@@ -1,0 +1,6 @@
+Specification-Title: MFi Library
+Specification-Version: 3.1
+Specification-Vendor: Naohide Sano
+Implementation-Title: Vavi MFi Library
+Implementation-Version: 3.1.0
+Implementation-Vendor: Naohide Sano

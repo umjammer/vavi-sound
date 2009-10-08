@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<html lang="ja">
+
+<head>
+<link rev="MADE" href="mailto:vavivavi@yahoo.co.jp" />
+<link rel="INDEX" href="orverview.html" />
+<meta http-equiv="Content-Type" content="text/html; charset=shift_jis" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<link rel="stylesheet" type="text/css" href="../../../vavi.css" />
+<title>vavi.sound.mfi</title>
+<!--
+ * Copyright (c) 2002 by Naohide Sano, All rights reserved.
+ *
+ * Written by Naohide Sano
+ *
+ * @author	<a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @version	0.00	020626	nsano	initial version
+-->
+</head>
+
+<body>
+
+<p>
+MFi サウンド関連のクラスを提供します．
+</p>
+
+<h2>概要</h2>
+<p>
+{@link javax.sound.midi} パッケージとほぼ同じ構造をしています。
+使用法は {@link javax.sound.midi} を参考にしてください。
+</p>
+<p>
+{@link vavi.sound.mfi.MfiSystem.getSequencer()} で再生する場合は
+システムプロパティ javax.sound.midi.Sequencer に "#Real Time Sequencer"
+を明示するようにしてください。{@link vavi.sound.midi.VaviSequencer} が
+デフォルトシーケンサになった場合 {@link vavi.sound.mfi.MfiSystem#getMetaEventListener()}
+が重複して登録されてしまいます。
+</p>
+
+<h2>これから実装すること</h2>
+
+<ul>
+<li>特殊命令の実装</li>
+<li><del datetime="030825">MfiFileFormat のヘッダ情報の扱いが未実装、メッセージにするか？ファイルフォーマットにするか？</del> → </li>
+<li><del datetime="030825">出てない音階がある</del></li>
+<li>MfiSystem converter の取得法が他と違う</li>
+<li><del datetime="090110">MfiSystem#main で鳴らない...</del></li>
+</ul>
+
+<h2>一次ライセンス</h2>
+<p>
+オリジナルのソースは見あたらないため
+一次ライセンスを気にする必要は無いと思われますが、
+念のために記しておきます。
+</p>
+<a href="http://www.xucker.jpn.org/ood/java/imelody/">open i-Melody Project</a>
+<p>
+ <a href="http://opensource.org/licenses/academic.php">Academic Free License (AFL)</a>,
+ <a href="http://www.gnu.org/licenses/lgpl.html">GNU Library or Lesser General Public License (LGPL)</a>
+</p>
+</body>
+
+</html>

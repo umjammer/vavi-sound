@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<html lang="ja">
+
+<head>
+<link rev="MADE" href="mailto:vavivavi@yahoo.co.jp" />
+<link rel="INDEX" href="orverview.html" />
+<meta http-equiv="Content-Type" content="text/html; charset=shift_jis" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<link rel="stylesheet" type="text/css" href="../../../vavi.css" />
+<title>vavi.sound.smaf.chunk</title>
+<!--
+ * Copyright (c) 2008 by Naohide Sano, All rights reserved.
+ *
+ * Written by Naohide Sano
+ *
+ * @author	<a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @version	0.00	080417	nsano	initial version
+-->
+</head>
+
+<body>
+
+<p>
+SMAF サウンド関連のファイル構造を表すクラスを提供します．
+</p>
+
+<h2>概要</h2>
+SMAF ファイルの読み込み時に使用されます。
+
+<h2>構造</h2>
+
+<pre>
+                                                                        wav2mld
+
+        FileChunk       (MMMD)                                          *
+                ContentsInfoChunk       (CNTI)                          *
+                        SubData*
+                [OptionalDataChunk]     (OPDA)
+                        DataChunk*                      (Dch*)
+                        ???Chunk                        (Pro*)
+                ScoreTrackChunk*        (MTR*)
+                        [SeekAndPhraseInfoChunk]        (MspI)
+                        SequenceDataChunk               (Mtsq)
+                                SmafMessage*
+                PcmAudioTrackChunk*     (ATR*)                          *
+                        [SeekAndPhraseInfoChunk]        (AspI)          *
+                        [SetupDataChunk]                (Atsu)
+                        AudioSequenceDataChunk          (Atsq)          *
+                                SmafMessage*
+                        WaveDataChunk*                  (Awa*)          *
+                GraphicsTrackChunk*     (GTR*)
+                [MasterTrackChunk]      (MSTR)
+                crc                                                     *
+
+</pre>
+
+<h2>これから実装すること</h2>
+
+<ul>
+<li></li>
+</ul>
+
+</body>
+
+</html>

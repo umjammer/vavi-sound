@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2003 by Naohide Sano, All rights reserved.
+#
+# MidiFileWriter
+#
+# 0.00	030817	nsano	initial version
+#
+
+vavi.sound.midi.mfi.MfiMidiFileWriter
+vavi.sound.midi.smaf.SmafMidiFileWriter
