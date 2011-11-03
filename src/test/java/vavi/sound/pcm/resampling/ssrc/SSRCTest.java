@@ -19,12 +19,16 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 import vavi.io.LittleEndianDataInputStream;
 import vavi.io.LittleEndianDataOutputStream;
 import vavi.sound.Checksum;
 import vavi.util.StringUtil;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -33,16 +37,14 @@ import vavi.util.StringUtil;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 060127 nsano initial version <br>
  */
-public class SSRCTest extends TestCase {
+public class SSRCTest {
 
     String inFile;
     String outFile = "out.vavi.wav";
     String correctFile = "out.wav";
 
-    /** @see junit.framework.TestCase#setUp() */
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
         Properties props = new Properties();
         props.load(SSRCTest.class.getResourceAsStream("local.properties"));
         inFile = props.getProperty("ssrc.in.wav");
@@ -134,6 +136,7 @@ gainControl.setValue(dB);
     }
 
     /** up sample (nio) */
+    @Test
     public void test5() throws Exception {
         SSRC.main(new String[] { "--rate", "44100", "--twopass", "--normalize", inFile, outFile });
 
@@ -176,7 +179,7 @@ System.err.println("2:\n" + StringUtil.getDump(buf));
         LittleEndianDataInputStream leis = new LittleEndianDataInputStream(new ByteArrayInputStream(buf));
         double d = leis.readDouble();
 System.err.printf("3: %f\n", d);
-        assertEquals(0.123456789, d);
+        assertEquals(0.123456789, d, 0);
     }
     
     /**

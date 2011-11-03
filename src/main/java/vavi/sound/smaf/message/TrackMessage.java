@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008 by KLab Inc., All rights reserved.
+ * Copyright (c) 2008 by Naohide Sano, All rights reserved.
  *
  * Programmed by Naohide Sano
  */
@@ -20,7 +20,7 @@ import vavi.util.Debug;
 /**
  * TrackMessage. TODO óvÇÈÇÃÇ©ÅH
  *
- * @author <a href="mailto:sano-n@klab.org">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 080415 nsano initial version <br>
  */
 public class TrackMessage {

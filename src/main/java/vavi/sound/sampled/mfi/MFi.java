@@ -26,7 +26,7 @@ public class MFi extends Type {
      * "mfi.base" String: output file template (use {@link String#format(String, Object...)})
      * "mfi.model" String: model
      * "mfi.time" float: dividing time in [sec]
-     * "mfi.sampleRate" int: ADPCM sampling rate
+     * "mfi.sampleRate" int: ADPCM sampling rate [Hz]
      * "mfi.bits" int: ADPCM sampling bits
      * "mfi.channels" int: ADPCM channels
      * "mfi.masterVolume" int: master volume in [%]

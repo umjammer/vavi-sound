@@ -118,12 +118,8 @@ Debug.println("reserved: " + StringUtil.toHex2(e1));
             }
 
 //Debug.println(available() + ", " + smafMessage);
-            if (smafMessage != null) {
 Debug.println("message: " + smafMessage);
-                messages.add(smafMessage);
-            } else {
-                assert false : "smafMessage is null";
-            }
+            messages.add(smafMessage);
         }
     }
 }

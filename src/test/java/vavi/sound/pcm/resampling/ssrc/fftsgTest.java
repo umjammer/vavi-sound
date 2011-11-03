@@ -6,9 +6,12 @@
 
 package vavi.sound.pcm.resampling.ssrc;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import vavi.util.SplitRadixFft;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -17,7 +20,7 @@ import junit.framework.TestCase;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 060127 nsano initial version <br>
  */
-public class fftsgTest extends TestCase {
+public class fftsgTest {
 
     /* random number generator, 0 <= RND < 1 */
     double RND(int[] p) {
@@ -39,7 +42,8 @@ public class fftsgTest extends TestCase {
     SplitRadixFft fftsg = new SplitRadixFft();
 
     /** */
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         ip = new int[NMAXSQRT + 2];
         a = new double[NMAX + 1];
         w = new double[NMAX * 5 / 4];
@@ -48,26 +52,29 @@ public class fftsgTest extends TestCase {
     }
 
     /** check of CDFT */
+    @Test
     public void testCDFT() throws Exception {
         putdata(0, NMAX - 1, a);
         fftsg.cdft(NMAX, 1, a, ip, w);
         fftsg.cdft(NMAX, -1, a, ip, w);
         double err = errorcheck(0, NMAX - 1, 2.0 / NMAX, a);
         System.out.printf("cdft err= %g \n", err);
-        assertEquals(0, err);
+        assertEquals(0, err, 0);
     }
 
     /** check of RDFT */
+    @Test
     public void testRDFT() throws Exception {
         putdata(0, NMAX - 1, a);
         fftsg.rdft(NMAX, 1, a, ip, w);
         fftsg.rdft(NMAX, -1, a, ip, w);
         double err = errorcheck(0, NMAX - 1, 2.0 / NMAX, a);
         System.out.printf("rdft err= %g \n", err);
-        assertEquals(0, err);
+        assertEquals(0, err, 0);
     }
 
     /** check of DDCT */
+    @Test
     public void testDDCT() throws Exception {
         putdata(0, NMAX - 1, a);
         fftsg.ddct(NMAX, 1, a, ip, w);
@@ -75,10 +82,11 @@ public class fftsgTest extends TestCase {
         a[0] *= 0.5;
         double err = errorcheck(0, NMAX - 1, 2.0 / NMAX, a);
         System.out.printf("ddct err= %g \n", err);
-        assertEquals(0, err);
+        assertEquals(0, err, 0);
     }
 
     /** check of DDST */
+    @Test
     public void testDDST() throws Exception {
         putdata(0, NMAX - 1, a);
         fftsg.ddst(NMAX, 1, a, ip, w);
@@ -86,10 +94,11 @@ public class fftsgTest extends TestCase {
         a[0] *= 0.5;
         double err = errorcheck(0, NMAX - 1, 2.0 / NMAX, a);
         System.out.printf("ddst err= %g \n", err);
-        assertEquals(0, err);
+        assertEquals(0, err, 0);
     }
 
     /** check of DFCT */
+    @Test
     public void testDFCT() throws Exception {
         putdata(0, NMAX, a);
         a[0] *= 0.5;
@@ -100,17 +109,18 @@ public class fftsgTest extends TestCase {
         fftsg.dfct(NMAX, a, t, ip, w);
         double err = errorcheck(0, NMAX, 2.0 / NMAX, a);
         System.out.printf("dfct err= %g \n", err);
-        assertEquals(0, err);
+        assertEquals(0, err, 0);
     }
 
     /** check of DFST */
+    @Test
     public void testDFST() throws Exception {
         putdata(1, NMAX - 1, a);
         fftsg.dfst(NMAX, a, t, ip, w);
         fftsg.dfst(NMAX, a, t, ip, w);
         double err = errorcheck(1, NMAX - 1, 2.0 / NMAX, a);
         System.out.printf("dfst err= %g \n", err);
-        assertEquals(0, err);
+        assertEquals(0, err, 0);
     }
 
     /** */

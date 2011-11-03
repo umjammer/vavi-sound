@@ -1210,6 +1210,7 @@ class SSRC {
 
         {
             int n1b2 = n1b / 2;
+            @SuppressWarnings("unused")
             int rp; // inbufのfs1での次に読むサンプルの場所を保持
             int rps; // rpを(fs1/sfrq=osf)で割った余り
             int rp2; // buf2のfs2での次に読むサンプルの場所を保持

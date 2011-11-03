@@ -17,11 +17,10 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
+import org.klab.commons.cli.Argument;
+import org.klab.commons.cli.HelpOption;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.sampled.FilterChain;
@@ -72,6 +71,11 @@ class SmafWithVoiceMaker {
     /** ADPCM volume */
     protected int adpcmVolume;
 
+    /** */
+    private static int toReal(int base, int percent) {
+        return (int) ((float) base * percent / 100); 
+    }
+    
     /**
      * 
      * @param sourceAis source PCM
@@ -96,8 +100,8 @@ class SmafWithVoiceMaker {
         this.samplingRate = samplingRate;
         this.bits = bits;
         this.channels = channels;
-        this.masterVolume = masterVolume;
-        this.adpcmVolume = adpcmVolume;
+        this.masterVolume = toReal(0x7f, masterVolume);
+        this.adpcmVolume = toReal(0x3f, adpcmVolume);
     }
 
     /**
@@ -110,7 +114,7 @@ class SmafWithVoiceMaker {
     public int create() throws IOException, UnsupportedAudioFileException, InvalidSmafDataException {
 long t = System.currentTimeMillis();
         // divide
-System.err.println("1: " + (System.currentTimeMillis() - t));
+Debug.println("1: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         byte[] buffer = new byte[sourceAis.available()];
         int l = 0;
@@ -119,7 +123,7 @@ t = System.currentTimeMillis();
             l += r;
         }
         int result = createSMAF(buffer, new File(filename));
-System.err.println("2: " + (System.currentTimeMillis() - t));
+Debug.println("2: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         return result;
     }
@@ -249,111 +253,65 @@ Debug.println("write: " + r);
     protected static String cr;
 
     /** */
+    protected static String defaultModel;
+
+    /** */
     static {
         try {
             Properties props = new Properties();
-            props.load(SmafWithVoiceMaker.class.getResourceAsStream("SmafWithVoiceMaker.properties"));
+            props.load(SmafWithVoiceMaker.class.getResourceAsStream("/vavi/sound/sampled/smaf/SmafWithVoiceMaker.properties"));
 
             vn = props.getProperty("contentsInfo.subDatum.vn");
             cr = props.getProperty("contentsInfo.subDatum.cr");
+            defaultModel = props.getProperty("defaultModel");
         } catch (Exception e) {
-            Debug.printStackTrace(e);
+            throw new IllegalStateException(e);
         }
     }
 
     //----
 
+    @Options
+    @HelpOption(argName = "help", option = "?", description = "print this help")
+    public static class Arguments {
+        @Argument(index = 0)
+        File file;
+        @Option(argName = "filename", option = "f", args = 1, required = false, description = "output mmf filename")
+        String outFilename = "out.mmf";
+        @Option(argName = "model", option = "m", required = false, args = 1, description = "terminal model")
+        String model = defaultModel;
+        @Option(argName = "rate", option = "r", required = false, args = 1, description = "adpcm sampling rate [Hz]")
+        int samplingRate = 16000;
+        @Option(argName = "bits", option = "b", required = false, args = 1, description = "adpcm sampling bits")
+        int bits = 4;
+        @Option(argName = "channels", option = "c", required = false, args = 1, description = "adpcm channels")
+        int channels = 1;
+        @Option(argName = "masterVolume", option = "v", required = false, args = 1, description = "master volume in [%]")
+        int masterVolume = 100;
+        @Option(argName = "adpcmVolume", option = "a", required = false, args = 1, description = "adpcm volume in [%]")
+        int adpcmVolume = 100;
+    }
+
     /**
-     * Creates .mld w/ voice file.
+     * Creates .mmf w/ voice file.
      * 
      * @param args input wave file
-     *             -f output mld filename
-     *             -s chunk time [second]
-     *             -r adpcm sampling rate
+     *             -f output mmf filename
+     *             -r adpcm sampling rate [Hz]
      *             -b adpcm sampling bits
      *             -c adpcm channels
-     *             -v master volume
-     *             -a adpcm volume
+     *             -v master volume [%]
+     *             -a adpcm volume [%]
      */
-    @SuppressWarnings("static-access")
     public static void main(String[] args) {
         try {
-            Options options = new Options();
-            options.addOption(OptionBuilder.withArgName("filename")
-                              .hasArg()
-                              .withDescription("output mld filename")
-                              .create("f"));
-            options.addOption(OptionBuilder.withArgName("size")
-                              .hasArg()
-                              .withDescription("size (second)")
-                              .create("s"));
-            options.addOption(OptionBuilder.withArgName("rate")
-                              .hasArg()
-                              .withDescription("sampling rate")
-                              .create("r"));
-            options.addOption(OptionBuilder.withArgName("bits")
-                              .hasArg()
-                              .withDescription("adpcm bits")
-                              .create("b"));
-            options.addOption(OptionBuilder.withArgName("channels")
-                              .hasArg()
-                              .withDescription("adpcm channels")
-                              .create("c"));
-            options.addOption(OptionBuilder.withArgName("masterVoluem")
-                              .hasArg()
-                              .withDescription("master volume in %")
-                              .create("v"));
-            options.addOption(OptionBuilder.withArgName("adpcmVoluem")
-                              .hasArg()
-                              .withDescription("adpcm volume in %")
-                              .create("a"));
+            Arguments arguments = new Arguments();
+            Options.Util.bind(args, arguments);
 
-            CommandLineParser parser = new BasicParser();
-            CommandLine cl = parser.parse(options, args);
-
-            String inFilename = cl.getArgs()[0];
-            String outFilename = "out.mmf";
-            float time = 10;
-            int samplingRate = 16000;
-            int bits = 4;
-            int channels = 1;
-            int masterVolume = 0x7f;
-            int adpcmVolume = 0x3f;
-
-            if (cl.hasOption("f")) {
-                outFilename = cl.getOptionValue("f");
-Debug.println("filename: " + outFilename);
-            }
-            if (cl.hasOption("s")) {
-                time = Float.parseFloat(cl.getOptionValue("s"));
-Debug.println("size: " + time);
-            }
-            if (cl.hasOption("r")) {
-                samplingRate = Integer.parseInt(cl.getOptionValue("r"));
-Debug.println("rate: " + samplingRate);
-            }
-            if (cl.hasOption("b")) {
-                bits = Integer.parseInt(cl.getOptionValue("b"));
-Debug.println("bits: " + bits);
-            }
-            if (cl.hasOption("c")) {
-                channels = Integer.parseInt(cl.getOptionValue("c"));
-Debug.println("channels: " + channels);
-            }
-            if (cl.hasOption("v")) {
-                masterVolume = (int) ((float) masterVolume * Integer.parseInt(cl.getOptionValue("v")) / 100);
-Debug.println("masterVolume: " + masterVolume + ", " + cl.getOptionValue("v") + "%");
-            }
-            if (cl.hasOption("a")) {
-                adpcmVolume = (int) ((float) adpcmVolume * Integer.parseInt(cl.getOptionValue("a")) / 100);
-Debug.println("adpcmVolume: " + adpcmVolume + ", " + cl.getOptionValue("a") + "%");
-            }
-    
             // create
-
-            AudioInputStream ais = AudioSystem.getAudioInputStream(new File(inFilename));
+            AudioInputStream ais = AudioSystem.getAudioInputStream(arguments.file);
             FilterChain filterChain = new FilterChain();
-            SmafWithVoiceMaker mwvm = new SmafWithVoiceMaker(filterChain.doFilter(ais), outFilename, time, samplingRate, bits, channels, masterVolume, adpcmVolume);
+            SmafWithVoiceMaker mwvm = new SmafWithVoiceMaker(filterChain.doFilter(ais), arguments.outFilename, 0 /* TODO */, arguments.samplingRate, arguments.bits, arguments.channels, arguments.masterVolume, arguments.adpcmVolume);
             mwvm.create();
 
             // done

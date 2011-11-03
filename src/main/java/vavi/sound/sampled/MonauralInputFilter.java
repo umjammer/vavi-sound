@@ -13,9 +13,11 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import vavi.util.Debug;
+
 
 /**
- * MonorizeInputFilter. 
+ * MonauralInputFilter. 
  *
  * @require tritonus_remaining-XXX.jar
  *
@@ -39,8 +41,8 @@ public class MonauralInputFilter implements InputFilter {
             inAudioFormat.getFrameSize(),
             inAudioFormat.getFrameRate(),
             inAudioFormat.isBigEndian());
-System.err.println("OUT: " + outAudioFormat);
-System.err.println("OK: " + AudioSystem.isConversionSupported(outAudioFormat, inAudioFormat));
+Debug.println("OUT: " + outAudioFormat);
+Debug.println("OK: " + AudioSystem.isConversionSupported(outAudioFormat, inAudioFormat));
 
         return AudioSystem.getAudioInputStream(outAudioFormat, sourceAis);
     }

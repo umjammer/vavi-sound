@@ -35,7 +35,7 @@ import vavi.util.Debug;
 public abstract class BasicAudioEngine implements AudioEngine {
 
     /** */
-    protected Data[] datum;
+    protected Data[] data;
 
     /* */
     public void setData(int streamNumber,
@@ -44,26 +44,26 @@ public abstract class BasicAudioEngine implements AudioEngine {
                         int bits,
                         int channels,
                         byte[] adpcm, boolean continued) {
-        Data data;
-        if (datum[streamNumber] == null) {
-            data = new Data();
-            data.channel = channel;
-            data.sampleRate = sampleRate;
-            data.bits = bits;
-            data.channels = channels;
+        Data datum;
+        if (this.data[streamNumber] == null) {
+            datum = new Data();
+            datum.channel = channel;
+            datum.sampleRate = sampleRate;
+            datum.bits = bits;
+            datum.channels = channels;
         } else {
-            data = datum[streamNumber];
+            datum = this.data[streamNumber];
         }
-        if (data.continued) {
-            byte[] temp = new byte[data.adpcm.length + adpcm.length];
-            System.arraycopy(data.adpcm, 0, temp, 0, data.adpcm.length);
-            System.arraycopy(adpcm, 0, temp, data.adpcm.length, adpcm.length);
-            data.adpcm = temp;
+        if (datum.continued) {
+            byte[] temp = new byte[datum.adpcm.length + adpcm.length];
+            System.arraycopy(datum.adpcm, 0, temp, 0, datum.adpcm.length);
+            System.arraycopy(adpcm, 0, temp, datum.adpcm.length, adpcm.length);
+            datum.adpcm = temp;
         } else {
-            data.adpcm = adpcm;
+            datum.adpcm = adpcm;
         }
-        data.continued = continued;
-        datum[streamNumber] = data;
+        datum.continued = continued;
+        this.data[streamNumber] = datum;
 
 try {
  OutputStream os = null;
@@ -94,17 +94,17 @@ Debug.printStackTrace(e);
 
         int channels = getChannels(streamNumber);
         if (channels == -1) {
-Debug.println("always used: no: " + streamNumber + ", ch: " + datum[streamNumber].channel);
+Debug.println("always used: no: " + streamNumber + ", ch: " + this.data[streamNumber].channel);
             return;
         }
 
         AudioFormat audioFormat = new AudioFormat(
             AudioFormat.Encoding.PCM_SIGNED,
-            datum[streamNumber].sampleRate,
+            this.data[streamNumber].sampleRate,
             16,
             channels,
             2 * channels,
-            datum[streamNumber].sampleRate,
+            this.data[streamNumber].sampleRate,
             false);
 Debug.println(audioFormat);
 

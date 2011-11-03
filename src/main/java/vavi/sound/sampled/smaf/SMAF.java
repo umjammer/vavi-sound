@@ -25,7 +25,7 @@ public class SMAF extends Type {
      * "smaf.directory" String: output base directory
      * "smaf.base" String: output file template (use {@link String#format(String, Object...)})
      * "smaf.time" float: dividing time in [sec]
-     * "smaf.sampleRate" int: ADPCM sampling rate
+     * "smaf.sampleRate" int: ADPCM sampling rate [Hz]
      * "smaf.bits" int: ADPCM sampling bits
      * "smaf.channels" int: ADPCM channels
      * "smaf.masterVolume" int: master volume in [%]

@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2011 by Naohide Sano, All rights reserved.
+#
+# AudioFileReader
+#
+# 0.00	111016	nsano	initial version
+#
+
+#vavi.sound.sampled.ccitt.CcittAudioFileReader

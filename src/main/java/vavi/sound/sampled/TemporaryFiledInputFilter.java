@@ -14,6 +14,8 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import vavi.util.Debug;
+
 
 /**
  * TemporaryFiledInputFilter. 
@@ -28,7 +30,7 @@ public class TemporaryFiledInputFilter implements InputFilter {
         // ˆê‰ñ temp ƒtƒ@ƒCƒ‹‚É—Ž‚Æ‚·
         File tmpFile = File.createTempFile("temp", ".wav");
         int r = AudioSystem.write(sourceAis, AudioFileFormat.Type.WAVE, tmpFile);
-System.err.println("RESULT: " + r);
+Debug.println("RESULT: " + r);
 
         return AudioSystem.getAudioInputStream(tmpFile);
     }

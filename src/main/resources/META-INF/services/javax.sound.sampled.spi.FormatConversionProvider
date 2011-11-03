@@ -7,3 +7,4 @@
 #
 
 vavi.sound.sampled.resampling.SampleRateConversionProvider
+#vavi.sound.sampled.ccitt.CcittFormatConversionProvider

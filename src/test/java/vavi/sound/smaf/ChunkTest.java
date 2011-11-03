@@ -12,9 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import vavi.sound.smaf.chunk.Chunk;
+
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -23,7 +25,7 @@ import vavi.sound.smaf.chunk.Chunk;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 050508 nsano initial version <br>
  */
-public class ChunkTest extends TestCase {
+public class ChunkTest {
 
     /** for testing protected methods */
     class HackedChunk extends Chunk {
@@ -89,6 +91,7 @@ public class ChunkTest extends TestCase {
      *  0FFFFFFF   | FF FF FF 7F
      * </pre>
      */
+    @Test
     public void testReadOneToFour() throws Exception {
         HackedChunk chunk = new HackedChunk(); 
         assertEquals(0x00000000, chunk.readOneToFour(new ByteArrayInputStream(new byte[] { 0x00 })));
@@ -119,6 +122,7 @@ public class ChunkTest extends TestCase {
      *  0000407F   | FF 7F
      * </pre>
      */
+    @Test
     public void testReadOneToTwo() throws Exception {
         HackedChunk chunk = new HackedChunk(); 
         assertEquals(0x00000000, chunk.readOneToTwo(new ByteArrayInputStream(new byte[] { 0x00 })));
@@ -133,6 +137,7 @@ public class ChunkTest extends TestCase {
     /**
      * Tests {@link SmafMessage#writeOneToTwo(OutputStream, int)}.
      */
+    @Test
     public void test01() throws Exception {
         assertEquals(15000 / 4, wr(15000 / 4));
         assertEquals(0x0040, wr(0x0040));
