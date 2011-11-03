@@ -6,85 +6,44 @@
 
 package vavi.sound.adpcm.ms;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 
-import vavi.io.LittleEndianDataInputStream;
-import vavi.util.Debug;
+import vavi.io.InputEngineOutputStream;
 
 
 /**
- * IMA OutputStream.
+ * MS OutputStream.
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 060202 nsano initial version <br>
  */
 public class MsOutputStream extends FilterOutputStream {
 
-    /** */
-    private ByteOrder byteOrder;
-
     /**
      * バイトオーダーは little endian
      */
-    public MsOutputStream(OutputStream out)
+    public MsOutputStream(OutputStream out, int samplesPerBlock, int channels)
         throws IOException {
 
-        this(out, ByteOrder.LITTLE_ENDIAN);
-    }
-
-    /** */
-    private OutputStream realOut;
-
-    /**
-     */
-    public MsOutputStream(OutputStream out, final ByteOrder byteOrder)
-        throws IOException {
-
-        super(new ByteArrayOutputStream());
-
-        this.byteOrder = byteOrder;
-Debug.println("byteOrder: " + this.byteOrder);
-
-        realOut = out;
+        this(out, samplesPerBlock, channels, ByteOrder.LITTLE_ENDIAN);
     }
 
     /**
-     * 必ず呼んでね。
+     * @param samplesPerBlock use 500 bytes as default
+     * @param channels use 1 as default
      */
-    public void close() throws IOException {
+    public MsOutputStream(OutputStream out, int samplesPerBlock, int channels, ByteOrder byteOrder)
+        throws IOException {
 
-        final Ms encoder = new Ms();
+        super(new InputEngineOutputStream(new MsInputEngine(out, samplesPerBlock, channels, byteOrder), samplesPerBlock * 2));
+    }
 
-        try {
-            LittleEndianDataInputStream ledis = new LittleEndianDataInputStream(new ByteArrayInputStream(((ByteArrayOutputStream) out).toByteArray()));
-            int length = ledis.available();
-Debug.println("length: " + length);
-            byte[] adpcm = new byte[length / 4];
-            int[] pcm = new int[length / 2];
-            for (int i = 0; i < pcm.length; i++) {
-                pcm[i] = ledis.readShort();
-            }
-            encoder.encodeBlock(1, pcm, pcm.length, new int[88], adpcm, 0);
-
-            realOut.write(adpcm);
-
-        } catch (IOException e) {
-Debug.printStackTrace(e);
-        } finally {
-            try {
-                realOut.flush();
-                realOut.close();
-            } catch (IOException e) {
-Debug.println(e);
-            }
-        }
-
-        realOut.close();
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        out.write(b, off, len);
     }
 }
 

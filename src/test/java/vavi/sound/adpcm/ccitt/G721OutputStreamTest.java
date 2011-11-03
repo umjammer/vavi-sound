@@ -7,36 +7,47 @@
 package vavi.sound.adpcm.ccitt;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 import vavi.io.IOStreamOutputEngine;
 import vavi.io.OutputEngineInputStream;
 import vavi.sound.Checksum;
+import vavi.util.Debug;
+
+import static org.junit.Assert.assertEquals;
 
 
 /**
- * MaOutputStreamTest. 
+ * G721OutputStreamTest. 
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>
  */
-public class G721OutputStreamTest extends TestCase {
+public class G721OutputStreamTest {
 
     String inFile = "pcm_8k_16_mono.pcm";
-    String outFile = "out.vavi.4.adpcm";
     String correctFile = "out.4.adpcm";
+    File outFile;
+
+    @Before
+    public void setup() throws IOException {
+        outFile = File.createTempFile("vavi", ".pcm");
+        outFile.deleteOnExit();
+Debug.println("outFile: " + outFile);
+    }
 
     /** */
+    @Test
     public void test1() throws Exception {
         OutputStream os = new FileOutputStream(outFile);
-        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(new FileInputStream(inFile), new IOStreamOutputEngine.OutputStreamFactory() {
+        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(getClass().getResourceAsStream(inFile), new IOStreamOutputEngine.OutputStreamFactory() {
             public OutputStream getOutputStream(OutputStream out) throws IOException {
                 return new G721OutputStream(out, ByteOrder.LITTLE_ENDIAN);
             }
@@ -53,7 +64,7 @@ public class G721OutputStreamTest extends TestCase {
         os.flush();
         os.close();
 
-        assertEquals(Checksum.getChecksum(new File(correctFile)), Checksum.getChecksum(new File(outFile)));
+        assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }
 

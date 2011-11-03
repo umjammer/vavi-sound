@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+
+<!-- ////////////////////////////////////////////////////////////////////// -->
+<!-- Copyright (c) 2006 by Naohide Sano, All rights reserved.               -->
+<!--                                                                        -->
+<!-- Written by Naohide Sano                                                -->
+<!--                                                                        -->
+<!-- VOX ADPCM Codec Test                                                   -->
+<!--                                                                        -->
+<!-- @author	Naohide Sano                                                -->
+<!-- @version	0.00	060120	nsano	initial version                     -->
+<!--                                                                        -->
+<!-- ////////////////////////////////////////////////////////////////////// -->
+
+<project default="run" basedir=".">
+
+  <!-- クラスパスの定義 -->
+  <path id="project.class.path">
+    <pathelement location="../../../../../java" />
+  </path>
+
+  <!-- ターゲットの定義 -->
+
+  <!-- clean -->
+  <target name="clean" description="ビルド環境のクリア">
+    <delete>
+      <fileset dir=".">
+        <include name="*.exe" />
+        <include name="out*.pcm" />
+        <include name="out*.adpcm" />
+      </fileset>
+    </delete>
+  </target>
+
+  <!-- cc -->
+  <target name="compile" description="コンパイル">
+    <exec executable="gcc">
+      <arg value="p211cnv.c" />
+      <arg line="-Dencoder" />
+      <arg line="-o encoder" />
+    </exec>
+    <exec executable="gcc">
+    <arg value="p211cnv.c" />
+    <arg line="-o decoder" />
+  </exec>
+  </target>
+
+  <!-- run -->
+  <target name="run" depends="compile" description="プログラムの実行">
+    <exec executable="encoder">
+      <arg value="pcm_8k_16_mono.pcm" />
+      <arg value="out.adpcm" />
+    </exec>
+    <exec executable="decoder">
+      <arg value="out.adpcm" />
+      <arg value="out.pcm" />
+    </exec>
+  </target>
+
+  <!-- play -->
+  <target name="play" depends="" description="プログラムの実行">
+    <java classname="t150_3">
+      <classpath>
+        <path refid="project.class.path" />
+        <pathelement location="../../../../../java/test/150/src" />
+      </classpath>
+      <arg value="out.pcm" />
+      <arg value="8000" />
+      <arg value="le" />
+    </java>
+  </target>
+
+</project>
+
+<!-- -->

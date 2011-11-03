@@ -1,7 +1,19 @@
 /*
- * Copyright (c) 2003 by Naohide Sano, All rights reserved.
+ * Copyright (C) 1999 Stanley J. Brooks &lt;stabro@megsinet.net&gt;
  *
- * Programmed by Naohide Sano
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 package vavi.sound.adpcm.ms;
@@ -25,8 +37,9 @@ import vavi.util.Debug;
  * <p>
  * Remark: code still turbulent, encoding very new.
  * </p>
+ * @author <a href="mailto:stabro@megsinet.net">Stanley J. Brooks</a>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
- * @version 0.00 030715 nsano port from c <br>
+ * @version 0.00 030715 nsano port to java <br>
  */
 class Ms {
 
@@ -54,7 +67,7 @@ class Ms {
      * appear in the actual WAVE file.  They should be read in
      * in case a sound program added extras to the list.
      */
-    private static final int[][] _iCoef = {
+    static final int[][] _iCoef = {
         { 256,    0 },
         { 512, -256 },
         { 0,      0 },
@@ -222,7 +235,7 @@ Debug.println("MSADPCM bpred >= nCoef, arbitrarily using 0");
 
         int op = 0;                         // output pointer (or null)
         // null means don't output, just compute the rms error
-        if (op != 0) {
+        if (outBuffer != null) {
             op += channels;                 // skip bpred indices
             op += 2 * channel;              // channel's stepsize
             outBuffer[op] = (byte) step;
@@ -244,6 +257,7 @@ Debug.println("MSADPCM bpred >= nCoef, arbitrarily using 0");
             // difference between linear prediction and current sample
             d = inBuffer[ip] - vlin;
             int dp = d + (step << 3) + (step >> 1);
+//System.err.println("vlin: " + vlin + ", d: " + d + ", dp: " + dp + ", in: " + inBuffer[ip] + ", coef: " + iCoef[0] + ", " + iCoef[1]);
             int c = 0;
             if (dp > 0) {
                 c = dp / step;
@@ -266,10 +280,11 @@ Debug.println("MSADPCM bpred >= nCoef, arbitrarily using 0");
             d = inBuffer[ip] - v0;
             d2 += d * d;                    // update square-error
 
-            if (op != 0) {                  // if we want output, put it in proper place
+            if (outBuffer != null) {                  // if we want output, put it in proper place
                 // FIXME does c << 0 work properly ?
                 outBuffer[op + (ox >> 3)] |= (byte) ((ox & 4) != 0 ? c : (c << 4));
                 ox += 4 * channels;
+//System.err.printf("%1x\n", c);
             }
 
             // Update the step for the next sample
@@ -278,8 +293,10 @@ Debug.println("MSADPCM bpred >= nCoef, arbitrarily using 0");
                 step = 16;
             }
         }
-
+//if (outBuffer != null)
+// System.err.print("\n");
         d2 /= length; // be sure it's non-negative
+//System.err.printf("ch%d: st %d->%d, d %.1f\n", channel, steps[sp], step, Math.sqrt(d2));
         steps[sp] = step;
 
         return (int) Math.sqrt(d2);
@@ -332,6 +349,7 @@ Debug.println("MSADPCM bpred >= nCoef, arbitrarily using 0");
 
             s1[0] = s0;
             encode(channel, channels, v, _iCoef[k], inBuffer, n0, s1, 0, null);
+//System.err.printf(" s32 %d\n", s1[0]);
 
             ss[0] = (3 * s0 + s1[0]) / 4;
             s1[0] = ss[0];
@@ -349,6 +367,7 @@ Debug.println("MSADPCM bpred >= nCoef, arbitrarily using 0");
             }
         }
         steps[sp] = smin;
+//System.err.printf("kmin %d, smin %5d, \n", kmin, smin);
         encode(channel, channels, v, _iCoef[kmin], inBuffer, length, steps, sp, outBuffer);
         outBuffer[channel] = (byte) kmin;
     }
@@ -385,10 +404,10 @@ Debug.println("MSADPCM bpred >= nCoef, arbitrarily using 0");
      * samplesPerBlock which would go into a block of size blockAlign
      * Yes, it is confusing usage.
      */
-    public int getSamplesIn(int dataLength,
-                            int channels,
-                            int blockAlign,
-                            int samplesPerBlock) {
+    public static int getSamplesIn(int dataLength,
+                                   int channels,
+                                   int blockAlign,
+                                   int samplesPerBlock) {
         int m, n;
 
         if (samplesPerBlock > 0) {
@@ -412,7 +431,7 @@ Debug.println("MSADPCM bpred >= nCoef, arbitrarily using 0");
     }
 
     /** Returns bytes per block. */
-    public int getBytesPerBlock(int channels, int samplesPerBlock) {
+    public static int getBytesPerBlock(int channels, int samplesPerBlock) {
         int n = 7 * channels;               // header
         if (samplesPerBlock > 2) {
             n += ((samplesPerBlock - 2) * channels + 1) / 2;

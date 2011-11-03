@@ -14,10 +14,16 @@ package vavi.sound.adpcm;
  * @version 0.00 060427 nsano initial version <br>
  */
 public interface Codec {
-    /** @return adpcm */
+    /**
+     * @param pcm 16bit 
+     * @return adpcm 4bit
+     */
     int encode(int pcm);
 
-    /** @return pcm */
+    /**
+     * @param adpcm 4bit 
+     * @return pcm 16bit
+     */
     int decode(int adpcm);
 }
 

@@ -1,7 +1,19 @@
 /*
- * Copyright (c) 2003 by Naohide Sano, All rights reserved.
+ * Copyright (C) 1999 Stanley J. Brooks <stabro@megsinet.net>
  *
- * Programmed by Naohide Sano
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package vavi.sound.adpcm.ima;
@@ -12,13 +24,14 @@ import vavi.util.Debug;
 /**
  * IMA ADPCM
  * 
+ * @author <a href="mailto:stabro@megsinet.net">Stanley J. Brooks</a>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
- * @version 0.00 030715 nsano port from c <br>
+ * @version 0.00 030715 nsano port to java <br>
  */
 class Ima {
 
     /** */
-    private static final int ISSTMAX = 88;
+    public static final int ISSTMAX = 88;
 
     /**
      * Lookup tables for IMA ADPCM format
@@ -246,6 +259,7 @@ Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") o
                         op += o_inc; // skip op for next group
                     }
                 } else {
+//System.err.println("op: " + op);
                     obuff[op] = (byte) cm;
                 }
                 i = (i + 1) & 0x07;
@@ -309,6 +323,7 @@ Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") o
                               int option) {
 
         int[] snext = new int[1];
+        int d;
 
         int s32 = steps[sp];
         int s0 = s32;
@@ -331,7 +346,7 @@ Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") o
             while (low > low0 || hi < hi0) {
                 if (!w && low > low0) {
                     snext[0] = --low;
-                    int d = encode(channel, channels, inBuffer[0], inBuffer, length, snext, 0, null);
+                    d = encode(channel, channels, inBuffer[0], inBuffer, length, snext, 0, null);
                     if (d < d0) {
                         d0 = d;
                         s0 = low;
@@ -347,7 +362,7 @@ Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") o
                 }
                 if (w && hi < hi0) {
                     snext[0] = ++hi;
-                    int d = encode(channel, channels, inBuffer[0], inBuffer, length, snext, 0, null);
+                    d = encode(channel, channels, inBuffer[0], inBuffer, length, snext, 0, null);
                     if (d < d0) {
                         d0 = d;
                         s0 = hi;
@@ -365,7 +380,7 @@ Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") o
             }
             steps[sp] = s0;
         }
-        encode(channel, channels, inBuffer[0], inBuffer, length, steps, sp, outBuffer);
+        d = encode(channel, channels, inBuffer[0], inBuffer, length, steps, sp, outBuffer);
     }
 
     /**
@@ -390,7 +405,7 @@ Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") o
      * then returns the max samplesPerBlock which would go into a block of size blockAlign
      * Yes, it is confusing.
      */
-    public int getSamplesIn(int dataLength, int channels, int blockAlign, int samplesPerBlock) {
+    public static int getSamplesIn(int dataLength, int channels, int blockAlign, int samplesPerBlock) {
         int m, n;
 // Debug.println("dataLength: " + dataLength);
 // Debug.println("channels: " + channels);
@@ -425,7 +440,7 @@ Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") o
      * @param channels channels
      * @param samplesPerBlock samples par block
      */
-    public int getBytesPerBlock(int channels, int samplesPerBlock) {
+    public static int getBytesPerBlock(int channels, int samplesPerBlock) {
         // per channel, ima has blocks of len 4, the 1st has 1st sample,
         // the others up to 8 samples per block,
         // so number of later blocks is (nsamp-1 + 7) / 8,

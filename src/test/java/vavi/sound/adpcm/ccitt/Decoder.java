@@ -39,7 +39,7 @@ public class Decoder {
         InputStream in = System.in;
         OutputStream out = System.out;
         
-        /* Process encoding argument, if any */
+        // Process encoding argument, if any
         int argc = 0;
         do {
             switch (args[argc].charAt(0)) {

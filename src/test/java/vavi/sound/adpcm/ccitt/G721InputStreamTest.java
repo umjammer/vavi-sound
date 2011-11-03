@@ -8,8 +8,8 @@ package vavi.sound.adpcm.ccitt;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
@@ -20,9 +20,13 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 import vavi.sound.Checksum;
+import vavi.util.Debug;
+
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -31,27 +35,22 @@ import vavi.sound.Checksum;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>
  */
-public class G721InputStreamTest extends TestCase {
+public class G721InputStreamTest {
 
     String inFile = "out.4.adpcm";
-    String outFile = "out.vavi.4.pcm";
     String correctFile = "out.4.pcm";
+    File outFile;
 
-    /** */
-    public void test1() throws Exception {
-        decode(new String[] { inFile, outFile, "test" });
-
-        assertEquals(Checksum.getChecksum(new File(correctFile)), Checksum.getChecksum(new File(outFile)));
+    @Before
+    public void setup() throws IOException {
+        outFile = File.createTempFile("vavi", ".pcm");
+        outFile.deleteOnExit();
+Debug.println("outFile: " + outFile);
     }
 
-
-    /**
-     * Play G721 ADPCM.
-     * @param args 0:dvi adpcm, 1:output pcm, 2:test or not, use "test"
-     */
-    void decode(String[] args) throws Exception {
-
-        final boolean isTest = args[2].equals("test");
+    /** */
+    @Test
+    public void test1() throws Exception {
 
         int sampleRate = 8000;
         ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
@@ -66,40 +65,36 @@ public class G721InputStreamTest extends TestCase {
             byteOrder.equals(ByteOrder.BIG_ENDIAN));
 System.err.println(format);
 
-        InputStream is = new G721InputStream(new FileInputStream(args[0]), ByteOrder.LITTLE_ENDIAN);
-OutputStream os = null;
-if (args[1] != null) {
- System.err.println("available: " + is.available());
- os = new BufferedOutputStream(new FileOutputStream(args[1]));
-}
+        InputStream is = new G721InputStream(getClass().getResourceAsStream(inFile), ByteOrder.LITTLE_ENDIAN);
+System.err.println("available: " + is.available());
 
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-        SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
-        line.open(format);
-        line.start();
-        byte[] buf = new byte[1024];
-        int l = 0;
+        OutputStream os = new BufferedOutputStream(new FileOutputStream(outFile));
+
+DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
+line.open(format);
+line.start();
+
 FloatControl gainControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
 double gain = .2d; // number between 0 and 1 (loudest)
 float dB = (float) (Math.log(gain) / Math.log(10.0) * 20.0);
 gainControl.setValue(dB);
 
+        byte[] buf = new byte[1024];
         while (is.available() > 0) {
-            l = is.read(buf, 0, 1024);
-            line.write(buf, 0, l);
-if (os != null) {
- os.write(buf, 0, l);
-}
+            int r = is.read(buf, 0, 1024);
+            if (r < 0) {
+                break;
+            }
+line.write(buf, 0, r);
+            os.write(buf, 0, r);
         }
-        line.drain();
-        line.stop();
-        line.close();
-if (os != null) {
- os.close();
-}
-        if (!isTest) {
-            System.exit(0);
-        }
+line.drain();
+line.stop();
+line.close();
+        os.close();
+
+        assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }
 

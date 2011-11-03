@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+
+<!-- ////////////////////////////////////////////////////////////////////// -->
+<!-- Copyright (c) 2006 by Naohide Sano, All rights reserved.               -->
+<!--                                                                        -->
+<!-- Written by Naohide Sano                                                -->
+<!--                                                                        -->
+<!-- ROHM ADPCM Codec Test                                                  -->
+<!--                                                                        -->
+<!-- @author	Naohide Sano                                                -->
+<!-- @version	0.00	060130	nsano	initial version                     -->
+<!--                                                                        -->
+<!-- ////////////////////////////////////////////////////////////////////// -->
+
+<project default="run" basedir=".">
+
+  <property name="project.home" value="../../../../../../.." />
+  <property file="${project.home}/local.properties" />
+
+  <!-- クラスパスの定義 -->
+  <path id="project.class.path">
+    <pathelement location="${vavi.dir}" />
+  </path>
+
+  <!-- ターゲットの定義 -->
+
+  <!-- clean -->
+  <target name="clean" description="環境のクリア">
+    <delete>
+      <fileset dir=".">
+        <include name="out*.pcm" />
+        <include name="out*.adpcm" />
+        <include name="*.exe" />
+      </fileset>
+    </delete>
+  </target>
+
+  <!-- cc -->
+  <target name="compile" description="C コンパイル">
+    <exec executable="gcc">
+      <arg value="Adpcm.c" />
+      <arg line="-Dencoder" />
+      <arg line="-o encoder" />
+    </exec>
+    <exec executable="gcc">
+      <arg value="Adpcm.c" />
+      <arg line="-o decoder" />
+    </exec>
+  </target>
+
+  <!-- run -->
+  <target name="run" depends="compile" description="リファレンスの作成">
+    <exec executable="encoder">
+      <arg value="pcm_8k_16_mono.pcm" />
+      <arg value="out.adpcm" />
+<!--
+      <redirector output="aaa"/>
+-->
+    </exec>
+    <exec executable="decoder">
+      <arg value="out.adpcm" />
+      <arg value="out.pcm" />
+    </exec>
+  </target>
+
+  <!-- play -->
+  <target name="play" depends="" description="play PCM">
+    <java classname="t150_3">
+      <classpath>
+        <path refid="project.class.path" />
+        <pathelement location="${vavi.dir}/test/150/src" />
+      </classpath>
+      <arg value="out.pcm" />
+      <arg value="8000" />
+      <arg value="le" />
+    </java>
+  </target>
+
+</project>
+
+<!-- -->

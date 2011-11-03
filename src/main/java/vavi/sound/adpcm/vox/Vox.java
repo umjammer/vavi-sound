@@ -1,7 +1,5 @@
 /*
- * Copyright (c) 2003 by Naohide Sano, All rights reserved.
- *
- * Programmed by Naohide Sano
+ * http://www.hundredsoft.jp/wav2mld/source/p211cnv.c
  */
 
 package vavi.sound.adpcm.vox;
@@ -24,8 +22,10 @@ import vavi.util.Debug;
 /**
  * Vox ADPCM codec.
  * 
+ * @author Furuhon
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
- * @version 0.00 030715 nsano initial version <br>
+ * @version 0.00 030715 nsano port to java <br>
+ * @see "http://www.hundredsoft.jp/wav2mld/source/p211cnv.c"
  */
 class Vox implements Codec {
 

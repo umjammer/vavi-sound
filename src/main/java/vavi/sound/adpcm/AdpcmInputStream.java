@@ -73,6 +73,7 @@ public abstract class AdpcmInputStream extends FilterInputStream {
 //Debug.println(in);
         if (!rest) {
             int adpcm = in.read();
+//System.err.println("0: " + StringUtil.toHex2(adpcm));
             if (adpcm == -1) {
                 return -1;
             }
@@ -80,7 +81,7 @@ public abstract class AdpcmInputStream extends FilterInputStream {
             current = decoder.decode(adpcm);
 
             rest = true;
-//Debug.println("1: " + StringUtil.toHex2(current & 0xff));
+//System.err.println("1: " + StringUtil.toHex2(current & 0xff));
             if (ByteOrder.BIG_ENDIAN.equals(byteOrder)) {
                 return (current & 0xff00) >> 8;
             } else {
@@ -88,7 +89,7 @@ public abstract class AdpcmInputStream extends FilterInputStream {
             }
         } else {
             rest = false;
-//Debug.println("2: " + StringUtil.toHex2((current & 0xff00) >> 8));
+//System.err.println("2: " + StringUtil.toHex2((current & 0xff00) >> 8));
             if (ByteOrder.BIG_ENDIAN.equals(byteOrder)) {
                 return current & 0xff;
             } else {
@@ -97,7 +98,7 @@ public abstract class AdpcmInputStream extends FilterInputStream {
         }
     }
 
-    /** */
+    /* */
     public int read(byte b[], int off, int len) throws IOException {
         if (b == null) {
             throw new NullPointerException();

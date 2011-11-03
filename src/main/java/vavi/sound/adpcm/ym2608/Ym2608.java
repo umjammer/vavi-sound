@@ -1,7 +1,5 @@
 /*
- * Copyright (c) 2003 by Naohide Sano, All rights reserved.
- *
- * Programmed by Naohide Sano
+ * http://hackipedia.org/Platform/Sega/Genesis/hardware,%20FM%20synthesis,%20YM2608/html/adpcm.html
  */
 
 package vavi.sound.adpcm.ym2608;
@@ -14,14 +12,22 @@ import vavi.sound.adpcm.Codec;
  * 
  * @author <a href="http://www.memb.jp/~dearna/">Masashi Wada</a> (DEARNA)
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
- * @version 0.00 030823 nsano port from c <br>
+ * @version 0.00 030823 nsano port to java <br>
  */
 class Ym2608 implements Codec {
 
     /** */
     private class State {
-        int stepSize = 127;
-        int xn;
+        long stepSize = 127;
+        long xn;
+        int count = 0;
+        void next() {
+            count++;
+            if (count % 1024 == 0) {
+                state.stepSize = 127;
+                state.xn = 0;
+            }
+        }
     }
 
     /** */
@@ -33,31 +39,29 @@ class Ym2608 implements Codec {
         57, 57, 57, 57, 77, 102, 128, 153
     };
 
-//private int ccc = 0;
-
     /**
-     * @param pcm PCM
-     * @return ADPCM
+     * @param pcm PCM 16bit
+     * @return ADPCM 4bit
      */
     public int encode(int pcm) {
 
         // エンコード処理 2
-        int dn = pcm - state.xn;
-//System.err.printf("%05d: %d, %d, %d\n", ccc, dn, pcm, xn);
+        long dn = pcm - state.xn;
+//System.err.printf("%05d: %d, %d, %d\n", ccc, dn, pcm, state.xn); // OK
         // エンコード処理 3, 4
         // I = | dn | / Sn から An を求める。
         // 乗数を使用して整数位で演算する。
-        int i = (int) ((((long) Math.abs(dn)) << 16) / (state.stepSize << 14));
-//System.err.printf("%05d: %d\n", ccc, i);
+        long i = (int) (((Math.abs(dn)) << 16) / ((state.stepSize) << 14));
+//System.err.printf("%05d: %d\n", ccc, i); // OK
         if (i > 7) {
             i = 7;
         }
-        int adpcm = i & 0xff;
+        int adpcm = (int) (i & 0xff);
 
         // エンコード処理 5
         // L3 + L2 / 2 + L1 / 4 + 1 / 8 * stepSize を 8 倍して整数演算
         i = (adpcm * 2 + 1) * state.stepSize / 8;
-//System.err.printf("%05d: %d, %d, %d\n", ccc, i, adpcm, state.stepSize);
+//System.err.printf("%05d: %d, %d, %d\n", ccc, i, adpcm, state.stepSize); // OK
 
         // 1 - 2 * L4 -> L4 が 1 の場合は -1 をかけるのと同じ
         if (dn < 0) {
@@ -69,12 +73,12 @@ class Ym2608 implements Codec {
         } else {
             state.xn += i;
         }
-//System.err.printf("%05d: %d, %d\n", ccc, xn, i);
+//System.err.printf("%05d: %d, %d\n", ccc, state.xn, i);
 
         // エンコード処理 6
         // ステップサイズの更新
-//System.err.printf("%05d: %d, %d, %d\n", ccc, i, adpcm, state.stepSize);
         state.stepSize = (stepsizeTable[adpcm] * state.stepSize) / 64;
+//System.err.printf("%05d: %d, %d, %d\n", ccc, i, adpcm, state.stepSize); // OK
 
         // エンコード処理 7
         if (state.stepSize < 127) {
@@ -82,10 +86,8 @@ class Ym2608 implements Codec {
         } else if (state.stepSize > 24576) {
             state.stepSize = 24576;
         }
-//ccc++;
-//if (ccc > 300) {
-// System.exit(0);
-//}
+
+        state.next();
 
         return adpcm;
     }
@@ -98,12 +100,13 @@ class Ym2608 implements Codec {
 
         // デコード処理 2, 3
         // L3 + L2 / 2 + L1 / 4 + 1 / 8 * stepSize を 8 倍して整数演算
-        int i = ((adpcm & 7) * 2 + 1) * state.stepSize / 8;
+        long i = ((adpcm & 7) * 2 + 1) * state.stepSize / 8;
         if ((adpcm & 8) != 0) {
             state.xn -= i;
         } else {
             state.xn += i;
         }
+//System.err.printf("%05d: %d, %d, %d\n", state.count, state.xn, state.stepSize, adpcm); // OK
 
         // デコード処理 4
         if (state.xn > 32767) {
@@ -120,9 +123,14 @@ class Ym2608 implements Codec {
         } else if (state.stepSize > 24576) {
             state.stepSize = 24576;
         }
+// System.err.printf("%05d: %d, %d, %d\n", state.count, state.xn, state.stepSize, adpcm); // OK
 
         // PCM で保存する
-        return state.xn;
+        int pcm = (int) state.xn;
+
+        state.next();
+
+        return pcm;
     }
 }
 

@@ -46,7 +46,7 @@
     <ivy:retrieve />
   </target>
 
-  <!-- compile 1.5 -->
+  <!-- compile -->
   <target name="compile" depends="prepare" description="Compile">
     <javac debug="on" target="1.5" encoding="MS932" destdir="${dir.build}">
       <classpath refid="project.class.path" />
@@ -94,283 +94,106 @@
 
   <!-- run -->
   <target name="run" depends="packaging" description="divide wave into mld (tmp dir)">
-    <delete dir="${test.150.run.out}/${test.150.run.type}" />
-    <mkdir dir="${test.150.run.out}/${test.150.run.type}" />
+    <delete dir="${vavi.sound.run.out}/${vavi.sound.run.type}" />
+    <mkdir dir="${vavi.sound.run.out}/${vavi.sound.run.type}" />
 
     <java classname="vavi.sound.sampled.mfi.MfiAudioFileWriter" fork="yes">
       <classpath>
         <path refid="project.class.path"/>
-        <pathelement location="vavix-sound.jar" />
+        <pathelement location="target/vavi-sound.jar" />
       </classpath>
-      <arg value="${test.150.run.in}" />
-      <arg value="${test.150.run.out}" />
-      <arg value="${test.150.run.length}" />
-      <arg value="${test.150.run.base}" />
-      <arg value="${test.150.run.type}" />
-      <arg value="${test.150.run.null}" />
+      <arg value="${vavi.sound.run.in}" />
+      <arg value="${vavi.sound.run.out}" />
+      <arg value="${vavi.sound.run.length}" />
+      <arg value="${vavi.sound.run.base}" />
+      <arg value="${vavi.sound.run.type}" />
+      <arg value="${vavi.sound.run.null}" />
     </java>
   </target>
 
   <!-- play -->
-  <target name="play" depends="compile" description="play mfi">
+  <target name="play" depends="packaging" description="play mfi">
     <fileset dir="." id="mlds.path">
-      <include name="${test.150.play.mld_play}" />
+      <include name="${vavi.sound.play.mld_play}" />
     </fileset>
     <pathconvert pathsep=" " property="mld.files" refid="mlds.path"/>
     <property name="mld.files" value="${toString:mlds.path}" />
-    <java classname="vavi.sound.mfi.MfiSystem" fork="yes">
-      <classpath refid="project.class.path" />
+    <java classname="Test1" fork="yes">
+      <classpath>
+        <path refid="project.class.path" />
+        <pathelement location="${dir.build}" />
+        <pathelement location="target/test-classes" />
+        <pathelement location="etc/libmfi-klab.jar" />
+      </classpath>
       <arg line="${mld.files}" />
     </java>
   </target>
 
   <!-- smaf with voice -->
   <target name="smaf" depends="packaging" description="smaf with voice spi">
-    <delete dir="${test.150.smaf.out}/mmf" />
-    <mkdir dir="${test.150.smaf.out}/mmf" />
+    <delete dir="${vavi.sound.smaf.out}/mmf" />
+    <mkdir dir="${vavi.sound.smaf.out}/mmf" />
 
     <java classname="vavi.sound.sampled.smaf.SmafAudioFileWriter" fork="yes">
       <classpath>
         <path refid="project.class.path"/>
-        <pathelement location="vavix-sound.jar" />
+        <pathelement location="target/vavi-sound.jar" />
       </classpath>
-      <arg value="${test.150.smaf.in}" />
-      <arg value="${test.150.smaf.out}" />
-      <arg value="${test.150.smaf.time}" />
-      <arg value="${test.150.smaf.base}" />
-      <arg value="${test.150.smaf.null}" />
+      <arg value="${vavi.sound.smaf.in}" />
+      <arg value="${vavi.sound.smaf.out}" />
+      <arg value="${vavi.sound.smaf.time}" />
+      <arg value="${vavi.sound.smaf.base}" />
+      <arg value="${vavi.sound.smaf.null}" />
     </java>
   </target>
 
   <!-- smaf with voice -->
   <target name="smaf.2" depends="packaging" description="smaf with voice direct">
-    <delete dir="${test.150.smaf.out}/mmf" />
-    <mkdir dir="${test.150.smaf.out}/mmf" />
+    <delete dir="${vavi.sound.smaf.out}/mmf" />
+    <mkdir dir="${vavi.sound.smaf.out}/mmf" />
 
     <java classname="vavi.sound.sampled.smaf.DividedSmafWithVoiceMaker" fork="yes">
       <classpath>
         <path refid="project.class.path"/>
-        <pathelement location="vavix-sound.jar" />
+        <pathelement location="target/vavi-sound.jar" />
       </classpath>
-      <arg line="-o ${test.150.smaf.out}" />
-      <arg line="-s ${test.150.smaf.time}" />
-      <arg line="-t ${test.150.smaf.base}" />
-      <arg line="-r ${test.150.smaf.sampleRate}" />
-      <arg value="${test.150.smaf.in}" />
+      <arg line="-o ${vavi.sound.smaf.out}" />
+      <arg line="-s ${vavi.sound.smaf.time}" />
+      <arg line="-t ${vavi.sound.smaf.base}" />
+      <arg line="-r ${vavi.sound.smaf.sampleRate}" />
+      <arg value="${vavi.sound.smaf.in}" />
     </java>
   </target>
 
   <!-- play smaf -->
-  <target name="play.2" depends="compile,compile.forRun" description="play smaf">
-    <java classname="t150_5" fork="yes">
-      <classpath refid="project.class.path" />
-      <arg line="${test.150.play.mmf_play}" />
-    </java>
-  </target>
-
-<!-- ______________________________________________________________________ -->
-
-  <!-- compile.jse -->
-  <target name="compile.jse" description="compile java sound examples">
-    <javac debug="on">
-      <classpath refid="project.class.path" />
-      <include name="jse/Midi*.java" />
-      <src path="src" />
-    </javac>
-  </target>
-
-  <!-- midi -->
-  <target name="midi" depends="compile.jse" description="pure java midi">
-    <java classname="jse.MidiPlayer" fork="yes">
-      <classpath refid="project.class.path"/>
-      <arg line="-d ${test.150.midi.device}" />
-      <arg line="-S ${test.150.midi.sequencer}" />
-      <arg value="${test.150.midi.in}" />
-      <arg value="" />
-    </java>
-  </target>
-
-  <!-- list -->
-  <target name="list" depends="compile.jse" description="list midi devices">
-    <java classname="jse.MidiPlayer" fork="yes">
-      <classpath refid="project.class.path"/>
-      <arg value="-l" />
-    </java>
-  </target>
-
-<!-- ______________________________________________________________________ -->
-
-  <!-- javac for all -->
-  <target name="compile.all" description="コンパイル adpcm">
-    <ant dir="../../vavi/sound/adpcm" target="compile.all" />
-  </target>
-
-  <!-- javac for run -->
-  <target name="compile.forRun" description="コンパイル for run">
-    <ant dir="../../vavix/util/grep" target="compile" />
-    <ant dir="../../vavi/sound" target="compile.all" />
-    <!-- compile -->
-    <javac debug="on">
-      <classpath refid="project.class.path" />
-      <include name="*.java" />
-      <src path="src" />
-    </javac>
-  </target>
-
-  <!-- tc -->
-  <target name="tc" depends="compile" description="フォーマットの変換">
-    <java classname="Transcode" fork="yes">
-      <classpath refid="project.class.path" />
-      <arg line="-o out.wav" />                 <!-- output ファイル -->
-      <arg line="-a ima4/ms:4000" />            <!-- フォーマット -->
-      <arg value="SE02_pcm_4_16_mono.wav" />    <!-- input ファイル -->
-    </java>
-  </target>
-
-  <!-- wave -->
-  <target name="wave" depends="compile.forRun" description="wave data の抽出">
-    <java classname="wave" fork="yes">
-      <classpath refid="project.class.path" />
-      <arg value="${test.150.wave.in}" />       <!-- input ファイル -->
-      <arg value="${test.150.wave.out}" />      <!-- output ファイル -->
-    </java>
-  </target>
-
-  <!-- tc2 -->
-  <target name="tc2" depends="compile" description="フォーマットの変換 Test">
-    <java classname="Transcoder" fork="yes">
-      <classpath refid="project.class.path" />
-      <arg value="-o out2.wav" />               <!-- output ファイル -->
-      <arg value="-a :8000" />                  <!-- フォーマット -->
-      <arg value="SE02.wav" />                  <!-- input ファイル -->
-    </java>
-  </target>
-
-  <!-- play wave -->
-  <target name="play.wave" depends="compile.all" description="play wave">
-    <java classname="t150_1" fork="yes">
-      <classpath refid="project.class.path" />
-      <arg value="out.wav" />
-      <arg value="SE02_pcm_11k_16_mono.wav" />
-      <arg value="SE02_pcm_8k_16_mono.wav" />
-      <arg value="SE02_ogg.wav" />
-    </java>
-  </target>
-
-  <!-- play g721 -->
-  <target name="play.adpcm" depends="compile.all" description="play adpcm">
-    <java classname="t150_2" fork="yes">
-      <classpath refid="project.class.path" />
-      <arg line="g721_lenear_16k.adpcm" />
-    </java>
-  </target>
-
-  <!-- play pcm -->
-  <target name="play.pcm" depends="compile.all" description="play adpcm">
-    <java classname="t150_3" fork="yes">
-      <!-- jvmarg value="-Xprof" / -->
-      <classpath refid="project.class.path" />
-      <arg line="lenear_16k_le.pcm" />
-      <arg line="lenear_16k_le.pcm.vavi" />
-    </java>
-  </target>
-
-  <!-- play dir -->
-  <target name="play.dir" depends="compile.forRun" description="play dir">
-    <java classname="t150_1" fork="yes" dir="${test.150.play.dir}">
-      <classpath refid="project.class.path" />
-      <arg value="*.mp3" />
-    </java>
-  </target>
-
-  <!-- ______________________________________________________________________ -->
-
-  <!-- iLBC -->
-  <target name="ilbc" depends="compile" description="iLBC">
-    <java classname="vavi.sound.ilbc.Ilbc" fork="yes">
-      <classpath refid="project.class.path" />
-      <arg value="20" />
-      <arg value="${test.150.wave.out}" />
-      <arg value="tmp/yyy.ilbc" />
-      <arg value="tmp/zzz.pcm" />
-    </java>
-  </target>
-
-<!-- ______________________________________________________________________ -->
-
-  <!-- vsq -->
-  <target name="vsq" depends="compile" description="vsq test">
-    <java classname="vavi.sound.vsq.Test" fork="yes">
-      <jvmarg value="-Djavax.sound.midi.Sequencer=${test.150.midi.sequencer}"/>
-      <classpath refid="project.class.path" />
-      <arg value="${test.150.vsq.in}" />
-      <arg value="${test.150.vsq.out}" />
-    </java>
-  </target>
-
-  <!-- vsq2 -->
-  <target name="vsq2" depends="compile" description="vsq test">
-    <java classname="vavi.sound.vsq.Test2" fork="yes">
-      <jvmarg value="-Djavax.sound.midi.Sequencer=${test.150.midi.sequencer}"/>
-      <jvmarg value="-Djavax.sound.midi.Synthesizer=${test.150.midi.synthesizer}"/>
-      <jvmarg value="-Dcom.sun.media.sound.Soundbank.defaultSoundbank=${test.150.midi.soundbank}"/> <!-- require patched gervill -->
-      <jvmarg value="-Xmx512m"/>
-      <classpath refid="project.class.path" />
-      <arg value="${test.150.vsq.in}" />
-    </java>
-  </target>
-
-<!-- ______________________________________________________________________ -->
-
-  <!-- クラスパスの定義 -->
-  <path id="libmfi.class.path">
-    <fileset dir="/home/nsano/work/libmfi/lib">
-      <include name="*.jar" />
+  <target name="play.2" depends="packaging" description="play smaf">
+    <fileset dir="." id="mmfs.path">
+      <include name="${vavi.sound.play.mmf_play}" />
     </fileset>
-    <pathelement location="/home/nsano/work/libmfi/build" />
-    <fileset dir="../../../lib">
-      <include name="tritonus_*.jar" />
-      <include name="javalayer.jar" />
-      <include name="jo*.jar" />
-    </fileset>
-    <pathelement location="../.." />
-    <pathelement location="src" />
-  </path>
-
-  <!-- analyze -->
-  <target name="analyze" depends="compile.forRun" description="play dir">
-    <java classname="t150_4" fork="yes">
-      <classpath refid="libmfi.class.path" />
-      <arg value="${test.150.analyze.dir}" />
+    <pathconvert pathsep=" " property="mmf.files" refid="mmfs.path"/>
+    <property name="mmf.files" value="${toString:mmfs.path}" />
+    <java classname="Test2" fork="yes">
+<jvmarg value="-Djava.awt.headless=true" />
+      <classpath>
+        <path refid="project.class.path" />
+        <pathelement location="${dir.build}" />
+        <pathelement location="target/test-classes" />
+      </classpath>
+      <arg line="${mmf.files}" />
     </java>
   </target>
 
-<!-- ______________________________________________________________________ -->
-
-  <path id="jmf.class.path">
-    <pathelement location="C:/Program Files/JMF2.1.1e/lib" />
-    <path refid="project.class.path" />
-  </path>
-
-  <!-- split -->
-  <target name="split" depends="compile.forRun" description="split">
-    <java classname="Split" fork="yes">
-      <jvmarg value="-Xmx256m" />
-      <classpath refid="jmf.class.path" />
-      <arg value="${test.150.split.in}" />     <!-- input ファイル -->
-      <arg line="-a ${test.150.split.audio}" />
-      <arg line="-v ${test.150.split.video}" />
-    </java>
+  <!-- findbugs -->
+  <target name="findbugs" depends="compile">
+    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
+    <findbugs home="${findbugs.home}"
+              output="xml"
+              outputFile="tmp/findbugs.xml"
+              jvmargs="-Xmx512m">
+      <auxClasspath refid="project.class.path" />
+      <sourcePath path="src/main/java" />
+      <class location="${dir.build}" />
+    </findbugs>
   </target>
-
-  <!-- dsr -->
-  <target name="dsr" depends="compile.forRun" description="data source reader">
-    <java classname="DataSourceReader" fork="yes">
-      <jvmarg value="-Xmx256m" />
-      <classpath refid="jmf.class.path" />
-      <arg value="-monitor" />
-      <arg value="${test.150.dsr.in}" />     <!-- input ファイル -->
-    </java>
-  </target>
-
+  
 </project>

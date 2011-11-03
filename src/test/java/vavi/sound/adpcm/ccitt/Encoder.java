@@ -33,7 +33,7 @@ public class Encoder {
      */
     public static void main(String[] args) throws Exception {
 
-        /* Set defaults to u-law input, G.721 output */
+        // Set defaults to u-law input, G.721 output
         AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
         ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
         String encoderName = "vavi.sound.adpcm.ccitt.G721";
@@ -41,7 +41,7 @@ public class Encoder {
         InputStream in = System.in;
         OutputStream out = System.out;
         
-        /* Process encoding argument, if any */
+        // Process encoding argument, if any
         int argc = 0;
         do {
             switch (args[argc].charAt(0)) {

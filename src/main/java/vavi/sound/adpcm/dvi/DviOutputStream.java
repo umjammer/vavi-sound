@@ -6,6 +6,7 @@
 
 package vavi.sound.adpcm.dvi;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 
@@ -33,6 +34,11 @@ public class DviOutputStream extends AdpcmOutputStream {
      */
     public DviOutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.BIG_ENDIAN);
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        out.write(b, off, len);
     }
 }
 

@@ -41,7 +41,7 @@ public class Decoder {
         BitInputStream is = new BitInputStream(new FileInputStream(args[0]));
         DataOutputStream os = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(args[1])));
 
-        while (is.available() > 0) {
+        while (true) {
             int abuf = is.read();
             if (abuf == -1) {
                 break;
@@ -65,7 +65,7 @@ public class Decoder {
 
         Dvi decoder = new Dvi();
 
-        while (is.available() > 0) {
+        while (true) {
             int abuf = is.read();
             if (abuf == -1) {
                 break;

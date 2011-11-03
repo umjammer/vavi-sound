@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+
+<!-- ////////////////////////////////////////////////////////////////////// -->
+<!-- Copyright (c) 2006 by Naohide Sano, All rights reserved.               -->
+<!--                                                                        -->
+<!-- Written by Naohide Sano                                                -->
+<!--                                                                        -->
+<!-- Intel/DVI ADPCM Codec Test                                             -->
+<!--                                                                        -->
+<!-- @author	Naohide Sano                                                -->
+<!-- @version	0.00	060120	nsano	initial version                     -->
+<!--                                                                        -->
+<!-- ////////////////////////////////////////////////////////////////////// -->
+
+<project default="run" basedir=".">
+
+  <!-- クラスパスの定義 -->
+  <path id="project.class.path">
+    <pathelement location="../../../../../java" />
+    <pathelement location="../../../.." />
+  </path>
+
+  <!-- ターゲットの定義 -->
+
+  <!-- clean -->
+  <target name="clean" description="ビルド環境のクリア">
+    <exec executable="make" dir="orig">
+      <arg value="clean" />
+    </exec>
+    <delete>
+      <fileset dir=".">
+        <include name="out*.adpcm" />
+        <include name="out*.pcm" />
+      </fileset>
+    </delete>
+  </target>
+
+  <!-- cc -->
+  <target name="compile" description="コンパイル">
+    <exec executable="make" dir="orig" />
+  </target>
+
+  <!-- run -->
+  <target name="run" depends="compile" description="プログラムの実行">
+    <exec executable="orig/rawcaudio">
+      <redirector input="pcm_8k_16_mono.pcm"
+                  output="out.adpcm" />
+    </exec>
+    <exec executable="orig/rawdaudio">
+      <redirector input="out.adpcm"
+                  output="out.pcm" />
+    </exec>
+  </target>
+
+  <!-- javac -->
+  <target name="compile.java" description="コンパイル">
+    <javac debug="true">
+      <classpath refid="project.class.path" />
+      <include name="*.java" />
+      <src path="." />
+    </javac>
+  </target>
+
+  <!-- run.java -->
+  <target name="run.java" depends="compile.java" description="プログラムの実行">
+    <java classname="vavi.sound.adpcm.dvi.Adpcm">
+      <classpath refid="project.class.path" />
+      <arg value="pcm_8k_16_mono.pcm" />
+      <arg value="out.0.adpcm" />
+      <arg value="-e" />
+    </java>
+    <java classname="vavi.sound.adpcm.dvi.Adpcm">
+      <classpath refid="project.class.path" />
+      <arg value="out.0.adpcm" />
+      <arg value="out.0.pcm" />
+      <arg value="-d" />
+    </java>
+  </target>
+
+</project>
+
+<!-- -->

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+
+<!-- ////////////////////////////////////////////////////////////////////// -->
+<!-- Copyright (c) 2006 by Naohide Sano, All rights reserved.               -->
+<!--                                                                        -->
+<!-- Written by Naohide Sano                                                -->
+<!--                                                                        -->
+<!-- Yamaha ADPCM Codec Test                                                -->
+<!--                                                                        -->
+<!-- @author	Naohide Sano                                                -->
+<!-- @version	0.00	060120	nsano	initial version                     -->
+<!--                                                                        -->
+<!-- ////////////////////////////////////////////////////////////////////// -->
+
+<project default="run" basedir=".">
+
+  <property name="dir.base" value="../../../../../../.." />
+  <property name="null" value="/dev/null" />
+  <property name="pcm" value="out.pcm" />
+
+  <!-- クラスパスの定義 -->
+  <path id="project.class.path">
+    <pathelement location="${dir.base}/target/classes" />
+    <pathelement location="${dir.base}/target/test-classes" />
+  </path>
+
+  <!-- ターゲットの定義 -->
+
+  <!-- clean -->
+  <target name="clean" description="環境のクリア">
+    <delete>
+      <fileset dir=".">
+        <include name="*.o" />
+        <include name="out*.adpcm" />
+        <include name="out*.pcm" />
+      </fileset>
+    </delete>
+  </target>
+
+  <!-- cc -->
+  <target name="compile" description="C コンパイル">
+    <exec executable="gcc">
+      <arg value="ym2608adpcm.c" />
+      <arg value="-Dencoder" />
+      <arg line="-o encoder" />
+    </exec>
+    <exec executable="gcc">
+      <arg value="ym2608adpcm.c" />
+      <arg line="-o decoder" />
+    </exec>
+  </target>
+
+  <!-- run -->
+  <target name="run" depends="clean,compile" description="リファレンスの作成">
+    <exec executable="./encoder">
+      <redirector input="pcm_8k_16_mono.pcm"
+                  output="out.adpcm"
+                  error="${null}" />
+    </exec>
+    <exec executable="./decoder">
+      <redirector input="out.adpcm"
+                  output="out.pcm"
+                  error="${null}" />
+    </exec>
+  </target>
+
+  <!-- play -->
+  <target name="play" depends="" description="play PCM">
+    <java classname="t150_3">
+      <classpath refid="project.class.path" />
+      <arg value="${pcm}" />
+<!--
+      <arg value="out.pcm" />
+-->
+      <arg value="8000" />
+      <arg value="le" />
+    </java>
+  </target>
+
+  <!-- t1 -->
+  <target name="t1" depends="compile" description="sampleN">
+    <exec executable="decoder">
+      <redirector input="sampleN.adpcm"
+                  output="sampleN.pcm"
+                  error="${null}" />
+    </exec>
+  </target>
+
+</project>
+
+<!-- -->
