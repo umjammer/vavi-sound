@@ -46,16 +46,16 @@ public class SeekAndPhraseInfoChunk extends Chunk {
         throws InvalidSmafDataException, IOException {
 
         byte[] data = new byte[size];
-Debug.println("SeekAndPhraseInfo: " + size + " bytes (subDatum)");
+Debug.println("SeekAndPhraseInfo: " + size + " bytes (subData)");
         read(is, data);
 
         int i = 0;
         while (i < size) {
 //Debug.println(i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
-            SubData subData = new SubData(data, i);
-            subDatum.put(subData.getTag(), subData);
-Debug.println("SeekAndPhraseInfo: subData: " + subData);
-            i += 2 + 1 + subData.getData().length + 1; // tag ':' data ','
+            SubData subDatum = new SubData(data, i);
+            subData.put(subDatum.getTag(), subDatum);
+Debug.println("SeekAndPhraseInfo: subData: " + subDatum);
+            i += 2 + 1 + subDatum.getData().length + 1; // tag ':' data ','
 //Debug.println(i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
         }
     }
@@ -67,20 +67,20 @@ Debug.println("SeekAndPhraseInfo: subData: " + subData);
         dos.write(id);
         dos.writeInt(size);
 
-        for (SubData subData : subDatum.values()) {
-            subData.writeTo(os);
+        for (SubData subDatum : subData.values()) {
+            subDatum.writeTo(os);
         }
     }
 
     /** */
-    private Map<String, SubData> subDatum = new TreeMap<String, SubData>();
+    private Map<String, SubData> subData = new TreeMap<String, SubData>();
 
     /** */
     private static final String TAG_StartPoint = "st";
 
     /** */
     public int getStartPoint() {
-        return ByteBuffer.wrap(subDatum.get(TAG_StartPoint).getData()).getInt();
+        return ByteBuffer.wrap(subData.get(TAG_StartPoint).getData()).getInt();
     }
 
     /** */
@@ -93,7 +93,7 @@ Debug.println("SeekAndPhraseInfo: subData: " + subData);
 
     /** */
     public int getStopPoint() {
-        return ByteBuffer.wrap(subDatum.get(TAG_StopPoint).getData()).getInt();
+        return ByteBuffer.wrap(subData.get(TAG_StopPoint).getData()).getInt();
     }
     
     /** */
@@ -102,9 +102,9 @@ Debug.println("SeekAndPhraseInfo: subData: " + subData);
     }
 
     /** */
-    private void addSubData(String tag, SubData subData) {
-        subDatum.put(tag, subData);
-        size += subData.getSize();
+    private void addSubData(String tag, SubData subDatum) {
+        subData.put(tag, subDatum);
+        size += subDatum.getSize();
     }
 
     /** */

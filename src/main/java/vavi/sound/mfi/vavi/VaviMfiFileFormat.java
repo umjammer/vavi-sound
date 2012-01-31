@@ -114,7 +114,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
         // 1. header (type + length + headerChunkDataLength + ...)
         int headerChunkLength = 4 + 4 + 2 + HeaderChunk.HEADER_LENGTH + headerChunk.getSubChunksLength();
         // 2. audio data
-        int audioChunksLength = getAudioDatumLength(sequence);
+        int audioChunksLength = getAudioDataLength(sequence);
         // 3. track
         int trackChunksLength = getTracksLength(sequence);
 
@@ -137,7 +137,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
      * すべてのオーディオデータチャンクの合計の長さを取得します。
      * @since MFi 4.0
      */
-    static int getAudioDatumLength(Sequence sequence) {
+    static int getAudioDataLength(Sequence sequence) {
         int audioDataLength = 0;
         Track track = sequence.getTracks()[0];
         for (int j = 0; j < track.size(); j++) {

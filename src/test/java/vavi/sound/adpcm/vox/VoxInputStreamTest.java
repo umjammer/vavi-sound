@@ -8,6 +8,7 @@ package vavi.sound.adpcm.vox;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +19,8 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.Before;
@@ -93,6 +96,57 @@ gainControl.setValue(dB);
         os.close();
 
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
+    }
+
+    //-------------------------------------------------------------------------
+
+    /** */
+    public static void main(String[] args) throws Exception {
+
+        int sampleRate = 8000;
+        ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
+
+        AudioFormat audioFormat = new AudioFormat(
+            AudioFormat.Encoding.PCM_SIGNED,
+            sampleRate,
+            16,
+            1,
+            2,
+            sampleRate,
+            byteOrder.equals(ByteOrder.BIG_ENDIAN));
+System.err.println(audioFormat);
+
+        InputStream is = new VoxInputStream(new FileInputStream(args[0]),
+                                            byteOrder);
+System.err.println("available: " + is.available());
+
+//  OutputStream os =
+//   new BufferedOutputStream(new FileOutputStream(args[1]));
+
+        DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+        SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
+        line.open(audioFormat);
+        line.addLineListener(new LineListener() {
+            public void update(LineEvent ev) {
+Debug.println(ev.getType());
+                if (LineEvent.Type.STOP == ev.getType()) {
+                    System.exit(0);
+                }
+            }
+        });
+        line.start();
+        byte[] buf = new byte[1024];
+        int l = 0;
+
+        while (is.available() > 0) {
+            l = is.read(buf, 0, 1024);
+            line.write(buf, 0, l);
+//  os.write(buf, 0, l);
+        }
+        line.drain();
+        line.stop();
+        line.close();
+//  os.close();
     }
 }
 

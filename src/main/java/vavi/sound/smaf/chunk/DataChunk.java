@@ -49,10 +49,10 @@ Debug.println("Data(" + languageCode + "): " + size);
 
 //Debug.println("available: " + available());
         while (available() > 4) { // TODO 正常ファイルは 0 でいい
-            SubData subData = new SubData(is);
-Debug.println(subData);
-            subDatum.put(subData.tag, subData);
-//Debug.println("SubData: " + subData.tag + ", " + subData.data.length + ", " + available());
+            SubData subDatum = new SubData(is);
+Debug.println(subDatum);
+            subData.put(subDatum.tag, subDatum);
+//Debug.println("SubData: " + subDatum.tag + ", " + subDatum.data.length + ", " + available());
         }
         skip(is, available()); // TODO 正常ファイルなら必要なし
     }
@@ -64,33 +64,33 @@ Debug.println(subData);
         dos.write(id);
         dos.writeInt(size);
 
-        for (SubData subData : subDatum.values()) {
-            subData.writeTo(os);
+        for (SubData subDatum : subData.values()) {
+            subDatum.writeTo(os);
         }
     }
 
     /** */
-    private Map<String, SubData> subDatum = new TreeMap<String, SubData>();
+    private Map<String, SubData> subData = new TreeMap<String, SubData>();
 
     /** */
     String getSubDataByTag(String tag) {
         try {
-            return new String(subDatum.get(tag).data, "Windows-31J"); // use #getLnaguageCode()
+            return new String(subData.get(tag).data, "Windows-31J"); // use #getLnaguageCode()
         } catch (UnsupportedEncodingException e) {
-            return new String(subDatum.get(tag).data);
+            return new String(subData.get(tag).data);
         }
     }
 
     /** */
     void addSubData(String tag, String data) {
-        SubData subData;
+        SubData subDatum;
         try {
-            subData = new SubData(tag, data.getBytes("Windows-31J")); // use #getLnaguageCode()
+            subDatum = new SubData(tag, data.getBytes("Windows-31J")); // use #getLnaguageCode()
         } catch (UnsupportedEncodingException e) {
-            subData = new SubData(tag, data.getBytes());
+            subDatum = new SubData(tag, data.getBytes());
         }
-        subDatum.put(tag, subData);
-        size += subData.getSize();
+        subData.put(tag, subDatum);
+        size += subDatum.getSize();
     }
 
     /** */

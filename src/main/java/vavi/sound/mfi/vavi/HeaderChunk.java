@@ -197,7 +197,7 @@ Debug.println("[vers]: "    + subChunks.get(VersMessage.TYPE));
         // 2. recalc
         this.dataLength = HEADER_LENGTH + getSubChunksLength();
         int headerChunkLengthDash = 2 + dataLength; // type, length excluded
-        int audioChunksLength = VaviMfiFileFormat.getAudioDatumLength(sequence); // TODO outer class method used
+        int audioChunksLength = VaviMfiFileFormat.getAudioDataLength(sequence); // TODO outer class method used
         int trackChunksLength = VaviMfiFileFormat.getTracksLength(sequence); // TODO outer class method used
         this.mfiDataLength = headerChunkLengthDash + audioChunksLength + trackChunksLength;
         this.tracksCount = sequence.getTracks().length;

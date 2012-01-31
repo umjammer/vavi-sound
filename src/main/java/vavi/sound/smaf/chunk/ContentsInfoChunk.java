@@ -63,14 +63,14 @@ Debug.println("copyStatus: " + copyStatus);
 Debug.println("copyCounts: " + copyCounts);
     	byte[] option = new byte[size - 5];
     	read(is, option);
-Debug.println("option: " + option.length + " bytes (subDatum)");
+Debug.println("option: " + option.length + " bytes (subData)");
         int i = 0;
         while (i < option.length) {
 //Debug.println(i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
-            SubData subData = new SubData(option, i, contentsCodeType);
-            subDatum.put(subData.getTag(), subData);
-Debug.println("ContentsInfo: subData: " + subData);
-            i += 2 + 1 + subData.getData().length + 1; // tag ':' data ','
+            SubData subDatum = new SubData(option, i, contentsCodeType);
+            subData.put(subDatum.getTag(), subDatum);
+Debug.println("ContentsInfo: subDatum: " + subDatum);
+            i += 2 + 1 + subDatum.getData().length + 1; // tag ':' data ','
 //Debug.println(i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
         }
     }
@@ -87,8 +87,8 @@ Debug.println("ContentsInfo: subData: " + subData);
         dos.writeByte(contentsCodeType);
         dos.writeByte(copyStatus);
         dos.writeByte(copyCounts);
-        for (SubData subData : subDatum.values()) {
-            subData.writeTo(os);
+        for (SubData subDatum : subData.values()) {
+            subDatum.writeTo(os);
         }
     }
 
@@ -191,20 +191,20 @@ Debug.println("ContentsInfo: subData: " + subData);
     }
 
     /** */
-    private Map<String, SubData> subDatum = new TreeMap<String, SubData>();
+    private Map<String, SubData> subData = new TreeMap<String, SubData>();
 
     /**
      * @return null when specified sub chunk is not found
      */
     public String getSubDataByTag(String tag) {
-        SubData subData = subDatum.get(tag);
-        if (subData == null) {
+        SubData subDatum = subData.get(tag);
+        if (subDatum == null) {
             return null;
         }
         try {
-            return new String(subData.getData(), "Windows-31J"); // use contentsCodeType
+            return new String(subDatum.getData(), "Windows-31J"); // use contentsCodeType
         } catch (UnsupportedEncodingException e) {
-            return new String(subData.getData());
+            return new String(subDatum.getData());
         }
     }
 
@@ -238,14 +238,14 @@ Debug.println("ContentsInfo: subData: " + subData);
      * Optional Data Chunk Çí«â¡ÇµÇΩÅB
      */
     public void addSubData(String tag, String data) {
-        SubData subData;
+        SubData subDatum;
         try {
-            subData = new SubData(tag, data.getBytes("Windows-31J")); // use contentsCodeType
+            subDatum = new SubData(tag, data.getBytes("Windows-31J")); // use contentsCodeType
         } catch (UnsupportedEncodingException e) {
-            subData = new SubData(tag, data.getBytes());
+            subDatum = new SubData(tag, data.getBytes());
         }
-        subDatum.put(tag, subData);
-        size += subData.getSize();
+        subData.put(tag, subDatum);
+        size += subDatum.getSize();
     }
 }
 
