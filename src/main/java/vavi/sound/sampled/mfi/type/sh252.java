@@ -13,7 +13,7 @@ import java.util.List;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.vavi.sharp.SharpMessage;
-import vavi.sound.sampled.mfi.MachineDependMfiWithVoiceMaker;
+import vavi.sound.sampled.mfi.MachineDependentMfiWithVoiceMaker;
 
 
 /**
@@ -22,7 +22,7 @@ import vavi.sound.sampled.mfi.MachineDependMfiWithVoiceMaker;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 050403 nsano initial version <br>
  */
-public class sh252 implements MachineDependMfiWithVoiceMaker {
+public class sh252 implements MachineDependentMfiWithVoiceMaker {
 
     /**
      * @param data PCM, 16bit

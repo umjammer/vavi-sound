@@ -14,17 +14,17 @@ import java.util.Properties;
 import vavi.util.Debug;
 
 /**
- * MachineDependMfiWithVoiceMakerFactory. 
+ * MachineDependentMfiWithVoiceMakerFactory. 
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 070428 nsano initial version <br>
  */
-class MachineDependMfiWithVoiceMakerFactory {
+class MachineDependentMfiWithVoiceMakerFactory {
     /** */
-    private static Map<String, MachineDependMfiWithVoiceMaker> mdvms = new HashMap<String, MachineDependMfiWithVoiceMaker>();
+    private static Map<String, MachineDependentMfiWithVoiceMaker> mdvms = new HashMap<String, MachineDependentMfiWithVoiceMaker>();
 
     /** */
-    static MachineDependMfiWithVoiceMaker getMachineDependMfiWithVoiceMaker(String model) {
+    static MachineDependentMfiWithVoiceMaker getMachineDependMfiWithVoiceMaker(String model) {
         return mdvms.get(model);
     }
 
@@ -40,8 +40,8 @@ class MachineDependMfiWithVoiceMakerFactory {
                 if (key.startsWith("class.")) {
                     String className = props.getProperty(key);
                     @SuppressWarnings(value={"unchecked"})
-                    Class<MachineDependMfiWithVoiceMaker> clazz = (Class<MachineDependMfiWithVoiceMaker>) Class.forName(className);
-                    MachineDependMfiWithVoiceMaker mdvm = clazz.newInstance();
+                    Class<MachineDependentMfiWithVoiceMaker> clazz = (Class<MachineDependentMfiWithVoiceMaker>) Class.forName(className);
+                    MachineDependentMfiWithVoiceMaker mdvm = clazz.newInstance();
                     mdvms.put(key.substring(key.indexOf('.') + 1), mdvm);
                 }
             }

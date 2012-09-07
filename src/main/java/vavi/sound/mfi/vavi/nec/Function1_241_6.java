@@ -7,8 +7,8 @@
 package vavi.sound.mfi.vavi.nec;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.sequencer.MachineDependFunction;
-import vavi.sound.mfi.vavi.track.MachineDependMessage;
+import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
+import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
 
 
@@ -19,7 +19,7 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 070423 nsano initial version <br>
  */
-public class Function1_241_6 implements MachineDependFunction {
+public class Function1_241_6 implements MachineDependentFunction {
 
     /**
      * 0x01, 0xf1, 0x06 StreamPan
@@ -41,7 +41,7 @@ public class Function1_241_6 implements MachineDependFunction {
      * 10       0 ~ 63, 128 mono, 255 no pan
      * </pre>
      */
-    public void process(MachineDependMessage message)
+    public void process(MachineDependentMessage message)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();

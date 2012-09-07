@@ -83,24 +83,17 @@
     </native2ascii>
   </target>
 
-  <!-- jar -->
-  <target name="packaging" depends="compile" description="パッケージング">
-    <jar jarfile="target/vavi-sound.jar">
-      <fileset dir="${dir.build}">
-        <include name="**/*" />
-      </fileset>
-    </jar>
-  </target>
-
   <!-- run -->
-  <target name="run" depends="packaging" description="divide wave into mld (tmp dir)">
+  <target name="run" depends="compile" description="divide wave into mld (tmp dir)">
     <delete dir="${vavi.sound.run.out}/${vavi.sound.run.type}" />
     <mkdir dir="${vavi.sound.run.out}/${vavi.sound.run.type}" />
 
     <java classname="vavi.sound.sampled.mfi.MfiAudioFileWriter" fork="yes">
       <classpath>
         <path refid="project.class.path"/>
-        <pathelement location="target/vavi-sound.jar" />
+        <pathelement location="${dir.build}" />
+        <pathelement location="target/test-classes" />
+        <pathelement location="etc/libmfi-klab.jar" />
       </classpath>
       <arg value="${vavi.sound.run.in}" />
       <arg value="${vavi.sound.run.out}" />
@@ -112,7 +105,7 @@
   </target>
 
   <!-- play -->
-  <target name="play" depends="packaging" description="play mfi">
+  <target name="play" depends="compile" description="play mfi">
     <fileset dir="." id="mlds.path">
       <include name="${vavi.sound.play.mld_play}" />
     </fileset>
@@ -130,14 +123,15 @@
   </target>
 
   <!-- smaf with voice -->
-  <target name="smaf" depends="packaging" description="smaf with voice spi">
+  <target name="smaf" depends="compile" description="smaf with voice spi">
     <delete dir="${vavi.sound.smaf.out}/mmf" />
     <mkdir dir="${vavi.sound.smaf.out}/mmf" />
 
     <java classname="vavi.sound.sampled.smaf.SmafAudioFileWriter" fork="yes">
       <classpath>
         <path refid="project.class.path"/>
-        <pathelement location="target/vavi-sound.jar" />
+        <pathelement location="${dir.build}" />
+        <pathelement location="target/test-classes" />
       </classpath>
       <arg value="${vavi.sound.smaf.in}" />
       <arg value="${vavi.sound.smaf.out}" />
@@ -148,14 +142,15 @@
   </target>
 
   <!-- smaf with voice -->
-  <target name="smaf.2" depends="packaging" description="smaf with voice direct">
+  <target name="smaf.2" depends="compile" description="smaf with voice direct">
     <delete dir="${vavi.sound.smaf.out}/mmf" />
     <mkdir dir="${vavi.sound.smaf.out}/mmf" />
 
     <java classname="vavi.sound.sampled.smaf.DividedSmafWithVoiceMaker" fork="yes">
       <classpath>
         <path refid="project.class.path"/>
-        <pathelement location="target/vavi-sound.jar" />
+        <pathelement location="${dir.build}" />
+        <pathelement location="target/test-classes" />
       </classpath>
       <arg line="-o ${vavi.sound.smaf.out}" />
       <arg line="-s ${vavi.sound.smaf.time}" />
@@ -166,7 +161,7 @@
   </target>
 
   <!-- play smaf -->
-  <target name="play.2" depends="packaging" description="play smaf">
+  <target name="play.2" depends="compile" description="play smaf">
     <fileset dir="." id="mmfs.path">
       <include name="${vavi.sound.play.mmf_play}" />
     </fileset>

@@ -13,24 +13,24 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.track.MachineDependMessage;
+import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 
 /**
- * Sub sequencer for machine depend system exclusive message.
+ * Sub sequencer for machine dependent system exclusive message.
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 020704 nsano initial version <br>
  */
-public interface MachineDependSequencer {
+public interface MachineDependentSequencer {
 
-    /** for {@link MachineDependSequencer} */
+    /** for {@link MachineDependentSequencer} */
     public final static int META_FUNCTION_ID_MACHINE_DEPEND = 0x01;
 
     /** */
-    void sequence(MachineDependMessage message)
+    void sequence(MachineDependentMessage message)
         throws InvalidMfiDataException;
 
     /** */
@@ -44,7 +44,7 @@ public interface MachineDependSequencer {
          * @return same instance for each vendor
          * @throws IllegalStateException when audio engine not found
          */
-        public static MachineDependSequencer getSequencer(int vendor) {
+        public static MachineDependentSequencer getSequencer(int vendor) {
             String key = KEY_HEADER + vendor;
             if (sequencers.containsKey(key)) {
                 return sequencers.get(key);
@@ -57,10 +57,10 @@ Debug.println(Level.SEVERE, "error vendor: " + StringUtil.toHex2(vendor));
         //---------------------------------------------------------------------
 
         /**
-         * {@link MachineDependSequencer} オブジェクトのインスタンス集。
+         * {@link MachineDependentSequencer} オブジェクトのインスタンス集。
          * インスタンスを使いまわすのでステートレスでなければならない。
          */
-        private static Map<String, MachineDependSequencer> sequencers = new HashMap<String, MachineDependSequencer>();
+        private static Map<String, MachineDependentSequencer> sequencers = new HashMap<String, MachineDependentSequencer>();
     
         static {
             try {
@@ -75,16 +75,16 @@ Debug.println(Level.SEVERE, "error vendor: " + StringUtil.toHex2(vendor));
                     if (key.startsWith(KEY_HEADER)) {
 Debug.println("sequencer class: " + props.getProperty(key));
                         @SuppressWarnings("unchecked")
-                        Class<MachineDependSequencer> clazz = (Class<MachineDependSequencer>) Class.forName(props.getProperty(key));
+                        Class<MachineDependentSequencer> clazz = (Class<MachineDependentSequencer>) Class.forName(props.getProperty(key));
 Debug.println("sequencer class: " + StringUtil.getClassName(clazz));
-                        MachineDependSequencer sequencer = clazz.newInstance();
+                        MachineDependentSequencer sequencer = clazz.newInstance();
     
                         sequencers.put(key, sequencer);
                     }
                 }
             } catch (Exception e) {
 Debug.printStackTrace(e);
-                System.exit(1);
+                throw new IllegalStateException(e);
             }
         }
     }

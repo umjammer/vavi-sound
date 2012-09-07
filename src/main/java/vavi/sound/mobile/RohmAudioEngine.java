@@ -44,7 +44,7 @@ public class RohmAudioEngine extends BasicAudioEngine {
     protected int getChannels(int streamNumber) {
         int channels = 1;
         if (data[streamNumber].channel != -1) { 
-            // from MachineDepend
+            // from MachineDependent
             if (streamNumber % 2 == 1 && data[streamNumber].channel % 2 == 1 && (data[streamNumber - 1] != null && data[streamNumber - 1].channel % 2 == 0)) {
                 return -1;
             }

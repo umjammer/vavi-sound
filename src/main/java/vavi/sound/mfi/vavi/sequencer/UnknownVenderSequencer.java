@@ -7,7 +7,7 @@
 package vavi.sound.mfi.vavi.sequencer;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.track.MachineDependMessage;
+import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 
 /**
@@ -16,13 +16,13 @@ import vavi.sound.mfi.vavi.track.MachineDependMessage;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 051114 nsano initial version <br>
  */
-public class UnknownVenderSequencer implements MachineDependSequencer {
+public class UnknownVenderSequencer implements MachineDependentSequencer {
 
     /** */
-    public void sequence(MachineDependMessage message)
+    public void sequence(MachineDependentMessage message)
         throws InvalidMfiDataException {
 
-        MachineDependFunction mdf = new UndefinedFunction();
+        MachineDependentFunction mdf = new UndefinedFunction();
         mdf.process(message);
     }
 }

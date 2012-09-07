@@ -7,10 +7,10 @@
 package vavi.sound.mfi.vavi.nec;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.sequencer.MachineDependFunction;
-import vavi.sound.mfi.vavi.sequencer.MachineDependFunctionFactory;
-import vavi.sound.mfi.vavi.sequencer.MachineDependSequencer;
-import vavi.sound.mfi.vavi.track.MachineDependMessage;
+import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
+import vavi.sound.mfi.vavi.sequencer.MachineDependentFunctionFactory;
+import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
+import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.mobile.YamahaAudioEngine;
 import vavi.util.Debug;
@@ -26,7 +26,7 @@ import vavi.util.StringUtil;
  *          0.02 030827 nsano refactoring <br>
  *          0.03 030829 nsano ignore channel <br>
  */
-public class NecSequencer implements MachineDependSequencer {
+public class NecSequencer implements MachineDependentSequencer {
 
     /**
      *
@@ -42,7 +42,7 @@ public class NecSequencer implements MachineDependSequencer {
      * 7        f2, channel
      * </pre>
      */
-    public void sequence(MachineDependMessage message)
+    public void sequence(MachineDependentMessage message)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();
@@ -63,7 +63,7 @@ Debug.println(StringUtil.toHex2(f1) + " " + StringUtil.toHex2(f2));
             key = "function." + f1 + "." + f2;
         }
 
-        MachineDependFunction mdf = factory.getFunction(key);
+        MachineDependentFunction mdf = factory.getFunction(key);
         mdf.process(message);
     }
 
@@ -80,7 +80,7 @@ Debug.println(StringUtil.toHex2(f1) + " " + StringUtil.toHex2(f2));
     //-------------------------------------------------------------------------
 
     /** */
-    private static MachineDependFunctionFactory factory = new MachineDependFunctionFactory("/vavi/sound/mfi/vavi/nec/nec.properties");
+    private static MachineDependentFunctionFactory factory = new MachineDependentFunctionFactory("/vavi/sound/mfi/vavi/nec/nec.properties");
 }
 
 /* */

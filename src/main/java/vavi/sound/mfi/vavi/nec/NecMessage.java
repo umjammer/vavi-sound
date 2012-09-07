@@ -12,7 +12,7 @@ import java.util.List;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.vavi.audio.YamahaAudioMessage;
-import vavi.sound.mfi.vavi.track.MachineDependMessage;
+import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mfi.vavi.track.Nop2Message;
 import vavi.sound.mobile.AudioEngine;
 import vavi.util.Debug;
@@ -201,7 +201,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
 
     /** 0x01 0xf0 0x_7 */
     private static MfiEvent getVoiceEvent(int streamNumber, int channels, int sampleRate, byte[] adpcm) throws InvalidMfiDataException {
-        MachineDependMessage message = new NecMessage();
+        MachineDependentMessage message = new NecMessage();
         Function1_240_7 function = new Function1_240_7();
         function.setStreamNumber(streamNumber);
         function.setMono(channels == 1 ? true : false); 
@@ -220,7 +220,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
      * @param maxGain (wav2mld use 0x00)
      */
     public static MfiEvent getMaxGainEvent(int maxGain) throws InvalidMfiDataException {
-        MachineDependMessage message = new NecMessage();
+        MachineDependentMessage message = new NecMessage();
         Function1_243_3 function = new Function1_243_3();
         function.setMaxGain(maxGain);
         message.setMessage(0x00, function.getMessage());
@@ -235,7 +235,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
      * @param maxStreamNumber (wav2mld use 0x02)
      */
     public static MfiEvent getSettingEvent(int maxStreamNumber) throws InvalidMfiDataException {
-        MachineDependMessage message = new NecMessage();
+        MachineDependentMessage message = new NecMessage();
         Function1_243_4 function = new Function1_243_4();
         function.setMaxStreamNumber(maxStreamNumber);
         message.setMessage(0x00, function.getMessage());
@@ -249,7 +249,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
      * </pre>
      */
     public static MfiEvent getStreamOnEvent(int channel, int streamNumber, int velocity) throws InvalidMfiDataException {
-        MachineDependMessage message = new NecMessage();
+        MachineDependentMessage message = new NecMessage();
         Function1_241_3 function = new Function1_241_3();
         function.setChannel(channel);
         function.setStreamNumber(streamNumber);
@@ -265,7 +265,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
      * </pre>
      */
     public static MfiEvent getStreamSlaveOnEvent(int channel, int streamNumber, int velocity) throws InvalidMfiDataException {
-        MachineDependMessage message = new NecMessage();
+        MachineDependentMessage message = new NecMessage();
         Function1_241_4 function = new Function1_241_4();
         function.setChannel(channel);
         function.setStreamNumber(streamNumber);
@@ -282,7 +282,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
      * <li> maybe deprecated since MFi 3.0
      */
     public static MfiEvent getVolumeEvent(int volume) throws InvalidMfiDataException {
-        MachineDependMessage message = new NecMessage();
+        MachineDependentMessage message = new NecMessage();
         Function242_1 function = new Function242_1();
         function.setVolume(volume);
         message.setMessage(0x00, function.getMessage());
@@ -296,7 +296,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
      * </pre>
      */
     public static MfiEvent getPanEvent(int channel, int streamNumber, int pan) throws InvalidMfiDataException {
-        MachineDependMessage message = new NecMessage();
+        MachineDependentMessage message = new NecMessage();
         Function1_241_6 function = new Function1_241_6();
         function.setChannel(channel);
         function.setStreamNumber(streamNumber);

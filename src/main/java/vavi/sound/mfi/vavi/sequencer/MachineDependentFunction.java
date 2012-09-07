@@ -7,19 +7,19 @@
 package vavi.sound.mfi.vavi.sequencer;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.track.MachineDependMessage;
+import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 /**
- * Sub sequencer for machine depend system exclusive message.
+ * Sub sequencer for machine dependent system exclusive message.
  * <p>
  * 今のところ実装クラスは bean でなければならない．
  * (引数なしのコンストラクタがあること)
- * {@link #process(MachineDependMessage)} 関連はステートレスでなければならない。
+ * {@link #process(MachineDependentMessage)} 関連はステートレスでなければならない。
  * </p>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
-public interface MachineDependFunction {
+public interface MachineDependentFunction {
 
     final int VENDOR_NEC        = 0x10; // N
     final int VENDOR_FUJITSU    = 0x20; // F
@@ -35,7 +35,7 @@ public interface MachineDependFunction {
     final int CARRIER_DOCOMO = 0x01;    // DoCoMo
 
     /** */
-    void process(MachineDependMessage message)
+    void process(MachineDependentMessage message)
         throws InvalidMfiDataException;
 }
 

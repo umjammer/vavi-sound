@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.sequencer.MachineDependFunction;
-import vavi.sound.mfi.vavi.track.MachineDependMessage;
+import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
+import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
 
@@ -22,7 +22,7 @@ import vavi.util.StringUtil;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 051111 nsano initial version <br>
  */
-public class Function143 implements MachineDependFunction {
+public class Function143 implements MachineDependentFunction {
 
     /** このデータのヘッダ分長さ */
     private static final int HEADER_LENGTH = 7;
@@ -40,7 +40,7 @@ public class Function143 implements MachineDependFunction {
      *  6    8f
      * </pre>
      */
-    public void process(MachineDependMessage message)
+    public void process(MachineDependentMessage message)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();

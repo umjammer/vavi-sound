@@ -21,19 +21,19 @@ import vavi.util.StringUtil;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030618 nsano initial version <br>
  */
-public class MachineDependFunctionFactory {
+public class MachineDependentFunctionFactory {
     /** */
     public static final String KEY_HEADER = "function.";
 
-    /** MachineDependFunction オブジェクトのインスタンス集 */
-    private Map<String, MachineDependFunction> functions = new HashMap<String, MachineDependFunction>();
+    /** {@link MachineDependentFunction} オブジェクトのインスタンス集 */
+    private Map<String, MachineDependentFunction> functions = new HashMap<String, MachineDependentFunction>();
 
     /** */
-    public MachineDependFunctionFactory(String propsName) {
+    public MachineDependentFunctionFactory(String propsName) {
         try {
             // props
             Properties props = new Properties();
-            props.load(MachineDependFunctionFactory.class.getResourceAsStream(propsName));
+            props.load(MachineDependentFunctionFactory.class.getResourceAsStream(propsName));
             
             // function
             Iterator<?> i = props.keySet().iterator();
@@ -42,9 +42,9 @@ public class MachineDependFunctionFactory {
                 if (key.startsWith(KEY_HEADER)) {
 Debug.println("function class: " + props.getProperty(key));
                     @SuppressWarnings("unchecked")
-                    Class<MachineDependFunction> clazz = (Class<MachineDependFunction>) Class.forName(props.getProperty(key));
+                    Class<MachineDependentFunction> clazz = (Class<MachineDependentFunction>) Class.forName(props.getProperty(key));
 Debug.println("function class: " + StringUtil.getClassName(clazz));
-                    MachineDependFunction function = clazz.newInstance();
+                    MachineDependentFunction function = clazz.newInstance();
 
                     functions.put(key, function);
                 }
@@ -56,7 +56,7 @@ Debug.printStackTrace(e);
     }
 
     /** */
-    public MachineDependFunction getFunction(String key) {
+    public MachineDependentFunction getFunction(String key) {
         if (functions.containsKey(key)) {
             return functions.get(key);
         } else {

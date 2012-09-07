@@ -63,8 +63,8 @@ class MfiWithVoiceMaker {
     /** ADPCM volume */
     protected int adpcmVolume;
 
-    /** MachineDependVoiceMaker object for model */
-    protected MachineDependMfiWithVoiceMaker mdvm;
+    /** {@link MachineDependVoiceMaker} object for model */
+    protected MachineDependentMfiWithVoiceMaker mdvm;
 
     /** */
     private static int toReal(int base, int percent) {
@@ -101,7 +101,7 @@ class MfiWithVoiceMaker {
         this.masterVolume = toReal(0x7f, masterVolume);
         this.adpcmVolume = toReal(0x3f, adpcmVolume);
 
-        this.mdvm = MachineDependMfiWithVoiceMakerFactory.getMachineDependMfiWithVoiceMaker(model);
+        this.mdvm = MachineDependentMfiWithVoiceMakerFactory.getMachineDependMfiWithVoiceMaker(model);
     }
 
     /**

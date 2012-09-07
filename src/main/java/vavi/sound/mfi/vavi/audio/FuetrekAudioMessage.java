@@ -9,7 +9,7 @@ package vavi.sound.mfi.vavi.audio;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.vavi.track.CuePointMessage;
-import vavi.sound.mfi.vavi.track.MachineDependMessage;
+import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mfi.vavi.track.MasterVolumeMessage;
 import vavi.sound.mfi.vavi.track.TempoMessage;
 import vavi.util.Debug;
@@ -22,7 +22,7 @@ import vavi.util.StringUtil;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 070427 nsano initial version <br>
  */
-public class FuetrekAudioMessage extends MachineDependMessage {
+public class FuetrekAudioMessage extends MachineDependentMessage {
 
     /** */
     protected static final int maxMasterVolume = 0x7f;

@@ -7,7 +7,7 @@
 package vavi.sound.mfi.vavi.mitsubishi;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.track.MachineDependMessage;
+import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
 
@@ -43,7 +43,7 @@ public class Function132 extends Function131 {
      *  10-13   size (big endian)
      * </pre>
      */
-    public void process(MachineDependMessage message)
+    public void process(MachineDependentMessage message)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();

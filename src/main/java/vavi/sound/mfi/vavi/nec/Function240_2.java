@@ -7,8 +7,8 @@
 package vavi.sound.mfi.vavi.nec;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.sequencer.MachineDependFunction;
-import vavi.sound.mfi.vavi.track.MachineDependMessage;
+import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
+import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
 import vavi.util.Debug;
 
@@ -20,7 +20,7 @@ import vavi.util.Debug;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030827 nsano initial version <br>
  */
-public class Function240_2 implements MachineDependFunction {
+public class Function240_2 implements MachineDependentFunction {
 
     /** このデータのヘッダ分長さ */
     private static final int HEADER_LENGTH = 10;
@@ -42,7 +42,7 @@ public class Function240_2 implements MachineDependFunction {
      * 9    sample rate    0:4kHz, 1:8kHz
      * </pre>
      */
-    public void process(MachineDependMessage message)
+    public void process(MachineDependentMessage message)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();

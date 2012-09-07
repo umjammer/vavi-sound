@@ -13,10 +13,10 @@ import javax.sound.midi.MetaEventListener;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiDevice;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
-import vavi.sound.mfi.vavi.sequencer.MachineDependSequencer;
+import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.mfi.vavi.sequencer.UnknownVenderSequencer;
-import vavi.sound.mfi.vavi.track.MachineDependMessage;
+import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.midi.MidiConstants;
 import vavi.sound.midi.MidiUtil;
@@ -58,7 +58,7 @@ class MetaEventAdapter implements MetaEventListener, MfiDevice {
 
     /**
      * {@link MfiMessageStore} を使用した再生機構を実装しています。
-     * @see MachineDependMessage#getMidiEvents(MidiContext)
+     * @see MachineDependentMessage#getMidiEvents(MidiContext)
      * @see vavi.sound.mfi.vavi.header.CopyMessage#getMidiEvents(MidiContext)
      * @see vavi.sound.mfi.vavi.header.ProtMessage#getMidiEvents(MidiContext)
      * @see vavi.sound.mfi.vavi.header.TitlMessage#getMidiEvents(MidiContext)
@@ -129,7 +129,7 @@ Debug.println(String.format("unhandled manufacturer: %02x", manufacturerId));
         byte[] data = message.getData();
         int functionId = data[1];
         switch (functionId) {
-        case MachineDependSequencer.META_FUNCTION_ID_MACHINE_DEPEND:
+        case MachineDependentSequencer.META_FUNCTION_ID_MACHINE_DEPEND:
             processSpecial_Vavi_MachineDepend(message);
             break;
         case AudioDataSequencer.META_FUNCTION_ID_MFi4:
@@ -152,12 +152,12 @@ Debug.println(String.format("unhandled function: %02x", functionId));
         byte[] data = message.getData();
         int id = (data[2] & 0xff) * 0xff + (data[3] & 0xff);
 //Debug.println("message id: " + id);
-        MachineDependMessage mdm = (MachineDependMessage) MfiMessageStore.get(id);
+        MachineDependentMessage mdm = (MachineDependentMessage) MfiMessageStore.get(id);
 
         int vendor = mdm.getVendor() | mdm.getCarrier();
-        MachineDependSequencer sequencer;
+        MachineDependentSequencer sequencer;
         try {
-            sequencer = MachineDependSequencer.Factory.getSequencer(vendor);
+            sequencer = MachineDependentSequencer.Factory.getSequencer(vendor);
         } catch (IllegalStateException e) {
             sequencer = new UnknownVenderSequencer();
         }

@@ -12,7 +12,7 @@ import java.util.List;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.vavi.audio.FuetrekAudioMessage;
-import vavi.sound.mfi.vavi.track.MachineDependMessage;
+import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mfi.vavi.track.Nop2Message;
 import vavi.sound.mobile.AudioEngine;
 import vavi.util.Debug;
@@ -116,7 +116,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
 
     /** 0x83 store */
     private static MfiEvent getWaveEvent(int channel, int packetId, int sampleRate, int bits, boolean continued, byte[] adpcm) throws InvalidMfiDataException {
-        MachineDependMessage message = new MitsubishiMessage();
+        MachineDependentMessage message = new MitsubishiMessage();
         Function131 function = new Function131();
         function.setChannel(channel);
         function.setPacketId(packetId);
@@ -135,7 +135,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
      * @param bits 4, 2
      */
     private static MfiEvent getWaveEvent(int channel, int packetId, int sampleRate, int bits) throws InvalidMfiDataException {
-        MachineDependMessage message = new MitsubishiMessage();
+        MachineDependentMessage message = new MitsubishiMessage();
         Function131 function = new Function131();
         function.setChannel(channel);
         function.setPacketId(packetId);
@@ -150,7 +150,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
 
     /** 0x84 store (unused) */
     public static MfiEvent getWaveEvent(int channel, int packetId, int sampleRate, int bits, boolean continued, int length, byte[] adpcm) throws InvalidMfiDataException {
-        MachineDependMessage message = new MitsubishiMessage();
+        MachineDependentMessage message = new MitsubishiMessage();
         Function132 function = new Function132();
         function.setChannel(channel);
         function.setPacketId(packetId);
@@ -182,7 +182,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
 
     /** 0x81 */
     private static MfiEvent getVolumeEvent(int channel, int realAdpcmVolume) throws InvalidMfiDataException {
-        MachineDependMessage message = new MitsubishiMessage();
+        MachineDependentMessage message = new MitsubishiMessage();
         Function129 function = new Function129();
         function.setChannel(channel);
         function.setVolume(realAdpcmVolume);
@@ -204,7 +204,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
 
     /** 0x82 */
     private static MfiEvent getPanpotEvent(int channel, int pan) throws InvalidMfiDataException {
-        MachineDependMessage message = new MitsubishiMessage();
+        MachineDependentMessage message = new MitsubishiMessage();
         Function130 function = new Function130();
         function.setChannel(channel);
         function.setPanpot(pan);
@@ -214,7 +214,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
 
     /** 0x8f */
     public static MfiEvent getSettingEvent(int sampleRate, int bits, int channels) throws InvalidMfiDataException {
-        MachineDependMessage message = new MitsubishiMessage();
+        MachineDependentMessage message = new MitsubishiMessage();
         Function143 function = new Function143();
         // 0x81
         function.setMaxSample(sampleRate);

@@ -19,7 +19,7 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.SysexMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
-import vavi.sound.mfi.vavi.sequencer.MachineDependSequencer;
+import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.util.Debug;
@@ -27,7 +27,7 @@ import vavi.util.StringUtil;
 
 
 /**
- * Machine depend System exclusive message.
+ * Machine dependent System exclusive message.
  * <pre>
  *  0xff, 0xff
  * </pre>
@@ -39,16 +39,16 @@ import vavi.util.StringUtil;
  *          0.04 030820 nsano implements {@link Serializable} <br>
  *          0.05 030821 nsano implements {@link MidiConvertible} <br>
  */
-public class MachineDependMessage extends SysexMessage
+public class MachineDependentMessage extends SysexMessage
     implements MidiConvertible, Serializable {
 
     /** */
-    protected MachineDependMessage(byte[] message) {
+    protected MachineDependentMessage(byte[] message) {
         super(message);
     }
 
     /** */
-    public MachineDependMessage() {
+    public MachineDependentMessage() {
         super(new byte[0]);
     }
 
@@ -79,7 +79,7 @@ public class MachineDependMessage extends SysexMessage
      * for {@link vavi.sound.mfi.vavi.TrackMessage}
      * @param is 実際のデータ (ヘッダ無し, data2 ~)
      */
-    public static MachineDependMessage readFrom(int delta, int status, int data1, InputStream is)
+    public static MachineDependentMessage readFrom(int delta, int status, int data1, InputStream is)
         throws InvalidMfiDataException,
                IOException {
 
@@ -104,7 +104,7 @@ public class MachineDependMessage extends SysexMessage
         // 6 
         // 7
 Debug.println("MachineDepend: " + StringUtil.toHex2(data[0]) + ", " + StringUtil.toHex2(data[5]) + " " + StringUtil.toHex2(data[6]) + " " + StringUtil.toHex2(data[7]) + " " + (data.length > 8 ? StringUtil.toHex2(data[8]) : "") + " " + (data.length > 9 ? StringUtil.toHex2(data[9]) : "") + " " + (data.length > 10 ? StringUtil.toHex2(data[10]) : ""));
-        MachineDependMessage message = new MachineDependMessage(data);
+        MachineDependentMessage message = new MachineDependentMessage(data);
         return message;
     }
 
@@ -128,16 +128,16 @@ Debug.println("MachineDepend: " + StringUtil.toHex2(data[0]) + ", " + StringUtil
 
     /**
      * <p>
-     * この {@link MachineDependMessage} のインスタンスに対応する
+     * この {@link MachineDependentMessage} のインスタンスに対応する
      * MIDI メッセージとして Meta type 0x7f の {@link MetaMessage} を作成する。
      * {@link MetaMessage} の実データとして {@link MfiMessageStore}
-     * にこの {@link MachineDependMessage} のインスタンスをストアして採番された id を
+     * にこの {@link MachineDependentMessage} のインスタンスをストアして採番された id を
      * 2 bytes big endian で格納する。
      * </p>
      * <p>
      * 再生の場合は {@link javax.sound.midi.MetaEventListener} で Meta type 0x7f を
      * リッスンして対応する id のメッセージを {@link MfiMessageStore} から見つける。
-     * それを {@link vavi.sound.mfi.vavi.sequencer.MachineDependSequencer} にかけて再生処理を
+     * それを {@link vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer} にかけて再生処理を
      * 行う。
      * </p>
      * <p>
@@ -158,11 +158,11 @@ Debug.println("MachineDepend: " + StringUtil.toHex2(data[0]) + ", " + StringUtil
      * |ff|7f|LL|5f|01|DH DL|
      * +--+--+--+--+--+--+--+
      *  0x5f 勝手につけたメーカ ID
-     *  0x01 {@link MachineDependMessage} データであることを表す
+     *  0x01 {@link MachineDependentMessage} データであることを表す
      *  DH DL 採番された id
      * </pre>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
-     * @see MachineDependSequencer#META_FUNCTION_ID_MACHINE_DEPEND
+     * @see MachineDependentSequencer#META_FUNCTION_ID_MACHINE_DEPEND
      */
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
@@ -172,7 +172,7 @@ Debug.println("MachineDepend: " + StringUtil.toHex2(data[0]) + ", " + StringUtil
         int id = MfiMessageStore.put(this);
         byte[] data = {
             VaviMidiDeviceProvider.MANUFACTURER_ID,
-            MachineDependSequencer.META_FUNCTION_ID_MACHINE_DEPEND,
+            MachineDependentSequencer.META_FUNCTION_ID_MACHINE_DEPEND,
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };

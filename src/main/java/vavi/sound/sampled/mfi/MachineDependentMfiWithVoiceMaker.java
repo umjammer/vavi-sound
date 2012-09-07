@@ -14,12 +14,12 @@ import vavi.sound.mfi.MfiEvent;
 
 
 /**
- * MachineDependMfiWithVoiceMaker.
+ * MachineDependentMfiWithVoiceMaker.
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 050403 nsano initial version <br>
  */
-public interface MachineDependMfiWithVoiceMaker {
+public interface MachineDependentMfiWithVoiceMaker {
 
     /**
      * Gets machine depend MFi events for ADPCM.
