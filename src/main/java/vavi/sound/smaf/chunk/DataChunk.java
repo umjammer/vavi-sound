@@ -34,7 +34,7 @@ public class DataChunk extends Chunk {
         super(id, size);
 
         this.languageCode = id[3] & 0xff;
-Debug.println("Data(" + languageCode + "): " + size);
+Debug.println("Data: lang: " + languageCode + ", size: " + size);
     }
 
     /** */
@@ -48,13 +48,13 @@ Debug.println("Data(" + languageCode + "): " + size);
         throws InvalidSmafDataException, IOException {
 
 //Debug.println("available: " + available());
-        while (available() > 4) { // TODO ³íƒtƒ@ƒCƒ‹‚Í 0 ‚Å‚¢‚¢
+        while (available() > 4) { // TODO æ­£å¸¸ãƒ•ã‚¡ã‚¤ãƒ«ã¯ 0 ã§ã„ã„
             SubData subDatum = new SubData(is);
 Debug.println(subDatum);
             subData.put(subDatum.tag, subDatum);
 //Debug.println("SubData: " + subDatum.tag + ", " + subDatum.data.length + ", " + available());
         }
-        skip(is, available()); // TODO ³íƒtƒ@ƒCƒ‹‚È‚ç•K—v‚È‚µ
+        skip(is, available()); // TODO æ­£å¸¸ãƒ•ã‚¡ã‚¤ãƒ«ãªã‚‰å¿…è¦ãªã—
     }
 
     /** */
@@ -70,12 +70,15 @@ Debug.println(subDatum);
     }
 
     /** */
+    private static final String defaultEncoding = "Windows-31J";
+
+    /** */
     private Map<String, SubData> subData = new TreeMap<String, SubData>();
 
     /** */
     String getSubDataByTag(String tag) {
         try {
-            return new String(subData.get(tag).data, "Windows-31J"); // use #getLnaguageCode()
+            return new String(subData.get(tag).data, defaultEncoding); // use #getLnaguageCode()
         } catch (UnsupportedEncodingException e) {
             return new String(subData.get(tag).data);
         }
@@ -85,7 +88,7 @@ Debug.println(subDatum);
     void addSubData(String tag, String data) {
         SubData subDatum;
         try {
-            subDatum = new SubData(tag, data.getBytes("Windows-31J")); // use #getLnaguageCode()
+            subDatum = new SubData(tag, data.getBytes(defaultEncoding)); // use #getLnaguageCode()
         } catch (UnsupportedEncodingException e) {
             subDatum = new SubData(tag, data.getBytes());
         }
@@ -108,8 +111,8 @@ Debug.println(subDatum);
     }
     
     /**
-     * ‹Lq‚·‚é•¶šƒR[ƒh‚ªUnicode ‚Ìê‡A‚»‚ê‚¼‚ê‚Ì•¶šŒQæ“ª‚ÉBOM (ƒoƒCƒgƒI[ƒ_[ƒ}[ƒN) ‚ğİ’è
-     * ‚·‚é‚±‚ÆBBOM –³‚µ‚Ìê‡AƒrƒbƒOƒGƒ“ƒfƒBƒAƒ“‚Æ‚µ‚Ä‰ğß‚·‚éB
+     * è¨˜è¿°ã™ã‚‹æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒUnicode ã®å ´åˆã€ãã‚Œãã‚Œã®æ–‡å­—ç¾¤å…ˆé ­ã«BOM (ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€ãƒ¼ãƒãƒ¼ã‚¯) ã‚’è¨­å®š
+     * ã™ã‚‹ã“ã¨ã€‚BOM ç„¡ã—ã®å ´åˆã€ãƒ“ãƒƒã‚°ã‚¨ãƒ³ãƒ‡ã‚£ã‚¢ãƒ³ã¨ã—ã¦è§£é‡ˆã™ã‚‹ã€‚
      */
     boolean isUnicode(int languageCode) {
         return languageCode >= 0x20 && languageCode <= 0x25; 
@@ -117,9 +120,9 @@ Debug.println(subDatum);
     
     /**
      * <pre>
-     * tag  2byte (ŒÅ’è)
-     * size 2byte (ŒÅ’è)
-     * data n byte (‰Â•Ï)
+     * tag  2byte (å›ºå®š)
+     * size 2byte (å›ºå®š)
+     * data n byte (å¯å¤‰)
      * </pre>
      */
     class SubData {
@@ -155,7 +158,7 @@ Debug.println(subDatum);
             return 2 + 2 + data.length;
         }
 
-        /** ƒ^ƒO */
+        /** ã‚¿ã‚° */
         private String tag;
 
         /** Data */
@@ -164,9 +167,25 @@ Debug.println(subDatum);
         /** */
         public String toString() {
             try {
-                return new String(tag) + "(" + data.length + "): lang: " + getLanguageCode() + ": " + new String(data, "Windows-31J");
+                String string = new String(data, defaultEncoding);
+                boolean printable = true;
+//System.err.print("@@@: ");
+                for (char c : string.toCharArray()) {
+//System.err.print(c);
+                    if (!StringUtil.isPrintableChar(c)) {
+                        printable = false;
+                        break;
+                    }
+                }
+//System.err.println();
+                if (printable) {
+                    return "SubData(" + new String(tag) + ", lang: " + getLanguageCode() + ", size: " + data.length + "): " + string;
+                } else {
+                    return "SubData(" + new String(tag) + ", lang: " + getLanguageCode() + ", size: " + data.length + ")\n" + StringUtil.getDump(data);
+                }
             } catch (UnsupportedEncodingException e) {
-                return new String(tag) + "(" + data.length + "): lang: " + getLanguageCode() + ":\n" + StringUtil.getDump(data);
+                assert false;
+                return null;
             }
         }
     }

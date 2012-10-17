@@ -22,16 +22,16 @@ import vavi.sound.adpcm.Codec;
  */
 public class G721OutputStream extends AdpcmOutputStream {
 
-    /** ƒGƒ“ƒR[ƒ_ */
+    /** ã‚¨ãƒ³ã‚³ãƒ¼ãƒ€ */
     protected Codec getCodec() {
         return new G721();
     }
 
     /**
-     * {@link vavi.io.BitOutputStream} ‚Í 4bit little endian ŒÅ’è
-     * <li> TODO {@link vavi.io.BitOutputStream} ‚Ì endian
+     * {@link vavi.io.BitOutputStream} ã¯ 4bit little endian å›ºå®š
+     * <li> TODO {@link vavi.io.BitOutputStream} ã® endian
      * @param out ADPCM
-     * @param byteOrder {@link #write(int)} ‚ÌƒoƒCƒgƒI[ƒ_ 
+     * @param byteOrder {@link #write(int)} ã®ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€ 
      */
     public G721OutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);

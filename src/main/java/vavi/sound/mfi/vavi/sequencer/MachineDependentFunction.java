@@ -8,13 +8,14 @@ package vavi.sound.mfi.vavi.sequencer;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
+import vavi.util.properties.PrefixedPropertiesFactory;
 
 /**
  * Sub sequencer for machine dependent system exclusive message.
  * <p>
- * ¡‚Ì‚Æ‚±‚ëÀ‘•ƒNƒ‰ƒX‚Í bean ‚Å‚È‚¯‚ê‚Î‚È‚ç‚È‚¢D
- * (ˆø”‚È‚µ‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ª‚ ‚é‚±‚Æ)
- * {@link #process(MachineDependentMessage)} ŠÖ˜A‚ÍƒXƒe[ƒgƒŒƒX‚Å‚È‚¯‚ê‚Î‚È‚ç‚È‚¢B
+ * ä»Šã®ã¨ã“ã‚å®Ÿè£…ã‚¯ãƒ©ã‚¹ã¯ bean ã§ãªã‘ã‚Œã°ãªã‚‰ãªã„ï¼
+ * (å¼•æ•°ãªã—ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãŒã‚ã‚‹ã“ã¨)
+ * {@link #process(MachineDependentMessage)} é–¢é€£ã¯ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¬ã‚¹ã§ãªã‘ã‚Œã°ãªã‚‰ãªã„ã€‚
  * </p>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
@@ -37,6 +38,24 @@ public interface MachineDependentFunction {
     /** */
     void process(MachineDependentMessage message)
         throws InvalidMfiDataException;
+
+    /** */
+    class Factory extends PrefixedPropertiesFactory<String, MachineDependentFunction> {
+
+        /** */
+        public Factory(String path) {
+            super(path, "function.");
+        }
+
+        /** */
+        public MachineDependentFunction getFunction(String key) {
+            try {
+                return get(key);
+            } catch (IllegalArgumentException e) {
+                return new UndefinedFunction(); // TODO should throw exception
+            }
+        }
+    }
 }
 
 /* */

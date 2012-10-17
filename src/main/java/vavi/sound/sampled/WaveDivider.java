@@ -23,17 +23,17 @@ import vavi.util.Debug;
  */
 public interface WaveDivider {
 
-    /** •ªŠ„‚³‚ê‚½ PCM ƒf[ƒ^‚ğ•\‚·ƒNƒ‰ƒX‚Å‚·B */
+    /** åˆ†å‰²ã•ã‚ŒãŸ PCM ãƒ‡ãƒ¼ã‚¿ã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã§ã™ã€‚ */
     class Chunk {
-        /** ‡”Ô */
+        /** é †ç•ª */
         public int sequence;
-        /** ƒTƒ“ƒvƒŠƒ“ƒOƒŒ[ƒg */
+        /** ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãƒ¬ãƒ¼ãƒˆ */
         public int samplingRate;
-        /** ƒTƒ“ƒvƒŠƒ“ƒO bits */
+        /** ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚° bits */
         public int bits;
-        /** ƒ`ƒƒƒ“ƒlƒ‹” */
+        /** ãƒãƒ£ãƒ³ãƒãƒ«æ•° */
         public int channels;
-        /** PCM ƒf[ƒ^ */
+        /** PCM ãƒ‡ãƒ¼ã‚¿ */
         public byte[] buffer;
         /** */
         Chunk(int sequence, byte[] buffer, int samplingRate, int bits, int channels) {
@@ -48,7 +48,7 @@ public interface WaveDivider {
     /** */
     class Factory {
         public static WaveDivider getWaveDivider(AudioInputStream audioInputStream) throws IOException, UnsupportedAudioFileException {
-            // TODO ‚¿‚á‚ñ‚ÆƒvƒƒpƒeƒB‚Æ‚©‚©‚ç‘I‚Ô
+            // TODO ã¡ã‚ƒã‚“ã¨ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã¨ã‹ã‹ã‚‰é¸ã¶
             if (audioInputStream.getFormat().getEncoding().equals(Encoding.PCM_SIGNED)) {
                 if (audioInputStream.getFormat().getChannels() == 1) {
                     return new Pcm16BitMonauralWaveDivider(audioInputStream);
@@ -68,7 +68,7 @@ Debug.println("unsupported type: " + audioInputStream.getFormat());
     }
 
     /**
-     * WAVE ƒtƒ@ƒCƒ‹’†‚Ì PCM ƒf[ƒ^‚ğ•ªŠ„‚µ‚Ü‚·B
+     * WAVE ãƒ•ã‚¡ã‚¤ãƒ«ä¸­ã® PCM ãƒ‡ãƒ¼ã‚¿ã‚’åˆ†å‰²ã—ã¾ã™ã€‚
      * @param seconds time for divide
      * @param event event for each chunks
      */

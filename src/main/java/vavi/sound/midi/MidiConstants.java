@@ -34,264 +34,264 @@ public final class MidiConstants {
 
     //-------------------------------------------------------------------------
 
-    // ���^�E�C�x���g
+    // メタ・イベント
     //
-    // �����ł́A�������̃��^�E�C�x���g�ɂ��Ē�`���Ȃ����B���ׂẴv��
-    // �O���������ׂẴ��^�E�C�x���g���T�|�[�g���Ȃ���΂Ȃ�Ȃ��Ƃ������Ƃ�
-    // �͂Ȃ��B�ŏ��ɒ�`���ꂽ���^�E�C�x���g�ɂ͈ȉ��̂��̂�����B
+    // ここでは、いくつかのメタ・イベントについて定義がなされる。すべてのプロ
+    // グラムがすべてのメタ・イベントをサポートしなければならないということで
+    // はない。最初に定義されたメタ・イベントには以下のものがある。
 
     /**
      * <pre>
-     * FF 00 02 ssss  [�V�[�P���X�E�i���o�[]
+     * FF 00 02 ssss  [シーケンス・ナンバー]
      * </pre>
-     * ���̃I�v�V�����E�C�x���g�́A�g���b�N�̖`���A�C�ӂ� 0 �łȂ��f���^�E�^�C
-     * ���̑O�ŁA���C�ӂ̓]���\�� MIDI �C�x���g�̑O�ɒu����Ȃ���΂Ȃ炸
-     * �A���ꂪ�V�[�P���X�̃i���o�[����肷��B���̃g���b�N���̃i���o�[�� 
-     * 1987 �N�Ă� MMA �~�[�e�B���O�ŋ��c���ꂽ�V Cue ���b�Z�[�W�̒��̃V�[�P���X
-     * �E�i���o�[�ɑΉ�����B����́A�t�H�[�}�b�g 2 �� MIDI �t�@�C���ɂ����Ă�
-     * �A�e�X�́u�p�^�[���v�����ʂ��邱�Ƃɂ���āACue ���b�Z�[�W��p���Ă���
-     * �u�\���O�v�V�[�P���X���p�^�[�����Q�Ƃł���悤�ɂ��邽�߂ɗp������B
-     * ID �i���o�[���ȗ�����Ă���Ƃ��́A���̃V�[�P���X�̃t�@�C�����ł̈ʒu
-     * [�󒍁F�擪���牽�Ԗڂ̃V�[�P���X��]���f�t�H�[���g�Ƃ��ėp������B
-     * �t�H�[�}�b�g 0 �܂��� 1 �� MIDI �t�@�C���ɂ����ẮA�P�̃V�[�P���X����
-     * �܂܂�Ȃ����߁A���̃i���o�[�͑� 1 ��(�܂�B���)�g���b�N�Ɋ܂܂�
-     * �邱�ƂɂȂ�B�������̃}���`�g���b�N�E�V�[�P���X�̓]�����K�v�ȏꍇ��
-     * �A�e�X���قȂ�V�[�P���X�E�i���o�[�����t�H�[�}�b�g�P�̃t�@�C���̃O��
-     * �[�v�Ƃ��čs���Ȃ���΂Ȃ�Ȃ��B
+     * このオプション・イベントは、トラックの冒頭、任意の 0 でないデルタ・タイ
+     * ムの前で、かつ任意の転送可能な MIDI イベントの前に置かれなければならず
+     * 、これがシーケンスのナンバーを特定する。このトラック中のナンバーは 
+     * 1987 年夏の MMA ミーティングで協議された新 Cue メッセージの中のシーケンス
+     * ・ナンバーに対応する。これは、フォーマット 2 の MIDI ファイルにおいては
+     * 、各々の「パターン」を識別することによって、Cue メッセージを用いている
+     * 「ソング」シーケンスがパターンを参照できるようにするために用いられる。
+     * ID ナンバーが省略されているときは、そのシーケンスのファイル中での位置
+     * [訳注：先頭から何番目のシーケンスか]がデフォールトとして用いられる。
+     * フォーマット 0 または 1 の MIDI ファイルにおいては、１つのシーケンスしか
+     * 含まれないため、このナンバーは第 1 の(つまり唯一の)トラックに含まれ
+     * ることになる。いくつかのマルチトラック・シーケンスの転送が必要な場合は
+     * 、各々が異なるシーケンス・ナンバーを持つフォーマット１のファイルのグル
+     * ープとして行われなければならない。
      */
     public static final int META_SEQUENCE_NO = 0x00;
 
     /**
      * <pre>
-     * FF 01 len text  [�e�L�X�g�E�C�x���g]
+     * FF 01 len text  [テキスト・イベント]
      * </pre>
-     * �C�ӂ̑傫������ѓ��e�̃e�L�X�g�B�g���b�N�̂����΂񏉂߂ɁA�g���b�N��
-     * �A�Ӑ}����I�[�P�X�g���C�V�����A���̑����[�U�������ɒu�������Ǝv�����
-     * �������Ă����Ɨǂ��B�e�L�X�g�E�C�x���g�́A�g���b�N���ł��̑��̎��ɓ���
-     * �ĉ̎���L���[�E�|�C���g�̋L�q�Ƃ��ėp���邱�Ƃ��ł���B���̃C�x���g��
-     * �̃e�L�X�g�́A�ő���̌݊������m�ۂ��邽�߂ɁA����\�ȃA�X�L�[�E�L��
-     * ���N�^�łȂ���΂Ȃ�Ȃ��B�������A���ʃr�b�g��p���鑼�̃L�����N�^�E�R
-     * �[�h(�󒍁F�����R�[�h�̂悤�� 2 �o�C�g�E�R�[�h�Ȃ�)���A�g�����ꂽ�L��
-     * ���N�^�E�Z�b�g���T�|�[�g���铯���R���s���[�^��̈قȂ�v���O�����ԂŃt
-     * �@�C�����������邽�߂ɗp���邱�Ƃ��ł���B��A�X�L�[�E�L�����N�^���T�|
-     * �[�g���Ȃ��@���̃v���O�����́A���̂悤�ȃR�[�h�𖳎����Ȃ���΂Ȃ��
-     * ���B
+     * 任意の大きさおよび内容のテキスト。トラックのいちばん初めに、トラック名
+     * 、意図するオーケストレイション、その他ユーザがそこに置きたいと思う情報
+     * を書いておくと良い。テキスト・イベントは、トラック中でその他の時に入れ
+     * て歌詞やキュー・ポイントの記述として用いることもできる。このイベント中
+     * のテキストは、最大限の互換性を確保するために、印刷可能なアスキー・キャ
+     * ラクタでなければならない。しかし、高位ビットを用いる他のキャラクタ・コ
+     * ード(訳注：漢字コードのような 2 バイト・コードなど)も、拡張されたキャ
+     * ラクタ・セットをサポートする同じコンピュータ上の異なるプログラム間でフ
+     * ァイルを交換するために用いることができる。非アスキー・キャラクタをサポ
+     * ートしない機種上のプログラムは、このようなコードを無視しなければならな
+     * い。
      * 
-     * (0.06 �ł̒ǉ������j ���^�E�C�x���g�̃^�C�v 01 ���� 0F �܂ł͗l�X�ȃ^
-     * �C�v�̃e�L�X�g�E�C�x���g�̂��߂ɗ\�񂳂�Ă���B���̊e�X�͏�L�̃e�L�X
-     * �g�E�C�x���g�̓����Əd�����Ă��邪�A�ȉ��̂悤�ɁA�قȂ�ړI�̂��߂ɗp
-     * ������B
+     * (0.06 での追加事項） メタ・イベントのタイプ 01 から 0F までは様々なタ
+     * イプのテキスト・イベントのために予約されている。この各々は上記のテキス
+     * ト・イベントの特性と重複しているが、以下のように、異なる目的のために用
+     * いられる。
      */
     public static final int META_TEXT_EVENT = 0x01;
 
     /**
      * <pre>
-     * FF 02 len text  [���쌠�\��]
+     * FF 02 len text  [著作権表示]
      * </pre>
-     * ���쌠�\�����A����\�ȃA�X�L�[�E�e�L�X�g�Ƃ��Ď��B���̕\���ɂ�(C)
-     * �̕����ƁA���앨���s�N�ƁA���쌠���L�Җ��Ƃ��܂܂�Ȃ���΂Ȃ�Ȃ��B��
-     * �Ƃ� MIDI �t�@�C���Ɋ���̊y�Ȃ����鎞�ɂ́A���ׂĂ̒��쌠�\������
-     * �̃C�x���g�ɒu���āA���ꂪ�t�@�C���̐擪�ɗ���悤�ɂ��Ȃ���΂Ȃ�Ȃ�
-     * �B���̃C�x���g�͑�P�g���b�N�E�u���b�N�̍ŏ��̃C�x���g�Ƃ��āA�f���^�E
-     * �^�C�� = 0 �Œu����Ȃ���΂Ȃ�Ȃ��B
+     * 著作権表示を、印刷可能なアスキー・テキストとして持つ。この表示には(C)
+     * の文字と、著作物発行年と、著作権所有者名とが含まれなければならない。ひ
+     * とつの MIDI ファイルに幾つかの楽曲がある時には、すべての著作権表示をこ
+     * のイベントに置いて、それがファイルの先頭に来るようにしなければならない
+     * 。このイベントは第１トラック・ブロックの最初のイベントとして、デルタ・
+     * タイム = 0 で置かれなければならない。
      */
     public static final int META_COPYRIGHT = 0x02;
 
     /**
      * <pre>
-     * FF 03 len text  [�V�[�P���X���܂��̓g���b�N��]
+     * FF 03 len text  [シーケンス名またはトラック名]
      * </pre>
-     * �t�H�[�}�b�g 0 �̃g���b�N�A�������̓t�H�[�}�b�g 1 �̃t�@�C���̑� 1 �g���b
-     * �N�ɂ����ẮA�V�[�P���X�̖��́B���̑��̏ꍇ�́A�g���b�N�̖��́B
+     * フォーマット 0 のトラック、もしくはフォーマット 1 のファイルの第 1 トラッ
+     * クにおいては、シーケンスの名称。その他の場合は、トラックの名称。
      */
     public static final int META_NAME = 0x03;
 
     /**
      * <pre>
-     * FF 04 len text  [�y�햼]
+     * FF 04 len text  [楽器名]
      * </pre>
-     * ���̃g���b�N�ŗp������ׂ��y��Ґ��̎�ނ��L�q����B MIDI �̖`���ɒu
-     * ����郁�^�E�C�x���g�ƂƂ��ɗp���āA�ǂ� MIDI �`���l���ɂ��̋L�q���K�p
-     * ����邩����肷�邱�Ƃ�����B���邢�́A�`���l�������̃C�x���g���̃e�L
-     * �X�g�œ��肵�Ă��ǂ��B
+     * そのトラックで用いられるべき楽器編成の種類を記述する。 MIDI の冒頭に置
+     * かれるメタ・イベントとともに用いて、どの MIDI チャネルにその記述が適用
+     * されるかを特定することもある。あるいは、チャネルをこのイベント中のテキ
+     * ストで特定しても良い。
      */
     public static final int META_INSTRUMENT = 0x04;
 
     /**
      * <pre>
-     * FF 05 len text  [�̎�]
+     * FF 05 len text  [歌詞]
      * </pre>
-     * �̎��B��ʓI�ɂ́A�e���߂����̃C�x���g�̃^�C������n�܂�Ɨ������̎��C
-     * �x���g�ƂȂ�B
+     * 歌詞。一般的には、各音節がそのイベントのタイムから始まる独立した歌詞イ
+     * ベントとなる。
      */
     public static final int META_LYRICS = 0x05;
 
     /**
      * <pre>
-     * FF 06 len text  [�}�[�J�[]
+     * FF 06 len text  [マーカー]
      * </pre>
-     * �ʏ�t�H�[�}�b�g 0 �̃g���b�N�A�������̓t�H�[�}�b�g 1 �̃t�@�C���̑�P�g
-     * ���b�N�ɂ���B���n�[�T���L����Z�N�V�������̂悤�ȁA�V�[�P���X�̂��̎�
-     * �_�̖��́B(�uFirst Verse�v��)
+     * 通常フォーマット 0 のトラック、もしくはフォーマット 1 のファイルの第１ト
+     * ラックにある。リハーサル記号やセクション名のような、シーケンスのその時
+     * 点の名称。(「First Verse」等)
      */
     public static final int META_MARKER = 0x06;
 
     /**
      * <pre>
-     * FF 07 len text  [�L���[�E�|�C���g]
+     * FF 07 len text  [キュー・ポイント]
      * </pre>
-     * �X�R�A�̂��̈ʒu�ɂ����āA�t�B�����A���B�f�I�E�X�N���[���A���邢�̓X�e
-     * �[�W��ŋN�����Ă��邱�Ƃ̋L�q�B(�u�Ԃ��Ƃɓ˂����ށv�u�����J���v�u��
-     * �͒j�ɕ���ł���H�킹��v��)
+     * スコアのその位置において、フィルム、ヴィデオ・スクリーン、あるいはステ
+     * ージ上で起こっていることの記述。(「車が家に突っ込む」「幕が開く」「女
+     * は男に平手打ちを食わせる」等)
      */
     public static final int META_QUE_POINT = 0x07;
 
     /**
      * <pre>
-     * FF 2F 00  [�g���b�N�̏I���]
+     * FF 2F 00  [トラックの終わり]
      * </pre>
-     * ���̃C�x���g�͏ȗ����邱�Ƃ��ł��Ȃ��B���ꂪ���邱�Ƃɂ���ăg���b�N��
-     * �������I���_�����m�ɂȂ�A�g���b�N�����m�Ȓ��������悤�ɂȂ�B�����
-     * �g���b�N�����[�v�ɂȂ��Ă�����A������Ă����肷�鎞�ɕK�v�ł���B
+     * このイベントは省略することができない。これがあることによってトラックの
+     * 正しい終結点が明確になり、トラックが正確な長さを持つようになる。これは
+     * トラックがループになっていたり連結されていたりする時に必要である。
      */
     public static final int META_END_OF_TRACK = 0x2f;
 
     /**
      * <pre>
-     * FF 51 03 tttttt  [�e���|�ݒ�(�P�ʂ� ��sec / MIDI �l������)]
+     * FF 51 03 tttttt  [テンポ設定(単位は μsec / MIDI 四分音符)]
      * </pre>
-     * ���̃C�x���g�̓e���|�E�`�F���W���w������B�u��sec / MIDI �l�������v��
-     * ����������΁u(��sec / MIDI �N���b�N)�� 24 ���� 1�v�ł���B�e���|��
-     * �u�� / ���ԁv�ł͂Ȃ��u���� / ���v�ɂ���ė^���邱�ƂŁA SMPTE �^�C���E
-     * �R�[�h�� MIDI �^�C���E�R�[�h�̂悤�Ȏ����ԃx�[�X�̓����v���g�R����p��
-     * �āA��ΓI�ɐ��m�Ȓ����ԓ����𓾂邱�Ƃ��ł���B���̃e���|�ݒ�œ����
-     * �鐳�m���́A120 �� / ���� 4 ���̋Ȃ��I��������Ɍ덷�� 500 ��sec �ȓ�
-     * �ɂƂǂ܂�A�Ƃ������̂ł���B���z�I�ɂ́A�����̃C�x���g�� Cue ��
-     * ��� MIDI �N���b�N������ʒu�ɂ̂݁A�������ׂ��ł���B���̂��Ƃ́A�ق�
-     * �̓����f�o�C�X�Ƃ̌݊�����ۏ؂��悤�A���Ȃ��Ƃ��A���̌����݂𑝂₻��
-     * �A�Ƃ������̂ŁA���̌��ʁA���̌`���ŕۑ����ꂽ���q�L����e���|�E�}�b�v
-     * �͗e�Ղɂق��̃f�o�C�X�֓]���ł��邱�ƂɂȂ�B
+     * このイベントはテンポ・チェンジを指示する。「μsec / MIDI 四分音符」は
+     * 言い換えれば「(μsec / MIDI クロック)の 24 分の 1」である。テンポを
+     * 「拍 / 時間」ではなく「時間 / 拍」によって与えることで、 SMPTE タイム・
+     * コードや MIDI タイム・コードのような実時間ベースの同期プロトコルを用い
+     * て、絶対的に正確な長時間同期を得ることができる。このテンポ設定で得られ
+     * る正確さは、120 拍 / 分で 4 分の曲を終わった時に誤差が 500 μsec 以内
+     * にとどまる、というものである。理想的には、これらのイベントは Cue の
+     * 上で MIDI クロックがある位置にのみ、おかれるべきである。このことは、ほか
+     * の同期デバイスとの互換性を保証しよう、少なくとも、その見込みを増やそう
+     * 、というもので、この結果、この形式で保存された拍子記号やテンポ・マップ
+     * は容易にほかのデバイスへ転送できることになる。
      */
     public static final int META_TEMPO = 0x51;
  
     /**
      * <pre>
-     * FF 54 05 hr mn se fr ff  [SMPTE �I�t�Z�b�g(0.06 �ł̒ǉ� -  SMPTE
-     * �@�@�@�@�@�@�@�@�@�@�@�@�@�@�@�@�@�@�@�@�@�@�@�@�t�H�[�}�b�g�̋L�q)]
+     * FF 54 05 hr mn se fr ff  [SMPTE オフセット(0.06 での追加 -  SMPTE
+     * 　　　　　　　　　　　　　　　　　　　　　　　　フォーマットの記述)]
      * </pre>
-     * ���̃C�x���g�́A��������΁A�g���b�N�E�u���b�N���X�^�[�g���邱�ƂɂȂ�
-     * �Ă��� SMPTE �^�C���������B����́A�g���b�N�̖`���ɒu����Ȃ���΂Ȃ�
-     * �Ȃ��B���Ȃ킿�A�C�ӂ� 0 �łȂ��f���^�E�^�C���̑O�ŁA���C�ӂ̓]���\
-     * �� MIDI �C�x���g�̑O�ł���B���Ԃ́A MIDI �^�C���E�R�[�h�ƑS�����l�� 
-     * SMPTE �t�H�[�}�b�g�ŃG���R�[�h����Ȃ���΂Ȃ�Ȃ��B�t�H�[�}�b�g 1 �̃t
-     * �@�C���ɂ����ẮA SMPTE �I�t�Z�b�g�̓e���|�E�}�b�v�ƂƂ��ɃX�g�A����
-     * ��K�v������A���̃g���b�N�ɂ����Ă͈Ӗ����Ȃ��Ȃ��B�f���^�E�^�C���̂�
-     * �߂ɈقȂ�t���[������\���w�肵�Ă��� SMPTE �x�[�X�̃g���b�N�ɂ�����
-     * ���Aff �̃t�B�[���h�͍ו������ꂽ�t���[��(100 ���� 1 �t���[���P��)��
-     * �����Ă���B
+     * このイベントは、もしあれば、トラック・ブロックがスタートすることになっ
+     * ている SMPTE タイムを示す。これは、トラックの冒頭に置かれなければなら
+     * ない。すなわち、任意の 0 でないデルタ・タイムの前で、かつ任意の転送可能
+     * な MIDI イベントの前である。時間は、 MIDI タイム・コードと全く同様に 
+     * SMPTE フォーマットでエンコードされなければならない。フォーマット 1 のフ
+     * ァイルにおいては、 SMPTE オフセットはテンポ・マップとともにストアされ
+     * る必要があり、他のトラックにあっては意味をなさない。デルタ・タイムのた
+     * めに異なるフレーム分解能を指定している SMPTE ベースのトラックにおいて
+     * も、ff のフィールドは細分化されたフレーム(100 分の 1 フレーム単位)を
+     * 持っている。
      */
     public static final int META_SMPTE_OFFSERT = 0x54;
 
     /**
      * <pre>
-     * FF 58 04 nn dd cc bb  [���q�L��]
+     * FF 58 04 nn dd cc bb  [拍子記号]
      * </pre>
-     * ���q�L���́A4 �̐����ŕ\�������Bnn �� dd �́A�L�����鎞�̂悤�ɁA���q
-     * �L���̕��q�ƕ����\���B����� 2 �̃}�C�i�X��ł���B���Ȃ킿�A2 �͎l��
-     * ������\���A3 �͔���������\���A���X�B�p�����[�^ cc �́A1 ���g���m�[���E
-     * �N���b�N������� MIDI �N���b�N����\�����Ă���B�p�����[�^ bb �́A MIDI 
-     * �l������(24 MIDI �N���b�N)�̒��ɋL����̎O�\�񕪉������������邩��
-     * �\�����Ă���B���̃p�����[�^�́A MIDI ��̎l������(24 �N���b�N)��
-     * �̂��̂Ƃ��ċL�����A���邢�͕\���㑼�̉����ɑΉ�������悤���[�U��`��
-     * ����v���O���������ɐ��������݂��邱�Ƃ��������ꂽ�B
+     * 拍子記号は、4 つの数字で表現される。nn と dd は、記譜する時のように、拍子
+     * 記号の分子と分母を表す。分母は 2 のマイナス乗である。すなわち、2 は四分
+     * 音符を表し、3 は八分音符を表す、等々。パラメータ cc は、1 メトロノーム・
+     * クリックあたりの MIDI クロック数を表現している。パラメータ bb は、 MIDI 
+     * 四分音符(24 MIDI クロック)の中に記譜上の三十二分音符がいくつ入るかを
+     * 表現している。このパラメータは、 MIDI 上の四分音符(24 クロック)を他
+     * のものとして記譜し、あるいは表現上他の音符に対応させるようユーザ定義で
+     * きるプログラムが既に数多く存在することから加えられた。
      * 
-     * �]���āA6 / 8 ���q�ŁA���g���m�[���͔������� 3 ���ɍ��ނ���ǂ��l����
-     * �� 24 �N���b�N�ŁA1 ���߂�����ł� 72 �N���b�N�ɂȂ锏�q�́A16 �i�Ŏ�
-     * �̂悤�ɂȂ�B
+     * 従って、6 / 8 拍子で、メトロノームは八分音符 3 つ毎に刻むけれども四分音
+     * 符 24 クロックで、1 小節あたりでは 72 クロックになる拍子は、16 進で次
+     * のようになる。
      * 
      *   FF 58 04 06 03 24 08
      * 
-     * ����́A8 ���� 6 ���q��(8 �� 2 �� 3 ��Ȃ̂ŁA06 03�ƂȂ�)�A�t�_�l����
-     * �������� 36 MIDI �N���b�N(16�i��24�I)[*2]�ŁA MIDI �l�������ɋL
-     * ����̎O�\�񕪉����� 8 �Ή�����Ƃ������Ƃ������Ă���B
+     * これは、8 分の 6 拍子で(8 は 2 の 3 乗なので、06 03となる)、付点四分音
+     * 符あたり 36 MIDI クロック(16進で24！)[*2]で、 MIDI 四分音符に記
+     * 譜上の三十二分音符が 8 つ対応するということを示している。
      */
     public static final int META_58 = 0x58;
 
     /**
      * <pre>
-     * FF 59 02 sf mi  [����]
-     *   sf = -7  �t���b�g�V��
-     *   sf = -1  �t���b�g�P��
-     *   sf = 0   �n��
-     *   sf = 1   �V���[�v�P��
-     *   sf = 7   �V���[�v�V��
+     * FF 59 02 sf mi  [調号]
+     *   sf = -7  フラット７つ
+     *   sf = -1  フラット１つ
+     *   sf = 0   ハ調
+     *   sf = 1   シャープ１つ
+     *   sf = 7   シャープ７つ
      * 
-     *   mi = 0   ����
-     *   mi = 1   �Z��
+     *   mi = 0   長調
+     *   mi = 1   短調
      * </pre>
      */
     public static final int META_59 = 0x59;
 
     /**
      * <pre>
-     * FF 7F len data  [�V�[�P���T�[���胁�^�E�C�x���g]
+     * FF 7F len data  [シーケンサー特定メタ・イベント]
      * </pre>
-     * ����̃V�[�P���T�[�̂��߂̓��ʂȗv���ɂ��̃C�x���g�E�^�C�v��p���邱��
-     * ���ł���B�f�[�^�E�o�C�g�̍ŏ��̂P�o�C�g�̓��[�J�[ID�ł���B��������
-     * ����A����͌����p�t�H�[�}�b�g�Ȃ̂ł��邩��A���̃C�x���g�E�^�C�v�̎g
-     * �p�����X�y�b�N�{�̂̊g���̕����]�܂����B���̃^�C�v�̃C�x���g�́A����
-     * ��B��̃t�@�C���E�t�H�[�}�b�g�Ƃ��ėp���邱�Ƃ�I�������V�[�P���T�[��
-     * ����Ďg�p����邩������Ȃ��B�d�l�ڍׂ̃t�H�[�}�b�g���m�肵���V�[�P��
-     * �T�[�ɂ����ẮA���̃t�H�[�}�b�g��p����ɂ������ĕW���d�l�����ׂ���
-     * ���낤�B
+     * 特定のシーケンサーのための特別な要求にこのイベント・タイプを用いること
+     * ができる。データ・バイトの最初の１バイトはメーカーIDである。しかしな
+     * がら、これは交換用フォーマットなのであるから、このイベント・タイプの使
+     * 用よりもスペック本体の拡張の方が望ましい。このタイプのイベントは、これ
+     * を唯一のファイル・フォーマットとして用いることを選択したシーケンサーに
+     * よって使用されるかもしれない。仕様詳細のフォーマットが確定したシーケン
+     * サーにおいては、このフォーマットを用いるにあたって標準仕様を守るべきで
+     * あろう。
      */
     public static final int META_MACHINE_DEPEND = 0x7f;
 
     //-------------------------------------------------------------------------
 
     /**
-     * 01H�`1FH 
-     * 00H 00H 01H�`00H 1FH 7FH 
+     * 01H〜1FH 
+     * 00H 00H 01H〜00H 1FH 7FH 
      */
     public static final int SYSEX_MAKER_ID_American = 0x01;
 
     /**
-     * 20H�`3FH 
-     * 00H 20H 00H�`00H 3FH 7FH 
+     * 20H〜3FH 
+     * 00H 20H 00H〜00H 3FH 7FH 
      */
     public static final int SYSEX_MAKER_ID_European = 0x20;
 
     /**
-     * 40H�`5FH 
-     * 00H 40H 00H�`00H 5FH 7FH
+     * 40H〜5FH 
+     * 00H 40H 00H〜00H 5FH 7FH
      */ 
     public static final int SYSEX_MAKER_ID_Japanese = 0x40;
 
     /**
-     * 60H�`7CH 
-     * 00H 60H 00H�`00H 7FH 7FH
+     * 60H〜7CH 
+     * 00H 60H 00H〜00H 7FH 7FH
      */ 
     public static final int SYSEX_MAKER_ID_Other = 0x60;
 
     /**
-     * 7DH�`7FH 
+     * 7DH〜7FH 
      */
     public static final int SYSEX_MAKER_ID_Special = 0x70; 
 
     // 7DH
-    // ���[�J�[ ID �� 7DH �́A�w�Z����@�ւȂǂł̌����p�Ɏg�p����� ID �ŁA
-    // ��c���ړI�ł̂ݎg�p�ł��܂��B 
+    // メーカー ID の 7DH は、学校教育機関などでの研究用に使用される ID で、
+    // 非営利目的でのみ使用できます。 
     //
     // 7EH
-    // 7EH �̓m�����A���^�C�����j�o�[�T���V�X�e���G�N�X�N���[�V�u�ł��B
-    // �G�N�X�N���[�V�u�̂����A���[�J�[��@��𒴂��Ă����ł����
-    // �֗��ȃf�[�^�]���Ɏg�p����܂��B�Ȃ��A7EH�͎����ԂɊ֌W�̂Ȃ��f�[�^�]���Ɏg�p����܂��B 
+    // 7EH はノンリアルタイムユニバーサルシステムエクスクルーシブです。
+    // エクスクルーシブのうち、メーカーや機種を超えてやり取りできると
+    // 便利なデータ転送に使用されます。なお、7EHは実時間に関係のないデータ転送に使用されます。 
     //
     // 7FH
-    // 7FH �̓��A���^�C�����j�o�[�T���V�X�e���G�N�X�N���[�V�u�ł��B
-    // 7EH �̃m�����A���^�C�����j�o�[�T���V�X�e���G�N�X�N���[�V�u�Ɠ��l�ɁA
-    // ���[�J�[��@��𒴂��ăf�[�^������肷��Ƃ��Ɏg�p����A
-    // 7FH�ł͎����ԂɊ֌W�̂���f�[�^�]���ɗ��p����܂��B 
+    // 7FH はリアルタイムユニバーサルシステムエクスクルーシブです。
+    // 7EH のノンリアルタイムユニバーサルシステムエクスクルーシブと同様に、
+    // メーカーや機種を超えてデータをやり取りするときに使用され、
+    // 7FHでは実時間に関係のあるデータ転送に利用されます。 
 
     //-------------------------------------------------------------------------
     
@@ -302,7 +302,7 @@ public final class MidiConstants {
             props.load(clazz.getResourceAsStream("midi.properties"));
         } catch (IOException e) {
 Debug.println(e);
-            System.exit(1);
+            throw new IllegalStateException(e);
         }
     }
 }

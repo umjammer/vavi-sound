@@ -6,9 +6,7 @@
 
 package vavi.sound.smaf;
 
-import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -84,9 +82,9 @@ public class SmafFileFormat {
     }
 
     /**
-     * ƒXƒgƒŠ[ƒ€‚É‘‚«‚İ‚Ü‚·B–‘O‚ÉƒV[ƒPƒ“ƒX‚ğİ’è‚µ‚Ä‚¨‚­‚±‚ÆB
-     * @after out ‚Í {@link java.io.OutputStream#flush() flush} ‚³‚ê‚Ü‚·
-     * @throws IllegalStateException ƒV[ƒPƒ“ƒX‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡ƒXƒ[‚³‚ê‚Ü‚·
+     * ã‚¹ãƒˆãƒªãƒ¼ãƒ ã«æ›¸ãè¾¼ã¿ã¾ã™ã€‚äº‹å‰ã«ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã‚’è¨­å®šã—ã¦ãŠãã“ã¨ã€‚
+     * @after out ã¯ {@link java.io.OutputStream#flush() flush} ã•ã‚Œã¾ã™
+     * @throws IllegalStateException ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆã‚¹ãƒ­ãƒ¼ã•ã‚Œã¾ã™
      */
     void writeTo(OutputStream out)
         throws InvalidSmafDataException, IOException {
@@ -114,23 +112,14 @@ public class SmafFileFormat {
             track.writeTo(out);
         }
 
-        out.flush(); // TODO ‚¢‚éH
+        out.flush(); // TODO ã„ã‚‹ï¼Ÿ
+
+        byteLength = smafDataLength + 4 + 4;
     }
 
     /** TODO */
     public static boolean isIgnored(SmafMessage message) {
         return false;
-    }
-    
-    //----
-    
-    /**
-     * load only
-     * @param args 0: input mmf
-     */
-    public static void main(String[] args) throws Exception {
-        SmafSystem.getSmafFileFormat(new BufferedInputStream(new FileInputStream(args[0])));
-        System.exit(0);
     }
 }
 

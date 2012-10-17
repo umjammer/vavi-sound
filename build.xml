@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ////////////////////////////////////////////////////////////////////// -->
 <!-- Copyright (c) 2002 by Naohide Sano, All rights reserved.               -->
@@ -20,7 +20,7 @@
   <property name="dir.build" value="target/classes" />
   <property name="lib.dir" value="lib" />
 	
-  <!-- クラスパスの定義 -->
+  <!-- 繧ｯ繝ｩ繧ｹ繝代せ縺ｮ螳夂ｾｩ -->
   <path id="project.class.path">
     <fileset dir="lib">
       <include name="*.jar" />
@@ -36,19 +36,24 @@
       <fileset dir="target/test-classes">
         <include name="**/*" />
       </fileset>
+      <fileset dir="${lib.dir}">
+        <include name="*" />
+      </fileset>
     </delete>
   </target>
 
   <!-- prepare -->
-  <target name="prepare" description="ビルド環境の準備">
+  <target name="prepare" description="繝薙Ν繝臥腸蠅�縺ｮ貅門ｙ">
     <ivy:settings file="ivy-settings.xml" />
     <ivy:convertpom pomFile="pom.xml" ivyFile="ivy.xml" />
     <ivy:retrieve />
+    <mkdir dir="${dir.build}" />
+    <mkdir dir="target/test-classes" />
   </target>
 
   <!-- compile -->
   <target name="compile" depends="prepare" description="Compile">
-    <javac debug="on" target="1.5" encoding="MS932" destdir="${dir.build}">
+    <javac debug="on" target="1.5" encoding="${encoding}" destdir="${dir.build}">
       <classpath refid="project.class.path" />
       <include name="**/*.java" />
       <src path="src/main/java" />
@@ -60,7 +65,7 @@
       </fileset>
     </copy>
 
-    <javac debug="on" target="1.5" encoding="MS932" destdir="target/test-classes">
+    <javac debug="on" target="1.5" encoding="${encoding}" destdir="target/test-classes">
       <classpath>
       	<path refid="project.class.path" />
         <pathelement location="${dir.build}" />
@@ -88,7 +93,7 @@
     <delete dir="${vavi.sound.run.out}/${vavi.sound.run.type}" />
     <mkdir dir="${vavi.sound.run.out}/${vavi.sound.run.type}" />
 
-    <java classname="vavi.sound.sampled.mfi.MfiAudioFileWriter" fork="yes">
+    <java classname="vavi.sound.sampled.mfi.MfiAudioFileWriterTest" fork="yes">
       <classpath>
         <path refid="project.class.path"/>
         <pathelement location="${dir.build}" />
@@ -105,13 +110,16 @@
   </target>
 
   <!-- play -->
-  <target name="play" depends="compile" description="play mfi">
+  <target name="play" depends="compile" description="play mfi dir">
     <fileset dir="." id="mlds.path">
       <include name="${vavi.sound.play.mld_play}" />
     </fileset>
     <pathconvert pathsep=" " property="mld.files" refid="mlds.path"/>
     <property name="mld.files" value="${toString:mlds.path}" />
+
     <java classname="Test1" fork="yes">
+      <jvmarg value="-Djava.awt.headless=true" />
+      <jvmarg value="-Djavax.sound.midi.Sequencer=#Real Time Sequencer" />
       <classpath>
         <path refid="project.class.path" />
         <pathelement location="${dir.build}" />
@@ -122,12 +130,44 @@
     </java>
   </target>
 
+  <!-- mfi -->
+  <target name="mfi" depends="compile" description="play mfi">
+    <java classname="Test1" fork="yes">
+      <jvmarg value="-Djava.awt.headless=true" />
+      <jvmarg value="-Djavax.sound.midi.Sequencer=#Real Time Sequencer" />
+      <classpath>
+        <path refid="project.class.path" />
+        <pathelement location="${dir.build}" />
+        <pathelement location="target/test-classes" />
+        <pathelement location="etc/libmfi-klab.jar" />
+      </classpath>
+      <arg value="${mld.file}" />
+    </java>
+  </target>
+
+  <!-- play smaf -->
+  <target name="smaf" depends="compile" description="play smaf">
+    <java classname="Test2" fork="yes">
+      <jvmarg value="-Djava.awt.headless=true" />
+      <jvmarg value="-Djavax.sound.midi.Sequencer=#Real Time Sequencer" />
+      <jvmarg value="-Dfile.encoding=utf-8" />
+      
+      <classpath>
+        <path refid="project.class.path" />
+        <pathelement location="${dir.build}" />
+        <pathelement location="target/test-classes" />
+      </classpath>
+      <arg value="${vavi.sound.play.mmf_play}" />
+    </java>
+  </target>
+
   <!-- smaf with voice -->
-  <target name="smaf" depends="compile" description="smaf with voice spi">
+  <target name="smaf.v1" depends="compile" description="make smaf with voice spi">
     <delete dir="${vavi.sound.smaf.out}/mmf" />
     <mkdir dir="${vavi.sound.smaf.out}/mmf" />
 
-    <java classname="vavi.sound.sampled.smaf.SmafAudioFileWriter" fork="yes">
+    <java classname="vavi.sound.sampled.smaf.SmafAudioFileWriterTest" fork="yes">
+      <jvmarg value="-Djava.awt.headless=true" />
       <classpath>
         <path refid="project.class.path"/>
         <pathelement location="${dir.build}" />
@@ -142,11 +182,12 @@
   </target>
 
   <!-- smaf with voice -->
-  <target name="smaf.2" depends="compile" description="smaf with voice direct">
+  <target name="smaf.v2" depends="compile" description="make smaf with voice direct">
     <delete dir="${vavi.sound.smaf.out}/mmf" />
     <mkdir dir="${vavi.sound.smaf.out}/mmf" />
 
     <java classname="vavi.sound.sampled.smaf.DividedSmafWithVoiceMaker" fork="yes">
+      <jvmarg value="-Djava.awt.headless=true" />
       <classpath>
         <path refid="project.class.path"/>
         <pathelement location="${dir.build}" />
@@ -167,14 +208,29 @@
     </fileset>
     <pathconvert pathsep=" " property="mmf.files" refid="mmfs.path"/>
     <property name="mmf.files" value="${toString:mmfs.path}" />
+
     <java classname="Test2" fork="yes">
-<jvmarg value="-Djava.awt.headless=true" />
+      <jvmarg value="-Djava.awt.headless=true" />
+      <jvmarg value="-Djavax.sound.midi.Sequencer=#Real Time Sequencer" />
       <classpath>
         <path refid="project.class.path" />
         <pathelement location="${dir.build}" />
         <pathelement location="target/test-classes" />
       </classpath>
       <arg line="${mmf.files}" />
+    </java>
+  </target>
+
+  <!-- play pcm -->
+  <target name="play.pcm" depends="compile" description="play pcm">
+    <java classname="t150_4" fork="yes">
+      <jvmarg value="-Djava.awt.headless=true" />
+      <classpath>
+        <path refid="project.class.path" />
+        <pathelement location="${dir.build}" />
+        <pathelement location="target/test-classes" />
+      </classpath>
+      <arg value="out.pcm" />
     </java>
   </target>
 

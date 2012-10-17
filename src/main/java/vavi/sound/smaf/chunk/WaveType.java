@@ -37,7 +37,7 @@ public class WaveType {
     private int waveChannels;
 
     /**
-     * TODO ƒ`ƒƒƒ“ƒN‚Å”’l‚ªˆá‚¤ enum ‚Å‰ğÁH
+     * TODO ãƒãƒ£ãƒ³ã‚¯ã§æ•°å€¤ãŒé•ã† enum ã§è§£æ¶ˆï¼Ÿ
      * "Awa*"
      * <pre>
      * 0x0 Signed
@@ -47,9 +47,18 @@ public class WaveType {
      * </pre>
      * "Mwa*"
      * <pre>
-     * 0x0 2fs complement PCM
+     * 0x0 2's complement PCM
      * 0x1 Offset Binary PCM
      * 0x2 ADPCM(YAMAHA)
+     * </pre>
+     * ã¨ã‚Šã‚ãˆãšå…±é€šã§
+     * <pre>
+     * 0 Signed
+     * 1 ADPCM
+     * 2 TwinVQ
+     * 3 MP3
+     * 4 2's complement PCM (signed PCM?)
+     * 5 Offset Binary PCM (unsigned PCM?)
      * </pre>
      */
     private int waveFormat;
@@ -62,6 +71,9 @@ public class WaveType {
 
     /** 4, 8, 12, 16 */
     private int waveBaseBit;
+
+    /** */
+    private static final int[] tableForMwq = { 4, 5, 1 };
 
     /**
      * "Awa*"
@@ -76,11 +88,12 @@ public class WaveType {
      * </pre>
      */
     WaveType(int waveType) throws IOException {
-Debug.println("waveType: " + StringUtil.toHex4(waveType));
+//Debug.println("waveType: " + StringUtil.toHex4(waveType));
         this.waveChannels = (waveType & 0x8000) != 0 ? 2 : 1;
         this.waveFormat = (waveType & 0x7000) >> 12;
         this.waveSamplingFreq = samplingFreqs[(waveType & 0x0f00) >> 8];
         this.waveBaseBit = 4 * (((waveType & 0x00f0) >> 4) + 1);
+Debug.println("waveType: " + this);
     }
 
     /**
@@ -97,9 +110,10 @@ Debug.println("waveType: " + StringUtil.toHex4(waveType));
     WaveType(byte[] waveType) throws IOException {
 Debug.println("waveType: " + StringUtil.toHex2(waveType[0]) + " " + StringUtil.toHex2(waveType[1]) + " " + StringUtil.toHex2(waveType[2]));
         this.waveChannels = (waveType[0] & 0x80) != 0 ? 2 : 1;
-        this.waveFormat = (waveType[0] & 0x70) >> 12;
+        this.waveFormat = tableForMwq[(waveType[0] & 0x70) >> 4];
         this.waveBaseBit = 4 * ((waveType[0] & 0x0f) + 1);
-        this.waveSamplingFreq = (waveType[1] << 8) | waveType[2];
+        this.waveSamplingFreq = ((waveType[1] & 0xff) << 8) | waveType[2] & 0xff;
+Debug.println("waveType: " + this);
     }
 
     /**
@@ -120,7 +134,7 @@ Debug.println("waveType: " + StringUtil.toHex2(waveType[0]) + " " + StringUtil.t
     int intValue() {
         int waveType = 0;
         waveType |= waveChannels == 2 ? 0x8000: 0;
-        waveType |= waveFormat << 12;
+        waveType |= waveFormat << 12; // TODO 5, 6
         int v;
         switch (waveSamplingFreq) {
         case 4000:

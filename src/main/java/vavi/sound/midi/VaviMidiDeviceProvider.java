@@ -21,7 +21,7 @@ import vavi.util.Debug;
  */
 public class VaviMidiDeviceProvider extends MidiDeviceProvider {
 
-    /** ŸŽè‚ÉŽg—p */
+    /** å‹æ‰‹ã«ä½¿ç”¨ */
     public final static int MANUFACTURER_ID = 0x5f;
 
     /** */
@@ -32,16 +32,16 @@ public class VaviMidiDeviceProvider extends MidiDeviceProvider {
         return infos;
     }
 
-    /** ADPCM Ä¶‹@\‚ð•t‰Á‚µ‚½ MIDI ƒV[ƒPƒ“ƒT‚ð•Ô‚µ‚Ü‚·B */
+    /** ADPCM å†ç”Ÿæ©Ÿæ§‹ã‚’ä»˜åŠ ã—ãŸ MIDI ã‚·ãƒ¼ã‚±ãƒ³ã‚µã‚’è¿”ã—ã¾ã™ã€‚ */
     public MidiDevice getDevice(MidiDevice.Info info)
         throws IllegalArgumentException {
 
-Debug.println("š1 info: " + info);
+Debug.println("â˜…1 info: " + info);
         if (info == VaviSequencer.info) {
             VaviSequencer wrappedSequencer = new VaviSequencer();
             return wrappedSequencer;
         } else {
-Debug.println("š1 here");
+Debug.println("â˜…1 here");
             throw new IllegalArgumentException();
         }
     }

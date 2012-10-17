@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import vavi.sound.midi.MidiConstants;
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -33,7 +34,7 @@ import vavi.util.Debug;
  *  Color Type : 1byte
  *  TimeBase : 1byte
  *  Option Size : 1byte
- *  Option Data : Option Size Ç≈éwíËÇµÇΩÉTÉCÉY(0Å`255b)
+ *  Option Data : Option Size „ÅßÊåáÂÆö„Åó„Åü„Çµ„Ç§„Ç∫(0„Äú255b)
  * </pre>
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
@@ -80,7 +81,7 @@ Debug.println("Graphics[" + trackNumber + "]: " + size);
             } else if (chunk instanceof ImageDataChunk) {
                 imageDataChunk = chunk;
             } else {
-Debug.println("unknown chunk: " + chunk.getClass());
+Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
     }
@@ -108,7 +109,7 @@ Debug.println("unknown chunk: " + chunk.getClass());
 
     /** 
      * 0x00 Handy Phone Standard
-     * 0x01Å`0xFF Reserved
+     * 0x01„Äú0xFF Reserved
      */
     private int playerType;
     /** */
@@ -116,7 +117,7 @@ Debug.println("unknown chunk: " + chunk.getClass());
     /**
      * 0x00 Direct RGB:=3:3:2
      * 0x01 Index Color
-     * 0x02Å`FF Reserved
+     * 0x02„ÄúFF Reserved
      */
     private int colorType;
 
@@ -168,8 +169,8 @@ Debug.println("unknown chunk: " + chunk.getClass());
 
     /** "Gftd" */
     public static class FontDataChunk extends Chunk {
-        // "Ge**Åh ÅFFont Chunk
-        // "Gu**Åh ÅFUnicode Font Chunk
+        // "Ge**‚Äù ÔºöFont Chunk
+        // "Gu**‚Äù ÔºöUnicode Font Chunk
         /** */
         protected void init(InputStream is, Chunk parent)
             throws InvalidSmafDataException, IOException {

@@ -48,10 +48,10 @@ import vavi.util.StringUtil;
  *   length     2
  *   data       L
  * </pre>
- * <li>{@link #data} ‚É‚Í header, sub chunk •”•ª‚ÍŠÜ‚Ü‚ê‚Ä‚¢‚Ü‚¹‚ñB“à—e‚Íƒˆ‚È ADPCM ‚Á‚Û‚¢
- * <li>{@link #length} ‚Í AudioData Chunk ‚·‚×‚Ä‚Ì’·‚³
- * <li>TODO extends {@link MfiMessage} ‚¢‚é‚ÌH AudioDataChunk ‚¶‚á‚È‚¢‚ÌH
- * <li>TODO ‚±‚ÌƒNƒ‰ƒX‚»‚Ì‚Ü‚Ü {@link vavi.sound.mfi.Track} ‚É“ü‚ê‚½‚ç‚æ‚­‚È‚¢‚Ì‚Å‚ÍH ¨ extends {@link MetaMessage}H
+ * <li>{@link #data} ã«ã¯ header, sub chunk éƒ¨åˆ†ã¯å«ã¾ã‚Œã¦ã„ã¾ã›ã‚“ã€‚å†…å®¹ã¯ç´”ç²‹ãª ADPCM ã£ã½ã„
+ * <li>{@link #length} ã¯ AudioData Chunk ã™ã¹ã¦ã®é•·ã•
+ * <li>TODO extends {@link MfiMessage} ã„ã‚‹ã®ï¼Ÿ AudioDataChunk ã˜ã‚ƒãªã„ã®ï¼Ÿ
+ * <li>TODO ã“ã®ã‚¯ãƒ©ã‚¹ãã®ã¾ã¾ {@link vavi.sound.mfi.Track} ã«å…¥ã‚ŒãŸã‚‰ã‚ˆããªã„ã®ã§ã¯ï¼Ÿ â†’ extends {@link MetaMessage}ï¼Ÿ
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 050721 nsano initial version <br>
  * @since MFi 4.0
@@ -62,7 +62,7 @@ public class AudioDataMessage extends MfiMessage
     /** {@value} */
     public static final String TYPE = "adat";
 
-    /** "adat" ‚Ì index */
+    /** "adat" ã® index */
     private int audioDataNumber;
 
     /**
@@ -79,10 +79,10 @@ public class AudioDataMessage extends MfiMessage
      * <pre>
      * 76543 2 1 0
      * ~~~~~ ~ ~ ~
-     *     | | | +- ‰¹’ö•Ï‰»§Œä¯•Êq (0: ‰¹’ö•Ï‰»‚É‰e‹¿‚³‚ê‚È‚¢, 1: ‰¹’ö•Ï‰»‚É‰e‹¿‚³‚ê‚é)
-     *     | | +--- ƒeƒ“ƒ|•Ï‰»§Œä¯•Êq (0: ƒeƒ“ƒ|•Ï‰»‚É‰e‹¿‚³‚ê‚È‚¢, 1: ƒeƒ“ƒ|•Ï‰»‚É‰e‹¿‚³‚ê‚é)
-     *     | +----- 3D ¯•Êq (0: 3D ˆ—‚µ‚Ä‚¢‚È‚¢, 1: 3D ˆ—‚µ‚Ä‚¢‚é)
-     *     +------- —\–ñ (0 ŒÅ’è)
+     *     | | | +- éŸ³ç¨‹å¤‰åŒ–åˆ¶å¾¡è­˜åˆ¥å­ (0: éŸ³ç¨‹å¤‰åŒ–ã«å½±éŸ¿ã•ã‚Œãªã„, 1: éŸ³ç¨‹å¤‰åŒ–ã«å½±éŸ¿ã•ã‚Œã‚‹)
+     *     | | +--- ãƒ†ãƒ³ãƒå¤‰åŒ–åˆ¶å¾¡è­˜åˆ¥å­ (0: ãƒ†ãƒ³ãƒå¤‰åŒ–ã«å½±éŸ¿ã•ã‚Œãªã„, 1: ãƒ†ãƒ³ãƒå¤‰åŒ–ã«å½±éŸ¿ã•ã‚Œã‚‹)
+     *     | +----- 3D è­˜åˆ¥å­ (0: 3D å‡¦ç†ã—ã¦ã„ãªã„, 1: 3D å‡¦ç†ã—ã¦ã„ã‚‹)
+     *     +------- äºˆç´„ (0 å›ºå®š)
      * </pre>
      */
     private int attribute;
@@ -158,9 +158,9 @@ Debug.println("audioDataLength: " + audioDataLength);
     }
 
     /**
-     * @after {@link #length} ‚ªİ’è‚³‚ê‚Ü‚·AAudioData Chunk ‚·‚×‚Ä‚Ì’·‚³
-     * @after {@link #data} ‚ªİ’è‚³‚ê‚Ü‚·Aƒwƒbƒ_•”AƒTƒuƒ`ƒƒƒ“ƒN‚ÍŠÜ‚Ü‚ê‚È‚¢
-     * @throws InvalidMfiDataException is ‚Ìn‚Ü‚è‚ª {@link #TYPE} ‚Ån‚Ü‚Á‚Ä‚¢‚È‚¢ê‡
+     * @after {@link #length} ãŒè¨­å®šã•ã‚Œã¾ã™ã€AudioData Chunk ã™ã¹ã¦ã®é•·ã•
+     * @after {@link #data} ãŒè¨­å®šã•ã‚Œã¾ã™ã€ãƒ˜ãƒƒãƒ€éƒ¨ã€ã‚µãƒ–ãƒãƒ£ãƒ³ã‚¯ã¯å«ã¾ã‚Œãªã„
+     * @throws InvalidMfiDataException is ã®å§‹ã¾ã‚ŠãŒ {@link #TYPE} ã§å§‹ã¾ã£ã¦ã„ãªã„å ´åˆ
      */
     public void readFrom(InputStream is)
         throws InvalidMfiDataException,
@@ -196,7 +196,7 @@ Debug.println("audio subchunk length sum: " + l + " / " + (headerLength - 2));
 
         // data
         int dataLength = audioDataLength - (headerLength + 1 + 1); // + format + attribute
-        data = new byte[dataLength]; // TODO ‘S•”‚Ìƒf[ƒ^ŠÜ‚ß‚é‚×‚«
+        data = new byte[dataLength]; // TODO å…¨éƒ¨ã®ãƒ‡ãƒ¼ã‚¿å«ã‚ã‚‹ã¹ã
         dis.readFully(data, 0, dataLength);
 Debug.println("adat length[" + audioDataNumber + "]: " + dataLength + " bytes\n" + StringUtil.getDump(data, 16));
 
@@ -205,8 +205,8 @@ Debug.println("adat length[" + audioDataNumber + "]: " + dataLength + " bytes\n"
     }
 
     /**
-     * ƒwƒbƒ_AƒTƒuƒ`ƒƒƒ“ƒNœ‚­B(ƒˆ‚È ADPCM)
-     * ƒf[ƒ^ƒCƒ“ƒ^[ƒŠ[ƒu‚Ís‚í‚¸ L R ‚Ì‡‚É‚Ü‚Æ‚ß‚ÄŠi”[‚·‚é
+     * ãƒ˜ãƒƒãƒ€ã€ã‚µãƒ–ãƒãƒ£ãƒ³ã‚¯é™¤ãã€‚(ç´”ç²‹ãª ADPCM)
+     * ãƒ‡ãƒ¼ã‚¿ã‚¤ãƒ³ã‚¿ãƒ¼ãƒªãƒ¼ãƒ–ã¯è¡Œã‚ãš L R ã®é †ã«ã¾ã¨ã‚ã¦æ ¼ç´ã™ã‚‹
      * <li>TODO Chunk interface
      */
     public void setData(byte[] data) {
@@ -227,8 +227,8 @@ Debug.println("audioDataLength: " + audioDataLength);
     }
 
     /**
-     * ƒwƒbƒ_AƒTƒuƒ`ƒƒƒ“ƒNœ‚­B (ƒˆ‚È ADPCM)
-     * ƒf[ƒ^ƒCƒ“ƒ^[ƒŠ[ƒu‚Ís‚í‚¸ L R ‚Ì‡‚É‚Ü‚Æ‚ß‚ÄŠi”[‚³‚ê‚Ä‚¢‚é
+     * ãƒ˜ãƒƒãƒ€ã€ã‚µãƒ–ãƒãƒ£ãƒ³ã‚¯é™¤ãã€‚ (ç´”ç²‹ãª ADPCM)
+     * ãƒ‡ãƒ¼ã‚¿ã‚¤ãƒ³ã‚¿ãƒ¼ãƒªãƒ¼ãƒ–ã¯è¡Œã‚ãš L R ã®é †ã«ã¾ã¨ã‚ã¦æ ¼ç´ã•ã‚Œã¦ã„ã‚‹
      * <li>TODO Chunk interface
      */
     public byte[] getData() {
@@ -253,7 +253,7 @@ Debug.println("audioDataLength: " + audioDataLength);
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // ƒV[ƒPƒ“ƒT[ŒÅ—Lƒƒ^ƒCƒxƒ“ƒg
+        metaMessage.setMessage(0x7f,    // ã‚·ãƒ¼ã‚±ãƒ³ã‚µãƒ¼å›ºæœ‰ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆ
                                data,
                                data.length);
 

@@ -91,6 +91,7 @@ class MfiWithVoiceMaker {
      * @param bits ADPCM sampling bits
      * @param masterVolume [real number]
      * @param adpcmVolume [real number]
+     * @throws IllegalArgumentException when MachineDependentMfiWithVoiceMaker not found
      */
     protected MfiWithVoiceMaker(String model, float time, int samplingRate, int bits, int channels, int masterVolume, int adpcmVolume) {
         this.time = time;
@@ -101,7 +102,7 @@ class MfiWithVoiceMaker {
         this.masterVolume = toReal(0x7f, masterVolume);
         this.adpcmVolume = toReal(0x3f, adpcmVolume);
 
-        this.mdvm = MachineDependentMfiWithVoiceMakerFactory.getMachineDependMfiWithVoiceMaker(model);
+        this.mdvm = MachineDependentMfiWithVoiceMaker.factory.get(model);
     }
 
     /**

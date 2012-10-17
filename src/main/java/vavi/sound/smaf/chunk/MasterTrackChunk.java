@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
@@ -51,7 +52,7 @@ Debug.println("sequenceType: " + sequenceType);
               if (chunk instanceof MasterTrackSequenceDataChunk) { // "Mssq"
                   sequenceDataChunk = chunk;
               } else {
-Debug.println("unknown chunk: " + chunk.getClass());
+Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
               }
         }
     }

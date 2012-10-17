@@ -24,8 +24,8 @@ import org.junit.Test;
 
 import vavi.io.LittleEndianDataInputStream;
 import vavi.io.LittleEndianDataOutputStream;
-import vavi.sound.Checksum;
 import vavi.util.StringUtil;
+import vavix.util.Checksum;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

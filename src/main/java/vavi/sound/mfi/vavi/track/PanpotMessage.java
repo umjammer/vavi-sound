@@ -22,7 +22,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * PanpotMessage.
  * <pre>
- *  0xff, 0xe# ‰¹Œ¹§Œäî•ñ
+ *  0xff, 0xe# éŸ³æºåˆ¶å¾¡æƒ…å ±
  *  channel true
  *  delta   true
  * </pre>
@@ -109,13 +109,13 @@ public class PanpotMessage extends vavi.sound.mfi.ShortMessage
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 channel,
-                                10,    // ƒpƒ“ƒ|ƒbƒg MSB
+                                10,    // ãƒ‘ãƒ³ãƒãƒƒãƒˆ MSB
                                 getPanpot() * 2);
         events[0] = new MidiEvent(shortMessage, context.getCurrent());
 //      shortMessage = new ShortMessage();
 //      shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
 //                              channel,
-//                              42,    // ƒpƒ“ƒ|ƒbƒg LSB
+//                              42,    // ãƒ‘ãƒ³ãƒãƒƒãƒˆ LSB
 //                              0);
 //      events[1] = new MidiEvent(shortMessage, context.getCurrent());
         return events;

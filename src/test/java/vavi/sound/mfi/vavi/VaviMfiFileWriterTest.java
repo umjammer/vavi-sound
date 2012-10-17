@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
@@ -33,22 +33,18 @@ import vavi.util.win32.WAVE;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 2007/01/25 nsano initial version <br>
  */
-public class VaviMfiFileWriterTest extends TestCase {
-
-    /* @see junit.framework.TestCase#setUp() */
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
+public class VaviMfiFileWriterTest {
 
     /**
-     * Creates .mld w/ voice file. wav ƒtƒ@ƒCƒ‹‚Íƒ‚ƒmƒ‰ƒ‹‚Ì‚İ‚Å‚·
-     * ƒTƒ“ƒvƒŠƒ“ƒOƒŒ[ƒg‚Í•ÏX‚³‚ê‚Ü‚¹‚ñ
+     * Creates .mld w/ voice file. wav ãƒ•ã‚¡ã‚¤ãƒ«ã¯ãƒ¢ãƒãƒ©ãƒ«ã®ã¿ã§ã™
+     * ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãƒ¬ãƒ¼ãƒˆã¯å¤‰æ›´ã•ã‚Œã¾ã›ã‚“
      * <p>
-     * TODO 65535 bytes ‚ğ’´‚¦‚½‚Æ‚«‚Ìˆ—
+     * TODO 65535 bytes ã‚’è¶…ãˆãŸã¨ãã®å‡¦ç†
      * </p>
      * input wav(PCM mono) file
      * output mld file
      */
+    @Test
     public void test1() throws Exception {
 
         InputStream in = new BufferedInputStream(new FileInputStream("in.wav"));
@@ -123,11 +119,11 @@ Debug.println("write: " + r);
     }    
 
     /**
-     * “¯‚¶ channel ‚ÅŸ‚Ì {@link ShortMessage#NOTE_OFF}, {@link ShortMessage#CONTROL_CHANGE}
-     * ‚Å‚ ‚é MIDI ƒCƒxƒ“ƒg‚ğæ“¾‚µ‚Ü‚·B
+     * åŒã˜ channel ã§æ¬¡ã® {@link ShortMessage#NOTE_OFF}, {@link ShortMessage#CONTROL_CHANGE}
+     * ã§ã‚ã‚‹ MIDI ã‚¤ãƒ™ãƒ³ãƒˆã‚’å–å¾—ã—ã¾ã™ã€‚
      *
-     * @throws NoSuchElementException Ÿ‚ÌƒCƒxƒ“ƒg‚ª‚È‚¢
-     * @throws IllegalStateException Œ»İ‚ÌƒCƒxƒ“ƒg‚Í {@link ShortMessage} ‚Å‚Í‚È‚¢
+     * @throws NoSuchElementException æ¬¡ã®ã‚¤ãƒ™ãƒ³ãƒˆãŒãªã„
+     * @throws IllegalStateException ç¾åœ¨ã®ã‚¤ãƒ™ãƒ³ãƒˆã¯ {@link ShortMessage} ã§ã¯ãªã„
      */
 /*
     public MidiEvent getNoteOffOrControllChangeMidiEvent() throws NoSuchElementException {
@@ -153,14 +149,14 @@ Debug.println("write: " + r);
                 if (shortMessage.getChannel() == channel &&
                     shortMessage.getData1() == data1) {
                     // next note off
-                    noteOffEventUsed.set(i);    // Á”ïƒtƒ‰ƒO on
+                    noteOffEventUsed.set(i);    // æ¶ˆè²»ãƒ•ãƒ©ã‚° on
                     return midiEvent;
                 } else if (shortMessage.getChannel() == channel &&
                            shortMessage.getCommand() == ShortMessage.CONTROL_CHANGE) {
                     // next control change
                     String key = "midi.short." + shortMessage.getCommand() + "." + shortMessage.getData1();
                     MfiConvertible convertible = MfiConvertibleFactory.getConverter(key);
-                    // TODO Converter ‚ª‚ ‚é‚©‚Ç‚¤‚©
+                    // TODO Converter ãŒã‚ã‚‹ã‹ã©ã†ã‹
                     if (convertible == null) {
                         continue;
                     }
@@ -175,7 +171,7 @@ Debug.println("(NEXT): " + MidiUtil.paramString(midiMessage) + ", " + convertibl
                             if (farShortMessage.getChannel() == channel &&
                                 farShortMessage.getData1() == data1) {
                                 // far next note off
-                                noteOffEventUsed.set(i);    // Á”ïƒtƒ‰ƒO on
+                                noteOffEventUsed.set(i);    // æ¶ˆè²»ãƒ•ãƒ©ã‚° on
                             }
                         }
                     }
@@ -191,10 +187,10 @@ Debug.println("(NEXT): " + MidiUtil.paramString(midiMessage) + ", " + convertibl
 */
 
     /**
-     * “¯‚¶ channel ‚ÅŸ‚Ì {@link ShortMessage} ‚Å‚ ‚é MIDI ƒCƒxƒ“ƒg‚ğæ“¾‚µ‚Ü‚·B
+     * åŒã˜ channel ã§æ¬¡ã® {@link ShortMessage} ã§ã‚ã‚‹ MIDI ã‚¤ãƒ™ãƒ³ãƒˆã‚’å–å¾—ã—ã¾ã™ã€‚
      * (not used)
-     * @throws NoSuchElementException Ÿ‚Ì MIDI ƒCƒxƒ“ƒg‚ª‚È‚¢
-     * @throws IllegalStateException Œ»İ‚ÌƒCƒxƒ“ƒg‚Í {@link ShortMessage} ‚Å‚Í‚È‚¢
+     * @throws NoSuchElementException æ¬¡ã® MIDI ã‚¤ãƒ™ãƒ³ãƒˆãŒãªã„
+     * @throws IllegalStateException ç¾åœ¨ã®ã‚¤ãƒ™ãƒ³ãƒˆã¯ {@link ShortMessage} ã§ã¯ãªã„
      */
 /*
     public MidiEvent getNextMidiEvent() throws NoSuchElementException {
@@ -230,8 +226,8 @@ Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getDa
     }
 */
     /**
-     * @return •â³‚È‚µ ƒ¢ƒ^ƒCƒ€
-     * TODO ‰½‚Å‚±‚ê‚Å‚¤‚Ü‚­‚¢‚­‚ÌH
+     * @return è£œæ­£ãªã— Î”ã‚¿ã‚¤ãƒ 
+     * TODO ä½•ã§ã“ã‚Œã§ã†ã¾ãã„ãã®ï¼Ÿ
      */
 /*
     private int retrieveDelta(int mfiTrackNumber, long currentTick) {

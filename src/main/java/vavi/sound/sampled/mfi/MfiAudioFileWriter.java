@@ -10,16 +10,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.AudioFileFormat.Type;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.spi.AudioFileWriter;
 
 import vavi.sound.mfi.InvalidMfiDataException;
+import vavi.util.Debug;
 
 
 /**
@@ -35,22 +33,22 @@ public class MfiAudioFileWriter extends AudioFileWriter {
         new MFi(null) // TODO null
     };
 
-    /** ‚±‚ÌƒI[ƒfƒBƒIƒtƒ@ƒCƒ‹ƒ‰ƒCƒ^‚ªƒtƒ@ƒCƒ‹‘‚«‚İƒTƒ|[ƒg‚ğ’ñ‹Ÿ‚·‚éƒtƒ@ƒCƒ‹Œ^‚ğæ“¾‚µ‚Ü‚·B */
+    /** ã“ã®ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªãƒ•ã‚¡ã‚¤ãƒ«ãƒ©ã‚¤ã‚¿ãŒãƒ•ã‚¡ã‚¤ãƒ«æ›¸ãè¾¼ã¿ã‚µãƒãƒ¼ãƒˆã‚’æä¾›ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«å‹ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public Type[] getAudioFileTypes() {
         return outputTypes;
     }
 
-    /** w’è‚³‚ê‚½ƒI[ƒfƒBƒI“ü—ÍƒXƒgƒŠ[ƒ€‚©‚ç‚±‚ÌƒI[ƒfƒBƒIƒtƒ@ƒCƒ‹ƒ‰ƒCƒ^‚ª‘‚«‚İ‚Å‚«‚éƒtƒ@ƒCƒ‹Œ^‚ğæ“¾‚µ‚Ü‚·B */
+    /** æŒ‡å®šã•ã‚ŒãŸã‚ªãƒ¼ãƒ‡ã‚£ã‚ªå…¥åŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‹ã‚‰ã“ã®ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªãƒ•ã‚¡ã‚¤ãƒ«ãƒ©ã‚¤ã‚¿ãŒæ›¸ãè¾¼ã¿ã§ãã‚‹ãƒ•ã‚¡ã‚¤ãƒ«å‹ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public Type[] getAudioFileTypes(AudioInputStream stream) {
         return getAudioFileTypes(); // TODO check stream
     }
 
     /**
-     * w’è‚³‚ê‚½ƒtƒ@ƒCƒ‹Œ`®‚ÌƒI[ƒfƒBƒIƒtƒ@ƒCƒ‹‚ğ•\‚·ƒoƒCƒgƒXƒgƒŠ[ƒ€‚ğAw’è‚³‚ê‚½ŠO•”ƒtƒ@ƒCƒ‹‚Ö‘‚«‚İ‚Ü‚·B
+     * æŒ‡å®šã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«å½¢å¼ã®ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªãƒ•ã‚¡ã‚¤ãƒ«ã‚’è¡¨ã™ãƒã‚¤ãƒˆã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’ã€æŒ‡å®šã•ã‚ŒãŸå¤–éƒ¨ãƒ•ã‚¡ã‚¤ãƒ«ã¸æ›¸ãè¾¼ã¿ã¾ã™ã€‚
      * @param fileType must be instance of {@link MFi}
-     * @param out null o—Í‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B win32: "nul", *nix: "/dev/null"
-     * @throws IllegalArgumentException fileType ‚ª MFi ‚Å‚È‚¢ê‡ƒXƒ[‚³‚ê‚Ü‚·B
-     * @throws NullPointerException fileType ‚É properties ‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡ƒXƒ[‚³‚ê‚Ü‚·B
+     * @param out null å‡ºåŠ›ã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚ win32: "nul", *nix: "/dev/null"
+     * @throws IllegalArgumentException fileType ãŒ MFi ã§ãªã„å ´åˆã‚¹ãƒ­ãƒ¼ã•ã‚Œã¾ã™ã€‚
+     * @throws NullPointerException fileType ã« properties ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆã‚¹ãƒ­ãƒ¼ã•ã‚Œã¾ã™ã€‚
      */
     public int write(AudioInputStream stream, Type fileType, OutputStream out) throws IOException {
         if (!isFileTypeSupported(fileType, stream)) {
@@ -60,7 +58,7 @@ public class MfiAudioFileWriter extends AudioFileWriter {
             // properties
             boolean divided = (Boolean) ((MFi) fileType).getProperty("mfi.divided");
             if (divided) {
-                // •ªŠ„
+                // åˆ†å‰²
                 String directory = (String) ((MFi) fileType).getProperty("mfi.directory");
                 String base = (String) ((MFi) fileType).getProperty("mfi.base");
                 String model = (String) ((MFi) fileType).getProperty("mfi.model");
@@ -75,7 +73,7 @@ public class MfiAudioFileWriter extends AudioFileWriter {
                 int r = mwvm.create();
                 return r;
             } else {
-                // ’P‘Ì
+                // å˜ä½“
                 String filename = (String) ((MFi) fileType).getProperty("mfi.filename");
                 String model = (String) ((MFi) fileType).getProperty("mfi.model");
                 float time = (Float) ((MFi) fileType).getProperty("mfi.time");
@@ -93,44 +91,19 @@ public class MfiAudioFileWriter extends AudioFileWriter {
             throw (IOException) new IOException().initCause(e);
         } catch (InvalidMfiDataException e) {
             throw (IOException) new IOException().initCause(e);
+        } catch (IllegalArgumentException e) {
+Debug.printStackTrace(e);
+            throw e;
         }
     }
 
     /**
-     * w’è‚³‚ê‚½ƒtƒ@ƒCƒ‹Œ^‚ÌƒI[ƒfƒBƒIƒtƒ@ƒCƒ‹‚ğ•\‚·ƒoƒCƒg‚ÌƒXƒgƒŠ[ƒ€‚ğAw’è‚³‚ê‚½o—ÍƒXƒgƒŠ[ƒ€‚Ö‘‚«‚İ‚Ü‚·B
+     * æŒ‡å®šã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«å‹ã®ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªãƒ•ã‚¡ã‚¤ãƒ«ã‚’è¡¨ã™ãƒã‚¤ãƒˆã®ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’ã€æŒ‡å®šã•ã‚ŒãŸå‡ºåŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã¸æ›¸ãè¾¼ã¿ã¾ã™ã€‚
      * @param fileType must be instance of {@link MFi}
-     * @param out null o—Í‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B win32: "nul", *nix: "/dev/null"
+     * @param out null å‡ºåŠ›ã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚ win32: "nul", *nix: "/dev/null"
      */
     public int write(AudioInputStream stream, Type fileType, File out) throws IOException {
         return write(stream, fileType, new FileOutputStream(out));
-    }
-
-    //----
-
-    /**
-     * @param args 0: input PCM, 1: output base dir, 2: length in seconds, 3: base file name, 4: type, 5: null device
-     */
-    public static void main(String[] args) throws Exception {
-        String inFilename = args[0];
-        String outDir = args[1];
-        float time = Float.parseFloat(args[2]);
-        String base = args[3];
-        String model = args[4];
-        String nullDevice = args[5]; // "nul" or "/dev/null"
-        AudioInputStream ais = AudioSystem.getAudioInputStream(new File(inFilename));
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put("mfi.divided", true);
-        properties.put("mfi.directory", outDir);
-        properties.put("mfi.base", base);
-        properties.put("mfi.model", model);
-        properties.put("mfi.time", time);
-        properties.put("mfi.sampleRate", 8000);
-        properties.put("mfi.bits", 4);
-        properties.put("mfi.channels", 1);
-        properties.put("mfi.masterVolume", 100);
-        properties.put("mfi.adpcmVolume", 100);
-        AudioSystem.write(ais, new MFi(properties), new File(nullDevice));
-        System.exit(0);
     }
 }
 

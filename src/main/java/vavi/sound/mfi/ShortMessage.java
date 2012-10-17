@@ -8,9 +8,9 @@ package vavi.sound.mfi;
 
 
 /**
- * ShortMessage ‚ð•\‚·ƒNƒ‰ƒX‚Å‚·B
+ * ShortMessage ã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
  * <p>
- * MFi Žd—l‚Ì"Šg’£ƒXƒe[ƒ^ƒX B"‚ð•\‚µ‚Ü‚·B
+ * MFi ä»•æ§˜ã®"æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ B"ã‚’è¡¨ã—ã¾ã™ã€‚
  * </p> 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano refine <br>
@@ -35,8 +35,8 @@ public abstract class ShortMessage extends MfiMessage {
      * 
      * @param delta
      * @param status
-     * @param data1 Šg’£ƒXƒe[ƒ^ƒX”Ô†
-     * @param data2 ‹@”\‚Ì’l
+     * @param data1 æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ç•ªå·
+     * @param data2 æ©Ÿèƒ½ã®å€¤
      */
     public ShortMessage(int delta, int status, int data1, int data2) {
         super(new byte[] {

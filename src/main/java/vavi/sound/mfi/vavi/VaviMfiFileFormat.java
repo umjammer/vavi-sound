@@ -48,7 +48,7 @@ import vavi.util.Debug;
  *  offset to tracks    08 02
  *  major type          0A 01   see below
  *  minor type          0B 01   see below
- *  number of tracks    0C 01   01:4˜a‰¹, 02:8˜a‰¹(MFi2), 04:16˜a‰¹(MFi2)
+ *  number of tracks    0C 01   01:4å’ŒéŸ³, 02:8å’ŒéŸ³(MFi2), 04:16å’ŒéŸ³(MFi2)
  *
  * 2. data information
  *  type                00 04   see below *1
@@ -81,7 +81,7 @@ import vavi.util.Debug;
 public class VaviMfiFileFormat extends MfiFileFormat {
 
     /**
-     * MIDI ƒtƒ@ƒCƒ‹ƒ^ƒCƒv
+     * MIDI ãƒ•ã‚¡ã‚¤ãƒ«ã‚¿ã‚¤ãƒ—
      * @see "vavi/sound/midi/package.html"
      */
     public static final int FILE_TYPE = 0x88;
@@ -97,33 +97,60 @@ public class VaviMfiFileFormat extends MfiFileFormat {
         return sequence;
     }
 
-    /** “Ç‚İ‚İ—p */
+    /** èª­ã¿è¾¼ã¿ç”¨ */
     private VaviMfiFileFormat() {
         super(FILE_TYPE, -1);
 
         this.sequence = new Sequence();
     }
 
-    /** ‘‚«‚İ—p */
+    /** æ›¸ãè¾¼ã¿ç”¨ */
     public VaviMfiFileFormat(Sequence sequence) {
         super(FILE_TYPE, -1);
 
         this.sequence = sequence;
-        this.headerChunk = new HeaderChunk(sequence); // ƒwƒbƒ_î•ñ‚Ìæ‚èo‚µ
+        // ãƒ˜ãƒƒãƒ€æƒ…å ±ã®å–ã‚Šå‡ºã—
+        this.headerChunk = new HeaderChunk(new HeaderChunk.Support() {
+            @Override
+            public void init(Map<String, SubMessage> subChunks) {
+                Track track = VaviMfiFileFormat.this.sequence.getTracks()[0];
+                for (int j = 0; j < track.size(); j++) {
+                    MfiEvent event = track.get(j);
+                    MfiMessage message = event.getMessage();
+                    if (message instanceof SubMessage) {
+                        SubMessage subChunk = (SubMessage) message;
+//Debug.println(infoMessage);
+                        subChunks.put(subChunk.getSubType(), subChunk);
+                    }
+                }
+            }
+            @Override
+            public int getTracksLength() {
+                return getAudioDataLength();
+            }
+            @Override
+            public int getTracksCount() {
+                return getTracksLength();
+            }
+            @Override
+            public int getAudioDataLength() {
+                return VaviMfiFileFormat.this.sequence.getTracks().length;
+            }
+        });
 
         // 1. header (type + length + headerChunkDataLength + ...)
         int headerChunkLength = 4 + 4 + 2 + HeaderChunk.HEADER_LENGTH + headerChunk.getSubChunksLength();
         // 2. audio data
-        int audioChunksLength = getAudioDataLength(sequence);
+        int audioChunksLength = getAudioDataLength();
         // 3. track
-        int trackChunksLength = getTracksLength(sequence);
+        int trackChunksLength = getTracksLength();
 
-        // —v‚·‚é‚Éƒtƒ@ƒCƒ‹‘S•”
+        // è¦ã™ã‚‹ã«ãƒ•ã‚¡ã‚¤ãƒ«å…¨éƒ¨
         this.byteLength = headerChunkLength + audioChunksLength + trackChunksLength;
     }
 
-    /** ‚·‚×‚Ä‚Ìƒgƒ‰ƒbƒNƒ`ƒƒƒ“ƒN‚Ì‡Œv‚Ì’·‚³‚ğæ“¾‚µ‚Ü‚·B */
-    static int getTracksLength(Sequence sequence) {
+    /** ã™ã¹ã¦ã®ãƒˆãƒ©ãƒƒã‚¯ãƒãƒ£ãƒ³ã‚¯ã®åˆè¨ˆã®é•·ã•ã‚’å–å¾—ã—ã¾ã™ã€‚ */
+    private int getTracksLength() {
         Track[] tracks = sequence.getTracks();
         int tracksLength = 0;
         for (int t = 0; t < tracks.length; t++) {
@@ -134,10 +161,10 @@ public class VaviMfiFileFormat extends MfiFileFormat {
     }
 
     /**
-     * ‚·‚×‚Ä‚ÌƒI[ƒfƒBƒIƒf[ƒ^ƒ`ƒƒƒ“ƒN‚Ì‡Œv‚Ì’·‚³‚ğæ“¾‚µ‚Ü‚·B
+     * ã™ã¹ã¦ã®ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªãƒ‡ãƒ¼ã‚¿ãƒãƒ£ãƒ³ã‚¯ã®åˆè¨ˆã®é•·ã•ã‚’å–å¾—ã—ã¾ã™ã€‚
      * @since MFi 4.0
      */
-    static int getAudioDataLength(Sequence sequence) {
+    private int getAudioDataLength() {
         int audioDataLength = 0;
         Track track = sequence.getTracks()[0];
         for (int j = 0; j < track.size(); j++) {
@@ -152,7 +179,7 @@ Debug.println("audioDataLength: " + audioDataLength);
     }
 
     /**
-     * ‚·‚×‚Ä‚ÌƒI[ƒfƒBƒIƒf[ƒ^ƒ`ƒƒƒ“ƒN‚ğæ“¾‚µ‚Ü‚·B
+     * ã™ã¹ã¦ã®ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªãƒ‡ãƒ¼ã‚¿ãƒãƒ£ãƒ³ã‚¯ã‚’å–å¾—ã—ã¾ã™ã€‚
      * @since MFi 4.0
      */
     private List<AudioDataMessage> getAudioDatum() {
@@ -168,22 +195,22 @@ Debug.println("audioDataLength: " + audioDataLength);
         return result;
     }
 
-    /** {@link Track}[0] ‚Å‘‚«o‚µÈ‚©‚ê‚éƒƒbƒZ[ƒW‚ÌŒ^ */
+    /** {@link Track}[0] ã§æ›¸ãå‡ºã—æ™‚çœã‹ã‚Œã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®å‹ */
     static boolean isIgnored(MfiMessage message) {
-        // TODO MetaMessage ‚¾‚¯‚ğÈ‚­‚Ì‚ª—‘zH
+        // TODO MetaMessage ã ã‘ã‚’çœãã®ãŒç†æƒ³ï¼Ÿ
         return message instanceof SubMessage || message instanceof AudioDataMessage;
     }
 
     /**
-     * ƒXƒgƒŠ[ƒ€‚É‘‚«‚İ‚Ü‚·B–‘O‚ÉƒV[ƒPƒ“ƒX‚ğİ’è‚µ‚Ä‚¨‚­‚±‚ÆB
-     * @after {@link #byteLength} ‚ªİ’è‚³‚ê‚Ü‚·
-     * @after os ‚Í {@link java.io.OutputStream#flush() flush} ‚³‚ê‚Ü‚·
-     * @throws IllegalStateException ƒV[ƒPƒ“ƒX‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡ƒXƒ[‚³‚ê‚Ü‚·
-     * @throws InvalidMfiDataException Å’áŒÀ‚Ì {@link SubMessage}
+     * ã‚¹ãƒˆãƒªãƒ¼ãƒ ã«æ›¸ãè¾¼ã¿ã¾ã™ã€‚äº‹å‰ã«ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã‚’è¨­å®šã—ã¦ãŠãã“ã¨ã€‚
+     * @after {@link #byteLength} ãŒè¨­å®šã•ã‚Œã¾ã™
+     * @after os ã¯ {@link java.io.OutputStream#flush() flush} ã•ã‚Œã¾ã™
+     * @throws IllegalStateException ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆã‚¹ãƒ­ãƒ¼ã•ã‚Œã¾ã™
+     * @throws InvalidMfiDataException æœ€ä½é™ã® {@link SubMessage}
      *         { {@link #setSorc(int) "sorc"},
      *         {@link #setTitle(String) "titl"},
      *         {@link #setVersion(String) "vers"} }
-     *         ‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡ƒXƒ[‚³‚ê‚Ü‚·
+     *         ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆã‚¹ãƒ­ãƒ¼ã•ã‚Œã¾ã™
      */
     public void writeTo(OutputStream os)
         throws InvalidMfiDataException,
@@ -208,15 +235,15 @@ Debug.println("audioDataLength: " + audioDataLength);
             track.writeTo(os);
         }
 
-        os.flush(); // TODO ‚¢‚éH
+        os.flush(); // TODO ã„ã‚‹ï¼Ÿ
     }
 
     /**
-     * ƒXƒgƒŠ[ƒ€‚©‚ç {@link MfiFileFormat} ƒIƒuƒWƒFƒNƒg‚ğæ“¾‚µ‚Ü‚·B
-     * {@link Sequence} ‚ªì¬‚³‚ê‚é‚Ì‚Å {@link #getSequence()} ‚Åæ‚èo‚µ‚Äg—p‚µ‚Ü‚·B
+     * ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‹ã‚‰ {@link MfiFileFormat} ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—ã—ã¾ã™ã€‚
+     * {@link Sequence} ãŒä½œæˆã•ã‚Œã‚‹ã®ã§ {@link #getSequence()} ã§å–ã‚Šå‡ºã—ã¦ä½¿ç”¨ã—ã¾ã™ã€‚
      * @param is
-     * @return {@link VaviMfiFileFormat} ƒIƒuƒWƒFƒNƒg
-     * @throws InvalidMfiDataException Å‰‚Ì 4 bytes ‚ª {@link HeaderChunk#TYPE} ‚Å–³‚¢ê‡ 
+     * @return {@link VaviMfiFileFormat} ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+     * @throws InvalidMfiDataException æœ€åˆã® 4 bytes ãŒ {@link HeaderChunk#TYPE} ã§ç„¡ã„å ´åˆ 
      */
     public static VaviMfiFileFormat readFrom(InputStream is)
         throws InvalidMfiDataException,
@@ -226,7 +253,7 @@ Debug.println("audioDataLength: " + audioDataLength);
 
         // 1. header
         mff.headerChunk = HeaderChunk.readFrom(is);
-        mff.byteLength = 4 + 4 + mff.headerChunk.getMfiDataLength(); // type + length + // TODO use accessor
+        mff.byteLength = 4 + 4 + mff.headerChunk.getMfiDataLength(); // type + length + // TODO use accessory
         int noteLength = mff.getNoteLength();
         int exst = mff.getExst();
         int tracksCount = mff.headerChunk.getTracksCount();
@@ -260,7 +287,7 @@ Debug.println("track number: " + trackNumber);
                 doSpecial(headerSubChunks, audioDataChunks, track);
             }
 
-            // ’Êíˆ—
+            // é€šå¸¸å‡¦ç†
             TrackMessage trackChunk = new TrackMessage(trackNumber, track);
             trackChunk.setNoteLength(noteLength);
             trackChunk.setExst(exst);
@@ -275,8 +302,8 @@ Debug.println("is rest: " + is.available());
     }
 
     /**
-     * {@link Track} 0 ‚É‘Î‚·‚é“Á•Ê‚Èˆ—B
-     * TODO ‚±‚¤‚¢‚¤•ª—£‚ ‚Ü‚èD‚«‚­‚È‚¢...
+     * {@link Track} 0 ã«å¯¾ã™ã‚‹ç‰¹åˆ¥ãªå‡¦ç†ã€‚
+     * TODO ã“ã†ã„ã†åˆ†é›¢ã‚ã¾ã‚Šå¥½ãããªã„...
      * @param headerSubChunks source 1
      * @param audioDataChunks source 2
      * @param track dest, must be track 0 and empty
@@ -284,15 +311,15 @@ Debug.println("is rest: " + is.available());
     private static void doSpecial(Map<String, SubMessage> headerSubChunks,
                                   List<AudioDataMessage> audioDataChunks,
                                   Track track) {
-        // Track 0 ‚Ìæ“ª‚É SubMessage ‚ğ‰Ÿ‚µ‚Ş
-        // TODO HeaderChunk ‚Å‚·‚×‚«—\Š´HHH
+        // Track 0 ã®å…ˆé ­ã« SubMessage ã‚’æŠ¼ã—è¾¼ã‚€
+        // TODO HeaderChunk ã§ã™ã¹ãäºˆæ„Ÿï¼Ÿï¼Ÿï¼Ÿ
         for (SubMessage headerSubChunk : headerSubChunks.values()) {
             track.add(new MfiEvent(headerSubChunk, 0l));
         }
 
-        // Track 0 ‚Ì header sub chunks ‚ÌŸ‚É AudioDataMessage ‚ğ‰Ÿ‚µ‚Ş
+        // Track 0 ã® header sub chunks ã®æ¬¡ã« AudioDataMessage ã‚’æŠ¼ã—è¾¼ã‚€
         for (AudioDataMessage audioDataChunk : audioDataChunks) {
-            // TODO {@link MetaMessage} ‚É•ÏŠ·HHH
+            // TODO {@link MetaMessage} ã«å¤‰æ›ï¼Ÿï¼Ÿï¼Ÿ
             track.add(new MfiEvent(audioDataChunk, 0l));
         }
     }
@@ -467,7 +494,7 @@ Debug.println("no note info, use 0");
     }
 
     /**
-     * Šg’£ƒXƒe[ƒ^ƒX A ‚Ì’·‚³‚ğæ“¾‚µ‚Ü‚·B
+     * æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ A ã®é•·ã•ã‚’å–å¾—ã—ã¾ã™ã€‚
      * @see ExstMessage
      */
     public int getExst() {
@@ -480,7 +507,7 @@ Debug.println("no note info, use 0");
     }
 
     /**
-     * Šg’£ƒXƒe[ƒ^ƒX A ‚Ì’·‚³‚ğİ’è‚µ‚Ü‚·B
+     * æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ A ã®é•·ã•ã‚’è¨­å®šã—ã¾ã™ã€‚
      * @see ExstMessage
      */
     public void setExst(int exst)
@@ -495,7 +522,7 @@ Debug.println("no note info, use 0");
     }
 
     /**
-     * AudioDataChunk ‚Ì”‚ğæ“¾‚µ‚Ü‚·B
+     * AudioDataChunk ã®æ•°ã‚’å–å¾—ã—ã¾ã™ã€‚
      * @see AinfMessage
      * @since MFi 4.0
      */
@@ -509,7 +536,7 @@ Debug.println("no note info, use 0");
     }
 
     /**
-     * AudioDataChunk ‚Ì‚İ‚Å\¬‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©B
+     * AudioDataChunk ã®ã¿ã§æ§‹æˆã•ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹ã€‚
      * @see AinfMessage
      * @since MFi 4.0
      */

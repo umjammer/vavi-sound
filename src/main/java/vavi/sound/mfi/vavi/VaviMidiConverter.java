@@ -6,17 +6,16 @@
 
 package vavi.sound.mfi.vavi;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
-import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 
@@ -24,7 +23,6 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiDevice;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
-import vavi.sound.mfi.MfiSystem;
 import vavi.sound.mfi.MidiConverter;
 import vavi.sound.mfi.Track;
 import vavi.sound.mfi.vavi.track.EndOfTrackMessage;
@@ -32,7 +30,6 @@ import vavi.sound.mfi.vavi.track.NopMessage;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.mfi.MfiVaviSequence;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -76,8 +73,8 @@ class VaviMidiConverter implements MidiConverter {
 
     /**
      * Converts midi sequence to mfi sequence.
-     * @deprecated
      */
+    @Deprecated
     public vavi.sound.mfi.Sequence toMfiSequence(Sequence midiSequence)
         throws InvalidMidiDataException {
 
@@ -98,6 +95,9 @@ Debug.printStackTrace(e);
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         }
     }
+
+/* debug */
+private static Set<String> uc = new HashSet<String>();
 
     /** Converts midi sequence to mfi sequence */
     protected vavi.sound.mfi.Sequence convert(Sequence midiSequence, int fileType)
@@ -201,8 +201,9 @@ Debug.println("create MFi track: 0");
 
 
             // convert
-            MfiConvertible converter = MfiConvertibleFactory.getConverter(key);
-            if (converter instanceof EndOfTrackMessage) { // TODO
+try {
+            MfiConvertible converter = MfiConvertible.factory.get(key);
+            if (converter instanceof EndOfTrackMessage) { // TODO ???
                 // converted
                 MfiEvent[] mfiEvents = converter.getMfiEvents(midiEvent, mfiContext);
                 for (int t = 0; t < mfiEvents.length && t < maxTracks; t++) {
@@ -225,7 +226,7 @@ Debug.println("create MFi track: 0");
 Debug.println("message is null[" +  mfiTracks[t].size() + "]: " + midiMessage);
                     }
                 }
-            } else if (converter != null) {
+            } else {
                 // interval
                 MfiEvent[] mfiEvents = mfiContext.getIntervalMfiEvents(mfiTrackNumber);
                 if (mfiEvents != null) {
@@ -233,7 +234,7 @@ Debug.println("message is null[" +  mfiTracks[t].size() + "]: " + midiMessage);
 if (mfiEvents[j] == null) {
  Debug.println(Level.WARNING, "NOP is null[" +  mfiTracks[mfiTrackNumber].size() + "]: " + MidiUtil.paramString(midiMessage));
 }
-                    addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvents[j]);
+                        addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvents[j]);
                     }
                 }
 
@@ -244,12 +245,18 @@ if (mfiEvents[j] == null) {
 if (mfiEvents[j] == null) {
  Debug.println(Level.WARNING, "event is null[" +  mfiTracks[mfiTrackNumber].size() + ", " + mfiEvents.length + "]: " + converter.getClass() + ", " + MidiUtil.paramString(midiMessage));
 }
-                addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvents[j]);
+                        addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvents[j]);
                     }
                 }
-            } else {
-//Debug.println("not convertible: " + key);
             }
+} catch (IllegalArgumentException e) {
+if (!uc.contains(key)) {
+ Debug.println(Level.WARNING, "no converter for: " + key);
+ uc.add(key);
+}
+//} else {
+//Debug.println("converter: " + StringUtil.getClassName(converter.getClass()));
+}
         }
 
         return mfiSequence;
@@ -326,76 +333,14 @@ Debug.println("resolution: " + resolution);
                         }
                     }
                 } else if (mfiMessage instanceof SubMessage) {
-Debug.println("ignore sequence: " + mfiMessage);
+Debug.println(Level.WARNING, "ignore sequence: " + mfiMessage);
                 } else {
-Debug.println("unknown sequence: " + mfiMessage);
+Debug.println(Level.WARNING, "unknown sequence: " + mfiMessage);
                 }
             }
         }
 
         return midiSequence;
-    }
-
-    //-------------------------------------------------------------------------
-
-    /**
-     * Tests this class.
-     * <pre>
-     * usage:
-     *  % java VaviMidiConverter -p in_mld_file
-     *  % java VaviMidiConverter -c in_mld_file out_mid_file
-     * </pre>
-     */
-    public static void main(String[] args) throws Exception {
-
-        boolean convert = false;
-        boolean play = false;
-        
-        if (args[0].equals("-c")) {
-            convert = true;
-        } else if (args[0].equals("-p")) {
-            play = true;
-        } else {
-            throw new IllegalArgumentException(args[0]);
-        }
-
-        File file = new File(args[1]);
-        vavi.sound.mfi.Sequence mfiSequence = MfiSystem.getSequence(file);
-        Sequence midiSequence = MfiSystem.toMidiSequence(mfiSequence);
-        
-        Sequencer midiSequencer = MidiSystem.getSequencer();
-Debug.println("midiSequencer: " + midiSequencer);
-Debug.println("midiSequencer:T: " + midiSequencer.getTransmitter());
-Debug.println("midiSequencer:R: " + midiSequencer.getReceiver());
-        midiSequencer.open();
-        midiSequencer.setSequence(midiSequence);
-
-        if (play) {
-            midiSequencer.start();
-            while (midiSequencer.isRunning()) {
-                try { Thread.sleep(100); } catch (Exception e) {}
-            }
-            midiSequencer.stop();
-        }
-        
-        midiSequencer.close();
-        
-        if (convert) {
-            int ts[] = MidiSystem.getMidiFileTypes(midiSequence);
-Debug.println("types: " + ts.length);
-            if (ts.length == 0) {
-                throw new IllegalArgumentException("no support type");
-            }
-            for (int i = 0; i < ts.length; i++) {
-Debug.println("type: 0x" + StringUtil.toHex2(ts[i]));
-            }
-
-            file = new File(args[2]);
-            int r = MidiSystem.write(midiSequence, 0, file);
-Debug.println("write: " + r);
-        }
-
-        System.exit(0);
     }
 }
 

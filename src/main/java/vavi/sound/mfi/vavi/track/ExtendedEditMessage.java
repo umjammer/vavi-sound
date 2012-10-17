@@ -34,7 +34,7 @@ public class ExtendedEditMessage extends SysexMessage {
 
     /**
      * for {@link vavi.sound.mfi.vavi.TrackMessage}
-     * @param is ÀÛ‚Ìƒf[ƒ^ (ƒwƒbƒ_–³‚µ)
+     * @param is å®Ÿéš›ã®ãƒ‡ãƒ¼ã‚¿ (ãƒ˜ãƒƒãƒ€ç„¡ã—)
      */
     public static ExtendedEditMessage readFrom(int delta, int status, int data1, InputStream is)
         throws InvalidMfiDataException,

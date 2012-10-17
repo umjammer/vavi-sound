@@ -20,6 +20,11 @@ import vavi.sound.mfi.Sequencer;
 * @version 0.00 090913 nsano initial version <br>
  */
 public class Test1 {
+    
+    /**
+     * 
+     * @param args
+     */
     public static void main(String[] args) throws Exception {
         final Sequencer sequencer = MfiSystem.getSequencer();
         sequencer.open();

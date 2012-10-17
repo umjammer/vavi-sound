@@ -8,11 +8,11 @@ package vavi.sound.mfi;
 
 
 /**
- * ƒ`ƒƒƒ“ƒlƒ‹ƒiƒ“ƒo‚ÉˆË‘¶‚·‚é {@link MfiMessage} ‚ğ•\‚·ƒNƒ‰ƒX‚Å‚·B
+ * ãƒãƒ£ãƒ³ãƒãƒ«ãƒŠãƒ³ãƒã«ä¾å­˜ã™ã‚‹ {@link MfiMessage} ã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
  * <p>
- * MIDI ‚É‚ ‚í‚¹‚é‚½‚ß‚É‚±‚Ì–¼‘O‚ğ Voice ... ‚Ì‘ã‚í‚è‚É—p‚¢‚Ä‚¢‚Ü‚·B
+ * MIDI ã«ã‚ã‚ã›ã‚‹ãŸã‚ã«ã“ã®åå‰ã‚’ Voice ... ã®ä»£ã‚ã‚Šã«ç”¨ã„ã¦ã„ã¾ã™ã€‚
  * </p>
- * <li>javax.sound.midi ƒpƒbƒP[ƒW‚É‚Í‚È‚¢... ‚¢‚é‚Ì‚©H
+ * <li>javax.sound.midi ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã«ã¯ãªã„... ã„ã‚‹ã®ã‹ï¼Ÿ
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 031203 nsano initial version <br>
  */

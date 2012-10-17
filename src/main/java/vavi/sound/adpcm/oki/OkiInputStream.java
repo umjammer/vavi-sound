@@ -28,11 +28,11 @@ public class OkiInputStream extends AdpcmInputStream {
     }
 
     /**
-     * {@link vavi.io.BitInputStream} ‚Í 4bit little endian ŒÅ’è
+     * {@link vavi.io.BitInputStream} ã¯ 4bit little endian å›ºå®š
      * TODO PCM encoding
      */
     public OkiInputStream(InputStream in, ByteOrder byteOrder) {
-        super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN); // oki adpcm ‚Í little endian ŒÅ’è
+        super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN); // oki adpcm ã¯ little endian å›ºå®š
         ((Oki) decoder).setEncoding(encoding);
 Debug.println(this.in);
     }

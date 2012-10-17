@@ -29,20 +29,20 @@ import vavi.util.StringUtil;
 public class NoteMessage extends SmafMessage
     implements MidiConvertible {
 
-    /** ‰¹ŠK */
+    /** éŸ³éš */
     private int note;
 
     /** smaf channel */
     private int channel;
 
-    /** ‰¹’· (!= 0) */
+    /** éŸ³é•· (!= 0) */
     private int gateTime;
     
     /** 0 ~ 127 */
     private int velocity;
 
     /**
-     * ƒIƒNƒ^[ƒu
+     * ã‚ªã‚¯ã‚¿ãƒ¼ãƒ–
      * <pre>
      * 01 Low
      * 00 Mid Low
@@ -72,7 +72,7 @@ public class NoteMessage extends SmafMessage
         this.note     =  status & 0x0f;
         this.gateTime =  gateTime;
 //if (gateTime == 0) {
-// Debug.println(Level.WARNING, "ššššš gateTime == 0: " + channel + "ch, note: " + note);
+// Debug.println(Level.WARNING, "â˜…â˜…â˜…â˜…â˜… gateTime == 0: " + channel + "ch, note: " + note);
 //}
         this.velocity = -1;
     }
@@ -102,8 +102,8 @@ public class NoteMessage extends SmafMessage
     }
 
     /**
-     * ‰¹ŠK‚ğæ“¾‚µ‚Ü‚·D
-     * @return ‰¹ŠK
+     * éŸ³éšã‚’å–å¾—ã—ã¾ã™ï¼
+     * @return éŸ³éš
      */
     public int getNote() {
         switch (octave) {
@@ -121,8 +121,8 @@ public class NoteMessage extends SmafMessage
     }
 
     /**
-     * ‰¹ŠK‚ğİ’è‚µ‚Ü‚·D
-     * @param note SMAF ‚Ì‰¹ŠK
+     * éŸ³éšã‚’è¨­å®šã—ã¾ã™ï¼
+     * @param note SMAF ã®éŸ³éš
      */
     public void setNote(int note) {
         if (octave != -1) {
@@ -145,32 +145,32 @@ public class NoteMessage extends SmafMessage
     }
 
     /**
-     * ƒ{ƒCƒXƒiƒ“ƒo‚ğæ“¾‚µ‚Ü‚·D
-     * @return ƒ{ƒCƒXƒiƒ“ƒo
+     * ãƒœã‚¤ã‚¹ãƒŠãƒ³ãƒã‚’å–å¾—ã—ã¾ã™ï¼
+     * @return ãƒœã‚¤ã‚¹ãƒŠãƒ³ãƒ
      */
     public int getChannel() {
         return channel;
     }
 
     /**
-     * ƒ{ƒCƒXƒiƒ“ƒo‚ğİ’è‚µ‚Ü‚·D
-     * @param channel ƒ{ƒCƒXƒiƒ“ƒo
+     * ãƒœã‚¤ã‚¹ãƒŠãƒ³ãƒã‚’è¨­å®šã—ã¾ã™ï¼
+     * @param channel ãƒœã‚¤ã‚¹ãƒŠãƒ³ãƒ
      */
     public void setChannel(int channel) {
         this.channel = channel & 0x03;
     }
 
     /**
-     * ‰¹’·‚ğæ“¾‚µ‚Ü‚·D
-     * @return ‰¹’·
+     * éŸ³é•·ã‚’å–å¾—ã—ã¾ã™ï¼
+     * @return éŸ³é•·
      */
     public int getGateTime() {
         return gateTime;
     }
 
     /**
-     * ‰¹’·‚ğİ’è‚µ‚Ü‚·D
-     * @param gateTime ‰¹’·
+     * éŸ³é•·ã‚’è¨­å®šã—ã¾ã™ï¼
+     * @param gateTime éŸ³é•·
      */
     public void setGateTime(int gateTime) {
         this.gateTime = gateTime;
@@ -211,12 +211,17 @@ public class NoteMessage extends SmafMessage
         return 0;   // TODO
     }
 
+private static int uc = 0;
+
     /** */
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
 if (gateTime == 0) {
- Debug.println(Level.WARNING, "ššššš gateTime == 0 ignored: " + this);
+ if (uc < 10) {
+  Debug.println(Level.WARNING, "â˜…â˜…â˜…â˜…â˜… gateTime == 0 ignored: " + this);
+ }
+ uc++;
  return null;
 }
         int length = (int) context.getTicksOf(this.gateTime);
@@ -244,8 +249,8 @@ if (gateTime == 0) {
     }
 
     /**
-     * TODO ƒ¢ƒ^ƒCƒ€‚ªA’¼‘O‚Ì“¯ƒ{ƒCƒXA“¯ƒL[‚Ì NoteMessage ‚ÌƒQ[ƒgƒ^ƒCƒ€‚æ‚è¬‚³‚¢ê‡‚Í’¼‘O‚Ì NoteMessage ‚©‚ç‚ÌŒp‘±‰¹‚Æ‚·‚é
-     * TODO Ÿ‚Ì‰¹‚Ü‚Å—]—T‚ª‚ ‚Á‚½‚çL‚Î‚µ‚ÄA–³‚©‚Á‚½‚çØ‚éH(–¢À‘•)
+     * TODO Î”ã‚¿ã‚¤ãƒ ãŒã€ç›´å‰ã®åŒãƒœã‚¤ã‚¹ã€åŒã‚­ãƒ¼ã® NoteMessage ã®ã‚²ãƒ¼ãƒˆã‚¿ã‚¤ãƒ ã‚ˆã‚Šå°ã•ã„å ´åˆã¯ç›´å‰ã® NoteMessage ã‹ã‚‰ã®ç¶™ç¶šéŸ³ã¨ã™ã‚‹
+     * TODO æ¬¡ã®éŸ³ã¾ã§ä½™è£•ãŒã‚ã£ãŸã‚‰ä¼¸ã°ã—ã¦ã€ç„¡ã‹ã£ãŸã‚‰åˆ‡ã‚‹ï¼Ÿ(æœªå®Ÿè£…)
      */
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
@@ -258,7 +263,7 @@ if (gateTime == 0) {
 //Debug.println(midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
 
         if (command == ShortMessage.NOTE_OFF ||
-            // note on ‚Å velocity 0 ‚Ìê‡
+            // note on ã§ velocity 0 ã®å ´åˆ
             (command == ShortMessage.NOTE_ON && data2 == 0)) {
 
             if (!context.isNoteOffEventUsed()) {

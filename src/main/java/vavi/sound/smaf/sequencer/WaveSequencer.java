@@ -6,16 +6,9 @@
 
 package vavi.sound.smaf.sequencer;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Level;
-
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.Debug;
-import vavi.util.StringUtil;
+import vavi.util.properties.PrefixedPropertiesFactory;
 
 
 /**
@@ -33,7 +26,7 @@ public interface WaveSequencer {
     void sequence() throws InvalidSmafDataException;
 
     /** */
-    class Factory {
+    class Factory extends PrefixedPropertiesFactory<Integer, AudioEngine> {
 
         /** */
         private static ThreadLocal<AudioEngine> audioEngineStore = new ThreadLocal<AudioEngine>();
@@ -48,53 +41,20 @@ public interface WaveSequencer {
         /**
          * First time.
          * @return same instance for each format
-         * @throws IllegalStateException when audio engine not found
+         * @throws IllegalArgumentException when audio engine not found
          */
         public static AudioEngine getAudioEngine(int format) {
-//Debug.println("format: " + format);
-            String key = "audioEngine.format." + format;
-            if (engines.containsKey(key)) {
-                AudioEngine engine = engines.get(key);
-                audioEngineStore.set(engine);
-                return engine;
-            } else {
-Debug.println(Level.SEVERE, "error format: " + format);
-                throw new IllegalStateException("error format: " + StringUtil.toHex2(format));
-            }
+            AudioEngine engine = instance.get(format);
+            audioEngineStore.set(engine);
+            return engine;
         }
 
-        //---------------------------------------------------------------------
+        /** */
+        private static Factory instance = new Factory();
 
-        /**
-         * {@link AudioEngine} オブジェクトのインスタンス集。
-         * インスタンスを使いまわすのでステートレスでなければならない。
-         */
-        private static Map<String, AudioEngine> engines = new HashMap<String, AudioEngine>();
-    
-        static {
-            try {
-                // props
-                Properties props = new Properties();
-                props.load(Factory.class.getResourceAsStream("/vavi/sound/smaf/smaf.properties"));
-                
-                // 
-                Iterator<?> i = props.keySet().iterator();
-                while (i.hasNext()) {
-                    String key = (String) i.next();
-                    if (key.startsWith("audioEngine.format.")) {
-//Debug.println("audioEngine key: " + key);
-                        @SuppressWarnings("unchecked")
-                        Class<AudioEngine> clazz = (Class<AudioEngine>) Class.forName(props.getProperty(key));
-Debug.println("audioEngine class: " + StringUtil.getClassName(clazz));
-                        AudioEngine engine = clazz.newInstance();
-    
-                        engines.put(key, engine);
-                    }
-                }
-            } catch (Exception e) {
-Debug.printStackTrace(e);
-                System.exit(1);
-            }
+        /** */
+        private Factory() {
+            super("/vavi/sound/smaf/smaf.properties", "audioEngine.format.");
         }
     }
 }

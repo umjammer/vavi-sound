@@ -12,7 +12,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * サポート情報 MFi Header Sub Chunk.
+ * 繧ｵ繝昴�ｼ繝域ュ蝣ｱ MFi Header Sub Chunk.
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>

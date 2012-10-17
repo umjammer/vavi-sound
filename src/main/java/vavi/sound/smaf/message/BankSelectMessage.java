@@ -143,14 +143,14 @@ Debug.println("BankSelect: [" + duration + "] " + channel + "ch, 0x" + StringUti
                 ShortMessage shortMessage = new ShortMessage();
                 shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                         midiChannel,
-                                        0x00,       // ƒoƒ“ƒNƒZƒŒƒNƒg MSB
+                                        0x00,       // ãƒãƒ³ã‚¯ã‚»ãƒ¬ã‚¯ãƒˆ MSB
                                         data2);
                 events[0] = new MidiEvent(shortMessage, context.getCurrentTick());
     
                 shortMessage = new ShortMessage();
                 shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                         midiChannel,
-                                        0x20,       // ƒoƒ“ƒNƒZƒŒƒNƒg LSB
+                                        0x20,       // ãƒãƒ³ã‚¯ã‚»ãƒ¬ã‚¯ãƒˆ LSB
                                         bank & 0x7f);
                 events[1] = new MidiEvent(shortMessage, context.getCurrentTick());
     
@@ -163,7 +163,7 @@ Debug.println("BankSelect(" + significant + "): [" + duration + "] " + midiChann
             ShortMessage shortMessage = new ShortMessage();
             shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                     midiChannel,
-                                    significant.data1,  // ƒoƒ“ƒNƒZƒŒƒNƒg MSB or LSB
+                                    significant.data1,  // ãƒãƒ³ã‚¯ã‚»ãƒ¬ã‚¯ãƒˆ MSB or LSB
                                     bank);
             return new MidiEvent[] {
                 new MidiEvent(shortMessage, context.getCurrentTick())

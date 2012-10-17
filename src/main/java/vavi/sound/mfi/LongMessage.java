@@ -10,9 +10,9 @@ package vavi.sound.mfi;
 /**
  * LongMessage.
  * <p>
- * MFi d—l‚Ì"Šg’£ƒXƒe[ƒ^ƒX A"‚ğ•\‚µ‚Ü‚·B
+ * MFi ä»•æ§˜ã®"æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ A"ã‚’è¡¨ã—ã¾ã™ã€‚
  * </p> 
- * <li>javax.sound.midi ƒpƒbƒP[ƒW‚É‚Í‚È‚¢B(MFi ƒIƒŠƒWƒiƒ‹)
+ * <li>javax.sound.midi ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã«ã¯ãªã„ã€‚(MFi ã‚ªãƒªã‚¸ãƒŠãƒ«)
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 070116 nsano initial version <br>
  */
@@ -22,8 +22,8 @@ public abstract class LongMessage extends MfiMessage {
      * 
      * @param delta
      * @param status
-     * @param data1 Šg’£ƒXƒe[ƒ^ƒX”Ô†
-     * @param data2 ‹@”\‚Ì’l
+     * @param data1 æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ç•ªå·
+     * @param data2 æ©Ÿèƒ½ã®å€¤
      */
     public LongMessage(int delta, int status, int data1, byte[] data2) {
         super(new byte[3 + data2.length]);
@@ -40,8 +40,8 @@ public abstract class LongMessage extends MfiMessage {
     }
 
     /**
-     * data (0 ~ 2 ƒwƒbƒ_–³‚µ)
-     * @return ƒRƒs[
+     * data (0 ~ 2 ãƒ˜ãƒƒãƒ€ç„¡ã—)
+     * @return ã‚³ãƒ”ãƒ¼
      */
     public byte[] getData() {
         byte[] tmp = new byte[this.length - 3];

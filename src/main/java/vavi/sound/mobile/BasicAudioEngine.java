@@ -6,11 +6,8 @@
 
 package vavi.sound.mobile;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -64,19 +61,7 @@ public abstract class BasicAudioEngine implements AudioEngine {
         }
         datum.continued = continued;
         this.data[streamNumber] = datum;
-
-try {
- OutputStream os = null;
- if (fileName != null) {
-Debug.println("šššššššš adpcm out to file: " + fileName);
-  os = new BufferedOutputStream(new FileOutputStream(fileName, true));
-  os.write(adpcm, 0, adpcm.length);
-  os.flush();
-  os.close();
- }
-} catch (IOException e) {
-Debug.printStackTrace(e);
-}
+// debug1();
     }
 
     /** */
@@ -114,11 +99,7 @@ Debug.println(audioFormat);
             InputStream[] iss = getInputStreams(streamNumber, channels);
 
 //Debug.println("is: " + is.available());
-OutputStream os = null;
-if (pcmFileName != null) {
-Debug.println("šššššššš output PCM to file: " + pcmFileName);
- os = new BufferedOutputStream(new FileOutputStream(pcmFileName));
-}
+// OutputStream os = debug2();
 
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
             SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
@@ -134,9 +115,7 @@ gainControl.setValue(dB);
                     int l = iss[0].read(buf, 0, 1024);
 //Debug.dump(buf, 64);
                     line.write(buf, 0, l);
-if (os != null) {
- os.write(buf, 0, l);
-}
+// debug3(os);
                 } else {
                     int lL = iss[0].read(buf, 0, 512);
                     /*int lR = */iss[1].read(buf, 512, 512);
@@ -154,10 +133,7 @@ if (os != null) {
             line.drain();
             line.stop();
             line.close();
-if (os != null) {
- os.flush();
- os.close();
-}
+// debug4(os);
         } catch (IOException e) {
             throw (RuntimeException) new IllegalStateException().initCause(e);
         } catch (LineUnavailableException e) {
@@ -225,43 +201,6 @@ Debug.println("Illegal EOF R: " + is.available());
         } catch (IOException e) {
             throw (RuntimeException) new IllegalStateException().initCause(e);
         }
-    }
-
-    //-------------------------------------------------------------------------
-
-    /** */
-    private static String fileName;
-
-    /** */
-    private static String pcmFileName;
-
-    /**
-     * Tests this class.
-     *
-     * usage: java $0 mfi_file adpcm
-     */
-    public static void main(String[] args) throws Exception {
-
-        if (args.length >= 2) {
-            fileName = args[1];
-        }
-        if (args.length >= 3) {
-            pcmFileName = args[2];
-        }
-
-        vavi.sound.mfi.Sequencer sequencer = vavi.sound.mfi.MfiSystem.getSequencer();
-        sequencer.open();
-        vavi.sound.mfi.Sequence sequence = vavi.sound.mfi.MfiSystem.getSequence(new File(args[0]));
-        sequencer.setSequence(sequence);
-        sequencer.addMetaEventListener(new vavi.sound.mfi.MetaEventListener() {
-            public void meta(vavi.sound.mfi.MetaMessage meta) {
-Debug.println(meta.getType());
-                if (meta.getType() == 47) {
-                    System.exit(0);
-                }
-            }
-        });
-        sequencer.start();
     }
 }
 

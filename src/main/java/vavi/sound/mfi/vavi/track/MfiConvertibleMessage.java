@@ -65,10 +65,10 @@ public class MfiConvertibleMessage implements MfiConvertible {
 //      MfiMessage mfiMessage = null;
 
         switch (data1) {
-        case 0:         // ƒoƒ“ƒNƒZƒŒƒNƒg MSB
+        case 0:         // ãƒãƒ³ã‚¯ã‚»ãƒ¬ã‚¯ãƒˆ MSB
             bankMSB[channel] = data2;
             break;
-        case 32:        // ƒoƒ“ƒNƒZƒŒƒNƒg LSB
+        case 32:        // ãƒãƒ³ã‚¯ã‚»ãƒ¬ã‚¯ãƒˆ LSB
             bankLSB[channel] = data2;
             break;
         case 98:        // NRPN LSB
@@ -83,7 +83,7 @@ public class MfiConvertibleMessage implements MfiConvertible {
         case 101:       // RPN MSB
             rpnMSB[channel] = data2;
             break;
-//      case 6:         // ƒf[ƒ^ƒGƒ“ƒgƒŠ[ MSB
+//      case 6:         // ãƒ‡ãƒ¼ã‚¿ã‚¨ãƒ³ãƒˆãƒªãƒ¼ MSB
 //          int rpn = rpnLSB[channel] & | (rpnMSB[channel] << 8);
 //          switch (rpn) {
 //          case RPN_PITCH_BEND_SENSITIVITY:

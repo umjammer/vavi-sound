@@ -32,7 +32,7 @@ public class Decoder {
     }
 
     /**
-     * big-endian o—Í
+     * big-endian å‡ºåŠ›
      */
     static void b(String[] args) throws IOException {
 
@@ -56,7 +56,7 @@ public class Decoder {
     }
 
     /**
-     * little-endian o—Í
+     * little-endian å‡ºåŠ›
      */
     static void a(String[] args) throws IOException {
 

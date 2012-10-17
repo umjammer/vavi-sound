@@ -27,7 +27,7 @@ public class TemporaryFiledInputFilter implements InputFilter {
 
     /** */
     public AudioInputStream doFilter(AudioInputStream sourceAis) throws IOException, UnsupportedAudioFileException {
-        // ˆê‰ñ temp ƒtƒ@ƒCƒ‹‚É—‚Æ‚·
+        // ä¸€å› temp ãƒ•ã‚¡ã‚¤ãƒ«ã«è½ã¨ã™
         File tmpFile = File.createTempFile("temp", ".wav");
         int r = AudioSystem.write(sourceAis, AudioFileFormat.Type.WAVE, tmpFile);
 Debug.println("RESULT: " + r);

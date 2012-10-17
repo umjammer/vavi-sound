@@ -22,7 +22,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * PitchBendMessage.
  * <pre>
- *  0xff, 0xe# ‰¹Œ¹§Œäî•ñ
+ *  0xff, 0xe# éŸ³æºåˆ¶å¾¡æƒ…å ±
  *  channel true
  *  delta   true
  * </pre>
@@ -95,7 +95,7 @@ public class PitchBendMessage extends vavi.sound.mfi.ShortMessage
     // ----
 
     /**
-     * PsmPlayer ‚ª‚±‚¤•ÏŠ·‚µ‚Ä‚¢‚½‚©‚ç‚µ‚å‚¤‚ª‚È‚¢B
+     * PsmPlayer ãŒã“ã†å¤‰æ›ã—ã¦ã„ãŸã‹ã‚‰ã—ã‚‡ã†ãŒãªã„ã€‚
      */
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {

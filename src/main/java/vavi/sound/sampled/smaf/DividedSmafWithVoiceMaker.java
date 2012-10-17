@@ -43,7 +43,7 @@ class DividedSmafWithVoiceMaker extends SmafWithVoiceMaker {
     /**
      * 
      * @param sourceAis source PCM
-     * @param directory output base directory
+     * @param directory output base directory, directory "mmf" will be added
      * @param base output file template
      * @param time dividing time in second
      * @param samplingRate ADPCM sampling rate [Hz]
@@ -57,7 +57,7 @@ class DividedSmafWithVoiceMaker extends SmafWithVoiceMaker {
 
         this.sourceAis = sourceAis;
 
-        this.directory = directory + File.separator + "mmf"; // TODO mmf �Ɉˑ��͗ǂ��Ȃ�
+        this.directory = directory + File.separator + "mmf"; // TODO mmf に依存は良くない
         this.base = base;
     }
 

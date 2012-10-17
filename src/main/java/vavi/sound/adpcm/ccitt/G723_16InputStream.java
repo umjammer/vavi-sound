@@ -28,8 +28,8 @@ public class G723_16InputStream extends AdpcmInputStream {
     }
 
     /**
-     * {@link vavi.io.BitInputStream} ‚Í 2bit little endian ŒÅ’è
-     * <li>TODO BitInputStream ‚Ì endian
+     * {@link vavi.io.BitInputStream} ã¯ 2bit little endian å›ºå®š
+     * <li>TODO BitInputStream ã® endian
      * <li>TODO PCM encoding
      */
     public G723_16InputStream(InputStream in, ByteOrder byteOrder) {
@@ -38,7 +38,7 @@ public class G723_16InputStream extends AdpcmInputStream {
 //Debug.println(this.in);
     }
 
-    /** ADPCM (4bit) Š·Z‚Ì’·‚³ */
+    /** ADPCM (4bit) æ›ç®—æ™‚ã®é•·ã• */
     public int available() throws IOException {
 //Debug.println("0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
         return (in.available() * 4) + (rest ? 1 : 0); // TODO chack * 4 ???

@@ -42,10 +42,10 @@ public interface Sequencer extends SmafDevice {
     /** */
     boolean isRunning();
 
-    /** {@link MetaEventListener Listener} ‚ğ“o˜^‚µ‚Ü‚·B */
+    /** {@link MetaEventListener Listener} ã‚’ç™»éŒ²ã—ã¾ã™ã€‚ */
     void addMetaEventListener(MetaEventListener l);
 
-    /** {@link MetaEventListener Listener} ‚ğíœ‚µ‚Ü‚·B */
+    /** {@link MetaEventListener Listener} ã‚’å‰Šé™¤ã—ã¾ã™ã€‚ */
     void removeMetaEventListener(MetaEventListener l);
 }
 

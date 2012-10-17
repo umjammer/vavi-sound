@@ -12,7 +12,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * “ú•tî•ñ MFi Header Sub Chunk.
+ * æ—¥ä»˜æƒ…å ± MFi Header Sub Chunk.
  * 
  * <pre>
  *  &quot;date&quot; 8 bytes: date created

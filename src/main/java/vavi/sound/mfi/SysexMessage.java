@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * System exclusive message.
  * <p>
- * MFi Žd—l‚Ì"Šg’£î•ñ"‚ð•\‚µ‚Ü‚·B
+ * MFi ä»•æ§˜ã®"æ‹¡å¼µæƒ…å ±"ã‚’è¡¨ã—ã¾ã™ã€‚
  * </p> 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 020703 nsano initial version <br>

@@ -10,7 +10,7 @@ import vavi.util.StringUtil;
 
 
 /**
- * ‰¹•„‚ğ•\‚·ƒƒbƒZ[ƒW‚Å‚·D
+ * éŸ³ç¬¦ã‚’è¡¨ã™ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã§ã™ï¼
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano MFi2 compliant <br>
@@ -21,16 +21,16 @@ import vavi.util.StringUtil;
  */
 public class NoteMessage extends MfiMessage implements ChannelMessage {
 
-    /** ‰¹ŠK 0 ~ 0x3e */
+    /** éŸ³éš 0 ~ 0x3e */
     private int note;
     /** voice No. 0 ~ 3 */
     private int voice;
-    /** ‰¹’· (delta) */
+    /** éŸ³é•· (delta) */
     private int gateTime;
-    /** ‰¹‹­ 0 ~ 63 */
+    /** éŸ³å¼· 0 ~ 63 */
     private int velocity;
     /**
-     * ƒIƒNƒ^[ƒuƒVƒtƒg
+     * ã‚ªã‚¯ã‚¿ãƒ¼ãƒ–ã‚·ãƒ•ãƒˆ
      * <pre>
      * 01 up 1 octave
      * 00 no shift
@@ -67,7 +67,7 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
 
     /**
      * Creates a note message for MFi2.
-     * note = 1 ‚Ìê‡
+     * note = 1 ã®å ´åˆ
      *
      * @param delta delta time
      * @param status see below
@@ -106,18 +106,18 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     }
 
     /**
-     * ‰¹ŠK‚ğæ“¾‚µ‚Ü‚·D
-     * @return ‰¹ŠK
+     * éŸ³éšã‚’å–å¾—ã—ã¾ã™ï¼
+     * @return éŸ³éš
      */
     public int getNote() {
         switch (shift) {
-        case 1:            // 01
+        case 1: // 01
             return note + 12;
-        case 0:            // 00
+        case 0: // 00
             return note;
-        case 3:            // 11
+        case 3: // 11
             return note - 12;
-        case 2:            // 10
+        case 2: // 10
             return note - 24;
         default:
             throw new IllegalArgumentException("shift: " + shift);
@@ -125,8 +125,8 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     }
 
     /**
-     * ‰¹ŠK‚ğİ’è‚µ‚Ü‚·D
-     * @param note MFi ‚Ì‰¹ŠK
+     * éŸ³éšã‚’è¨­å®šã—ã¾ã™ï¼
+     * @param note MFi ã®éŸ³éš
      */
     public void setNote(int note) {
         if (note >= 0x3f) {
@@ -149,16 +149,16 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     }
 
     /**
-     * ƒ{ƒCƒXƒiƒ“ƒo‚ğæ“¾‚µ‚Ü‚·D
-     * @return ƒ{ƒCƒXƒiƒ“ƒo
+     * ãƒœã‚¤ã‚¹ãƒŠãƒ³ãƒã‚’å–å¾—ã—ã¾ã™ï¼
+     * @return ãƒœã‚¤ã‚¹ãƒŠãƒ³ãƒ
      */
     public int getVoice() {
         return voice;
     }
 
     /**
-     * ƒ{ƒCƒXƒiƒ“ƒo‚ğİ’è‚µ‚Ü‚·D
-     * @param voice ƒ{ƒCƒXƒiƒ“ƒo
+     * ãƒœã‚¤ã‚¹ãƒŠãƒ³ãƒã‚’è¨­å®šã—ã¾ã™ï¼
+     * @param voice ãƒœã‚¤ã‚¹ãƒŠãƒ³ãƒ
      */
     public void setVoice(int voice) {
         this.voice = voice & 0x03;
@@ -166,16 +166,16 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     }
 
     /**
-     * ‰¹’·‚ğæ“¾‚µ‚Ü‚·D
-     * @return ‰¹’·
+     * éŸ³é•·ã‚’å–å¾—ã—ã¾ã™ï¼
+     * @return éŸ³é•·
      */
     public int getGateTime() {
         return gateTime;
     }
 
     /**
-     * ‰¹’·‚ğİ’è‚µ‚Ü‚·D
-     * @param gateTime ‰¹’·
+     * éŸ³é•·ã‚’è¨­å®šã—ã¾ã™ï¼
+     * @param gateTime éŸ³é•·
      */
     public void setGateTime(int gateTime) {
         this.gateTime = gateTime;
@@ -183,16 +183,16 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     }
 
     /**
-     * ‰¹‹­‚ğæ“¾‚µ‚Ü‚·D
-     * @return ‰¹‹­
+     * éŸ³å¼·ã‚’å–å¾—ã—ã¾ã™ï¼
+     * @return éŸ³å¼·
      */
     public int getVelocity() {
         return velocity;
     }
 
     /**
-     * ‰¹‹­‚ğİ’è‚µ‚Ü‚·D
-     * @param velocity ‰¹‹­
+     * éŸ³å¼·ã‚’è¨­å®šã—ã¾ã™ï¼
+     * @param velocity éŸ³å¼·
      */
     public void setVelocity(int velocity) {
         this.velocity = velocity & 0x3f;

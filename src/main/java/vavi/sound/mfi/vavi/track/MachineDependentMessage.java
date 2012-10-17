@@ -53,7 +53,7 @@ public class MachineDependentMessage extends SysexMessage
     }
 
     /**
-     * ƒƒbƒZ[ƒW‚ğİ’è‚µ‚Ü‚·Bƒf[ƒ^‚Í6ƒoƒCƒg–Ú‚©‚ç‚Ì‚à‚Ì(ÀÛ‚Ìƒf[ƒ^)‚ğw’è‚µ‚Ü‚·B
+     * ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¨­å®šã—ã¾ã™ã€‚ãƒ‡ãƒ¼ã‚¿ã¯6ãƒã‚¤ãƒˆç›®ã‹ã‚‰ã®ã‚‚ã®(å®Ÿéš›ã®ãƒ‡ãƒ¼ã‚¿)ã‚’æŒ‡å®šã—ã¾ã™ã€‚
      * @param delta delta time
      * @param message data from 6th byte
      */
@@ -77,7 +77,7 @@ public class MachineDependentMessage extends SysexMessage
 
     /**
      * for {@link vavi.sound.mfi.vavi.TrackMessage}
-     * @param is ÀÛ‚Ìƒf[ƒ^ (ƒwƒbƒ_–³‚µ, data2 ~)
+     * @param is å®Ÿéš›ã®ãƒ‡ãƒ¼ã‚¿ (ãƒ˜ãƒƒãƒ€ç„¡ã—, data2 ~)
      */
     public static MachineDependentMessage readFrom(int delta, int status, int data1, InputStream is)
         throws InvalidMfiDataException,
@@ -128,39 +128,43 @@ Debug.println("MachineDepend: " + StringUtil.toHex2(data[0]) + ", " + StringUtil
 
     /**
      * <p>
-     * ‚±‚Ì {@link MachineDependentMessage} ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚É‘Î‰‚·‚é
-     * MIDI ƒƒbƒZ[ƒW‚Æ‚µ‚Ä Meta type 0x7f ‚Ì {@link MetaMessage} ‚ğì¬‚·‚éB
-     * {@link MetaMessage} ‚ÌÀƒf[ƒ^‚Æ‚µ‚Ä {@link MfiMessageStore}
-     * ‚É‚±‚Ì {@link MachineDependentMessage} ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğƒXƒgƒA‚µ‚ÄÌ”Ô‚³‚ê‚½ id ‚ğ
-     * 2 bytes big endian ‚ÅŠi”[‚·‚éB
+     * ã“ã® {@link MachineDependentMessage} ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«å¯¾å¿œã™ã‚‹
+     * MIDI ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã¨ã—ã¦ Meta type 0x7f ã® {@link MetaMessage} ã‚’ä½œæˆã™ã‚‹ã€‚
+     * {@link MetaMessage} ã®å®Ÿãƒ‡ãƒ¼ã‚¿ã¨ã—ã¦ {@link MfiMessageStore}
+     * ã«ã“ã® {@link MachineDependentMessage} ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ã‚¹ãƒˆã‚¢ã—ã¦æ¡ç•ªã•ã‚ŒãŸ id ã‚’
+     * 2 bytes big endian ã§æ ¼ç´ã™ã‚‹ã€‚
      * </p>
      * <p>
-     * Ä¶‚Ìê‡‚Í {@link javax.sound.midi.MetaEventListener} ‚Å Meta type 0x7f ‚ğ
-     * ƒŠƒbƒXƒ“‚µ‚Ä‘Î‰‚·‚é id ‚ÌƒƒbƒZ[ƒW‚ğ {@link MfiMessageStore} ‚©‚çŒ©‚Â‚¯‚éB
-     * ‚»‚ê‚ğ {@link vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer} ‚É‚©‚¯‚ÄÄ¶ˆ—‚ğ
-     * s‚¤B
+     * å†ç”Ÿã®å ´åˆã¯ {@link javax.sound.midi.MetaEventListener} ã§ Meta type 0x7f ã‚’
+     * ãƒªãƒƒã‚¹ãƒ³ã—ã¦å¯¾å¿œã™ã‚‹ id ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ {@link MfiMessageStore} ã‹ã‚‰è¦‹ã¤ã‘ã‚‹ã€‚
+     * ãã‚Œã‚’ {@link vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer} ã«ã‹ã‘ã¦å†ç”Ÿå‡¦ç†ã‚’
+     * è¡Œã†ã€‚
      * </p>
      * <p>
-     * Ä¶‹@\‚Í vavi.sound.mfi.vavi.MetaEventAdapter ‚ğQÆB
+     * å†ç”Ÿæ©Ÿæ§‹ã¯ {@link vavi.sound.mfi.vavi.MetaEventAdapter} ã‚’å‚ç…§ã€‚
      * </p>
      * <pre>
      * MIDI Meta
      * +--+--+--+--+--+--+--+--+--+--+--+-
      * |ff|7f|LL|ID|DD DD ...
      * +--+--+--+--+--+--+--+--+--+--+--+-
-     *  0x7f ƒV[ƒPƒ“ƒT[ŒÅ—Lƒƒ^ƒCƒxƒ“ƒg
-     *  LL ƒzƒ“ƒ}‚É 1 byte H
-     *  ID ƒ[ƒJ[ID
+     *  0x7f ã‚·ãƒ¼ã‚±ãƒ³ã‚µãƒ¼å›ºæœ‰ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆ
+     *  LL ãƒ›ãƒ³ãƒã« 1 byte ï¼Ÿ
+     *  ID ãƒ¡ãƒ¼ã‚«ãƒ¼ID
      * </pre>
      * <pre>
-     * Œ»ó
+     * ç¾çŠ¶
      * +--+--+--+--+--+--+--+
      * |ff|7f|LL|5f|01|DH DL|
      * +--+--+--+--+--+--+--+
-     *  0x5f Ÿè‚É‚Â‚¯‚½ƒ[ƒJ ID
-     *  0x01 {@link MachineDependentMessage} ƒf[ƒ^‚Å‚ ‚é‚±‚Æ‚ğ•\‚·
-     *  DH DL Ì”Ô‚³‚ê‚½ id
+     *  0x5f å‹æ‰‹ã«ã¤ã‘ãŸãƒ¡ãƒ¼ã‚« ID
+     *  0x01 {@link MachineDependentMessage} ãƒ‡ãƒ¼ã‚¿ã§ã‚ã‚‹ã“ã¨ã‚’è¡¨ã™
+     *  DH DL æ¡ç•ªã•ã‚ŒãŸ id
      * </pre>
+     * <p>
+     * ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã® MIDI ã‚·ãƒ¼ã‚±ãƒ³ã‚µã‚’ä½¿ç”¨ã™ã‚‹ãŸã‚ã€ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆã—ã‹ãƒ•ãƒƒã‚¯ã§ããªã„ã®ã§
+     * ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆã«å¤‰æ›ã—ã¦ã„ã‚‹ã€‚
+     * </p>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
      * @see MachineDependentSequencer#META_FUNCTION_ID_MACHINE_DEPEND
      */
@@ -176,7 +180,7 @@ Debug.println("MachineDepend: " + StringUtil.toHex2(data[0]) + ", " + StringUtil
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // ƒV[ƒPƒ“ƒT[ŒÅ—Lƒƒ^ƒCƒxƒ“ƒg
+        metaMessage.setMessage(0x7f,    // ã‚·ãƒ¼ã‚±ãƒ³ã‚µãƒ¼å›ºæœ‰ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆ
                                data,
                                data.length);
 

@@ -24,7 +24,7 @@ import vavi.sound.midi.MidiUtil;
 
 
 /**
- * Copyright î•ñ MFi Header Sub Chunk.
+ * Copyright æƒ…å ± MFi Header Sub Chunk.
  * <pre>
  *  &quot;copy&quot; n bytes: copyright
  *  MIDI {@link MidiConstants#META_COPYRIGHT META_COPYRIGHT (0x02)}
@@ -75,7 +75,7 @@ public class CopyMessage extends SubMessage implements MidiConvertible, MfiConve
 
         MetaMessage metaMessage = new MetaMessage();
 
-        metaMessage.setMessage(MidiConstants.META_COPYRIGHT, // ’˜ìŒ •\¦
+        metaMessage.setMessage(MidiConstants.META_COPYRIGHT, // è‘—ä½œæ¨©è¡¨ç¤º
                                getData(), getDataLength());
 
         return new MidiEvent[] {

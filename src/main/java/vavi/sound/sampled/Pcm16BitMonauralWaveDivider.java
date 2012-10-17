@@ -38,8 +38,8 @@ class Pcm16BitMonauralWaveDivider implements WaveDivider {
     }
 
     /**
-     * WAVE ƒtƒ@ƒCƒ‹’†‚Ì PCM ƒf[ƒ^‚ğ•ªŠ„‚µ‚Ü‚·B
-     * PCM ‚Íƒ‚ƒmƒ‰ƒ‹ 16 bit ‚É‚µ‚©‘Î‰‚µ‚Ä‚¢‚Ü‚¹‚ñB
+     * WAVE ãƒ•ã‚¡ã‚¤ãƒ«ä¸­ã® PCM ãƒ‡ãƒ¼ã‚¿ã‚’åˆ†å‰²ã—ã¾ã™ã€‚
+     * PCM ã¯ãƒ¢ãƒãƒ©ãƒ« 16 bit ã«ã—ã‹å¯¾å¿œã—ã¦ã„ã¾ã›ã‚“ã€‚
      * @param seconds time for divide
      * @param event event for each chunks
      */

@@ -10,7 +10,7 @@ package vavi.sound.adpcm.oki;
 /**
  * A-law codec.
  * <p>
- * TODO ccitt G.711 ‚È‚Ì‚Å“‡‚·‚é
+ * TODO ccitt G.711 ãªã®ã§çµ±åˆã™ã‚‹
  * </p>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030817 nsano initial version <br>

@@ -14,7 +14,7 @@ import vavi.util.Debug;
 
 /**
  * NEC System exclusive message function 0x01, 0xf0, 0x07 processor.
- * (Šg’£ƒXƒgƒŠ[ƒ€”gŒ`§Œäî•ñ)
+ * (æ‹¡å¼µã‚¹ãƒˆãƒªãƒ¼ãƒ æ³¢å½¢åˆ¶å¾¡æƒ…å ±)
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030827 nsano initial version <br>
@@ -22,11 +22,11 @@ import vavi.util.Debug;
  */
 public class Function1_240_7 implements MachineDependentFunction {
 
-    /** ‚±‚Ìƒf[ƒ^‚Ìƒwƒbƒ_•ª’·‚³ */
+    /** ã“ã®ãƒ‡ãƒ¼ã‚¿ã®ãƒ˜ãƒƒãƒ€åˆ†é•·ã• */
     public static final int HEADER_LENGTH = 13;
 
     /**
-     * 0x01, 0xf0, 0x07 Šg’£ƒXƒgƒŠ[ƒ€”gŒ`§Œäî•ñ
+     * 0x01, 0xf0, 0x07 æ‹¡å¼µã‚¹ãƒˆãƒªãƒ¼ãƒ æ³¢å½¢åˆ¶å¾¡æƒ…å ±
      *
      * @param message see below
      * <pre>
@@ -57,8 +57,8 @@ public class Function1_240_7 implements MachineDependentFunction {
 
         this.streamNumber = data[ 9] & 0xff;            // stream number 0 ~ 31
         this.mono =        (data[10] & 0x80) == 0;      // 0: mono, 1: stereo
-        this.format =      (data[10] & 0x03) >> 1;      // 0: 4bit ADPCM (0db Center ŒÅ’è), 1: 4bit ADPCM
-        this.sampleRate =  (data[11] << 8) + data[12];  // 4000 ~ 16000 (stereo ‚Í”¼•ª)
+        this.format =      (data[10] & 0x03) >> 1;      // 0: 4bit ADPCM (0db Center å›ºå®š), 1: 4bit ADPCM
+        this.sampleRate =  (data[11] << 8) + data[12];  // 4000 ~ 16000 (stereo æ™‚ã¯åŠåˆ†)
 
         int adpcmLength = data.length - HEADER_LENGTH;
 Debug.println("ADPCM: No." + streamNumber + ", " + sampleRate + "Hz, " + adpcmLength + " bytes, " + (mono ? "mono" : "stereo") + ", " + format);
@@ -74,9 +74,9 @@ Debug.println("ADPCM: No." + streamNumber + ", " + sampleRate + "Hz, " + adpcmLe
     private int streamNumber;
     /** 0: mono, 1: stereo */
     private boolean mono;
-    /** 0: 4bit ADPCM (0db Center ŒÅ’è), 1: 4bit ADPCM */
+    /** 0: 4bit ADPCM (0db Center å›ºå®š), 1: 4bit ADPCM */
     private int format;
-    /** 4000 ~ 16000 (stereo ‚Í”¼•ª) */
+    /** 4000 ~ 16000 (stereo æ™‚ã¯åŠåˆ†) */
     private int sampleRate;
     /** little endian */
     private byte[] adpcm;
@@ -89,7 +89,7 @@ Debug.println("ADPCM: No." + streamNumber + ", " + sampleRate + "Hz, " + adpcmLe
     }
 
     /**
-     * @param format 0: 4bit ADPCM (0db Center ŒÅ’è), 1: 4bit ADPCM (wav2mld use 1)
+     * @param format 0: 4bit ADPCM (0db Center å›ºå®š), 1: 4bit ADPCM (wav2mld use 1)
      */
     public void setFormat(int format) {
         this.format = format & 0x03;
@@ -113,8 +113,8 @@ Debug.println("ADPCM: No." + streamNumber + ", " + sampleRate + "Hz, " + adpcmLe
     }
 
     /**
-     * –‘O‚É #setPcm(InputStream), #setSamplingRate(int)
-     * ‚ğ—p‚¢‚ÄƒtƒB[ƒ‹ƒh‚ğİ’è‚µ‚Ä‚¨‚¢‚Ä‰º‚³‚¢B
+     * äº‹å‰ã« #setPcm(InputStream), #setSamplingRate(int)
+     * ã‚’ç”¨ã„ã¦ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã‚’è¨­å®šã—ã¦ãŠã„ã¦ä¸‹ã•ã„ã€‚
      */
     public byte[] getMessage()
         throws InvalidMfiDataException {

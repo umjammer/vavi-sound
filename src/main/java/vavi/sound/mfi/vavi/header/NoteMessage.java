@@ -10,7 +10,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * ƒm[ƒgƒƒbƒZ[ƒW’·î•ñ MFi Header Sub Chunk.
+ * ãƒŽãƒ¼ãƒˆãƒ¡ãƒƒã‚»ãƒ¼ã‚¸é•·æƒ…å ± MFi Header Sub Chunk.
  * 
  * <pre>
  *  &quot;note&quot; 2 bytes: note length (1 for 4byte)

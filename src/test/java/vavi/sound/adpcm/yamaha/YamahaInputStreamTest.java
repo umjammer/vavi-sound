@@ -28,9 +28,9 @@ import javax.sound.sampled.SourceDataLine;
 import org.junit.Before;
 import org.junit.Test;
 
-import vavi.sound.Checksum;
 import vavi.util.Debug;
 import vavi.util.win32.WAVE;
+import vavix.util.Checksum;
 
 import static org.junit.Assert.assertEquals;
 

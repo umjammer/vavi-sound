@@ -20,22 +20,22 @@ import vavi.sound.adpcm.Codec;
  * @version 0.00 030714 nsano initial version <br>
  *          0.01 030714 nsano fine tune <br>
  *          0.02 030714 nsano fix available() <br>
- *          0.03 030715 nsano read() endian ‘Î‰ <br>
+ *          0.03 030715 nsano read() endian å¯¾å¿œ <br>
  *          0.10 060427 nsano refactoring <br>
  */
 public class G721InputStream extends AdpcmInputStream {
 
-    /** ƒfƒR[ƒ_ */
+    /** ãƒ‡ã‚³ãƒ¼ãƒ€ */
     protected Codec getCodec() {
         return new G721();
     }
 
     /**
-     * {@link vavi.io.BitInputStream} ‚Í 4bit little endian ŒÅ’è
-     * <li>TODO BitInputStream ‚Ì endian
+     * {@link vavi.io.BitInputStream} ã¯ 4bit little endian å›ºå®š
+     * <li>TODO BitInputStream ã® endian
      * <li>TODO PCM encoding
      * @param in CCITT ADPCM
-     * @param byteOrder #read() ‚ÌƒoƒCƒgƒI[ƒ_
+     * @param byteOrder #read() æ™‚ã®ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€
      */
     public G721InputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);

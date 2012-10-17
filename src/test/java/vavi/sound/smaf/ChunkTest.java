@@ -75,7 +75,7 @@ public class ChunkTest {
     /**
      * Tests {@link HackedChunk#readOneToFour(InputStream)}.
      * <pre>
-     *  実際の数値 | 可変長での表現
+     *  螳滄圀縺ｮ謨ｰ蛟､ | 蜿ｯ螟蛾聞縺ｧ縺ｮ陦ｨ迴ｾ
      * ------------+-------------
      *  00000000   | 00
      *  00000040   | 40
@@ -111,7 +111,7 @@ public class ChunkTest {
     /**
      * Tests {@link HackedChunk#readOneToTwo(InputStream)}.
      * <pre>
-     *  実際の数値 | 可変長での表現
+     *  螳滄圀縺ｮ謨ｰ蛟､ | 蜿ｯ螟蛾聞縺ｧ縺ｮ陦ｨ迴ｾ
      * ------------+-------------
      *  00000000   | 00
      *  00000040   | 40

@@ -15,7 +15,7 @@ import vavi.sound.mfi.MfiMessage;
 /**
  * temporary store.
  * <p>
- * TODO ‰½‚Æ‚©‚µ‚Ä–o–Å‚µ‚½‚¢ -> ThreadLocal ?
+ * TODO ä½•ã¨ã‹ã—ã¦æ’²æ»…ã—ãŸã„ -> ThreadLocal ?
  * </p>
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
@@ -33,7 +33,7 @@ public class MfiMessageStore {
     }
 
     /**
-     * @return {@link javax.sound.midi.MetaMessage} ‚Åg—p‚³‚ê‚é id
+     * @return {@link javax.sound.midi.MetaMessage} ã§ä½¿ç”¨ã•ã‚Œã‚‹ id
      */
     public static /* synchronized */ int put(MfiMessage message) {
         try {

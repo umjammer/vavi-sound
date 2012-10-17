@@ -51,31 +51,31 @@ class VaviSequencer implements Sequencer {
     public void start() {
         if (vaviSequence != null) {
             sequencer.addMetaEventListener(vaviSequence.getMetaEventListener());
-Debug.println("Åö1 mel: " + vaviSequence);
+Debug.println("‚òÖ1 mel: " + vaviSequence);
         }
         sequencer.start();
-Debug.println("Åö1 start: " + sequencer.hashCode());
+Debug.println("‚òÖ1 start: " + sequencer.hashCode());
     }
 
     /* */
     public void stop() {
-Debug.println("Åö1 stop: " + sequencer.hashCode());
+Debug.println("‚òÖ1 stop: " + sequencer.hashCode());
         sequencer.stop();
         if (vaviSequence != null) {
-Debug.println("Åö1 mel: " + vaviSequence);
+Debug.println("‚òÖ1 mel: " + vaviSequence);
             sequencer.removeMetaEventListener(vaviSequence.getMetaEventListener());
         }
     }
 
     /* */
     public void close() {
-Debug.println("Åö1 close: " + sequencer.hashCode());
+Debug.println("‚òÖ1 close: " + sequencer.hashCode());
         sequencer.close();
     }
 
     /* */
     public void open() throws MidiUnavailableException {
-Debug.println("Åö1 open: " + sequencer.hashCode());
+Debug.println("‚òÖ1 open: " + sequencer.hashCode());
         sequencer.open();
     }
 

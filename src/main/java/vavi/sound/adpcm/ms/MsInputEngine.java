@@ -61,9 +61,9 @@ Debug.println("byteOrder: " + this.byteOrder);
     private int[] steps = new int[16];
 
     /**
-     * {@link #in} ‚ª {@link #samplesPerBlock} * 2 ‚µ‚©“Ç‚Ü‚È‚¢‚Ì‚Å {@link IOStreamInputEngine} ‚Ì
+     * {@link #in} ãŒ {@link #samplesPerBlock} * 2 ã—ã‹èª­ã¾ãªã„ã®ã§ {@link IOStreamInputEngine} ã®
      * {@link IOStreamInputEngine#IOStreamInputEngine(OutputStream, vavi.io.IOStreamInputEngine.InputStreamFactory, int)
-     * ‚Ì bufferSize ‚ğ {@link #samplesPerBlock} * 2 ‚É‚·‚é‚±‚ÆB
+     * ã® bufferSize ã‚’ {@link #samplesPerBlock} * 2 ã«ã™ã‚‹ã“ã¨ã€‚
      */
     public void execute() throws IOException {
         if (in == null) {

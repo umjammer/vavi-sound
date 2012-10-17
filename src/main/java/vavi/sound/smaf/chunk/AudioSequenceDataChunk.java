@@ -56,7 +56,7 @@ Debug.println("messages: " + messages.size());
 
     /**
      * internal use
-     * Atsq �̏ꍇ
+     * Atsq の場合
      */
     protected SmafMessage getHandyPhoneStandardMessage(int duration, int data, int gateTime) {
         return new WaveMessage(duration, data, gateTime);

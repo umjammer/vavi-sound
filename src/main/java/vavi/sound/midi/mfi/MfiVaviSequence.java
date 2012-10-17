@@ -6,18 +6,13 @@
 
 package vavi.sound.midi.mfi;
 
-import java.io.File;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
-import javax.sound.midi.MidiFileFormat;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 
 import vavi.sound.mfi.MfiSystem;
 import vavi.sound.mfi.MfiUnavailableException;
 import vavi.sound.midi.VaviSequence;
-import vavi.util.StringUtil;
 
 
 /**
@@ -45,15 +40,6 @@ public class MfiVaviSequence extends Sequence implements VaviSequence {
         } catch (MfiUnavailableException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    //----
-
-    /** load MFi */
-    public static void main(String[] args) throws Exception {
-        MidiFileFormat mff = MidiSystem.getMidiFileFormat(new File(args[0]));
-System.err.println(StringUtil.paramString(mff));
-        System.exit(0);
     }
 }
 

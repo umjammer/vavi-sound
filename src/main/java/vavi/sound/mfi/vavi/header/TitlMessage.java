@@ -24,7 +24,7 @@ import vavi.sound.midi.MidiUtil;
 
 
 /**
- * ƒ^ƒCƒgƒ‹î•ñ MFi Header Sub Chunk.
+ * ã‚¿ã‚¤ãƒˆãƒ«æƒ…å ± MFi Header Sub Chunk.
  * <pre>
  *  &quot;titl&quot; n byte: mld title, &lt; 16 bytes expected, SJIS encoded
  *  MIDI {@link MidiConstants#META_NAME META_NAME (0x03)}
@@ -91,7 +91,7 @@ public class TitlMessage extends SubMessage
 
         MetaMessage metaMessage = new MetaMessage();
 
-        metaMessage.setMessage(MidiConstants.META_NAME,    // ƒV[ƒPƒ“ƒX–¼/ƒgƒ‰ƒbƒN–¼
+        metaMessage.setMessage(MidiConstants.META_NAME,    // ã‚·ãƒ¼ã‚±ãƒ³ã‚¹å/ãƒˆãƒ©ãƒƒã‚¯å
                                getData(),
                                getDataLength());
 

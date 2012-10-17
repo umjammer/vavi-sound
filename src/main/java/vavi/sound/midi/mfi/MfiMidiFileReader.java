@@ -6,17 +6,12 @@
 
 package vavi.sound.midi.mfi;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaEventListener;
-import javax.sound.midi.MetaMessage;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
-import javax.sound.midi.Sequencer;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiSystem;
@@ -33,7 +28,7 @@ import vavi.util.Debug;
  */
 public class MfiMidiFileReader extends BasicMidiFileReader {
 
-    /** MFi ‚©‚ç•ÏŠ·‚³‚ê‚½ MIDI Sequence ‚ğæ“¾‚µ‚Ü‚·B */
+    /** MFi ã‹ã‚‰å¤‰æ›ã•ã‚ŒãŸ MIDI Sequence ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public Sequence getSequence(InputStream is)
         throws InvalidMidiDataException,
                IOException {
@@ -43,7 +38,7 @@ public class MfiMidiFileReader extends BasicMidiFileReader {
                 throw new IOException("mark not supported: " + is);
             }
 
-            is.mark(4); // 4 ‚Í MfiSystem#getSequence ‚ª 4 bytes ‚Å”»’f‚Å‚«‚é‚±‚Æ‚ÉˆË‘¶‚µ‚Ä‚¢‚é
+            is.mark(4); // 4 ã¯ MfiSystem#getSequence ãŒ 4 bytes ã§åˆ¤æ–­ã§ãã‚‹ã“ã¨ã«ä¾å­˜ã—ã¦ã„ã‚‹
 
             vavi.sound.mfi.Sequence mfiSequence = MfiSystem.getSequence(is);
 //Debug.println(mfiSequence);
@@ -57,29 +52,6 @@ Debug.println(e);
 Debug.println(Level.SEVERE, e);
             throw (IOException) new IOException().initCause(e);
         }
-    }
-
-    //----
-
-    /** 
-     * Play MFi file.
-     * @param args [0] filename
-     */
-    public static void main(String[] args) throws Exception {
-        Sequencer sequencer = MidiSystem.getSequencer();
-        sequencer.open();
-        Sequence sequence = MidiSystem.getSequence(new File(args[0]));
-Debug.println(sequence);
-        sequencer.setSequence(sequence);
-        sequencer.addMetaEventListener(new MetaEventListener() {
-            public void meta(MetaMessage meta) {
-Debug.println(meta.getType());
-                if (meta.getType() == 47) {
-                    System.exit(0);
-                }
-            }
-        });
-        sequencer.start();
     }
 }
 

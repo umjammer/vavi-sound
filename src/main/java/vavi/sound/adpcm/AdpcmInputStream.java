@@ -24,18 +24,18 @@ import vavi.io.BitOutputStream;
  * @version 0.00 030714 nsano initial version <br>
  *          0.01 030714 nsano fine tune <br>
  *          0.02 030714 nsano fix available() <br>
- *          0.03 030715 nsano read() endian ‘Î‰ <br>
+ *          0.03 030715 nsano read() endian å¯¾å¿œ <br>
  *          0.10 060427 nsano refactoring <br>
  */
 public abstract class AdpcmInputStream extends FilterInputStream {
 
-    /** #read() ‚ª•Ô‚· PCM ‚ÌƒtƒH[ƒ}ƒbƒg */
+    /** #read() ãŒè¿”ã™ PCM ã®ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ */
     protected AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
 
-    /** #read() ‚ª•Ô‚· PCM ‚ÌƒoƒCƒgƒI[ƒ_ */
+    /** #read() ãŒè¿”ã™ PCM ã®ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€ */
     protected ByteOrder byteOrder;
 
-    /** ƒfƒR[ƒ_ */
+    /** ãƒ‡ã‚³ãƒ¼ãƒ€ */
     protected Codec decoder;
 
     /** */
@@ -43,9 +43,9 @@ public abstract class AdpcmInputStream extends FilterInputStream {
 
     /**
      * @param in PCM
-     * @param byteOrder {@link #read()} ‚ÌƒoƒCƒgƒI[ƒ_ 
-     * @param bits {@link BitOutputStream} ‚ÌƒTƒCƒY
-     * @param bitOrder {@link BitOutputStream} ‚ÌƒoƒCƒgƒI[ƒ_ 
+     * @param byteOrder {@link #read()} æ™‚ã®ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€ 
+     * @param bits {@link BitOutputStream} ã®ã‚µã‚¤ã‚º
+     * @param bitOrder {@link BitOutputStream} ã®ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€ 
      */
     public AdpcmInputStream(InputStream in, ByteOrder byteOrder, int bits, ByteOrder bitOrder) {
         super(new BitInputStream(in, bits, bitOrder));
@@ -54,20 +54,20 @@ public abstract class AdpcmInputStream extends FilterInputStream {
 //Debug.println(this.in);
     }
 
-    /** ADPCM (4bit) Š·Z‚Ì’·‚³ */
+    /** ADPCM (4bit) æ›ç®—æ™‚ã®é•·ã• */
     public int available() throws IOException {
 //Debug.println("0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
-        // TODO * 2 ‚Æ‚© bits ‚ÅŒvZ‚·‚×‚«H
+        // TODO * 2 ã¨ã‹ bits ã§è¨ˆç®—ã™ã¹ãï¼Ÿ
         return (in.available() * 2) + (rest ? 1 : 0);
     }
 
-    /** c‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚© */
+    /** æ®‹ã£ã¦ã„ã‚‹ã‹ã©ã†ã‹ */
     protected boolean rest = false;
-    /** Œ»İ‚Ì’l */
+    /** ç¾åœ¨ã®å€¤ */
     protected int current;
 
     /**
-     * @return PCM H or L (8bit LSB —LŒø)
+     * @return PCM H or L (8bit LSB æœ‰åŠ¹)
      */
     public int read() throws IOException {
 //Debug.println(in);

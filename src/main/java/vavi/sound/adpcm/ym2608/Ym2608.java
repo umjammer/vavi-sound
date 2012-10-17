@@ -45,12 +45,12 @@ class Ym2608 implements Codec {
      */
     public int encode(int pcm) {
 
-        // ƒGƒ“ƒR[ƒhˆ— 2
+        // ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰å‡¦ç† 2
         long dn = pcm - state.xn;
 //System.err.printf("%05d: %d, %d, %d\n", ccc, dn, pcm, state.xn); // OK
-        // ƒGƒ“ƒR[ƒhˆ— 3, 4
-        // I = | dn | / Sn ‚©‚ç An ‚ğ‹‚ß‚éB
-        // æ”‚ğg—p‚µ‚Ä®”ˆÊ‚Å‰‰Z‚·‚éB
+        // ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰å‡¦ç† 3, 4
+        // I = | dn | / Sn ã‹ã‚‰ An ã‚’æ±‚ã‚ã‚‹ã€‚
+        // ä¹—æ•°ã‚’ä½¿ç”¨ã—ã¦æ•´æ•°ä½ã§æ¼”ç®—ã™ã‚‹ã€‚
         long i = (int) (((Math.abs(dn)) << 16) / ((state.stepSize) << 14));
 //System.err.printf("%05d: %d\n", ccc, i); // OK
         if (i > 7) {
@@ -58,16 +58,16 @@ class Ym2608 implements Codec {
         }
         int adpcm = (int) (i & 0xff);
 
-        // ƒGƒ“ƒR[ƒhˆ— 5
-        // L3 + L2 / 2 + L1 / 4 + 1 / 8 * stepSize ‚ğ 8 ”{‚µ‚Ä®”‰‰Z
+        // ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰å‡¦ç† 5
+        // L3 + L2 / 2 + L1 / 4 + 1 / 8 * stepSize ã‚’ 8 å€ã—ã¦æ•´æ•°æ¼”ç®—
         i = (adpcm * 2 + 1) * state.stepSize / 8;
 //System.err.printf("%05d: %d, %d, %d\n", ccc, i, adpcm, state.stepSize); // OK
 
-        // 1 - 2 * L4 -> L4 ‚ª 1 ‚Ìê‡‚Í -1 ‚ğ‚©‚¯‚é‚Ì‚Æ“¯‚¶
+        // 1 - 2 * L4 -> L4 ãŒ 1 ã®å ´åˆã¯ -1 ã‚’ã‹ã‘ã‚‹ã®ã¨åŒã˜
         if (dn < 0) {
-            // - ‚Ìê‡•„†ƒrƒbƒg‚ğ•t‚¯‚éB
-            // ƒGƒ“ƒR[ƒhˆ— 5 ‚Å ADPCM •„†‚ª×–‚‚É‚È‚é‚Ì‚ÅA
-            // —\‘ª’lXV‚Ü‚Å•Û—¯‚µ‚½B
+            // - ã®å ´åˆç¬¦å·ãƒ“ãƒƒãƒˆã‚’ä»˜ã‘ã‚‹ã€‚
+            // ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰å‡¦ç† 5 ã§ ADPCM ç¬¦å·ãŒé‚ªé­”ã«ãªã‚‹ã®ã§ã€
+            // äºˆæ¸¬å€¤æ›´æ–°æ™‚ã¾ã§ä¿ç•™ã—ãŸã€‚
             adpcm |= 0x8;
             state.xn -= i;
         } else {
@@ -75,12 +75,12 @@ class Ym2608 implements Codec {
         }
 //System.err.printf("%05d: %d, %d\n", ccc, state.xn, i);
 
-        // ƒGƒ“ƒR[ƒhˆ— 6
-        // ƒXƒeƒbƒvƒTƒCƒY‚ÌXV
+        // ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰å‡¦ç† 6
+        // ã‚¹ãƒ†ãƒƒãƒ—ã‚µã‚¤ã‚ºã®æ›´æ–°
         state.stepSize = (stepsizeTable[adpcm] * state.stepSize) / 64;
 //System.err.printf("%05d: %d, %d, %d\n", ccc, i, adpcm, state.stepSize); // OK
 
-        // ƒGƒ“ƒR[ƒhˆ— 7
+        // ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰å‡¦ç† 7
         if (state.stepSize < 127) {
             state.stepSize = 127;
         } else if (state.stepSize > 24576) {
@@ -93,13 +93,13 @@ class Ym2608 implements Codec {
     }
 
     /**
-     * @param adpcm ADPCM (LSB 4 bit —LŒø)
+     * @param adpcm ADPCM (LSB 4 bit æœ‰åŠ¹)
      * @return PCM 
      */
     public int decode(int adpcm) {
 
-        // ƒfƒR[ƒhˆ— 2, 3
-        // L3 + L2 / 2 + L1 / 4 + 1 / 8 * stepSize ‚ğ 8 ”{‚µ‚Ä®”‰‰Z
+        // ãƒ‡ã‚³ãƒ¼ãƒ‰å‡¦ç† 2, 3
+        // L3 + L2 / 2 + L1 / 4 + 1 / 8 * stepSize ã‚’ 8 å€ã—ã¦æ•´æ•°æ¼”ç®—
         long i = ((adpcm & 7) * 2 + 1) * state.stepSize / 8;
         if ((adpcm & 8) != 0) {
             state.xn -= i;
@@ -108,16 +108,16 @@ class Ym2608 implements Codec {
         }
 //System.err.printf("%05d: %d, %d, %d\n", state.count, state.xn, state.stepSize, adpcm); // OK
 
-        // ƒfƒR[ƒhˆ— 4
+        // ãƒ‡ã‚³ãƒ¼ãƒ‰å‡¦ç† 4
         if (state.xn > 32767) {
             state.xn = 32767;
         } else if (state.xn < -32768) {
             state.xn = -32768;
         }
-        // ƒfƒR[ƒhˆ— 5
+        // ãƒ‡ã‚³ãƒ¼ãƒ‰å‡¦ç† 5
         state.stepSize = state.stepSize * stepsizeTable[adpcm] / 64;
 
-        // ƒfƒR[ƒhˆ— 6
+        // ãƒ‡ã‚³ãƒ¼ãƒ‰å‡¦ç† 6
         if (state.stepSize < 127) {
             state.stepSize = 127;
         } else if (state.stepSize > 24576) {
@@ -125,7 +125,7 @@ class Ym2608 implements Codec {
         }
 // System.err.printf("%05d: %d, %d, %d\n", state.count, state.xn, state.stepSize, adpcm); // OK
 
-        // PCM ‚Å•Û‘¶‚·‚é
+        // PCM ã§ä¿å­˜ã™ã‚‹
         int pcm = (int) state.xn;
 
         state.next();

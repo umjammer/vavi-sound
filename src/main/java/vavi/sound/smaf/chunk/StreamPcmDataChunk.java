@@ -12,9 +12,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.SmafMessage;
 import vavi.util.Debug;
 
@@ -49,7 +49,7 @@ Debug.println("StreamPcmData: " + size);
             if (chunk instanceof StreamWaveDataChunk) {
                 streamWaveDataChunks.add(chunk);
             } else {
-Debug.println("unknown chunk: " + chunk.getClass());
+Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
     }
@@ -76,15 +76,15 @@ Debug.println("unknown chunk: " + chunk.getClass());
     }
 
     /** */
-    public List<SmafEvent> getSmafEvents() {
-        List<SmafEvent> events = new ArrayList<SmafEvent>();
+    public List<SmafMessage> getSmafMessages() {
+        List<SmafMessage> messages = new ArrayList<SmafMessage>();
 
         for (Chunk streamWaveDataChunk : streamWaveDataChunks) {
             SmafMessage smafMessage = ((StreamWaveDataChunk) streamWaveDataChunk).toSmafMessage();
-            events.add(new SmafEvent(smafMessage, 0l));
+            messages.add(smafMessage);
         }
 
-        return events;
+        return messages;
     }
 }
 

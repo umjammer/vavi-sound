@@ -8,7 +8,6 @@ package vavi.sound.mfi.vavi.nec;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.sequencer.MachineDependentFunctionFactory;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
@@ -50,17 +49,17 @@ public class NecSequencer implements MachineDependentSequencer {
         int f1 = data[6] & 0xff;
         int f2 = 0;
 
-        String key = null;
+        String key;
         
         if (f1 == 0x01) {
             f2 = data[7] & 0xff;        // 0 ~ 32
             int f3 = data[8] & 0x0f;    // 0 ~ 16
 Debug.println(StringUtil.toHex2(f1) + " " + StringUtil.toHex2(f2) + " " + StringUtil.toHex2(f3));
-            key = "function." + f1 + "." + f2 + "." + f3;
+            key = f1 + "." + f2 + "." + f3;
         } else {
             f2 = data[7] & 0x0f;        // 0 ~ 16
 Debug.println(StringUtil.toHex2(f1) + " " + StringUtil.toHex2(f2));
-            key = "function." + f1 + "." + f2;
+            key = f1 + "." + f2;
         }
 
         MachineDependentFunction mdf = factory.getFunction(key);
@@ -80,7 +79,7 @@ Debug.println(StringUtil.toHex2(f1) + " " + StringUtil.toHex2(f2));
     //-------------------------------------------------------------------------
 
     /** */
-    private static MachineDependentFunctionFactory factory = new MachineDependentFunctionFactory("/vavi/sound/mfi/vavi/nec/nec.properties");
+    private static MachineDependentFunction.Factory factory = new MachineDependentFunction.Factory("/vavi/sound/mfi/vavi/nec/nec.properties");
 }
 
 /* */

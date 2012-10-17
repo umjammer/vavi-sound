@@ -15,7 +15,6 @@ import java.io.OutputStream;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 
 import vavi.util.Debug;
@@ -55,14 +54,14 @@ public final class SmafSystem {
     private SmafSystem() {
     }
 
-    /** ƒV[ƒPƒ“ƒT‚ðŽæ“¾‚µ‚Ü‚·B */
+    /** ã‚·ãƒ¼ã‚±ãƒ³ã‚µã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static Sequencer getSequencer()
         throws SmafUnavailableException {
 
         return sequencer;
     }
 
-    /** MIDI ƒV[ƒPƒ“ƒT‚É•t‰Á‚·‚éƒŠƒXƒi‚ðŽæ“¾‚µ‚Ü‚·B */
+    /** MIDI ã‚·ãƒ¼ã‚±ãƒ³ã‚µã«ä»˜åŠ ã™ã‚‹ãƒªã‚¹ãƒŠã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static MetaEventListener getMetaEventListener()
         throws SmafUnavailableException {
 
@@ -91,7 +90,7 @@ public final class SmafSystem {
         return ff.getSequence();
     }
 
-    /** SMAF ƒV[ƒPƒ“ƒX‚ðŽæ“¾‚µ‚Ü‚·B */
+    /** SMAF ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static vavi.sound.smaf.Sequence getSequence(File file)
         throws InvalidSmafDataException, IOException {
 
@@ -147,76 +146,11 @@ Debug.printStackTrace(e);
         return writer.write(smafSequence, fileType, out);
     }
 
-    /** SMAF or MIDI ‚Å‘‚«o‚µ‚Ü‚·B */
+    /** SMAF or MIDI ã§æ›¸ãå‡ºã—ã¾ã™ã€‚ */
     public static int write(vavi.sound.smaf.Sequence smafSequence, int fileType, File out)
         throws IOException {
 
         return writer.write(smafSequence, fileType, out);
-    }
-
-    //-------------------------------------------------------------------------
-
-    /**
-     * Tests this class.
-     * <pre>
-     * usage:
-     *  % java -Djavax.sound.midi.Sequencer="#Java MIDI(MFi/SMAF) ADPCM Sequencer" SmafSystem -p in_mmf_file
-     *  % java SmafSystem -c in_mmf_file out_mid_file
-     * </pre>
-     */
-    public static void main(String[] args) throws Exception {
-//try {
-        boolean convert = false;
-        boolean play = false;
-        
-        if (args[0].equals("-c")) {
-            convert = true;
-        } else if (args[0].equals("-p")) {
-            play = true;
-        } else {
-            throw new IllegalArgumentException(args[0]);
-        }
-
-        File file = new File(args[1]);
-        vavi.sound.smaf.Sequence smafSequence = SmafSystem.getSequence(new BufferedInputStream(new FileInputStream(file)));
-        Sequence midiSequence = SmafSystem.toMidiSequence(smafSequence);
-
-        if (play) {
-            javax.sound.midi.Sequencer midiSequencer = MidiSystem.getSequencer();
-            midiSequencer.open();
-            midiSequencer.setSequence(midiSequence);
-
-            midiSequencer.start();
-            while (midiSequencer.isRunning()) {
-                try { Thread.sleep(100); } catch (Exception e) {}
-            }
-            midiSequencer.stop();
-
-            midiSequencer.close();
-        }
-        
-        if (convert) {
-//Debug.println("™™™ here: " + midiSequence);
-            int ts[] = MidiSystem.getMidiFileTypes(midiSequence);
-//Debug.println("ššš here");
-//Debug.println("types: " + ts.length);
-            if (ts.length == 0) {
-                throw new IllegalArgumentException("no support type");
-            }
-            for (int i = 0; i < ts.length; i++) {
-//Debug.println("type: 0x" + StringUtil.toHex2(ts[i]));
-            }
-
-            file = new File(args[2]);
-            int r = MidiSystem.write(midiSequence, 0, file);
-Debug.println("write: " + r + " bytes as '" + args[2] + "'");
-        }
-
-        System.exit(0);
-//} catch (Throwable t) {
-// Debug.printStackTrace(t);
-// System.exit(1);
-//}
     }
 }
 

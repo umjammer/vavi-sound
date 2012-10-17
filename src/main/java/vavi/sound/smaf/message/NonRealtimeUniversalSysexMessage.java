@@ -18,44 +18,44 @@ import vavi.sound.smaf.SysexMessage;
  * <pre>
  *  0xf0
  *  0xfe
- *  SUB-ID#1 | SUB-ID#2   | ÇÕÇΩÇÁÇ´ 
+ *  SUB-ID#1 | SUB-ID#2   | „ÅØ„Åü„Çâ„Åç 
  *  ---------|------------|-----------------------
- *   00H     | --         | ñ¢égóp
+ *   00H     | --         | Êú™‰ΩøÁî®
  *   01H     | (not used) | Sample Dump Header
  *   02H     | (not used) | Sample Data Packet
  *   03H     | (not used) | Sample Dump Request
  *   04H     | nn         | MIDI Time Code
- *           | 00H  Å@    |  Special
+ *           | 00H  „ÄÄ    |  Special
  *           | 01H        |  Punch In Points
  *           | 02H        |  Punch Out Points
  *           | 03H        |  Delete Punch In Point
- *           | 04H  Å@    |  Delete Punch Out Point
- *           | 05H  Å@    |  Event Start Point
- *           | 06H  Å@    |  Event Stop Point
- *           | 07H  Å@    |  Event Start Points with additional info.
- *           | 08H  Å@    |  Event Stop Points with additional info.
- *           | 09H  Å@    |  Delete Event Start Point
- *           | 0AH  Å@    |  Delete Event Stop Point
- *           | 0BH  Å@    |  Cue Points
+ *           | 04H  „ÄÄ    |  Delete Punch Out Point
+ *           | 05H  „ÄÄ    |  Event Start Point
+ *           | 06H  „ÄÄ    |  Event Stop Point
+ *           | 07H  „ÄÄ    |  Event Start Points with additional info.
+ *           | 08H  „ÄÄ    |  Event Stop Points with additional info.
+ *           | 09H  „ÄÄ    |  Delete Event Start Point
+ *           | 0AH  „ÄÄ    |  Delete Event Stop Point
+ *           | 0BH  „ÄÄ    |  Cue Points
  *           | 0CH        |  Cue Points with additional info.
  *           | 0DH        |  Delete Cue Point
- *           | 0EH  Å@    |  Event Name in additional info.
+ *           | 0EH  „ÄÄ    |  Event Name in additional info.
  *   05H     | nn         | Sample Dump Extensions
- *           | 01H  Å@    |  Multiple Loop Points
- *           | 02H  Å@    |  Loop Points Request
+ *           | 01H  „ÄÄ    |  Multiple Loop Points
+ *           | 02H  „ÄÄ    |  Loop Points Request
  *   06H     | nn         | General Information
- *           | 01H  Å@    |  Identity Request
- *           | 02H  Å@    |  Identity Reply
+ *           | 01H  „ÄÄ    |  Identity Request
+ *           | 02H  „ÄÄ    |  Identity Reply
  *   07H     | nn         | File Dump
- *           | 01H  Å@    |  Header
- *           | 02H  Å@    |  Data Packet
- *           | 03H  Å@    |  Request
+ *           | 01H  „ÄÄ    |  Header
+ *           | 02H  „ÄÄ    |  Data Packet
+ *           | 03H  „ÄÄ    |  Request
  *   08H     | nn         | MIDI Tuning Standard 
- *           | 00H      Å@|  Bulk Dump Request
- *           | 01H  Å@    |  Bulk Dump Reply
+ *           | 00H      „ÄÄ|  Bulk Dump Request
+ *           | 01H  „ÄÄ    |  Bulk Dump Reply
  *   09H     | nn         | General MIDI
  *           | 01H        |  General MIDI System On
- *           | 02H  Å@    |  General MIDI System Off
+ *           | 02H  „ÄÄ    |  General MIDI System Off
  *   7BH     | (not used) | End Of File
  *   7CH     | (not used) | Wait
  *   7DH     | (not used) | Cancel 

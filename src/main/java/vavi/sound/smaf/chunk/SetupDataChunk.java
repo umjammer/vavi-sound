@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
@@ -52,9 +53,10 @@ Debug.println("SetupData: " + size + " bytes");
             readHandyPhoneStandard(is);
             break;
         case MobileStandard_Compress:
-            readMobileStandard(is); // TODO huffman
+            readMobileStandard(is); // TODO Huffman
             break;
         case MobileStandard_NoCompress:
+        case Unknown3:
             readMobileStandard(is);
             break;
         }
@@ -91,12 +93,12 @@ Debug.println("messages: " + messages.size());
                     break;
                 default:
                     smafMessage = new UndefinedMessage(0);
-Debug.println("unknown 0xff, 0x" + StringUtil.toHex2(e2));
+Debug.println(Level.WARNING, "unknown 0xff, 0x" + StringUtil.toHex2(e2));
                     break;
                 }
             } else {
                 smafMessage = new UndefinedMessage(0);
-Debug.println("unhandled: " + StringUtil.toHex2(e1));
+Debug.println(Level.WARNING, "unhandled: " + StringUtil.toHex2(e1));
             }
 
             if (smafMessage != null) {
@@ -123,7 +125,7 @@ Debug.println("unhandled: " + StringUtil.toHex2(e1));
                 smafMessage = SysexMessage.Factory.getSysexMessage(0, data);
             } else {
                 smafMessage = new UndefinedMessage(0);
-Debug.println("unhandled: " + StringUtil.toHex2(status));
+Debug.println(Level.WARNING, "unhandled: " + StringUtil.toHex2(status));
             }
 
             if (smafMessage != null) {

@@ -11,7 +11,7 @@ import javax.sound.midi.InvalidMidiDataException;
 
 /**
  * MidiConverter.
- * <li>javax.sound.midi パッケージにはない。(MFi オリジナル)
+ * <li>javax.sound.midi 繝代ャ繧ｱ繝ｼ繧ｸ縺ｫ縺ｯ縺ｪ縺�縲�(MFi 繧ｪ繝ｪ繧ｸ繝翫Ν)
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030819 nsano initial version <br>

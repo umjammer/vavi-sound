@@ -308,7 +308,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
     //----
 
     /**
-     * Creates adpcm data message. (original pure stereo, TODO –Â‚ç‚ñ...)
+     * Creates adpcm data message. (original pure stereo, TODO é³´ã‚‰ã‚“...)
      * <pre>
      * 0x01 0xf0 0x_7
      * </pre>

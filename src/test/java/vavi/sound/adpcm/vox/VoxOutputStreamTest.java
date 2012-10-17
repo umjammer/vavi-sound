@@ -18,8 +18,8 @@ import org.junit.Test;
 
 import vavi.io.IOStreamOutputEngine;
 import vavi.io.OutputEngineInputStream;
-import vavi.sound.Checksum;
 import vavi.util.Debug;
+import vavix.util.Checksum;
 
 import static org.junit.Assert.assertEquals;
 

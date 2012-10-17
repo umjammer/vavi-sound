@@ -6,12 +6,17 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
@@ -31,6 +36,7 @@ import vavi.sound.smaf.message.UndefinedMessage;
 import vavi.sound.smaf.message.VolumeMessage;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
+import vavix.io.huffman.Huffman;
 
 
 /**
@@ -66,9 +72,27 @@ Debug.println("SequenceData: " + size + " bytes");
             readHandyPhoneStandard(is);
             break;
         case MobileStandard_Compress:
-            readMobileStandard(new HuffmanDecodingInputStream(is));
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            for (int i = 0; i < size; i++) {
+                baos.write(is.read());
+            }
+//OutputStream os1 = new FileOutputStream("/tmp/data.enc");
+//os1.write(baos.toByteArray());
+//os1.flush();
+//os1.close();
+//Debug.println("data.enc created");
+            byte[] decoded = new Huffman().decode(baos.toByteArray());
+//OutputStream os2 = new FileOutputStream("/tmp/data.dec");
+//os2.write(decoded);
+//os2.flush();
+//os2.close();
+//Debug.println("data.dec created");
+Debug.println("decode: " + size + " -> " + decoded.length);
+            size = decoded.length;
+            readMobileStandard(new ByteArrayInputStream(decoded));
             break;
         case MobileStandard_NoCompress:
+        case Unknown3: // TODO 
             readMobileStandard(is);
             break;
         }
@@ -77,7 +101,7 @@ Debug.println("messages: " + messages.size());
 
     /**
      * internal use
-     * Mtsq ‚Ìê‡
+     * Mtsq ã®å ´åˆ
      * @param gateTime should not be 0
      */
     protected SmafMessage getHandyPhoneStandardMessage(int duration, int data, int gateTime) {
@@ -111,7 +135,7 @@ Debug.println("messages: " + messages.size());
                     break;
                 default:
                     smafMessage = new UndefinedMessage(duration);
-Debug.println("unknown 0xff, 0x" + StringUtil.toHex2(e2));
+Debug.println(Level.WARNING, "unknown 0xff, 0x" + StringUtil.toHex2(e2));
                     break;
                 }
             } else if (e1 != 0x00) { // note
@@ -126,7 +150,7 @@ Debug.println("unknown 0xff, 0x" + StringUtil.toHex2(e2));
                         smafMessage = new EndOfSequenceMessage(duration);
                     } else {
                         smafMessage = new UndefinedMessage(duration);
-Debug.println("unknown 0x00, 0x00, 0x" + StringUtil.toHex2(e3));
+Debug.println(Level.WARNING, "unknown 0x00, 0x00, 0x" + StringUtil.toHex2(e3));
                     }
                 } else {
                     int channel = (e2 & 0xc0) >> 6;
@@ -162,7 +186,7 @@ Debug.println("unknown 0x00, 0x00, 0x" + StringUtil.toHex2(e3));
                             break;
                         default:
                             smafMessage = new UndefinedMessage(duration);
-Debug.println("unknown 0x00, 0x" + StringUtil.toHex2(e2) + ", 3, " + StringUtil.toHex2(data));
+Debug.println(Level.WARNING, "unknown 0x00, 0x" + StringUtil.toHex2(e2) + ", 3, " + StringUtil.toHex2(data));
                             break;
                         }
                         break;
@@ -194,6 +218,11 @@ Debug.println("unknown 0x00, 0x" + StringUtil.toHex2(e2) + ", 3, " + StringUtil.
         0x38, 0x40, 0x48, 0x50, 0x60, 0x70, 0x7F, -1
     };
 
+/** debug */
+private Set<String> uc = new HashSet<String>();
+/** debug */
+private int cc = 0;
+
     /** formatType 1, 2 */
     private void readMobileStandard(InputStream is)
         throws InvalidSmafDataException, IOException {
@@ -221,49 +250,49 @@ Debug.println("unknown 0x00, 0x" + StringUtil.toHex2(e2) + ", 3, " + StringUtil.
                 int d1 = read(is);
                 int d2 = read(is);
                 smafMessage = null;
-Debug.println("reserved: 0xa_: " + StringUtil.toHex2(d1) + StringUtil.toHex2(d2));
+Debug.println(Level.WARNING, "reserved: 0xa_: " + StringUtil.toHex2(d1) + StringUtil.toHex2(d2));
             } else if (status >= 0xb0 && status <= 0xbf) { // control change
                 int channel = status & 0x0f;
                 int control = read(is);
                 int value   = read(is);
                 switch (control) { // TODO no specification
-                case 0x00: // ƒoƒ“ƒNƒZƒŒƒNƒg MSB
+                case 0x00: // ãƒãƒ³ã‚¯ã‚»ãƒ¬ã‚¯ãƒˆ MSB
                     smafMessage = new BankSelectMessage(duration, channel, value, BankSelectMessage.Significant.Least);
                     break;
-                case 0x20: // ƒoƒ“ƒNƒZƒŒƒNƒg LSB
+                case 0x20: // ãƒãƒ³ã‚¯ã‚»ãƒ¬ã‚¯ãƒˆ LSB
                     smafMessage = new BankSelectMessage(duration, channel, value, BankSelectMessage.Significant.Most);
                     break;
-                case 0x01: // ƒ‚ƒWƒ…ƒŒ[ƒVƒ‡ƒ“ƒfƒvƒX MSB
+                case 0x01: // ãƒ¢ã‚¸ãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ—ã‚¹ MSB
                     smafMessage = new ModulationMessage(duration, channel, value);
                     break;
-                case 0x07: // ƒƒCƒ“ƒ{ƒŠƒ…[ƒ€ MSB
+                case 0x07: // ãƒ¡ã‚¤ãƒ³ãƒœãƒªãƒ¥ãƒ¼ãƒ  MSB
                     smafMessage = new VolumeMessage(duration, channel, value);
                     break;
-                case 0x0a: // ƒpƒ“ƒ|ƒbƒg MSB
+                case 0x0a: // ãƒ‘ãƒ³ãƒãƒƒãƒˆ MSB
                     smafMessage = new PanMessage(duration, channel, value);
                     break;
-                case 0x0b: // ƒGƒNƒXƒvƒŒƒbƒVƒ‡ƒ“ MSB
+                case 0x0b: // ã‚¨ã‚¯ã‚¹ãƒ—ãƒ¬ãƒƒã‚·ãƒ§ãƒ³ MSB
                     smafMessage = new ExpressionMessage(duration, channel, value);
                     break;
-                case 0x06: // ƒf[ƒ^ƒGƒ“ƒgƒŠ[ MSB
-                case 0x26: // ƒf[ƒ^ƒGƒ“ƒgƒŠ[ LSB
-                case 0x40: // ƒz[ƒ‹ƒh 1 (ƒ_ƒ“ƒp[) 
-                case 0x47: // ƒtƒBƒ‹ƒ^EƒŒƒ]ƒiƒ“ƒX MA-5
-                case 0x4a: // ƒuƒ‰ƒCƒgƒlƒX MA-5
+                case 0x06: // ãƒ‡ãƒ¼ã‚¿ã‚¨ãƒ³ãƒˆãƒªãƒ¼ MSB
+                case 0x26: // ãƒ‡ãƒ¼ã‚¿ã‚¨ãƒ³ãƒˆãƒªãƒ¼ LSB
+                case 0x40: // ãƒ›ãƒ¼ãƒ«ãƒ‰ 1 (ãƒ€ãƒ³ãƒ‘ãƒ¼) 
+                case 0x47: // ãƒ•ã‚£ãƒ«ã‚¿ãƒ»ãƒ¬ã‚¾ãƒŠãƒ³ã‚¹ MA-5
+                case 0x4a: // ãƒ–ãƒ©ã‚¤ãƒˆãƒã‚¹ MA-5
                 case 0x64: // RPN LSB
-                    // value = 00 ‚Ì‚ÝH ƒsƒbƒ`Eƒxƒ“ƒhEƒZƒ“ƒVƒeƒBƒrƒeƒB
+                    // value = 00 ã®ã¿ï¼Ÿ ãƒ”ãƒƒãƒãƒ»ãƒ™ãƒ³ãƒ‰ãƒ»ã‚»ãƒ³ã‚·ãƒ†ã‚£ãƒ“ãƒ†ã‚£
                 case 0x65: // RPN MSB
-                    // value = 00 ‚Ì‚ÝH ƒsƒbƒ`Eƒxƒ“ƒhEƒZƒ“ƒVƒeƒBƒrƒeƒB
-                case 0x78: // ƒI[ƒ‹EƒTƒEƒ“ƒhEƒIƒt
-                case 0x79: // ƒŠƒZƒbƒgƒI[ƒ‹ƒRƒ“ƒgƒ[ƒ‰[
-                case 0x7b: // ƒI[ƒ‹Eƒm[ƒgEƒIƒt MA-5
-                case 0x7e: // ƒ‚ƒmEƒ‚[ƒhEƒIƒ“
-                case 0x7f: // ƒ|ƒŠEƒ‚[ƒhEƒIƒ“ (MA-3 ‚Ì‚Ý)
+                    // value = 00 ã®ã¿ï¼Ÿ ãƒ”ãƒƒãƒãƒ»ãƒ™ãƒ³ãƒ‰ãƒ»ã‚»ãƒ³ã‚·ãƒ†ã‚£ãƒ“ãƒ†ã‚£
+                case 0x78: // ã‚ªãƒ¼ãƒ«ãƒ»ã‚µã‚¦ãƒ³ãƒ‰ãƒ»ã‚ªãƒ•
+                case 0x79: // ãƒªã‚»ãƒƒãƒˆã‚ªãƒ¼ãƒ«ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼
+                case 0x7b: // ã‚ªãƒ¼ãƒ«ãƒ»ãƒŽãƒ¼ãƒˆãƒ»ã‚ªãƒ• MA-5
+                case 0x7e: // ãƒ¢ãƒŽãƒ»ãƒ¢ãƒ¼ãƒ‰ãƒ»ã‚ªãƒ³
+                case 0x7f: // ãƒãƒªãƒ»ãƒ¢ãƒ¼ãƒ‰ãƒ»ã‚ªãƒ³ (MA-3 ã®ã¿)
                     smafMessage = new MidiConvertibleMessage(duration, control, channel, value);
                     break;
                 default:
                     smafMessage = new UndefinedMessage(duration);
-Debug.println("undefined control: " + StringUtil.toHex2(control) + ", " + StringUtil.toHex2(value));
+Debug.println(Level.WARNING, "undefined control: " + StringUtil.toHex2(control) + ", " + StringUtil.toHex2(value));
                     break;
                 }
             } else if (status >= 0xc0 && status <= 0xcf) { // program change
@@ -273,7 +302,7 @@ Debug.println("undefined control: " + StringUtil.toHex2(control) + ", " + String
             } else if (status >= 0xd0 && status <= 0xdf) { // reserved
                 int d1 = read(is);
                 smafMessage = new UndefinedMessage(duration);
-Debug.println("reserved: 0xd_: " + StringUtil.toHex2(d1));
+Debug.println(Level.WARNING, "reserved: 0xd_: " + StringUtil.toHex2(d1));
             } else if (status >= 0xe0 && status <= 0xef) { // pitch vend message
                 int channel = status & 0x0f;
                 int lsb = read(is);
@@ -288,13 +317,13 @@ Debug.println("reserved: 0xd_: " + StringUtil.toHex2(d1));
                 case 0x2f:
                     int d2 = read(is); // must be 0
                     if (d2 != 0) {
-Debug.println("illegal state: " + StringUtil.toHex2(d2));
+Debug.println(Level.WARNING, "illegal state: " + StringUtil.toHex2(d2));
                     }
                     smafMessage = new EndOfSequenceMessage(duration);
                     break;
                 default:
                     smafMessage = new UndefinedMessage(duration);
-Debug.println("unknown: 0xff: " + StringUtil.toHex2(d1));
+Debug.println(Level.WARNING, "unknown: 0xff: " + StringUtil.toHex2(d1));
                     break;
                 }
             } else if (status == 0xf0) { // exclusive
@@ -303,9 +332,18 @@ Debug.println("unknown: 0xff: " + StringUtil.toHex2(d1));
                 read(is, data);
                 // TODO end check 0xf7
                 smafMessage = SysexMessage.Factory.getSysexMessage(duration, data);
+            } else if (status < 0x80) { // data
+                smafMessage = null;
+if (cc < 10) {
+ Debug.println(Level.WARNING, "data found, ignore: " + StringUtil.toHex2(status));
+}
+cc++;
             } else /* 0xf1 ~ 0xfe */ {  // reserved
                 smafMessage = new UndefinedMessage(duration);
-Debug.println("reserved: " + StringUtil.toHex2(status));
+if (!uc.contains("reserved: " + StringUtil.toHex2(status))) {
+ Debug.println(Level.WARNING, "reserved: " + StringUtil.toHex2(status));
+ uc.add("reserved: " + StringUtil.toHex2(status));
+}
             }
 
 //Debug.println(available() + ", " + smafMessage);

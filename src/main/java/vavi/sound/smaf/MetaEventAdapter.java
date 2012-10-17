@@ -10,11 +10,12 @@ import java.util.logging.Level;
 
 import javax.sound.midi.MetaEventListener;
 
-import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.midi.MidiConstants;
 import vavi.sound.midi.MidiUtil;
+import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.smaf.message.MidiContext;
 import vavi.sound.smaf.message.WaveMessage;
+import vavi.sound.smaf.sequencer.MachineDependentSequencer;
 import vavi.sound.smaf.sequencer.SmafMessageStore;
 import vavi.sound.smaf.sequencer.WaveSequencer;
 import vavi.util.Debug;
@@ -54,13 +55,13 @@ class MetaEventAdapter implements MetaEventListener, SmafDevice {
     }
 
     /**
-     * {@link SmafMessageStore} ‚ğg—p‚µ‚½Ä¶‹@\‚ğÀ‘•‚µ‚Ä‚¢‚Ü‚·B
+     * {@link SmafMessageStore} ã‚’ä½¿ç”¨ã—ãŸå†ç”Ÿæ©Ÿæ§‹ã‚’å®Ÿè£…ã—ã¦ã„ã¾ã™ã€‚
      * @see WaveMessage#getMidiEvents(MidiContext)
      */
     public void meta(javax.sound.midi.MetaMessage message) {
 //Debug.println("type: " + message.getType());
         switch (message.getType()) {
-        case MidiConstants.META_MACHINE_DEPEND: // ƒV[ƒPƒ“ƒTŒÅ—L‚Ìƒƒ^ƒCƒxƒ“ƒg
+        case MidiConstants.META_MACHINE_DEPEND: // ã‚·ãƒ¼ã‚±ãƒ³ã‚µå›ºæœ‰ã®ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆ
             try {
                 processSpecial(message);
             } catch (InvalidSmafDataException e) {
@@ -73,13 +74,13 @@ Debug.printStackTrace(e);
 throw e;
 }
             break;
-        case MidiConstants.META_TEXT_EVENT:     // ƒeƒLƒXƒgEƒCƒxƒ“ƒg
-        case MidiConstants.META_COPYRIGHT:      // ’˜ìŒ •\¦
-        case MidiConstants.META_NAME:           // ƒV[ƒPƒ“ƒX–¼‚Ü‚½‚Íƒgƒ‰ƒbƒN–¼
+        case MidiConstants.META_TEXT_EVENT:     // ãƒ†ã‚­ã‚¹ãƒˆãƒ»ã‚¤ãƒ™ãƒ³ãƒˆ
+        case MidiConstants.META_COPYRIGHT:      // è‘—ä½œæ¨©è¡¨ç¤º
+        case MidiConstants.META_NAME:           // ã‚·ãƒ¼ã‚±ãƒ³ã‚¹åã¾ãŸã¯ãƒˆãƒ©ãƒƒã‚¯å
 Debug.println("meta " + message.getType() + ": " + MidiUtil.getDecodedMessage(message.getData()));
             break;
-        case MidiConstants.META_END_OF_TRACK:   // ƒgƒ‰ƒbƒN‚ÌI‚í‚è
-        case MidiConstants.META_TEMPO:          // ƒeƒ“ƒ|İ’è
+        case MidiConstants.META_END_OF_TRACK:   // ãƒˆãƒ©ãƒƒã‚¯ã®çµ‚ã‚ã‚Š
+        case MidiConstants.META_TEMPO:          // ãƒ†ãƒ³ãƒè¨­å®š
 Debug.println(Level.FINE, "this handler ignore meta: " + message.getType());
             break;
         default:
@@ -101,13 +102,13 @@ Debug.println("no meta sub handler: " + message.getType());
         int manufacturerId = data[0];
         switch (manufacturerId) {
         case 0:     // 3 byte manufacturer id
-Debug.println(String.format("unhandled manufacturer: %02x %02x %02x", data[0], data[1], data[2]));
+Debug.println(Level.WARNING, String.format("unhandled manufacturer: %02x %02x %02x", data[0], data[1], data[2]));
             break;
         case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x5f vavi
             processSpecial_Vavi(message);
             break;
         default:
-Debug.println(String.format("unhandled manufacturer: %02x", manufacturerId));
+Debug.println(Level.WARNING, String.format("unhandled manufacturer: %02x", manufacturerId));
             break;
         }
     }
@@ -124,13 +125,31 @@ Debug.println(String.format("unhandled manufacturer: %02x", manufacturerId));
         byte[] data = message.getData();
         int functionId = data[1];
         switch (functionId) {
+        case MachineDependentSequencer.META_FUNCTION_ID_MACHINE_DEPEND:
+            processSpecial_Vavi_MachineDependent(message);
+            break;
         case WaveSequencer.META_FUNCTION_ID_SMAF:
             processSpecial_Vavi_Wave(message);
             break;
         default:
-Debug.println(String.format("unhandled function: %02x", functionId));
+Debug.println(Level.WARNING, String.format("unhandled function: %02x", functionId));
             break;
         }
+    }
+
+    /**
+     * <pre>
+     * 0x5f 0x01
+     * </pre>
+     */
+    private void processSpecial_Vavi_MachineDependent(javax.sound.midi.MetaMessage message)
+        throws InvalidSmafDataException {
+
+        byte[] data = message.getData();
+        int id = (data[2] & 0xff) * 0xff + (data[3] & 0xff);
+//Debug.println("message id: " + id);
+        MachineDependentSequencer sequencer = MachineDependentSequencer.class.cast(SmafMessageStore.get(id));
+        sequencer.sequence();
     }
 
     /**

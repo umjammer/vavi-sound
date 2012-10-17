@@ -57,10 +57,12 @@ public abstract class TrackChunk extends Chunk {
     public enum FormatType {
         /** */
         HandyPhoneStandard(2, false),
-        /** ƒnƒtƒ}ƒ“•„†‰»‚É‚æ‚éˆ³k‚ğs‚¤ */
+        /** ãƒãƒ•ãƒãƒ³ç¬¦å·åŒ–ã«ã‚ˆã‚‹åœ§ç¸®ã‚’è¡Œã† */
         MobileStandard_Compress(16, true),
         /** */
-        MobileStandard_NoCompress(16, false);
+        MobileStandard_NoCompress(16, false),
+        /** TODO what? */
+        Unknown3(32, false);
         /** */
         boolean compressed;
         /** size in file */
@@ -83,9 +85,9 @@ public abstract class TrackChunk extends Chunk {
     }
 
     /**
-     * ‚±‚ÌƒXƒe[ƒ^ƒX‚Å‚±‚Ì Track Chunk ‚ÌÀƒtƒH[ƒ}ƒbƒg‚ğ’è‹`‚·‚éBƒf[ƒ^EƒTƒCƒYíŒ¸‚Ì‚½‚ßALSI
-     * Native Format ‚Å‚Ì‹Lq‚âA«—ˆƒpƒƒtƒ‹‚È Control CPU ‚ğ‘z’è‚µ‚ÄA‚»‚Ì‘¼‚ÌƒV[ƒPƒ“ƒXEƒtƒH[ƒ}
-     * ƒbƒg‚ğ‹Lq‰Â”\‚Æ‚·‚éBCompress ‚Íƒnƒtƒ}ƒ“•„†‰»‚É‚æ‚éˆ³k‚ğs‚¤‚±‚Æ‚Æ’è‚ß‚éB
+     * ã“ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã§ã“ã® Track Chunk ã®å®Ÿãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’å®šç¾©ã™ã‚‹ã€‚ãƒ‡ãƒ¼ã‚¿ãƒ»ã‚µã‚¤ã‚ºå‰Šæ¸›ã®ãŸã‚ã€LSI
+     * Native Format ã§ã®è¨˜è¿°ã‚„ã€å°†æ¥ãƒ‘ãƒ¯ãƒ•ãƒ«ãª Control CPU ã‚’æƒ³å®šã—ã¦ã€ãã®ä»–ã®ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ãƒ»ãƒ•ã‚©ãƒ¼ãƒ
+     * ãƒƒãƒˆã‚’è¨˜è¿°å¯èƒ½ã¨ã™ã‚‹ã€‚Compress ã¯ãƒãƒ•ãƒãƒ³ç¬¦å·åŒ–ã«ã‚ˆã‚‹åœ§ç¸®ã‚’è¡Œã†ã“ã¨ã¨å®šã‚ã‚‹ã€‚
      */
     public void setFormatType(FormatType formatType) {
         this.formatType = formatType;
@@ -94,13 +96,13 @@ public abstract class TrackChunk extends Chunk {
     /** */
     public enum SequenceType {
         /**
-         * Sequence Data ‚Í‚P‚Â‚Ì˜A‘±‚µ‚½ƒV[ƒPƒ“ƒXEƒf[ƒ^‚Å‚ ‚éBSeek Point ‚â Phrase List ‚ÍƒV[ƒPƒ“
-         * ƒX’†‚ÌˆÓ–¡‚Ì‚ ‚éˆÊ’u‚ğŠO•”‚©‚çQÆ‚·‚é–Ú“I‚Å—˜—p‚·‚éB
+         * Sequence Data ã¯ï¼‘ã¤ã®é€£ç¶šã—ãŸã‚·ãƒ¼ã‚±ãƒ³ã‚¹ãƒ»ãƒ‡ãƒ¼ã‚¿ã§ã‚ã‚‹ã€‚Seek Point ã‚„ Phrase List ã¯ã‚·ãƒ¼ã‚±ãƒ³
+         * ã‚¹ä¸­ã®æ„å‘³ã®ã‚ã‚‹ä½ç½®ã‚’å¤–éƒ¨ã‹ã‚‰å‚ç…§ã™ã‚‹ç›®çš„ã§åˆ©ç”¨ã™ã‚‹ã€‚
          */
         StreamSequence,
         /**
-         * Sequence Data ‚Í•¡”‚ÌƒtƒŒ[ƒYƒf[ƒ^‚ğ˜A‘±‚Å•\‹L‚µ‚½‚à‚Ì‚Å‚ ‚éBPhrase List ‚ÍŠO•”‚©‚çŒÂ
-         * •ÊƒtƒŒ[ƒY‚ğ”F¯‚·‚éˆ×‚É—p‚¢‚éB
+         * Sequence Data ã¯è¤‡æ•°ã®ãƒ•ãƒ¬ãƒ¼ã‚ºãƒ‡ãƒ¼ã‚¿ã‚’é€£ç¶šã§è¡¨è¨˜ã—ãŸã‚‚ã®ã§ã‚ã‚‹ã€‚Phrase List ã¯å¤–éƒ¨ã‹ã‚‰å€‹
+         * åˆ¥ãƒ•ãƒ¬ãƒ¼ã‚ºã‚’èªè­˜ã™ã‚‹ç‚ºã«ç”¨ã„ã‚‹ã€‚
          */
         SubSequence;
     }
@@ -126,12 +128,12 @@ public abstract class TrackChunk extends Chunk {
      * 0x01 2 msec
      * 0x02 4 msec
      * 0x03 5 msec
-     * 0x04`0x0F Reserved
+     * 0x04ã€œ0x0F Reserved
      * 0x10 10 msec
      * 0x11 20 msec
      * 0x12 40 msec
      * 0x13 50 msec
-     * 0x14`0xFF Reserved
+     * 0x14ã€œ0xFF Reserved
      * - 
      * </pre>
      * @param timeBase real timeBase [msec]
@@ -157,7 +159,7 @@ public abstract class TrackChunk extends Chunk {
     }
 
     /**
-     * Timebase_D ‚Æ Timebase_G ‚Í“¯ˆê‚Å‚ ‚é‚±‚ÆB
+     * Timebase_D ã¨ Timebase_G ã¯åŒä¸€ã§ã‚ã‚‹ã“ã¨ã€‚
      * @param durationTimeBase in [msec]
      * @throws IllegalArgumentException wrong durationTimeBase
      */
@@ -194,8 +196,8 @@ public abstract class TrackChunk extends Chunk {
     }
 
     /**
-     * æ“ª‚É MetaMessage (META_MACHINE_DEPEND) ‚ª“ü‚éB 
-     * TrackChunk ‚Ìî•ñ‚ğ Properties ‚Å•Û‚µ‚Ä‚¢‚éB
+     * å…ˆé ­ã« MetaMessage (META_MACHINE_DEPEND) ãŒå…¥ã‚‹ã€‚ 
+     * TrackChunk ã®æƒ…å ±ã‚’ Properties ã§ä¿æŒã—ã¦ã„ã‚‹ã€‚
      */
     public abstract List<SmafEvent> getSmafEvents()
         throws InvalidSmafDataException;

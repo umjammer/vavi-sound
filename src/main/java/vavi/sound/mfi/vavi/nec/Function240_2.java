@@ -22,7 +22,7 @@ import vavi.util.Debug;
  */
 public class Function240_2 implements MachineDependentFunction {
 
-    /** ‚±‚Ìƒf[ƒ^‚Ìƒwƒbƒ_•ª’·‚³ */
+    /** ã“ã®ãƒ‡ãƒ¼ã‚¿ã®ãƒ˜ãƒƒãƒ€åˆ†é•·ã• */
     private static final int HEADER_LENGTH = 10;
 
     /**

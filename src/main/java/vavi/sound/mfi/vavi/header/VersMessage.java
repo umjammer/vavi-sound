@@ -13,7 +13,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * ƒo[ƒWƒ‡ƒ“î•ñ MFi Header Sub Chunk.
+ * ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ± MFi Header Sub Chunk.
  * 
  * <pre>
  *  &quot;vers&quot; 4 bytes: mld version

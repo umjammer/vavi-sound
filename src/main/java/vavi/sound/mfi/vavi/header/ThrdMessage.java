@@ -10,7 +10,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * 3D î•ñ MFi Header Sub Chunk.
+ * 3D æƒ…å ± MFi Header Sub Chunk.
  * <pre>
  *  &quot;thrd&quot;  bytes: 
  * </pre>

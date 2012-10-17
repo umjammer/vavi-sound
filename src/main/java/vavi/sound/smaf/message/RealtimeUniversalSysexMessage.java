@@ -18,44 +18,44 @@ import vavi.sound.smaf.SysexMessage;
  * <pre>
  *  0xf0
  *  0xff
- *  SUB-ID#1 | SUB-ID#2 | ‚Í‚½‚ç‚«
+ *  SUB-ID#1 | SUB-ID#2 | ã¯ãŸã‚‰ã
  *  ---------+----------+------------------------------------------
- *   00H     | --       | –¢g—p
+ *   00H     | --       | æœªä½¿ç”¨
  *   01H     | nn       | MIDI Time Code
- *           | 01H  @  |  Full Message
- *           | 02H  @  |  User Bits
+ *           | 01H  ã€€  |  Full Message
+ *           | 02H  ã€€  |  User Bits
  *   02H     | nn       | MIDI Show Control
- *           | 00H  @  |  MSC Extensions
- *           | 01H`7FH |  MSC Commands
+ *           | 00H  ã€€  |  MSC Extensions
+ *           | 01Hã€œ7FH |  MSC Commands
  *   03H     | nn       | Notation Information
- *           | 01H  @  |  Bar Number
- *           | 02H  @  |  Time Signature(Immediate)
- *           | 42H  @  |  Time Signature(Delayed)
+ *           | 01H  ã€€  |  Bar Number
+ *           | 02H  ã€€  |  Time Signature(Immediate)
+ *           | 42H  ã€€  |  Time Signature(Delayed)
  *   04H     | nn       | Device Control
- *           | 01H  @  |  Master Volume
- *           | 02H  @  |  Master Ballance
+ *           | 01H  ã€€  |  Master Volume
+ *           | 02H  ã€€  |  Master Ballance
  *   05H     | nn       | Real Time MTC Cueing
- *           | 00H  @  |  Special
- *           | 01H  @  |  Punch In Points
- *           | 02H  @  |  Punch Out Points
- *           | 03H  @  |  (Reserved)
- *           | 04H  @  |  (Reserved)
- *           | 05H  @  |  Event Start Points
- *           | 06H  @  |  Event Stop Points
- *           | 07H  @  |  Event Start Points with additional info.
- *           | 08H  @  |  Event Stop Points with additional info.
- *           | 09H  @  |  (Reserved)
- *           | 0AH  @  |  (Reserved)
- *           | 0BH  @  |  Cue Points
- *           | 0CH  @  |  Cue Points with additional info.
- *           | 0DH  @  |  (Reserved)
- *           | 0EH  @  |  Event Name in additional info.
+ *           | 00H  ã€€  |  Special
+ *           | 01H  ã€€  |  Punch In Points
+ *           | 02H  ã€€  |  Punch Out Points
+ *           | 03H  ã€€  |  (Reserved)
+ *           | 04H  ã€€  |  (Reserved)
+ *           | 05H  ã€€  |  Event Start Points
+ *           | 06H  ã€€  |  Event Stop Points
+ *           | 07H  ã€€  |  Event Start Points with additional info.
+ *           | 08H  ã€€  |  Event Stop Points with additional info.
+ *           | 09H  ã€€  |  (Reserved)
+ *           | 0AH  ã€€  |  (Reserved)
+ *           | 0BH  ã€€  |  Cue Points
+ *           | 0CH  ã€€  |  Cue Points with additional info.
+ *           | 0DH  ã€€  |  (Reserved)
+ *           | 0EH  ã€€  |  Event Name in additional info.
  *   06H     | nn       | MIDI Machine Control Commands
- *           | 00H`7FH |  MMC Commands
+ *           | 00Hã€œ7FH |  MMC Commands
  *   07H     | nn       | MIDI Machine Control Responses
- *           | 00H`7FH |  MMC Commands
+ *           | 00Hã€œ7FH |  MMC Commands
  *   08H     | nn       | MIDI Tuning Standard
- *           | 02H   @ |  Note Change
+ *           | 02H   ã€€ |  Note Change
  * </pre>
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
@@ -66,19 +66,19 @@ public class RealtimeUniversalSysexMessage extends SysexMessage {
 
     /**
 
-[ƒ}ƒXƒ^[ƒ{ƒŠƒ…[ƒ€]
+[ãƒã‚¹ã‚¿ãƒ¼ãƒœãƒªãƒ¥ãƒ¼ãƒ ]
       F0 7F 7F 04 01 ll mm F7
-          nn=0`7F(‰¹—ÊF0`127) ¦ ‰Šú’l‚Ínn=64 (‰¹—ÊF100)
+          nn=0ã€œ7F(éŸ³é‡ï¼š0ã€œ127) â€» åˆæœŸå€¤ã¯nn=64 (éŸ³é‡ï¼š100)
 
 [Master Fine Tuning]
       F0h 7F 7F 04 03 vh vl F7
-          ƒ}ƒXƒ^[Eƒtƒ@ƒCƒ“Eƒ`ƒ…[ƒ“‚ğİ’è‚µ‚Ü‚·B
-          A440Hz‚©‚ç‚Ìƒ`ƒ…[ƒjƒ“ƒO‚ğƒZƒ“ƒg’PˆÊ‚Åw’è‚µ‚Ü‚·B 
+          ãƒã‚¹ã‚¿ãƒ¼ãƒ»ãƒ•ã‚¡ã‚¤ãƒ³ãƒ»ãƒãƒ¥ãƒ¼ãƒ³ã‚’è¨­å®šã—ã¾ã™ã€‚
+          A440Hzã‹ã‚‰ã®ãƒãƒ¥ãƒ¼ãƒ‹ãƒ³ã‚°ã‚’ã‚»ãƒ³ãƒˆå˜ä½ã§æŒ‡å®šã—ã¾ã™ã€‚ 
 
 [Master Coarse Tuning]
       F0 7F 7F 04 04 00 vl F7 
-          ƒ}ƒXƒ^[EƒR[ƒXEƒ`ƒ…[ƒ“‚ğİ’è‚µ‚Ü‚·B
-          A440Hz‚©‚ç‚Ìƒ`ƒ…[ƒjƒ“ƒO‚ğ100[cent]’PˆÊ‚Åw’è‚µ‚Ü‚·B
+          ãƒã‚¹ã‚¿ãƒ¼ãƒ»ã‚³ãƒ¼ã‚¹ãƒ»ãƒãƒ¥ãƒ¼ãƒ³ã‚’è¨­å®šã—ã¾ã™ã€‚
+          A440Hzã‹ã‚‰ã®ãƒãƒ¥ãƒ¼ãƒ‹ãƒ³ã‚°ã‚’100[cent]å˜ä½ã§æŒ‡å®šã—ã¾ã™ã€‚
 
 [GM SYSTEM ON]
       F0 7E 7F 09 01 F7

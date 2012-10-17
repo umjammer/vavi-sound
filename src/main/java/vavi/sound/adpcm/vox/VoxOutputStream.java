@@ -24,16 +24,16 @@ import vavi.sound.adpcm.Codec;
  */
 public class VoxOutputStream extends AdpcmOutputStream {
 
-    /** ƒGƒ“ƒR[ƒ_ */
+    /** ã‚¨ãƒ³ã‚³ãƒ¼ãƒ€ */
     protected Codec getCodec() {
         return new Vox();
     }
 
     /**
-     * {@link vavi.io.BitInputStream} ‚Í 4bit big endian ŒÅ’è
+     * {@link vavi.io.BitInputStream} ã¯ 4bit big endian å›ºå®š
      * TODO check endian
      * @param out ADPCM
-     * @param byteOrder #write(int) ‚ÌƒoƒCƒgƒI[ƒ_ 
+     * @param byteOrder #write(int) ã®ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€ 
      */
     public VoxOutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.BIG_ENDIAN);

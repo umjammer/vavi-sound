@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import vavi.sound.midi.MidiConstants;
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -28,15 +29,15 @@ import vavi.util.Debug;
  * <pre>
  * "MTR*"
  *
- *  Format Type              : 1 byte (•K{)
- *  Sequence Type            : 1 byte (•K{)
- *  TimeBase_D               : 1 byte (•K{)
- *  TimeBase_G               : 1 byte (•K{)
- *  Channel Status           : n byte (•K{)(Format Type ‚ÉˆË‘¶)
+ *  Format Type              : 1 byte (å¿…é ˆ)
+ *  Sequence Type            : 1 byte (å¿…é ˆ)
+ *  TimeBase_D               : 1 byte (å¿…é ˆ)
+ *  TimeBase_G               : 1 byte (å¿…é ˆ)
+ *  Channel Status           : n byte (å¿…é ˆ)(Format Type ã«ä¾å­˜)
  *  Seek &amp; Phrase Info Chunk : n byte (Option)
  *  Setup Data Chunk         : n byte (Option)
- *  Sequence Data Chunk      : n byte (•K{)
- *  Stream PCM Data Chunk    : n byte (Option) (Format Type= &quot;Mobile Standard&quot; ‚Ìê‡‚Ì‚İ)
+ *  Sequence Data Chunk      : n byte (å¿…é ˆ)
+ *  Stream PCM Data Chunk    : n byte (Option) (Format Type = &quot;Mobile Standard&quot; ã®å ´åˆã®ã¿)
  * </pre>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
@@ -88,6 +89,11 @@ Debug.println("gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBa
 //Debug.println(channelStatuses[i]);
             }
           } break;
+        case Unknown3: {
+            byte[] buffer = new byte[32];
+            read(is, buffer);
+            // TODO implement
+          } break;
         }
 Debug.println("formatType: " + formatType);
 
@@ -103,7 +109,7 @@ Debug.println("formatType: " + formatType);
             } else if (chunk instanceof StreamPcmDataChunk) {
                 streamPcmDataChunk = chunk;
             } else {
-Debug.println("unknown chunk: " + chunk.getClass());
+Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
             }
         }
     }
@@ -197,6 +203,16 @@ Debug.println("unknown chunk: " + chunk.getClass());
             List<SmafMessage> messages = ((SetupDataChunk) setupDataChunk).getSmafMessages();
             for (SmafMessage message : messages) {
                 events.add(new SmafEvent(message, 0l));
+//Debug.println("SetupDataChunk: " + message);
+            }
+        }
+
+        //
+        if (streamPcmDataChunk != null) {
+            List<SmafMessage> messages = ((StreamPcmDataChunk) streamPcmDataChunk).getSmafMessages();
+            for (SmafMessage message : messages) {
+                events.add(new SmafEvent(message, 0l)); // TODO 0l
+//Debug.println("StreamPcmDataChunk: " + message);
             }
         }
 
@@ -204,6 +220,7 @@ Debug.println("unknown chunk: " + chunk.getClass());
         List<SmafMessage> messages = ((SequenceDataChunk) sequenceDataChunk).getSmafMessages();
         for (SmafMessage message : messages) {
             events.add(new SmafEvent(message, 0l)); // TODO 0l
+//Debug.println("SequenceDataChunk: " + message);
         }
 
         return events;

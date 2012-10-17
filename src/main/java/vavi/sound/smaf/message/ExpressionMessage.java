@@ -96,7 +96,7 @@ public class ExpressionMessage extends vavi.sound.smaf.ShortMessage
 //Debug.println("Expression: [" + duration + "] " + channel + "ch, " + volume);
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 midiChannel,
-                                11,	// エクスプレッション MSB
+                                11,	// 繧ｨ繧ｯ繧ｹ繝励Ξ繝�繧ｷ繝ｧ繝ｳ MSB
                                 volume);
         events[0] = new MidiEvent(shortMessage, context.getCurrentTick());
         return events;

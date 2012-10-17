@@ -27,7 +27,7 @@ import vavi.util.Debug;
 
 
 /**
- * ƒeƒ“ƒ|ƒƒbƒZ[ƒW‚ğ•\‚·ƒNƒ‰ƒX‚Å‚·D
+ * ãƒ†ãƒ³ãƒãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã§ã™ï¼
  * <pre>
  *  0xff, 0xc#
  * </pre>
@@ -40,12 +40,12 @@ import vavi.util.Debug;
 public class TempoMessage extends ShortMessage
     implements MidiConvertible, MfiConvertible {
 
-    /** 4 •ª‰¹•„‚Ì•ª‰ğ”\ @see #timeBaseTable */
+    /** 4 åˆ†éŸ³ç¬¦ã®åˆ†è§£èƒ½ @see #timeBaseTable */
     private int timeBase;
-    /** 1 •ªŠÔ‚Ì 4 •ª‰¹•„‚Ì” 20 ~ 125 ~ 255 */
+    /** 1 åˆ†é–“ã® 4 åˆ†éŸ³ç¬¦ã®æ•° 20 ~ 125 ~ 255 */
     private int tempo;
 
-    /** 4 •ª‰¹•„‚Ì•ª‰ğ”\ @index 0xc0 ~ 0xcf */
+    /** 4 åˆ†éŸ³ç¬¦ã®åˆ†è§£èƒ½ @index 0xc0 ~ 0xcf */
     private static final int[] timeBaseTable = {
         6, 12, 24, 48, 96, 192, 384, -1,
         15, 30, 60, 120, 240, 480, 960, -1
@@ -82,7 +82,7 @@ public class TempoMessage extends ShortMessage
     /** */
     public void setTimeBase(int timeBase) {
         this.timeBase = timeBase;
-        // TODO -1 ‚ª’Ê‚é‚¼
+        // TODO -1 ãŒé€šã‚‹ã
         for (int i = 0; i < timeBaseTable.length; i++) {
             if (timeBase == timeBaseTable[i]) {
 if (timeBase < 0) {
@@ -121,7 +121,7 @@ if (timeBase < 0) {
 
         int tempo    = getTempo();
         int timeBase = getTimeBase();
-        // l•ª‰¹•„‚Ì’·‚³‚ğƒÊsec‚Åw’è TODO round ‚Å‚¢‚¢‚Ì‚©?, TODO 48??? (ƒzƒ“ƒ}‚Í 60 * 10^6 / tempo)
+        // å››åˆ†éŸ³ç¬¦ã®é•·ã•ã‚’Î¼secã§æŒ‡å®š TODO round ã§ã„ã„ã®ã‹?, TODO 48??? (ãƒ›ãƒ³ãƒã¯ 60 * 10^6 / tempo)
         int l = (int) Math.round(60d * 1000000d / ((48d / timeBase) * tempo));
 //Debug.println(this);
 //Debug.println(l + " = " +
@@ -155,7 +155,7 @@ if (timeBase < 0) {
                  (data[2] & 0xff);
 //Debug.println("(CALC) timeBase: " + timeBase + ", tempo: " + tempo + ", l; " + l);
 
-        // TODO ˆê‰ñƒXƒP[ƒ‹•ÏX‚µ‚½‚ç•Ï‚¦‚È‚¢H
+        // TODO ä¸€å›ã‚¹ã‚±ãƒ¼ãƒ«å¤‰æ›´ã—ãŸã‚‰å¤‰ãˆãªã„ï¼Ÿ
         if (context.isScaleChanged()) {
             timeBase = getNearestTimeBase((int) (context.getTimeBase() / context.getScale()));
             tempo = (int) Math.round(60d * 1000000d / ((48d / timeBase) * l));

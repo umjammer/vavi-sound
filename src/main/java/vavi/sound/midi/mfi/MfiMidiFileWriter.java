@@ -8,6 +8,7 @@ package vavi.sound.midi.mfi;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
@@ -22,7 +23,7 @@ import vavi.util.StringUtil;
 /**
  * MfiMidiFileWriter implemented by vavi.
  * 
- * @caution MidiSystem ‚Íg‚Á‚¿‚á‚¾‚ßI
+ * @caution MidiSystem ã¯ä½¿ã£ã¡ã‚ƒã ã‚ï¼
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030817 nsano initial version <br>
@@ -41,15 +42,15 @@ Debug.println("(2): " + StringUtil.expand(MfiSystem.getMfiFileTypes()));
         return MfiSystem.getMfiFileTypes();
     }
 
-    /** @param fileType 0x88:MFi (vavi) ‚ğƒTƒ|[ƒg‚µ‚Ü‚· */
+    /** @param fileType 0x88:MFi (vavi) ã‚’ã‚µãƒãƒ¼ãƒˆã—ã¾ã™ */
     public boolean isFileTypeSupported(int fileType) {
 Debug.println("(1): fileType: " + fileType);
         return MfiSystem.isFileTypeSupported(fileType);
     }
 
     /**
-     * @param fileType 0x88:MFi (vavi) ‚ğƒTƒ|[ƒg‚µ‚Ü‚·
-     * TODO sequence ‚ğ–³‹‚µ‚Ä‚¢‚é
+     * @param fileType 0x88:MFi (vavi) ã‚’ã‚µãƒãƒ¼ãƒˆã—ã¾ã™
+     * TODO sequence ã‚’ç„¡è¦–ã—ã¦ã„ã‚‹
      */
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
 Debug.println("(2): fileType: " + fileType);
@@ -60,7 +61,7 @@ Debug.println("(2): fileType: " + fileType);
     /**
      * @param in MIDI Sequence
      * @param fileType {@link #isFileTypeSupported(int)},
-     *        {@link #isFileTypeSupported(int, Sequence)} ‚ª true ‚Ì‚à‚Ì‚Ì‚İ
+     *        {@link #isFileTypeSupported(int, Sequence)} ãŒ true ã®ã‚‚ã®ã®ã¿
      */
     public int write(Sequence in, int fileType, OutputStream out)
         throws IOException {
@@ -72,7 +73,7 @@ Debug.println("out: " + out);
                 vavi.sound.mfi.Sequence mfiSequence = MfiSystem.toMfiSequence(in, fileType);
                 return MfiSystem.write(mfiSequence, fileType, out);
             } else {
-Debug.println("unknown fileType: " + fileType);
+Debug.println(Level.WARNING, "unknown fileType: " + fileType);
                 return 0;
             }
         } catch (InvalidMidiDataException e) {

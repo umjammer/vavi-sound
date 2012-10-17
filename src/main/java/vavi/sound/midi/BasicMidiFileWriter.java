@@ -17,7 +17,7 @@ import javax.sound.midi.spi.MidiFileWriter;
 /**
  * BasicMidiFileWriter.
  * 
- * @caution {@link javax.sound.midi.MidiSystem} ‚Íg‚Á‚¿‚á‚¾‚ßI
+ * @caution {@link javax.sound.midi.MidiSystem} ã¯ä½¿ã£ã¡ã‚ƒã ã‚ï¼
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041223 nsano initial version <br>
@@ -25,7 +25,7 @@ import javax.sound.midi.spi.MidiFileWriter;
 public abstract class BasicMidiFileWriter extends MidiFileWriter {
 
     /**
-     * {@link #write(Sequence, int, java.io.OutputStream)} ‚ÉˆÏ÷
+     * {@link #write(Sequence, int, java.io.OutputStream)} ã«å§”è­²
      */
     public final int write(Sequence in, int fileType, File out)
         throws IOException {

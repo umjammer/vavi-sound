@@ -71,8 +71,8 @@ public class ChannelConfigurationMessage extends ShortMessage
     //----
 
     /**
-     * ƒRƒ“ƒeƒLƒXƒg‚Ìƒ`ƒƒƒ“ƒlƒ‹ƒRƒ“ƒtƒBƒOƒŒ[ƒVƒ‡ƒ“‚ðÝ’è‚µ‚Ü‚·B
-     * @return ‰½‚à•Ô‚µ‚Ü‚¹‚ñ 
+     * ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã®ãƒãƒ£ãƒ³ãƒãƒ«ã‚³ãƒ³ãƒ•ã‚£ã‚°ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ã‚’è¨­å®šã—ã¾ã™ã€‚
+     * @return ä½•ã‚‚è¿”ã—ã¾ã›ã‚“ 
      */
     public MidiEvent[] getMidiEvents(MidiContext context) {
 Debug.println(this);

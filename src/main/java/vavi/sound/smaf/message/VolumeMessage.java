@@ -26,7 +26,7 @@ import vavi.util.Debug;
  *  duration    1or2
  *  data0       0x00
  *  data1       cc 11 0111
- *  data2       value       0x00`0x7f
+ *  data2       value       0x00ã€œ0x7f
  * </pre>
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
@@ -122,7 +122,7 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
             context.getDrum(this.channel) == ChannelConfiguration.PERCUSSION &&
             context.getSmafTrackNumber() * 4 + this.channel != MidiContext.CHANNEL_DRUM) {
 
-            // TODO psm ‚ÍÅŒã(Å‘åH)H‚Ì volume ‚ğİ’è
+            // TODO psm ã¯æœ€å¾Œ(æœ€å¤§ï¼Ÿ)ï¼Ÿã® volume ã‚’è¨­å®š
 Debug.println("volume: " + volume);
             context.setVelocity(this.channel, volume);
 
@@ -134,7 +134,7 @@ Debug.println("volume: " + volume);
         	ShortMessage shortMessage = new ShortMessage();
         	shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                     midiChannel,
-                    				7,	// ƒƒCƒ“ƒ{ƒŠƒ…[ƒ€ MSB
+                    				7,	// ãƒ¡ã‚¤ãƒ³ãƒœãƒªãƒ¥ãƒ¼ãƒ  MSB
                     				volume);
         	events[0] = new MidiEvent(shortMessage, context.getCurrentTick());
             return events;

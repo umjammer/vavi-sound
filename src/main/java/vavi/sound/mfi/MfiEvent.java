@@ -8,7 +8,7 @@ package vavi.sound.mfi;
 
 
 /**
- * MFi ‚ÌƒCƒxƒ“ƒg‚Å‚·D
+ * MFi ã®ã‚¤ãƒ™ãƒ³ãƒˆã§ã™ï¼
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>

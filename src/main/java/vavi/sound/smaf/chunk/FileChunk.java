@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
@@ -60,7 +61,7 @@ Debug.println("TRACK: " + scoreTrackChunks.size());
             } else if (chunk instanceof MasterTrackChunk) {
                 masterTrackChunk = (TrackChunk) chunk;
             } else {
-Debug.println("unknown chunk: " + chunk.getClass());
+Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
             }
         }
 //Debug.println("available: " + is.available());
@@ -214,7 +215,7 @@ Debug.println("has kddi crc: " + StringUtil.toHex4(kddiCrc) + ", " + StringUtil.
     }
 
     /**
-     * Chunk Header ‹y‚Ñ Body ‚Ì Byte —ñ‚É‘Î‚µA‰º‹L‚É¦‚·Š„”‚ÅŠ„‚èZ‚µ‚½—]‚èB(16 bit)
+     * Chunk Header åŠã³ Body ã® Byte åˆ—ã«å¯¾ã—ã€ä¸‹è¨˜ã«ç¤ºã™å‰²æ•°ã§å‰²ã‚Šç®—ã—ãŸä½™ã‚Šã€‚(16 bit)
      */
     private int crc;
 

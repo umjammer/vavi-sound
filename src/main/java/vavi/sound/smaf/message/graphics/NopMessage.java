@@ -16,7 +16,7 @@ import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 /**
  * NopMessage.
  * (Short Control Event 0x00..0x1f)
- * TODO ShortMessage ‚Å‚Í‚È‚¢‹C‚ª‚·‚é
+ * TODO ShortMessage ã§ã¯ãªã„æ°—ãŒã™ã‚‹
  * <pre>
  *  duration    1or2
  *  event type  0x00

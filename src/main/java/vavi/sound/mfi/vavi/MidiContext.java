@@ -28,17 +28,17 @@ public class MidiContext {
     /** */
     public static final int MAX_MIDI_CHANNELS = 16;
 
-    /** ƒ`ƒƒƒ“ƒlƒ‹ƒRƒ“ƒtƒBƒMƒ…ƒŒ[ƒVƒ‡ƒ“ */
+    /** ãƒãƒ£ãƒ³ãƒãƒ«ã‚³ãƒ³ãƒ•ã‚£ã‚®ãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ */
     public enum ChannelConfiguration {
-        /** ƒŠƒYƒ€ */
+        /** ãƒªã‚ºãƒ  */
         PERCUSSION,
-        /** ‚»‚Ì‘¼ */
+        /** ãã®ä»– */
         SOUND_SET,
-        /** –¢g—p */
+        /** æœªä½¿ç”¨ */
         UNUSED
     };
 
-    /** channel 9 ‚ÍƒfƒtƒHƒ‹ƒg‚ÅƒŠƒYƒ€ */
+    /** channel 9 ã¯ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§ãƒªã‚ºãƒ  */
     public static final int CHANNEL_DRUM = 9;
 
     /** */
@@ -46,10 +46,10 @@ public class MidiContext {
         drums[CHANNEL_DRUM] = ChannelConfiguration.PERCUSSION;
     }
 
-    /** ƒŠƒYƒ€ƒ`ƒƒƒ“ƒlƒ‹‚ª•¡”‚Ìê‡‚Ì•Û‘¶—p TODO */
+    /** ãƒªã‚ºãƒ ãƒãƒ£ãƒ³ãƒãƒ«ãŒè¤‡æ•°ã®å ´åˆã®ä¿å­˜ç”¨ TODO */
 //    drumProgram = 0;
 
-    /** Œ»İ‚Ìƒgƒ‰ƒbƒN No. */
+    /** ç¾åœ¨ã®ãƒˆãƒ©ãƒƒã‚¯ No. */
     private int mfiTrackNumber;
 
     /** */
@@ -62,7 +62,7 @@ public class MidiContext {
         this.mfiTrackNumber = trackNumber;
     }
 
-    /** Œ»İ‚Ìƒ¢ƒ^ƒCƒ€ */
+    /** ç¾åœ¨ã®Î”ã‚¿ã‚¤ãƒ  */
     private long[] currents = new long[4];
 
     /** mfiTrackNumber must be set */
@@ -80,10 +80,10 @@ public class MidiContext {
         this.currents[mfiTrackNumber] += value;
     }
 
-    /** channel ‚ªƒŠƒYƒ€‚©‚Ç‚¤‚©, index is pseudo MIDI channel */
+    /** channel ãŒãƒªã‚ºãƒ ã‹ã©ã†ã‹, index is pseudo MIDI channel */
     private ChannelConfiguration[] drums = new ChannelConfiguration[MAX_MIDI_CHANNELS];
 
-    /* init */ {
+    /* initializing */ {
         for (int i = 0; i < MAX_MIDI_CHANNELS; i++) {
             drums[i] = ChannelConfiguration.UNUSED;
         }
@@ -92,7 +92,7 @@ public class MidiContext {
     /** */
     private static final int CHANNEL_UNUSED = -1;
 
-    /** DRUM_CHANNEL ‚ªƒŠƒYƒ€‚Å‚È‚¢ê‡‚ÌŒğŠ·æƒ`ƒƒƒ“ƒlƒ‹ */
+    /** DRUM_CHANNEL ãŒãƒªã‚ºãƒ ã§ãªã„å ´åˆã®äº¤æ›å…ˆãƒãƒ£ãƒ³ãƒãƒ« */
     private int drumSwapChannel = CHANNEL_UNUSED;
 
     /**
@@ -105,11 +105,11 @@ Debug.println("already swapped: " + channel + ", " + value);
             drums[channel] = value;
         }
 
-        // DRUM_CHANNEL ‚ªƒŠƒYƒ€‚Å‚È‚¯‚ê‚Î‹ó‚¢‚Ä‚é channel ‚ÆŒğŠ·
+        // DRUM_CHANNEL ãŒãƒªã‚ºãƒ ã§ãªã‘ã‚Œã°ç©ºã„ã¦ã‚‹ channel ã¨äº¤æ›
         if (channel == CHANNEL_DRUM && drums[CHANNEL_DRUM] == ChannelConfiguration.SOUND_SET && drumSwapChannel == CHANNEL_UNUSED) {
             for (int k = MAX_MIDI_CHANNELS - 1; k >= 0; k--) {
                 if (k != CHANNEL_DRUM && drums[k] == ChannelConfiguration.UNUSED) {
-                    drumSwapChannel = k; // TODO •¡”‘Î‰H
+                    drumSwapChannel = k; // TODO è¤‡æ•°å¯¾å¿œï¼Ÿ
 Debug.println("channel 9 -> " + k);
                     break;
                 }
@@ -120,7 +120,7 @@ Debug.println("cannot swap: " + channel + ", " + value);
         }
     }
 
-    /** channel ‚ÉŠ„‚è“–‚Ä‚ç‚ê‚½ volume, index is pseudo MIDI channel */
+    /** channel ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚ŒãŸ volume, index is pseudo MIDI channel */
     private int[] volumes = new int[MAX_MIDI_CHANNELS];
 
     /**
@@ -144,12 +144,12 @@ Debug.println("cannot swap: " + channel + ", " + value);
         return volumes[channel];
     }
 
-    /** channel ‚ÉŠ„‚è“–‚Ä‚ç‚ê‚½ program no, index is real MIDI channel */
+    /** channel ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚ŒãŸ program no, index is real MIDI channel */
     private int[] programs = new int[MAX_MIDI_CHANNELS];
 
     /**
      * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
-     * @return ƒhƒ‰ƒ€’u‚«Š·‚¦Œã‚Ìƒ`ƒƒƒ“ƒlƒ‹ (real MIDI channel)
+     * @return ãƒ‰ãƒ©ãƒ ç½®ãæ›ãˆå¾Œã®ãƒãƒ£ãƒ³ãƒãƒ« (real MIDI channel)
      */
     public int setProgram(int channel, int program) {
         if (channel != drumSwapChannel && drums[channel] == ChannelConfiguration.PERCUSSION) {
@@ -166,7 +166,7 @@ Debug.println("drum always zero:[" + channel + "]: " + program);
 
     /**
      * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
-     * @return ƒhƒ‰ƒ€’u‚«Š·‚¦Œã‚Ìƒ`ƒƒƒ“ƒlƒ‹ (real MIDI channel)
+     * @return ãƒ‰ãƒ©ãƒ ç½®ãæ›ãˆå¾Œã®ãƒãƒ£ãƒ³ãƒãƒ« (real MIDI channel)
      */
     public int setBank(int channel, int bank) {
         if (channel != drumSwapChannel && drums[channel] == ChannelConfiguration.PERCUSSION) {
@@ -195,7 +195,7 @@ Debug.println("drum always zero:[" + channel + "]: " + bank);
 
     /** 
      * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
-     * @return ƒhƒ‰ƒ€’u‚«Š·‚¦Œã‚Ìƒ`ƒƒƒ“ƒlƒ‹ (real MIDI channel)
+     * @return ãƒ‰ãƒ©ãƒ ç½®ãæ›ãˆå¾Œã®ãƒãƒ£ãƒ³ãƒãƒ« (real MIDI channel)
      */
     public int retrieveChannel(int channel) {
 
@@ -218,7 +218,7 @@ Debug.println("drum always zero:[" + channel + "]: " + bank);
      */
     public int retrievePitch(int channel, int pitch) {
         if (drums[channel] == ChannelConfiguration.PERCUSSION) {
-            pitch -= 10; // TODO d—l
+            pitch -= 10; // TODO ä»•æ§˜
         }
 
         return pitch + 45;
@@ -233,7 +233,7 @@ Debug.println("drum always zero:[" + channel + "]: " + bank);
     /** 0 ~ 24, index is pseudo MIDI channel */
     private int[] pitchBendRanges = new int[MAX_MIDI_CHANNELS];
 
-    /* init */ {
+    /* initializing */ {
         for (int i = 0; i < MAX_MIDI_CHANNELS; i++) {
             pitchBends[i] = 16;
             finePitchBends[i] = 16;

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiDevice;
@@ -107,12 +108,12 @@ public final class MidiUtil {
     /** */
     private static String decodingEncoding = "JISAutoDetect";
 
-    /** MIDI ƒf[ƒ^‚Åæ“ª‚ª 0xff ‚Ìê‡‘Î‰ (ƒGƒ“ƒR[ƒh‚³‚ê‚Ä‚¢‚é) */
+    /** MIDI ãƒ‡ãƒ¼ã‚¿ã§å…ˆé ­ãŒ 0xff ã®å ´åˆå¯¾å¿œ (ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã•ã‚Œã¦ã„ã‚‹) */
     public static String getDecodedMessage(byte[] data) {
         return getDecodedMessage(data, decodingEncoding);
     }
 
-    /** MIDI ƒf[ƒ^‚Åæ“ª‚ª 0xff ‚Ìê‡‘Î‰ (ƒGƒ“ƒR[ƒh‚³‚ê‚Ä‚¢‚é) */
+    /** MIDI ãƒ‡ãƒ¼ã‚¿ã§å…ˆé ­ãŒ 0xff ã®å ´åˆå¯¾å¿œ (ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã•ã‚Œã¦ã„ã‚‹) */
     public static String getDecodedMessage(byte[] data, String encoding) {
         int start = 0;
         int length = data.length;
@@ -126,7 +127,7 @@ public final class MidiUtil {
                 length -= 3;
                 return new String(data, start, length, encoding);
             } catch (UnsupportedEncodingException e) {
-Debug.println("unknown cp: " + e.getMessage());
+Debug.println(Level.WARNING, "unknown cp: " + e.getMessage());
             }
         }
         try {
@@ -150,7 +151,7 @@ Debug.println("unknown cp: " + e.getMessage());
         try {
             textData = text.getBytes(encoding);
         } catch (UnsupportedEncodingException e) {
-Debug.println("unknown cp: " + e.getMessage());
+Debug.println(Level.WARNING, "unknown cp: " + e.getMessage());
             textData = text.getBytes();
         }
         byte[] data = new byte[textData.length + 3];
@@ -211,7 +212,7 @@ Debug.printStackTrace(e);
     }
 
     /**
-     * com.sun.media.sound.RealTimeSequencer ‚ğ•Ô‚µ‚½‚¢B 
+     * com.sun.media.sound.RealTimeSequencer ã‚’è¿”ã—ãŸã„ã€‚ 
      */
     public static Sequencer getDefaultSequencer() {
 

@@ -21,16 +21,16 @@ import vavi.sound.adpcm.Codec;
  */
 public class YamahaOutputStream extends AdpcmOutputStream {
 
-    /** ƒGƒ“ƒR[ƒ_ */
+    /** ã‚¨ãƒ³ã‚³ãƒ¼ãƒ€ */
     protected Codec getCodec() {
         return new Yamaha();
     }
 
     /**
      * 
-     * {@link vavi.io.BitOutputStream} ‚Í 4bit little endian ŒÅ’è
+     * {@link vavi.io.BitOutputStream} ã¯ 4bit little endian å›ºå®š
      * @param out ADPCM
-     * @param byteOrder {@link #write(int)} ‚ÌƒoƒCƒgƒI[ƒ_ 
+     * @param byteOrder {@link #write(int)} ã®ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€ 
      */
     public YamahaOutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);

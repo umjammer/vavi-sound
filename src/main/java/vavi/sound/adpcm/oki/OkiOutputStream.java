@@ -21,15 +21,15 @@ import vavi.sound.adpcm.Codec;
  */
 public class OkiOutputStream extends AdpcmOutputStream {
 
-    /** ƒGƒ“ƒR[ƒ_ */
+    /** ã‚¨ãƒ³ã‚³ãƒ¼ãƒ€ */
     protected Codec getCodec() {
         return new Oki();
     }
 
     /**
-     * {@link vavi.io.BitOutputStream} ‚Í 4bit little endian ŒÅ’è
+     * {@link vavi.io.BitOutputStream} ã¯ 4bit little endian å›ºå®š
      * @param out ADPCM
-     * @param byteOrder #write(int) ‚ÌƒoƒCƒgƒI[ƒ_ 
+     * @param byteOrder #write(int) ã®ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€ 
      */
     public OkiOutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);

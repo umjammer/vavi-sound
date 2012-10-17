@@ -26,7 +26,7 @@ import vavi.util.Debug;
 
 /**
  * BasicMidiFileReader. 
- * Œp³‚µ‚½ƒNƒ‰ƒX‚Å {@link #getSequence(InputStream)} ‚ğÀ‘•‚µ‚Ä‚­‚¾‚³‚¢B
+ * ç¶™æ‰¿ã—ãŸã‚¯ãƒ©ã‚¹ã§ {@link #getSequence(InputStream)} ã‚’å®Ÿè£…ã—ã¦ãã ã•ã„ã€‚
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
@@ -34,8 +34,8 @@ import vavi.util.Debug;
 public abstract class BasicMidiFileReader extends MidiFileReader {
 
     /**
-     * Œp³‚µ‚½ƒNƒ‰ƒX‚ÅÀ‘•‚µ‚½ {@link #getSequence(InputStream)} ‚Å
-     * À‘•‚µ‚½ƒ^ƒCƒv‚©‚ç•ÏŠ·‚³‚ê‚½ MIDI Sequence ‚ğæ“¾‚µ‚Ü‚·B
+     * ç¶™æ‰¿ã—ãŸã‚¯ãƒ©ã‚¹ã§å®Ÿè£…ã—ãŸ {@link #getSequence(InputStream)} ã§
+     * å®Ÿè£…ã—ãŸã‚¿ã‚¤ãƒ—ã‹ã‚‰å¤‰æ›ã•ã‚ŒãŸ MIDI Sequence ã‚’å–å¾—ã—ã¾ã™ã€‚
      * @param stream a midi stream
      * @throws IOException when the I/O does not support marking.  
      */
@@ -43,7 +43,7 @@ public abstract class BasicMidiFileReader extends MidiFileReader {
         throws InvalidMidiDataException,
                IOException {
 
-//Debug.println("here š");
+//Debug.println("here â˜…");
         Sequence midiSequence = getSequence(stream);
         ByteArrayOutputStream os = new ByteArrayOutputStream(); 
         MidiSystem.write(midiSequence, 0, os);
@@ -52,7 +52,7 @@ public abstract class BasicMidiFileReader extends MidiFileReader {
         return midiFF;
     }
 
-    /** {@link #getMidiFileFormat(InputStream)} ‚ÉˆÏ÷ */
+    /** {@link #getMidiFileFormat(InputStream)} ã«å§”è­² */
     public MidiFileFormat getMidiFileFormat(File file)
         throws InvalidMidiDataException,
                IOException {
@@ -62,7 +62,7 @@ Debug.println("file: " + file);
         return getMidiFileFormat(is);
     }
 
-    /** {@link #getMidiFileFormat(InputStream)} ‚ÉˆÏ÷ */
+    /** {@link #getMidiFileFormat(InputStream)} ã«å§”è­² */
     public MidiFileFormat getMidiFileFormat(URL url)
         throws InvalidMidiDataException,
                IOException {
@@ -71,7 +71,7 @@ Debug.println("file: " + file);
         return getMidiFileFormat(is);
     }
 
-    /** {@link #getSequence(InputStream)} ‚ÉˆÏ÷ */
+    /** {@link #getSequence(InputStream)} ã«å§”è­² */
     public Sequence getSequence(File file)
         throws InvalidMidiDataException,
                IOException {
@@ -80,7 +80,7 @@ Debug.println("file: " + file);
         return getSequence(is);
     }
 
-    /** {@link #getSequence(InputStream)} ‚ÉˆÏ÷ */
+    /** {@link #getSequence(InputStream)} ã«å§”è­² */
     public Sequence getSequence(URL url)
         throws InvalidMidiDataException,
                IOException {

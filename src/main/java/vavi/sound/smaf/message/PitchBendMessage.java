@@ -87,7 +87,7 @@ public class PitchBendMessage extends vavi.sound.smaf.ShortMessage
     }
 
     /**
-     * PsmPlayer ‚ª‚±‚¤•ÏŠ·‚µ‚Ä‚¢‚½‚©‚ç‚µ‚å‚¤‚ª‚È‚¢B
+     * PsmPlayer ãŒã“ã†å¤‰æ›ã—ã¦ã„ãŸã‹ã‚‰ã—ã‚‡ã†ãŒãªã„ã€‚
      */
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {

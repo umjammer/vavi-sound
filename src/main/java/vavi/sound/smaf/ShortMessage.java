@@ -8,7 +8,7 @@ package vavi.sound.smaf;
 
 
 /**
- * ShortMessage を表すクラスです。
+ * ShortMessage 繧定｡ｨ縺吶け繝ｩ繧ｹ縺ｧ縺吶�
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>

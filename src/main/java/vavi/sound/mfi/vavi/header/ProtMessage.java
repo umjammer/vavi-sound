@@ -22,7 +22,7 @@ import vavi.sound.midi.MidiUtil;
 
 
 /**
- * ƒf[ƒ^ŠÇ—‹y‚Ñ•ÛŒìî•ñ MFi Header Sub Chunk.
+ * ãƒ‡ãƒ¼ã‚¿ç®¡ç†åŠã³ä¿è­·æƒ…å ± MFi Header Sub Chunk.
  * <pre>
  *  &quot;prot&quot; n bytes: data managing
  *  MIDI {@link MidiConstants#META_TEXT_EVENT META_TEXT_EVENT (0x01)}
@@ -80,7 +80,7 @@ public class ProtMessage extends SubMessage
 
         MetaMessage metaMessage = new MetaMessage();
 
-        metaMessage.setMessage(MidiConstants.META_TEXT_EVENT, // ƒeƒLƒXƒg
+        metaMessage.setMessage(MidiConstants.META_TEXT_EVENT, // ãƒ†ã‚­ã‚¹ãƒˆ
                                getData(),
                                getDataLength());
 

@@ -21,7 +21,7 @@ import vavi.sound.mfi.spi.MfiFileReader;
 
 /**
  * MfiFileReader implemented by vavi.
- * <li> TODO “Áê–½—ß‚ÌÀ‘•
+ * <li> TODO ç‰¹æ®Šå‘½ä»¤ã®å®Ÿè£…
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano midi compliant <br>
  *          0.11 030618 nsano add vibrato related <br>

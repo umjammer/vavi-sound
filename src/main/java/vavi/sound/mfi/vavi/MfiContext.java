@@ -6,7 +6,6 @@
 
 package vavi.sound.mfi.vavi;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
@@ -19,14 +18,12 @@ import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.Track;
 
 import vavi.sound.mfi.MfiEvent;
-import vavi.sound.mfi.MfiSystem;
 import vavi.sound.mfi.vavi.track.NopMessage;
 import vavi.sound.mfi.vavi.track.TempoMessage;
 import vavi.sound.midi.MidiConstants;
@@ -36,7 +33,7 @@ import vavi.util.Debug;
 
 /**
  * mfi context for the converter.
- * <li>TODO {@link MfiConvertible} ‚±‚±‚Å‚¢‚¢‚Ì‚©H
+ * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030905 nsano initial version <br>
  *          0.01 030907 nsano add {@link MfiConvertible} handler <br>
@@ -45,7 +42,7 @@ import vavi.util.Debug;
  */
 public class MfiContext {
 
-    /** MFi ‚Ìƒgƒ‰ƒbƒN”‚ÌÅ‘å’l */
+    /** MFi ã®ãƒˆãƒ©ãƒƒã‚¯æ•°ã®æœ€å¤§å€¤ */
     public static final int MAX_MFI_TRACKS = 4;
 
     //----
@@ -64,7 +61,7 @@ Debug.println("type: " + type);
         this.type = type;
     }
 
-    /** TODO ¡‚Ì‚Æ‚±‚ë {@link Sequence#getResolution()} */
+    /** TODO ä»Šã®ã¨ã“ã‚ {@link Sequence#getResolution()} */
     private int timeBase;
 
     /** */
@@ -74,7 +71,7 @@ Debug.println("type: " + type);
 
     //----
 
-    /** index ‚Í MFi Track No., g—p‚³‚ê‚Ä‚¢‚ê‚Î true */
+    /** index ã¯ MFi Track No., ä½¿ç”¨ã•ã‚Œã¦ã„ã‚Œã° true */
     private boolean[] trackUsed = new boolean[MAX_MFI_TRACKS];
 
     /**
@@ -112,7 +109,7 @@ Debug.println("type: " + type);
     //----
 
     /**
-     * tick ‚Ì”{—¦
+     * tick ã®å€ç‡
      * @see vavi.sound.mfi.vavi.track.TempoMessage
      */
     private double scale = 1.0d;
@@ -134,10 +131,10 @@ Debug.println("type: " + type);
 
     //----
 
-    /** ’¼‘O‚Ì tick, index ‚Í MFi Track No. */
+    /** ç›´å‰ã® tick, index ã¯ MFi Track No. */
     private long[] previousTicks = new long[MAX_MFI_TRACKS];
 
-    /* init */ {
+    /* initializing */ {
         for (int i = 0; i < MAX_MFI_TRACKS; i++) {
             previousTicks[i] = 0;
         }
@@ -164,15 +161,15 @@ Debug.println("type: " + type);
         this.previousTicks[mfiTrackNumber] += tick;
     }
 
-    /** @return •â³‚ ‚è ƒ¢ƒ^ƒCƒ€ */
+    /** @return è£œæ­£ã‚ã‚Š Î”ã‚¿ã‚¤ãƒ  */
     public int retrieveAdjustedDelta(int mfiTrackNumber, long currentTick) {
         return getAdjustedDelta(mfiTrackNumber, (currentTick - previousTicks[mfiTrackNumber]) / scale);
     }
 
-    /** Math#round() ‚ÅŠÛ‚ß‚ç‚ê‚½Œë· */
+    /** Math#round() ã§ä¸¸ã‚ã‚‰ã‚ŒãŸèª¤å·® */
     private double[] roundedSum = new double[MAX_MFI_TRACKS];
     
-    /** Math#round() ‚ÅŠÛ‚ß‚ç‚ê‚½Œë·‚ª®”’l‚æ‚è‘å‚«‚­‚È‚Á‚½ê‡‚Ì•â³ */
+    /** Math#round() ã§ä¸¸ã‚ã‚‰ã‚ŒãŸèª¤å·®ãŒæ•´æ•°å€¤ã‚ˆã‚Šå¤§ãããªã£ãŸå ´åˆã®è£œæ­£ */
     private int getAdjustedDelta(int mfiTrackNumber, double doubleDelta) {
         int delta = (int) Math.round(doubleDelta);
         double rounded = doubleDelta - delta;
@@ -192,18 +189,18 @@ Debug.println("type: " + type);
     //----
 
     /**
-     * ˆê‚Â‘O‚Ì NoteOn ‚©‚ç‚ÌŠÔ (currentTick - beforeTicks[track]) ‚É
-     * ‚¢‚­‚Âƒ¢‚ª“ü‚é‚©(®”’lA‚ ‚Ü‚èØ‚èÌ‚Ä)‚ğ‹‚ßA‚»‚ÌŒÂ”•ª‘}“ü‚·‚é
-     * NopMessage ‚Ì”z—ñ‚ğ•Ô‚µ‚Ü‚·B
+     * ä¸€ã¤å‰ã® NoteOn ã‹ã‚‰ã®æ™‚é–“ (currentTick - beforeTicks[track]) ã«
+     * ã„ãã¤Î”ãŒå…¥ã‚‹ã‹(æ•´æ•°å€¤ã€ã‚ã¾ã‚Šåˆ‡ã‚Šæ¨ã¦)ã‚’æ±‚ã‚ã€ãã®å€‹æ•°åˆ†æŒ¿å…¥ã™ã‚‹
+     * NopMessage ã®é…åˆ—ã‚’è¿”ã—ã¾ã™ã€‚
      * <pre>
      *     event    index    process
      *   |
      * --+- NoteOn    -2    -> brforeTick
-     * ª|
-     * b|
-     * ƒ¢|- NoteOff    -1    -> noteOffEventUsed[-1] = true
-     * b|
-     * «|
+     * â†‘|
+     * ï½œ|
+     * Î”|- NoteOff    -1    -> noteOffEventUsed[-1] = true
+     * ï½œ|
+     * â†“|
      * --+-
      *   |
      *  -O- NoteOn    midiEventIndex
@@ -212,7 +209,7 @@ Debug.println("type: " + type);
      *   |
      * --+-
      * </pre>
-     * ã‹L}‚¾‚Æ 1 ‚Â‚Ì NopMessage ‚ª‘}“ü‚³‚ê‚éB
+     * ä¸Šè¨˜å›³ã ã¨ 1 ã¤ã® NopMessage ãŒæŒ¿å…¥ã•ã‚Œã‚‹ã€‚
      * 
      * @return null current event is MetaMessage or SysexMessage or delta not supported.
      */
@@ -242,7 +239,7 @@ Debug.println(Level.WARNING, "not supported for delta: " + midiEventIndex + ", "
             return null;
         }
 if (interval < 0) {
- // ‚ ‚è‚¦‚È‚¢‚Í‚¸
+ // ã‚ã‚Šãˆãªã„ã¯ãš
  Debug.println(Level.WARNING, "interval: " + interval + ", " + midiEventIndex + ", " + MidiUtil.paramString(midiMessage));
  interval = 0;
 }
@@ -253,8 +250,8 @@ if (interval < 0) {
         MfiEvent[] mfiEvents = new MfiEvent[nopLength];
         for (int i = 0; i < nopLength; i++) {
             NopMessage mfiMessage = new NopMessage(255, 0);
-            mfiEvents[i] = new MfiEvent(mfiMessage, 0l);    // TODO 0l
-            // 255 ƒ¢ •ªŒã‚ë‚É‚¸‚ç‚µ‚Ä‚¢‚­
+            mfiEvents[i] = new MfiEvent(mfiMessage, 0l); // TODO 0l
+            // 255 Î” åˆ†å¾Œã‚ã«ãšã‚‰ã—ã¦ã„ã
             incrementPreviousTick(mfiTrackNumber, Math.round(255 * scale));
         };
 
@@ -263,9 +260,9 @@ if (interval < 0) {
     }
 
     /**
-     * ‘O‚Ìƒf[ƒ^(MIDI NoteOn)‚ªÀs‚³‚ê‚Ä‚©‚ç‚Ìƒ¢(ŠÔ)‚ğæ“¾‚µ‚Ü‚·B
-     * •K‚¸–‘O‚É #getIntervalMfiEvents() ‚ğÀs‚µ‚Äƒ¢‚ğ 255 ˆÈ‰º‚ğ
-     * •Ô‚·‚æ‚¤‚É‚µ‚Ä‚¨‚¢‚Ä‰º‚³‚¢B
+     * å‰ã®ãƒ‡ãƒ¼ã‚¿(MIDI NoteOn)ãŒå®Ÿè¡Œã•ã‚Œã¦ã‹ã‚‰ã®Î”(æ™‚é–“)ã‚’å–å¾—ã—ã¾ã™ã€‚
+     * å¿…ãšäº‹å‰ã« {@link #getIntervalMfiEvents(int)} ã‚’å®Ÿè¡Œã—ã¦Î”ã‚’ 255 ä»¥ä¸‹ã‚’
+     * è¿”ã™ã‚ˆã†ã«ã—ã¦ãŠã„ã¦ä¸‹ã•ã„ã€‚
      */
     public int getDelta(int mfiTrackNumber) {
 
@@ -278,28 +275,33 @@ if (interval < 0) {
             delta = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick()); 
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
             // tempo
-            delta = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick()); // TODO 0 ‚Å‚¢‚¢‚Ì‚©H
+            delta = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick()); // TODO 0 ã§ã„ã„ã®ã‹ï¼Ÿ
 //Debug.println("[" + midiEventIndex + "] delta for tempo, " + mfiTrackNumber + "ch: " + delta);
         } else {
 Debug.println(Level.WARNING, "no delta defined for: " + MidiUtil.paramString(midiMessage));
         }
 
 if (delta > 255) {
- // getIntervalMfiEvents ‚Åˆ—‚³‚ê‚Ä‚¢‚é‚Í‚¸‚È‚Ì‚Å‚ ‚è‚¦‚È‚¢
- Debug.println(Level.SEVERE, "ƒ¢: " + delta + ", " + (delta % 256));
+ // getIntervalMfiEvents ã§å‡¦ç†ã•ã‚Œã¦ã„ã‚‹ã¯ãšãªã®ã§ã‚ã‚Šãˆãªã„
+ Debug.println(Level.SEVERE, "Î”: " + delta + ", " + (delta % 256));
 }
         return delta % 256;
     }
 
     //----
 
-    /** •â³‚³‚ê‚½ MFi Pitch ‚ğæ“¾‚µ‚Ü‚·B sound -45, percussion -35 */
+    /**
+     * è£œæ­£ã•ã‚ŒãŸ MFi Pitch ã‚’å–å¾—ã—ã¾ã™ã€‚
+     * <p>
+     * sound -45, percussion -35
+     * </p>
+     */
     public int retrievePitch(int channel, int pitch) {
         return pitch - 45 + (channel == MidiContext.CHANNEL_DRUM ? 10 : 0);
     }
 
     /**
-     * MFi Voice No. ‚ğæ“¾‚µ‚Ü‚·B
+     * MFi Voice No. ã‚’å–å¾—ã—ã¾ã™ã€‚
      * @param channel MIDI channel
      */
     public int retrieveVoice(int channel) {
@@ -307,7 +309,7 @@ if (delta > 255) {
     }
 
     /**
-     * MFi Track ‚ğæ“¾‚µ‚Ü‚·B
+     * MFi Track ã‚’å–å¾—ã—ã¾ã™ã€‚
      * @param channel MIDI channel
      */
     public int retrieveMfiTrack(int channel) {
@@ -316,10 +318,10 @@ if (delta > 255) {
 
     //----
 
-    /** MIDI ƒCƒxƒ“ƒg‚Ì’PˆêƒV[ƒPƒ“ƒX */
+    /** MIDI ã‚¤ãƒ™ãƒ³ãƒˆã®å˜ä¸€ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ */
     private List<MidiEvent> midiEvents = new ArrayList<MidiEvent>();
     
-    /** MIDI ƒCƒxƒ“ƒg‚Ì’PˆêƒV[ƒPƒ“ƒX‚ğİ’è‚µ‚Ü‚·B */
+    /** MIDI ã‚¤ãƒ™ãƒ³ãƒˆã®å˜ä¸€ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã‚’è¨­å®šã—ã¾ã™ã€‚ */
     public void setMidiSequence(Sequence midiSequence) {
 
         this.timeBase = midiSequence.getResolution();
@@ -402,19 +404,19 @@ Debug.println("(SCALE) final scale: " + scale + ", " + scaleChanged);
         return midiEvents.get(midiEventIndex);
     }
 
-    /** Œ»İ‚Ì MIDI ƒCƒxƒ“ƒg‚ÌƒCƒ“ƒfƒbƒNƒX’l */
+    /** ç¾åœ¨ã® MIDI ã‚¤ãƒ™ãƒ³ãƒˆã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹å€¤ */
     private int midiEventIndex;
 
-    /** Œ»İ‚Ì MIDI ƒCƒxƒ“ƒg‚ÌƒCƒ“ƒfƒbƒNƒX’l‚ğæ“¾‚µ‚Ü‚·B */
+    /** ç¾åœ¨ã® MIDI ã‚¤ãƒ™ãƒ³ãƒˆã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹å€¤ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     int getMidiEventIndex() {
         return midiEventIndex;
     }
 
     /**
-     * “¯‚¶ channel ‚ÅŸ‚Ì {@link ShortMessage} ‚Å‚ ‚é MIDI ƒCƒxƒ“ƒg‚ğæ“¾‚µ‚Ü‚·B
+     * åŒã˜ channel ã§æ¬¡ã® {@link ShortMessage} ã§ã‚ã‚‹ MIDI ã‚¤ãƒ™ãƒ³ãƒˆã‚’å–å¾—ã—ã¾ã™ã€‚
      *
-     * @throws NoSuchElementException Ÿ‚Ì MIDI ƒCƒxƒ“ƒg‚ª‚È‚¢
-     * @throws IllegalStateException Œ»İ‚ÌƒCƒxƒ“ƒg‚Í {@link ShortMessage} ‚Å‚Í‚È‚¢
+     * @throws NoSuchElementException æ¬¡ã® MIDI ã‚¤ãƒ™ãƒ³ãƒˆãŒãªã„
+     * @throws IllegalStateException ç¾åœ¨ã®ã‚¤ãƒ™ãƒ³ãƒˆã¯ {@link ShortMessage} ã§ã¯ãªã„
      */
     public MidiEvent getNoteOffMidiEvent() throws NoSuchElementException {
 
@@ -450,39 +452,12 @@ Debug.println("(SCALE) final scale: " + scale + ", " + scaleChanged);
         throw new NoSuchElementException(channel + "ch, " + data1);
     }
 
-    /** ‚·‚Å‚ÉÁ”ï‚³‚ê‚½‚©‚Ç‚¤‚© */
+    /** ã™ã§ã«æ¶ˆè²»ã•ã‚ŒãŸã‹ã©ã†ã‹ */
     private BitSet noteOffEventUsed;
 
-    /** ‚·‚Å‚ÉÁ”ï‚³‚ê‚½‚©‚Ç‚¤‚©‚ğæ“¾‚µ‚Ü‚·B */
+    /** ã™ã§ã«æ¶ˆè²»ã•ã‚ŒãŸã‹ã©ã†ã‹ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public boolean isNoteOffEventUsed() {
         return noteOffEventUsed.get(midiEventIndex);
-    }
-
-    //-------------------------------------------------------------------------
-
-    /**
-     * Converts the midi file to a mfi file.
-     * <pre>
-     * usage:
-     *  % java MfiContext in_midi_file out_mld_file
-     * </pre>
-     */
-    public static void main(String[] args) throws Exception {
-
-Debug.println("midi in: " + args[0]);
-Debug.println("mfi out: " + args[1]);
-
-        File file = new File(args[0]);
-        javax.sound.midi.Sequence midiSequence = MidiSystem.getSequence(file);
-        MidiFileFormat midiFileFormat = MidiSystem.getMidiFileFormat(file);
-        int type = midiFileFormat.getType();
-Debug.println("type: " + type);
-        vavi.sound.mfi.Sequence mfiSequence = MfiSystem.toMfiSequence(midiSequence, type);
-        file = new File(args[1]);
-        int r = MfiSystem.write(mfiSequence, VaviMfiFileFormat.FILE_TYPE, file);
-Debug.println("write: " + r);
-
-        System.exit(0);
     }
 }
 

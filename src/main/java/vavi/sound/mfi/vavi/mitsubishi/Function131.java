@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.mitsubishi;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -23,16 +25,16 @@ import vavi.util.StringUtil;
  */
 public class Function131 implements MachineDependentFunction {
 
-    /** ‚·‚®‚Éƒf[ƒ^‚ğ—˜—p‚¹‚¸‚ÉAˆê“I‚É•Û‘¶‚µ‚Ä‚¨‚­ */
+    /** ã™ãã«ãƒ‡ãƒ¼ã‚¿ã‚’åˆ©ç”¨ã›ãšã«ã€ä¸€æ™‚çš„ã«ä¿å­˜ã—ã¦ãŠã */
     public static final int MODE_STORE = 0;
-    /** ‚·‚®‚Éƒf[ƒ^‚ğ—˜—p‚·‚é */
+    /** ã™ãã«ãƒ‡ãƒ¼ã‚¿ã‚’åˆ©ç”¨ã™ã‚‹ */
     public static final int MODE_SET = 1;
-    /** ƒŠƒTƒCƒNƒ‹ƒ‚[ƒh wave size = 0 */
+    /** ãƒªã‚µã‚¤ã‚¯ãƒ«ãƒ¢ãƒ¼ãƒ‰ wave size = 0 */
     public static final int MODE_RECYCLE = 2;
-    /** —\–ñ */
+    /** äºˆç´„ */
     public static final int MODE_RESERVED = 3;
 
-    /** ‚±‚Ìƒf[ƒ^‚Ìƒwƒbƒ_•ª’·‚³ */
+    /** ã“ã®ãƒ‡ãƒ¼ã‚¿ã®ãƒ˜ãƒƒãƒ€åˆ†é•·ã• */
     public static final int HEADER_LENGTH = 10;
 
     /**
@@ -87,7 +89,7 @@ Debug.println("sampling: " + StringUtil.toHex2(data[8] & 0x3f) + ": rate=" + sam
         play();
     }
 
-    /** mode •Ê‚ÉÄ¶‚µ‚Ü‚·B */
+    /** mode åˆ¥ã«å†ç”Ÿã—ã¾ã™ã€‚ */
     protected void play() {
 
         AudioEngine player = MitsubishiSequencer.getAudioEngine();
@@ -111,16 +113,16 @@ Debug.println("sampling: " + StringUtil.toHex2(data[8] & 0x3f) + ": rate=" + sam
     protected int packetId;
     /** @see #MODE_RECYCLE MODE_* */
     protected int mode = MODE_SET;
-    /** ƒTƒ“ƒvƒŠƒ“ƒOƒŒ[ƒg {4k, 8k, 16k, 32k} */
+    /** ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãƒ¬ãƒ¼ãƒˆ {4k, 8k, 16k, 32k} */
     protected int sampleRate = 16000;
-    /** adpcm ‚ÌÅ¬’PˆÊ {2bit, 4bit} */
+    /** adpcm ã®æœ€å°å˜ä½ {2bit, 4bit} */
     protected int bits = 4;
     /** */
     protected boolean continued = false;
-    /** ADPCM ‚Ìƒoƒbƒtƒ@ */
+    /** ADPCM ã®ãƒãƒƒãƒ•ã‚¡ */
     protected byte[] adpcm;
 
-    /** ƒTƒ“ƒvƒŠƒ“ƒOƒŒ[ƒg‚ğæ“¾‚µ‚Ü‚·B */
+    /** ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãƒ¬ãƒ¼ãƒˆã‚’å–å¾—ã—ã¾ã™ã€‚ */
     protected int getSamplingRateInternal(int format1) {
         int sampleRate = 8000;
         switch (format1) {
@@ -137,13 +139,13 @@ Debug.println("sampling: " + StringUtil.toHex2(data[8] & 0x3f) + ": rate=" + sam
             sampleRate = 32000;
             break;
         default:
-Debug.println("unknown sampling rate: " + format1);
+Debug.println(Level.WARNING, "unknown sampling rate: " + format1);
             break;
         }
         return sampleRate;
     }
 
-    /** ƒTƒ“ƒvƒŠƒ“ƒOƒrƒbƒg”‚ğæ“¾‚µ‚Ü‚·B */
+    /** ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãƒ“ãƒƒãƒˆæ•°ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     protected int getSamplingBitsInternal(int format2) {
         int bits = 4;
         switch (format2) {
@@ -154,7 +156,7 @@ Debug.println("unknown sampling rate: " + format1);
             bits = 4;
             break;
         default:
-Debug.println("unknown bits: " + format2);
+Debug.println(Level.WARNING, "unknown bits: " + format2);
             break;
         }
         return bits;
@@ -232,9 +234,9 @@ Debug.println("unknown bits: " + format2);
     }
 
     /**
-     * –‘O‚É {@link #setAdpcm(byte[])}, {@link #setSamplingRate(int)},
-     * {@link #setSamplingBits(int)} ‚ğ—p‚¢‚ÄƒtƒB[ƒ‹ƒh‚ğİ’è‚µ‚Ä‚¨‚¢‚Ä‰º‚³‚¢B
-     * <li> wav2mld ‚Í continued ‚Ì‚Æ‚« mode ‚ª MODE_STORE ‚ÅAÅŒã‚É MODE_RECYCLE
+     * äº‹å‰ã« {@link #setAdpcm(byte[])}, {@link #setSamplingRate(int)},
+     * {@link #setSamplingBits(int)} ã‚’ç”¨ã„ã¦ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã‚’è¨­å®šã—ã¦ãŠã„ã¦ä¸‹ã•ã„ã€‚
+     * <li> wav2mld ã¯ continued ã®ã¨ã mode ãŒ MODE_STORE ã§ã€æœ€å¾Œã« MODE_RECYCLE
      */
     public byte[] getMessage() throws InvalidMfiDataException {
 

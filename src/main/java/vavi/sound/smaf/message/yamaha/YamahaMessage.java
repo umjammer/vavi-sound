@@ -7,11 +7,20 @@
 package vavi.sound.smaf.message.yamaha;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 
-import vavi.sound.smaf.SysexMessage;
+import vavi.sound.midi.VaviMidiDeviceProvider;
+import vavi.sound.mobile.AudioEngine;
+import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.sound.smaf.message.MachineDependentMessage;
 import vavi.sound.smaf.message.MidiContext;
 import vavi.sound.smaf.message.MidiConvertible;
+import vavi.sound.smaf.sequencer.MachineDependentSequencer;
+import vavi.sound.smaf.sequencer.SmafMessageStore;
+import vavi.sound.smaf.sequencer.WaveSequencer;
+import vavi.util.Debug;
+import vavi.util.StringUtil;
 
 
 /**
@@ -20,46 +29,46 @@ import vavi.sound.smaf.message.MidiConvertible;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 050501 nsano initial version <br>
  */
-public class YamahaMessage extends SysexMessage
-    implements MidiConvertible {
+public class YamahaMessage extends MachineDependentMessage
+    implements MachineDependentSequencer, MidiConvertible {
 
     /**
      * 
-     * <li>[MA-3] ƒXƒgƒŠ[ƒ€PCM ƒyƒA
+     * <li>[MA-3] ã‚¹ãƒˆãƒªãƒ¼ãƒ PCM ãƒšã‚¢
      * <p>
-     * w’è‚µ‚½“ñ‚Â‚ÌƒXƒgƒŠ[ƒ€PCM‚ğ“¯Šú”­‰¹‚³‚¹‚é‚æ‚¤İ’è‚Å‚«‚Ü‚·B
-     * “¯ŠúƒƒbƒZ[ƒW‚ğóMŒãA‚¢‚¸‚ê‚©‚Ìƒm[ƒgEƒIƒ“‚Å“ñ‚Â‚ÌƒTƒEƒ“ƒh‚ª“¯‚É”­‰¹‚³‚ê‚Ü‚·B
+     * æŒ‡å®šã—ãŸäºŒã¤ã®ã‚¹ãƒˆãƒªãƒ¼ãƒ PCMã‚’åŒæœŸç™ºéŸ³ã•ã›ã‚‹ã‚ˆã†è¨­å®šã§ãã¾ã™ã€‚
+     * åŒæœŸãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å—ä¿¡å¾Œã€ã„ãšã‚Œã‹ã®ãƒãƒ¼ãƒˆãƒ»ã‚ªãƒ³ã§äºŒã¤ã®ã‚µã‚¦ãƒ³ãƒ‰ãŒåŒæ™‚ã«ç™ºéŸ³ã•ã‚Œã¾ã™ã€‚
      * </p>
      * <pre>
      * ex.)F0 xx 43 79 06 7F 08 cl id1 id2 F7
-     *  @@cl=00(“¯Šú),01(‰ğœ)
-     *    @id1=00`20(Wave ID 1)
-     *    @id2=00`20(Wave ID 2)
+     *  ã€€ã€€cl=00(åŒæœŸ),01(è§£é™¤)
+     *    ã€€id1=00ã€œ20(Wave ID 1)
+     *    ã€€id2=00ã€œ20(Wave ID 2)
      * </pre>
-     * <li> MA-3/MA-5 ƒXƒgƒŠ[ƒ€PCM ƒEƒF[ƒuEƒpƒ“ƒ|ƒbƒg
+     * <li> MA-3/MA-5 ã‚¹ãƒˆãƒªãƒ¼ãƒ PCM ã‚¦ã‚§ãƒ¼ãƒ–ãƒ»ãƒ‘ãƒ³ãƒãƒƒãƒˆ
      * <p>
-     * w’è‚µ‚½ƒXƒgƒŠ[ƒ€PCMƒEƒF[ƒu‚ÌƒXƒeƒŒƒI’èˆÊˆÊ’u‚ğİ’è‚µ‚Ü‚·B
+     * æŒ‡å®šã—ãŸã‚¹ãƒˆãƒªãƒ¼ãƒ PCMã‚¦ã‚§ãƒ¼ãƒ–ã®ã‚¹ãƒ†ãƒ¬ã‚ªå®šä½ä½ç½®ã‚’è¨­å®šã—ã¾ã™ã€‚
      * </p>
      * <pre>
      * ex.)F0 xx 43 79 06 7F 0B id pp dd F7
-     *  @@id=00`20(Wave ID)
-     *  @@pp=00(w’è),01(ƒNƒŠƒA),02(ƒIƒt)
-     *  @@dd=00`7F(’èˆÊFCenter=40)
+     *  ã€€ã€€id=00ã€œ20(Wave ID)
+     *  ã€€ã€€pp=00(æŒ‡å®š),01(ã‚¯ãƒªã‚¢),02(ã‚ªãƒ•)
+     *  ã€€ã€€dd=00ã€œ7F(å®šä½ï¼šCenter=40)
      * </pre>
-     * ¦ ˆê“x‚±‚ê‚ğw’è‚µ‚½ê‡AƒNƒŠƒA‚µ‚È‚¢ŒÀ‚èƒ`ƒƒƒ“ƒlƒ‹Eƒpƒ“ƒ|ƒbƒg(CC#10)‚Ìw’è‚ÍŒø‰Ê‚ ‚è‚Ü‚¹‚ñB
+     * â€» ä¸€åº¦ã“ã‚Œã‚’æŒ‡å®šã—ãŸå ´åˆã€ã‚¯ãƒªã‚¢ã—ãªã„é™ã‚Šãƒãƒ£ãƒ³ãƒãƒ«ãƒ»ãƒ‘ãƒ³ãƒãƒƒãƒˆ(CC#10)ã®æŒ‡å®šã¯åŠ¹æœã‚ã‚Šã¾ã›ã‚“ã€‚
      * <pre>
      * ----------------------
-     *  MA-3 ƒ}ƒXƒ^[Eƒ{ƒŠƒ…[ƒ€
-     *  MA-3 ƒXƒgƒŠ[ƒ€PCMƒyƒA
-     *  MA-3 ƒXƒgƒŠ[ƒ€PCMƒEƒF[ƒuEƒpƒ“ƒ|ƒbƒg
-     *  MA-3 Š„‚è‚İİ’è
+     *  MA-3 ãƒã‚¹ã‚¿ãƒ¼ãƒ»ãƒœãƒªãƒ¥ãƒ¼ãƒ 
+     *  MA-3 ã‚¹ãƒˆãƒªãƒ¼ãƒ PCMãƒšã‚¢
+     *  MA-3 ã‚¹ãƒˆãƒªãƒ¼ãƒ PCMã‚¦ã‚§ãƒ¼ãƒ–ãƒ»ãƒ‘ãƒ³ãƒãƒƒãƒˆ
+     *  MA-3 å‰²ã‚Šè¾¼ã¿è¨­å®š
      *  ----------------------
      * </pre>
 <pre>
 
 [???] (puc)
          43 01 80 31 xx F7
-                     ~~ ƒeƒ“ƒ|ƒf[ƒ^H@Mtsu ‚Åw’è‚µ‚½‚à‚Ì 
+                     ~~ ãƒ†ãƒ³ãƒãƒ‡ãƒ¼ã‚¿ï¼Ÿã€€Mtsu ã§æŒ‡å®šã—ãŸã‚‚ã® 
 
 [???] (my dump)
          43 03 91 18 00 F7
@@ -71,11 +80,11 @@ public class YamahaMessage extends SysexMessage
 
 [???] (puc)
 FF F0 05 43 02 80 ** F7
-                  ~~ 1 ƒfƒ‹ƒ^ƒ^ƒCƒ€‚ ‚½‚è‚Ì msec ‚ç‚µ‚¢
+                  ~~ 1 ãƒ‡ãƒ«ã‚¿ã‚¿ã‚¤ãƒ ã‚ãŸã‚Šã® msec ã‚‰ã—ã„
 
-[‰¹Fİ’è] (puc)
+[éŸ³è‰²è¨­å®š] (puc)
 FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
-                  ~~ ~~  1 ƒoƒCƒg–Ú‚Í 00 2 ƒoƒCƒg–Ú‚ª‰¹F”Ô†
+                  ~~ ~~  1 ãƒã‚¤ãƒˆç›®ã¯ 00 2 ãƒã‚¤ãƒˆç›®ãŒéŸ³è‰²ç•ªå·
 
 [FMAll4HPS] (smaftool)
          43 03 00 00 47 50 01 25 1B 92 42 A0 14 72 71 00 A0 F7
@@ -99,33 +108,80 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
 [MA-3,5 SetWave] (smaftool)
          43 79    7F 03
 
-[ƒXƒgƒŠ[ƒ€PCM ƒEƒF[ƒuƒpƒ“ƒ|ƒbƒg] (proper)
+[ã‚¹ãƒˆãƒªãƒ¼ãƒ PCM ã‚¦ã‚§ãƒ¼ãƒ–ãƒ‘ãƒ³ãƒãƒƒãƒˆ] (proper)
       F0 43 79 06 7F 0B ii cc dd F7
-          ii: WaveID 1`32 i1H`20Fj
-          cc: ƒpƒ“ƒ|ƒbƒgw’è 0AƒNƒŠƒA 1Aƒpƒ“ƒIƒt 2
-          dd: ƒpƒ“ƒ|ƒbƒg’l0`127 (00H`7FH)
+          ii: WaveID 1ã€œ32 ï¼ˆ1Hã€œ20Fï¼‰
+          cc: ãƒ‘ãƒ³ãƒãƒƒãƒˆæŒ‡å®š 0ã€ã‚¯ãƒªã‚¢ 1ã€ãƒ‘ãƒ³ã‚ªãƒ• 2
+          dd: ãƒ‘ãƒ³ãƒãƒƒãƒˆå€¤0ã€œ127 (00Hã€œ7FH)
 
-[ƒ†[ƒU[ƒCƒxƒ“ƒg] (proper)
+[ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚¤ãƒ™ãƒ³ãƒˆ] (proper)
       F0 43 79 06 7F 10 dd F7
-          dd: ƒ†[ƒU[ƒCƒxƒ“ƒgí•Ê 0`15 (0H`FH)
+          dd: ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚¤ãƒ™ãƒ³ãƒˆç¨®åˆ¥ 0ã€œ15 (0Hã€œFH)
 
 </pre>
-     *
+     * <p>
+     * ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã® MIDI ã‚·ãƒ¼ã‚±ãƒ³ã‚µã‚’ä½¿ç”¨ã™ã‚‹ãŸã‚ã€ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆã—ã‹ãƒ•ãƒƒã‚¯ã§ããªã„ã®ã§
+     * ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆã«å¤‰æ›ã—ã¦ã„ã‚‹ã€‚
+     * </p>
      * @see "http://www.music.ne.jp/~puc/mmf_format.html"
      * @see "ATS-MA5-SMAF_GL_133_HV.pdf"
      * @see "http://murachue.ddo.jp/web/softlist.cgi?mode=desc&title=mmftool"
      */
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 
-        MidiEvent[] events = new MidiEvent[1];
-        javax.sound.midi.SysexMessage sysexMessage = new javax.sound.midi.SysexMessage();
+//        MidiEvent[] events = new MidiEvent[1];
+//        javax.sound.midi.SysexMessage sysexMessage = new javax.sound.midi.SysexMessage();
 //Debug.println("(" + StringUtil.toHex2(command) + "): " + channel + "ch, " + StringUtil.toHex2(value));
-        byte[] temp = new byte[data.length + 1];
-        temp[0] = (byte) 0xf0;
-        System.arraycopy(data, 0, temp, 1, data.length);
-        sysexMessage.setMessage(temp, temp.length);
-        events[0] = new MidiEvent(sysexMessage, context.getCurrentTick());
-        return events;
+//        byte[] temp = new byte[data.length + 1];
+//        temp[0] = (byte) 0xf0;
+//        System.arraycopy(data, 0, temp, 1, data.length);
+//        sysexMessage.setMessage(temp, temp.length);
+//        events[0] = new MidiEvent(sysexMessage, context.getCurrentTick());
+//        return events;
+
+        MetaMessage metaMessage = new MetaMessage();
+
+        int id = SmafMessageStore.put(this);
+        byte[] data = {
+            VaviMidiDeviceProvider.MANUFACTURER_ID,
+            MachineDependentSequencer.META_FUNCTION_ID_MACHINE_DEPEND,
+            (byte) ((id / 0x100) & 0xff),
+            (byte) ((id % 0x100) & 0xff)
+        };
+        metaMessage.setMessage(0x7f,    // ã‚·ãƒ¼ã‚±ãƒ³ã‚µãƒ¼å›ºæœ‰ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆ
+                               data,
+                               data.length);
+
+        return new MidiEvent[] {
+            new MidiEvent(metaMessage, context.getCurrentTick())
+        };
+    }
+
+    /* TODO ä»Šã€è¶…é©å½“ */
+    public void sequence() throws InvalidSmafDataException {
+Debug.println("yamaha: " + data.length + "\n" + StringUtil.getDump(data, 64));
+        switch (data[1]) {
+        case 0x79:
+            switch (data[3]) {
+            case 0x7f:
+                switch (data[4]) {
+                case 0x20: { // 
+Debug.println("YAMAHA UNKNOWN: ");
+                    AudioEngine engine = WaveSequencer.Factory.getAudioEngine();
+                    engine.start(2);
+                    break;
+                }
+                case 0x00: { // volume
+Debug.println("YAMAHA VOLUME: ");
+                    AudioEngine engine = WaveSequencer.Factory.getAudioEngine();
+                    engine.start(1);
+                    break;
+                }
+                }
+                break;
+            }
+            break;
+        }
     }
 }
 

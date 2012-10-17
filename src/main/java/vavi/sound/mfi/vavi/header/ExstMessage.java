@@ -11,7 +11,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * 拡張ステータス A メッセージ長 MFi Header Sub Chunk.
+ * 諡｡蠑ｵ繧ｹ繝�繝ｼ繧ｿ繧ｹ A 繝｡繝�繧ｻ繝ｼ繧ｸ髟ｷ MFi Header Sub Chunk.
  * 
  * <pre>
  *  &quot;exst&quot; 2 bytes: extended status data length

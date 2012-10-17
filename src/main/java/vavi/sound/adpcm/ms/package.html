@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="Windows-31J"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <html lang="ja">
 
 <head>
 <link rev="MADE" href="mailto:vavivavi@yahoo.co.jp" />
 <link rel="INDEX" href="orverview.html" />
-<meta http-equiv="Content-Type" content="text/html; charset=shift_jis" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
 <link rel="stylesheet" type="text/css" href="../../../../vavi.css" />
 <title>vavi.sound.adpcm.ms</title>
@@ -22,27 +22,27 @@
 <body>
 
 <p>
-MS ADPCM �t�H�[�}�b�g�֘A�̃N���X��񋟂��܂��D
+MS ADPCM フォーマット関連のクラスを提供します．
 </p>
 
-sox �Ɠ������ʂɂȂ����̂Ŋ����Ƃ݂Ȃ��B
+sox と同じ結果になったので完成とみなす。
 
-<h2>������������</h2>
-
-<ul>
-<li>ACM �� M$ ADPCM �Ƃ͌��ʂ��Ⴄ</li>
-</ul>
-
-<h2>���ꂩ��������邱��</h2>
+<h2>分かったこと</h2>
 
 <ul>
-<li><del datetime="111016">�ꊇ�ǂݍ��݂��~�߂�</del></li>
-<li><del datetime="111016">���������� EngineeringIO ���g��</del></li>
-<li><del datetime="060124">��������</del></li>
-<li><del>�Ō�̃t���O�����g���؂�Ă���</del> �� #drain() </li>
+<li>ACM の M$ ADPCM とは結果が違う</li>
 </ul>
 
-<h2>�ꎟ���C�Z���X</h2>
+<h2>これから実装すること</h2>
+
+<ul>
+<li><del datetime="111016">一括読み込みを止める</del></li>
+<li><del datetime="111016">↑もしくは EngineeringIO を使う</del></li>
+<li><del datetime="060124">音が汚い</del></li>
+<li><del>最後のフラグメントが切れている</del> → #drain() </li>
+</ul>
+
+<h2>一次ライセンス</h2>
 
 <b style="color:red">WARNING THIS PROGRAM LICENCE IS LGPL</b>
 

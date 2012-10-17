@@ -30,8 +30,8 @@ import vavi.io.IOStreamOutputEngine;
 import vavi.io.InputEngineOutputStream;
 import vavi.io.LittleEndianDataInputStream;
 import vavi.io.OutputEngineInputStream;
-import vavi.sound.Checksum;
 import vavi.util.Debug;
+import vavix.util.Checksum;
 
 import static org.junit.Assert.assertEquals;
 
@@ -120,7 +120,7 @@ Debug.println("outFile: " + outFile.length());
     }
 
     /**
-     * TODO input engine ‚Æ output engine ‚ÌŒ‹‡‚ª‚¤‚Ü‚­‚¢‚©‚È‚¢
+     * TODO input engine ã¨ output engine ã®çµåˆãŒã†ã¾ãã„ã‹ãªã„
      */
     @Test
     public void test2() throws Exception {

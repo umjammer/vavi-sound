@@ -101,7 +101,7 @@ public class AudioPlayMessage extends LongMessage
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // ƒV[ƒPƒ“ƒT[ŒÅ—Lƒƒ^ƒCƒxƒ“ƒg
+        metaMessage.setMessage(0x7f,    // ã‚·ãƒ¼ã‚±ãƒ³ã‚µãƒ¼å›ºæœ‰ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆ
                                data,
                                data.length);
 
@@ -110,7 +110,7 @@ public class AudioPlayMessage extends LongMessage
         };
     }
 
-    /** */
+    /** @throws IllegalArgumentException when audio engine does not found */
     public void sequence() throws InvalidMfiDataException {
         int id = getIndex();
 

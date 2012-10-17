@@ -22,7 +22,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * VolumeMessage.
  * <pre>
- *  0xe# 音源制御情報
+ *  0xe# 髻ｳ貅仙宛蠕｡諠�蝣ｱ
  *  channel true
  *  delta   true
  * </pre>
@@ -109,13 +109,13 @@ public class VolumeMessage extends vavi.sound.mfi.ShortMessage
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 channel,
-                                7,          // メインボリューム MSB
+                                7,          // 繝｡繧､繝ｳ繝懊Μ繝･繝ｼ繝 MSB
                                 context.getVolume(channel) * 2);
         events[0] = new MidiEvent(shortMessage, context.getCurrent());
 //      shortMessage = new ShortMessage();
 //      shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
 //                              channel,
-//                              39,         // メインボリューム LSB
+//                              39,         // 繝｡繧､繝ｳ繝懊Μ繝･繝ｼ繝 LSB
 //                              0);
 //      events[1] = new MidiEvent(shortMessage, context.getCurrent());
         return events;

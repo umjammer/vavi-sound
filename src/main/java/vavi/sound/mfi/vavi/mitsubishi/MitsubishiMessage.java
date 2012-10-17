@@ -21,7 +21,7 @@ import vavi.util.Debug;
 /**
  * Mitsubishi System exclusive message.
  * <p>
- * TODO ‹@”\‚²‚Æ‚É FunctionXXX ‚ÉˆÚ‚·
+ * TODO æ©Ÿèƒ½ã”ã¨ã« FunctionXXX ã«ç§»ã™
  * </p>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030711 nsano initial version <br>
@@ -41,7 +41,7 @@ public final class MitsubishiMessage extends FuetrekAudioMessage {
     /**
      * 0x83
      * <p>
-     * TODO ŠÔw’è‚È‚¢ê‡
+     * TODO æ™‚é–“æŒ‡å®šãªã„å ´åˆ
      * </p>
      * @param pcm wave (PCM), 16bit 
      * @param sampleRate 4k, 8k, 16k, 32k are available
@@ -220,10 +220,10 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
         function.setMaxSample(sampleRate);
         // 0x89
         function.setMaxSampleCue(sampleRate);
-        // 0x83 —v‚Í 16kHz, 4bit mono ‚Ì = 4, 8kHz, 4bit mono ‚Ì‚É 2
-        function.setMaxParallel(sampleRate * (bits / 2) * channels); // TODO bit “K“–
-        // 0x8B —v‚Í 16kHz, 4bit mono ‚Ì = 4, 8kHz, 4bit mono ‚Ì‚É 2
-        function.setMaxParallelCue(sampleRate * (bits / 2) * channels); // TODO bit “K“–
+        // 0x83 è¦ã¯ 16kHz, 4bit mono ã®æ™‚ = 4, 8kHz, 4bit mono ã®æ™‚ã« 2
+        function.setMaxParallel(sampleRate * (bits / 2) * channels); // TODO bit é©å½“
+        // 0x8B è¦ã¯ 16kHz, 4bit mono ã®æ™‚ = 4, 8kHz, 4bit mono ã®æ™‚ã« 2
+        function.setMaxParallelCue(sampleRate * (bits / 2) * channels); // TODO bit é©å½“
         message.setMessage(0x00, function.getMessage());
         return new MfiEvent(message, 0l);
     }

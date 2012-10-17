@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import vavi.sound.midi.MidiConstants;
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -76,7 +77,7 @@ Debug.println("gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBa
             } else if (chunk instanceof WaveDataChunk) {
                 waveDataChunks.add(chunk);
             } else {
-Debug.println("unknown chunk: " + chunk.getClass());
+Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
     }
@@ -143,7 +144,7 @@ Debug.println("unknown chunk: " + chunk.getClass());
     /** */
     private List<Chunk> waveDataChunks = new ArrayList<Chunk>();
 
-    /** "Awa*" TODO ƒzƒ“ƒ}‚É•¡”‚©H */
+    /** "Awa*" TODO ãƒ›ãƒ³ãƒã«è¤‡æ•°ã‹ï¼Ÿ */
     public void addWaveDataChunk(Chunk waveDataChunk) {
         waveDataChunks.add(waveDataChunk);
         size += waveDataChunk.getSize() + 8;

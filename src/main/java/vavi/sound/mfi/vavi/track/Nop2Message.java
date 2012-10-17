@@ -17,7 +17,7 @@ import vavi.util.Debug;
 /**
  * Nop2Message.
  * <pre>
- *  0xff, 0xd# ‰‰‘tŠÇ—î•ñ
+ *  0xff, 0xd# æ¼”å¥ç®¡ç†æƒ…å ±
  *  channel false
  *  delta   true
  * </pre>

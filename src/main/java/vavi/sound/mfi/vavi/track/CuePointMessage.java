@@ -16,7 +16,7 @@ import vavi.util.Debug;
 /**
  * CuePointMessage.
  * <pre>
- *  0xff, 0xd# ‰‰‘tŠÇ—î•ñ
+ *  0xff, 0xd# æ¼”å¥ç®¡ç†æƒ…å ±
  *  channel false
  *  delta   ?
  * </pre>
@@ -67,8 +67,8 @@ public class CuePointMessage extends ShortMessage
     //----
 
     /**
-     * TODO {@link javax.sound.midi.MetaMessage} ‚É 0x07 ƒLƒ…[ƒ|ƒCƒ“ƒg‚Á‚Ä‚ ‚é‚æ
-     * @return ‰½‚à•Ô‚µ‚Ü‚¹‚ñ 
+     * TODO {@link javax.sound.midi.MetaMessage} ã« 0x07 ã‚­ãƒ¥ãƒ¼ãƒã‚¤ãƒ³ãƒˆã£ã¦ã‚ã‚‹ã‚ˆ
+     * @return ä½•ã‚‚è¿”ã—ã¾ã›ã‚“ 
      */
     public MidiEvent[] getMidiEvents(MidiContext context) {
 

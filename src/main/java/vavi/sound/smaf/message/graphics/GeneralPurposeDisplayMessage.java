@@ -15,10 +15,10 @@ import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 
 /**
  * GeneralPurposeDisplayMessage.
- * (Display Object Event 0x40`0x7F)
+ * (Display Object Event 0x40ã€œ0x7F)
  * <pre>
  *  duration    1or2
- *  event type  0x40`0x7F
+ *  event type  0x40ã€œ0x7F
  *  duration    1or2
  * </pre>
  * 

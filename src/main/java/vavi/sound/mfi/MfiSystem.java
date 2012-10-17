@@ -41,30 +41,30 @@ import vavi.util.Debug;
  */
 public final class MfiSystem {
 
-    /** ƒAƒNƒZƒX‚Å‚«‚Ü‚¹‚ñB */
+    /** ã‚¢ã‚¯ã‚»ã‚¹ã§ãã¾ã›ã‚“ã€‚ */
     private MfiSystem() {
     }
 
-    /** ƒfƒtƒHƒ‹ƒgƒvƒƒoƒCƒ_‚©‚ç‚·‚×‚Ä‚ÌƒfƒoƒCƒX‚ğæ“¾‚µ‚Ü‚·B */
+    /** ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ—ãƒ­ãƒã‚¤ãƒ€ã‹ã‚‰ã™ã¹ã¦ã®ãƒ‡ãƒã‚¤ã‚¹ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static MfiDevice.Info[] getMfiDeviceInfo() {
-        return provider.getDeviceInfo(); // TODO ƒvƒƒoƒCƒ_‚Ü‚í‚·‚×‚«
+        return provider.getDeviceInfo(); // TODO ãƒ—ãƒ­ãƒã‚¤ãƒ€ã¾ã‚ã™ã¹ã
     }
 
-    /** ƒfƒtƒHƒ‹ƒgƒvƒƒoƒCƒ_‚©‚çw’è‚µ‚½î•ñ‚ÌƒfƒoƒCƒX‚ğæ“¾‚µ‚Ü‚·B */
+    /** ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ—ãƒ­ãƒã‚¤ãƒ€ã‹ã‚‰æŒ‡å®šã—ãŸæƒ…å ±ã®ãƒ‡ãƒã‚¤ã‚¹ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static MfiDevice getMfiDevice(MfiDevice.Info info)
         throws MfiUnavailableException {
 
-        return provider.getDevice(info); // TODO ƒvƒƒoƒCƒ_‚Ü‚í‚·‚×‚«
+        return provider.getDevice(info); // TODO ãƒ—ãƒ­ãƒã‚¤ãƒ€ã¾ã‚ã™ã¹ã
     }
 
     /**
-     * ƒfƒtƒHƒ‹ƒgƒvƒƒoƒCƒ_‚©‚çƒV[ƒPƒ“ƒT‚ğæ“¾‚µ‚Ü‚·B
+     * ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ—ãƒ­ãƒã‚¤ãƒ€ã‹ã‚‰ã‚·ãƒ¼ã‚±ãƒ³ã‚µã‚’å–å¾—ã—ã¾ã™ã€‚
      * <p>
-     * {@link #getSequencer()} ‚ÅÄ¶‚·‚éê‡‚Í
-     * ƒVƒXƒeƒ€ƒvƒƒpƒeƒB <code>javax.sound.midi.Sequencer</code> ‚É <code>"#Real Time Sequencer"</code>
-     * ‚ğ–¾¦‚·‚é‚æ‚¤‚É‚µ‚Ä‚­‚¾‚³‚¢B<code>"Java MIDI(MFi/SMAF) ADPCM Sequencer"</code> ‚ª
-     * ƒfƒtƒHƒ‹ƒgƒV[ƒPƒ“ƒT‚É‚È‚Á‚½ê‡A{@link #getMetaEventListener()}‚Åæ“¾‚Å‚«‚éƒŠƒXƒi[
-     * ‚ªd•¡‚µ‚Ä“o˜^‚³‚ê‚Ä‚µ‚Ü‚¢‚Ü‚·B
+     * {@link #getSequencer()} ã§å†ç”Ÿã™ã‚‹å ´åˆã¯
+     * ã‚·ã‚¹ãƒ†ãƒ ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ <code>javax.sound.midi.Sequencer</code> ã« <code>"#Real Time Sequencer"</code>
+     * ã‚’æ˜ç¤ºã™ã‚‹ã‚ˆã†ã«ã—ã¦ãã ã•ã„ã€‚<code>"Java MIDI(MFi/SMAF) ADPCM Sequencer"</code> ãŒ
+     * ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚·ãƒ¼ã‚±ãƒ³ã‚µã«ãªã£ãŸå ´åˆã€{@link #getMetaEventListener()}ã§å–å¾—ã§ãã‚‹ãƒªã‚¹ãƒŠãƒ¼
+     * ãŒé‡è¤‡ã—ã¦ç™»éŒ²ã•ã‚Œã¦ã—ã¾ã„ã¾ã™ã€‚
      * </p>
      */
     public static Sequencer getSequencer()
@@ -77,11 +77,11 @@ public final class MfiSystem {
                 return (Sequencer) device;
             }
         }
-        // TODO ‚È‚¯‚ê‚Î‘¼‚ÌƒvƒƒoƒCƒ_‚ğ’T‚·‚×‚«
+        // TODO ãªã‘ã‚Œã°ä»–ã®ãƒ—ãƒ­ãƒã‚¤ãƒ€ã‚’æ¢ã™ã¹ã
         throw new MfiUnavailableException("no sequencer available");
     }
 
-    /** MIDI ƒV[ƒPƒ“ƒT‚É•t‰Á‚·‚éƒŠƒXƒi‚ğæ“¾‚µ‚Ü‚·B */
+    /** MIDI ã‚·ãƒ¼ã‚±ãƒ³ã‚µã«ä»˜åŠ ã™ã‚‹ãƒªã‚¹ãƒŠã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static javax.sound.midi.MetaEventListener getMetaEventListener()
         throws MfiUnavailableException {
 
@@ -93,11 +93,11 @@ public final class MfiSystem {
             }
         }
 
-        // TODO ‚È‚¯‚ê‚Î‘¼‚ÌƒvƒƒoƒCƒ_‚ğ’T‚·‚×‚«
+        // TODO ãªã‘ã‚Œã°ä»–ã®ãƒ—ãƒ­ãƒã‚¤ãƒ€ã‚’æ¢ã™ã¹ã
         throw new MfiUnavailableException("no MetaEventListener available");
     }
 
-    /** ƒfƒtƒHƒ‹ƒgƒvƒƒoƒCƒ_‚©‚ç MIDI - MFi ƒRƒ“ƒo[ƒ^‚ğæ“¾‚µ‚Ü‚·B */
+    /** ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ—ãƒ­ãƒã‚¤ãƒ€ã‹ã‚‰ MIDI - MFi ã‚³ãƒ³ãƒãƒ¼ã‚¿ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static MidiConverter getMidiConverter()
         throws MfiUnavailableException {
 
@@ -108,11 +108,12 @@ public final class MfiSystem {
                 return (MidiConverter) device;
             }
         }
-        // TODO ‚È‚¯‚ê‚Î‘¼‚ÌƒvƒƒoƒCƒ_‚ğ’T‚·‚×‚«
+        // TODO ãªã‘ã‚Œã°ä»–ã®ãƒ—ãƒ­ãƒã‚¤ãƒ€ã‚’æ¢ã™ã¹ã
         throw new MfiUnavailableException("no midiConverter available");
     }
 
-    /** @deprecated use #toMfiSequence(javax.sound.midi.Sequence sequence, int) */
+    /** use #toMfiSequence(javax.sound.midi.Sequence sequence, int) */
+    @Deprecated
     public static Sequence toMfiSequence(javax.sound.midi.Sequence sequence)
         throws InvalidMidiDataException, MfiUnavailableException {
 
@@ -121,7 +122,7 @@ public final class MfiSystem {
     }
 
     /**
-     * MIDI ƒV[ƒPƒ“ƒX‚ğ MFi ƒV[ƒPƒ“ƒX‚É•ÏŠ·‚µ‚Ü‚·B
+     * MIDI ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã‚’ MFi ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã«å¤‰æ›ã—ã¾ã™ã€‚
      * @param type    midi file type
      * @see MfiFileFormat#type
      */
@@ -133,7 +134,7 @@ public final class MfiSystem {
         return converter.toMfiSequence(sequence, type);
     }
 
-    /** MFi ƒV[ƒPƒ“ƒX‚ğ MIDI ƒV[ƒPƒ“ƒX‚É•ÏŠ·‚µ‚Ü‚·B */
+    /** MFi ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã‚’ MIDI ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã«å¤‰æ›ã—ã¾ã™ã€‚ */
     public static javax.sound.midi.Sequence toMidiSequence(Sequence sequence)
         throws InvalidMfiDataException, MfiUnavailableException {
 
@@ -142,7 +143,7 @@ public final class MfiSystem {
         return converter.toMidiSequence(sequence);
     }
 
-    /** MFi ƒtƒ@ƒCƒ‹ƒtƒH[ƒ}ƒbƒg‚ğæ“¾‚µ‚Ü‚·B */
+    /** MFi ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static MfiFileFormat getMfiFileFormat(InputStream stream)
         throws InvalidMfiDataException,
                IOException {
@@ -161,7 +162,7 @@ Debug.println(e);
         throw new InvalidMfiDataException("unsupported stream: " + stream);
     }
 
-    /** MFi ƒtƒ@ƒCƒ‹ƒtƒH[ƒ}ƒbƒg‚ğæ“¾‚µ‚Ü‚·B */
+    /** MFi ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static MfiFileFormat getMfiFileFormat(File file)
         throws InvalidMfiDataException,
                IOException {
@@ -169,7 +170,7 @@ Debug.println(e);
         return getMfiFileFormat(new BufferedInputStream(new FileInputStream(file)));
     }
 
-    /** MFi ƒtƒ@ƒCƒ‹ƒtƒH[ƒ}ƒbƒg‚ğæ“¾‚µ‚Ü‚·B */
+    /** MFi ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static MfiFileFormat getMfiFileFormat(URL url)
         throws InvalidMfiDataException,
                IOException {
@@ -177,7 +178,7 @@ Debug.println(e);
         return getMfiFileFormat(new BufferedInputStream(url.openStream()));
     }
 
-    /** MFi ƒV[ƒPƒ“ƒX‚ğæ“¾‚µ‚Ü‚·B */
+    /** MFi ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static Sequence getSequence(InputStream stream)
         throws InvalidMfiDataException,
                IOException {
@@ -197,7 +198,7 @@ Debug.println(e);
         throw new InvalidMfiDataException("unsupported stream: " + stream);
     }
 
-    /** MFi ƒV[ƒPƒ“ƒX‚ğæ“¾‚µ‚Ü‚·B */
+    /** MFi ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static Sequence getSequence(File file)
         throws InvalidMfiDataException,
                IOException {
@@ -205,7 +206,7 @@ Debug.println(e);
         return getSequence(new BufferedInputStream(new FileInputStream(file)));
     }
 
-    /** MFi ƒV[ƒPƒ“ƒX‚ğæ“¾‚µ‚Ü‚·B */
+    /** MFi ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static Sequence getSequence(URL url)
         throws InvalidMfiDataException,
                IOException {
@@ -213,7 +214,7 @@ Debug.println(e);
         return getSequence(new BufferedInputStream(url.openStream()));
     }
 
-    /** ƒTƒ|[ƒg‚·‚é MFi ƒtƒ@ƒCƒ‹ƒ^ƒCƒv‚ğæ“¾‚µ‚Ü‚·B */
+    /** ã‚µãƒãƒ¼ãƒˆã™ã‚‹ MFi ãƒ•ã‚¡ã‚¤ãƒ«ã‚¿ã‚¤ãƒ—ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static int[] getMfiFileTypes() {
         List<Integer> types = new ArrayList<Integer>();
         for (int i = 0; i < writers.length; i++) {
@@ -231,7 +232,7 @@ Debug.println(e);
         return result;
     }
 
-    /** w’è‚µ‚½ƒV[ƒPƒ“ƒX‚É‘Î‰‚·‚é MFi ƒtƒ@ƒCƒ‹ƒ^ƒCƒv‚ğæ“¾‚µ‚Ü‚·B */
+    /** æŒ‡å®šã—ãŸã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã«å¯¾å¿œã™ã‚‹ MFi ãƒ•ã‚¡ã‚¤ãƒ«ã‚¿ã‚¤ãƒ—ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public static int[] getMfiFileTypes(Sequence sequence) {
         List<Integer> types = new ArrayList<Integer>();
         for (int i = 0; i < writers.length; i++) {
@@ -249,7 +250,7 @@ Debug.println(e);
         return result;
     }
 
-    /** ƒtƒ@ƒCƒ‹ƒ^ƒCƒv‚ªƒTƒ|[ƒg‚³‚ê‚é‚©‚Ç‚¤‚©‚ğ•Ô‚µ‚Ü‚·B */
+    /** ãƒ•ã‚¡ã‚¤ãƒ«ã‚¿ã‚¤ãƒ—ãŒã‚µãƒãƒ¼ãƒˆã•ã‚Œã‚‹ã‹ã©ã†ã‹ã‚’è¿”ã—ã¾ã™ã€‚ */
     public static boolean isFileTypeSupported(int fileType) {
         for (int i = 0; i < writers.length; i++) {
             if (writers[i].isFileTypeSupported(fileType)) {
@@ -259,7 +260,7 @@ Debug.println(e);
         return false;
     }
 
-    /** ƒtƒ@ƒCƒ‹ƒ^ƒCƒv‚ªw’è‚µ‚½ƒV[ƒPƒ“ƒX‚ÅƒTƒ|[ƒg‚³‚ê‚é‚©‚Ç‚¤‚©‚ğ•Ô‚µ‚Ü‚·B */
+    /** ãƒ•ã‚¡ã‚¤ãƒ«ã‚¿ã‚¤ãƒ—ãŒæŒ‡å®šã—ãŸã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã§ã‚µãƒãƒ¼ãƒˆã•ã‚Œã‚‹ã‹ã©ã†ã‹ã‚’è¿”ã—ã¾ã™ã€‚ */
     public static boolean isFileTypeSupported(int fileType, Sequence sequence) {
         for (int i = 0; i < writers.length; i++) {
             if (writers[i].isFileTypeSupported(fileType, sequence)) {
@@ -269,7 +270,7 @@ Debug.println(e);
         return false;
     }
 
-    /** MFi or MIDI ‚Å‘‚«o‚µ‚Ü‚·B */
+    /** MFi or MIDI ã§æ›¸ãå‡ºã—ã¾ã™ã€‚ */
     public static int write(Sequence in, int fileType, OutputStream out)
         throws IOException {
 
@@ -282,7 +283,7 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
         return 0;
     }
 
-    /** MFi or MIDI ‚Å‘‚«o‚µ‚Ü‚·B */
+    /** MFi or MIDI ã§æ›¸ãå‡ºã—ã¾ã™ã€‚ */
     public static int write(Sequence in, int fileType, File out)
         throws IOException {
 
@@ -291,18 +292,18 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
 
     //-------------------------------------------------------------------------
 
-    /** all ƒvƒƒoƒCƒ_ */
+    /** all ãƒ—ãƒ­ãƒã‚¤ãƒ€ */
     private static MfiDeviceProvider[] providers;
-    /** all ƒŠ[ƒ_ */
+    /** all ãƒªãƒ¼ãƒ€ */
     private static MfiFileReader[] readers;
-    /** all ƒ‰ƒCƒ^ */
+    /** all ãƒ©ã‚¤ã‚¿ */
     private static MfiFileWriter[] writers;
 
-    /** default ƒvƒƒoƒCƒ_ */
+    /** default ãƒ—ãƒ­ãƒã‚¤ãƒ€ */
     private static MfiDeviceProvider provider;
 
     /**
-     * default ‚Í MfiSystem.properties ‚Åw’è‚µ‚Ü‚·B
+     * default ã¯ MfiSystem.properties ã§æŒ‡å®šã—ã¾ã™ã€‚
      * <li>vavi.sound.mfi.spi.MfiDeviceProvider
      */
     static {
@@ -362,37 +363,7 @@ props.list(System.err);
             }
         } catch (Exception e) {
 Debug.println(Level.SEVERE, e);
-Debug.printStackTrace(e);
-            System.exit(1);
-        }
-    }
-
-    //-------------------------------------------------------------------------
-
-    /**
-     * Tests this class.
-     *
-     * usage: java -Djavax.sound.midi.Sequencer="#Real Time Sequencer" MfiSystem mfi_file ...
-     */
-    public static void main(String[] args) throws Exception {
-        final Sequencer sequencer = MfiSystem.getSequencer();
-        sequencer.open();
-        for (int i = 0; i < args.length; i++) {
-Debug.println("START: " + args[i]);
-            Sequence sequence = MfiSystem.getSequence(new File(args[i]));
-            sequencer.setSequence(sequence);
-            if (i == args.length - 1) {
-                sequencer.addMetaEventListener(new MetaEventListener() {
-                    public void meta(MetaMessage meta) {
-Debug.println(meta.getType());
-                        if (meta.getType() == 47) {
-                            sequencer.close();
-                        }
-                    }
-                });
-            }
-            sequencer.start();
-Debug.println("END: " + args[i]);
+            throw new IllegalStateException(e);
         }
     }
 }

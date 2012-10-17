@@ -6,8 +6,6 @@
 
 package vavi.sound.smaf.message;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.BitSet;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
@@ -16,14 +14,12 @@ import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.Track;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
-import vavi.sound.smaf.SmafSystem;
 import vavi.util.Debug;
 
 
@@ -35,7 +31,7 @@ import vavi.util.Debug;
  */
 public class SmafContext implements SmafConvertible {
 
-    /** SMAF ‚Ìƒgƒ‰ƒbƒN”‚ÌÅ‘å’l */
+    /** SMAF ã®ãƒˆãƒ©ãƒƒã‚¯æ•°ã®æœ€å¤§å€¤ */
     public static final int MAX_SMAF_TRACKS = 4;
 
     //----
@@ -53,7 +49,7 @@ public class SmafContext implements SmafConvertible {
         this.type = type;
     }
 
-    /** TODO ¡‚Ì‚Æ‚±‚ë sequence#resolution */
+    /** TODO ä»Šã®ã¨ã“ã‚ sequence#resolution */
     private int timeBase;
 
     /** */
@@ -68,7 +64,7 @@ public class SmafContext implements SmafConvertible {
 
     //----
 
-    /** index ‚Í SMAF Track No., g—p‚³‚ê‚Ä‚¢‚ê‚Î true */
+    /** index ã¯ SMAF Track No., ä½¿ç”¨ã•ã‚Œã¦ã„ã‚Œã° true */
     private boolean[] trackUsed = new boolean[MAX_SMAF_TRACKS];
 
     /**
@@ -88,7 +84,7 @@ public class SmafContext implements SmafConvertible {
     //----
 
     /**
-     * tick ‚Ì”{—¦
+     * tick ã®å€ç‡
      */
     private double scale = 1.0d;
 
@@ -105,7 +101,7 @@ Debug.println("scale: " + scale);
 
     //----
 
-    /** ’¼‘O‚Ì tick, index ‚Í SMAF Track No. */
+    /** ç›´å‰ã® tick, index ã¯ SMAF Track No. */
     private long[] beforeTicks = new long[MAX_SMAF_TRACKS];
 
     /* init */ {
@@ -135,23 +131,23 @@ Debug.println("scale: " + scale);
         this.beforeTicks[smafTrackNumber] += getAdjustedDelta(smafTrackNumber, delta * scale);
     }
 
-    /** @return •â³‚ ‚è ƒ¢ƒ^ƒCƒ€ */
+    /** @return è£œæ­£ã‚ã‚Š Î”ã‚¿ã‚¤ãƒ  */
     public int retrieveAdjustedDelta(int smafTrackNumber, long currentTick) {
         return getAdjustedDelta(smafTrackNumber, (currentTick - beforeTicks[smafTrackNumber]) / scale);
     }
 
     /**
-     * @return •â³‚È‚µ ƒ¢ƒ^ƒCƒ€
-     * TODO ‰½‚Å‚±‚ê‚Å‚¤‚Ü‚­‚¢‚­‚ÌH
+     * @return è£œæ­£ãªã— Î”ã‚¿ã‚¤ãƒ 
+     * TODO ä½•ã§ã“ã‚Œã§ã†ã¾ãã„ãã®ï¼Ÿ
      */
     private int retrieveDelta(int smafTrackNumber, long currentTick) {
         return (int) Math.round((currentTick - beforeTicks[smafTrackNumber]) / scale);
     }
 
-    /** Math#round() ‚ÅŠÛ‚ß‚ç‚ê‚½Œë· */
+    /** Math#round() ã§ä¸¸ã‚ã‚‰ã‚ŒãŸèª¤å·® */
     private float[] roundedSum = new float[MAX_SMAF_TRACKS];
     
-    /** Math#round() ‚ÅŠÛ‚ß‚ç‚ê‚½Œë·‚ª®”’l‚æ‚è‘å‚«‚­‚È‚Á‚½ê‡‚Ì•â³ */
+    /** Math#round() ã§ä¸¸ã‚ã‚‰ã‚ŒãŸèª¤å·®ãŒæ•´æ•°å€¤ã‚ˆã‚Šå¤§ãããªã£ãŸå ´åˆã®è£œæ­£ */
     private int getAdjustedDelta(int smafTrackNumber, double floatDelta) {
         int delta = (int) Math.round(floatDelta);
         double rounded = floatDelta - delta;
@@ -171,18 +167,18 @@ Debug.println("rounded under -1, minus 1: " + roundedSum[smafTrackNumber] + "[" 
     //----
 
     /**
-     * ˆê‚Â‘O‚Ì NoteOn ‚©‚ç‚ÌŠÔ (currentTick - beforeTicks[track]) ‚É
-     * ‚¢‚­‚Âƒ¢‚ª“ü‚é‚©(®”’lA‚ ‚Ü‚èØ‚èÌ‚Ä)‚ğ‹‚ßA‚»‚ÌŒÂ”•ª‘}“ü‚·‚é
-     * NopMessage ‚Ì”z—ñ‚ğ•Ô‚µ‚Ü‚·B
+     * ä¸€ã¤å‰ã® NoteOn ã‹ã‚‰ã®æ™‚é–“ (currentTick - beforeTicks[track]) ã«
+     * ã„ãã¤Î”ãŒå…¥ã‚‹ã‹(æ•´æ•°å€¤ã€ã‚ã¾ã‚Šåˆ‡ã‚Šæ¨ã¦)ã‚’æ±‚ã‚ã€ãã®å€‹æ•°åˆ†æŒ¿å…¥ã™ã‚‹
+     * NopMessage ã®é…åˆ—ã‚’è¿”ã—ã¾ã™ã€‚
      * <pre>
      *     event	index	process
      *   |
      * --+- NoteOn	-2	-> brforeTick
-     * ª|
-     * b|
-     * ƒ¢|- NoteOff	-1	-> noteOffEventUsed[-1] = true
-     * b|
-     * «|
+     * â†‘|
+     * ï½œ|
+     * Î”|- NoteOff	-1	-> noteOffEventUsed[-1] = true
+     * ï½œ|
+     * â†“|
      * --+-
      *   |
      *  -O- NoteOn	midiEventIndex
@@ -191,7 +187,7 @@ Debug.println("rounded under -1, minus 1: " + roundedSum[smafTrackNumber] + "[" 
      *   |
      * --+-
      * </pre>
-     * ã‹L}‚¾‚Æ 1 ‚Â‚Ì NopMessage ‚ª‘}“ü‚³‚ê‚éB
+     * ä¸Šè¨˜å›³ã ã¨ 1 ã¤ã® NopMessage ãŒæŒ¿å…¥ã•ã‚Œã‚‹ã€‚
      */
     public SmafEvent[] getIntervalSmafEvents() {
 
@@ -227,7 +223,7 @@ Debug.println(Level.WARNING, "not supported message: " + midiMessage);
 // Debug.println("interval: " + interval + ", " + (interval - 256));
 //}
 if (interval < 0) {
- // ‚ ‚è‚¦‚È‚¢‚Í‚¸
+ // ã‚ã‚Šãˆãªã„ã¯ãš
  Debug.println(Level.WARNING, "interval: " + interval);
  interval = 0;
 }
@@ -239,7 +235,7 @@ if (interval < 0) {
         for (int i = 0; i < nopLength; i++) {
             NopMessage smafMessage = new NopMessage(255);
             smafEvents[i] = new SmafEvent(smafMessage, 0l);	// TODO 0l
-            // 255 ƒ¢ •ªŒã‚ë‚É‚¸‚ç‚µ‚Ä‚¢‚­
+            // 255 Î” åˆ†å¾Œã‚ã«ãšã‚‰ã—ã¦ã„ã
             incrementBeforeTick(track, 255);
         };
 
@@ -248,9 +244,9 @@ if (interval < 0) {
     }
 
     /**
-     * ‘O‚Ìƒf[ƒ^(MIDI NoteOn)‚ªÀs‚³‚ê‚Ä‚©‚ç‚Ìƒ¢(ŠÔ)‚ğæ“¾‚µ‚Ü‚·B
-     * •K‚¸–‘O‚É #getIntervalSmafEvents() ‚ğÀs‚µ‚Äƒ¢‚ğ 255 ˆÈ‰º‚ğ
-     * •Ô‚·‚æ‚¤‚É‚µ‚Ä‚¨‚¢‚Ä‰º‚³‚¢B
+     * å‰ã®ãƒ‡ãƒ¼ã‚¿(MIDI NoteOn)ãŒå®Ÿè¡Œã•ã‚Œã¦ã‹ã‚‰ã®Î”(æ™‚é–“)ã‚’å–å¾—ã—ã¾ã™ã€‚
+     * å¿…ãšäº‹å‰ã« #getIntervalSmafEvents() ã‚’å®Ÿè¡Œã—ã¦Î”ã‚’ 255 ä»¥ä¸‹ã‚’
+     * è¿”ã™ã‚ˆã†ã«ã—ã¦ãŠã„ã¦ä¸‹ã•ã„ã€‚
      */
     public int getDuration() {
 
@@ -266,28 +262,28 @@ if (interval < 0) {
             delta = retrieveAdjustedDelta(retrieveSmafTrack(channel), midiEvent.getTick()); 
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
             // tempo
-            delta = retrieveAdjustedDelta(smafTrackNumber, midiEvent.getTick()); // TODO smafTrackNumber ‚Å‚¢‚¢‚Ì‚©H
+            delta = retrieveAdjustedDelta(smafTrackNumber, midiEvent.getTick()); // TODO smafTrackNumber ã§ã„ã„ã®ã‹ï¼Ÿ
 Debug.println("delta for tempo[" + smafTrackNumber + "]: " + delta);
         } else {
 Debug.println("no delta defined for: " + midiMessage);
         }
 
 if (delta > 255) {
- // getIntervalSmafEvents ‚Åˆ—‚³‚ê‚Ä‚¢‚é‚Í‚¸‚È‚Ì‚Å‚ ‚è‚¦‚È‚¢
- Debug.println(Level.WARNING, "ƒ¢: " + delta + ", " + (delta % 256));
+ // getIntervalSmafEvents ã§å‡¦ç†ã•ã‚Œã¦ã„ã‚‹ã¯ãšãªã®ã§ã‚ã‚Šãˆãªã„
+ Debug.println(Level.WARNING, "Î”: " + delta + ", " + (delta % 256));
 }
         return delta % 256;
     }
 
     //----
 
-    /** •â³‚³‚ê‚½ SMAF Pitch ‚ğæ“¾‚µ‚Ü‚·B sound -45, percussion -35 */
+    /** è£œæ­£ã•ã‚ŒãŸ SMAF Pitch ã‚’å–å¾—ã—ã¾ã™ã€‚ sound -45, percussion -35 */
     public int retrievePitch(int channel, int pitch) {
         return pitch - 45 + (channel == MidiContext.CHANNEL_DRUM ? 10 : 0);
     }
 
     /**
-     * SMAF Voice No. ‚ğæ“¾‚µ‚Ü‚·B
+     * SMAF Voice No. ã‚’å–å¾—ã—ã¾ã™ã€‚
      * @param channel MIDI channel
      */
     public int retrieveVoice(int channel) {
@@ -295,7 +291,7 @@ if (delta > 255) {
     }
 
     /**
-     * MIDI Channel ‚ğæ“¾‚µ‚Ü‚·B
+     * MIDI Channel ã‚’å–å¾—ã—ã¾ã™ã€‚
      * @param voice SMAF channel
      */
     public int retrieveChannel(int voice) {
@@ -303,7 +299,7 @@ if (delta > 255) {
     }
 
     /**
-     * SMAF Track ‚ğæ“¾‚µ‚Ü‚·B
+     * SMAF Track ã‚’å–å¾—ã—ã¾ã™ã€‚
      * @param channel MIDI channel
      */
     public int retrieveSmafTrack(int channel) {
@@ -312,46 +308,46 @@ if (delta > 255) {
 
     //----
 
-    /** Œ»İ‚Ì SMAF ‚Ìƒgƒ‰ƒbƒN No. */
+    /** ç¾åœ¨ã® SMAF ã®ãƒˆãƒ©ãƒƒã‚¯ No. */
     private int smafTrackNumber;
 
-    /** Œ»İ‚Ì SMAF ƒgƒ‰ƒbƒN No. ‚ğİ’è‚µ‚Ü‚·B */
+    /** ç¾åœ¨ã® SMAF ãƒˆãƒ©ãƒƒã‚¯ No. ã‚’è¨­å®šã—ã¾ã™ã€‚ */
     public void setSmafTrackNumber(int smafTrackNumber) {
         this.smafTrackNumber = smafTrackNumber;
     }
 
-    /** Œ»İ‚Ì SMAF ƒgƒ‰ƒbƒN No. ‚ğæ“¾‚µ‚Ü‚·B */
+    /** ç¾åœ¨ã® SMAF ãƒˆãƒ©ãƒƒã‚¯ No. ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public int getSmafTrackNumber() {
         return smafTrackNumber;
     }
 
-    /** Œ»İ‚Ì MIDI ƒgƒ‰ƒbƒN */
+    /** ç¾åœ¨ã® MIDI ãƒˆãƒ©ãƒƒã‚¯ */
     private Track midiTrack;
 
-    /** Œ»İ‚Ì MIDI ƒgƒ‰ƒbƒN‚ğİ’è‚µ‚Ü‚·B */
+    /** ç¾åœ¨ã® MIDI ãƒˆãƒ©ãƒƒã‚¯ã‚’è¨­å®šã—ã¾ã™ã€‚ */
     public void setMidiTrack(Track midiTrack) {
         this.midiTrack = midiTrack;
         this.noteOffEventUsed = new BitSet(midiTrack.size());
     }
 
-    /** Œ»İ‚Ì MIDI ƒCƒxƒ“ƒg‚ÌƒCƒ“ƒfƒbƒNƒX’l */
+    /** ç¾åœ¨ã® MIDI ã‚¤ãƒ™ãƒ³ãƒˆã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹å€¤ */
     private int midiEventIndex;
 
-    /** Œ»İ‚Ì MIDI ƒCƒxƒ“ƒg‚ÌƒCƒ“ƒfƒbƒNƒX’l‚ğİ’è‚µ‚Ü‚·B */
+    /** ç¾åœ¨ã® MIDI ã‚¤ãƒ™ãƒ³ãƒˆã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹å€¤ã‚’è¨­å®šã—ã¾ã™ã€‚ */
     public void setMidiEventIndex(int midiEventIndex) {
         this.midiEventIndex = midiEventIndex;
     }
 
-    /** Œ»İ‚Ì MIDI ƒCƒxƒ“ƒg‚ÌƒCƒ“ƒfƒbƒNƒX’l‚ğæ“¾‚µ‚Ü‚·B */
+    /** ç¾åœ¨ã® MIDI ã‚¤ãƒ™ãƒ³ãƒˆã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹å€¤ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     int getMidiEventIndex() {
         return midiEventIndex;
     }
 
     /**
-     * “¯‚¶ channel ‚ÅŸ‚Ì ShortMessage ‚Å‚ ‚é MIDI ƒCƒxƒ“ƒg‚ğæ“¾‚µ‚Ü‚·B
+     * åŒã˜ channel ã§æ¬¡ã® ShortMessage ã§ã‚ã‚‹ MIDI ã‚¤ãƒ™ãƒ³ãƒˆã‚’å–å¾—ã—ã¾ã™ã€‚
      *
-     * @throws NoSuchElementException Ÿ‚Ì MIDI ƒCƒxƒ“ƒg‚ª‚È‚¢
-     * @throws IllegalStateException Œ»İ‚ÌƒCƒxƒ“ƒg‚Í ShortMessage ‚Å‚Í‚È‚¢
+     * @throws NoSuchElementException æ¬¡ã® MIDI ã‚¤ãƒ™ãƒ³ãƒˆãŒãªã„
+     * @throws IllegalStateException ç¾åœ¨ã®ã‚¤ãƒ™ãƒ³ãƒˆã¯ ShortMessage ã§ã¯ãªã„
      */
     public MidiEvent getNextMidiEvent() throws NoSuchElementException {
 
@@ -386,12 +382,12 @@ Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getDa
     }
 
     /**
-     * Œ»İ‘I‘ğ’†‚Ì NoteOn ƒCƒxƒ“ƒg‚Æ‘Î‚Ì NoteOff ƒCƒxƒ“ƒg‚ğæ“¾‚µ‚Ü‚·B
-     * IllegalStateException ‚ÍƒoƒOƒgƒ‰ƒbƒv‚Ì‚½‚ß‚¾‚¯‚Ég—p‚µ‚Ä‚­‚¾‚³‚¢B
+     * ç¾åœ¨é¸æŠä¸­ã® NoteOn ã‚¤ãƒ™ãƒ³ãƒˆã¨å¯¾ã® NoteOff ã‚¤ãƒ™ãƒ³ãƒˆã‚’å–å¾—ã—ã¾ã™ã€‚
+     * IllegalStateException ã¯ãƒã‚°ãƒˆãƒ©ãƒƒãƒ—ã®ãŸã‚ã ã‘ã«ä½¿ç”¨ã—ã¦ãã ã•ã„ã€‚
      * @see vavi.sound.smaf.message.NoteMessage
      *
-     * @throws NoSuchElementException ‘Î‚Ì NoteOff ƒCƒxƒ“ƒg‚ª‚È‚¢
-     * @throws IllegalStateException Œ»İ‚ÌƒCƒxƒ“ƒg‚Í ShortMessage ‚Å‚Í‚È‚¢
+     * @throws NoSuchElementException å¯¾ã® NoteOff ã‚¤ãƒ™ãƒ³ãƒˆãŒãªã„
+     * @throws IllegalStateException ç¾åœ¨ã®ã‚¤ãƒ™ãƒ³ãƒˆã¯ ShortMessage ã§ã¯ãªã„
      */
     public MidiEvent getNoteOffMidiEvent() throws NoSuchElementException {
 
@@ -416,7 +412,7 @@ Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getDa
                 if (shortMessage.getChannel() == channel &&
                     shortMessage.getData1() == data1) {
 
-                    noteOffEventUsed.set(i);	// Á”ïƒtƒ‰ƒO on
+                    noteOffEventUsed.set(i);	// æ¶ˆè²»ãƒ•ãƒ©ã‚° on
                     return midiEvent;
                 }
             }
@@ -425,10 +421,10 @@ Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getDa
         throw new NoSuchElementException(channel + "ch, " + data1);
     }
 
-    /** ‚·‚Å‚ÉÁ”ï‚³‚ê‚½‚©‚Ç‚¤‚© */
+    /** ã™ã§ã«æ¶ˆè²»ã•ã‚ŒãŸã‹ã©ã†ã‹ */
     private BitSet noteOffEventUsed;
 
-    /** ‚·‚Å‚ÉÁ”ï‚³‚ê‚½‚©‚Ç‚¤‚©‚ğæ“¾‚µ‚Ü‚·B */
+    /** ã™ã§ã«æ¶ˆè²»ã•ã‚ŒãŸã‹ã©ã†ã‹ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public boolean isNoteOffEventUsed() {
         return noteOffEventUsed.get(midiEventIndex);
     }
@@ -474,10 +470,10 @@ Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getDa
         int data2 = shortMessage.getData2();
 
         switch (data1) {
-        case 0:		// ƒoƒ“ƒNƒZƒŒƒNƒg MSB
+        case 0:		// ãƒãƒ³ã‚¯ã‚»ãƒ¬ã‚¯ãƒˆ MSB
             bankMSB[channel] = data2;
             break;
-        case 32:	// ƒoƒ“ƒNƒZƒŒƒNƒg LSB
+        case 32:	// ãƒãƒ³ã‚¯ã‚»ãƒ¬ã‚¯ãƒˆ LSB
             bankLSB[channel] = data2;
             break;
         case 98:	// NRPN LSB
@@ -498,34 +494,6 @@ Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getDa
         }
 
         return null;
-    }
-
-    //-------------------------------------------------------------------------
-
-    /**
-     * Converts the midi file to a smaf file.
-     * <pre>
-     * usage:
-     *  % java SmafContext in_midi_file out_mmf_file
-     * </pre>
-     */
-    public static void main(String[] args) throws Exception {
-
-Debug.println("midi in: " + args[0]);
-Debug.println("smaf out: " + args[1]);
-
-    	File file = new File(args[0]);
-    	javax.sound.midi.Sequence midiSequence = MidiSystem.getSequence(file);
-    	MidiFileFormat midiFileFormat = MidiSystem.getMidiFileFormat(file);
-        int type = midiFileFormat.getType();
-Debug.println("type: " + type);
-        vavi.sound.smaf.Sequence smafSequence = SmafSystem.toSmafSequence(midiSequence, type);
-
-        file = new File(args[1]);
-        int r = SmafSystem.write(smafSequence, 0, new FileOutputStream(file));
-Debug.println("write: " + r);
-
-        System.exit(0);
     }
 }
 

@@ -6,16 +6,9 @@
 
 package vavi.sound.mfi.vavi.sequencer;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Level;
-
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mobile.AudioEngine;
-import vavi.util.Debug;
-import vavi.util.StringUtil;
+import vavi.util.properties.PrefixedPropertiesFactory;
 
 
 /**
@@ -34,13 +27,13 @@ public interface AudioDataSequencer {
     void sequence() throws InvalidMfiDataException;
 
     /** */
-    class Factory {
+    class Factory extends PrefixedPropertiesFactory<Integer, AudioEngine> {
 
         /** */
         private static ThreadLocal<AudioEngine> audioEngineStore = new ThreadLocal<AudioEngine>();
 
         /**
-         * Second time or lator. 
+         * Second time or later. 
          */
         public static AudioEngine getAudioEngine() {
             return audioEngineStore.get();
@@ -49,51 +42,20 @@ public interface AudioDataSequencer {
         /**
          * First time.
          * @return same instance for each format
-         * @throws IllegalStateException when audio engine not found
+         * @throws IllegalArgumentException when audio engine not found
          */
         public static AudioEngine getAudioEngine(int format) {
-            String key = "audioEngine.format." + format;
-            if (engines.containsKey(key)) {
-                AudioEngine engine = engines.get(key);
-                audioEngineStore.set(engine);
-                return engine;
-            } else {
-Debug.println(Level.SEVERE, "error format: " + StringUtil.toHex2(format));
-                throw new IllegalStateException("error format: " + StringUtil.toHex2(format));
-            }
+            AudioEngine engine = instance.get(format);
+            audioEngineStore.set(engine);
+            return engine;
         }
 
-        //---------------------------------------------------------------------
+        /** */
+        private static Factory instance = new Factory();
 
-        /**
-         * {@link AudioEngine} オブジェクトのインスタンス集。
-         * インスタンスを使いまわすのでステートレスでなければならない。
-         */
-        private static Map<String, AudioEngine> engines = new HashMap<String, AudioEngine>();
-    
-        static {
-            try {
-                // props
-                Properties props = new Properties();
-                props.load(Factory.class.getResourceAsStream("/vavi/sound/mfi/vavi/vavi.properties"));
-                
-                // 
-                Iterator<?> i = props.keySet().iterator();
-                while (i.hasNext()) {
-                    String key = (String) i.next();
-                    if (key.startsWith("audioEngine.format.")) {
-                        @SuppressWarnings("unchecked")
-                        Class<AudioEngine> clazz = (Class<AudioEngine>) Class.forName(props.getProperty(key));
-Debug.println("audioEngine class: " + StringUtil.getClassName(clazz));
-                        AudioEngine engine = clazz.newInstance();
-    
-                        engines.put(key, engine);
-                    }
-                }
-            } catch (Exception e) {
-Debug.printStackTrace(e);
-                throw (RuntimeException) new IllegalStateException().initCause(e);
-            }
+        /** */
+        private Factory() {
+            super("/vavi/sound/mfi/vavi/vavi.properties", "audioEngine.format.");
         }
     }
 }

@@ -14,7 +14,7 @@ import javax.sound.midi.ShortMessage;
 /**
  * MidiConvertibleMessage.
  * <p>
- * CONTROL_CHANGE ‚ğ‚·‚×‚Äˆµ‚¤
+ * CONTROL_CHANGE ã‚’ã™ã¹ã¦æ‰±ã†
  * </p>
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)

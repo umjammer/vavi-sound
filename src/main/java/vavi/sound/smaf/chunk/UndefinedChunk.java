@@ -9,6 +9,7 @@ package vavi.sound.smaf.chunk;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
@@ -26,7 +27,6 @@ public class UndefinedChunk extends Chunk {
     /** */
     public UndefinedChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("Undefined: " + size + " bytes");
 //new Exception("*** DUMMY ***").printStackTrace(System.err);
     }
 
@@ -36,7 +36,7 @@ Debug.println("Undefined: " + size + " bytes");
 
         byte[] data = new byte[size];
         read(is, data);
-Debug.println("\n" + StringUtil.getDump(data, 64));
+Debug.println(Level.WARNING, "Undefined: size: " + size + "\n" + StringUtil.getDump(data, 64));
     }
 
     /** */

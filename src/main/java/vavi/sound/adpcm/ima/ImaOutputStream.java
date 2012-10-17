@@ -23,7 +23,7 @@ import vavi.io.InputEngineOutputStream;
 public class ImaOutputStream extends FilterOutputStream {
 
     /**
-     * バイトオーダーは little endian
+     * 繝舌う繝医が繝ｼ繝繝ｼ縺ｯ little endian
      */
     public ImaOutputStream(OutputStream out,
                            int samplesPerBlock,

@@ -16,7 +16,7 @@ import vavi.util.Debug;
 /**
  * LoopPointMessage.
  * <pre>
- *  0xff, 0xd# 演奏管理情報
+ *  0xff, 0xd# 貍泌･冗ｮ｡逅�諠�蝣ｱ
  *  channel false
  *  delta   ?
  * </pre>
@@ -60,12 +60,12 @@ public class LoopPointMessage extends ShortMessage
         this.start =  data2 & 0x03;
     }
 
-    /** ループID */
+    /** 繝ｫ繝ｼ繝悠D */
     public int getNest() {
         return nest;
     }
 
-    /** ループ回数 0: 無限回 */
+    /** 繝ｫ繝ｼ繝怜屓謨ｰ 0: 辟｡髯仙屓 */
     public int getTimes() {
         return times;
     }

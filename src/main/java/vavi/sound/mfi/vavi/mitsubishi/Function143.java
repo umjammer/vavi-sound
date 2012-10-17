@@ -24,7 +24,7 @@ import vavi.util.StringUtil;
  */
 public class Function143 implements MachineDependentFunction {
 
-    /** ‚±‚Ìƒf[ƒ^‚Ìƒwƒbƒ_•ª’·‚³ */
+    /** ã“ã®ãƒ‡ãƒ¼ã‚¿ã®ãƒ˜ãƒƒãƒ€åˆ†é•·ã• */
     private static final int HEADER_LENGTH = 7;
 
     /**

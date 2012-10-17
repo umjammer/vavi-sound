@@ -8,6 +8,7 @@ package vavi.sound.midi.smaf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
@@ -22,7 +23,7 @@ import vavi.util.Debug;
 /**
  * SmafMidiFileWriter.
  * 
- * @caution MidiSystem ‚Íg‚Á‚¿‚á‚¾‚ßI
+ * @caution MidiSystem ã¯ä½¿ã£ã¡ã‚ƒã ã‚ï¼
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
@@ -39,14 +40,14 @@ public class SmafMidiFileWriter extends BasicMidiFileWriter {
         return new int[] { SmafFileFormat.FILE_TYPE };
     }
 
-    /** @param fileType 0x84:SMAF ‚ğƒTƒ|[ƒg‚µ‚Ü‚· */
+    /** @param fileType 0x84:SMAF ã‚’ã‚µãƒãƒ¼ãƒˆã—ã¾ã™ */
     public boolean isFileTypeSupported(int fileType) {
         return fileType == SmafFileFormat.FILE_TYPE;
     }
 
     /**
-     * @param fileType 0x84:SMAF ‚ğƒTƒ|[ƒg‚µ‚Ü‚·
-     * TODO sequence ‚ğ–³‹‚µ‚Ä‚¢‚é
+     * @param fileType 0x84:SMAF ã‚’ã‚µãƒãƒ¼ãƒˆã—ã¾ã™
+     * TODO sequence ã‚’ç„¡è¦–ã—ã¦ã„ã‚‹
      */
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
         return fileType == SmafFileFormat.FILE_TYPE;
@@ -54,7 +55,7 @@ public class SmafMidiFileWriter extends BasicMidiFileWriter {
 
     /**
      * @param in MIDI Sequence
-     * @param fileType #isFileTypeSupported ‚ª true ‚Ì‚à‚Ì‚Ì‚İ
+     * @param fileType #isFileTypeSupported ãŒ true ã®ã‚‚ã®ã®ã¿
      */
     public int write(Sequence in, int fileType, OutputStream out)
         throws IOException {
@@ -66,7 +67,7 @@ Debug.println("out: " + out);
                 vavi.sound.smaf.Sequence smafSequence = SmafSystem.toSmafSequence(in, fileType);
                 return SmafSystem.write(smafSequence, fileType, out);
             } else {
-Debug.println("unknown fileType: " + fileType);
+Debug.println(Level.WARNING, "unknown fileType: " + fileType);
                 return 0;
             }
         } catch (InvalidMidiDataException e) {

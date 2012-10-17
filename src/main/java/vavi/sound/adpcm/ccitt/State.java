@@ -118,7 +118,7 @@ class State {
      *
      * Using linear search for simple coding.
      *
-     * TODO package “àŒöŠJ‚©‚Á‚¿‚åˆ«‚¢‚ª G711 “à‚Å‰B•Á‚³‚ê‚é‚Ì‚Å–³‹D
+     * TODO package å†…å…¬é–‹ã‹ã£ã¡ã‚‡æ‚ªã„ãŒ G711 å†…ã§éš è”½ã•ã‚Œã‚‹ã®ã§ç„¡è¦–ï¼
      */
     static int quan(int val) {
         int i;

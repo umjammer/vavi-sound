@@ -14,7 +14,7 @@ import vavi.util.Debug;
 
 /**
  * NEC System exclusive message function 0x01, 0xf3, 0x04 processor.
- * (ƒXƒgƒŠ[ƒ€”w’è)
+ * (ã‚¹ãƒˆãƒªãƒ¼ãƒ æ•°æŒ‡å®š)
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 051113 nsano initial version <br>

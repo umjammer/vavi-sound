@@ -16,7 +16,7 @@ import vavi.util.win32.WAVE;
 
 
 /**
- * wave ƒtƒ@ƒCƒ‹‚©‚çƒf[ƒ^‚¾‚¯‚ğ”²‚«o‚·ƒvƒƒOƒ‰ƒ€D
+ * wave ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã ã‘ã‚’æŠœãå‡ºã™ãƒ—ãƒ­ã‚°ãƒ©ãƒ ï¼
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 020708 nsano initial version <br>

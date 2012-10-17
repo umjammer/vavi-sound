@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
@@ -51,7 +52,7 @@ Debug.println("ImageData: " + size + " bytes");
             } else if (chunk instanceof LinkChunk) { // ""
                 imageDataChunks.add(chunk);
             } else {
-                Debug.println("unknown chunk: " + chunk.getClass());
+                Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
 Debug.println("messages: " + imageDataChunks.size());

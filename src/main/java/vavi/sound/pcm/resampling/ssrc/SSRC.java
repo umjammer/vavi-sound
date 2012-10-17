@@ -616,15 +616,15 @@ class SSRC {
 
         {
             int n2b2 = n2b / 2;
-            // inbuf‚Ìfs1‚Å‚ÌŸ‚É“Ç‚ŞƒTƒ“ƒvƒ‹‚ÌêŠ‚ğ•Û
+            // inbufã®fs1ã§ã®æ¬¡ã«èª­ã‚€ã‚µãƒ³ãƒ—ãƒ«ã®å ´æ‰€ã‚’ä¿æŒ
             int rp;
-            // Ÿ‚Édispose‚·‚ésfrq‚Å‚ÌƒTƒ“ƒvƒ‹”
+            // æ¬¡ã«disposeã™ã‚‹sfrqã§ã®ã‚µãƒ³ãƒ—ãƒ«æ•°
             int ds;
-            // ÀÛ‚Éƒtƒ@ƒCƒ‹‚©‚çinbuf‚É“Ç‚İ‚Ü‚ê‚½’l‚©‚çŒvZ‚µ‚½ stage2 filter‚É“n‚³‚ê‚éƒTƒ“ƒvƒ‹”
+            // å®Ÿéš›ã«ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰inbufã«èª­ã¿è¾¼ã¾ã‚ŒãŸå€¤ã‹ã‚‰è¨ˆç®—ã—ãŸ stage2 filterã«æ¸¡ã•ã‚Œã‚‹ã‚µãƒ³ãƒ—ãƒ«æ•°
             int nsmplwrt1;
-            // ÀÛ‚Éƒtƒ@ƒCƒ‹‚©‚çinbuf‚É“Ç‚İ‚Ü‚ê‚½’l‚©‚çŒvZ‚µ‚½ stage2 filter‚É“n‚³‚ê‚éƒTƒ“ƒvƒ‹”
+            // å®Ÿéš›ã«ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰inbufã«èª­ã¿è¾¼ã¾ã‚ŒãŸå€¤ã‹ã‚‰è¨ˆç®—ã—ãŸ stage2 filterã«æ¸¡ã•ã‚Œã‚‹ã‚µãƒ³ãƒ—ãƒ«æ•°
             int nsmplwrt2 = 0;
-            // stage1 filter‚©‚ço—Í‚³‚ê‚½ƒTƒ“ƒvƒ‹‚Ì”‚ğn1y*osf‚ÅŠ„‚Á‚½—]‚è
+            // stage1 filterã‹ã‚‰å‡ºåŠ›ã•ã‚ŒãŸã‚µãƒ³ãƒ—ãƒ«ã®æ•°ã‚’n1y*osfã§å‰²ã£ãŸä½™ã‚Š
             int s1p;
             boolean init;
             boolean ending;
@@ -1176,7 +1176,7 @@ class SSRC {
             iza = I0Bessel.value(alp);
 //System.err.printf("iza %f, alp: %f\n", iza, alp); // OK
 
-            n2y = fs2 / fs1; // 0‚Å‚È‚¢ƒTƒ“ƒvƒ‹‚ªfs2‚Å‰½ƒTƒ“ƒvƒ‹‚¨‚«‚É‚ ‚é‚©H
+            n2y = fs2 / fs1; // 0ã§ãªã„ã‚µãƒ³ãƒ—ãƒ«ãŒfs2ã§ä½•ã‚µãƒ³ãƒ—ãƒ«ãŠãã«ã‚ã‚‹ã‹ï¼Ÿ
             n2x = n2 / n2y + 1;
 
             f2order = new int[n2y];
@@ -1211,18 +1211,18 @@ class SSRC {
         {
             int n1b2 = n1b / 2;
             @SuppressWarnings("unused")
-            int rp; // inbuf‚Ìfs1‚Å‚ÌŸ‚É“Ç‚ŞƒTƒ“ƒvƒ‹‚ÌêŠ‚ğ•Û
-            int rps; // rp‚ğ(fs1/sfrq=osf)‚ÅŠ„‚Á‚½—]‚è
-            int rp2; // buf2‚Ìfs2‚Å‚ÌŸ‚É“Ç‚ŞƒTƒ“ƒvƒ‹‚ÌêŠ‚ğ•Û
-            int ds; // Ÿ‚Édispose‚·‚ésfrq‚Å‚ÌƒTƒ“ƒvƒ‹”
-            // ÀÛ‚Éƒtƒ@ƒCƒ‹‚©‚çinbuf‚É“Ç‚İ‚Ü‚ê‚½’l‚©‚çŒvZ‚µ‚½ stage2 filter‚É“n‚³‚ê‚éƒTƒ“ƒvƒ‹”
+            int rp; // inbufã®fs1ã§ã®æ¬¡ã«èª­ã‚€ã‚µãƒ³ãƒ—ãƒ«ã®å ´æ‰€ã‚’ä¿æŒ
+            int rps; // rpã‚’(fs1/sfrq=osf)ã§å‰²ã£ãŸä½™ã‚Š
+            int rp2; // buf2ã®fs2ã§ã®æ¬¡ã«èª­ã‚€ã‚µãƒ³ãƒ—ãƒ«ã®å ´æ‰€ã‚’ä¿æŒ
+            int ds; // æ¬¡ã«disposeã™ã‚‹sfrqã§ã®ã‚µãƒ³ãƒ—ãƒ«æ•°
+            // å®Ÿéš›ã«ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰inbufã«èª­ã¿è¾¼ã¾ã‚ŒãŸå€¤ã‹ã‚‰è¨ˆç®—ã—ãŸ stage2 filterã«æ¸¡ã•ã‚Œã‚‹ã‚µãƒ³ãƒ—ãƒ«æ•°
 //          int nsmplwrt1;
-            // ÀÛ‚Éƒtƒ@ƒCƒ‹‚©‚çinbuf‚É“Ç‚İ‚Ü‚ê‚½’l‚©‚çŒvZ‚µ‚½ stage2 filter‚É“n‚³‚ê‚éƒTƒ“ƒvƒ‹”
+            // å®Ÿéš›ã«ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰inbufã«èª­ã¿è¾¼ã¾ã‚ŒãŸå€¤ã‹ã‚‰è¨ˆç®—ã—ãŸ stage2 filterã«æ¸¡ã•ã‚Œã‚‹ã‚µãƒ³ãƒ—ãƒ«æ•°
             int nsmplwrt2 = 0;
-            int s2p; // stage1 filter‚©‚ço—Í‚³‚ê‚½ƒTƒ“ƒvƒ‹‚Ì”‚ğn1y*osf‚ÅŠ„‚Á‚½—]‚è
+            int s2p; // stage1 filterã‹ã‚‰å‡ºåŠ›ã•ã‚ŒãŸã‚µãƒ³ãƒ—ãƒ«ã®æ•°ã‚’n1y*osfã§å‰²ã£ãŸä½™ã‚Š
             boolean init, ending;
 //          int osc;
-            int bp; // rp2‚©‚çŒvZ‚³‚ê‚éDbuf2‚ÌŸ‚É“Ç‚ŞƒTƒ“ƒvƒ‹‚ÌˆÊ’u
+            int bp; // rp2ã‹ã‚‰è¨ˆç®—ã•ã‚Œã‚‹ï¼buf2ã®æ¬¡ã«èª­ã‚€ã‚µãƒ³ãƒ—ãƒ«ã®ä½ç½®
             int rps_backup, s2p_backup;
             int k, ch, p;
             int inbuflen = 0;
@@ -1233,13 +1233,13 @@ class SSRC {
             // |....B....|....C....| buf1 n1b2+n1b2
             // |.A.|....D....| buf2 n2x+n1b2
             //
-            // ‚Ü‚¸inbuf‚©‚çB‚Éosf”{ƒTƒ“ƒvƒŠƒ“ƒO‚µ‚È‚ª‚çƒRƒs[
-            // C‚ÍƒNƒŠƒA
-            // BC‚Éstage 1 filter‚ğ‚©‚¯‚é
-            // D‚ÉB‚ğ‘«‚·
-            // AD‚Éstage 2 filter‚ğ‚©‚¯‚é
-            // D‚ÌŒã‚ë‚ğA‚ÉˆÚ“®
-            // C‚ğD‚ÉƒRƒs[
+            // ã¾ãšinbufã‹ã‚‰Bã«osfå€ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ã—ãªãŒã‚‰ã‚³ãƒ”ãƒ¼
+            // Cã¯ã‚¯ãƒªã‚¢
+            // BCã«stage 1 filterã‚’ã‹ã‘ã‚‹
+            // Dã«Bã‚’è¶³ã™
+            // ADã«stage 2 filterã‚’ã‹ã‘ã‚‹
+            // Dã®å¾Œã‚ã‚’Aã«ç§»å‹•
+            // Cã‚’Dã«ã‚³ãƒ”ãƒ¼
 
             buf1 = new double[nch][n1b];
 

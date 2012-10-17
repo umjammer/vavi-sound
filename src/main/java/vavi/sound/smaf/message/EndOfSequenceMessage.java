@@ -75,7 +75,7 @@ public class EndOfSequenceMessage extends vavi.sound.smaf.ShortMessage
         return getMessage().length;
     }
 
-    /** NOP ���̑΍�� EOT �� tick ���J�E���g�������̂ɐݒ肷��B */
+    /** NOP 等の対策で EOT の tick をカウントしたものに設定する。 */
     public MidiEvent[] getMidiEvents(MidiContext context) {
         javax.sound.midi.Track midiTrack = context.getMidiTrack();
         MidiEvent midiEvent = midiTrack.get(midiTrack.size() - 1); // should be EoT
@@ -86,8 +86,8 @@ Debug.println("EOT: " + midiEvent.getMessage().getClass().getName());
     }
 
     /**
-     * @return ���̃��\�b�h�̖߂�l�̂� SMAF �g���b�N 0 ~ 3 �� EndOfSequenceMessage ��
-     * SmafEvent �ɂȂ�B�g���b�N���Ȃ��ꍇ�� null �������Ă���
+     * @return このメソッドの戻り値のみ SMAF トラック 0 ~ 3 の EndOfSequenceMessage の
+     * SmafEvent になる。トラックがない場合は null が入っている
      */
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context) {
 

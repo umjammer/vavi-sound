@@ -35,13 +35,13 @@ public class VaviNoteMessage extends NoteMessage
         super(delta, status, data);
     }
 
-    /** MFi2 note = 1 ‚Ìê‡ */
+    /** MFi2 note = 1 ã®å ´åˆ */
     public VaviNoteMessage(int delta, int status, int data1, int data2) {
         super(delta, status, data1, data2);
     }
 
     /** for {@link MfiConvertible}, note = 1 */
-    protected VaviNoteMessage() {
+    public VaviNoteMessage() { // TODO public ãã¬ã¬...
         super();
     }
 
@@ -78,9 +78,9 @@ public class VaviNoteMessage extends NoteMessage
     }
 
     /**
-     * TODO ƒ¢ƒ^ƒCƒ€‚ªA’¼‘O‚Ì“¯ƒ{ƒCƒXA“¯ƒL[‚Ì NoteMessage ‚Ì
-     *      ƒQ[ƒgƒ^ƒCƒ€‚æ‚è¬‚³‚¢ê‡‚Í’¼‘O‚Ì NoteMessage ‚©‚ç‚ÌŒp‘±‰¹‚Æ‚·‚é
-     * TODO Ÿ‚Ì‰¹‚Ü‚Å—]—T‚ª‚ ‚Á‚½‚çL‚Î‚µ‚ÄA–³‚©‚Á‚½‚çØ‚éH(–¢À‘•)
+     * TODO Î”ã‚¿ã‚¤ãƒ ãŒã€ç›´å‰ã®åŒãƒœã‚¤ã‚¹ã€åŒã‚­ãƒ¼ã® NoteMessage ã®
+     *      ã‚²ãƒ¼ãƒˆã‚¿ã‚¤ãƒ ã‚ˆã‚Šå°ã•ã„å ´åˆã¯ç›´å‰ã® NoteMessage ã‹ã‚‰ã®ç¶™ç¶šéŸ³ã¨ã™ã‚‹
+     * TODO æ¬¡ã®éŸ³ã¾ã§ä½™è£•ãŒã‚ã£ãŸã‚‰ä¼¸ã°ã—ã¦ã€ç„¡ã‹ã£ãŸã‚‰åˆ‡ã‚‹ï¼Ÿ(æœªå®Ÿè£…)
      */
     public MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context)
         throws InvalidMfiDataException {
@@ -93,7 +93,7 @@ public class VaviNoteMessage extends NoteMessage
 //Debug.println(midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
 
         if (command == ShortMessage.NOTE_OFF ||
-            // note on ‚Å velocity 0 ‚Ìê‡
+            // note on ã§ velocity 0 ã®å ´åˆ
             (command == ShortMessage.NOTE_ON && data2 == 0)) {
 
             if (!context.isNoteOffEventUsed()) {

@@ -27,7 +27,7 @@ import vavi.util.StringUtil;
 
 /**
  * WaveMessage.
- * TODO SysexMessage ‚Æ‚©‚¶‚á‚È‚¢‚ÌH
+ * TODO SysexMessage ã¨ã‹ã˜ã‚ƒãªã„ã®ï¼Ÿ
  * <pre>
  *  format 0x00
  *   duration   1or2
@@ -147,38 +147,38 @@ public class WaveMessage extends SmafMessage
 
     /**
      * <p>
-     * ‚±‚Ì {@link WaveMessage} ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚É‘Î‰‚·‚é
-     * MIDI ƒƒbƒZ[ƒW‚Æ‚µ‚Ä Meta type 0x7f ‚Ì {@link MetaMessage} ‚ğì¬‚·‚éB
-     * {@link MetaMessage} ‚ÌÀƒf[ƒ^‚Æ‚µ‚Ä {@link SmafMessageStore}
-     * ‚É‚±‚Ì {@link WaveMessage} ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğƒXƒgƒA‚µ‚ÄÌ”Ô‚³‚ê‚½ id ‚ğ
-     * 2 bytes big endian ‚ÅŠi”[‚·‚éB
+     * ã“ã® {@link WaveMessage} ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«å¯¾å¿œã™ã‚‹
+     * MIDI ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã¨ã—ã¦ Meta type 0x7f ã® {@link MetaMessage} ã‚’ä½œæˆã™ã‚‹ã€‚
+     * {@link MetaMessage} ã®å®Ÿãƒ‡ãƒ¼ã‚¿ã¨ã—ã¦ {@link SmafMessageStore}
+     * ã«ã“ã® {@link WaveMessage} ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ã‚¹ãƒˆã‚¢ã—ã¦æ¡ç•ªã•ã‚ŒãŸ id ã‚’
+     * 2 bytes big endian ã§æ ¼ç´ã™ã‚‹ã€‚
      * </p>
      * <p>
-     * Ä¶‚Ìê‡‚Í {@link javax.sound.midi.MetaEventListener} ‚Å Meta type 0x7f ‚ğ
-     * ƒŠƒbƒXƒ“‚µ‚Ä‘Î‰‚·‚é id ‚ÌƒƒbƒZ[ƒW‚ğ {@link SmafMessageStore} ‚©‚çŒ©‚Â‚¯‚éB
-     * ‚»‚ê‚ğ {@link vavi.sound.smaf.sequencer.WaveSequencer} ‚É‚©‚¯‚ÄÄ¶ˆ—‚ğ
-     * s‚¤B
+     * å†ç”Ÿã®å ´åˆã¯ {@link javax.sound.midi.MetaEventListener} ã§ Meta type 0x7f ã‚’
+     * ãƒªãƒƒã‚¹ãƒ³ã—ã¦å¯¾å¿œã™ã‚‹ id ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ {@link SmafMessageStore} ã‹ã‚‰è¦‹ã¤ã‘ã‚‹ã€‚
+     * ãã‚Œã‚’ {@link vavi.sound.smaf.sequencer.WaveSequencer} ã«ã‹ã‘ã¦å†ç”Ÿå‡¦ç†ã‚’
+     * è¡Œã†ã€‚
      * </p>
      * <p>
-     * Ä¶‹@\‚Í vavi.sound.smaf.MetaEventAdapter ‚ğQÆB
+     * å†ç”Ÿæ©Ÿæ§‹ã¯ vavi.sound.smaf.MetaEventAdapter ã‚’å‚ç…§ã€‚
      * </p>
      * <pre>
      * MIDI Meta
      * +--+--+--+--+--+--+--+--+--+--+--+-
      * |ff|7f|LL|ID|DD DD ...
      * +--+--+--+--+--+--+--+--+--+--+--+-
-     *  0x7f ƒV[ƒPƒ“ƒT[ŒÅ—Lƒƒ^ƒCƒxƒ“ƒg
-     *  LL ƒzƒ“ƒ}‚É 1 byte H
-     *  ID ƒ[ƒJ[ID
+     *  0x7f ã‚·ãƒ¼ã‚±ãƒ³ã‚µãƒ¼å›ºæœ‰ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆ
+     *  LL ãƒ›ãƒ³ãƒã« 1 byte ï¼Ÿ
+     *  ID ãƒ¡ãƒ¼ã‚«ãƒ¼ID
      * </pre>
      * <pre>
-     * Œ»ó
+     * ç¾çŠ¶
      * +--+--+--+--+--+--+--+
      * |ff|7f|LL|5f|01|DH DL|
      * +--+--+--+--+--+--+--+
-     *  0x5f Ÿè‚É‚Â‚¯‚½ƒ[ƒJ ID
-     *  0x01 {@link WaveMessage} ƒf[ƒ^‚Å‚ ‚é‚±‚Æ‚ğ•\‚·
-     *  DH DL Ì”Ô‚³‚ê‚½ id
+     *  0x5f å‹æ‰‹ã«ã¤ã‘ãŸãƒ¡ãƒ¼ã‚« ID
+     *  0x01 {@link WaveMessage} ãƒ‡ãƒ¼ã‚¿ã§ã‚ã‚‹ã“ã¨ã‚’è¡¨ã™
+     *  DH DL æ¡ç•ªã•ã‚ŒãŸ id
      * </pre>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
      * @see vavi.sound.smaf.sequencer.WaveSequencer#META_FUNCTION_ID_SMAF
@@ -195,7 +195,7 @@ public class WaveMessage extends SmafMessage
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // ƒV[ƒPƒ“ƒT[ŒÅ—Lƒƒ^ƒCƒxƒ“ƒg
+        metaMessage.setMessage(0x7f,    // ã‚·ãƒ¼ã‚±ãƒ³ã‚µãƒ¼å›ºæœ‰ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆ
                                data,
                                data.length);
 

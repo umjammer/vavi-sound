@@ -7,6 +7,10 @@
 package vavi.sound.smaf;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
@@ -53,6 +57,9 @@ class SmafMidiConverter implements SmafDevice {
     public void open() {
     }
 
+/** debug */
+private Set<Class<? extends SmafMessage>> uc = new HashSet<Class<? extends SmafMessage>>();
+    
     /** Converts smaf sequence to midi sequence */
     Sequence convert(vavi.sound.smaf.Sequence smafSequence)
         throws InvalidMidiDataException,
@@ -85,7 +92,7 @@ Debug.println("resolution: " + resolution);
                 SmafMessage smafMessage = smafEvent.getMessage();
                 
                 midiContext.addCurrentTick(midiContext.getTicksOf(smafMessage.getDuration()));
-//Debug.println("¡¡¡¡¡(" + i + ":" + j + ") ticks: " + midiContext.getCurrentTick() + "(" + midiContext.getTicksOf(smafMessage.getDuration()) + "," + smafMessage.getDuration() + "), " + smafMessage.getClass().getSimpleName());
+//Debug.println("â– â– â– â– â– (" + i + ":" + j + ") ticks: " + midiContext.getCurrentTick() + "(" + midiContext.getTicksOf(smafMessage.getDuration()) + "," + smafMessage.getDuration() + "), " + smafMessage.getClass().getSimpleName());
                 
                 if (smafMessage instanceof MidiConvertible) {
 if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
@@ -98,7 +105,7 @@ if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
 //if (smafMessage instanceof vavi.sound.smaf.message.NoteMessage) {
 // int gateTime = ((vavi.sound.smaf.message.NoteMessage) smafMessage).getGateTime();
 // if (gateTime == 0) {
-//  Debug.println(Level.WARNING, "ššššš(" + i + ":" + j + ") gateTime == 0: " + smafMessage);
+//  Debug.println(Level.WARNING, "â˜…â˜…â˜…â˜…â˜…(" + i + ":" + j + ") gateTime == 0: " + smafMessage);
 // }
 //}
                     MidiEvent[] midiEvents = ((MidiConvertible) smafMessage).getMidiEvents(midiContext);
@@ -108,8 +115,16 @@ if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
 //                          addSmafMessage(midiTrack, midiEvents[k]);
                         }
                     }
+                } else if (smafMessage instanceof MetaMessage) {
+                    Debug.println("meta: " + MetaMessage.class.cast(smafMessage).getType());
+                    for (Map.Entry<String, Object> entry : MetaMessage.class.cast(smafMessage).data.entrySet()) {
+                        Debug.println(entry.getKey() + "=" + entry.getValue());
+                    }
                 } else {
-Debug.println("unhandled message: " + smafMessage);
+if (!uc.contains(smafMessage.getClass())) {
+ Debug.println(Level.WARNING, "unhandled message: " + smafMessage);
+ uc.add(smafMessage.getClass());
+}
                 }
             }
         }
@@ -117,11 +132,11 @@ Debug.println("unhandled message: " + smafMessage);
         return midiSequence;
     }
 
-    /** Note ‚ª Control/Program ‚æ‚èæ‚É“ü‚é‚±‚Æ‚ª‚ ‚é */
+    /** Note ãŒ Control/Program ã‚ˆã‚Šå…ˆã«å…¥ã‚‹ã“ã¨ãŒã‚ã‚‹ */
     @SuppressWarnings("unused")
     private void addSmafMessage(javax.sound.midi.Track midiTrack, MidiEvent midiEvent) {
-//Debug.println("š: " + midiEvent.getMessage());
-//Debug.println("š: " + (midiTrack.size() > 1 ? midiTrack.get(midiTrack.size() - 2).getMessage() : null));
+//Debug.println("â˜…: " + midiEvent.getMessage());
+//Debug.println("â˜…: " + (midiTrack.size() > 1 ? midiTrack.get(midiTrack.size() - 2).getMessage() : null));
         if (midiEvent.getTick() == 0 &&
             midiEvent.getMessage() instanceof ShortMessage &&
             ((ShortMessage) midiEvent.getMessage()).getCommand() == ShortMessage.PROGRAM_CHANGE &&
@@ -133,7 +148,7 @@ Debug.println("unhandled message: " + smafMessage);
             midiTrack.remove(removedMidiEvent);
             midiTrack.add(midiEvent);
             midiTrack.add(removedMidiEvent);
-Debug.println("ššššš : " + MidiUtil.paramString(midiEvent.getMessage()) + ", " + MidiUtil.paramString(removedMidiEvent.getMessage()));
+Debug.println("â˜…â˜…â˜…â˜…â˜… : " + MidiUtil.paramString(midiEvent.getMessage()) + ", " + MidiUtil.paramString(removedMidiEvent.getMessage()));
         } else {
             midiTrack.add(midiEvent);
         }

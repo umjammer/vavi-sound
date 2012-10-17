@@ -16,6 +16,9 @@ import vavi.util.Debug;
 /**
  * HuffmanDecodingInputStream.
  * 
+ * TODO 出典
+ * TODO not work
+ * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 080505 nsano initial version <br>
  */

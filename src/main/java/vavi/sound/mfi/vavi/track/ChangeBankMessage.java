@@ -18,7 +18,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * ChangeBankMessage.
  * <pre>
- *  0xff, 0xe# ‰¹Œ¹§Œäî•ñ
+ *  0xff, 0xe# éŸ³æºåˆ¶å¾¡æƒ…å ±
  *  channel    true
  *  delta    ?
  * </pre>

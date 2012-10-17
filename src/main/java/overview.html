@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <html lang="ja">
 
 <head>
 <link rev="MADE" href="mailto:vavivavi@yahoo.co.jp" />
 <link rel="INDEX" href="orverview.html" />
-<meta http-equiv="Content-Type" content="text/html; charset=shift_jis" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
 <link rel="stylesheet" type="text/css" href="../../../vavi.css" />
 <title>vavi.sound</title>
@@ -21,29 +21,29 @@
 
 <body>
 
-‚±‚ÌƒhƒLƒ…ƒƒ“ƒg‚Í’…ƒƒƒ‰ƒCƒuƒ‰ƒŠ‚Ì API d—l‚Å‚·B
+ã“ã®ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã¯ç€ãƒ¡ãƒ­ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã® API ä»•æ§˜ã§ã™ã€‚
 
-<h2>“Á’¥</h2>
+<h2>ç‰¹å¾´</h2>
 <ul>
-<li>{@link javax.sound.midi.spi} ‚Æ‚µ‚ÄÀ‘•‚³‚ê‚Ä‚¢‚é‚½‚ß“Á‚ÉƒvƒƒOƒ‰ƒ€‚Å
-ˆÓ¯‚·‚é‚±‚Æ‚È‚­ MFi ƒtƒ@ƒCƒ‹‚ğ midi ƒtƒ@ƒCƒ‹‚Æ‚µ‚Äæ‚èˆµ‚¢‰Â”\‚Å‚·B</li>
-<li>MFi ƒo[ƒWƒ‡ƒ“ 3.1 ‚Ü‚Å‚ÌŒ`®‚ğƒTƒ|[ƒg‚µ‚Ä‚¢‚Ü‚·B</li>
-<li>MFi ©¨ SMF ‚Ì‘ŠŒİ•ÏŠ·‚ª‰Â”\‚Å‚·B</li>
-<li>‹@íˆË‘¶ƒf[ƒ^‚Ìƒnƒ“ƒhƒ‰‚ğ’Ç‰Á‚·‚é–‚ÅŠe‹@í‚É‘Î‰‚µ‚½’…º‚ªì¬‰Â”\‚Å‚·B</li>
+<li>{@link javax.sound.midi.spi} ã¨ã—ã¦å®Ÿè£…ã•ã‚Œã¦ã„ã‚‹ãŸã‚ç‰¹ã«ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã§
+æ„è­˜ã™ã‚‹ã“ã¨ãªã MFi ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ midi ãƒ•ã‚¡ã‚¤ãƒ«ã¨ã—ã¦å–ã‚Šæ‰±ã„å¯èƒ½ã§ã™ã€‚</li>
+<li>MFi ãƒãƒ¼ã‚¸ãƒ§ãƒ³ 3.1 ã¾ã§ã®å½¢å¼ã‚’ã‚µãƒãƒ¼ãƒˆã—ã¦ã„ã¾ã™ã€‚</li>
+<li>MFi â†â†’ SMF ã®ç›¸äº’å¤‰æ›ãŒå¯èƒ½ã§ã™ã€‚</li>
+<li>æ©Ÿç¨®ä¾å­˜ãƒ‡ãƒ¼ã‚¿ã®ãƒãƒ³ãƒ‰ãƒ©ã‚’è¿½åŠ ã™ã‚‹äº‹ã§å„æ©Ÿç¨®ã«å¯¾å¿œã—ãŸç€å£°ãŒä½œæˆå¯èƒ½ã§ã™ã€‚</li>
 </ul>
 
-<h2>ŠT—v</h2>
+<h2>æ¦‚è¦</h2>
 
-<p>O‚Â‚Ì‘å‚«‚Èƒp[ƒg‚©‚ç\¬‚³‚ê‚Ü‚·B</p>
+<p>ä¸‰ã¤ã®å¤§ããªãƒ‘ãƒ¼ãƒˆã‹ã‚‰æ§‹æˆã•ã‚Œã¾ã™ã€‚</p>
 <ol>
-    <li>ADPCM ƒR[ƒfƒbƒN</li>
-    <li>MFi ƒ‰ƒCƒuƒ‰ƒŠ</li>
-    <li>{@link javax.sound.midi.spi} À‘•</li>
+    <li>ADPCM ã‚³ãƒ¼ãƒ‡ãƒƒã‚¯</li>
+    <li>MFi ãƒ©ã‚¤ãƒ–ãƒ©ãƒª</li>
+    <li>{@link javax.sound.midi.spi} å®Ÿè£…</li>
 </ol>
 
-<h3>1. ADPCM ƒR[ƒfƒbƒN</h3>
+<h3>1. ADPCM ã‚³ãƒ¼ãƒ‡ãƒƒã‚¯</h3>
 
-<p>ƒpƒbƒP[ƒW
+<p>ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸
 <ul>
     <li>{@link vavi.sound.adpcm.ccitt}</li>
     <li>{@link vavi.sound.adpcm.ma}</li>
@@ -52,14 +52,14 @@
 </p>
 
 <p>
-’…º‚Ég—p‚³‚ê‚é ADPCM ƒR[ƒfƒbƒN‚ğæ‚èˆµ‚¤ƒpƒbƒP[ƒWŒQ‚Å‚·B
-Java ‚Ì•W€ IO ({@link java.io.InputStream}/{@link java.io.OutputStream}) ‚Æ‚µ‚ÄÀ‘•‚³‚ê‚Ä‚¢‚é‚½‚ß
-æ‚èˆµ‚¢‚ª—eˆÕ‚ÅƒXƒgƒŠ[ƒ~ƒ“ƒO‚àŠy‚És‚¦‚Ü‚·B
+ç€å£°ã«ä½¿ç”¨ã•ã‚Œã‚‹ ADPCM ã‚³ãƒ¼ãƒ‡ãƒƒã‚¯ã‚’å–ã‚Šæ‰±ã†ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ç¾¤ã§ã™ã€‚
+Java ã®æ¨™æº– IO ({@link java.io.InputStream}/{@link java.io.OutputStream}) ã¨ã—ã¦å®Ÿè£…ã•ã‚Œã¦ã„ã‚‹ãŸã‚
+å–ã‚Šæ‰±ã„ãŒå®¹æ˜“ã§ã‚¹ãƒˆãƒªãƒ¼ãƒŸãƒ³ã‚°ã‚‚æ¥½ã«è¡Œãˆã¾ã™ã€‚
 </p>
 
-<h3>2. MFi ƒ‰ƒCƒuƒ‰ƒŠ</h3>
+<h3>2. MFi ãƒ©ã‚¤ãƒ–ãƒ©ãƒª</h3>
 
-<p>ƒpƒbƒP[ƒW
+<p>ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸
 <ul>
     <li>{@link vavi.sound.mfi}</li>
     <li>{@link vavi.sound.mfi.vavi}</li>
@@ -68,16 +68,16 @@ Java ‚Ì•W€ IO ({@link java.io.InputStream}/{@link java.io.OutputStream}) ‚Æ‚µ‚Ä
 </p>
 
 <p>
-’…ƒƒƒ‰ƒCƒuƒ‰ƒŠ‚ÌŠj‚Æ‚È‚é•”•ª‚Å‚·BMFi ‚Ìƒtƒ@ƒCƒ‹\‘¢‚ğæ‚èˆµ‚¢AMIDI \‘¢‚É•ÏŠ·‚·‚é–‚ªo—ˆ‚Ü‚·B
-‚Ü‚½ MIDI ‚©‚ç MFi ‚Ö‚Ì•ÏŠ·‚à‰Â”\‚Å‚·BŠî–{“I‚É {@link javax.sound.midi} ƒpƒbƒP[ƒW‚Æ“¯‚¶\‘¢‚ğ‚Æ‚Á‚Ä‚¢‚Ü‚·B
-‹@íˆË‘¶ƒf[ƒ^‚ğˆµ‚¤ƒpƒbƒP[ƒW‚Æ‚µ‚Ä {@link vavi.sound.mfi.vavi.mitsubishi DĞ} ‚Æ
-{@link vavi.sound.mfi.vavi.nec NĞ} ‚ªƒTƒ“ƒvƒ‹À‘•‚³‚ê‚Ä‚¢‚Ü‚·B
+ç€ãƒ¡ãƒ­ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®æ ¸ã¨ãªã‚‹éƒ¨åˆ†ã§ã™ã€‚MFi ã®ãƒ•ã‚¡ã‚¤ãƒ«æ§‹é€ ã‚’å–ã‚Šæ‰±ã„ã€MIDI æ§‹é€ ã«å¤‰æ›ã™ã‚‹äº‹ãŒå‡ºæ¥ã¾ã™ã€‚
+ã¾ãŸ MIDI ã‹ã‚‰ MFi ã¸ã®å¤‰æ›ã‚‚å¯èƒ½ã§ã™ã€‚åŸºæœ¬çš„ã« {@link javax.sound.midi} ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã¨åŒã˜æ§‹é€ ã‚’ã¨ã£ã¦ã„ã¾ã™ã€‚
+æ©Ÿç¨®ä¾å­˜ãƒ‡ãƒ¼ã‚¿ã‚’æ‰±ã†ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã¨ã—ã¦ {@link vavi.sound.mfi.vavi.mitsubishi Dç¤¾} ã¨
+{@link vavi.sound.mfi.vavi.nec Nç¤¾} ãŒã‚µãƒ³ãƒ—ãƒ«å®Ÿè£…ã•ã‚Œã¦ã„ã¾ã™ã€‚
 </p>
 
 
-<h3>3. {@link javax.sound.midi.spi} À‘•</h3>
+<h3>3. {@link javax.sound.midi.spi} å®Ÿè£…</h3>
 
-<p>ƒpƒbƒP[ƒW
+<p>ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸
 <ul>
     <li>{@link vavi.sound.midi}</li>
     <li>{@link vavi.sound.midi.mfi}</li>
@@ -85,17 +85,17 @@ Java ‚Ì•W€ IO ({@link java.io.InputStream}/{@link java.io.OutputStream}) ‚Æ‚µ‚Ä
 </p>
 
 <p>
-{@link javax.sound.midi.spi} ‚ÌˆêÀ‘•‚Æ‚µ‚Ä‹@”\‚³‚¹‚é‚½‚ß‚ÌƒpƒbƒP[ƒW‚Å‚·B
+{@link javax.sound.midi.spi} ã®ä¸€å®Ÿè£…ã¨ã—ã¦æ©Ÿèƒ½ã•ã›ã‚‹ãŸã‚ã®ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã§ã™ã€‚
 <a href="http://java.sun.com/j2se/1.5.0/ja/docs/ja/guide/sound/programmer_guide/chapter1.html#111901">SPI</a>
-d—l‚É]‚¢“o˜^‚·‚ê‚Î midi ‚Ìˆêƒtƒ@ƒCƒ‹Œ`®‚Æ‚µ‚Ä MFi ƒtƒ@ƒCƒ‹‚ğ
-Ä¶‚·‚é–‚ª‰Â”\‚É‚È‚è‚Ü‚·B
+ä»•æ§˜ã«å¾“ã„ç™»éŒ²ã™ã‚Œã° midi ã®ä¸€ãƒ•ã‚¡ã‚¤ãƒ«å½¢å¼ã¨ã—ã¦ MFi ãƒ•ã‚¡ã‚¤ãƒ«ã‚’
+å†ç”Ÿã™ã‚‹äº‹ãŒå¯èƒ½ã«ãªã‚Šã¾ã™ã€‚
 </p>
 
-<h2>g—p•û–@</h2>
+<h2>ä½¿ç”¨æ–¹æ³•</h2>
 
-<h3>1. MFi ‚©‚ç MIDI ì¬</h3>
+<h3>1. MFi ã‹ã‚‰ MIDI ä½œæˆ</h3>
 <pre>
-        // ŠÈ’P‚·‚¬‚é‚©H
+        // ç°¡å˜ã™ãã‚‹ã‹ï¼Ÿ
         File inFile = new File("sample.mld");
         vavi.sound.mfi.Sequence mfiSequence = MfiSystem.getSequence(inFile);
         Sequence midiSequence = MfiSystem.toMidiSequence(mfiSequence);
@@ -104,9 +104,9 @@ Java ‚Ì•W€ IO ({@link java.io.InputStream}/{@link java.io.OutputStream}) ‚Æ‚µ‚Ä
         MidiSystem.write(midiSequence, 0, outFile);
 </pre>
 
-<h3>2. MIDI ‚©‚ç MFi ì¬</h3>
+<h3>2. MIDI ã‹ã‚‰ MFi ä½œæˆ</h3>
 <pre>
-        // ŠÈ’P‚·‚¬‚é‚©H
+        // ç°¡å˜ã™ãã‚‹ã‹ï¼Ÿ
         File inFile = new File("sample.mid");
         javax.sound.midi.Sequence midiSequence = MidiSystem.getSequence(inFile);
         MidiFileFormat midiFileFormat = MidiSystem.getMidiFileFormat(inFile);
@@ -117,9 +117,9 @@ Java ‚Ì•W€ IO ({@link java.io.InputStream}/{@link java.io.OutputStream}) ‚Æ‚µ‚Ä
         MfiSystem.write(mfiSequence, VaviMfiFileFormat.FILE_TYPE, outFile);
 </pre>
 
-<h3>3. ’…ºì¬</h3>
+<h3>3. ç€å£°ä½œæˆ</h3>
 <pre>
-        // ‚¿‚å‚Á‚Æ‚Í•~‹‚‚­‚È‚Á‚½‚©‚ÈH
+        // ã¡ã‚‡ã£ã¨ã¯æ•·å±…é«˜ããªã£ãŸã‹ãªï¼Ÿ
         int time = ...;
         InputStream waveStream = ...;
 

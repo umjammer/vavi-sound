@@ -10,7 +10,7 @@ package vavi.sound.mfi;
 /**
  * MetaMessage.
  * <p>
- * Šg’£î•ñ‚É€‹’B
+ * æ‹¡å¼µæƒ…å ±ã«æº–æ‹ ã€‚
  * </p>
  * <pre>
  * this class {@link #data} in [MFi meta]
@@ -48,9 +48,9 @@ public class MetaMessage extends MfiMessage {
 
         byte[] tmp = new byte[HEADER_LENGTH + length];
 
-        tmp[0] = (byte) 0x00;   // delta time always 0
-        tmp[1] = (byte) 0xff;   // normal
-        tmp[2] = (byte) 0xfd;   // TODO Šg’£î•ñ‹ó”Ô 0xfd ‚ğŸè‚É Meta ‚Æ‚·‚é
+        tmp[0] = (byte) 0x00; // delta time always 0
+        tmp[1] = (byte) 0xff; // normal
+        tmp[2] = (byte) 0xfd; // æ‹¡å¼µæƒ…å ±ç©ºç•ª 0xfd ã‚’å‹æ‰‹ã«(TODO) Meta ã¨ã™ã‚‹
         tmp[3] = (byte) (((length + 1) / 0x100) & 0xff);
         tmp[4] = (byte) (((length + 1) % 0x100) & 0xff);
         tmp[5] = (byte) type;
@@ -60,7 +60,7 @@ public class MetaMessage extends MfiMessage {
     }
 
     /**
-     * Meta ”Ô†
+     * Meta ç•ªå·
      * <p>
      * {@link javax.sound.midi.MetaMessage} compatible. 
      * </p>
@@ -70,11 +70,11 @@ public class MetaMessage extends MfiMessage {
     }
 
     /**
-     * data (ƒwƒbƒ_Aæ“ª‚Ì Meta type ‚Í–³‚µ)
+     * data (ãƒ˜ãƒƒãƒ€ã€å…ˆé ­ã® Meta type ã¯ç„¡ã—)
      * <p>
      * {@link javax.sound.midi.MetaMessage} compatible.
      * </p>
-     * @return ƒRƒs[
+     * @return ã‚³ãƒ”ãƒ¼
      */
     public byte[] getData() {
         byte[] tmp = new byte[this.length - HEADER_LENGTH];

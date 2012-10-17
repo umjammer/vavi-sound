@@ -12,8 +12,8 @@ import javax.swing.event.EventListenerList;
 
 
 /**
- * MetaEvent ‹@\‚Ìƒ†[ƒeƒBƒŠƒeƒBƒNƒ‰ƒX‚Å‚·D
- * <li>javax.sound.midi ƒpƒbƒP[ƒW‚É‚Í‚È‚¢B(SAMF ƒIƒŠƒWƒiƒ‹)
+ * MetaEvent æ©Ÿæ§‹ã®ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£ã‚¯ãƒ©ã‚¹ã§ã™ï¼
+ * <li>javax.sound.midi ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã«ã¯ãªã„ã€‚(SAMF ã‚ªãƒªã‚¸ãƒŠãƒ«)
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
@@ -23,17 +23,17 @@ class MetaSupport implements Serializable {
     /** The metaEvent listeners */
     private EventListenerList listenerList = new EventListenerList();
 
-    /** {@link MetaEventListener} ‚ğ’Ç‰Á‚µ‚Ü‚·D */
+    /** {@link MetaEventListener} ã‚’è¿½åŠ ã—ã¾ã™ï¼ */
     public void addMetaEventListener(MetaEventListener l) {
         listenerList.add(MetaEventListener.class, l);
     }
 
-    /** {@link MetaEventListener} ‚ğíœ‚µ‚Ü‚·D */
+    /** {@link MetaEventListener} ã‚’å‰Šé™¤ã—ã¾ã™ï¼ */
     public void removeMetaEventListener(MetaEventListener l) {
         listenerList.remove(MetaEventListener.class, l);
     }
 
-    /** meta message ‚ğ”­s‚µ‚Ü‚·D */
+    /** meta message ã‚’ç™ºè¡Œã—ã¾ã™ï¼ */
     public void fireMeta(MetaMessage meta) {
         Object[] listeners = listenerList.getListenerList();
         for (int i = listeners.length - 2; i >= 0; i -= 2) {

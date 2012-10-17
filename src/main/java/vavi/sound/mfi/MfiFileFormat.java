@@ -15,7 +15,7 @@ package vavi.sound.mfi;
  */
 public class MfiFileFormat {
 
-    /** ƒtƒ@ƒCƒ‹‚·‚×‚Ä‚Ì’·‚³ */
+    /** ãƒ•ã‚¡ã‚¤ãƒ«ã™ã¹ã¦ã®é•·ã• */
     protected int byteLength;
 
     /** */
@@ -27,7 +27,7 @@ public class MfiFileFormat {
         this.byteLength = bytes;
     }
 
-    /** ƒtƒ@ƒCƒ‹‚·‚×‚Ä‚Ì’·‚³‚ğæ“¾‚µ‚Ü‚·B */
+    /** ãƒ•ã‚¡ã‚¤ãƒ«ã™ã¹ã¦ã®é•·ã•ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public int getByteLength() {
         return byteLength;
     }

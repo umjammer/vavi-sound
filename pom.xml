@@ -11,9 +11,10 @@
   <organization>
     <name></name>
   </organization>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <url>http://www.vavisoft.com/</url>
-  <description></description>
+  <description>1.0.1
+	refactor properties related</description>
   <build>
     <plugins>
       <plugin>
@@ -21,7 +22,7 @@
         <configuration>
           <source>6</source>
           <target>6</target>
-          <encoding>Windows-31J</encoding>
+          <encoding>UTF-8</encoding>
           <compilerVersion>6</compilerVersion>
         </configuration>
       </plugin>
@@ -76,7 +77,7 @@
   	<dependency>
   		<groupId>vavi</groupId>
   		<artifactId>vavi-commons</artifactId>
-  		<version>1.0.2</version>
+  		<version>1.0.3</version>
   	</dependency>
   	<dependency>
   		<groupId>junit</groupId>
@@ -102,6 +103,11 @@
   	  <groupId>org.klab</groupId>
   	  <artifactId>klab-commons-cli</artifactId>
   	  <version>1.2.1</version>
+  	</dependency>
+  	<dependency>
+  	  <groupId>vavi</groupId>
+  	  <artifactId>vavi-util-codec-sandbox</artifactId>
+  	  <version>0.0.1</version>
   	</dependency>
   </dependencies>
 </project>

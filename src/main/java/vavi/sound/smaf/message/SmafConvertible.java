@@ -15,8 +15,8 @@ import vavi.sound.smaf.SmafEvent;
 /**
  * SmafConvertible.
  * <p>
- * ¡‚Ì‚Æ‚±‚ëÀ‘•ƒNƒ‰ƒX‚Í bean ‚Å‚È‚¯‚ê‚Î‚È‚ç‚È‚¢D
- * (ˆø”‚È‚µ‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ª‚ ‚é‚±‚Æ)
+ * ä»Šã®ã¨ã“ã‚å®Ÿè£…ã‚¯ãƒ©ã‚¹ã¯ bean ã§ãªã‘ã‚Œã°ãªã‚‰ãªã„ï¼
+ * (å¼•æ•°ãªã—ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãŒã‚ã‚‹ã“ã¨)
  * </p>
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
@@ -24,7 +24,7 @@ import vavi.sound.smaf.SmafEvent;
  */
 public interface SmafConvertible {
 
-    /** TODO À‘•–@‚¢‚Ü‚¢‚¿CBeanUtil “™‚ªg‚¦‚È‚¢‚©H */
+    /** TODO å®Ÿè£…æ³•ã„ã¾ã„ã¡ï¼ŒBeanUtil ç­‰ãŒä½¿ãˆãªã„ã‹ï¼Ÿ */
     SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context) throws InvalidSmafDataException;
 }
 

@@ -25,24 +25,24 @@ import vavi.io.BitOutputStream;
  */
 public abstract class AdpcmOutputStream extends FilterOutputStream {
 
-    /** #write(int) ‚É“n‚· PCM ‚ÌƒtƒH[ƒ}ƒbƒg */
+    /** #write(int) ã«æ¸¡ã™ PCM ã®ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ */
     protected AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
 
-    /** #write(int) ‚É“n‚· PCM ‚ÌƒoƒCƒgƒI[ƒ_ */
+    /** #write(int) ã«æ¸¡ã™ PCM ã®ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€ */
     protected ByteOrder byteOrder;
 
-    /** ƒGƒ“ƒR[ƒ_ */
+    /** ã‚¨ãƒ³ã‚³ãƒ¼ãƒ€ */
     protected Codec encoder;
 
     /** */
     protected abstract Codec getCodec();
 
     /**
-     * TODO BitOutputStream ‚Ìˆø”‚ğ‚Ü‚Æ‚ß‚Ä BitOutputStream ‚É‚·‚éH
+     * TODO BitOutputStream ã®å¼•æ•°ã‚’ã¾ã¨ã‚ã¦ BitOutputStream ã«ã™ã‚‹ï¼Ÿ
      * @param out ADPCM
-     * @param byteOrder {@link #write(int)} ‚ÌƒoƒCƒgƒI[ƒ_ 
-     * @param bits {@link BitOutputStream} ‚ÌƒTƒCƒY
-     * @param bitOrder {@link BitOutputStream} ‚ÌƒoƒCƒgƒI[ƒ_ 
+     * @param byteOrder {@link #write(int)} ã®ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€ 
+     * @param bits {@link BitOutputStream} ã®ã‚µã‚¤ã‚º
+     * @param bitOrder {@link BitOutputStream} ã®ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€ 
      */
     public AdpcmOutputStream(OutputStream out, ByteOrder byteOrder, int bits, ByteOrder bitOrder) {
         super(new BitOutputStream(out, bits, bitOrder));
@@ -51,13 +51,13 @@ public abstract class AdpcmOutputStream extends FilterOutputStream {
 //Debug.println(this.out);
     }
 
-    /** c‚Á‚Ä‚¢‚È‚¢‚©‚Ç‚¤‚© (PCM L or H •Ğ•û•Û‚µ‚Ä‚é‚©‚Ç‚¤‚©) */
+    /** æ®‹ã£ã¦ã„ãªã„ã‹ã©ã†ã‹ (PCM L or H ç‰‡æ–¹ä¿æŒã—ã¦ã‚‹ã‹ã©ã†ã‹) */
     protected boolean flushed = true;
-    /** Œ»İ‚Ì’l (PCM L or H •Ğ•û‚µ‚©—ˆ‚Ä‚È‚¢‚Ì•Û—p) */
+    /** ç¾åœ¨ã®å€¤ (PCM L or H ç‰‡æ–¹ã—ã‹æ¥ã¦ãªã„æ™‚ã®ä¿æŒç”¨) */
     protected int current;
 
     /**
-     * @param b PCM H or L byte ‚ğ {@link #byteOrder} ‡‚Éw’è (LSB 8bit —LŒø)
+     * @param b PCM H or L byte ã‚’ {@link #byteOrder} é †ã«æŒ‡å®š (LSB 8bit æœ‰åŠ¹)
      */
     public void write(int b) throws IOException {
         if (!flushed) {

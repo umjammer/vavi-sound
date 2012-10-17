@@ -11,7 +11,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * •¶šƒR[ƒhî•ñ MFi Header Sub Chunk.
+ * æ–‡å­—ã‚³ãƒ¼ãƒ‰æƒ…å ± MFi Header Sub Chunk.
  * <pre>
  *  &quot;code&quot; 4 bytes: code
  * </pre>

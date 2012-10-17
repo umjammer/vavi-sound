@@ -15,8 +15,8 @@ import java.io.OutputStream;
 
 import org.junit.Test;
 
-import vavi.sound.Checksum;
 import vavix.io.Rot13;
+import vavix.util.Checksum;
 
 import static org.junit.Assert.assertEquals;
 

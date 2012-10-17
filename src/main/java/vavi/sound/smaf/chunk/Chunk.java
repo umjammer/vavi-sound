@@ -13,19 +13,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
+import vavi.util.properties.PrefixedPropertiesFactory;
 
 
 /**
  * Chunk.
  * 
+ * TODO make InputStream sub class of FilterInputStream
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
  */
@@ -38,8 +36,8 @@ public abstract class Chunk {
     protected int size;
 
     /**
-     * e‚ÅƒJƒEƒ“ƒgƒ_ƒEƒ“‚µ‚È‚¢‚ÅÏ‚Ş‚æ‚¤‚ÉB
-     * (Œ‹‹Ç‚â‚â‚±‚µ‚¢‚¾‚¯‚¿‚á‚¤‚ñH)
+     * è¦ªã§ã‚«ã‚¦ãƒ³ãƒˆãƒ€ã‚¦ãƒ³ã—ãªã„ã§æ¸ˆã‚€ã‚ˆã†ã«ã€‚
+     * (çµå±€ã‚„ã‚„ã“ã—ã„ã ã‘ã¡ã‚ƒã†ã‚“ï¼Ÿ)
      * @see #Chunk(byte[], int)
      * @see #available()
      * @see #read(InputStream)
@@ -52,7 +50,7 @@ public abstract class Chunk {
     public Chunk() {
     }
 
-    /** TODO bean ‚Å‚à‚¢‚¢‚©‚à */
+    /** TODO bean ã§ã‚‚ã„ã„ã‹ã‚‚ */
     protected Chunk(byte[] id, int size) {
         
         this.id = id;
@@ -62,11 +60,11 @@ public abstract class Chunk {
     }
 
     /**
-     * @param is Chunk Header ‚Í“Ç‚İ‚İÏ‚İ‚Å‚ ‚é‚±‚Æ
+     * @param is Chunk Header ã¯èª­ã¿è¾¼ã¿æ¸ˆã¿ã§ã‚ã‚‹ã“ã¨
      * @throws IOException
      * @throws InvalidSmafDataException
      * TODO Chunk -> constructor ???
-     * TODO parent ‚ğ“n‚µ‚½‚¢‚ªˆ×B
+     * TODO parent ã‚’æ¸¡ã—ãŸã„ãŒç‚ºã€‚
      */
     protected abstract void init(InputStream is, Chunk parent)
         throws InvalidSmafDataException, IOException;
@@ -76,13 +74,13 @@ public abstract class Chunk {
         return new String(id);
     }
 
-    /** Chunk Header ‚Ì 8 ƒoƒCƒg‚ÍŠÜ‚Ü‚ê‚Ä‚¢‚È‚¢‚Ì‚Å’ˆÓ */
+    /** Chunk Header ã® 8 ãƒã‚¤ãƒˆã¯å«ã¾ã‚Œã¦ã„ãªã„ã®ã§æ³¨æ„ */
     public int getSize() {
         return size;
     }
 
     /**
-     * ƒJƒEƒ“ƒgƒ_ƒEƒ“‚µ‚½Œ‹‰Ê
+     * ã‚«ã‚¦ãƒ³ãƒˆãƒ€ã‚¦ãƒ³ã—ãŸçµæœ
      * @see #readSize
      */
     protected int available() {
@@ -90,7 +88,7 @@ public abstract class Chunk {
     }
 
     /**
-     * Ÿè‚ÉƒJƒEƒ“ƒgƒ_ƒEƒ“‚µ‚È‚¢ InputStream ‚©‚ç’¼Ú“Ç‚İ‚ñ‚¾ê‡‚Ì•â³—p
+     * å‹æ‰‹ã«ã‚«ã‚¦ãƒ³ãƒˆãƒ€ã‚¦ãƒ³ã—ãªã„ InputStream ã‹ã‚‰ç›´æ¥èª­ã¿è¾¼ã‚“ã å ´åˆã®è£œæ­£ç”¨
      * @see #readSize
      */
     private void consume(int size) {
@@ -98,8 +96,8 @@ public abstract class Chunk {
     }
 
     /**
-     * EOF ƒ`ƒFƒbƒN•t‚«‚Ìƒ†[ƒeƒBƒŠƒeƒB
-     * @see #readSize ƒJƒEƒ“ƒgƒ_ƒEƒ“‚³‚ê‚Ü‚·
+     * EOF ãƒã‚§ãƒƒã‚¯ä»˜ãã®ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£
+     * @see #readSize ã‚«ã‚¦ãƒ³ãƒˆãƒ€ã‚¦ãƒ³ã•ã‚Œã¾ã™
      */
     protected void skip(InputStream is, long bytes) throws IOException {
         skipInternal(is, bytes);
@@ -107,7 +105,7 @@ public abstract class Chunk {
     }
     
     /**
-     * EOF ƒ`ƒFƒbƒN•t‚«‚Ìƒ†[ƒeƒBƒŠƒeƒB
+     * EOF ãƒã‚§ãƒƒã‚¯ä»˜ãã®ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£
      */
     private static void skipInternal(InputStream is, long bytes) throws IOException {
         long l = 0;
@@ -121,8 +119,8 @@ public abstract class Chunk {
     }
     
     /**
-     * EOF ƒ`ƒFƒbƒN•t‚«‚Ìƒ†[ƒeƒBƒŠƒeƒB
-     * @see #readSize ƒJƒEƒ“ƒgƒ_ƒEƒ“‚³‚ê‚Ü‚·
+     * EOF ãƒã‚§ãƒƒã‚¯ä»˜ãã®ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£
+     * @see #readSize ã‚«ã‚¦ãƒ³ãƒˆãƒ€ã‚¦ãƒ³ã•ã‚Œã¾ã™
      * @return unsigned byte
      */
     protected int read(InputStream is) throws IOException {
@@ -132,8 +130,8 @@ public abstract class Chunk {
     }
 
     /**
-     * EOF ƒ`ƒFƒbƒN•t‚«‚Ìƒ†[ƒeƒBƒŠƒeƒB
-     * @see #readSize ƒJƒEƒ“ƒgƒ_ƒEƒ“‚³‚ê‚Ü‚·
+     * EOF ãƒã‚§ãƒƒã‚¯ä»˜ãã®ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£
+     * @see #readSize ã‚«ã‚¦ãƒ³ãƒˆãƒ€ã‚¦ãƒ³ã•ã‚Œã¾ã™
      * @return unsigned short
      */
     protected int readShort(InputStream is) throws IOException {
@@ -143,9 +141,9 @@ public abstract class Chunk {
     }
 
     /**
-     * EOF ƒ`ƒFƒbƒN•t‚«‚Ìƒ†[ƒeƒBƒŠƒeƒB
-     * buffer.length ƒTƒCƒY“Ç‚İ‚Ü‚ê‚Ü‚·B
-     * @see #readSize ƒJƒEƒ“ƒgƒ_ƒEƒ“‚³‚ê‚Ü‚·
+     * EOF ãƒã‚§ãƒƒã‚¯ä»˜ãã®ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£
+     * buffer.length ã‚µã‚¤ã‚ºèª­ã¿è¾¼ã¾ã‚Œã¾ã™ã€‚
+     * @see #readSize ã‚«ã‚¦ãƒ³ãƒˆãƒ€ã‚¦ãƒ³ã•ã‚Œã¾ã™
      */
     protected void read(InputStream is, byte[] buffer) throws IOException {
         readInternal(is, buffer);
@@ -153,7 +151,7 @@ public abstract class Chunk {
     }
 
     /**
-     * EOF ƒ`ƒFƒbƒN•t‚«‚Ìƒ†[ƒeƒBƒŠƒeƒB
+     * EOF ãƒã‚§ãƒƒã‚¯ä»˜ãã®ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£
      */
     private static void readInternal(InputStream is, byte[] buffer) throws IOException {
         int l = 0;
@@ -167,9 +165,9 @@ public abstract class Chunk {
     }
     
     /**
-     * Å‰‚Å‚È‚¢e‚Ì“Ç‚İ‚İ—p(ƒ}[ƒN–³‚µ)
+     * æœ€åˆã§ãªã„è¦ªã®èª­ã¿è¾¼ã¿ç”¨(ãƒãƒ¼ã‚¯ç„¡ã—)
      * @param is
-     * @return “Ç‚İ‚ñ‚¾ Chunk ƒIƒuƒWƒFƒNƒg
+     * @return èª­ã¿è¾¼ã‚“ã  Chunk ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
      */
     protected Chunk readFrom(InputStream is)
         throws InvalidSmafDataException, IOException {
@@ -179,10 +177,10 @@ public abstract class Chunk {
 
     /**
      * @param is should support marking
-     * @param parent e‚Ìƒf[ƒ^‚ª—~‚µ‚¢‚ª‚ ‚é‚Ì‚Å
-     * @param mark Chunk Header ‚ğ“Ç‚İ‚ñ‚¾‚ ‚Æ”jŠü‚·‚é‚©‚Ç‚¤‚©(Å‰‚¾‚¯g‚¤)
-     * @return “Ç‚İ‚ñ‚¾ Chunk ƒIƒuƒWƒFƒNƒg
-     * @see #readSize parent != null ‚È‚çƒJƒEƒ“ƒgƒ_ƒEƒ“‚³‚ê‚Ü‚·
+     * @param parent è¦ªã®ãƒ‡ãƒ¼ã‚¿ãŒæ¬²ã—ã„æ™‚ãŒã‚ã‚‹ã®ã§
+     * @param mark Chunk Header ã‚’èª­ã¿è¾¼ã‚“ã ã‚ã¨ç ´æ£„ã™ã‚‹ã‹ã©ã†ã‹(æœ€åˆã ã‘ä½¿ã†)
+     * @return èª­ã¿è¾¼ã‚“ã  Chunk ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+     * @see #readSize parent != null ãªã‚‰ã‚«ã‚¦ãƒ³ãƒˆãƒ€ã‚¦ãƒ³ã•ã‚Œã¾ã™
      * @throws IOException when <i>is</i> does not support marking 
      */
     public static Chunk readFrom(InputStream is, Chunk parent, boolean mark)
@@ -209,7 +207,7 @@ Debug.println("size: " + StringUtil.toHex8(size) + "(" + size + ")");
             skipInternal(is, 8);
         }
 
-        Chunk chunk = Factory.newInstance(id, size);
+        Chunk chunk = newInstance(id, size);
         chunk.init(is, parent);
 
         if (mark) {
@@ -228,7 +226,7 @@ Debug.println("crc (calc): " + StringUtil.toHex4((int) ~crc.getValue()));
         }
 
         if (parent != null) {
-            // e‚Ìƒ‹[ƒv“à‚Å‚Ì“Ç‚İ‚İ‚Ìê‡
+            // è¦ªã®ãƒ«ãƒ¼ãƒ—å†…ã§ã®èª­ã¿è¾¼ã¿ã®å ´åˆ
             parent.consume(8 + chunk.getSize());
         }
 
@@ -267,9 +265,9 @@ Debug.println("crc (calc): " + StringUtil.toHex4((int) ~crc.getValue()));
         int crc = 0xffff;
 
         /**
-         * 16 ƒrƒbƒg‚Ì CRC ‚ğ•û–@ 1 ‚Å‹‚ß‚Ü‚·B
-         * @param c ƒf[ƒ^‚ğ—^‚¦‚Ü‚·B
-         * @return CRC ’l‚ğ•Ô‚µ‚Ü‚·B
+         * 16 ãƒ“ãƒƒãƒˆã® CRC ã‚’æ–¹æ³• 1 ã§æ±‚ã‚ã¾ã™ã€‚
+         * @param c ãƒ‡ãƒ¼ã‚¿ã‚’ä¸ãˆã¾ã™ã€‚
+         * @return CRC å€¤ã‚’è¿”ã—ã¾ã™ã€‚
          */
         public int update(byte[] c) {
             for (int n = 0; n < c.length; n++) {
@@ -294,7 +292,7 @@ Debug.println("crc (calc): " + StringUtil.toHex4((int) ~crc.getValue()));
 
     /**
      * read 1 ~ 2 bytes
-     * @return 0`127, 128`16511 (0x407f)
+     * @return 0ã€œ127, 128ã€œ16511 (0x407f)
      */
     protected int readOneToTwo(InputStream is)
         throws IOException {
@@ -347,93 +345,70 @@ Debug.println("crc (calc): " + StringUtil.toHex4((int) ~crc.getValue()));
 
     //----
 
-    private static class Factory {
-        /**
-         * @param id a chunk id read
-         * @param size
-         * @return chunk
-         */
-        protected static Chunk newInstance(byte[] id, int size)
-            throws InvalidSmafDataException {
+    /**
+     * @param id a chunk id read
+     * @param size
+     * @return chunk
+     */
+    private static Chunk newInstance(byte[] id, int size)
+        throws InvalidSmafDataException {
 
-            String type = new String(id);
-Debug.println("Chunk ID(read): " + type);
-
-            Iterator<String> i = chunkInstantiators.keySet().iterator();
-            while (i.hasNext()) {
-                String key = i.next();
-        
-                if (key.charAt(3) == '*') {
-                    if (key.substring(0, 3).equals(type.substring(0, 3))) {
-                        return newInstance(chunkInstantiators.get(key), id, size);
-                    }
-                } else {
-                    if (key.equals(type)) {
-                        return newInstance(chunkInstantiators.get(key), id, size);
-                    }
-                }
-            }
-
+        try {
+            return chunkFactory.get(id).newInstance(id, size);
+        } catch (IllegalArgumentException e) {
             return new UndefinedChunk(id, size); // TODO out source
-//            throw new InvalidSmafDataException("unsupported chunk id: " + StringUtil.getDump(id));
-        }
-        
-        /**
-         * @param constructor
-         * @param size
-         * @throws IllegalStateException when instantiation failed
-         */
-        private static Chunk newInstance(Constructor<? extends Chunk> constructor, byte[] id, int size) {
-            try {
-                Object[] args = new Object[] {
-                    id,
-                    new Integer(size)
-                };
-                return constructor.newInstance(args);
-            } catch (Exception e) {
+//          throw new InvalidSmafDataException("unsupported chunk id: " + StringUtil.getDump(id));
+        } catch (Exception e) {
 if (e instanceof InvocationTargetException) {
- Debug.printStackTrace(e.getCause());
+Debug.printStackTrace(e.getCause());
 } else {
- Debug.printStackTrace(e);
-}
-                throw (RuntimeException) new IllegalStateException().initCause(e);
-            }
-        }
-
-        /** Chunk ƒIƒuƒWƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾‚·‚éƒRƒ“ƒXƒgƒ‰ƒNƒ^W */
-        private static Map<String, Constructor<? extends Chunk>> chunkInstantiators = new HashMap<String, Constructor<? extends Chunk>>();
-    
-        /** */
-        private static final String keyBase ="chunk.";
-    
-        /** */
-        static {
-            try {
-                // props
-                Properties props = new Properties();
-                final String path = "/vavi/sound/smaf/smaf.properties";
-                props.load(Factory.class.getResourceAsStream(path));
-    
-                // chunk
-                Iterator<?> i = props.keySet().iterator();
-                while (i.hasNext()) {
-                    String key = (String) i.next();
-                    if (key.startsWith(keyBase)) {
-//Debug.println("key: " + key);
-                        @SuppressWarnings("unchecked")
-                        Class<? extends Chunk> clazz = (Class<? extends Chunk>) Class.forName(props.getProperty(key));
-//Debug.println("chunk class: " + StringUtil.getClassName(clazz));
-                        Constructor<? extends Chunk> constructor = clazz.getConstructor(byte[].class, Integer.TYPE);
-                        
-                        chunkInstantiators.put(key.substring(keyBase.length()), constructor);
-                    }
-                }
-            } catch (Exception e) {
 Debug.printStackTrace(e);
-                System.exit(1);
-            }
+}
+            throw (RuntimeException) new IllegalStateException().initCause(e);
         }
     }
+
+    /** */
+    private static final String keyBase = "chunk.";
+
+    /** */
+    private static final PrefixedPropertiesFactory<byte[], Constructor<? extends Chunk>> chunkFactory =
+        new PrefixedPropertiesFactory<byte[], Constructor<? extends Chunk>>("/vavi/sound/smaf/smaf.properties", keyBase) {
+
+        @Override
+        public Constructor<? extends Chunk> get(byte[] id) {
+            String type = new String(id);
+Debug.println("Chunk ID(read): " + (Character.isLetterOrDigit(type.charAt(3)) ? type : new String(id, 0, 3) + "+0x" + StringUtil.toHex2(type.charAt(3))));
+
+            for (String key : instances.keySet()) {
+                if (key.charAt(3) == '*' && key.substring(0, 3).equals(type.substring(0, 3))) {
+                    return instances.get(key);
+                } else if (key.equals(type)) {
+                    return instances.get(key);
+                }
+            }
+
+            throw new IllegalArgumentException(type);
+        }
+
+        @Override
+        protected Constructor<? extends Chunk> getStoreValue(String value) {
+            try {
+                @SuppressWarnings("unchecked")
+                Class<? extends Chunk> clazz = (Class<? extends Chunk>) Class.forName(value);
+//Debug.println("chunk class: " + StringUtil.getClassName(clazz));
+                return clazz.getConstructor(byte[].class, Integer.TYPE);
+            } catch (Exception e) {
+Debug.printStackTrace(e);
+                throw new IllegalStateException(e);
+            }
+        }
+
+        @Override
+        protected String getStoreKey(String key) {
+            return key.substring(keyBase.length());
+        }
+    };
 }
 
 /* */

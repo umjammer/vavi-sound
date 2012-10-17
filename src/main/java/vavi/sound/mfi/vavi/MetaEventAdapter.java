@@ -17,10 +17,11 @@ import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.mfi.vavi.sequencer.UnknownVenderSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.midi.MidiConstants;
 import vavi.sound.midi.MidiUtil;
+import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.util.Debug;
+import vavi.util.StringUtil;
 
 
 /**
@@ -57,7 +58,7 @@ class MetaEventAdapter implements MetaEventListener, MfiDevice {
     }
 
     /**
-     * {@link MfiMessageStore} ‚ğg—p‚µ‚½Ä¶‹@\‚ğÀ‘•‚µ‚Ä‚¢‚Ü‚·B
+     * {@link MfiMessageStore} ã‚’ä½¿ç”¨ã—ãŸå†ç”Ÿæ©Ÿæ§‹ã‚’å®Ÿè£…ã—ã¦ã„ã¾ã™ã€‚
      * @see MachineDependentMessage#getMidiEvents(MidiContext)
      * @see vavi.sound.mfi.vavi.header.CopyMessage#getMidiEvents(MidiContext)
      * @see vavi.sound.mfi.vavi.header.ProtMessage#getMidiEvents(MidiContext)
@@ -67,7 +68,7 @@ class MetaEventAdapter implements MetaEventListener, MfiDevice {
     public void meta(javax.sound.midi.MetaMessage message) {
 //Debug.println("type: " + message.getType());
         switch (message.getType()) {
-        case MidiConstants.META_MACHINE_DEPEND: // ƒV[ƒPƒ“ƒTŒÅ—L‚Ìƒƒ^ƒCƒxƒ“ƒg
+        case MidiConstants.META_MACHINE_DEPEND: // ã‚·ãƒ¼ã‚±ãƒ³ã‚µå›ºæœ‰ã®ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆ
             try {
                 processSpecial(message);
             } catch (InvalidMfiDataException e) {
@@ -80,13 +81,13 @@ Debug.printStackTrace(e);
 throw e;
 }
             break;
-        case MidiConstants.META_TEXT_EVENT:     // ƒeƒLƒXƒgEƒCƒxƒ“ƒg
-        case MidiConstants.META_COPYRIGHT:      // ’˜ìŒ •\¦
-        case MidiConstants.META_NAME:           // ƒV[ƒPƒ“ƒX–¼‚Ü‚½‚Íƒgƒ‰ƒbƒN–¼
+        case MidiConstants.META_TEXT_EVENT:     // ãƒ†ã‚­ã‚¹ãƒˆãƒ»ã‚¤ãƒ™ãƒ³ãƒˆ
+        case MidiConstants.META_COPYRIGHT:      // è‘—ä½œæ¨©è¡¨ç¤º
+        case MidiConstants.META_NAME:           // ã‚·ãƒ¼ã‚±ãƒ³ã‚¹åã¾ãŸã¯ãƒˆãƒ©ãƒƒã‚¯å
 Debug.println("meta " + message.getType() + ": " + MidiUtil.getDecodedMessage(message.getData()));
             break;
-        case MidiConstants.META_END_OF_TRACK:   // ƒgƒ‰ƒbƒN‚ÌI‚í‚è
-        case MidiConstants.META_TEMPO:          // ƒeƒ“ƒ|İ’è
+        case MidiConstants.META_END_OF_TRACK:   // ãƒˆãƒ©ãƒƒã‚¯ã®çµ‚ã‚ã‚Š
+        case MidiConstants.META_TEMPO:          // ãƒ†ãƒ³ãƒè¨­å®š
 Debug.println(Level.FINE, "this handler ignore meta: " + message.getType());
             break;
         default:
@@ -107,13 +108,13 @@ Debug.println("no meta sub handler: " + message.getType());
         int manufacturerId = data[0];
         switch (manufacturerId) {
         case 0:     // 3 byte manufacturer id
-Debug.println(String.format("unhandled manufacturer: %02x %02x %02x", data[0], data[1], data[2]));
+Debug.println(Level.WARNING, String.format("unhandled manufacturer: %02x %02x %02x", data[0], data[1], data[2]));
             break;
         case VaviMidiDeviceProvider.MANUFACTURER_ID:
             processSpecial_Vavi(message);
             break;
         default:
-Debug.println(String.format("unhandled manufacturer: %02x", manufacturerId));
+Debug.println(Level.WARNING, String.format("unhandled manufacturer: %02x", manufacturerId));
             break;
         }
     }
@@ -130,13 +131,13 @@ Debug.println(String.format("unhandled manufacturer: %02x", manufacturerId));
         int functionId = data[1];
         switch (functionId) {
         case MachineDependentSequencer.META_FUNCTION_ID_MACHINE_DEPEND:
-            processSpecial_Vavi_MachineDepend(message);
+            processSpecial_Vavi_MachineDependent(message);
             break;
         case AudioDataSequencer.META_FUNCTION_ID_MFi4:
             processSpecial_Vavi_Mfi4(message);
             break;
         default:
-Debug.println(String.format("unhandled function: %02x", functionId));
+Debug.println(Level.WARNING, String.format("unhandled function: %02x", functionId));
             break;
         }
     }
@@ -146,7 +147,7 @@ Debug.println(String.format("unhandled function: %02x", functionId));
      * 0x5f 0x01
      * </pre>
      */
-    private void processSpecial_Vavi_MachineDepend(javax.sound.midi.MetaMessage message)
+    private void processSpecial_Vavi_MachineDependent(javax.sound.midi.MetaMessage message)
         throws InvalidMfiDataException {
 
         byte[] data = message.getData();
@@ -157,8 +158,9 @@ Debug.println(String.format("unhandled function: %02x", functionId));
         int vendor = mdm.getVendor() | mdm.getCarrier();
         MachineDependentSequencer sequencer;
         try {
-            sequencer = MachineDependentSequencer.Factory.getSequencer(vendor);
-        } catch (IllegalStateException e) {
+            sequencer = MachineDependentSequencer.factory.get(vendor);
+        } catch (IllegalArgumentException e) {
+Debug.println(Level.SEVERE, "error vendor: " + StringUtil.toHex2(vendor));
             sequencer = new UnknownVenderSequencer();
         }
         sequencer.sequence(mdm);

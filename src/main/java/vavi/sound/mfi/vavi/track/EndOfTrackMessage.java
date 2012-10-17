@@ -19,7 +19,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * EndOfTrackMessage.
  * <pre>
- *  0xff, 0xd# ���t�Ǘ����
+ *  0xff, 0xd# 演奏管理情報
  *  channel false
  *  delta   true
  * </pre>
@@ -80,8 +80,8 @@ public class EndOfTrackMessage extends ShortMessage
     }
 
     /**
-     * @return ���̃��\�b�h�̖߂�l�̂� MFi �g���b�N 0 ~ 3 �� EndOfTrackMessage ��
-     * MfiEvent �ɂȂ�B�g���b�N���Ȃ��ꍇ�� null �������Ă���
+     * @return このメソッドの戻り値のみ MFi トラック 0 ~ 3 の EndOfTrackMessage の
+     * MfiEvent になる。トラックがない場合は null が入っている
      */
     public MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context) {
 

@@ -42,7 +42,7 @@ public class Function1 implements MachineDependentFunction {
         int voice     = (data[7] & 0xc0) >> 6;  // 0 ~ 3
         int pitchBend =  data[7] & 0x3f;        // -32 ~ 31
         pitchBend *= (data[7] & 0x20) != 0 ? -1 : 0;
-        // pitchBend * Pitch Bend Range * 100 / 32 [ƒZƒ“ƒg]
+        // pitchBend * Pitch Bend Range * 100 / 32 [ã‚»ãƒ³ãƒˆ]
 Debug.println("Pitch Bend: " + StringUtil.toHex2(voice) + " " + pitchBend);
     }
 }

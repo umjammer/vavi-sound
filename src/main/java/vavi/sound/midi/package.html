@@ -3,7 +3,7 @@
 <head>
 <link rev="MADE" href="mailto:vavivavi@yahoo.co.jp"/>
 <link rel="INDEX" href="orverview.html"/>
-<meta http-equiv="Content-Type" content="text/html; charset=shift_jis"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="Content-Style-Type" content="text/css"/>
 <link rel="stylesheet" type="text/css" href="../../../vavi.css"/>
 <title>vavi.sound.midi</title>
@@ -21,14 +21,14 @@
 <body>
 
 <p>
-MIDI ‚ÌƒT[ƒrƒXƒvƒƒoƒCƒ_‚Æ‚µ‚Ä‚ÌÀ‘•‚ğ‚·‚é‚½‚ß‚ÌŠî–{ƒNƒ‰ƒX‚ğ’ñ‹Ÿ‚µ‚Ü‚·B
+MIDI ã®ã‚µãƒ¼ãƒ“ã‚¹ãƒ—ãƒ­ãƒã‚¤ãƒ€ã¨ã—ã¦ã®å®Ÿè£…ã‚’ã™ã‚‹ãŸã‚ã®åŸºæœ¬ã‚¯ãƒ©ã‚¹ã‚’æä¾›ã—ã¾ã™ã€‚
 </p>
 
-<h2>’ˆÓ</h2>
-MFi, SMAF ‚ğ‚±‚ÌƒpƒbƒP[ƒW‚ÅÄ¶‚·‚éê‡AƒVƒXƒeƒ€ƒvƒƒpƒeƒB <code>javax.sound.midi.Sequencer</code> ‚É
-<code>"#Java MIDI(MFi/SMAF) ADPCM Sequencer"</code> ‚Æİ’è‚µ‚Ä‚­‚¾‚³‚¢BADPCM ‚Ìƒnƒ“ƒhƒŠƒ“ƒO‚ª‚Å‚«‚È‚­‚È‚è‚Ü‚·B
+<h2>æ³¨æ„</h2>
+MFi, SMAF ã‚’ã“ã®ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã§å†ç”Ÿã™ã‚‹å ´åˆã€ã‚·ã‚¹ãƒ†ãƒ ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ <code>javax.sound.midi.Sequencer</code> ã«
+<code>"#Java MIDI(MFi/SMAF) ADPCM Sequencer"</code> ã¨è¨­å®šã—ã¦ãã ã•ã„ã€‚ADPCM ã®ãƒãƒ³ãƒ‰ãƒªãƒ³ã‚°ãŒã§ããªããªã‚Šã¾ã™ã€‚
 
-<h2>MIDI ƒtƒ@ƒCƒ‹ƒ^ƒCƒv‚ÌŸè‚Èd—l</h2>
+<h2>MIDI ãƒ•ã‚¡ã‚¤ãƒ«ã‚¿ã‚¤ãƒ—ã®å‹æ‰‹ãªä»•æ§˜</h2>
 
 <pre>
  8765 4321 LSB
@@ -40,24 +40,24 @@ MFi, SMAF ‚ğ‚±‚ÌƒpƒbƒP[ƒW‚ÅÄ¶‚·‚éê‡AƒVƒXƒeƒ€ƒvƒƒpƒeƒB <code>javax.sound.m
  +------------ for Mobile Flag (SMAF, MFi etc)
 </pre>
 
-<h2>‚±‚ê‚©‚çÀ‘•‚·‚é‚±‚Æ</h2>
+<h2>ã“ã‚Œã‹ã‚‰å®Ÿè£…ã™ã‚‹ã“ã¨</h2>
 
 <ul>
-<li>SMAF Handyphone/Mobile ‚ÌØ‚è•ª‚¯</li>
-<li> «‚Í OK ‚Å
+<li>SMAF Handyphone/Mobile ã®åˆ‡ã‚Šåˆ†ã‘</li>
+<li> â†“ã¯ OK ã§
 <pre>
         InputStream is = new BufferedInputStream(new FileInputStream(file));
         Sequence sequence = MidiSystem.getSequence(is);
         sequencer.setSequence(sequence);
 </pre>
-« ‚Í NGASmaf,MfiFileReader (ƒvƒƒoƒCƒ_‚Q‚Â–ÚˆÈ~H)‚É
- 0 ƒoƒCƒg‚Ì ByteArrayInputStream ‚Ì MIDI ƒXƒgƒŠ[ƒ€‚ª“n‚Á‚Ä‚­‚é
+â†“ ã¯ NGã€Smaf,MfiFileReader (ãƒ—ãƒ­ãƒã‚¤ãƒ€ï¼’ã¤ç›®ä»¥é™ï¼Ÿ)ã«
+ 0 ãƒã‚¤ãƒˆã® ByteArrayInputStream ã® MIDI ã‚¹ãƒˆãƒªãƒ¼ãƒ ãŒæ¸¡ã£ã¦ãã‚‹
 <pre>
         InputStream is = new BufferedInputStream(new FileInputStream(file));
         sequencer.setSequence(is);
 </pre>
 </li>
-<li><del>DeveiceInfo ü‚è‚ğ‚¿‚á‚ñ‚Æ‚·‚é (MidiSystem#getSequencer() ‚Å SmafMidiSequencer(ˆê”Ô–Ú) ‚ª•Ô‚é)</del> ¨ d—l</li>
+<li><del>DeveiceInfo å‘¨ã‚Šã‚’ã¡ã‚ƒã‚“ã¨ã™ã‚‹ (MidiSystem#getSequencer() ã§ SmafMidiSequencer(ä¸€ç•ªç›®) ãŒè¿”ã‚‹)</del> â†’ ä»•æ§˜</li>
 </ul>
 
 <h2>Deprecated</h2>

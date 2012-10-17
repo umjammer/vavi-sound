@@ -7,7 +7,6 @@
 package vavi.sound.smaf.message;
 
 import vavi.sound.smaf.SmafMessage;
-import vavi.util.Debug;
 
 
 /**
@@ -24,7 +23,7 @@ public class UndefinedMessage extends SmafMessage {
      */
     public UndefinedMessage(int duration) {
         this.duration = duration;
-Debug.println("UndefinedMessage: šššššššššššššššš");
+//Debug.println("UndefinedMessage: â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…");
     }
 
     /** */

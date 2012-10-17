@@ -22,14 +22,14 @@ import vavi.util.StringUtil;
  */
 public class Function132 extends Function131 {
 
-    /** ‚±‚Ìƒf[ƒ^‚Ìƒwƒbƒ_•ª’·‚³ */
+    /** ã“ã®ãƒ‡ãƒ¼ã‚¿ã®ãƒ˜ãƒƒãƒ€åˆ†é•·ã• */
     @SuppressWarnings("hiding")
     public static final int HEADER_LENGTH = 14;
 
     /**
      * 0x84 Wave Packet Data3    MFi2, MFi3
      * <p>
-     * TODO playSize ‚Ì”½‰f
+     * TODO playSize ã®åæ˜ 
      * </p>
      * @param message see below
      * <pre>
@@ -77,15 +77,15 @@ Debug.println("sampling: " + StringUtil.toHex2(data[8] & 0x3f) + ": rate=" + sam
     protected int length;
 
     /**
-     * @param length ˆê”ÔÅ‰‚Ìƒ`ƒƒƒ“ƒN‚ÉŒã‘±‘S‚Ä‚ğ‘«‚µ‚½’·‚³A‚»‚êˆÈŠO‚Í 0 ‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B
+     * @param length ä¸€ç•ªæœ€åˆã®ãƒãƒ£ãƒ³ã‚¯ã«å¾Œç¶šå…¨ã¦ã‚’è¶³ã—ãŸé•·ã•ã€ãã‚Œä»¥å¤–ã¯ 0 ã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚
      */
     public void setLength(int length) {
         this.length = length;
     }
 
     /**
-     * –‘O‚É {@link #setAdpcm(byte[])}, {@link #setSamplingRate(int)},
-     * {@link #setSamplingBits(int)} ‚ğ—p‚¢‚ÄƒtƒB[ƒ‹ƒh‚ğİ’è‚µ‚Ä‚¨‚¢‚Ä‰º‚³‚¢B
+     * äº‹å‰ã« {@link #setAdpcm(byte[])}, {@link #setSamplingRate(int)},
+     * {@link #setSamplingBits(int)} ã‚’ç”¨ã„ã¦ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã‚’è¨­å®šã—ã¦ãŠã„ã¦ä¸‹ã•ã„ã€‚
      */
     public byte[] getMessage() throws InvalidMfiDataException {
 

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.LongMessage;
@@ -33,9 +34,9 @@ import vavi.util.StringUtil;
 /**
  * TrackMessage.
  * <p>
- * {@link #getLength()} ‚Í Track Chunk ‚·‚×‚Ä‚Ì’·‚³
+ * {@link #getLength()} ã¯ Track Chunk ã™ã¹ã¦ã®é•·ã•
  * </p>
- * <li>TODO <code>extends {@link MfiMessage}</code> ‚¢‚é‚ÌH TrackChunk ‚¶‚á‚È‚¢‚ÌH
+ * <li>TODO <code>extends {@link MfiMessage}</code> ã„ã‚‹ã®ï¼Ÿ TrackChunk ã˜ã‚ƒãªã„ã®ï¼Ÿ
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030825 nsano initial version <br>
  *          0.01 030826 nsano refactoring <br>
@@ -51,10 +52,10 @@ public class TrackMessage extends MfiMessage {
     /** */
     private int trackNumber;
 
-    /** “Ç‚İ‚İ—p */
+    /** èª­ã¿è¾¼ã¿ç”¨ */
     private int noteLength = -1;
 
-    /** “Ç‚İ‚İ—p */
+    /** èª­ã¿è¾¼ã¿ç”¨ */
     private int exst = -1;
 
     /** */
@@ -78,8 +79,8 @@ Debug.println("exst: " + exst);
     }
 
     /**
-     * {@link Track}[0] ‚Ì•s•K—v‚Èƒf[ƒ^‚ÍÈ‚©‚ê‚Ü‚·B
-     * @see VaviMfiFileFormat#isIgnored(MfiMessage) ˆË‘¶ŠÖŒW‚ª‚¢‚Ü‚¢‚¿‚©‚à
+     * {@link Track}[0] ã®ä¸å¿…è¦ãªãƒ‡ãƒ¼ã‚¿ã¯çœã‹ã‚Œã¾ã™ã€‚
+     * @see VaviMfiFileFormat#isIgnored(MfiMessage) ä¾å­˜é–¢ä¿‚ãŒã„ã¾ã„ã¡ã‹ã‚‚
      */
     public void writeTo(OutputStream os) throws IOException {
 
@@ -99,9 +100,9 @@ Debug.println("track: " + trackNumber + ": " + getDataLength());
     }
 
     /**
-     * ‘‚«o‚µ—p
-     * {@link Track}[0] ‚Ì•s•K—v‚Èƒf[ƒ^‚ÍÈ‚©‚ê‚Ü‚·B
-     * @see VaviMfiFileFormat#isIgnored(MfiMessage) ˆË‘¶ŠÖŒW‚ª‚¢‚Ü‚¢‚¿‚©‚à
+     * æ›¸ãå‡ºã—ç”¨
+     * {@link Track}[0] ã®ä¸å¿…è¦ãªãƒ‡ãƒ¼ã‚¿ã¯çœã‹ã‚Œã¾ã™ã€‚
+     * @see VaviMfiFileFormat#isIgnored(MfiMessage) ä¾å­˜é–¢ä¿‚ãŒã„ã¾ã„ã¡ã‹ã‚‚
      */
     public int getDataLength() {
         int trackLength = 0;
@@ -124,11 +125,11 @@ try {
     }
 
     /**
-     * @before {@link #noteLength}, {@link #exst} ‚ªİ’è‚³‚ê‚Ä‚¢‚é‚±‚Æ
-     * @after {@link #length} ‚ªİ’è‚³‚ê‚é Track Chunk ‚Ì’·‚³
-     * @throws IllegalStateException {@link vavi.sound.mfi.vavi.header.NoteMessage} ‚Ì’·‚³
-     *         ‚à‚µ‚­‚Í {@link #exst} ‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡
-     * @throws InvalidMfiDataException is ‚Ìn‚Ü‚è‚ª {@link #TYPE} ‚Ån‚Ü‚Á‚Ä‚¢‚È‚¢ê‡
+     * @before {@link #noteLength}, {@link #exst} ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹ã“ã¨
+     * @after {@link #length} ãŒè¨­å®šã•ã‚Œã‚‹ Track Chunk ã®é•·ã•
+     * @throws IllegalStateException {@link vavi.sound.mfi.vavi.header.NoteMessage} ã®é•·ã•
+     *         ã‚‚ã—ãã¯ {@link #exst} ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆ
+     * @throws InvalidMfiDataException is ã®å§‹ã¾ã‚ŠãŒ {@link #TYPE} ã§å§‹ã¾ã£ã¦ã„ãªã„å ´åˆ
      */
     public void readFrom(InputStream is)
         throws InvalidMfiDataException,
@@ -170,7 +171,7 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
 
     /**
      * Reads a message from stream
-     * TODO MfiMessage#readFrom ‚Ì‚æ‚¤‚È‹C‚à‚·‚é‚Ì‚¾‚ª vavi ƒpƒbƒP[ƒW‚Æ‚ÌˆË‘¶ŠÖŒW‚ª‚¢‚Ü‚¢‚¿‚©... 
+     * TODO MfiMessage#readFrom ã®ã‚ˆã†ãªæ°—ã‚‚ã™ã‚‹ã®ã ãŒ vavi ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã¨ã®ä¾å­˜é–¢ä¿‚ãŒã„ã¾ã„ã¡ã‹... 
      */
     private MfiMessage getMessage(DataInputStream dis)
         throws IOException {
@@ -184,7 +185,7 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
         case MfiMessage.STATUS_CLASS_C: // Class C (0xbf)
         case MfiMessage.STATUS_NORMAL:  // Normal (0xff)
             return getClassOrNormalMessage(delta, status, dis);
-        default:                        // ƒm[ƒgƒƒbƒZ[ƒW
+        default:                        // ãƒãƒ¼ãƒˆãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
             return NoteMessageFactory.getMessage(delta, status, dis, noteLength);
         }
     }
@@ -194,24 +195,24 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
      * @see "vavi.properties"
      * @param status 0x3f: Class A, 0x7f: Class B, 0xbf: Class C, 0xff: Normal
      * @param dis data1 ~
-     * TODO MfiMessage#readFrom ‚Ì‚æ‚¤‚È‹C‚à‚·‚é‚Ì‚¾‚ª vavi ƒpƒbƒP[ƒW‚Æ‚ÌˆË‘¶ŠÖŒW‚ª‚¢‚Ü‚¢‚¿‚©... 
+     * TODO MfiMessage#readFrom ã®ã‚ˆã†ãªæ°—ã‚‚ã™ã‚‹ã®ã ãŒ vavi ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã¨ã®ä¾å­˜é–¢ä¿‚ãŒã„ã¾ã„ã¡ã‹... 
      */
     private MfiMessage getClassOrNormalMessage(int delta,
                                                int status,
                                                DataInputStream dis)
         throws IOException {
 
-        int data1 = dis.readUnsignedByte();    // Šg’£ƒXƒe[ƒ^ƒX
+        int data1 = dis.readUnsignedByte();    // æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹
 
         MfiMessage message = null;
         if (data1 >= 0x00 && data1 <= 0x7f) {
-            // Šg’£ƒXƒe[ƒ^ƒX A ... LongMessage
+            // æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ A ... LongMessage
             message = LongMessageFactory.getMessage(delta, status, data1, dis, exst);
         } else if (data1 >= 0x80 && data1 <= 0xef) {
-            // Šg’£ƒXƒe[ƒ^ƒX B ... ShortMessage
+            // æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ B ... ShortMessage
             message = ShortMessageFactory.getMessage(delta, status, data1, dis);
         } else {
-            // Šg’£î•ñ 0xf# ... SysexMessage
+            // æ‹¡å¼µæƒ…å ± 0xf# ... SysexMessage
             message = SysexMessageFactory.getMessage(delta, status, data1, dis);
         }
 
@@ -238,7 +239,7 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
          * 0xc0 ~ 0xfe
          * </pre>
          * @param dis data1 ~
-         * TODO NoteMessage#readFrom ‚Ì‚æ‚¤‚È‹C‚à‚·‚é‚Ì‚¾‚ª vavi ƒpƒbƒP[ƒW‚Æ‚ÌˆË‘¶ŠÖŒW‚ª‚¢‚Ü‚¢‚¿‚©... 
+         * TODO NoteMessage#readFrom ã®ã‚ˆã†ãªæ°—ã‚‚ã™ã‚‹ã®ã ãŒ vavi ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã¨ã®ä¾å­˜é–¢ä¿‚ãŒã„ã¾ã„ã¡ã‹... 
          */
         public static MfiMessage getMessage(int delta,
                                             int status,
@@ -266,10 +267,10 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
             }
         }
 
-        /** ƒm[ƒg {@link NoteMessage} ƒIƒuƒWƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾‚·‚éƒRƒ“ƒXƒgƒ‰ƒNƒ^ 1 */
+        /** ãƒãƒ¼ãƒˆ {@link NoteMessage} ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—ã™ã‚‹ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ 1 */
         private static Constructor<NoteMessage> noteMessageConstructor1;
 
-        /** ƒm[ƒg {@link NoteMessage} ƒIƒuƒWƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾‚·‚éƒRƒ“ƒXƒgƒ‰ƒNƒ^ 2 */
+        /** ãƒãƒ¼ãƒˆ {@link NoteMessage} ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—ã™ã‚‹ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ 2 */
         private static Constructor<NoteMessage> noteMessageConstructor2;
 
         static {
@@ -300,13 +301,13 @@ Debug.printStackTrace(e);
     private static class SysexMessageFactory {
         
         /**
-         * Šg’£î•ñ 0xf# ~ 0xf#
+         * æ‹¡å¼µæƒ…å ± 0xf# ~ 0xf#
          * <pre>
          *  length = dis.readShort();
          *  data ...
          * </pre>
          * @param dis data2 ~
-         * TODO SysexMessage#readFrom ‚Ì‚æ‚¤‚È‹C‚à‚·‚é‚Ì‚¾‚ª vavi ƒpƒbƒP[ƒW‚Æ‚ÌˆË‘¶ŠÖŒW‚ª‚¢‚Ü‚¢‚¿‚©... 
+         * TODO SysexMessage#readFrom ã®ã‚ˆã†ãªæ°—ã‚‚ã™ã‚‹ã®ã ãŒ vavi ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã¨ã®ä¾å­˜é–¢ä¿‚ãŒã„ã¾ã„ã¡ã‹... 
          */
         public static MfiMessage getMessage(int delta,
                                             int status,
@@ -332,12 +333,12 @@ Debug.printStackTrace(e);
                 data2[1] = (byte) ((length % 0x100) & 0xff);
                 dis.readFully(data2, 2, length);
 
-Debug.println("sysex unhandled: delta: " + StringUtil.toHex2(delta) + ", status: " + StringUtil.toHex2(status) + ", extended status: " + StringUtil.toHex2(data1));
+Debug.println(Level.WARNING, "sysex unhandled: delta: " + StringUtil.toHex2(delta) + ", status: " + StringUtil.toHex2(status) + ", extended status: " + StringUtil.toHex2(data1));
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
         }
 
-        /** Šg’£ƒXƒe[ƒ^ƒX A {@link SysexMessage} ƒIƒuƒWƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾‚·‚éƒƒ\ƒbƒhW */
+        /** æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ A {@link SysexMessage} ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰é›† */
         private static Map<String, Method> sysexMessageInstantiators = new HashMap<String, Method>();
 
         static {
@@ -371,13 +372,13 @@ Debug.printStackTrace(e);
     private static class ShortMessageFactory {
         
         /**
-         * Šg’£ƒXƒe[ƒ^ƒX B (0x80 ~ 0xef)
+         * æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ B (0x80 ~ 0xef)
          * <pre>
          *  length 1 fixed
          *  data 1 byte
          * </pre>
          * @param dis data2 ~
-         * TODO ShortMessage#readFrom ‚Ì‚æ‚¤‚È‹C‚à‚·‚é‚Ì‚¾‚ª vavi ƒpƒbƒP[ƒW‚Æ‚ÌˆË‘¶ŠÖŒW‚ª‚¢‚Ü‚¢‚¿‚©... 
+         * TODO ShortMessage#readFrom ã®ã‚ˆã†ãªæ°—ã‚‚ã™ã‚‹ã®ã ãŒ vavi ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã¨ã®ä¾å­˜é–¢ä¿‚ãŒã„ã¾ã„ã¡ã‹... 
          */
         public static MfiMessage getMessage(int delta,
                                             int status,
@@ -393,7 +394,7 @@ Debug.printStackTrace(e);
             if (shortMessageConstructors.containsKey(key)) {
                 constructor = shortMessageConstructors.get(key);
             } else {
-Debug.println("short unhandled: delta: " + StringUtil.toHex2(delta) + ", status: " + StringUtil.toHex2(status) + ", extended status: " + StringUtil.toHex2(data1));
+Debug.println(Level.WARNING, "short unhandled: delta: " + StringUtil.toHex2(delta) + ", status: " + StringUtil.toHex2(status) + ", extended status: " + StringUtil.toHex2(data1));
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
 
@@ -404,7 +405,7 @@ Debug.println("short unhandled: delta: " + StringUtil.toHex2(delta) + ", status:
             }
         }
 
-        /** Šg’£ƒXƒe[ƒ^ƒX B {@link ShortMessage} ƒIƒuƒWƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾‚·‚éƒRƒ“ƒXƒgƒ‰ƒNƒ^W */
+        /** æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ B {@link ShortMessage} ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—ã™ã‚‹ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿é›† */
         private static Map<String, Constructor<ShortMessage>> shortMessageConstructors = new HashMap<String, Constructor<ShortMessage>>();
 
         static {
@@ -440,14 +441,14 @@ Debug.printStackTrace(e);
     private static class LongMessageFactory {
         
         /**
-         * Šg’£ƒXƒe[ƒ^ƒX A (0x00 ~ 0x7f)
+         * æ‹¡å¼µã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ A (0x00 ~ 0x7f)
          * <pre>
          *  length is 'exst'
          *  data ...
          * </pre>
          * @param dis data2 ~
          * @see #exst
-         * TODO LongMessage#readFrom ‚Ì‚æ‚¤‚È‹C‚à‚·‚é‚Ì‚¾‚ª vavi ƒpƒbƒP[ƒW‚Æ‚ÌˆË‘¶ŠÖŒW‚ª‚¢‚Ü‚¢‚¿‚©... 
+         * TODO LongMessage#readFrom ã®ã‚ˆã†ãªæ°—ã‚‚ã™ã‚‹ã®ã ãŒ vavi ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã¨ã®ä¾å­˜é–¢ä¿‚ãŒã„ã¾ã„ã¡ã‹... 
          */
         public static MfiMessage getMessage(int delta,
                                             int status,
@@ -465,7 +466,7 @@ Debug.printStackTrace(e);
             if (longMessageConstructors.containsKey(key)) {
                 constructor = longMessageConstructors.get(key);
             } else {
-Debug.println("long unhandled: delta: " + StringUtil.toHex2(delta) + ", status: " + StringUtil.toHex2(status) + ", extended status: " + StringUtil.toHex2(data1));
+Debug.println(Level.WARNING, "long unhandled: delta: " + StringUtil.toHex2(delta) + ", status: " + StringUtil.toHex2(status) + ", extended status: " + StringUtil.toHex2(data1));
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
 
@@ -476,7 +477,7 @@ Debug.println("long unhandled: delta: " + StringUtil.toHex2(delta) + ", status: 
             }
         }
 
-        /** Šg’£î•ñ {@link LongMessage} ƒIƒuƒWƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾‚·‚éƒRƒ“ƒXƒgƒ‰ƒNƒ^W */
+        /** æ‹¡å¼µæƒ…å ± {@link LongMessage} ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—ã™ã‚‹ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿é›† */
         private static Map<String, Constructor<LongMessage>> longMessageConstructors = new HashMap<String, Constructor<LongMessage>>();
 
         static {

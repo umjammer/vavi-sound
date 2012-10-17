@@ -40,7 +40,7 @@ class SubData {
         this(buffer, offset, 0); // TODO 0 ?
     }
 
-    /** TODO ï∂éöÉRÅ[ÉhÇ∆Ç© */
+    /** TODO ÊñáÂ≠ó„Ç≥„Éº„Éâ„Å®„Åã */
     SubData(byte[] buffer, int offset, int contentsCodeType) throws IOException {
         this.contentsCodeType = contentsCodeType;
 
@@ -91,7 +91,7 @@ class SubData {
     /** */
     private String tag;
 
-    /** É^ÉO */
+    /** „Çø„Ç∞ */
     public String getTag() {
         return tag;
     }

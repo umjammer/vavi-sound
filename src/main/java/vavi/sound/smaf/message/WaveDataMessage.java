@@ -24,7 +24,7 @@ import vavi.util.Debug;
 
 /**
  * WaveDataMessage.
- * TODO SysexMessage ‚Æ‚©‚¶‚á‚È‚¢‚ÌH
+ * TODO SysexMessage ã¨ã‹ã˜ã‚ƒãªã„ã®ï¼Ÿ
  * <pre>
  *  
  * </pre>
@@ -102,7 +102,7 @@ public class WaveDataMessage extends SmafMessage
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // ƒV[ƒPƒ“ƒT[ŒÅ—Lƒƒ^ƒCƒxƒ“ƒg
+        metaMessage.setMessage(0x7f,    // ã‚·ãƒ¼ã‚±ãƒ³ã‚µãƒ¼å›ºæœ‰ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆ
                                data,
                                data.length);
 
@@ -113,7 +113,16 @@ public class WaveDataMessage extends SmafMessage
 
     /* */
     public void sequence() throws InvalidSmafDataException {
-Debug.println("WAVE DATA: " + number);
+Debug.println("WAVE DATA[" + number + "]: " + this);
+//try {
+// java.io.OutputStream os = new java.io.FileOutputStream("out.pcm");
+// os.write(data);
+// os.flush();
+// os.close();
+// Debug.println("WAVE DATA saved to out.pcm");
+//} catch (java.io.IOException e) {
+// Debug.printStackTrace(e);
+//}
         AudioEngine engine = Factory.getAudioEngine(format);
         engine.setData(number, -1, samplingRate, samplingBits, channels, data, false);
     }

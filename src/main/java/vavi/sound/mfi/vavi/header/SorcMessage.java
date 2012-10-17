@@ -11,7 +11,7 @@ import vavi.util.StringUtil;
 
 
 /**
- * Ä”z•z•s‰Â¯•Êq MFi Header Sub Chunk.
+ * å†é…å¸ƒä¸å¯è­˜åˆ¥å­ MFi Header Sub Chunk.
  * 
  * <pre>
  * 

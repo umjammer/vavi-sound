@@ -28,7 +28,7 @@ import vavi.util.Debug;
  */
 public class SmafMidiFileReader extends BasicMidiFileReader {
 
-    /** SMAF ‚©‚ç•ÏŠ·‚³‚ê‚½ MIDI Sequence ‚ğæ“¾‚µ‚Ü‚·B */
+    /** SMAF ã‹ã‚‰å¤‰æ›ã•ã‚ŒãŸ MIDI Sequence ã‚’å–å¾—ã—ã¾ã™ã€‚ */
     public Sequence getSequence(InputStream is)
         throws InvalidMidiDataException,
                IOException {
@@ -38,7 +38,7 @@ public class SmafMidiFileReader extends BasicMidiFileReader {
                 throw new IOException("mark not supported: " + is);
             }
 
-            is.mark(4); // 4 ‚Í SmafSystem#getSequence ‚ª 4 bytes ‚Å”»’f‚Å‚«‚é‚±‚Æ‚ÉˆË‘¶‚µ‚Ä‚¢‚é
+            is.mark(4); // 4 ã¯ SmafSystem#getSequence ãŒ 4 bytes ã§åˆ¤æ–­ã§ãã‚‹ã“ã¨ã«ä¾å­˜ã—ã¦ã„ã‚‹
 
             vavi.sound.smaf.Sequence sequence = SmafSystem.getSequence(is);
 //Debug.println(sequence);

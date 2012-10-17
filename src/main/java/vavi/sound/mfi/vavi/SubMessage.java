@@ -41,11 +41,11 @@ import vavi.util.StringUtil;
  * |00 ff fd|LL LL|7f|XX XX XX XX|DD DD ...
  * +--+--+--+--+--+--+--+--+--+--+--+-
  * </pre>
- * <li>{@link #getLength()} ‚Íƒf[ƒ^ + 10 ({@link MetaMessage#HEADER_LENGTH meta header} +
- *     {@link #SUB_TYPE_LENGTH type ‚Ì•¶š’·•ª}) ‚ğ•Ô‚µ‚Ü‚·B
- * <li>TODO {@link MetaMessage} ‚Å‚ ‚é•K—v‚ª‚ ‚é‚Ì‚©H (MIDI ‚Á‚Û‚­‚Í‚È‚Á‚Ä‚é‚ª)
- * <li>ª {@link vavi.sound.mfi.Track}[0] ‚ÌÅ‰‚É“ü‚ê‚é‚Ì‚Í {@link MetaMessage} ‚Æ‚Ü‚Æ‚ß‚ç‚ê‚é
- * <li>ª ‚»‚¤‚·‚é‚Æ {@link vavi.sound.mfi.vavi.AudioDataMessage} ‚Í {@link MetaMessage} ‚ÌƒTƒuƒNƒ‰ƒX‚Å‚ ‚é‚×‚«
+ * <li>{@link #getLength()} ã¯ãƒ‡ãƒ¼ã‚¿ + 10 ({@link MetaMessage#HEADER_LENGTH meta header} +
+ *     {@link #SUB_TYPE_LENGTH type ã®æ–‡å­—é•·åˆ†}) ã‚’è¿”ã—ã¾ã™ã€‚
+ * <li>TODO {@link MetaMessage} ã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚‹ã®ã‹ï¼Ÿ (MIDI ã£ã½ãã¯ãªã£ã¦ã‚‹ãŒ)
+ * <li>â†‘ {@link vavi.sound.mfi.Track}[0] ã®æœ€åˆã«å…¥ã‚Œã‚‹ã®ã¯ {@link MetaMessage} ã¨ã¾ã¨ã‚ã‚‰ã‚Œã‚‹
+ * <li>â†‘ ãã†ã™ã‚‹ã¨ {@link vavi.sound.mfi.vavi.AudioDataMessage} ã¯ {@link MetaMessage} ã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã§ã‚ã‚‹ã¹ã
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030819 nsano out source from {@link VaviMfiFileFormat} <br>
  *          0.10 030825 nsano merge {@link SubMessage} <br>
@@ -62,7 +62,7 @@ public abstract class SubMessage extends MetaMessage {
     /** "port".length */
     protected static final int SUB_TYPE_LENGTH = 4;
 
-    /** ƒV[ƒPƒ“ƒTŒÅ—L‚Ìƒƒ^ƒCƒxƒ“ƒg */
+    /** ã‚·ãƒ¼ã‚±ãƒ³ã‚µå›ºæœ‰ã®ãƒ¡ã‚¿ã‚¤ãƒ™ãƒ³ãƒˆ */
     public static final int META_TYPE = 0x7f;
 
     /**
@@ -118,24 +118,24 @@ public abstract class SubMessage extends MetaMessage {
     }
 
     /**
-     * @return subType •¶š—ñ (ex. "prot") 
+     * @return subType æ–‡å­—åˆ— (ex. "prot") 
      */
     public String getSubType() {
         return new String(this.data, HEADER_LENGTH, SUB_TYPE_LENGTH);
     }
 
     /**
-     * ƒf[ƒ^•”•ª‚Ì‚İB{@link #getSubType() subType} •¶š—ñ‚àŠÜ‚İ‚Ü‚¹‚ñB
+     * ãƒ‡ãƒ¼ã‚¿éƒ¨åˆ†ã®ã¿ã€‚{@link #getSubType() subType} æ–‡å­—åˆ—ã‚‚å«ã¿ã¾ã›ã‚“ã€‚
      * @return {@link #getLength()} - 10 ({@link MetaMessage#HEADER_LENGTH meta header} +
-     *         {@link #SUB_TYPE_LENGTH type ‚Ì•¶š’·•ª})
+     *         {@link #SUB_TYPE_LENGTH type ã®æ–‡å­—é•·åˆ†})
      */
     public int getDataLength() {
         return getLength() - (HEADER_LENGTH + SUB_TYPE_LENGTH);
     }
 
     /**
-     * ƒf[ƒ^•”•ª‚Ì‚İB{@link #getSubType() subType} •¶š—ñ‚àŠÜ‚İ‚Ü‚¹‚ñB
-     * @return ƒRƒs[
+     * ãƒ‡ãƒ¼ã‚¿éƒ¨åˆ†ã®ã¿ã€‚{@link #getSubType() subType} æ–‡å­—åˆ—ã‚‚å«ã¿ã¾ã›ã‚“ã€‚
+     * @return ã‚³ãƒ”ãƒ¼
      */
     public byte[] getData() {
         byte[] tmp = new byte[getDataLength()];
@@ -146,8 +146,8 @@ public abstract class SubMessage extends MetaMessage {
     }
 
     /**
-     * ƒf[ƒ^•”•ª‚Ì‚İA’·‚³‚ª•Ï‚í‚Á‚½ê‡³‚µ‚­ˆ—‚³‚ê‚éB
-     * @param data {@link #getSubType() subType} •¶š—ñ‚ğŠÜ‚ß‚È‚¢
+     * ãƒ‡ãƒ¼ã‚¿éƒ¨åˆ†ã®ã¿ã€é•·ã•ãŒå¤‰ã‚ã£ãŸå ´åˆæ­£ã—ãå‡¦ç†ã•ã‚Œã‚‹ã€‚
+     * @param data {@link #getSubType() subType} æ–‡å­—åˆ—ã‚’å«ã‚ãªã„
      */
     public void setData(byte[] data)
         throws InvalidMfiDataException {
@@ -237,7 +237,7 @@ Debug.println(subChunk);
 
     //----
 
-    /** {@link SubMessage} ‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^W */
+    /** {@link SubMessage} ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿é›† */
     private static Map<String, Constructor<SubMessage>> subChunkConstructors = new HashMap<String, Constructor<SubMessage>>();
 
     static {
@@ -274,7 +274,7 @@ Debug.println("read encoding: " + readingEncoding);
             }
         } catch (Exception e) {
 Debug.printStackTrace(e);
-            System.exit(1);
+            throw new IllegalStateException(e);
         }
     }
 }

@@ -12,10 +12,10 @@ import java.nio.ByteOrder;
 /**
  * AudioEngine.
  * <p>
- * {@link vavi.sound.mfi.vavi.sequencer.AudioDataSequencer} ‚Åg—p‚³‚ê‚Ü‚·B
- * ğŒ‚Íˆø”‚È‚µ‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ª‚ ‚é‚±‚ÆA
- * {@link #encode(int, int, byte[])} ‚ÉŠÖ˜A‚·‚é•”•ª‚Í
- * ƒXƒe[ƒgƒŒƒX‚Å‚È‚¯‚ê‚Î‚È‚ç‚È‚¢‚±‚Æ‚Å‚·B
+ * {@link vavi.sound.mfi.vavi.sequencer.AudioDataSequencer} ã§ä½¿ç”¨ã•ã‚Œã¾ã™ã€‚
+ * æ¡ä»¶ã¯å¼•æ•°ãªã—ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãŒã‚ã‚‹ã“ã¨ã€
+ * {@link #encode(int, int, byte[])} ã«é–¢é€£ã™ã‚‹éƒ¨åˆ†ã¯
+ * ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¬ã‚¹ã§ãªã‘ã‚Œã°ãªã‚‰ãªã„ã“ã¨ã§ã™ã€‚
  * </p>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 051116 nsano initial version <br>
@@ -85,7 +85,7 @@ public interface AudioEngine {
         private static final int R = 1;
 
         /**
-         * ƒCƒ“ƒ^[ƒŠ[ƒu‚³‚ê‚½ PCM ‚ğ L R ‡‚É•ª—£
+         * ã‚¤ãƒ³ã‚¿ãƒ¼ãƒªãƒ¼ãƒ–ã•ã‚ŒãŸ PCM ã‚’ L R é †ã«åˆ†é›¢
          * @param stereo PCM stereo, currently 16bit only
          * @param bits PCM bits, TODO currently unused
          * @param byteOrder PCM 16 bit byte order, TODO currently unused
@@ -114,8 +114,9 @@ public interface AudioEngine {
             }
             return monos;
         }
+
         /**
-         * ƒCƒ“ƒ^[ƒŠ[ƒu‚·‚é‚Æ‚¢‚¤‚ç‚µ‚¢B
+         * ã‚¤ãƒ³ã‚¿ãƒ¼ãƒªãƒ¼ãƒ–ã™ã‚‹ã¨ã„ã†ã‚‰ã—ã„ã€‚
          * @param monoL ADPCM monaural L, currently 4bit only
          * @param monoR ADPCM monaural R, currently 4bit only
          * @param bits ADPCM bits, TODO currently unused
@@ -134,8 +135,9 @@ public interface AudioEngine {
             }
             return stereo;
         }
+
         /**
-         * ƒCƒ“ƒ^[ƒŠ[ƒu‚µ‚È‚¢B
+         * ã‚¤ãƒ³ã‚¿ãƒ¼ãƒªãƒ¼ãƒ–ã—ãªã„ã€‚
          * @param monoL adpcm data L
          * @param monoR adpcm data R
          * @return L, R concatenated adpcm data

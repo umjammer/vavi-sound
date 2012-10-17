@@ -20,29 +20,29 @@ FF 7F nn mm
       |  +- manufacturers id
       +---- length
 
-[ƒeƒ“ƒ|]
+[ãƒ†ãƒ³ãƒ]
       FF 51 03 aa bb cc
 
-[ƒeƒLƒXƒg]
-      FF 01 ll dd c dd
+[ãƒ†ã‚­ã‚¹ãƒˆ]
+      FF 01 ll dd â€¦ dd
 
-[’˜ìŒ •\Ž¦]
-      FF 02 ll dd c dd
+[è‘—ä½œæ¨©è¡¨ç¤º]
+      FF 02 ll dd â€¦ dd
 
-[ƒLƒ…[Eƒ|ƒCƒ“ƒg]
+[ã‚­ãƒ¥ãƒ¼ãƒ»ãƒã‚¤ãƒ³ãƒˆ]
       FF 07 05 53 54 41 52 54 (START)
       FF 07 04 53 54 4F 50 (STOP)
 
-[XF ƒLƒ…[ƒ|ƒCƒ“ƒg]
+[XF ã‚­ãƒ¥ãƒ¼ãƒã‚¤ãƒ³ãƒˆ]
       FF 7F 04 43 7B 02 rr
 
-[ƒ`ƒƒƒ“ƒlƒ‹ƒXƒe[ƒ^ƒXŽw’è]
+[ãƒãƒ£ãƒ³ãƒãƒ«ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æŒ‡å®š]
       FF 7F 14 43 02 00 04 dd ... dd
 
-[MA-5 AL ƒ`ƒƒƒ“ƒlƒ‹Žw’è]
+[MA-5 AL ãƒãƒ£ãƒ³ãƒãƒ«æŒ‡å®š]
       FF 7F 06 43 02 01 01 cc dd
 
-[MA-5 V ”­‰¹ƒ`ƒƒƒ“ƒlƒ‹Žw’è]
+[MA-5 V ç™ºéŸ³ãƒãƒ£ãƒ³ãƒãƒ«æŒ‡å®š]
       FF 7F 06 43 02 01 02 cc dd
 
 
@@ -86,7 +86,7 @@ public class MetaMessage extends SmafMessage {
     }
 
     /**
-     * Meta ”Ô†
+     * Meta ç•ªå·
      * <p>
      * {@link javax.sound.midi.MetaMessage} compatible. 
      * </p>
@@ -100,7 +100,7 @@ public class MetaMessage extends SmafMessage {
      * <p>
      * {@link javax.sound.midi.MetaMessage} nearly compatible.
      * </p>
-     * @return ƒRƒs[
+     * @return ã‚³ãƒ”ãƒ¼
      */
     public Map<String, Object> getData() {
         return data;

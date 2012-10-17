@@ -56,7 +56,7 @@ public class VaviMfiFileWriter extends MfiFileWriter {
 
     /** */
     public int[] getMfiFileTypes(Sequence sequence) {
-        // sequence ‚ğ–³‹‚µ‚Ä‚¢‚é‚¯‚Ç MFi Sequence ˆê‚Â‚µ‚©Œ^‚È‚¢‚©‚ç‚¢‚¢ 
+        // sequence ã‚’ç„¡è¦–ã—ã¦ã„ã‚‹ã‘ã© MFi Sequence ä¸€ã¤ã—ã‹å‹ãªã„ã‹ã‚‰ã„ã„ 
         return types;
     }
 
@@ -72,16 +72,16 @@ public class VaviMfiFileWriter extends MfiFileWriter {
 
     /** */
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
-        // sequence ‚ğ–³‹‚µ‚Ä‚¢‚é‚¯‚Ç MFi Sequence ˆê‚Â‚µ‚©Œ^‚È‚¢‚©‚ç‚¢‚¢ 
+        // sequence ã‚’ç„¡è¦–ã—ã¦ã„ã‚‹ã‘ã© MFi Sequence ä¸€ã¤ã—ã‹å‹ãªã„ã‹ã‚‰ã„ã„ 
         return isFileTypeSupported(fileType);
     }
 
     /**
-     * @param in {@link Sequence#getTracks() Sequence#tracks}[0] ‚É
-     *           Šeí {@link SubMessage} ‚ğİ’è‚·‚é‚±‚Æ‚Å
-     *           ƒwƒbƒ_ƒ`ƒƒƒ“ƒN‚Ì“à—e‚ğw’è‚·‚é‚±‚Æ‚ªo—ˆ‚Ü‚·B
-     * @return 0: fileType ‚ªƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚È‚¢ê‡A‘‚«‚İƒf[ƒ^‚ÉƒGƒ‰[‚ª‚ ‚éê‡
-     *         else: ‘‚«‚ñ‚¾ƒoƒCƒg”
+     * @param in {@link Sequence#getTracks() Sequence#tracks}[0] ã«
+     *           å„ç¨® {@link SubMessage} ã‚’è¨­å®šã™ã‚‹ã“ã¨ã§
+     *           ãƒ˜ãƒƒãƒ€ãƒãƒ£ãƒ³ã‚¯ã®å†…å®¹ã‚’æŒ‡å®šã™ã‚‹ã“ã¨ãŒå‡ºæ¥ã¾ã™ã€‚
+     * @return 0: fileType ãŒã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ãªã„å ´åˆã€æ›¸ãè¾¼ã¿ãƒ‡ãƒ¼ã‚¿ã«ã‚¨ãƒ©ãƒ¼ãŒã‚ã‚‹å ´åˆ
+     *         else: æ›¸ãè¾¼ã‚“ã ãƒã‚¤ãƒˆæ•°
      */
     public int write(Sequence in, int fileType, OutputStream out)
         throws IOException {
@@ -93,7 +93,7 @@ Debug.println(Level.WARNING, "unsupported fileType: " + fileType);
 
         VaviMfiFileFormat ff = new VaviMfiFileFormat(in);
 
-        // header (Å’áŒÀ•K—v‚È‚à‚Ì‚ÍƒfƒtƒHƒ‹ƒg‚ğİ’è)
+        // header (æœ€ä½é™å¿…è¦ãªã‚‚ã®ã¯ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚’è¨­å®š)
         try {
             // sorc
             try { ff.getSorc(); }
@@ -110,7 +110,7 @@ Debug.println(Level.WARNING, "unsupported fileType: " + fileType);
             // note length
             ff.setNoteLength(1);
         } catch (InvalidMfiDataException e) {
-            // TODO IOException ‚Å‚¢‚¢‚Ì‚©H
+            // TODO IOException ã§ã„ã„ã®ã‹ï¼Ÿ
             throw (IOException) new IOException().initCause(e);
         }
 
@@ -134,7 +134,7 @@ Debug.printStackTrace(e);
         return ff.getByteLength();
     }
 
-    /** {@link #write(Sequence, int, OutputStream)} ‚ÉˆÏ÷ */
+    /** {@link #write(Sequence, int, OutputStream)} ã«å§”è­² */
     public int write(Sequence in, int fileType, File out)
         throws IOException {
 
@@ -180,7 +180,7 @@ Debug.println("vers: " + defaultVersion);
             }
         } catch (Exception e) {
 Debug.printStackTrace(e);
-            System.exit(1);
+            throw new IllegalStateException(e);
         }
     }
 }

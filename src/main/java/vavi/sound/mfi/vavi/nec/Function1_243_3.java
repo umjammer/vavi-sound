@@ -14,7 +14,7 @@ import vavi.util.Debug;
 
 /**
  * NEC System exclusive message function 0x01, 0xf3, 0x03 processor.
- * (MaxGain İ’è)
+ * (MaxGain è¨­å®š)
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 051113 nsano initial version <br>
@@ -56,7 +56,7 @@ Debug.println("MaxGain: " + maxGain);
 
     /** 0 ~ 96 (-96db), default 24 */
     public void setMaxGain(int maxGain) {
-        this.maxGain = Math.min(maxGain, 96); // TODO minus ‚ª’Ê‚é‚æ
+        this.maxGain = Math.min(maxGain, 96); // TODO minus ãŒé€šã‚‹ã‚ˆ
     }
 
     /** */

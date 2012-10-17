@@ -17,7 +17,7 @@ import vavi.util.StringUtil;
 
 
 /**
- * オーディオチャンク情報 MFi Header Sub Chunk.
+ * 繧ｪ繝ｼ繝�繧｣繧ｪ繝√Ε繝ｳ繧ｯ諠�蝣ｱ MFi Header Sub Chunk.
  * <pre>
  *  0: 7 6 543210
  *       ^ ~~~~~~

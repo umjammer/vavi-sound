@@ -19,14 +19,14 @@ import vavi.util.Debug;
 /**
  * Sequencer implemented for SMAF.
  * <p>
- * ‚±‚ÌƒV[ƒPƒ“ƒTƒNƒ‰ƒX‚ÅÄ¶‚·‚éê‡‚Í
- * ƒVƒXƒeƒ€ƒvƒƒpƒeƒB <code>javax.sound.midi.Sequencer</code> ‚É <code>"#Real Time Sequencer"</code>
- * ‚ğ–¾¦‚·‚é‚æ‚¤‚É‚µ‚Ä‚­‚¾‚³‚¢B<code>"Java MIDI(MFi/SMAF) ADPCM Sequencer"</code> ‚ª
- * ƒfƒtƒHƒ‹ƒgƒV[ƒPƒ“ƒT‚É‚È‚Á‚½ê‡A{@link #mea}‚ªd•¡‚µ‚Ä“o˜^‚³‚ê‚Ä‚µ‚Ü‚¢‚Ü‚·B
+ * ã“ã®ã‚·ãƒ¼ã‚±ãƒ³ã‚µã‚¯ãƒ©ã‚¹ã§å†ç”Ÿã™ã‚‹å ´åˆã¯
+ * ã‚·ã‚¹ãƒ†ãƒ ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ <code>javax.sound.midi.Sequencer</code> ã« <code>"#Real Time Sequencer"</code>
+ * ã‚’æ˜ç¤ºã™ã‚‹ã‚ˆã†ã«ã—ã¦ãã ã•ã„ã€‚<code>"Java MIDI(MFi/SMAF) ADPCM Sequencer"</code> ãŒ
+ * ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚·ãƒ¼ã‚±ãƒ³ã‚µã«ãªã£ãŸå ´åˆã€{@link #mea}ãŒé‡è¤‡ã—ã¦ç™»éŒ²ã•ã‚Œã¦ã—ã¾ã„ã¾ã™ã€‚
  * </p>
  * <p>
- * {@link javax.sound.midi.MidiSystem} ‚ğ
- * g—p‚µ‚Ä‚¢‚é‚½‚ß javax.sound.midi SPI ‚ÌƒvƒƒOƒ‰ƒ€“à‚Åg—p‚µ‚Ä‚Í‚¢‚¯‚Ü‚¹‚ñB 
+ * {@link javax.sound.midi.MidiSystem} ã‚’
+ * ä½¿ç”¨ã—ã¦ã„ã‚‹ãŸã‚ javax.sound.midi SPI ã®ãƒ—ãƒ­ã‚°ãƒ©ãƒ å†…ã§ä½¿ç”¨ã—ã¦ã¯ã„ã‘ã¾ã›ã‚“ã€‚ 
  * </p>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
@@ -126,15 +126,15 @@ Debug.println(e);
 
     //-------------------------------------------------------------------------
 
-    /** {@link MetaMessage MetaEvent} ƒ†[ƒeƒBƒŠƒeƒBB */
+    /** {@link MetaMessage MetaEvent} ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£ã€‚ */
     private MetaSupport metaSupport = new MetaSupport();
 
-    /** {@link MetaEventListener} ‚ğ“o˜^‚µ‚Ü‚·B */
+    /** {@link MetaEventListener} ã‚’ç™»éŒ²ã—ã¾ã™ã€‚ */
     public void addMetaEventListener(MetaEventListener l) {
         metaSupport.addMetaEventListener(l);
     }
 
-    /** {@link MetaEventListener} ‚ğíœ‚µ‚Ü‚·B */
+    /** {@link MetaEventListener} ã‚’å‰Šé™¤ã—ã¾ã™ã€‚ */
     public void removeMetaEventListener(MetaEventListener l) {
         metaSupport.removeMetaEventListener(l);
     }
@@ -150,7 +150,7 @@ Debug.println(e);
         public void meta(javax.sound.midi.MetaMessage message) {
 //Debug.println("type: " + message.getType());
             switch (message.getType()) {
-            case 0x2f:  // ©“®“I‚ÉÅŒã‚É‚Â‚¯‚Ä‚­‚ê‚é
+            case 0x2f:  // è‡ªå‹•çš„ã«æœ€å¾Œã«ã¤ã‘ã¦ãã‚Œã‚‹
                 try {
                     MetaMessage metaMessage = new MetaMessage();
                     metaMessage.setMessage(0x2f, null);

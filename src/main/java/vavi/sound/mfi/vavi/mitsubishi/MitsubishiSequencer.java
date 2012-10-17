@@ -9,7 +9,6 @@ package vavi.sound.mfi.vavi.mitsubishi;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.sequencer.MachineDependentFunctionFactory;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
@@ -37,8 +36,7 @@ public class MitsubishiSequencer implements MachineDependentSequencer {
         int function = data[6] & 0xff;
 //Debug.println("function: 0x" + StringUtil.toHex2(function));
 
-        String key = MachineDependentFunctionFactory.KEY_HEADER + function;
-        MachineDependentFunction mdf = factory.getFunction(key);
+        MachineDependentFunction mdf = factory.getFunction(String.valueOf(function));
         mdf.process(message);
     }
 
@@ -55,7 +53,7 @@ public class MitsubishiSequencer implements MachineDependentSequencer {
     //-------------------------------------------------------------------------
 
     /** */
-    private static MachineDependentFunctionFactory factory = new MachineDependentFunctionFactory("/vavi/sound/mfi/vavi/mitsubishi/mitsubishi.properties");
+    private static MachineDependentFunction.Factory factory = new MachineDependentFunction.Factory("/vavi/sound/mfi/vavi/mitsubishi/mitsubishi.properties");
 }
 
 /* */

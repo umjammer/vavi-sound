@@ -10,10 +10,10 @@ import java.io.Serializable;
 
 
 /**
- * Mfi ƒƒbƒZ[ƒW‚ÌŠî’êƒNƒ‰ƒX‚Å‚·D
+ * Mfi ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®åŸºåº•ã‚¯ãƒ©ã‚¹ã§ã™ï¼
  * <pre>
  * +--+--+--+--+--+--+--+--+-
- * |ƒ¢|ST|D1 D2 ...
+ * |Î”|ST|D1 D2 ...
  * +--+--+--+--+--+--+--+--+-
  * </pre>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
@@ -40,7 +40,7 @@ public abstract class MfiMessage
     /**
      * <pre>
      * +--+--+--+--+--+--+--+--+-
-     * |ƒ¢|ST|D1 D2 ...
+     * |Î”|ST|D1 D2 ...
      * +--+--+--+--+--+--+--+--+-
      * </pre>
      */
@@ -50,7 +50,7 @@ public abstract class MfiMessage
     protected int length;
 
     /**
-     * @after {@link #length} ‚ªİ’è‚³‚ê‚é 
+     * @after {@link #length} ãŒè¨­å®šã•ã‚Œã‚‹ 
      */
     protected MfiMessage(byte[] data) {
         this.data = data;
@@ -60,7 +60,7 @@ public abstract class MfiMessage
     }
 
     /**
-     * ƒƒbƒZ[ƒW‚ÌƒoƒCƒg”z—ñ‚ğİ’è‚µ‚Ü‚·D
+     * ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®ãƒã‚¤ãƒˆé…åˆ—ã‚’è¨­å®šã—ã¾ã™ï¼
      */
     protected void setMessage(byte[] data, int length)
         throws InvalidMfiDataException {
@@ -77,8 +77,8 @@ public abstract class MfiMessage
     }
 
     /**
-     * ƒƒbƒZ[ƒW‚ÌƒoƒCƒg”z—ñ‚ğæ“¾‚µ‚Ü‚·D
-     * @return ƒRƒs[
+     * ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®ãƒã‚¤ãƒˆé…åˆ—ã‚’å–å¾—ã—ã¾ã™ï¼
+     * @return ã‚³ãƒ”ãƒ¼
      */
     public byte[] getMessage() {
         byte[] returnedArray = new byte[length];
@@ -86,31 +86,31 @@ public abstract class MfiMessage
         return returnedArray;
     }
 
-    /** ‘O‚Ìƒf[ƒ^‚ªÀs‚³‚ê‚Ä‚©‚ç‚ÌŠÔ‚ğæ“¾‚µ‚Ü‚·D */
+    /** å‰ã®ãƒ‡ãƒ¼ã‚¿ãŒå®Ÿè¡Œã•ã‚Œã¦ã‹ã‚‰ã®æ™‚é–“ã‚’å–å¾—ã—ã¾ã™ï¼ */
     public int getDelta() {
         if (length > 0) {
             return data[0] & 0xff;
         }
-        return 0;  // TODO this.data ‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡
+        return 0;  // TODO this.data ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆ
     }
 
     /**
-     * delta ‚ğİ’è‚µ‚Ü‚·D
+     * delta ã‚’è¨­å®šã—ã¾ã™ï¼
      * @param delta delta
      */
     public void setDelta(int delta) {
         this.data[0] = (byte) (delta & 0xff);
     }
 
-    /** ƒXƒe[ƒ^ƒXî•ñ‚ğæ“¾‚µ‚Ü‚·D */
+    /** ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æƒ…å ±ã‚’å–å¾—ã—ã¾ã™ï¼ */
     public int getStatus() {
         if (length > 1) {
             return data[1] & 0xff;
         }
-        return 0;  // TODO this.data ‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡
+        return 0;  // TODO this.data ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆ
     }
 
-    /** ƒƒbƒZ[ƒW‚Ì’·‚³‚ğæ“¾‚µ‚Ü‚·D */
+    /** ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®é•·ã•ã‚’å–å¾—ã—ã¾ã™ï¼ */
     public int getLength() {
         return length;
     }

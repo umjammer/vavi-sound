@@ -27,7 +27,7 @@ public class DviInputStream extends AdpcmInputStream {
     }
 
     /**
-     * {@link vavi.io.BitInputStream} ‚Í 4bit big endian ŒÅ’è
+     * {@link vavi.io.BitInputStream} ã¯ 4bit big endian å›ºå®š
      */
     public DviInputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 4, ByteOrder.BIG_ENDIAN);

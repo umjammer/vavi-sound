@@ -32,17 +32,17 @@ public class MidiContext {
     /** Max MIDI channels */
     public static final int MAX_MIDI_CHANNELS = 16;
 
-    /** ƒ`ƒƒƒ“ƒlƒ‹ƒRƒ“ƒtƒBƒMƒ…ƒŒ[ƒVƒ‡ƒ“ */
+    /** ãƒãƒ£ãƒ³ãƒãƒ«ã‚³ãƒ³ãƒ•ã‚£ã‚®ãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ */
     public enum ChannelConfiguration {
-        /** ƒŠƒYƒ€ */
+        /** ãƒªã‚ºãƒ  */
         PERCUSSION,
-        /** ‚»‚Ì‘¼ */
+        /** ãã®ä»– */
         SOUND_SET,
-        /** –¢g—p */
+        /** æœªä½¿ç”¨ */
         UNUSED
     };
 
-    /** channel 9 ‚ÍƒfƒtƒHƒ‹ƒg‚ÅƒŠƒYƒ€ */
+    /** channel 9 ã¯ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§ãƒªã‚ºãƒ  */
     public static final int CHANNEL_DRUM = 9;
 
     /** */
@@ -126,7 +126,7 @@ Debug.println("channelStatuses: " + (channelStatuses != null ? channelStatuses.l
         }
     }
 
-    /** Œ»İ‚Ìƒgƒ‰ƒbƒN No. */
+    /** ç¾åœ¨ã®ãƒˆãƒ©ãƒƒã‚¯ No. */
     private int smafTrackNumber;
 
     /** */
@@ -139,7 +139,7 @@ Debug.println("channelStatuses: " + (channelStatuses != null ? channelStatuses.l
         this.smafTrackNumber = smafTrackNumber;
     }
 
-    /** Œ»İ‚Ì ticks, index is smafTrackNumber */
+    /** ç¾åœ¨ã® ticks, index is smafTrackNumber */
     private long[] currentTicks = new long[4];
 
     /**
@@ -166,7 +166,7 @@ Debug.println("channelStatuses: " + (channelStatuses != null ? channelStatuses.l
         this.currentTicks[smafTrackNumber] += ticks;
     }
 
-    /** channel ‚ªƒŠƒYƒ€‚©‚Ç‚¤‚©, index is pseudo MIDI channel */
+    /** channel ãŒãƒªã‚ºãƒ ã‹ã©ã†ã‹, index is pseudo MIDI channel */
     private ChannelConfiguration[] drums = new ChannelConfiguration[MAX_MIDI_CHANNELS];
 
     /** index is pseudo MIDI channel */
@@ -181,7 +181,7 @@ Debug.println("channelStatuses: " + (channelStatuses != null ? channelStatuses.l
     /** */
     private static final int CHANNEL_UNUSED = -1;
 
-    /** DRUM_CHANNEL ‚ªƒŠƒYƒ€‚Å‚È‚¢ê‡‚ÌŒğŠ·æƒ`ƒƒƒ“ƒlƒ‹ */
+    /** DRUM_CHANNEL ãŒãƒªã‚ºãƒ ã§ãªã„å ´åˆã®äº¤æ›å…ˆãƒãƒ£ãƒ³ãƒãƒ« */
     private int drumSwapChannel = CHANNEL_UNUSED;
 
     /**
@@ -206,7 +206,7 @@ Debug.println("already swapped: " + midiChannel + ", " + value);
 //Debug.println("temporary: " + midiChannel + ", " + value);
         }
 
-        // DRUM_CHANNEL ‚ªƒŠƒYƒ€‚Å‚È‚¯‚ê‚Î‹ó‚¢‚Ä‚é channel ‚ÆŒğŠ·
+        // DRUM_CHANNEL ãŒãƒªã‚ºãƒ ã§ãªã‘ã‚Œã°ç©ºã„ã¦ã‚‹ channel ã¨äº¤æ›
         if (midiChannel == CHANNEL_DRUM && drums[CHANNEL_DRUM] == ChannelConfiguration.SOUND_SET && drumSwapChannel == CHANNEL_UNUSED) {
             for (int k = MAX_MIDI_CHANNELS - 1; k >= 0; k--) {
                 if (k != CHANNEL_DRUM && drums[k] == ChannelConfiguration.UNUSED) {
@@ -233,7 +233,7 @@ Debug.println("drums: " + midiChannel + "ch, " + value + "\n" + sb1 + "\n" + sb2
 }
     }
 
-    /** channel ‚ÉŠ„‚è“–‚Ä‚ç‚ê‚½ program no, index is pseudo MIDI channel */
+    /** channel ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚ŒãŸ program no, index is pseudo MIDI channel */
     private int[] programs = new int[MAX_MIDI_CHANNELS];
 
     /** 
@@ -253,7 +253,7 @@ if (smafTrackNumber > 0) {
 
     /**
      * @param smafChannel SMAF channel
-     * @return ƒhƒ‰ƒ€’u‚«Š·‚¦Œã‚Ìƒ`ƒƒƒ“ƒlƒ‹ (real MIDI channel)
+     * @return ãƒ‰ãƒ©ãƒ ç½®ãæ›ãˆå¾Œã®ãƒãƒ£ãƒ³ãƒãƒ« (real MIDI channel)
      */
     public int setProgram(int smafChannel, int program) {
         int midiChannel = getMidiChannel(smafChannel);
@@ -284,7 +284,7 @@ Debug.println("drum always zero:[" + midiChannel + "]: " + program);
 
     /**
      * @param smafChannel SMAF channel
-     * @return ƒhƒ‰ƒ€’u‚«Š·‚¦Œã‚Ìƒ`ƒƒƒ“ƒlƒ‹ (real MIDI channel)
+     * @return ãƒ‰ãƒ©ãƒ ç½®ãæ›ãˆå¾Œã®ãƒãƒ£ãƒ³ãƒãƒ« (real MIDI channel)
      * @see #drums
      */
     public int retrieveChannel(int smafChannel) {
@@ -294,12 +294,12 @@ Debug.println("drum always zero:[" + midiChannel + "]: " + program);
 //Debug.println("used swapped channel: " + midiChannel);
 //        }
 
-        // ƒhƒ‰ƒ€‚Ìƒ`ƒƒƒ“ƒlƒ‹‚ªƒTƒEƒ“ƒh‚Æ‚µ‚Äg—p‚³‚ê‚Ä‚¢‚é
+        // ãƒ‰ãƒ©ãƒ ã®ãƒãƒ£ãƒ³ãƒãƒ«ãŒã‚µã‚¦ãƒ³ãƒ‰ã¨ã—ã¦ä½¿ç”¨ã•ã‚Œã¦ã„ã‚‹
         if (midiChannel == CHANNEL_DRUM && drums[CHANNEL_DRUM] == ChannelConfiguration.SOUND_SET) {
             midiChannel = drumSwapChannel;
         }
 
-        // ƒp[ƒJƒbƒVƒ‡ƒ“w’è‚Í‚·‚×‚Ä MIDI ƒhƒ‰ƒ€ƒ`ƒƒƒlƒ‹‚É
+        // ãƒ‘ãƒ¼ã‚«ãƒƒã‚·ãƒ§ãƒ³æŒ‡å®šã¯ã™ã¹ã¦ MIDI ãƒ‰ãƒ©ãƒ ãƒãƒ£ãƒãƒ«ã«
         if (drums[midiChannel] == ChannelConfiguration.PERCUSSION) {
             midiChannel = CHANNEL_DRUM;
         }
@@ -360,12 +360,12 @@ Debug.println("drum always zero:[" + midiChannel + "]: " + program);
      *  0x02         | +2 Octave
      *  0x03         | +3 Octave
      *  0x04         | +4 Octave
-     *  0x05 ` 0x80 | Reserved
+     *  0x05 ã€œ 0x80 | Reserved
      *  0x81         | -1 Octave
      *  0x82         | -2 Octave
      *  0x83         | -3 Octave
      *  0x84         | -4 Octave
-     *  0x85 ` 0xFF | Reserved
+     *  0x85 ã€œ 0xFF | Reserved
      * </pre>
      * @see OctaveShiftMessage
      */
@@ -393,7 +393,7 @@ Debug.println("drum always zero:[" + midiChannel + "]: " + program);
         int midiChannel = getMidiChannel(smafChannel);
         velocities[midiChannel] = velocity;
 //Debug.println("velocities[" + mididChannel + "]: " + octaveShift);
-        return velocity; // TODO ‚¤`‚ñ
+        return velocity; // TODO ã†ã€œã‚“
     }
 
     /**
@@ -409,8 +409,8 @@ Debug.println("drum always zero:[" + midiChannel + "]: " + program);
     //----
 
     /**
-     * index is MA1ƒŒƒWƒXƒ^’l
-     * TODO ‚Ç‚¤‚Â‚©‚¤‚ÌH
+     * index is MA1ãƒ¬ã‚¸ã‚¹ã‚¿å€¤
+     * TODO ã©ã†ã¤ã‹ã†ã®ï¼Ÿ
      * @see "SscMA1_Gl110-j.pdf"
      */
     private static final int[] tempoTable = {
@@ -485,7 +485,7 @@ Debug.println("drum always zero:[" + midiChannel + "]: " + program);
 Debug.println("tempoTable: " + tempoTable.length);    
     }
 
-    /** ƒeƒ“ƒ|‚Ìw’è‚ª‚È‚¢ê‡ASSD‚Í 4 •ª‰¹•„ = 120 ‚Æ‚µ‚Äˆµ‚¢‚Ü‚· */
+    /** ãƒ†ãƒ³ãƒã®æŒ‡å®šãŒãªã„å ´åˆã€SSDã¯ 4 åˆ†éŸ³ç¬¦ = 120 ã¨ã—ã¦æ‰±ã„ã¾ã™ */
     private static final int tempo = 120;
 
     /** */

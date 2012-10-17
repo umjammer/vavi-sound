@@ -18,7 +18,7 @@ import vavi.util.Debug;
 
 
 /**
- * TrackMessage. TODO —v‚é‚Ì‚©H
+ * TrackMessage. TODO è¦ã‚‹ã®ã‹ï¼Ÿ
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 080415 nsano initial version <br>
@@ -56,15 +56,15 @@ Debug.println("track: " + trackNumber + ": " + getDataLength());
     }
 
     /**
-     * track ‚Ì’†g‚ğŒ©‚Ä ScoreTrack, PcmAudio, Graphic ‚ÉU‚è•ª‚¯
+     * track ã®ä¸­èº«ã‚’è¦‹ã¦ ScoreTrack, PcmAudio, Graphic ã«æŒ¯ã‚Šåˆ†ã‘
      */
     private String getType() {
         return "ATR\0"; // TODO
     }
 
     /** 
-     * ‘‚«o‚µ—p
-     * {@link Track}[0] ‚Ì•s•K—v‚Èƒf[ƒ^‚ÍÈ‚©‚ê‚Ü‚·B
+     * æ›¸ãå‡ºã—ç”¨
+     * {@link Track}[0] ã®ä¸å¿…è¦ãªãƒ‡ãƒ¼ã‚¿ã¯çœã‹ã‚Œã¾ã™ã€‚
      */
     public int getDataLength() {
         int trackLength = 0;

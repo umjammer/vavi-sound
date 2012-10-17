@@ -22,7 +22,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * ExpressionMessage.
  * <pre>
- *  0xff, 0xe# ‰¹Œ¹§Œäî•ñ
+ *  0xff, 0xe# éŸ³æºåˆ¶å¾¡æƒ…å ±
  *  channel true
  *  delta   true
  * </pre>
@@ -102,7 +102,7 @@ public class ExpressionMessage extends vavi.sound.mfi.ShortMessage
 
     //----
 
-    /** TODO ƒGƒNƒXƒvƒŒƒbƒVƒ‡ƒ“‚Æ‚İ‚È‚µ‚½‚¯‚Ç‚¢‚¢‚ÌH */
+    /** TODO ã‚¨ã‚¯ã‚¹ãƒ—ãƒ¬ãƒƒã‚·ãƒ§ãƒ³ã¨ã¿ãªã—ãŸã‘ã©ã„ã„ã®ï¼Ÿ */
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
@@ -115,20 +115,20 @@ public class ExpressionMessage extends vavi.sound.mfi.ShortMessage
 //      ShortMessage shortMessage = new ShortMessage();
 //      shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
 //                  channel,
-//                  7,    // ƒƒCƒ“ƒ{ƒŠƒ…[ƒ€ MSB
+//                  7,    // ãƒ¡ã‚¤ãƒ³ãƒœãƒªãƒ¥ãƒ¼ãƒ  MSB
 //                  context.getVolume(channel) * 2);
 //      events[0] = new MidiEvent(shortMessage, context.getCurrent());
 //      shortMessage = new ShortMessage();
 //      shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
 //                  channel,
-//                  39,    // ƒƒCƒ“ƒ{ƒŠƒ…[ƒ€ LSB
+//                  39,    // ãƒ¡ã‚¤ãƒ³ãƒœãƒªãƒ¥ãƒ¼ãƒ  LSB
 //                  0);
 //      events[1] = new MidiEvent(shortMessage, context.getCurrent());
         MidiEvent[] events = new MidiEvent[1];
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 channel,
-                                11,    // ƒGƒNƒXƒvƒŒƒbƒVƒ‡ƒ“ MSB
+                                11,    // ã‚¨ã‚¯ã‚¹ãƒ—ãƒ¬ãƒƒã‚·ãƒ§ãƒ³ MSB
                                 getVolume() < 0 ? getVolume() * 2 + 128 :
                                                   getVolume() * 2);
         events[0] = new MidiEvent(shortMessage, context.getCurrent());

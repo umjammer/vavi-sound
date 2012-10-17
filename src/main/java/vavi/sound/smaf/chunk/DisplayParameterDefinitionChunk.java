@@ -103,33 +103,33 @@ Debug.println("parameters: " + parameter);
 
     /** */
     enum ParameterID {
-        /** ƒtƒHƒ“ƒg‚ÌŽí—Þ */
+        /** ãƒ•ã‚©ãƒ³ãƒˆã®ç¨®é¡ž */
         FontType(0x01),
-        /** ƒtƒHƒ“ƒg‚ÌƒTƒCƒY */
+        /** ãƒ•ã‚©ãƒ³ãƒˆã®ã‚µã‚¤ã‚º */
         FontSize(0x02),
-        /** •¶Žš•À‚Ñ•ûŒü */
+        /** æ–‡å­—ä¸¦ã³æ–¹å‘ */
         Direction(0x03),
-        /** •¶ŽšƒAƒgƒŠƒrƒ…[ƒgŽw’è «—ˆŠg’£ */
+        /** æ–‡å­—ã‚¢ãƒˆãƒªãƒ“ãƒ¥ãƒ¼ãƒˆæŒ‡å®š å°†æ¥æ‹¡å¼µ */
         Attribute(0x04),
-        /** •¶ŽšF */
+        /** æ–‡å­—è‰² */
         FontColor0(0x10),
-        /** F‘Ö‚¦Œã•¶ŽšF */
+        /** è‰²æ›¿ãˆå¾Œæ–‡å­—è‰² */
         FontColor1(0x11),
-        /** •¶Žš‰Žæ‚èF «—ˆŠg’£ */
+        /** æ–‡å­—ç¸å–ã‚Šè‰² å°†æ¥æ‹¡å¼µ */
         EdgeColor0(0x12),
-        /** F‘Ö‚¦Œã•¶Žš‰Žæ‚èF «—ˆŠg’£ */
+        /** è‰²æ›¿ãˆå¾Œæ–‡å­—ç¸å–ã‚Šè‰² å°†æ¥æ‹¡å¼µ */
         EdgeColor1(0x13),
-        /** •¶Žš”wŒiF */
+        /** æ–‡å­—èƒŒæ™¯è‰² */
         BackColor0(0x14),
-        /** F‘Ö‚¦Œã•¶Žš”wŒiF */
+        /** è‰²æ›¿ãˆå¾Œæ–‡å­—èƒŒæ™¯è‰² */
         BackColor1(0x15),
-        /** ƒfƒtƒHƒ‹ƒg‚ÌÀ•WŽw’è•û–@ */
+        /** ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®åº§æ¨™æŒ‡å®šæ–¹æ³• */
         Coordinates(0x20),
-        /** ”wŒiF Plane 0 Žw’èF */
+        /** èƒŒæ™¯è‰² Plane 0 æŒ‡å®šè‰² */
         BackDropColor(0x30),
-        /** “§–¾F‚Æ‚·‚éF‚ðŽw’è */
+        /** é€æ˜Žè‰²ã¨ã™ã‚‹è‰²ã‚’æŒ‡å®š */
         TransparentColor(0x31),
-        /** “§–¾ˆ—‚Ì—LŒøƒtƒ‰ƒO */
+        /** é€æ˜Žå‡¦ç†ã®æœ‰åŠ¹ãƒ•ãƒ©ã‚° */
         TransparentEnable(0x32);
         /** */
         int value;

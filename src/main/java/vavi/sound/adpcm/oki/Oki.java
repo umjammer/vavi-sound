@@ -38,7 +38,7 @@ import vavi.sound.adpcm.Codec;
 /**
  * OKI MSM6258 ADPCM voice synthesizer codec.
  * <p>
- * TODO 8 bit �Ή�
+ * TODO 8 bit 対応
  * </p>
  * @author Tetsuya Isaki
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
@@ -75,13 +75,13 @@ class Oki implements Codec {
         alaw.setBit(16);
     }
 
-    /** ����� PCM �l��\�����邽�߂̃e�[�u�� */
+    /** 次回の PCM 値を予測するためのテーブル */
     private static final int[] adpcm_estimindex = {
         2,  6,  10,  14,  18,  22,  26,  30,
         -2, -6, -10, -14, -18, -22, -26, -30
     };
 
-    /** �ʎq���� */
+    /** 量子化幅 */
     private static final int[] adpcm_estim = {
         16,  17,  19,  21,  23,  25,  28,  31,  34,  37,
         41,  45,  50,  55,  60,  66,  73,  80,  88,  97,
@@ -90,17 +90,17 @@ class Oki implements Codec {
         724, 796, 876, 963, 1060, 1166, 1282, 1411, 1552
     };
 
-    /** ������e�[�u��? */
+    /** 何するテーブル? */
     private static final int[] adpcm_estimstep = {
         -1, -1, -1, -1, 2, 4, 6, 8,
         -1, -1, -1, -1, 2, 4, 6, 8
     };
 
     /**
-     * signed linear 16 �� 1 �T���v���� Oki ADPCM 1 �T���v���ɕϊ����܂��B
+     * signed linear 16 の 1 サンプルを Oki ADPCM 1 サンプルに変換します。
      * <p>
-     * MSM6258 �����҂��� PCM �� 12bit �����t PCM (slinear12 �ɂ�����) �ł���B
-     * �]���Ă��̊֐��ł͓����ɐU���ϊ�(16bit -> 12bit) ���s�Ȃ��Ă���B
+     * MSM6258 が期待する PCM は 12bit 符号付 PCM (slinear12 にあたる) である。
+     * 従ってこの関数では同時に振幅変換(16bit -> 12bit) も行なっている。
      * </p>
      * 
      * @param a 16bit signed linear pcm
@@ -108,27 +108,27 @@ class Oki implements Codec {
      */
     private int encodeInternal(int a) {
 
-        // mc->mc_estim �ɂ́A�O��̍�����\���l�C���f�b�N�X�������Ă���
+        // mc->mc_estim には、前回の差分比予測値インデックスが入っている
         int estim = this.mc_estim;
         int b;
         int s;
         
-        // df �́A�� PCM �l a �ƑO��̗\�� PCM �l�Ƃ̍����ł���
+        // df は、実 PCM 値 a と前回の予測 PCM 値との差分である
         int df = a - this.mc_amp;
-        // dl �́A������\���l�e�[�u�� adpcm_estim[] ����A�\�����ꂽ
-        // ����������o��������
+        // dl は、差分比予測値テーブル adpcm_estim[] から、予測された
+        // 差分比を取り出したもの
         int dl = adpcm_estim[estim];
-        // c �́A������ 12bit �ɕϊ����A(dl/8) �ɑ΂���䗦���o�������́B
-        // /16 �� 16bit �� 12bit �Ƃ̍��A���Ȃ킿 2^4 �ł���B
-        // *8 �́Adl ���Ȃ킿 adpcm_estim[] �̒l��8�{�l�ŋL�^���Ă��邱��
-        // �ɋN������
+        // c は、差分を 12bit に変換し、(dl/8) に対する比率を出したもの。
+        // /16 は 16bit と 12bit との差、すなわち 2^4 である。
+        // *8 は、dl すなわち adpcm_estim[] の値が8倍値で記録してあること
+        // に起因する
         int c = (df / 16) * 8 / dl;
-        // c �����������ɂ���ď������ς��B
-        // ������ c �͏��Z�ɂ�� 0 �ɂȂ��Ă��邩���m�ꂸ�A���̏ꍇ���Ƃ���
-        // �����Ă��܂��̂�����邽�ߕ�������ɂ� df ��p���Ă���B
+        // c が正か負かによって処理が変わる。
+        // ただし c は除算により 0 になっているかも知れず、その場合正として
+        // 扱われてしまうのを避けるため符号判定には df を用いている。
         //
-        // ���ۂɃG���R�[�h���� ADPCM �f�[�^�́A�����r�b�g�ƐU���r�b�g��
-        // �g�ݍ��킹�ł���B�U���r�b�g�� c �� 2 �Ŋ���������
+        // 実際にエンコードする ADPCM データは、符号ビットと振幅ビットの
+        // 組み合わせである。振幅ビットは c を 2 で割ったもの
         if (df < 0) {
             b = -c / 2;
             s = 0x08;
@@ -136,26 +136,26 @@ class Oki implements Codec {
             b = c / 2;
             s = 0;
         }
-        // �U���� 3bit �Ȃ̂ŁA7 �Ő�������
+        // 振幅は 3bit なので、7 で制限する
         if (b > 7) {
             b = 7;
         }
-        // �������Ă������ƂŁA�Ȍ� s �͕����� 4bit�B
-        // b �͕����Ȃ��̐�Βl�Ƃ��Ďg�������邱�Ƃ��ł���
+        // こうしておくことで、以後 s は符号つき 4bit。
+        // b は符号なしの絶対値として使い分けることができる
         s |= b;
-        // �����܂ł̕ϊ��ŁA�U���r�b�g b �̎��ۂ̔䗦 c �Ƃ̊֌W�́A
-        // b : �䗦�͈� c
-        // 0 : 0 <= �䗦 < 2
-        // 1 : 2 <= �䗦 < 4
-        // 2 : 4 <= �䗦 < 6
-        // 3 : 6 <= �䗦 < 8
-        // 4 : 8 <= �䗦 < 10
-        // 5 : 10 <= �䗦 < 12
-        // 6 : 12 <= �䗦 < 14
-        // 7 : 14 <= �䗦
-        // �̂悤�ɂȂ�B
+        // ここまでの変換で、振幅ビット b の実際の比率 c との関係は、
+        // b : 比率範囲 c
+        // 0 : 0 <= 比率 < 2
+        // 1 : 2 <= 比率 < 4
+        // 2 : 4 <= 比率 < 6
+        // 3 : 6 <= 比率 < 8
+        // 4 : 8 <= 比率 < 10
+        // 5 : 10 <= 比率 < 12
+        // 6 : 12 <= 比率 < 14
+        // 7 : 14 <= 比率
+        // のようになる。
         //
-        // �����PCM�l��\������B�������������肵�Ă��邪�A���ۂɂ�
+        // 次回のPCM値を予測する。すごくすっきりしているが、実際には
         //
         //  static int adpcm_estimindex_0[16] = {
         //    1,  3,  5,  7,  9,  11,  13,  15,
@@ -163,17 +163,17 @@ class Oki implements Codec {
         //  };
         //  mc->mc_amp += (short) (adpcm_estimindex_0[(int) s] * 16 / 8 * dl);
         //
-        // �Ȃ̂ł���Badpcm_estimindex_0[] �� adpcm_estimindex[] ��
-        // 1/2 �l�ł���A���̐���̈Ӗ��͏�L�䗦�͈͂̒����l�ł���B
-        // ���̔䗦�ɁA16 = 2 ^ 4 ���|���� 16 bit �����A(dl / 8) ���|���邱�Ƃ�
-        // ����ė\�������l�����߂��A������L�^����̂ł���B
-        // ���������킯�ŁAadpcm_estimindex[] �����炩����2�{���Ă�����
-        // �������肷��̂ł���B
+        // なのである。adpcm_estimindex_0[] は adpcm_estimindex[] の
+        // 1/2 値であり、この数列の意味は上記比率範囲の中央値である。
+        // この比率に、16 = 2 ^ 4 を掛けて 16 bit 化し、(dl / 8) を掛けることに
+        // よって予測差分値が求められ、これを記録するのである。
+        // そういうわけで、adpcm_estimindex[] をあらかじめ2倍しておくと
+        // すっきりするのである。
         this.mc_amp += adpcm_estimindex[s] * dl;
-        // b �̒l�ɏ]���āA����g�p���鍷�����\���� mc->mc_estim ��
-        // �ۑ����Ă����B�S���� 49 �i�K�B
-        // �]�k�ł��邪�A������������ adpcm_estimstep[16] �� [8] �ł悢�B
-        // [16] �Ȃ̂� adpcm2pcm �Ƃ̊֌W��K�v������ł���B
+        // b の値に従って、次回使用する差分比を予測し mc->mc_estim に
+        // 保存しておく。全部で 49 段階。
+        // 余談であるが、ここだけだと adpcm_estimstep[16] は [8] でよい。
+        // [16] なのは adpcm2pcm との関係上必要だからである。
         estim += adpcm_estimstep[b];
         if (estim < 0) {
             estim = 0;
@@ -186,7 +186,7 @@ class Oki implements Codec {
     }
 
     /**
-     * 16 �� 1 �T���v���� Oki ADPCM 1 �T���v���ɕϊ����܂��B
+     * 16 の 1 サンプルを Oki ADPCM 1 サンプルに変換します。
      * 
      * @param pcm pcm
      * @return 4bit oki adpcm
@@ -206,30 +206,30 @@ class Oki implements Codec {
     }
 
     /**
-     * Oki ADPCM 1 �T���v���� signed linear 16 �� 1 �T���v���ɕϊ����܂��B
+     * Oki ADPCM 1 サンプルを signed linear 16 の 1 サンプルに変換します。
      * <p>
-     * MSM6258 ���o�͂��� PCM �� 12bit �����t PCM (slinear12 �ɂ�����) �ł���B
-     * �]���Ă��̊֐��ł͓����ɐU���ϊ�(12bit -> 16bit) ���s�Ȃ��Ă���B
+     * MSM6258 が出力する PCM は 12bit 符号付 PCM (slinear12 にあたる) である。
+     * 従ってこの関数では同時に振幅変換(12bit -> 16bit) も行なっている。
      * </p>
      * 
      * @param b 4bit adpcm
      * @return 16bit linear pcm
      */
     private int decodeInternal(int b) {
-        // mc->mc_estim �ɂ́A�O��̍�����\���l�C���f�b�N�X�������Ă���
+        // mc->mc_estim には、前回の差分比予測値インデックスが入っている
         int estim = this.mc_estim;
         
-        // �� PCM �l���v�Z���Ă���B�{���̎���
+        // 実 PCM 値を計算している。本来の式は
         //
         //  mc->mc_amp += adpcm_estim[estim] / 8 * adpcm_estimindex_0[b] * 16;
         //
-        // �ł���Bpcm2adpcm_step() �ł��q�ׂ��ʂ� adpcm_estim[] ��8�{�l��
-        // ����̂� 8 �Ŋ���B����ɔ䗦�ł��� adpcm_estimindex_0[] ���|����B
-        // �X�� 12bit -> 16bit �ϊ��̂��߂� 16 (= 2^4) ���|���Ă���B
-        // adpcm_estimindex_0[] * 2 �� adpcm_estimindex[] �ł���̂ŁA
-        // �㎮�͎��ۂɎg���Ă���ȉ��̎��ƂȂ�
+        // である。pcm2adpcm_step() でも述べた通り adpcm_estim[] は8倍値で
+        // あるので 8 で割る。それに比率である adpcm_estimindex_0[] を掛ける。
+        // 更に 12bit -> 16bit 変換のために 16 (= 2^4) を掛けている。
+        // adpcm_estimindex_0[] * 2 は adpcm_estimindex[] であるので、
+        // 上式は実際に使われている以下の式となる
         this.mc_amp += adpcm_estim[estim] * adpcm_estimindex[b];
-        // ����̍������\������ mc->mc_estim �ɕۑ����Ă���
+        // 次回の差分比を予測して mc->mc_estim に保存しておく
         estim += adpcm_estimstep[b];
         
         if (estim < 0) {
@@ -244,7 +244,7 @@ class Oki implements Codec {
     }
 
     /**
-     * Oki ADPCM 1 �T���v���� pcm �� 1 �T���v���ɕϊ����܂��B
+     * Oki ADPCM 1 サンプルを pcm の 1 サンプルに変換します。
      * @param	adpcm	4bit adpcm
      * @return	pcm
      */

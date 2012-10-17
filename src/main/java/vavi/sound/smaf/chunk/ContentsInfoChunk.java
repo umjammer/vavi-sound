@@ -16,6 +16,7 @@ import java.util.TreeMap;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
+import vavi.util.StringUtil;
 
 
 /**
@@ -23,12 +24,12 @@ import vavi.util.Debug;
  * <pre>
  * "CNTI"
  * 
- *  Contents Class F1 byte (•K{)
- *  Contents Type F1 byte (•K{)
- *  Contents Code Type F1 byte (•K{)
- *  Copy Status F1 byte (•K{)
- *  Copy Counts F1 byte (•K{)
- *  Option Fn byte (Option)
+ *  Contents Class ï¼š1 byte (å¿…é ˆ)
+ *  Contents Type ï¼š1 byte (å¿…é ˆ)
+ *  Contents Code Type ï¼š1 byte (å¿…é ˆ)
+ *  Copy Status ï¼š1 byte (å¿…é ˆ)
+ *  Copy Counts ï¼š1 byte (å¿…é ˆ)
+ *  Option ï¼šn byte (Option)
  * </pre>
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
@@ -52,13 +53,13 @@ public class ContentsInfoChunk extends Chunk {
         throws InvalidSmafDataException, IOException {
 
         this.contentsClass = read(is);
-Debug.println("contentsClass: " + contentsClass);
+Debug.println("contentsClass: " + (contentsClass == 0 ? "YAMAHA" : "Vender ID(" + contentsClass + ")"));
         this.contentsType = read(is);
-Debug.println("contentsType: " + contentsType);
+Debug.println("contentsType: 0x" + StringUtil.toHex2(contentsType));
         this.contentsCodeType = read(is);
-Debug.println("contentsCodeType: " + contentsCodeType);
+Debug.println("contentsCodeType: 0x" + StringUtil.toHex2(contentsCodeType));
         this.copyStatus = read(is);
-Debug.println("copyStatus: " + copyStatus);
+Debug.println("copyStatus: " + StringUtil.toBits(copyStatus, 8));
         this.copyCounts = read(is);
 Debug.println("copyCounts: " + copyCounts);
     	byte[] option = new byte[size - 5];
@@ -99,8 +100,8 @@ Debug.println("ContentsInfo: subDatum: " + subDatum);
     private int contentsClass;
 
     /**
-     * ƒRƒ“ƒeƒ“ƒc‚ÌƒNƒ‰ƒX‚ğ•\Œ»‚·‚éB
-     * ¦PDA ’[––“™A«—ˆ‚Ì‘½‹@”\’[––‚Å“¯—l‚Ìƒf[ƒ^ƒtƒH[ƒ}ƒbƒg‚Ü‚Å—¬—p‚·‚éê‡‚Ì‹æ•Ê‚É—p‚¢‚éB
+     * ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ã®ã‚¯ãƒ©ã‚¹ã‚’è¡¨ç¾ã™ã‚‹ã€‚
+     * â€»PDA ç«¯æœ«ç­‰ã€å°†æ¥ã®å¤šæ©Ÿèƒ½ç«¯æœ«ã§åŒæ§˜ã®ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã¾ã§æµç”¨ã™ã‚‹å ´åˆã®åŒºåˆ¥ã«ç”¨ã„ã‚‹ã€‚
      */
     public void setContentsClass(int contentsClass) {
         this.contentsClass = contentsClass;
@@ -111,31 +112,31 @@ Debug.println("ContentsInfo: subDatum: " + subDatum);
 
     /**
      * <pre>
-     * 0x01 ISO 8859-1 (Latin-1) ‰pŒêAƒtƒ‰ƒ“ƒXŒêAƒhƒCƒcŒê ƒCƒ^ƒŠƒAŒêAƒXƒyƒCƒ“ŒêAƒ|ƒ‹ƒgƒKƒ‹Œê
-     * 0x02 EUC-KR(KS) ŠØ‘Œê
-     * 0x03 HZ-GB-2312 ’†‘Œê(ŠÈ‘Ìš)
-     * 0x04 Big5 ’†‘Œê(”É‘Ìš)
-     * 0x05 KOI8-R ƒƒVƒAŒê‚È‚Ç
-     * 0x06 TCVN-5773:1993 ƒxƒgƒiƒ€Œê
-     * 0x07`0x1F Reserved Reserved
+     * 0x01 ISO 8859-1 (Latin-1) è‹±èªã€ãƒ•ãƒ©ãƒ³ã‚¹èªã€ãƒ‰ã‚¤ãƒ„èª ã‚¤ã‚¿ãƒªã‚¢èªã€ã‚¹ãƒšã‚¤ãƒ³èªã€ãƒãƒ«ãƒˆã‚¬ãƒ«èª
+     * 0x02 EUC-KR(KS) éŸ“å›½èª
+     * 0x03 HZ-GB-2312 ä¸­å›½èª(ç°¡ä½“å­—)
+     * 0x04 Big5 ä¸­å›½èª(ç¹ä½“å­—)
+     * 0x05 KOI8-R ãƒ­ã‚·ã‚¢èªãªã©
+     * 0x06 TCVN-5773:1993 ãƒ™ãƒˆãƒŠãƒ èª
+     * 0x07ã€œ0x1F Reserved Reserved
      * 0x20 UCS-2 Unicode
      * 0x21 UCS-4 Unicode
      * 0x22 UTF-7 Unicode
      * 0x23 UTF-8 Unicode
      * 0x24 UTF-16 Unicode
      * 0x25 UTF-32 Unicode
-     * 0x26`0xFF Reserved Reserved
+     * 0x26ã€œ0xFF Reserved Reserved
      * </pre>
-     * ‚½‚¾‚µAContents Info Chunk ‚ÌOption ‚É‚¨‚¢‚Ä‚ÍA‚Ç‚Ìƒ^ƒCƒv‚à w,(0x2C)x ‚ÍOption ‚ÌƒfƒŠƒ~ƒ^‚Æ‚µ
-     * ‚Ä’è‹`‚µ‚Ä‚¢‚é‚½‚ßAƒGƒXƒP[ƒvƒLƒƒƒ‰ƒNƒ^‚Æ‚µ‚Ä‚ÌƒoƒbƒNƒXƒ‰ƒbƒVƒ…w\(0x5C)x ‚Æ‡‚í‚¹‚Äg—p‚·‚éB
+     * ãŸã ã—ã€Contents Info Chunk ã®Option ã«ãŠã„ã¦ã¯ã€ã©ã®ã‚¿ã‚¤ãƒ—ã‚‚ ã€,(0x2C)ã€ ã¯Option ã®ãƒ‡ãƒªãƒŸã‚¿ã¨ã—
+     * ã¦å®šç¾©ã—ã¦ã„ã‚‹ãŸã‚ã€ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ã¨ã—ã¦ã®ãƒãƒƒã‚¯ã‚¹ãƒ©ãƒƒã‚·ãƒ¥ã€\(0x5C)ã€ ã¨åˆã‚ã›ã¦ä½¿ç”¨ã™ã‚‹ã€‚
      * <pre>
-     *  •\‹L ‹@”\
-     *  \, g,h ‚ğ•\‚·
-     *  \\ \‚ğ•\‚·
-     *  \ –³‹‚·‚é
+     *  è¡¨è¨˜ æ©Ÿèƒ½
+     *  \, â€œ,â€ ã‚’è¡¨ã™
+     *  \\ \ã‚’è¡¨ã™
+     *  \ ç„¡è¦–ã™ã‚‹
      * </pre>
-     * ƒfƒŠƒ~ƒ^‚ğ³‚µ‚­¯•Êo—ˆ‚È‚¢‚±‚Æ‚ª‘z’è‚³‚ê‚é•¶šƒR[ƒh‚ªİ’è‚³‚ê‚Ä‚¢‚éê‡‚É‚ÍContents Info
-     * Chunk ‚ÌOption ‚Éƒf[ƒ^‚ğ‹Lq‚¹‚¸AOptional Data Chunk ‚Éƒf[ƒ^‚ğ‹Lq‚·‚é‚à‚Ì‚Æ‚·‚éB
+     * ãƒ‡ãƒªãƒŸã‚¿ã‚’æ­£ã—ãè­˜åˆ¥å‡ºæ¥ãªã„ã“ã¨ãŒæƒ³å®šã•ã‚Œã‚‹æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹å ´åˆã«ã¯Contents Info
+     * Chunk ã®Option ã«ãƒ‡ãƒ¼ã‚¿ã‚’è¨˜è¿°ã›ãšã€Optional Data Chunk ã«ãƒ‡ãƒ¼ã‚¿ã‚’è¨˜è¿°ã™ã‚‹ã‚‚ã®ã¨ã™ã‚‹ã€‚
      */
     public void setContentsCodeType(int contentsCodeType) {
         this.contentsCodeType = contentsCodeType;
@@ -145,12 +146,12 @@ Debug.println("ContentsInfo: subDatum: " + subDatum);
     private int contentsType;
 
     /**
-     * ƒRƒ“ƒeƒ“ƒc‚Ìƒ^ƒCƒv‚ğ•\Œ»‚·‚éB
+     * ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ã®ã‚¿ã‚¤ãƒ—ã‚’è¡¨ç¾ã™ã‚‹ã€‚
      * <pre>
-     * 0x00`0x0F, 0x30`0x33 ’…MƒƒƒfƒB
-     * 0x10`0x1F, 0x40`0x42 ƒJƒ‰ƒIƒPŒn
-     * 0x20`0x2F, 0x50`0x53 CM Œn
-     * ã‹LˆÈŠO‚Ì–¢g—p’l Reserved
+     * 0x00ã€œ0x0F, 0x30ã€œ0x33 ç€ä¿¡ãƒ¡ãƒ­ãƒ‡ã‚£
+     * 0x10ã€œ0x1F, 0x40ã€œ0x42 ã‚«ãƒ©ã‚ªã‚±ç³»
+     * 0x20ã€œ0x2F, 0x50ã€œ0x53 CM ç³»
+     * ä¸Šè¨˜ä»¥å¤–ã®æœªä½¿ç”¨å€¤ Reserved
      * </pre>
      */
     public void setContentsType(int contentsType) {
@@ -161,13 +162,13 @@ Debug.println("ContentsInfo: subDatum: " + subDatum);
     private int copyCounts;
 
     /**
-     * ƒRƒs[‰ñ”‚ğ•\Œ»‚·‚éB
+     * ã‚³ãƒ”ãƒ¼å›æ•°ã‚’è¡¨ç¾ã™ã‚‹ã€‚
      * <pre>
      * Copy Counts Description
-     * 0x00`0xFE Copy Counts
-     * 0xFF Copy Counts(255 ˆÈã)
+     * 0x00ã€œ0xFE Copy Counts
+     * 0xFF Copy Counts(255 ä»¥ä¸Š)
      * </pre>
-     * ¦ ƒRƒs[^ˆÚ“®‚ª”­¶‚·‚é‚½‚Ñ‚É‚PƒJƒEƒ“ƒgi‚ß‚éB
+     * â€» ã‚³ãƒ”ãƒ¼ï¼ç§»å‹•ãŒç™ºç”Ÿã™ã‚‹ãŸã³ã«ï¼‘ã‚«ã‚¦ãƒ³ãƒˆé€²ã‚ã‚‹ã€‚
      */
     public void setCopyCounts(int copyCounts) {
         this.copyCounts = copyCounts;
@@ -177,14 +178,14 @@ Debug.println("ContentsInfo: subDatum: " + subDatum);
     private int copyStatus;
 
     /**
-     * ƒRƒ“ƒeƒ“ƒc‚Ì‚ÂƒRƒs[’è‹`‚ğ•\Œ»‚·‚éB
+     * ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ã®æŒã¤ã‚³ãƒ”ãƒ¼å®šç¾©ã‚’è¡¨ç¾ã™ã‚‹ã€‚
      * <pre>
      *         | b7       | b6       | b5       | b4       | b3       | b2       | b1      |  b0
      * --------+----------+----------+----------+----------+----------+----------+---------+-----
-     * •s‰Âbit | Reserved | Reserved | Reserved | Reserved | Reserved | •ÒW     | •Û‘¶    | “]‘—
+     * ä¸å¯bit | Reserved | Reserved | Reserved | Reserved | Reserved | ç·¨é›†     | ä¿å­˜    | è»¢é€
      * </pre>
-     * b0 ‚Í“]‘—‚Ì‰Â/•s‰ÂAb1 ‚Í•Û‘¶‚Ì‰Â/•s‰Âb2 ‚Í•ÒW‚Ì‰Â/•s‰Â‚ğ’è‹`‚·‚éB(0:‰Â 1:•s‰Â)
-     * Reserved bit ‚Íh1h‚Å–„‚ß‚éB
+     * b0 ã¯è»¢é€ã®å¯/ä¸å¯ã€b1 ã¯ä¿å­˜ã®å¯/ä¸å¯b2 ã¯ç·¨é›†ã®å¯/ä¸å¯ã‚’å®šç¾©ã™ã‚‹ã€‚(0:å¯ 1:ä¸å¯)
+     * Reserved bit ã¯â€1â€ã§åŸ‹ã‚ã‚‹ã€‚
      */
     public void setCopyStatus(int copyStatus) {
         this.copyStatus = copyStatus;
@@ -209,33 +210,33 @@ Debug.println("ContentsInfo: subDatum: " + subDatum);
     }
 
     /**
-     * Option (Contents Type 0x00, Contents Class 0x00 ~ 0xFF —p)
+     * Option (Contents Type 0x00, Contents Class 0x00 ~ 0xFF ç”¨)
      * <p>
-     * ƒWƒƒƒ“ƒ‹–¼A‹È–¼AƒA[ƒeƒBƒXƒg–¼AìŒ/ì‹ÈÒ–¼“™‚ğŠi”[‚·‚éB•K‚¸‚µ‚à•\¦‚Ég—p‚·‚é‚à‚Ì‚Å‚Í‚È‚­AŒÂ
-     * •Êƒf[ƒ^‚Ì”F¯‚Ég—p‚·‚é‚à‚Ì‚Å‚ ‚éB
-     * ƒf[ƒ^‚Í‰Â•Ï’·‚Æ‚µAwƒ^ƒO (2byte)x+w : (0x3A)x+wDatax+w , (0x2C)x‚Å‹æØ‚Á‚Ä‹Lq‚·‚éBƒ^ƒO–¼‚ğˆÈ
-     * ‰º‚Æ‚·‚éBƒ^ƒO‚Í2byte ŒÅ’è‚ÌƒoƒCƒg—ñ‚Æ‚·‚éB
-     * wDatax“à‚É‚¨‚¢‚Äw , (0x2C)x‚ğ•¶š‚Æ‚µ‚Äg—p‚·‚éê‡ ‚ÌƒGƒXƒP[ƒvƒLƒƒƒ‰ƒNƒ^‚ğ˜4.2.3‚É’è‹`‚·‚éB
+     * ã‚¸ãƒ£ãƒ³ãƒ«åã€æ›²åã€ã‚¢ãƒ¼ãƒ†ã‚£ã‚¹ãƒˆåã€ä½œè©/ä½œæ›²è€…åç­‰ã‚’æ ¼ç´ã™ã‚‹ã€‚å¿…ãšã—ã‚‚è¡¨ç¤ºã«ä½¿ç”¨ã™ã‚‹ã‚‚ã®ã§ã¯ãªãã€å€‹
+     * åˆ¥ãƒ‡ãƒ¼ã‚¿ã®èªè­˜ã«ä½¿ç”¨ã™ã‚‹ã‚‚ã®ã§ã‚ã‚‹ã€‚
+     * ãƒ‡ãƒ¼ã‚¿ã¯å¯å¤‰é•·ã¨ã—ã€ã€ã‚¿ã‚° (2byte)ã€+ã€ : (0x3A)ã€+ã€Dataã€+ã€ , (0x2C)ã€ã§åŒºåˆ‡ã£ã¦è¨˜è¿°ã™ã‚‹ã€‚ã‚¿ã‚°åã‚’ä»¥
+     * ä¸‹ã¨ã™ã‚‹ã€‚ã‚¿ã‚°ã¯2byte å›ºå®šã®ãƒã‚¤ãƒˆåˆ—ã¨ã™ã‚‹ã€‚
+     * ã€Dataã€å†…ã«ãŠã„ã¦ã€ , (0x2C)ã€ã‚’æ–‡å­—ã¨ã—ã¦ä½¿ç”¨ã™ã‚‹å ´åˆ ã®ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ã‚’Â§4.2.3ã«å®šç¾©ã™ã‚‹ã€‚
      * </p>
      * <pre>
-     *  –¼Ì           | ƒ^ƒO–¼ | Hex
+     *  åç§°           | ã‚¿ã‚°å | Hex
      * ----------------+--------+-----------
-     *  ƒxƒ“ƒ_[–¼     | VN     | 0x56 0x4E
-     *  ƒLƒƒƒŠƒA–¼     | CN     | 0x43 0x4E
-     *  ƒJƒeƒSƒŠ[–¼   | CA     | 0x43 0x41
-     *  ‹È–¼           | ST     | 0x53 0x54
-     *  ƒA[ƒeƒBƒXƒg–¼ | AN     | 0x41 0x4E
-     *  ìŒ           | WW     | 0x57 0x57
-     *  ì‹È           | SW     | 0x53 0x57
-     *  •Ò‹È           | AW     | 0x41 0x57
+     *  ãƒ™ãƒ³ãƒ€ãƒ¼å     | VN     | 0x56 0x4E
+     *  ã‚­ãƒ£ãƒªã‚¢å     | CN     | 0x43 0x4E
+     *  ã‚«ãƒ†ã‚´ãƒªãƒ¼å   | CA     | 0x43 0x41
+     *  æ›²å           | ST     | 0x53 0x54
+     *  ã‚¢ãƒ¼ãƒ†ã‚£ã‚¹ãƒˆå | AN     | 0x41 0x4E
+     *  ä½œè©           | WW     | 0x57 0x57
+     *  ä½œæ›²           | SW     | 0x53 0x57
+     *  ç·¨æ›²           | AW     | 0x41 0x57
      *  Copyright&copy;     | CR     | 0x43 0x52
-     *  ŠÇ—Ò’c‘Ì–¼   | GR     | 0x47 0x52
-     *  ŠÇ—î•ñ       | MI     | 0x4D 0x49
-     *  ì¬“ú       | CD     | 0x43 0x44
-     *  XV“ú       | UD     | 0x55 0x44
+     *  ç®¡ç†è€…å›£ä½“å   | GR     | 0x47 0x52
+     *  ç®¡ç†æƒ…å ±       | MI     | 0x4D 0x49
+     *  ä½œæˆæ—¥æ™‚       | CD     | 0x43 0x44
+     *  æ›´æ–°æ—¥æ™‚       | UD     | 0x55 0x44
      * </pre>
-     * Unicode ‚Ì’Ç‰Á‚É‚ ‚½‚èAOption “à‚ÌƒfƒŠƒ~ƒ^‚ğ¯•Ê‚Å‚«‚È‚¢•¶šƒR[ƒh‚ª‘¶İ‚·‚é‚½‚ß
-     * Optional Data Chunk ‚ğ’Ç‰Á‚µ‚½B
+     * Unicode ã®è¿½åŠ ã«ã‚ãŸã‚Šã€Option å†…ã®ãƒ‡ãƒªãƒŸã‚¿ã‚’è­˜åˆ¥ã§ããªã„æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒå­˜åœ¨ã™ã‚‹ãŸã‚
+     * Optional Data Chunk ã‚’è¿½åŠ ã—ãŸã€‚
      */
     public void addSubData(String tag, String data) {
         SubData subDatum;

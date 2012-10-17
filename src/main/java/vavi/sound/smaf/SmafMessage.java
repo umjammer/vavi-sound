@@ -11,7 +11,7 @@ import java.io.OutputStream;
 
 
 /**
- * SMAF ƒƒbƒZ[ƒW‚ÌŠî’êƒNƒ‰ƒX‚Å‚·D
+ * SMAF ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®åŸºåº•ã‚¯ãƒ©ã‚¹ã§ã™ï¼
  * 
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
@@ -36,7 +36,7 @@ public abstract class SmafMessage {
     }
 
     /**
-     * @return ƒRƒs[
+     * @return ã‚³ãƒ”ãƒ¼
      */
     public abstract byte[] getMessage();
 

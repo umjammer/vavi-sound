@@ -15,10 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.MfiEvent;
-import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.Sequence;
-import vavi.sound.mfi.Track;
 import vavi.sound.mfi.vavi.header.SorcMessage;
 import vavi.sound.mfi.vavi.header.TitlMessage;
 import vavi.sound.mfi.vavi.header.VersMessage;
@@ -38,15 +35,15 @@ class HeaderChunk {
     /** = ({@link #majorType} + {@link #minorType} + {@link #tracksCount}) */
     public static final int HEADER_LENGTH = 3;
 
-    /** ’…MƒƒƒfƒBƒf[ƒ^ */
+    /** ç€ä¿¡ãƒ¡ãƒ­ãƒ‡ã‚£ãƒ‡ãƒ¼ã‚¿ */
     public static final int MAJOR_TYPE_RING_TONE = 0x01;
-    /** ‰¹Šyƒf[ƒ^ */
+    /** éŸ³æ¥½ãƒ‡ãƒ¼ã‚¿ */
     public static final int MAJOR_TYPE_MUSIC = 0x02;
-    /** {@link #majorType} ‚ª {@link #MAJOR_TYPE_RING_TONE} ‚Ìê‡A‘S‹Èƒf[ƒ^ */
+    /** {@link #majorType} ãŒ {@link #MAJOR_TYPE_RING_TONE} ã®å ´åˆã€å…¨æ›²ãƒ‡ãƒ¼ã‚¿ */
     public static final int MINOR_TYPE_ALL = 0x01;
-    /** {@link #majorType} ‚ª {@link #MAJOR_TYPE_RING_TONE} ‚Ìê‡A•”•ªƒf[ƒ^  */
+    /** {@link #majorType} ãŒ {@link #MAJOR_TYPE_RING_TONE} ã®å ´åˆã€éƒ¨åˆ†ãƒ‡ãƒ¼ã‚¿  */
     public static final int MINOR_TYPE_PART = 0x02;
-    /** {@link #majorType} ‚ª {@link #MAJOR_TYPE_MUSIC} ‚Ìê‡AŒÅ’è  */
+    /** {@link #majorType} ãŒ {@link #MAJOR_TYPE_MUSIC} ã®å ´åˆã€å›ºå®š  */
     public static final int MINOR_TYPE_MUSIC = 0x00;
 
     /** MFi data length ({@link #TYPE} + {@link #mfiDataLength} are excluded) */
@@ -60,54 +57,51 @@ class HeaderChunk {
     /** */
     private int minorType = -1;
 
-    /** Å‘å 4 ‚â‚Á‚Ä */
+    /** æœ€å¤§ 4 ã‚„ã£ã¦ */
     private int tracksCount;
 
-    /** ƒwƒbƒ_EƒTƒuƒ`ƒƒƒ“ƒN */
+    /** ãƒ˜ãƒƒãƒ€ãƒ»ã‚µãƒ–ãƒãƒ£ãƒ³ã‚¯ */
     private Map<String, SubMessage> subChunks = new LinkedHashMap<String, SubMessage>();
 
-    /**
-     * internal use
-     * <li>TODO ƒLƒŒ‚­‚È‚¢‚È‚Ÿ...
-     */
-    private Sequence sequence;
+    /** */
+    private Support support;
+
+    /** */
+    public static interface Support {
+        /**
+         * {@link #support} ã‹ã‚‰ {@link SubMessage} ã‚’å–ã‚Šå‡ºã—ã¾ã™ã€‚
+         * {@link SubMessage} ã¯ {@link Sequence#getTracks()}[0] ã®å…ˆé ­ã«ã‚ã‚‹ã®ãŒä»•æ§˜
+         */
+        void init(Map<String, SubMessage> subChunks);
+        int getAudioDataLength();
+        int getTracksLength();
+        int getTracksCount();
+    }
 
     /**
-     * “Ç‚İ‚İ—p
+     * èª­ã¿è¾¼ã¿ç”¨
      */
     private HeaderChunk() {
     }
 
     /**
-     * ‘‚«o‚µ—p
-     * {@link #sequence} ‚©‚ç {@link SubMessage} ‚ğæ‚èo‚µ‚Ü‚·B
-     * {@link SubMessage} ‚Í {@link Sequence#getTracks()}[0] ‚Ìæ“ª‚É‚ ‚é‚Ì‚ªd—l
+     * æ›¸ãå‡ºã—ç”¨
      */
-    public HeaderChunk(Sequence sequence) {
-        //
-        Track track = sequence.getTracks()[0];
-        for (int j = 0; j < track.size(); j++) {
-            MfiEvent event = track.get(j);
-            MfiMessage message = event.getMessage();
-            if (message instanceof SubMessage) {
-                SubMessage subChunk = (SubMessage) message;
-//Debug.println(infoMessage);
-                subChunks.put(subChunk.getSubType(), subChunk);
-            }
-        }
-
-        this.sequence = sequence;
+    public HeaderChunk(Support support) {
+        this.support = support;
+        
+        support.init(subChunks);
     }
 
     /**
-     * MFi ƒf[ƒ^‚Ì’·‚³ (type, length ‚Íœ‚­)
+     * MFi ãƒ‡ãƒ¼ã‚¿ã®é•·ã• (type, length ã¯é™¤ã)
      */
     public int getMfiDataLength() {
         return mfiDataLength;
     }
 
     /**
-     * Chunk ƒf[ƒ^‚Ì’·‚³ (type, length ‚Íœ‚­)
+     * Chunk ãƒ‡ãƒ¼ã‚¿ã®é•·ã• (type, length ã¯é™¤ã)
      * <li>TODO -> interface Chunk
      */
     public int getDataLength() {
@@ -152,7 +146,7 @@ class HeaderChunk {
     }
 
     /**
-     * ƒwƒbƒ_ƒTƒuƒ`ƒƒƒ“ƒN‚Ì’·‚³‚ğæ“¾‚µ‚Ü‚·B
+     * ãƒ˜ãƒƒãƒ€ã‚µãƒ–ãƒãƒ£ãƒ³ã‚¯ã®é•·ã•ã‚’å–å¾—ã—ã¾ã™ã€‚
      * <li>TODO scope
      */
     public int getSubChunksLength() {
@@ -174,11 +168,11 @@ class HeaderChunk {
     }
 
     /**
-     * @throws InvalidMfiDataException Å’áŒÀ‚Ì {@link SubMessage}
+     * @throws InvalidMfiDataException æœ€ä½é™ã® {@link SubMessage}
      *         { {@link VaviMfiFileFormat#setSorc(int) "sorc"},
      *         {@link VaviMfiFileFormat#setTitle(String) "titl"},
      *         {@link VaviMfiFileFormat#setVersion(String) "vers"} }
-     *         ‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡ƒXƒ[‚³‚ê‚Ü‚·
+     *         ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆã‚¹ãƒ­ãƒ¼ã•ã‚Œã¾ã™
      */
     public void writeTo(OutputStream os)
         throws InvalidMfiDataException,
@@ -197,10 +191,10 @@ Debug.println("[vers]: "    + subChunks.get(VersMessage.TYPE));
         // 2. recalc
         this.dataLength = HEADER_LENGTH + getSubChunksLength();
         int headerChunkLengthDash = 2 + dataLength; // type, length excluded
-        int audioChunksLength = VaviMfiFileFormat.getAudioDataLength(sequence); // TODO outer class method used
-        int trackChunksLength = VaviMfiFileFormat.getTracksLength(sequence); // TODO outer class method used
+        int audioChunksLength = support.getAudioDataLength();
+        int trackChunksLength = support.getTracksLength();
         this.mfiDataLength = headerChunkLengthDash + audioChunksLength + trackChunksLength;
-        this.tracksCount = sequence.getTracks().length;
+        this.tracksCount = support.getTracksCount();
 
         // 3. write
         DataOutputStream dos = new DataOutputStream(os);
@@ -225,7 +219,7 @@ Debug.println("numberTracks: "  + tracksCount);
     }
 
     /**
-     * @throws InvalidMfiDataException Å‰‚Ì 4 bytes ‚ª {@link #TYPE} ‚Å–³‚¢ê‡ 
+     * @throws InvalidMfiDataException æœ€åˆã® 4 bytes ãŒ {@link #TYPE} ã§ç„¡ã„å ´åˆ 
      */
     public static HeaderChunk readFrom(InputStream is)
         throws InvalidMfiDataException,

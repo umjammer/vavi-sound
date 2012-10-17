@@ -24,7 +24,7 @@ import vavi.util.Debug;
  */
 class SmafSequence extends Sequence {
 
-    /** TODO “à—e‚Í SmafFileFormat/FileChunk ‚ÉˆÚ‚·‚×‚« */
+    /** TODO å†…å®¹ã¯ SmafFileFormat/FileChunk ã«ç§»ã™ã¹ã */
     SmafSequence(FileChunk fileChunk) {
         try {
             for (TrackChunk scoreTrackChunk : fileChunk.getScoreTrackChunks()) {
@@ -41,11 +41,11 @@ class SmafSequence extends Sequence {
             }
             // SMF XF Information | SMAF Contents Info Chunk
             // -------------------+-------------------------
-            // ‹È–¼               | ST: ‹È–¼
-            // ì‹ÈÒ             | SW: ì‹È
-            // ìŒÒ             | WW: ìŒ
-            // •Ò‹ÈÒ             | AW: •Ò‹È
-            // ‰‰‘tÒE‰Ì¥Ò     | AN: ƒA[ƒeƒBƒXƒg–¼
+            // æ›²å               | ST: æ›²å
+            // ä½œæ›²è€…             | SW: ä½œæ›²
+            // ä½œè©è€…             | WW: ä½œè©
+            // ç·¨æ›²è€…             | AW: ç·¨æ›²
+            // æ¼”å¥è€…ãƒ»æ­Œå”±è€…     | AN: ã‚¢ãƒ¼ãƒ†ã‚£ã‚¹ãƒˆå
             Track track0 = tracks.get(0);
             String title = "title";
             String prot = "vavi";
@@ -54,7 +54,7 @@ class SmafSequence extends Sequence {
 Debug.println(dataChunk);
                     // TODO
                 }
-            } else if (fileChunk.getContentsInfoChunk() != null) { // TODO •K{‚È‚Ì‚Å if —v‚ç‚ñ
+            } else if (fileChunk.getContentsInfoChunk() != null) { // TODO å¿…é ˆãªã®ã§ if è¦ã‚‰ã‚“
                 title = fileChunk.getContentsInfoChunk().getSubDataByTag("ST");
                 prot = fileChunk.getContentsInfoChunk().getSubDataByTag("SW");
                 // TODO create meta for ContentsInfoChunk

@@ -28,8 +28,8 @@ public class VoxInputStream extends AdpcmInputStream {
     }
 
     /**
-     * {@link vavi.io.BitInputStream} ‚Í 4bit big endian ŒÅ’è
-     * TODO vox ‚Í big endian ?
+     * {@link vavi.io.BitInputStream} ã¯ 4bit big endian å›ºå®š
+     * TODO vox ã¯ big endian ?
      */
     public VoxInputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 4, ByteOrder.BIG_ENDIAN);
