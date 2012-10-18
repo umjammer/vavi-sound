@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ////////////////////////////////////////////////////////////////////// -->
 <!-- Copyright (c) 2006 by Naohide Sano, All rights reserved.               -->
@@ -16,7 +16,7 @@
 
   <property name="dir.base" value="../../../../../../.." />
 
-  <!-- ƒNƒ‰ƒXƒpƒX‚Ì’è‹` -->
+  <!-- ã‚¯ãƒ©ã‚¹ãƒ‘ã‚¹ã®å®šç¾© -->
   <path id="project.class.path">
     <pathelement location="${dir.base}/target/classes" />
     <pathelement location="${dir.base}/target/test-classes" />
@@ -25,10 +25,10 @@
     </fileset>
   </path>
 
-  <!-- ƒ^[ƒQƒbƒg‚Ì’è‹` -->
+  <!-- ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®å®šç¾© -->
 
   <!-- clean -->
-  <target name="clean" description="ŠÂ‹«‚ÌƒNƒŠƒA">
+  <target name="clean" description="ç’°å¢ƒã®ã‚¯ãƒªã‚¢">
     <delete>
       <fileset dir=".">
         <include name="*.o" />
@@ -39,7 +39,7 @@
   </target>
 
   <!-- pcm -->
-  <target name="pcm" depends="" description="MS ACM MS adpcm ‚Ì’Šo">
+  <target name="pcm" depends="" description="MS ACM MS adpcm ã®æŠ½å‡º">
     <java classname="wave">
       <classpath>
         <path refid="project.class.path" />
@@ -50,7 +50,7 @@
   </target>
 
   <!-- adpcm -->
-  <target name="adpcm" depends="" description="MS ACM MS adpcm ‚Ì’Šo">
+  <target name="adpcm" depends="" description="MS ACM MS adpcm ã®æŠ½å‡º">
     <java classname="wave">
       <classpath>
         <path refid="project.class.path" />
@@ -61,7 +61,7 @@
   </target>
 
   <!-- sox -->
-  <target name="sox.decode" depends="" description="sox ‚ÅƒfƒR[ƒh">
+  <target name="sox.decode" depends="" description="sox ã§ãƒ‡ã‚³ãƒ¼ãƒ‰">
     <exec executable="/usr/local/src/sox/src/sox">
       <arg value="ms_8k_4_mono.wav" />
       <arg line="-D -e signed-integer -t wav" />
@@ -70,7 +70,7 @@
   </target>
 
   <!-- sox.pcm -->
-  <target name="sox.pcm" depends="sox.decode" description="sox pcm ‚Ì’Šo">
+  <target name="sox.pcm" depends="sox.decode" description="sox pcm ã®æŠ½å‡º">
     <java classname="wave">
       <classpath>
         <path refid="project.class.path" />
@@ -81,7 +81,7 @@
   </target>
 
   <!-- sox encode -->
-  <target name="sox.encode" depends="" description="sox ‚ÅƒGƒ“ƒR[ƒh">
+  <target name="sox.encode" depends="" description="sox ã§ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰">
     <exec executable="/usr/local/src/sox/src/sox">
       <arg value="linear_8k_16_mono.wav" />
       <arg line="-D -e ms -t wav" />
@@ -90,7 +90,7 @@
   </target>
 
   <!-- sox.adpcm -->
-  <target name="sox.adpcm" depends="sox.encode" description="sox adpcm ‚Ì’Šo">
+  <target name="sox.adpcm" depends="sox.encode" description="sox adpcm ã®æŠ½å‡º">
     <java classname="wave" fork="true">
       <classpath>
         <path refid="project.class.path" />

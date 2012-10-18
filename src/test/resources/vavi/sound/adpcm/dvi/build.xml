@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ////////////////////////////////////////////////////////////////////// -->
 <!-- Copyright (c) 2006 by Naohide Sano, All rights reserved.               -->
@@ -14,16 +14,16 @@
 
 <project default="run" basedir=".">
 
-  <!-- ƒNƒ‰ƒXƒpƒX‚Ì’è‹` -->
+  <!-- ã‚¯ãƒ©ã‚¹ãƒ‘ã‚¹ã®å®šç¾© -->
   <path id="project.class.path">
     <pathelement location="../../../../../java" />
     <pathelement location="../../../.." />
   </path>
 
-  <!-- ƒ^[ƒQƒbƒg‚Ì’è‹` -->
+  <!-- ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®å®šç¾© -->
 
   <!-- clean -->
-  <target name="clean" description="ƒrƒ‹ƒhŠÂ‹«‚ÌƒNƒŠƒA">
+  <target name="clean" description="ãƒ“ãƒ«ãƒ‰ç’°å¢ƒã®ã‚¯ãƒªã‚¢">
     <exec executable="make" dir="orig">
       <arg value="clean" />
     </exec>
@@ -36,12 +36,12 @@
   </target>
 
   <!-- cc -->
-  <target name="compile" description="ƒRƒ“ƒpƒCƒ‹">
+  <target name="compile" description="ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«">
     <exec executable="make" dir="orig" />
   </target>
 
   <!-- run -->
-  <target name="run" depends="compile" description="ƒvƒƒOƒ‰ƒ€‚ÌŽÀs">
+  <target name="run" depends="compile" description="ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®å®Ÿè¡Œ">
     <exec executable="orig/rawcaudio">
       <redirector input="pcm_8k_16_mono.pcm"
                   output="out.adpcm" />
@@ -53,7 +53,7 @@
   </target>
 
   <!-- javac -->
-  <target name="compile.java" description="ƒRƒ“ƒpƒCƒ‹">
+  <target name="compile.java" description="ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«">
     <javac debug="true">
       <classpath refid="project.class.path" />
       <include name="*.java" />
@@ -62,7 +62,7 @@
   </target>
 
   <!-- run.java -->
-  <target name="run.java" depends="compile.java" description="ƒvƒƒOƒ‰ƒ€‚ÌŽÀs">
+  <target name="run.java" depends="compile.java" description="ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®å®Ÿè¡Œ">
     <java classname="vavi.sound.adpcm.dvi.Adpcm">
       <classpath refid="project.class.path" />
       <arg value="pcm_8k_16_mono.pcm" />

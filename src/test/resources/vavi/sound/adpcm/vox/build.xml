@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ////////////////////////////////////////////////////////////////////// -->
 <!-- Copyright (c) 2006 by Naohide Sano, All rights reserved.               -->
@@ -14,15 +14,15 @@
 
 <project default="run" basedir=".">
 
-  <!-- ƒNƒ‰ƒXƒpƒX‚Ì’è‹` -->
+  <!-- ã‚¯ãƒ©ã‚¹ãƒ‘ã‚¹ã®å®šç¾© -->
   <path id="project.class.path">
     <pathelement location="../../../../../java" />
   </path>
 
-  <!-- ƒ^[ƒQƒbƒg‚Ì’è‹` -->
+  <!-- ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®å®šç¾© -->
 
   <!-- clean -->
-  <target name="clean" description="ƒrƒ‹ƒhŠÂ‹«‚ÌƒNƒŠƒA">
+  <target name="clean" description="ãƒ“ãƒ«ãƒ‰ç’°å¢ƒã®ã‚¯ãƒªã‚¢">
     <delete>
       <fileset dir=".">
         <include name="*.exe" />
@@ -33,7 +33,7 @@
   </target>
 
   <!-- cc -->
-  <target name="compile" description="ƒRƒ“ƒpƒCƒ‹">
+  <target name="compile" description="ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«">
     <exec executable="gcc">
       <arg value="p211cnv.c" />
       <arg line="-Dencoder" />
@@ -46,7 +46,7 @@
   </target>
 
   <!-- run -->
-  <target name="run" depends="compile" description="ƒvƒƒOƒ‰ƒ€‚ÌŽÀs">
+  <target name="run" depends="compile" description="ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®å®Ÿè¡Œ">
     <exec executable="encoder">
       <arg value="pcm_8k_16_mono.pcm" />
       <arg value="out.adpcm" />
@@ -58,7 +58,7 @@
   </target>
 
   <!-- play -->
-  <target name="play" depends="" description="ƒvƒƒOƒ‰ƒ€‚ÌŽÀs">
+  <target name="play" depends="" description="ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®å®Ÿè¡Œ">
     <java classname="t150_3">
       <classpath>
         <path refid="project.class.path" />

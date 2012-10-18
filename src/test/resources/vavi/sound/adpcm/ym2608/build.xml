@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ////////////////////////////////////////////////////////////////////// -->
 <!-- Copyright (c) 2006 by Naohide Sano, All rights reserved.               -->
@@ -18,16 +18,16 @@
   <property name="null" value="/dev/null" />
   <property name="pcm" value="out.pcm" />
 
-  <!-- �N���X�p�X�̒�` -->
+  <!-- クラスパスの定義 -->
   <path id="project.class.path">
     <pathelement location="${dir.base}/target/classes" />
     <pathelement location="${dir.base}/target/test-classes" />
   </path>
 
-  <!-- �^�[�Q�b�g�̒�` -->
+  <!-- ターゲットの定義 -->
 
   <!-- clean -->
-  <target name="clean" description="���̃N���A">
+  <target name="clean" description="環境のクリア">
     <delete>
       <fileset dir=".">
         <include name="*.o" />
@@ -38,7 +38,7 @@
   </target>
 
   <!-- cc -->
-  <target name="compile" description="C �R���p�C��">
+  <target name="compile" description="C コンパイル">
     <exec executable="gcc">
       <arg value="ym2608adpcm.c" />
       <arg value="-Dencoder" />
@@ -51,7 +51,7 @@
   </target>
 
   <!-- run -->
-  <target name="run" depends="clean,compile" description="���t�@�����X�̍쐬">
+  <target name="run" depends="clean,compile" description="リファレンスの作成">
     <exec executable="./encoder">
       <redirector input="pcm_8k_16_mono.pcm"
                   output="out.adpcm"
