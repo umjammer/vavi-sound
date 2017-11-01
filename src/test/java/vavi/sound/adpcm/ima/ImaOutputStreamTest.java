@@ -115,6 +115,7 @@ Debug.println("outFile: " + outFile.getCanonicalPath());
         line.stop();
         line.close();
 
+        is2.close();
 Debug.println("outFile: " + outFile.length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
@@ -184,6 +185,7 @@ Debug.println("outFile: " + outFile.length());
         line.stop();
         line.close();
 
+        is2.close();
 Debug.println("outFile: " + outFile.length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(inFile)), Checksum.getChecksum(outFile));
     }
@@ -271,6 +273,7 @@ Debug.println("inFile: " + length);
         line.stop();
         line.close();
 
+        is.close();
 Debug.println("outFile: " + new File(outFile).length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(new File(outFile)));
     }

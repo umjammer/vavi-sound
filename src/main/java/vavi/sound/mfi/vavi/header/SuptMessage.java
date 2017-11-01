@@ -44,7 +44,7 @@ public class SuptMessage extends SubMessage {
             String string = new String(data, readingEncoding);
             return "supt: " + length + ": \"" + string + "\"";
         } catch (UnsupportedEncodingException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 }

@@ -89,6 +89,8 @@ gainControl.setValue(dB);
         line.drain();
         line.stop();
         line.close();
+        
+        is.close();
     }
 }
 

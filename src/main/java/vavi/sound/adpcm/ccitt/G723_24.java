@@ -69,7 +69,7 @@ class G723_24 extends G711 {
     /**
      * Encodes a linear PCM, A-law or u-law input sample and returns its 3-bit
      * code.
-     * @return	-1 if invalid input coding value.
+     * @return    -1 if invalid input coding value.
      */
     public int encode(int sl) {
 
@@ -83,30 +83,30 @@ class G723_24 extends G711 {
         } else {
             throw new IllegalArgumentException(encoding.toString());
         }
-        
+
         // ACCUM
         int sezi = state.getZeroPredictor();
         int sez = sezi >> 1;
         int sei = sezi + state.getPolePredictor();
         int se = sei >> 1;                                  // se = estimated signal
-        
+
         // SUBTA estimation diff.
         int d = sl - se;
-        
+
         // MIX quantize prediction difference d
         int y = state.getStepSize();                        // quantizer step size
         int i = quantize(d, y, qtab_723_24, 3);             // i = ADPCM code
         // quantized diff.
         int dq = reconstruct((i & 4) != 0, _dqlntab[i], y);
-        
+
         // ADDB reconstructed signal
         int sr = (dq < 0) ? se - (dq & 0x3fff) : se + dq;
-        
+
         // ADDC pole prediction diff.
         int dqsez = sr + sez - se;
-        
+
         state.update(3, y, _witab[i], _fitab[i], dq, sr, dqsez);
-        
+
         return i;
     }
 
@@ -118,13 +118,13 @@ class G723_24 extends G711 {
     public int decode(int i) {
 
         i &= 0x07;                                          // mask to get proper bits
-        
+
         // ACCUM
         int sezi = state.getZeroPredictor();
         int sez = sezi >> 1;
         int sei = sezi + state.getPolePredictor();
         int se = sei >> 1;                                  // se = estimated signal
-        
+
         // MIX
         int y = state.getStepSize();                        // adaptive quantizer step size
         // unquantize pred diff
@@ -132,9 +132,9 @@ class G723_24 extends G711 {
         // ADDB reconst. signal
         int sr = (dq < 0) ? (se - (dq & 0x3fff)) : (se + dq);
         int dqsez = sr - se + sez;                          // pole prediction diff.
-        
+
         state.update(3, y, _witab[i], _fitab[i], dq, sr, dqsez);
-        
+
         if (AudioFormat.Encoding.ALAW.equals(encoding)) {
             return adjustAlawTandem(sr, se, y, i, 4, qtab_723_24);
         } else if (AudioFormat.Encoding.ULAW.equals(encoding)) {

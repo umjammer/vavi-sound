@@ -190,7 +190,7 @@ if (timeBase < 0) {
 
     /** */
     public static int getNearestTimeBase(int timeBase) {
-        List<Pair> table = new ArrayList<Pair>();
+        List<Pair> table = new ArrayList<>();
         for (int i = 0; i < timeBaseTable.length; i++) {
             if (timeBaseTable[i] != -1) {
                 int difference = Math.abs(timeBase - timeBaseTable[i]);

@@ -89,6 +89,7 @@ Debug.println("byteOrder: " + this.byteOrder);
                 for (int i = 0; i < pcm.length; i++) {
                     pcm[i] = ledis.readShort();
                 }
+                ledis.close();
                 encoder.encodeBlock(1, pcm, pcm.length, steps, adpcm, bytesPerBlock);
 //System.err.println(StringUtil.getDump(adpcm, 128));
     

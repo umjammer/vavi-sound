@@ -110,7 +110,7 @@ Debug.println(e);
             throw (InvalidMfiDataException) new InvalidMfiDataException().initCause(e);
         } catch (MfiUnavailableException e) {
 Debug.println(e);
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -168,7 +168,7 @@ Debug.println("★0 stop: " + midiSequencer.hashCode());
     private javax.sound.midi.MetaEventListener mel = new javax.sound.midi.MetaEventListener() {
         /** */
         public void meta(javax.sound.midi.MetaMessage message) {
-//Debug.println("type: " + message.getType());
+Debug.println("★0 meta: type: " + message.getType());
             switch (message.getType()) {
             case 0x2f:  // 自動的に最後につけてくれる
                 try {

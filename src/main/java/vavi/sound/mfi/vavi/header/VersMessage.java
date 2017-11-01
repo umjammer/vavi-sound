@@ -50,7 +50,7 @@ public class VersMessage extends SubMessage {
         try {
             return new String(getData(), readingEncoding);
         } catch (UnsupportedEncodingException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -64,7 +64,7 @@ public class VersMessage extends SubMessage {
         try {
             setData(version.getBytes(readingEncoding));
         } catch (UnsupportedEncodingException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 

@@ -27,7 +27,7 @@ public class Sequence {
 
     /** Creates a sequence. */
     public Sequence() {
-        tracks = new ArrayList<Track>();
+        tracks = new ArrayList<>();
     }
 
     /** */

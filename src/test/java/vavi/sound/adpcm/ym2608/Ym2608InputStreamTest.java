@@ -92,7 +92,7 @@ gainControl.setValue(dB);
         line.stop();
         line.close();
         os.close();
-
+        is.close();
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }

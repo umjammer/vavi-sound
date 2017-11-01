@@ -62,7 +62,7 @@ Debug.println(dataChunk);
             insert(track0, new SmafEvent(new VNMessage(prot == null ? "" : prot), 0), 0);
             insert(track0, new SmafEvent(new STMessage(title == null ? "" : title), 0), 0);
         } catch (InvalidSmafDataException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -89,7 +89,7 @@ Debug.println(dataChunk);
             List<SmafEvent> events = (List<SmafEvent>) clazz.getDeclaredField("events").get(track);
             events.add(index, event);
         } catch (Exception e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 }

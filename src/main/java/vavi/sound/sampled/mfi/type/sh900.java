@@ -33,7 +33,7 @@ public class sh900 implements MachineDependentMfiWithVoiceMaker {
     public List<MfiEvent> getEvents(byte[] data, float time, int sampleRate, int bits, int channels, int masterVolume, int adpcmVolume)
         throws InvalidMfiDataException, IOException {
         
-        List<MfiEvent> events = new ArrayList<MfiEvent>();
+        List<MfiEvent> events = new ArrayList<>();
         
         // master volume
         events.add(SharpMessage.getMasterVolumeEvent(masterVolume));

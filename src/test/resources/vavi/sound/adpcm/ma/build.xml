@@ -15,6 +15,7 @@
 <project default="run" basedir=".">
 
   <property name="project.home" value="../../../../../../.." />
+  <property environment="env"/>
   <property file="${project.home}/local.properties" />
 
   <!-- クラスパスの定義 -->

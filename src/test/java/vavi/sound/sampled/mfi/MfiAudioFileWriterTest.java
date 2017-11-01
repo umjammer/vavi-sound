@@ -45,7 +45,7 @@ public class MfiAudioFileWriterTest {
         String nullDevice = args[5]; // "nul" or "/dev/null"
         AudioInputStream ais = AudioSystem.getAudioInputStream(new File(inFilename));
 System.err.println(ais.getFormat());
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("mfi.divided", true);
         properties.put("mfi.directory", outDir);
         properties.put("mfi.base", base);

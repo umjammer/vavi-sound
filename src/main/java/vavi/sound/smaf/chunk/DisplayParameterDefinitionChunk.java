@@ -76,7 +76,7 @@ Debug.println("parameters: " + parameter);
     }
 
     /** */
-    private List<Event> events = new ArrayList<Event>();
+    private List<Event> events = new ArrayList<>();
 
     /** */
     static class Event {
@@ -86,7 +86,7 @@ Debug.println("parameters: " + parameter);
          */
         int eventType;
         /** */
-        List<Parameter> parameters = new ArrayList<Parameter>();
+        List<Parameter> parameters = new ArrayList<>();
         /** */
         static class Parameter {
             ParameterID parameterID;

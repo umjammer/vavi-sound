@@ -65,35 +65,35 @@ abstract class G711 implements Codec {
 
     /** */
     private static final int seg_aend[] = {
-    	0x1f, 0x3f, 0x7f, 0xff,
-    	0x1ff, 0x3ff, 0x7ff, 0xfff
+        0x1f, 0x3f, 0x7f, 0xff,
+        0x1ff, 0x3ff, 0x7ff, 0xfff
     };
 
     /** */
     private static final int seg_uend[] = {
-    	0x3f, 0x7f, 0xff, 0x1ff,
-    	0x3ff, 0x7ff, 0xfff, 0x1fff
+        0x3f, 0x7f, 0xff, 0x1ff,
+        0x3ff, 0x7ff, 0xfff, 0x1fff
     };
 
     /* copy from CCITT G.711 specifications */
 
     /** u- to A-law conversions */
     private static final int _u2a[] = {
-    	1,	1,	2,	2,	3,	3,	4,	4,
-    	5,	5,	6,	6,	7,	7,	8,	8,
-    	9,	10,	11,	12,	13,	14,	15,	16,
-    	17,	18,	19,	20,	21,	22,	23,	24,
-    	25,	27,	29,	31,	33,	34,	35,	36,
-    	37,	38,	39,	40,	41,	42,	43,	44,
-    	46,	48,	49,	50,	51,	52,	53,	54,
-    	55,	56,	57,	58,	59,	60,	61,	62,
-    	64,	65,	66,	67,	68,	69,	70,	71,
-    	72,	73,	74,	75,	76,	77,	78,	79,
+        1,    1,    2,    2,    3,    3,    4,    4,
+        5,    5,    6,    6,    7,    7,    8,    8,
+        9,    10,    11,    12,    13,    14,    15,    16,
+        17,    18,    19,    20,    21,    22,    23,    24,
+        25,    27,    29,    31,    33,    34,    35,    36,
+        37,    38,    39,    40,    41,    42,    43,    44,
+        46,    48,    49,    50,    51,    52,    53,    54,
+        55,    56,    57,    58,    59,    60,    61,    62,
+        64,    65,    66,    67,    68,    69,    70,    71,
+        72,    73,    74,    75,    76,    77,    78,    79,
 /* corrected:
-    	81,	82,	83,	84,	85,	86,	87,	88,
+        81,    82,    83,    84,    85,    86,    87,    88,
   should be: */
-    	80,	82,	83,	84,	85,	86,	87,	88,
-    	89, 90, 91, 92, 93, 94, 95, 96,
+        80,    82,    83,    84,    85,    86,    87,    88,
+        89, 90, 91, 92, 93, 94, 95, 96,
         97, 98, 99, 100, 101, 102, 103, 104,
         105, 106, 107, 108, 109, 110, 111, 112,
         113, 114, 115, 116, 117, 118, 119, 120,
@@ -102,22 +102,22 @@ abstract class G711 implements Codec {
 
     /** A- to u-law conversions */
     private static final int _a2u[] = {
-        1,	3,	5,	7,	9,	11,	13,	15,
-        16,	17,	18,	19,	20,	21,	22,	23,
-        24,	25,	26,	27,	28,	29,	30,	31,
-        32,	32,	33,	33,	34,	34,	35,	35,
-        36,	37,	38,	39,	40,	41,	42,	43,
-        44,	45,	46,	47,	48,	48,	49,	49,
-        50,	51,	52,	53,	54,	55,	56,	57,
-        58,	59,	60,	61,	62,	63,	64,	64,
-        65,	66,	67,	68,	69,	70,	71,	72,
+        1,    3,    5,    7,    9,    11,    13,    15,
+        16,    17,    18,    19,    20,    21,    22,    23,
+        24,    25,    26,    27,    28,    29,    30,    31,
+        32,    32,    33,    33,    34,    34,    35,    35,
+        36,    37,    38,    39,    40,    41,    42,    43,
+        44,    45,    46,    47,    48,    48,    49,    49,
+        50,    51,    52,    53,    54,    55,    56,    57,
+        58,    59,    60,    61,    62,    63,    64,    64,
+        65,    66,    67,    68,    69,    70,    71,    72,
 /* corrected:
-        73,	74,	75,	76,	77,	78,	79,	79,
+        73,    74,    75,    76,    77,    78,    79,    79,
    should be: */
-        73,	74,	75,	76,	77,	78,	79,	80,
+        73,    74,    75,    76,    77,    78,    79,    80,
         
-        80,	81,	82,	83,	84,	85,	86,	87,
-        88,	89,	90,	91,	92,	93,	94,	95,
+        80,    81,    82,    83,    84,    85,    86,    87,
+        88,    89,    90,    91,    92,    93,    94,    95,
         96, 97, 98, 99, 100, 101, 102, 103,
         104, 105, 106, 107, 108, 109, 110, 111,
         112, 113, 114, 115, 116, 117, 118, 119,
@@ -140,8 +140,8 @@ abstract class G711 implements Codec {
      *
      * accepts an 16-bit integer and encodes it as A-law data.
      * <pre>
-     *		Linear Input Code	    Compressed Code
-     *	------------------------	---------------
+     *        Linear Input Code        Compressed Code
+     *    ------------------------    ---------------
      *        0000000wxyza              000wxyz
      *        0000001wxyza              001wxyz
      *        000001wxyzab              010wxyz
@@ -164,9 +164,9 @@ abstract class G711 implements Codec {
         pcm_val = pcm_val >> 3;
         
         if (pcm_val >= 0) {
-            mask = 0xd5;		// sign (7th) bit = 1
+            mask = 0xd5;        // sign (7th) bit = 1
         } else {
-            mask = 0x55;		// sign bit = 0
+            mask = 0x55;        // sign bit = 0
             pcm_val = -pcm_val - 1;
         }
         
@@ -174,7 +174,7 @@ abstract class G711 implements Codec {
         int seg = search(pcm_val, seg_aend, 8);
         
         // Combine the sign, segment, and quantization bits.
-        if (seg >= 8) {			// out of range, return maximum value.
+        if (seg >= 8) {            // out of range, return maximum value.
             return 0x7f ^ mask;
         } else {
             aval = seg << SEG_SHIFT;
@@ -223,8 +223,8 @@ abstract class G711 implements Codec {
      * is biased by adding 33 which shifts the encoding range from (0 - 8158)
      * to (33 - 8191). The result can be seen in the following encoding table:
      * <pre>
-     *	Biased Linear Input Code	Compressed Code
-     *	------------------------	---------------
+     *    Biased Linear Input Code    Compressed Code
+     *    ------------------------    ---------------
      *       00000001wxyza              000wxyz
      *       0000001wxyzab              001wxyz
      *       000001wxyzabc              010wxyz
@@ -262,7 +262,7 @@ abstract class G711 implements Codec {
             mask = 0xff;
         }
         if (pcm_val > CLIP) {
-            pcm_val = CLIP;		// clip the magnitude
+            pcm_val = CLIP;        // clip the magnitude
         }
         pcm_val += (BIAS >> 2);
         
@@ -271,7 +271,7 @@ abstract class G711 implements Codec {
         
         // Combine the sign, segment, quantization bits;
         // and complement the code word.
-        if (seg >= 8) {			// out of range, return maximum value.
+        if (seg >= 8) {            // out of range, return maximum value.
             return 0x7f ^ mask;
         } else {
             uval = (seg << 4) | ((pcm_val >> (seg + 1)) & 0xf);
@@ -386,7 +386,7 @@ abstract class G711 implements Codec {
         int exp = State.quan(dqm >> 1);
 // System.err.println("exp:\t" + exp);
         // Fractional part of base 2 log
-        int mant = ((dqm << 7) >> exp) & 0x7f;	// Fractional portion.
+        int mant = ((dqm << 7) >> exp) & 0x7f;    // Fractional portion.
         // Log of magnitude of 'd'
         int dl = (exp << 7) + mant;
         
@@ -402,10 +402,10 @@ abstract class G711 implements Codec {
         // Obtain codeword i for 'd'.
         //
         int i = quan(dln, table, size);
-        if (d < 0) {			// take 1's complement of i
+        if (d < 0) {            // take 1's complement of i
             return (size << 1) + 1 - i;
-        } else if (i == 0) {		// take 1's complement of 0
-            return (size << 1) + 1;	// new in 1988
+        } else if (i == 0) {        // take 1's complement of 0
+            return (size << 1) + 1;    // new in 1988
         } else {
             return i;
         }
@@ -477,19 +477,19 @@ abstract class G711 implements Codec {
         if (sr <= -32768) {
             sr = 0;
         }
-        
+
         // u-law compressed 8-bit code
         int sp = linear2ulaw(sr << 2);
         // 16-bit prediction error
         int dx = (ulaw2linear(sp) >> 2) - se;
         // quantized prediction error
         int id = quantize(dx, y, qtab, sign - 1);
-        
+
         if (id == i) {
             return sp;
         } else {
             // ADPCM codes : 8, 9, ... F, 0, 1, ... , 6, 7
-            int sd;			        // adjusted u-law decoded sample value
+            int sd;                 // adjusted u-law decoded sample value
             int im = i ^ sign;      // 2's complement to biased unsigned
             int imx = id ^ sign;    // biased magnitude of id
             if (imx > im) {         // sp adjusted to next lower value

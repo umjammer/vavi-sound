@@ -73,7 +73,7 @@ public abstract class SubMessage extends MetaMessage {
             byte[] message = getSubMessage(subType, data, data.length);
             setMessage(META_TYPE, message, message.length);
         } catch (InvalidMfiDataException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -86,9 +86,9 @@ public abstract class SubMessage extends MetaMessage {
             byte[] message = getSubMessage(subType, tmp, tmp.length);
             setMessage(META_TYPE, message, message.length);
         } catch (UnsupportedEncodingException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         } catch (InvalidMfiDataException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -215,7 +215,7 @@ Debug.println(this);
                 subChunk = constructor.newInstance(subType, subData);
             } catch (Exception e) {
 Debug.printStackTrace(e);
-                throw (RuntimeException) new IllegalStateException().initCause(e);
+                throw new IllegalStateException(e);
             }
         } else {
 Debug.println(Level.WARNING, "unknown sub chunk: " + subType);
@@ -225,7 +225,7 @@ Debug.println(Level.WARNING, "unknown sub chunk: " + subType);
                         byte[] message = getSubMessage(subType, subData, subData.length);
                         setMessage(META_TYPE, message, message.length);
                     } catch (InvalidMfiDataException e) {
-                        throw (RuntimeException) new IllegalStateException().initCause(e);
+                        throw new IllegalStateException(e);
                     }
                 }
             };
@@ -238,7 +238,7 @@ Debug.println(subChunk);
     //----
 
     /** {@link SubMessage} のコンストラクタ集 */
-    private static Map<String, Constructor<SubMessage>> subChunkConstructors = new HashMap<String, Constructor<SubMessage>>();
+    private static Map<String, Constructor<SubMessage>> subChunkConstructors = new HashMap<>();
 
     static {
         try {

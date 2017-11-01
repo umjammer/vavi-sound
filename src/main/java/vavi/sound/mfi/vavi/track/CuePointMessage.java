@@ -6,11 +6,14 @@
 
 package vavi.sound.mfi.vavi.track;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
+
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
-import vavi.util.Debug;
+import vavi.sound.midi.MidiConstants;
 
 
 /**
@@ -70,7 +73,7 @@ public class CuePointMessage extends ShortMessage
      * TODO {@link javax.sound.midi.MetaMessage} に 0x07 キューポイントってあるよ
      * @return 何も返しません 
      */
-    public MidiEvent[] getMidiEvents(MidiContext context) {
+    public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 
 //      if (start) {
 //          byte[] data = new byte[6];
@@ -88,10 +91,20 @@ public class CuePointMessage extends ShortMessage
 //               new MidiEvent(sysexMessage, context.getCurrent())
 //          };
 //      } else {
-Debug.println("ignore: " + this);
-        return null;
-    }
+//Debug.println("ignore: " + this);
+//        return null;
 //      }
+        MetaMessage metaMessage = new MetaMessage();
+
+        String text = start ? "start" : "stop";
+        
+        metaMessage.setMessage(MidiConstants.META_QUE_POINT, // キューポイント
+                               text.getBytes(), text.getBytes().length);
+
+        return new MidiEvent[] {
+            new MidiEvent(metaMessage, context.getCurrent())
+        };
+    }
 }
 
 /* */

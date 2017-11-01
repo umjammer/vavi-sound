@@ -73,7 +73,7 @@ Debug.println(subDatum);
     private static final String defaultEncoding = "Windows-31J";
 
     /** */
-    private Map<String, SubData> subData = new TreeMap<String, SubData>();
+    private Map<String, SubData> subData = new TreeMap<>();
 
     /** */
     String getSubDataByTag(String tag) {

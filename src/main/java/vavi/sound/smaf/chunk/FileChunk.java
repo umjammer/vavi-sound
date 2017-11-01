@@ -157,7 +157,7 @@ Debug.println("has kddi crc: " + StringUtil.toHex4(kddiCrc) + ", " + StringUtil.
     }
 
     /** "MTR*" */
-    private List<TrackChunk> scoreTrackChunks = new ArrayList<TrackChunk>();
+    private List<TrackChunk> scoreTrackChunks = new ArrayList<>();
     
     /** */
     public List<TrackChunk> getScoreTrackChunks() {
@@ -171,7 +171,7 @@ Debug.println("has kddi crc: " + StringUtil.toHex4(kddiCrc) + ", " + StringUtil.
     }
 
     /** "ATR*" */
-    private List<TrackChunk> pcmAudioTrackChunks = new ArrayList<TrackChunk>();
+    private List<TrackChunk> pcmAudioTrackChunks = new ArrayList<>();
 
     /** */
     public List<TrackChunk> getPcmAudioTrackChunks() {
@@ -185,7 +185,7 @@ Debug.println("has kddi crc: " + StringUtil.toHex4(kddiCrc) + ", " + StringUtil.
     }
 
     /** "GTR*" */
-    private List<TrackChunk> graphicsTrackChunks = new ArrayList<TrackChunk>();
+    private List<TrackChunk> graphicsTrackChunks = new ArrayList<>();
 
     /** */
     public List<TrackChunk> getGraphicsTrackChunks() {

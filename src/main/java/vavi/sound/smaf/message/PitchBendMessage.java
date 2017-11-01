@@ -68,10 +68,10 @@ public class PitchBendMessage extends vavi.sound.smaf.ShortMessage
 
     /** */
     public String toString() {
-	return "PitchBend:" +
+    return "PitchBend:" +
         " duration=" + duration +
-	    " channel=" + channel +
-	    " pitchBend=" + pitchBend;
+        " channel=" + channel +
+        " pitchBend=" + pitchBend;
     }
 
     //----

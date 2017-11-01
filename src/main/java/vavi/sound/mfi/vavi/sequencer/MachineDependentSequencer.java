@@ -28,7 +28,7 @@ public interface MachineDependentSequencer {
 
     /** */
     static final PrefixedPropertiesFactory<Integer, MachineDependentSequencer> factory =
-        new PrefixedPropertiesFactory<Integer, MachineDependentSequencer>("/vavi/sound/mfi/vavi/vavi.properties", "sequencer.vendor.");
+        new PrefixedPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "sequencer.vendor.");
 }
 
 /* */

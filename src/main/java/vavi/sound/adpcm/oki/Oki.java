@@ -199,7 +199,7 @@ class Oki implements Codec {
         } else if (AudioFormat.Encoding.PCM_SIGNED.equals(encoding)) {
             return encodeInternal(pcm);
         } else if (AudioFormat.Encoding.PCM_UNSIGNED.equals(encoding)) {
-            return encodeInternal(pcm ^ 0x8000);	// TODO
+            return encodeInternal(pcm ^ 0x8000);    // TODO
         } else {
             throw new IllegalArgumentException(encoding.toString());
         }
@@ -218,7 +218,7 @@ class Oki implements Codec {
     private int decodeInternal(int b) {
         // mc->mc_estim には、前回の差分比予測値インデックスが入っている
         int estim = this.mc_estim;
-        
+
         // 実 PCM 値を計算している。本来の式は
         //
         //  mc->mc_amp += adpcm_estim[estim] / 8 * adpcm_estimindex_0[b] * 16;
@@ -231,22 +231,22 @@ class Oki implements Codec {
         this.mc_amp += adpcm_estim[estim] * adpcm_estimindex[b];
         // 次回の差分比を予測して mc->mc_estim に保存しておく
         estim += adpcm_estimstep[b];
-        
+
         if (estim < 0) {
             estim = 0;
         } else if (estim > 48) {
             estim = 48;
         }
-        
+
         this.mc_estim = estim;
-        
+
         return this.mc_amp;
     }
 
     /**
      * Oki ADPCM 1 サンプルを pcm の 1 サンプルに変換します。
-     * @param	adpcm	4bit adpcm
-     * @return	pcm
+     * @param    adpcm    4bit adpcm
+     * @return    pcm
      */
     public int decode(int adpcm) {
         if (AudioFormat.Encoding.ALAW.equals(encoding)) {
@@ -256,7 +256,7 @@ class Oki implements Codec {
         } else if (AudioFormat.Encoding.PCM_SIGNED.equals(encoding)) {
             return decodeInternal(adpcm);
         } else if (AudioFormat.Encoding.PCM_UNSIGNED.equals(encoding)) {
-            return decodeInternal(adpcm) ^ 0x8000;	// TODO
+            return decodeInternal(adpcm) ^ 0x8000;    // TODO
         } else {
             throw new IllegalArgumentException(encoding.toString());
         }

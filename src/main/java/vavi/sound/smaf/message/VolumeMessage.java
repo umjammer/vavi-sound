@@ -131,12 +131,12 @@ Debug.println("volume: " + volume);
             int midiChannel = context.retrieveChannel(this.channel);
 
             MidiEvent[] events = new MidiEvent[1];
-        	ShortMessage shortMessage = new ShortMessage();
-        	shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
+            ShortMessage shortMessage = new ShortMessage();
+            shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                     midiChannel,
-                    				7,	// メインボリューム MSB
-                    				volume);
-        	events[0] = new MidiEvent(shortMessage, context.getCurrentTick());
+                                    7,    // メインボリューム MSB
+                                    volume);
+            events[0] = new MidiEvent(shortMessage, context.getCurrentTick());
             return events;
         }
     }

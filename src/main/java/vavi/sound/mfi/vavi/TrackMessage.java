@@ -254,7 +254,7 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
                 try {
                     return noteMessageConstructor2.newInstance(delta, status, data1, data2);
                 } catch (Exception e) {
-                    throw (RuntimeException) new IllegalStateException().initCause(e);
+                    throw new IllegalStateException(e);
                 }
             } else {
                 int data1 = dis.readUnsignedByte();
@@ -262,7 +262,7 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
                 try {
                     return noteMessageConstructor1.newInstance(delta, status, data1);
                 } catch (Exception e) {
-                    throw (RuntimeException) new IllegalStateException().initCause(e);
+                    throw new IllegalStateException(e);
                 }
             }
         }
@@ -292,7 +292,7 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
                 }
             } catch (Exception e) {
 Debug.printStackTrace(e);
-                throw (RuntimeException) new IllegalStateException().initCause(e);
+                throw new IllegalStateException(e);
             }
         }
     }
@@ -323,7 +323,7 @@ Debug.printStackTrace(e);
                 try {
                     return (SysexMessage) method.invoke(null, delta, status, data1, dis);
                 } catch (Exception e) {
-                    throw (RuntimeException) new IllegalStateException().initCause(e);
+                    throw new IllegalStateException(e);
                 }
             } else {
                 // TODO clean up
@@ -339,7 +339,7 @@ Debug.println(Level.WARNING, "sysex unhandled: delta: " + StringUtil.toHex2(delt
         }
 
         /** 拡張ステータス A {@link SysexMessage} オブジェクトのインスタンスを取得するメソッド集 */
-        private static Map<String, Method> sysexMessageInstantiators = new HashMap<String, Method>();
+        private static Map<String, Method> sysexMessageInstantiators = new HashMap<>();
 
         static {
             try {
@@ -363,7 +363,7 @@ Debug.println(Level.WARNING, "sysex unhandled: delta: " + StringUtil.toHex2(delt
                 }
             } catch (Exception e) {
 Debug.printStackTrace(e);
-                throw (RuntimeException) new IllegalStateException().initCause(e);
+                throw new IllegalStateException(e);
             }
         }
     }
@@ -401,12 +401,12 @@ Debug.println(Level.WARNING, "short unhandled: delta: " + StringUtil.toHex2(delt
             try {
                 return constructor.newInstance(delta, status, data1, data2);
             } catch (Exception e) {
-                throw (RuntimeException) new IllegalStateException().initCause(e);
+                throw new IllegalStateException(e);
             }
         }
 
         /** 拡張ステータス B {@link ShortMessage} オブジェクトのインスタンスを取得するコンストラクタ集 */
-        private static Map<String, Constructor<ShortMessage>> shortMessageConstructors = new HashMap<String, Constructor<ShortMessage>>();
+        private static Map<String, Constructor<ShortMessage>> shortMessageConstructors = new HashMap<>();
 
         static {
             try {
@@ -432,7 +432,7 @@ Debug.println(Level.WARNING, "short unhandled: delta: " + StringUtil.toHex2(delt
 
             } catch (Exception e) {
 Debug.printStackTrace(e);
-                throw (RuntimeException) new IllegalStateException().initCause(e);
+                throw new IllegalStateException(e);
             }
         }
     }
@@ -473,12 +473,12 @@ Debug.println(Level.WARNING, "long unhandled: delta: " + StringUtil.toHex2(delta
             try {
                 return constructor.newInstance(delta, status, data1, data2);
             } catch (Exception e) {
-                throw (RuntimeException) new IllegalStateException().initCause(e);
+                throw new IllegalStateException(e);
             }
         }
 
         /** 拡張情報 {@link LongMessage} オブジェクトのインスタンスを取得するコンストラクタ集 */
-        private static Map<String, Constructor<LongMessage>> longMessageConstructors = new HashMap<String, Constructor<LongMessage>>();
+        private static Map<String, Constructor<LongMessage>> longMessageConstructors = new HashMap<>();
 
         static {
             try {
@@ -503,7 +503,7 @@ Debug.println(Level.WARNING, "long unhandled: delta: " + StringUtil.toHex2(delta
                 }
             } catch (Exception e) {
 Debug.printStackTrace(e);
-                throw (RuntimeException) new IllegalStateException().initCause(e);
+                throw new IllegalStateException(e);
             }
         }
     }
@@ -519,7 +519,7 @@ Debug.printStackTrace(e);
             try {
                 return unknownMessageConstructor1.newInstance(delta, status, data1, data2);
             } catch (Exception e) {
-                throw (RuntimeException) new IllegalStateException().initCause(e);
+                throw new IllegalStateException(e);
             }
         }
 
@@ -531,7 +531,7 @@ Debug.printStackTrace(e);
             try {
                 return unknownMessageConstructor2.newInstance(delta, status, data1, data2);
             } catch (Exception e) {
-                throw (RuntimeException) new IllegalStateException().initCause(e);
+                throw new IllegalStateException(e);
             }
         }
 
@@ -561,7 +561,7 @@ Debug.printStackTrace(e);
 
             } catch (Exception e) {
 Debug.printStackTrace(e);
-                throw (RuntimeException) new IllegalStateException().initCause(e);
+                throw new IllegalStateException(e);
             }
         }
     }

@@ -73,7 +73,7 @@ Debug.println("SeekAndPhraseInfo: subData: " + subDatum);
     }
 
     /** */
-    private Map<String, SubData> subData = new TreeMap<String, SubData>();
+    private Map<String, SubData> subData = new TreeMap<>();
 
     /** */
     private static final String TAG_StartPoint = "st";

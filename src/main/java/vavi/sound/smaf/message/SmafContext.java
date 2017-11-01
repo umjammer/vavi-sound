@@ -171,17 +171,17 @@ Debug.println("rounded under -1, minus 1: " + roundedSum[smafTrackNumber] + "[" 
      * いくつΔが入るか(整数値、あまり切り捨て)を求め、その個数分挿入する
      * NopMessage の配列を返します。
      * <pre>
-     *     event	index	process
+     *     event    index    process
      *   |
-     * --+- NoteOn	-2	-> brforeTick
+     * --+- NoteOn    -2    -> brforeTick
      * ↑|
      * ｜|
-     * Δ|- NoteOff	-1	-> noteOffEventUsed[-1] = true
+     * Δ|- NoteOff    -1    -> noteOffEventUsed[-1] = true
      * ｜|
      * ↓|
      * --+-
      *   |
-     *  -O- NoteOn	midiEventIndex
+     *  -O- NoteOn    midiEventIndex
      *   |
      *   |
      *   |
@@ -234,7 +234,7 @@ if (interval < 0) {
         SmafEvent[] smafEvents = new SmafEvent[nopLength];
         for (int i = 0; i < nopLength; i++) {
             NopMessage smafMessage = new NopMessage(255);
-            smafEvents[i] = new SmafEvent(smafMessage, 0l);	// TODO 0l
+            smafEvents[i] = new SmafEvent(smafMessage, 0l);    // TODO 0l
             // 255 Δ 分後ろにずらしていく
             incrementBeforeTick(track, 255);
         };
@@ -295,7 +295,7 @@ if (delta > 255) {
      * @param voice SMAF channel
      */
     public int retrieveChannel(int voice) {
-	return smafTrackNumber * 4 + voice;
+    return smafTrackNumber * 4 + voice;
     }
 
     /**
@@ -412,7 +412,7 @@ Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getDa
                 if (shortMessage.getChannel() == channel &&
                     shortMessage.getData1() == data1) {
 
-                    noteOffEventUsed.set(i);	// 消費フラグ on
+                    noteOffEventUsed.set(i);    // 消費フラグ on
                     return midiEvent;
                 }
             }
@@ -470,22 +470,22 @@ Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getDa
         int data2 = shortMessage.getData2();
 
         switch (data1) {
-        case 0:		// バンクセレクト MSB
+        case 0:        // バンクセレクト MSB
             bankMSB[channel] = data2;
             break;
-        case 32:	// バンクセレクト LSB
+        case 32:    // バンクセレクト LSB
             bankLSB[channel] = data2;
             break;
-        case 98:	// NRPN LSB
+        case 98:    // NRPN LSB
             nrpnLSB[channel] = data2;
             break;
-        case 99:	// NRPN MSB
+        case 99:    // NRPN MSB
             nrpnMSB[channel] = data2;
             break;
-        case 100:	// RPN LSB
+        case 100:    // RPN LSB
             rpnLSB[channel] = data2;
             break;
-        case 101:	// RPN MSB
+        case 101:    // RPN MSB
             rpnMSB[channel] = data2;
             break;
         default:

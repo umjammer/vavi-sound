@@ -61,7 +61,7 @@ class HeaderChunk {
     private int tracksCount;
 
     /** ヘッダ・サブチャンク */
-    private Map<String, SubMessage> subChunks = new LinkedHashMap<String, SubMessage>();
+    private Map<String, SubMessage> subChunks = new LinkedHashMap<>();
 
     /** */
     private Support support;

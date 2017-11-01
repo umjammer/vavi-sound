@@ -39,6 +39,7 @@ public class AdpcmOutputStreamTest {
                 };
             }
         };
+        os.close();
     }
 }
 

@@ -142,7 +142,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     }
 
     /** */
-    private List<Chunk> waveDataChunks = new ArrayList<Chunk>();
+    private List<Chunk> waveDataChunks = new ArrayList<>();
 
     /** "Awa*" TODO ホンマに複数か？ */
     public void addWaveDataChunk(Chunk waveDataChunk) {
@@ -153,10 +153,10 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     /* */
     @Override
     public List<SmafEvent> getSmafEvents() throws InvalidSmafDataException {
-        List<SmafEvent> events = new ArrayList<SmafEvent>();
+        List<SmafEvent> events = new ArrayList<>();
 
         //
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         props.put("localType", PcmAudioTrackChunk.class);
         props.put("formatType", formatType);
         props.put("sequenceType", sequenceType);

@@ -62,7 +62,7 @@ public class TitlMessage extends SubMessage
         try {
             return new String(getData(), readingEncoding);
         } catch (UnsupportedEncodingException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -73,7 +73,7 @@ public class TitlMessage extends SubMessage
         try {
             setData(title.getBytes(writingEncoding));
         } catch (UnsupportedEncodingException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 

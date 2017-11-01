@@ -63,7 +63,7 @@ Debug.println("OptionalData: " + size + " bytes");
     }
 
     /** DataChunk "Dch*", ... */
-    private List<Chunk> dataChunks = new ArrayList<Chunk>();
+    private List<Chunk> dataChunks = new ArrayList<>();
 
     /**
      * @return Returns the subChunks.

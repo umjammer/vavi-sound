@@ -133,7 +133,7 @@ Debug.println(Level.WARNING, "unknown cp: " + e.getMessage());
         try {
             return new String(data, start, length, encoding);
         } catch (UnsupportedEncodingException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -207,7 +207,7 @@ Debug.println("sequencerDeviceName: " + sequencerDeviceName);
             
         } catch (Exception e) {
 Debug.printStackTrace(e);
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -277,7 +277,7 @@ props.list(System.err);
             }
         } catch (Exception e) {
 Debug.printStackTrace(e);
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 }

@@ -156,7 +156,7 @@ class State {
      */
     public int getZeroPredictor() {
         int sezi = fmult(b[0] >> 2, dq[0]);
-        for (int i = 1; i < 6; i++) {			// ACCUM
+        for (int i = 1; i < 6; i++) {            // ACCUM
             sezi += fmult(b[i] >> 2, dq[i]);
         }
         return sezi;
@@ -231,7 +231,7 @@ class State {
         // dqthr = 0.75 * thr2
         int dqthr = (thr2 + (thr2 >> 1)) >> 1;
         
-        int tr;			            // tone/transition detector
+        int tr;                        // tone/transition detector
         if (td == 0) {              // signal supposed voice
             tr = 0;
         } else if (mag <= dqthr) {  // supposed data, but small mag
@@ -247,7 +247,7 @@ class State {
         yu = y + ((wi - y) >> 5);
         
         // LIMB
-        if (yu < 544) {	// 544 <= yu <= 5120
+        if (yu < 544) {    // 544 <= yu <= 5120
             yu = 544;
         } else if (yu > 5120) {
             yu = 5120;
@@ -378,11 +378,11 @@ class State {
         // DELAY A
         pk[1] = pk[0];
         pk[0] = pk0;
-        
+
         // TONE
         if (tr == 1) {              // this sample has been treated as data
             td = 0;                 // next one will be treated as voice
-        } else if (a2p < -11776) {	// small sample-to-sample correlation
+        } else if (a2p < -11776) {    // small sample-to-sample correlation
             td = 1;                 // signal may be data
         } else {                    // signal is voice
             td = 0;
@@ -391,7 +391,7 @@ class State {
         // Adaptation speed control.
         dms += (fi - dms) >> 5;             // FILTA
         dml += (((fi << 2) - dml) >> 7);    // FILTB
-        
+
         if (tr == 1) {
             ap = 256;
         } else if (y < 1536) {              // SUBTC

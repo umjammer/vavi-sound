@@ -27,7 +27,7 @@ public class MfiMessageStore {
     private static int currentId = 0;
 
     /** */
-    private static Map<Integer, MfiMessage> stores = new HashMap<Integer, MfiMessage>();
+    private static Map<Integer, MfiMessage> stores = new HashMap<>();
 
     private MfiMessageStore() {
     }

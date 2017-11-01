@@ -32,7 +32,7 @@ import vavi.sound.adpcm.Codec;
  * The algorithm for this coder was taken from the IMA Compatibility Project
  * proceedings, Vol 2, Number 2; May 1992.
  *
- * @version	1.20	921218
+ * @version    1.20    921218
  *
  * Change log:
  * - Fixed a stupid bug, where the delta was computed as
@@ -90,7 +90,7 @@ class Dvi implements Codec {
 
     /**
      * @param input pcm
-     * @return adpcm	
+     * @return adpcm
      */
     public int encode(int input) {
 

@@ -62,8 +62,8 @@ Debug.println("contentsCodeType: 0x" + StringUtil.toHex2(contentsCodeType));
 Debug.println("copyStatus: " + StringUtil.toBits(copyStatus, 8));
         this.copyCounts = read(is);
 Debug.println("copyCounts: " + copyCounts);
-    	byte[] option = new byte[size - 5];
-    	read(is, option);
+        byte[] option = new byte[size - 5];
+        read(is, option);
 Debug.println("option: " + option.length + " bytes (subData)");
         int i = 0;
         while (i < option.length) {
@@ -192,7 +192,7 @@ Debug.println("ContentsInfo: subDatum: " + subDatum);
     }
 
     /** */
-    private Map<String, SubData> subData = new TreeMap<String, SubData>();
+    private Map<String, SubData> subData = new TreeMap<>();
 
     /**
      * @return null when specified sub chunk is not found

@@ -216,7 +216,7 @@ Debug.println(e);
 
     /** サポートする MFi ファイルタイプを取得します。 */
     public static int[] getMfiFileTypes() {
-        List<Integer> types = new ArrayList<Integer>();
+        List<Integer> types = new ArrayList<>();
         for (int i = 0; i < writers.length; i++) {
             int[] ts = writers[i].getMfiFileTypes();
             for (int j = 0; j < ts.length; j++) {
@@ -234,7 +234,7 @@ Debug.println(e);
 
     /** 指定したシーケンスに対応する MFi ファイルタイプを取得します。 */
     public static int[] getMfiFileTypes(Sequence sequence) {
-        List<Integer> types = new ArrayList<Integer>();
+        List<Integer> types = new ArrayList<>();
         for (int i = 0; i < writers.length; i++) {
             int[] ts = writers[i].getMfiFileTypes(sequence);
             for (int j = 0; j < ts.length; j++) {

@@ -139,7 +139,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     }
 
     /** > 1 */
-    private List<Chunk> sequenceDataChunks = new ArrayList<Chunk>(); 
+    private List<Chunk> sequenceDataChunks = new ArrayList<>(); 
 
     /** (option) */
     private Chunk fontDataChunk;
@@ -149,10 +149,10 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     /* */
     @Override
     public List<SmafEvent> getSmafEvents() throws InvalidSmafDataException {
-        List<SmafEvent> events = new ArrayList<SmafEvent>();
+        List<SmafEvent> events = new ArrayList<>();
 
         //
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         props.put("localType", GraphicsTrackChunk.class);
         props.put("formatType", formatType);
         props.put("playerType", playerType);

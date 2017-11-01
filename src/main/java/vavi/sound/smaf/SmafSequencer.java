@@ -92,7 +92,7 @@ Debug.println(e);
             throw (InvalidSmafDataException) new InvalidSmafDataException().initCause(e);
         } catch (SmafUnavailableException e) {
 Debug.println(e);
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 

@@ -127,7 +127,7 @@ Debug.println("ADPCM subId: " + StringUtil.toHex2(subId) + "\n" + StringUtil.get
     }
 
     /** */
-    private List<SubIdChunk> subIds = new ArrayList<SubIdChunk>();
+    private List<SubIdChunk> subIds = new ArrayList<>();
 
     /** */
     private class SubIdChunk {

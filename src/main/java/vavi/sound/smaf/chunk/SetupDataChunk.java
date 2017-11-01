@@ -149,7 +149,7 @@ Debug.println(Level.WARNING, "unhandled: " + StringUtil.toHex2(status));
     }
 
     /** SysEx messages */
-    private List<SmafMessage> messages = new ArrayList<SmafMessage>();
+    private List<SmafMessage> messages = new ArrayList<>();
 
     /**
      * @return Returns the messages.

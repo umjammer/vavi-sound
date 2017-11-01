@@ -30,7 +30,7 @@ public interface AudioDataSequencer {
     class Factory extends PrefixedPropertiesFactory<Integer, AudioEngine> {
 
         /** */
-        private static ThreadLocal<AudioEngine> audioEngineStore = new ThreadLocal<AudioEngine>();
+        private static ThreadLocal<AudioEngine> audioEngineStore = new ThreadLocal<>();
 
         /**
          * Second time or later. 

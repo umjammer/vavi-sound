@@ -24,7 +24,7 @@ public class MachineDependentSequencerTest {
     @Test
     public void test() {
         PrefixedPropertiesFactory<Integer, MachineDependentSequencer> machineDependentSequencerFactory =
-            new PrefixedPropertiesFactory<Integer, MachineDependentSequencer>("/vavi/sound/mfi/vavi/vavi.properties", "sequencer.vendor.");
+            new PrefixedPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "sequencer.vendor.");
 
         MachineDependentSequencer mds = machineDependentSequencerFactory.get(97);
         System.err.println(mds);

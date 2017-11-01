@@ -25,7 +25,7 @@ public class Track {
      * 
      */
     Track() {
-        events = new ArrayList<SmafEvent>();
+        events = new ArrayList<>();
     }
 
     /** */

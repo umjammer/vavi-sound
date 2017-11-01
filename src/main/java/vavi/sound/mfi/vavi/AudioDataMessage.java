@@ -88,7 +88,7 @@ public class AudioDataMessage extends MfiMessage
     private int attribute;
 
     /** */
-    private Map<String, SubMessage> subChunks = new LinkedHashMap<String, SubMessage>();
+    private Map<String, SubMessage> subChunks = new LinkedHashMap<>();
 
     /**
      * @see #FORMAT_ADPCM_TYPE2

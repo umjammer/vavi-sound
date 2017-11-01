@@ -319,7 +319,7 @@ if (delta > 255) {
     //----
 
     /** MIDI イベントの単一シーケンス */
-    private List<MidiEvent> midiEvents = new ArrayList<MidiEvent>();
+    private List<MidiEvent> midiEvents = new ArrayList<>();
     
     /** MIDI イベントの単一シーケンスを設定します。 */
     public void setMidiSequence(Sequence midiSequence) {

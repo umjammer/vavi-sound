@@ -84,6 +84,7 @@ Debug.println("ext size: " + ledis.available());
 Debug.println("iCoef[" + i + "][" + j + "]: " + StringUtil.toHex4(iCoefs[i][j]) + ": " + iCoefs[i][j]);
             }
         }
+        ledis.close();
         WAVE.data data = (WAVE.data) wave.findChildOf(WAVE.data.class);
         in = new ByteArrayInputStream(data.getWave());
 Debug.println("wave: " + in.available());
@@ -143,6 +144,8 @@ line.drain();
 line.stop();
 line.close();
         os.close();
+        
+        is.close();
 
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }

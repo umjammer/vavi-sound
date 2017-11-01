@@ -67,7 +67,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     }
 
     /** */
-    private List<Chunk> streamWaveDataChunks = new ArrayList<Chunk>();
+    private List<Chunk> streamWaveDataChunks = new ArrayList<>();
 
     /** "Mwa*" */
     public void addWaveDataChunk(Chunk streamWaveDataChunk) {
@@ -77,7 +77,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
 
     /** */
     public List<SmafMessage> getSmafMessages() {
-        List<SmafMessage> messages = new ArrayList<SmafMessage>();
+        List<SmafMessage> messages = new ArrayList<>();
 
         for (Chunk streamWaveDataChunk : streamWaveDataChunks) {
             SmafMessage smafMessage = ((StreamWaveDataChunk) streamWaveDataChunk).toSmafMessage();

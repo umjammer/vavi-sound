@@ -119,6 +119,8 @@ System.err.println("output: " + args[argc]);
 
         os.flush();
         os.close();
+        
+        is.close();
     }
 }
 

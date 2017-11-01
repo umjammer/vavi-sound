@@ -31,7 +31,7 @@ public class NecMessage extends YamahaAudioMessage {
     private static int MAX_BLOCK = 0xffff - Function1_240_7.HEADER_LENGTH;
 
     /** */
-    private static ThreadLocal<Integer> sequence = new ThreadLocal<Integer>();
+    private static ThreadLocal<Integer> sequence = new ThreadLocal<>();
 
     /** thread local sequence */
     private static void initSequence() {
@@ -78,7 +78,7 @@ Debug.println("delta: " + delta + ", time: " + time);
         int numberOfChunks = pcm.length / (PCM_MAX_BLOCK * channels);
         int moduloOfChunks = pcm.length % (PCM_MAX_BLOCK * channels);
 
-        List<MfiEvent> events = new ArrayList<MfiEvent>();
+        List<MfiEvent> events = new ArrayList<>();
 
         // 1. data
         int streamNumber = 0;
@@ -330,7 +330,7 @@ Debug.println("adpcm length: " + adpcm.length);
         int numberOfChunks = adpcm.length / MAX_BLOCK;
         int moduloOfChunks = adpcm.length % MAX_BLOCK;
 
-        List<MfiEvent> events = new ArrayList<MfiEvent>();
+        List<MfiEvent> events = new ArrayList<>();
 
         // 1. data
         int streamNumber = 0;

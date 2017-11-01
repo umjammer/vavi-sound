@@ -219,7 +219,7 @@ Debug.println(Level.WARNING, "unknown 0x00, 0x" + StringUtil.toHex2(e2) + ", 3, 
     };
 
 /** debug */
-private Set<String> uc = new HashSet<String>();
+private Set<String> uc = new HashSet<>();
 /** debug */
 private int cc = 0;
 
@@ -368,7 +368,7 @@ if (!uc.contains("reserved: " + StringUtil.toHex2(status))) {
     }
 
     /** */
-    protected List<SmafMessage> messages = new ArrayList<SmafMessage>();
+    protected List<SmafMessage> messages = new ArrayList<>();
     
     /**
      * @return Returns the messages.

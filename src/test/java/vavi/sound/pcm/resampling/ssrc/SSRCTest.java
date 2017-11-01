@@ -169,6 +169,7 @@ gainControl.setValue(dB);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         LittleEndianDataOutputStream leos = new LittleEndianDataOutputStream(baos);
         leos.writeDouble(0.123456789);
+        leos.close();
 System.err.println("1:\n" + StringUtil.getDump(baos.toByteArray()));
         //
         byte[] buf = new byte[8];
@@ -178,6 +179,7 @@ System.err.println("2:\n" + StringUtil.getDump(buf));
         //
         LittleEndianDataInputStream leis = new LittleEndianDataInputStream(new ByteArrayInputStream(buf));
         double d = leis.readDouble();
+        leis.close();
 System.err.printf("3: %f\n", d);
         assertEquals(0.123456789, d, 0);
     }

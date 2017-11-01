@@ -695,19 +695,19 @@ class SSRC {
                 case 3:
                     for (i = 0; i < nsmplread * nch; i++) {
                         inbuf[nch * inbuflen + i] = (1 / (double) 0x7fffff) *
-                		((rawinbuf[i * 3    ] <<  0) |
-                		 (rawinbuf[i * 3 + 1] <<  8) |
-                		 (rawinbuf[i * 3 + 2] << 16));
-            	    }
-            	    break;
+                        ((rawinbuf[i * 3    ] <<  0) |
+                         (rawinbuf[i * 3 + 1] <<  8) |
+                         (rawinbuf[i * 3 + 2] << 16));
+                    }
+                    break;
 
                 case 4:
                     for (i = 0; i < nsmplread * nch; i++) {
                         inbuf[nch * inbuflen + i] = (1 / (double) 0x7fffffff) *
-                		((rawinbuf[i * 4    ] <<  0) |
-                		 (rawinbuf[i * 4 + 1] <<  8) |
-                		 (rawinbuf[i * 4 + 2] << 16) |
-                		 (rawinbuf[i * 4 + 3] << 24));
+                        ((rawinbuf[i * 4    ] <<  0) |
+                         (rawinbuf[i * 4 + 1] <<  8) |
+                         (rawinbuf[i * 4 + 2] << 16) |
+                         (rawinbuf[i * 4 + 3] << 24));
                     }
                     break;
                 }
@@ -747,16 +747,16 @@ class SSRC {
                         for (p = 0; p < nsmplwrt1; p++) {
                             int s1o = f1order[s1p];
 
-                		    buf2[ch][p] =
-                		        stage1[s1o][0] * inbuf[ip + 0 * nch] +
-                		        stage1[s1o][1] * inbuf[ip + 1 * nch] +
-                		        stage1[s1o][2] * inbuf[ip + 2 * nch] +
-                		        stage1[s1o][3] * inbuf[ip + 3 * nch] +
-                		        stage1[s1o][4] * inbuf[ip + 4 * nch] +
-                		        stage1[s1o][5] * inbuf[ip + 5 * nch] +
-                		        stage1[s1o][6] * inbuf[ip + 6 * nch];
-		    
-                		    ip += f1inc[s1p];
+                            buf2[ch][p] =
+                                stage1[s1o][0] * inbuf[ip + 0 * nch] +
+                                stage1[s1o][1] * inbuf[ip + 1 * nch] +
+                                stage1[s1o][2] * inbuf[ip + 2 * nch] +
+                                stage1[s1o][3] * inbuf[ip + 3 * nch] +
+                                stage1[s1o][4] * inbuf[ip + 4 * nch] +
+                                stage1[s1o][5] * inbuf[ip + 5 * nch] +
+                                stage1[s1o][6] * inbuf[ip + 6 * nch];
+            
+                            ip += f1inc[s1p];
 
                             s1p++;
                             if (s1p == no) {
@@ -769,18 +769,18 @@ class SSRC {
                         for (p = 0; p < nsmplwrt1; p++) {
                             int s1o = f1order[s1p];
 
-                		    buf2[ch][p] =
-                		        stage1[s1o][0] * inbuf[ip + 0 * nch] +
-                		        stage1[s1o][1] * inbuf[ip + 1 * nch] +
-              		            stage1[s1o][2] * inbuf[ip + 2 * nch] +
-              		            stage1[s1o][3] * inbuf[ip + 3 * nch] +
-              		            stage1[s1o][4] * inbuf[ip + 4 * nch] +
-              		            stage1[s1o][5] * inbuf[ip + 5 * nch] +
-              		            stage1[s1o][6] * inbuf[ip + 6 * nch] +
-              		            stage1[s1o][7] * inbuf[ip + 7 * nch] +
-              		            stage1[s1o][8] * inbuf[ip + 8 * nch];
-		    
-                		    ip += f1inc[s1p];
+                            buf2[ch][p] =
+                                stage1[s1o][0] * inbuf[ip + 0 * nch] +
+                                stage1[s1o][1] * inbuf[ip + 1 * nch] +
+                                  stage1[s1o][2] * inbuf[ip + 2 * nch] +
+                                  stage1[s1o][3] * inbuf[ip + 3 * nch] +
+                                  stage1[s1o][4] * inbuf[ip + 4 * nch] +
+                                  stage1[s1o][5] * inbuf[ip + 5 * nch] +
+                                  stage1[s1o][6] * inbuf[ip + 6 * nch] +
+                                  stage1[s1o][7] * inbuf[ip + 7 * nch] +
+                                  stage1[s1o][8] * inbuf[ip + 8 * nch];
+            
+                            ip += f1inc[s1p];
 
                             s1p++;
                             if (s1p == no) {
@@ -1314,10 +1314,10 @@ class SSRC {
                 case 4:
                     for (i = 0; i < nsmplread * nch; i++) {
                         inbuf[nch * inbuflen + i] = (1 / (double) 0x7fffffff) *
-                		    (((rawinbuf[i * 4    ] & 0xff) <<  0) |
-                		     ((rawinbuf[i * 4 + 1] & 0xff) <<  8) |
-                		     ((rawinbuf[i * 4 + 2] & 0xff) << 16) |
-                		     ((rawinbuf[i * 4 + 3] & 0xff) << 24));
+                            (((rawinbuf[i * 4    ] & 0xff) <<  0) |
+                             ((rawinbuf[i * 4 + 1] & 0xff) <<  8) |
+                             ((rawinbuf[i * 4 + 2] & 0xff) << 16) |
+                             ((rawinbuf[i * 4 + 3] & 0xff) << 24));
                     }
                     break;
                 }
@@ -1651,18 +1651,18 @@ System.err.println("no_src");
             case 3:
                 fpi.read(buf, 0, 3);
                 f = (1 / (double) 0x7fffff) * 
-            	      (((buf[0] & 0xff) <<  0) |
-            	       ((buf[1] & 0xff) <<  8) |
-            	       ((buf[2] & 0xff) << 16));
-            	break;
+                      (((buf[0] & 0xff) <<  0) |
+                       ((buf[1] & 0xff) <<  8) |
+                       ((buf[2] & 0xff) << 16));
+                break;
             case 4:
                 fpi.read(buf, 0, 4);
-            	f = (1 / (double) 0x7fffffff) * 
-            	      (((buf[0] & 0xff) <<  0) |
-            	       ((buf[1] & 0xff) <<  8) |
-            	       ((buf[2] & 0xff) << 16) |
-            	       ((buf[3] & 0xff) << 24));
-            	break;
+                f = (1 / (double) 0x7fffffff) * 
+                      (((buf[0] & 0xff) <<  0) |
+                       ((buf[1] & 0xff) <<  8) |
+                       ((buf[2] & 0xff) << 16) |
+                       ((buf[3] & 0xff) << 24));
+                break;
             };
 
             if (fpi.available() == 0) {
@@ -1951,6 +1951,7 @@ System.err.println("no_src");
                 while (l < length) {
                     long r = fpi.skip(length);
                     if (r < 0) {
+                        leis.close();
                         throw new EOFException();
                     }
                     l += r;
@@ -2067,6 +2068,8 @@ System.err.println("no_src");
             leos.writeBytes("data");
             dword = 0;
             leos.writeInt(dword);
+            
+            leos.close();
         }
 
         if (dither != 0) {
@@ -2294,7 +2297,7 @@ System.err.println("no_src");
             dword = len - 44;
             leos.writeInt(dword);
             
-            fpor.close();
+            leos.close();
         }
 
 //      System.exit(0);

@@ -55,7 +55,7 @@ public class NoteMessage extends SmafMessage
     /**
      * Creates a note message for HandyPhoneStandard.
      *
-     * @param duration	
+     * @param duration    
      * @param status <pre>
      *  76 54 3210
      *  ~~ ~~ ~~~~
@@ -63,7 +63,7 @@ public class NoteMessage extends SmafMessage
      *  |  +- octave 0 ~ 3
      *  +- channel 0 ~ 3
      * </pre>
-     * @param gateTime	note length (!= 0)
+     * @param gateTime    note length (!= 0)
      */
     public NoteMessage(int duration, int status, int gateTime) {
         this.duration =  duration;
@@ -107,11 +107,11 @@ public class NoteMessage extends SmafMessage
      */
     public int getNote() {
         switch (octave) {
-        case 0:			// 00
+        case 0:            // 00
             return note;
         case 1:         // 01
             return note + 12;
-        case 2:			// 10
+        case 2:            // 10
             return note + 24;
         case 3:         // 11
             return note + 36;

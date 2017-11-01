@@ -54,7 +54,7 @@ Debug.println("delta: " + delta);
         AudioEngine audioEngine = MitsubishiSequencer.getAudioEngine();
         byte[] adpcm = audioEngine.encode(bits, channels, pcm);
 Debug.println("adpcm mono length: " + adpcm.length);
-        List<MfiEvent> events = new ArrayList<MfiEvent>();
+        List<MfiEvent> events = new ArrayList<>();
         if (channels == 1) {
 Debug.println("adpcm length: " + adpcm.length);
             events.addAll(getAdpcmEventsSub(L, 0, sampleRate, bits, adpcm));
@@ -92,7 +92,7 @@ Debug.println("adpcm L, R length: " + temp.length);
         int numberOfChunks = adpcm.length / MAX_BLOCK;
         int moduloOfChunks = adpcm.length % MAX_BLOCK;
         
-        List<MfiEvent> events = new ArrayList<MfiEvent>();
+        List<MfiEvent> events = new ArrayList<>();
 
         for (int i = 0; i < numberOfChunks; i++) {
             byte[] chunk = new byte[MAX_BLOCK];
@@ -169,7 +169,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
      * @param adpcmVolume in %
      */
     public static List<MfiEvent> getVolumeEvents(int channels, int adpcmVolume) throws InvalidMfiDataException {
-        List<MfiEvent> events = new ArrayList<MfiEvent>();
+        List<MfiEvent> events = new ArrayList<>();
         int realAdpcmVolume = (int) (adpcmVolume * maxAdpcmVolume / 100f);
         if (channels == 1) {
             events.add(getVolumeEvent(L, realAdpcmVolume));
@@ -192,7 +192,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
 
     /** 0x82 */
     public static List<MfiEvent> getPanEvents(int channels) throws InvalidMfiDataException {
-        List<MfiEvent> events = new ArrayList<MfiEvent>();
+        List<MfiEvent> events = new ArrayList<>();
         if (channels == 1) {
             events.add(getPanpotEvent(L, 0x20));
         } else {

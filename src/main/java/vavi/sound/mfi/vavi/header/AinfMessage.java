@@ -46,7 +46,7 @@ public class AinfMessage extends SubMessage {
     public static final String TYPE = "ainf";
 
     /** */
-    private List<AudioInfo> audioInfos = new ArrayList<AudioInfo>();
+    private List<AudioInfo> audioInfos = new ArrayList<>();
 
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
@@ -83,7 +83,7 @@ public class AinfMessage extends SubMessage {
             byte[] message = getSubMessage(TYPE, baos.toByteArray(), baos.size());
             setMessage(META_TYPE, message, message.length);
         } catch (InvalidMfiDataException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         } catch (IOException e) {
             assert false : e.toString();
         }

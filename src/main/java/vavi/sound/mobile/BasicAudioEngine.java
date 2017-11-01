@@ -135,9 +135,9 @@ gainControl.setValue(dB);
             line.close();
 // debug4(os);
         } catch (IOException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         } catch (LineUnavailableException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -199,7 +199,7 @@ Debug.println("Illegal EOF R: " + is.available());
                 return Util.concatenate(monoL, monoR);
             }
         } catch (IOException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 }

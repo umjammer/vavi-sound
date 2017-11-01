@@ -25,7 +25,7 @@ public class Track {
 
     /** Creates new Track */
     Track() {
-        events = new ArrayList<MfiEvent>();
+        events = new ArrayList<>();
     }
 
     /** */

@@ -58,7 +58,7 @@ class SmafMidiConverter implements SmafDevice {
     }
 
 /** debug */
-private Set<Class<? extends SmafMessage>> uc = new HashSet<Class<? extends SmafMessage>>();
+private Set<Class<? extends SmafMessage>> uc = new HashSet<>();
     
     /** Converts smaf sequence to midi sequence */
     Sequence convert(vavi.sound.smaf.Sequence smafSequence)

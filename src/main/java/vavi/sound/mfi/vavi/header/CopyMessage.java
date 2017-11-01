@@ -64,7 +64,7 @@ public class CopyMessage extends SubMessage implements MidiConvertible, MfiConve
 
             return "copy: " + length + ": " + new String(data, readingEncoding);
         } catch (UnsupportedEncodingException e) {
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 

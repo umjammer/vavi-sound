@@ -62,7 +62,7 @@ public class SmafDeviceProvider {
 
         /** */
         public static SmafDevice.Info[] getSmafDeviceInfos() {
-            List<SmafDevice.Info> tmp = new ArrayList<SmafDevice.Info>();
+            List<SmafDevice.Info> tmp = new ArrayList<>();
 
             for (SmafDevice.Info smafDeviceInfo : deviceMap.keySet()) {
                 tmp.add(smafDeviceInfo);
@@ -85,7 +85,7 @@ Debug.printStackTrace(e);
         }
 
         /** */
-        private static Map<SmafDevice.Info, Class<SmafDevice>> deviceMap = new HashMap<SmafDevice.Info, Class<SmafDevice>>();
+        private static Map<SmafDevice.Info, Class<SmafDevice>> deviceMap = new HashMap<>();
 
         /* */
         static {
@@ -110,7 +110,7 @@ Debug.printStackTrace(e);
                 }
             } catch (Exception e) {
 Debug.printStackTrace(e);
-                throw (RuntimeException) new IllegalStateException().initCause(e);
+                throw new IllegalStateException(e);
             }
         }
     }

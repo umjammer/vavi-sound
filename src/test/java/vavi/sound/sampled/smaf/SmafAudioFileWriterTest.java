@@ -43,7 +43,7 @@ public class SmafAudioFileWriterTest {
         String base = args[3];
         String nullDevice = args[4]; // "nul" or "/dev/null"
         AudioInputStream ais = AudioSystem.getAudioInputStream(new File(inFilename));
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("smaf.divided", true);
         properties.put("smaf.directory", outDir);
         properties.put("smaf.base", base);

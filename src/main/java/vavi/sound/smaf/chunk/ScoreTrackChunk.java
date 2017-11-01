@@ -183,10 +183,10 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
     /* */
     @Override
     public List<SmafEvent> getSmafEvents() throws InvalidSmafDataException {
-        List<SmafEvent> events = new ArrayList<SmafEvent>();
+        List<SmafEvent> events = new ArrayList<>();
 
         //
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         props.put("localType", ScoreTrackChunk.class);
         props.put("formatType", formatType);
         props.put("sequenceType", sequenceType);

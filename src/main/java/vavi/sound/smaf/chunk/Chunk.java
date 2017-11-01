@@ -364,7 +364,7 @@ Debug.printStackTrace(e.getCause());
 } else {
 Debug.printStackTrace(e);
 }
-            throw (RuntimeException) new IllegalStateException().initCause(e);
+            throw new IllegalStateException(e);
         }
     }
 

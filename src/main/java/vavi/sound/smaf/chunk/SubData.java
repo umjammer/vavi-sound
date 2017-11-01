@@ -48,7 +48,7 @@ class SubData {
         if (buffer[offset + 2] != ':') {
             throw new IllegalArgumentException("not ':' but '" + (char) buffer[offset + 2] + "'");
         }
-        List<Byte> temp = new ArrayList<Byte>();
+        List<Byte> temp = new ArrayList<>();
         int i = offset + 3;
         while (i < buffer.length) {
             if (buffer[i] == '\\') {

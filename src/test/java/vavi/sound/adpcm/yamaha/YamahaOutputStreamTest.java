@@ -124,6 +124,7 @@ Debug.println(ev.getType());
         line.stop();
         line.close();
 // os.close();
+        is.close();
     }
 }
 

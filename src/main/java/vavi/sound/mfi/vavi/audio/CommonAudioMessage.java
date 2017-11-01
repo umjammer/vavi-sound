@@ -101,7 +101,7 @@ Debug.println("a delta: " + aDelta + ", tempo: " + tempoMessage.getTempo() + ", 
 
     /** */
     public static List<MfiEvent> getNop2Events(float time) {
-        List<MfiEvent> events = new ArrayList<MfiEvent>();
+        List<MfiEvent> events = new ArrayList<>();
 
         int delta = getDelta(time);
 Debug.println("delta: " + delta);
@@ -132,7 +132,7 @@ Debug.println("delta: " + delta);
 
     /** 0x80 */
     private static List<MfiEvent> getAudioEventsType1(byte[] data, int sampleRate, int bits, int channels) {
-        List<MfiEvent> events = new ArrayList<MfiEvent>();
+        List<MfiEvent> events = new ArrayList<>();
         // exst
         events.add(new MfiEvent(new ExstMessage(1), 0l));
 
@@ -152,7 +152,7 @@ Debug.println("delta: " + delta);
 
     /** 0x81 */
     private static List<MfiEvent> getAudioEventsType2(byte[] data, int sampleRate, int bits, int channels) {
-        List<MfiEvent> events = new ArrayList<MfiEvent>();
+        List<MfiEvent> events = new ArrayList<>();
 
         // exst
         events.add(new MfiEvent(new ExstMessage(1), 0l));

@@ -239,6 +239,8 @@ public class Adpcm {
            while (l < buf.length) {
                int r = is.read(buf, l, buf.length - l);
                if (r == -1) {
+                   os.close();
+                   is.close();
                    throw new EOFException();
                }
                l += r;

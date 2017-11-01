@@ -30,7 +30,7 @@ public interface MfiConvertible {
 
     /** */
     static final PrefixedPropertiesFactory<String, MfiConvertible> factory =
-        new PrefixedPropertiesFactory<String, MfiConvertible>("/vavi/sound/mfi/vavi/vavi.properties", "midi.");
+        new PrefixedPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "midi.");
 }
 
 /* */

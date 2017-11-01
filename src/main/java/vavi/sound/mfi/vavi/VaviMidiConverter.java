@@ -97,7 +97,7 @@ Debug.printStackTrace(e);
     }
 
 /* debug */
-private static Set<String> uc = new HashSet<String>();
+private static Set<String> uc = new HashSet<>();
 
     /** Converts midi sequence to mfi sequence */
     protected vavi.sound.mfi.Sequence convert(Sequence midiSequence, int fileType)

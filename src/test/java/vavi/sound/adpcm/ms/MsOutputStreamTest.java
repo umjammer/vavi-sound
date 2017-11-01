@@ -194,6 +194,8 @@ Debug.println("outFile: " + outFile.length());
         line.stop();
         line.close();
 
+        is.close();
+        
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }

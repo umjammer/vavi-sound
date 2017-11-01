@@ -95,7 +95,7 @@ public class PanMessage extends vavi.sound.smaf.ShortMessage
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 midiChannel,
-                                10,	// パンポット MSB
+                                10,    // パンポット MSB
                                 panpot);
         events[0] = new MidiEvent(shortMessage, context.getCurrentTick());
         return events;

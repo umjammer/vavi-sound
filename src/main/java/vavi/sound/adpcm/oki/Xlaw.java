@@ -75,7 +75,7 @@ public abstract class Xlaw implements Codec {
             if (bit == 8) {
                 return encodeTable[linear ^ 0x80];
             } else if (bit == 16) {
-                return encodeTable[(linear >> 8) ^ 0x80];	// TODO
+                return encodeTable[(linear >> 8) ^ 0x80];    // TODO
             } else {
                 throw new IllegalArgumentException("illegal bit: " + bit);
             }
@@ -83,7 +83,7 @@ public abstract class Xlaw implements Codec {
             if (bit == 8) {
                 return encodeTable[linear];
             } else if (bit == 16) {
-                return  encodeTable[linear >> 8];	// TODO
+                return  encodeTable[linear >> 8];    // TODO
             } else {
                 throw new IllegalArgumentException("illegal bit: " + bit);
             }

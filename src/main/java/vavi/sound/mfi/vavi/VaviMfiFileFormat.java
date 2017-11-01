@@ -183,7 +183,7 @@ Debug.println("audioDataLength: " + audioDataLength);
      * @since MFi 4.0
      */
     private List<AudioDataMessage> getAudioDatum() {
-        List<AudioDataMessage> result = new ArrayList<AudioDataMessage>();
+        List<AudioDataMessage> result = new ArrayList<>();
         Track track = sequence.getTracks()[0];
         for (int j = 0; j < track.size(); j++) {
             MfiEvent event = track.get(j);
@@ -260,7 +260,7 @@ Debug.println("audioDataLength: " + audioDataLength);
         int audioDataCount = mff.getAudioDataChunkCount();
 //      boolean isAudioDataOnly = ff.isAudioDataOnly();
         Map<String, SubMessage> headerSubChunks = mff.headerChunk.getSubChunks();
-        List<AudioDataMessage> audioDataChunks = new ArrayList<AudioDataMessage>();
+        List<AudioDataMessage> audioDataChunks = new ArrayList<>();
 int dataLength = mff.headerChunk.getMfiDataLength() - (2 + mff.headerChunk.getDataLength());
 int l = 0;
 

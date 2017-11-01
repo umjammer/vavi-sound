@@ -27,7 +27,7 @@ public class SmafMessageStore {
     private static int currentId = 0;
 
     /** */
-    private static Map<Integer, SmafMessage> stores = new HashMap<Integer, SmafMessage>();
+    private static Map<Integer, SmafMessage> stores = new HashMap<>();
 
     private SmafMessageStore() {
     }

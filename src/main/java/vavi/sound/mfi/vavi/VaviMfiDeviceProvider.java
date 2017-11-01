@@ -66,7 +66,7 @@ public class VaviMfiDeviceProvider extends MfiDeviceProvider {
 
         /** */
         public static MfiDevice.Info[] getMfiDeviceInfos() {
-            List<MfiDevice.Info> tmp = new ArrayList<MfiDevice.Info>();
+            List<MfiDevice.Info> tmp = new ArrayList<>();
 
             for (MfiDevice.Info mfiDeviceInfo : deviceMap.keySet()) {
                 tmp.add(mfiDeviceInfo);
@@ -89,7 +89,7 @@ Debug.printStackTrace(e);
         }
 
         /** */
-        private static Map<MfiDevice.Info, Class<MfiDevice>> deviceMap = new HashMap<MfiDevice.Info, Class<MfiDevice>>();
+        private static Map<MfiDevice.Info, Class<MfiDevice>> deviceMap = new HashMap<>();
 
         /* */
         static {
@@ -114,7 +114,7 @@ Debug.printStackTrace(e);
                 }
             } catch (Exception e) {
 Debug.printStackTrace(e);
-                throw (RuntimeException) new IllegalStateException().initCause(e);
+                throw new IllegalStateException(e);
             }
         }
     }
