@@ -369,7 +369,7 @@ if (!uc.contains("reserved: " + StringUtil.toHex2(status))) {
 
     /** */
     protected List<SmafMessage> messages = new ArrayList<>();
-    
+
     /**
      * @return Returns the messages.
      */
