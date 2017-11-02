@@ -7,8 +7,8 @@
 <!--                                                                        -->
 <!-- vavi-sound                                                             -->
 <!--                                                                        -->
-<!-- @author	Naohide Sano                                                -->
-<!-- @version	0.00	021105	nsano	initial version                     -->
+<!-- @author Naohide Sano                                                   -->
+<!-- @version 0.00 021105 nsano initial version                             -->
 <!--                                                                        -->
 <!-- ////////////////////////////////////////////////////////////////////// -->
 
@@ -30,20 +30,10 @@
 
   <!-- Path Definitions -->
   <path id="project.class.path">
+    <pathelement location="${javac.dest.test}" />
+    <pathelement location="${javac.dest}" />
     <fileset refid="maven-ant-tasks.dependency.fileset"/>
   </path>
-
-  <!-- clean -->
-  <target name="clean" description="Cleaning">
-    <delete>
-      <fileset dir="${javac.dest}">
-        <include name="**/*" />
-      </fileset>
-      <fileset dir="${javac.dest.test}">
-        <include name="**/*" />
-      </fileset>
-    </delete>
-  </target>
 
   <!-- prepare -->
   <target name="prepare" description="Preparing">
@@ -51,70 +41,20 @@
     <artifact:dependencies fileSetId="maven-ant-tasks.dependency.fileset">
       <pom refid="maven.project"/>
     </artifact:dependencies>
-  </target>
-
-  <!-- javac all vavi -->
-  <target name="compile" depends="prepare" description="Compiling">
-    <javac debug="on" destdir="${javac.dest}"
-           source="${project.build.plugins.plugin.configuration.source}"
-           target="${project.build.plugins.plugin.configuration.target}"
-           encoding="${project.build.plugins.plugin.configuration.encoding}">
-      <classpath refid="project.class.path" />
-      <include name="**/*.java" />
-      <src path="${javac.source}" />
-    </javac>
-
-    <copy todir="${javac.dest}">
-      <fileset dir="${javac.resource}">
-        <include name="**/*" />
-      </fileset>
-    </copy>
-
-    <javac debug="on" destdir="${javac.dest.test}"
-           source="${project.build.plugins.plugin.configuration.source}"
-           target="${project.build.plugins.plugin.configuration.target}"
-           encoding="${project.build.plugins.plugin.configuration.encoding}">
-      <classpath>
-        <path refid="project.class.path" />
-        <pathelement location="${javac.dest}" />
-      </classpath>
-      <include name="**/*.java" />
-      <src path="${javac.source.test}" />
-    </javac>
-
-    <copy todir="${javac.dest.test}">
-      <fileset dir="${javac.resource.test}">
-        <include name="**/*" />
-      </fileset>
-    </copy>
-
-    <native2ascii encoding="Windows-31J"
-                  ext=".properties"
-                  src="src/main/native2ascii"
-                  dest="${javac.dest}" >
-      <include name="**/*.properties" />
-    </native2ascii>
-  </target>
-
-  <!-- jar -->
-  <target name="package" depends="compile" description="Packaging">
-    <jar jarfile="target/${project.artifactId}-${project.version}.jar">
-      <fileset dir="${javac.dest}">
-        <include name="**/*" />
-      </fileset>
-    </jar>
+    <artifact:mvn pom="pom.xml">
+      <arg value="package"/>
+      <arg value="-Dmaven.test.skip=true"/>
+    </artifact:mvn>
   </target>
 
   <!-- run -->
-  <target name="run" depends="compile" description="divide wave into mld (tmp dir)">
+  <target name="run" depends="prepare" description="divide wave into mld (tmp dir)">
     <delete dir="${vavi.sound.run.out}/${vavi.sound.run.type}" />
     <mkdir dir="${vavi.sound.run.out}/${vavi.sound.run.type}" />
 
     <java classname="vavi.sound.sampled.mfi.MfiAudioFileWriterTest" fork="yes">
       <classpath>
         <path refid="project.class.path"/>
-        <pathelement location="${javac.dest}" />
-        <pathelement location="${javac.dest.test}" />
         <pathelement location="etc/libmfi-klab.jar" />
       </classpath>
       <arg value="${vavi.sound.run.in}" />
@@ -127,7 +67,7 @@
   </target>
 
   <!-- play -->
-  <target name="play" depends="compile" description="play mfi dir">
+  <target name="play" depends="prepare" description="play mfi dir">
     <fileset dir="." id="mlds.path">
       <include name="${vavi.sound.play.mld_play}" />
     </fileset>
@@ -139,8 +79,6 @@
       <jvmarg value="-Djavax.sound.midi.Sequencer=#Real Time Sequencer" />
       <classpath>
         <path refid="project.class.path" />
-        <pathelement location="${javac.dest}" />
-        <pathelement location="${javac.dest.test}" />
         <pathelement location="etc/libmfi-klab.jar" />
       </classpath>
       <arg line="${mld.files}" />
@@ -148,14 +86,12 @@
   </target>
 
   <!-- mfi -->
-  <target name="mfi" depends="compile" description="play mfi">
+  <target name="mfi" depends="prepare" description="play mfi">
     <java classname="Test1" fork="yes">
       <jvmarg value="-Djava.awt.headless=true" />
       <jvmarg value="-Djavax.sound.midi.Sequencer=#Real Time Sequencer" />
       <classpath>
         <path refid="project.class.path" />
-        <pathelement location="${javac.dest}" />
-        <pathelement location="${javac.dest.test}" />
         <pathelement location="etc/libmfi-klab.jar" />
       </classpath>
       <arg value="${mld.file}" />
@@ -163,23 +99,21 @@
   </target>
 
   <!-- play smaf -->
-  <target name="smaf" depends="compile" description="play smaf">
+  <target name="smaf" depends="prepare" description="play smaf">
     <java classname="Test2" fork="yes">
       <jvmarg value="-Djava.awt.headless=true" />
       <jvmarg value="-Djavax.sound.midi.Sequencer=#Real Time Sequencer" />
-      <jvmarg value="-Dfile.encoding=utf-8" />
-      
+      <jvmarg value="-Dfile.encoding=${project.build.plugins.plugin.configuration.encoding}" />
+
       <classpath>
         <path refid="project.class.path" />
-        <pathelement location="${javac.dest}" />
-        <pathelement location="${javac.dest.test}" />
       </classpath>
       <arg value="${vavi.sound.play.smaf}" />
     </java>
   </target>
 
   <!-- smaf with voice -->
-  <target name="smaf.v1" depends="compile" description="make smaf with voice spi">
+  <target name="smaf.v1" depends="prepare" description="make smaf with voice spi">
     <delete dir="${vavi.sound.smaf.out}/mmf" />
     <mkdir dir="${vavi.sound.smaf.out}/mmf" />
 
@@ -187,8 +121,6 @@
       <jvmarg value="-Djava.awt.headless=true" />
       <classpath>
         <path refid="project.class.path"/>
-        <pathelement location="${javac.dest}" />
-        <pathelement location="${javac.dest.test}" />
       </classpath>
       <arg value="${vavi.sound.smaf.in}" />
       <arg value="${vavi.sound.smaf.out}" />
@@ -199,7 +131,7 @@
   </target>
 
   <!-- smaf with voice -->
-  <target name="smaf.v2" depends="compile" description="make smaf with voice direct">
+  <target name="smaf.v2" depends="prepare" description="make smaf with voice direct">
     <delete dir="${vavi.sound.smaf.out}/mmf" />
     <mkdir dir="${vavi.sound.smaf.out}/mmf" />
 
@@ -207,8 +139,6 @@
       <jvmarg value="-Djava.awt.headless=true" />
       <classpath>
         <path refid="project.class.path"/>
-        <pathelement location="${javac.dest}" />
-        <pathelement location="${javac.dest.test}" />
       </classpath>
       <arg line="-o ${vavi.sound.smaf.out}" />
       <arg line="-s ${vavi.sound.smaf.time}" />
@@ -219,7 +149,7 @@
   </target>
 
   <!-- play smaf -->
-  <target name="play.2" depends="compile" description="play smaf">
+  <target name="play.2" depends="prepare" description="play smaf">
     <fileset dir="." id="mmfs.path">
       <include name="${vavi.sound.play.mmf_play}" />
     </fileset>
@@ -231,33 +161,29 @@
       <jvmarg value="-Djavax.sound.midi.Sequencer=#Real Time Sequencer" />
       <classpath>
         <path refid="project.class.path" />
-        <pathelement location="${javac.dest}" />
-        <pathelement location="${javac.dest.test}" />
       </classpath>
       <arg line="${mmf.files}" />
     </java>
   </target>
 
   <!-- play pcm -->
-  <target name="play.pcm" depends="compile" description="play pcm">
+  <target name="play.pcm" depends="prepare" description="play pcm">
     <java classname="t150_4" fork="yes">
       <jvmarg value="-Djava.awt.headless=true" />
       <classpath>
         <path refid="project.class.path" />
-        <pathelement location="${javac.dest}" />
-        <pathelement location="${javac.dest.test}" />
       </classpath>
       <arg value="out.pcm" />
     </java>
   </target>
 
   <!-- findbugs -->
-  <target name="findbugs" depends="compile">
+  <target name="findbugs" depends="prepare">
     <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
     <findbugs home="${findbugs.home}"
               output="html"
               outputFile="tmp/findbugs.html"
-              jvmargs="-Xmx512m -Dfile.encoding=utf-8">
+              jvmargs="-Xmx512m -Dfile.encoding=${project.build.plugins.plugin.configuration.encoding}">
       <auxClasspath refid="project.class.path" />
       <sourcePath path="${javac.source}" />
       <class location="${javac.dest}" />
