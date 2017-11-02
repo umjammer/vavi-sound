@@ -19,7 +19,7 @@ import vavi.util.Debug;
 
 
 /**
- * ImaInputEngine. 
+ * ImaInputEngine.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2011/10/18 umjammer initial version <br>
@@ -90,7 +90,7 @@ Debug.println("byteOrder: " + this.byteOrder);
                 }
                 ledis.close();
                 encoder.encodeBlock(1, pcm, pcm.length, steps, adpcm, 9);
-    
+
 //Debug.println("adpcm: " + adpcm.length);
                 out.write(adpcm);
             }
