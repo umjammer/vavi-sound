@@ -36,7 +36,7 @@ import vavi.sound.smaf.message.UndefinedMessage;
 import vavi.sound.smaf.message.VolumeMessage;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
-import vavi.util.codec.HuffmanDecoder;;
+import vavix.io.huffman.Huffman;
 
 
 /**
@@ -81,7 +81,7 @@ Debug.println("SequenceData: " + size + " bytes");
 //os1.flush();
 //os1.close();
 //Debug.println("data.enc created");
-            byte[] decoded = new HuffmanDecoder().decode(baos.toByteArray());
+            byte[] decoded = new Huffman().decode(baos.toByteArray());
 //OutputStream os2 = new FileOutputStream("/tmp/data.dec");
 //os2.write(decoded);
 //os2.flush();

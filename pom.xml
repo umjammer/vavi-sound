@@ -80,6 +80,14 @@
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
     </repository>
+    <repository>
+      <id>umjammer-mvn-repo</id>
+      <url>https://raw.github.com/umjammer/umjammer/mvn-repo/</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>
@@ -103,7 +111,6 @@
       <groupId>javax.media</groupId>
       <artifactId>jmf</artifactId>
       <version>2.1.1e</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
@@ -113,7 +120,12 @@
     <dependency>
       <groupId>com.github.umjammer</groupId>
       <artifactId>vavi-util-codec-sandbox</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>vavi</groupId>
+      <artifactId>vavi-sound-nda</artifactId>
+      <version>1.0.2</version>
     </dependency>
   </dependencies>
   <scm>
