@@ -1,3 +1,5 @@
+[![Release](https://jitpack.io/v/umjammer/vavi-sound.svg)](https://jitpack.io/#umjammer/vavi-sound)
+
 # vavi-sound
 
 | **SPI** |  **Codec** |  **Description** | **IN Status** | **OUT Status** | **SPI Status** |
