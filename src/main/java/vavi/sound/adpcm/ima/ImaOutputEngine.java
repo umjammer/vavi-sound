@@ -16,7 +16,7 @@ import vavi.io.OutputEngine;
 
 
 /**
- * ImaOutputEngine. 
+ * ImaOutputEngine.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2011/10/16 umjammer initial version <br>
@@ -78,7 +78,7 @@ class ImaOutputEngine implements OutputEngine {
                 if (l < packet.length) {
                     samplesThisBlock = Ima.getSamplesIn(0, channels, l, 0);
                 }
-                
+
                 decoder.decodeBlock(channels,
                                     packet,
                                     samples,

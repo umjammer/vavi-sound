@@ -11,9 +11,13 @@
   <organization>
     <name></name>
   </organization>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <url>https://github.com/umjammer/vavi-sound</url>
-  <description>1.0.2
+  <description>1.0.3
+
+    make build pass
+
+1.0.2
 
     maintenance version
 
@@ -105,7 +109,6 @@
       <groupId>com.github.umjammer</groupId>
       <artifactId>vavi-commons-sandbox</artifactId>
       <version>0.3.3</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>javax.media</groupId>
