@@ -36,7 +36,7 @@ import vavi.sound.smaf.message.UndefinedMessage;
 import vavi.sound.smaf.message.VolumeMessage;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
-import vavix.io.huffman.Huffman;
+import vavi.util.codec.HuffmanDecoder;;
 
 
 /**
@@ -81,7 +81,7 @@ Debug.println("SequenceData: " + size + " bytes");
 //os1.flush();
 //os1.close();
 //Debug.println("data.enc created");
-            byte[] decoded = new Huffman().decode(baos.toByteArray());
+            byte[] decoded = new HuffmanDecoder().decode(baos.toByteArray());
 //OutputStream os2 = new FileOutputStream("/tmp/data.dec");
 //os2.write(decoded);
 //os2.flush();
@@ -369,7 +369,7 @@ if (!uc.contains("reserved: " + StringUtil.toHex2(status))) {
 
     /** */
     protected List<SmafMessage> messages = new ArrayList<>();
-    
+
     /**
      * @return Returns the messages.
      */
