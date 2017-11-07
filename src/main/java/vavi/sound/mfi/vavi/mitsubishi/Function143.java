@@ -18,7 +18,7 @@ import vavi.util.StringUtil;
 
 /**
  * Mitsubishi System exclusive message function 0x8f processor.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 051111 nsano initial version <br>
  */

@@ -23,7 +23,7 @@ import vavi.util.Debug;
 
 /**
  * MIDI Context for a converter.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
  */
@@ -144,7 +144,7 @@ Debug.println("channelStatuses: " + (channelStatuses != null ? channelStatuses.l
 
     /**
      * smafTrackNumber must be set
-     * @return ticks 
+     * @return ticks
      */
     public long getCurrentTick() {
         return currentTicks[smafTrackNumber];
@@ -152,7 +152,7 @@ Debug.println("channelStatuses: " + (channelStatuses != null ? channelStatuses.l
 
     /**
      * smafTrackNumber must be set
-     * @param ticks ticks 
+     * @param ticks ticks
      */
     public void setCurrentTick(long ticks) {
         this.currentTicks[smafTrackNumber] = ticks;
@@ -160,7 +160,7 @@ Debug.println("channelStatuses: " + (channelStatuses != null ? channelStatuses.l
 
     /**
      * smafTrackNumber must be set
-     * @param ticks ticks 
+     * @param ticks ticks
      */
     public void addCurrentTick(long ticks) {
         this.currentTicks[smafTrackNumber] += ticks;
@@ -236,9 +236,9 @@ Debug.println("drums: " + midiChannel + "ch, " + value + "\n" + sb1 + "\n" + sb2
     /** channel に割り当てられた program no, index is pseudo MIDI channel */
     private int[] programs = new int[MAX_MIDI_CHANNELS];
 
-    /** 
-     * @param smafChannel SMAF channel 
-     * @return pseudo MIDI channel 
+    /**
+     * @param smafChannel SMAF channel
+     * @return pseudo MIDI channel
      */
     private int getMidiChannel(int smafChannel) {
         if (formatType == ScoreTrackChunk.FormatType.HandyPhoneStandard) {
@@ -482,7 +482,7 @@ Debug.println("drum always zero:[" + midiChannel + "]: " + program);
 
     /** */
     static {
-Debug.println("tempoTable: " + tempoTable.length);    
+Debug.println("tempoTable: " + tempoTable.length);
     }
 
     /** テンポの指定がない場合、SSDは 4 分音符 = 120 として扱います */

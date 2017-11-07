@@ -37,7 +37,7 @@ import static org.junit.Assert.assertEquals;
 
 
 /**
- * MsOutputStreamTest. 
+ * MsOutputStreamTest.
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>
@@ -142,10 +142,10 @@ Debug.println("inFile: " + length);
                     pcm[i] = ledis.readShort();
                 }
                 encoder.encodeBlock(1, pcm, pcm.length, steps, adpcm, bpb);
-    
+
                 os.write(adpcm);
             }
-            
+
             ll += l;
         }
 
@@ -195,7 +195,7 @@ Debug.println("outFile: " + outFile.length());
         line.close();
 
         is.close();
-        
+
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }

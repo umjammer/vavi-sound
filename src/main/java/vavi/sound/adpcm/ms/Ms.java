@@ -78,7 +78,7 @@ class Ms {
     };
 
     /**
-     * @param sp state pointer 
+     * @param sp state pointer
      */
     private int decode(int code,
                        State[] state,

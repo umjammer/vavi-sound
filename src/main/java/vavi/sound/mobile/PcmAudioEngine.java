@@ -23,7 +23,7 @@ import vavi.util.Debug;
 
 /**
  * PCM AudioEngine.
- * 
+ *
 WSC-MAX_DLL
 DLL
                  Input File                                                               Output File
@@ -35,7 +35,7 @@ wscma5_dll       WAVE                16bit or 8bit    4kHz~ 8kHz              mo
                  WAVE or AIFF        16bit or 8bit    4kHz~12kHz              mono        8bit PCM            SMAF/MA-5
                  WAVE or AIFF        16bit            4kHz~12kHz             stereo       4bit ADPCM          SMAF/MA-5
                  WAVE or AIFF        16bit or 8bit    4kHz~6kHz              stereo       8bit PCM            SMAF/MA-5
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 020829 nsano initial version <br>
  * @see "WSC-MAx.pdf"
@@ -46,7 +46,7 @@ public class PcmAudioEngine extends BasicAudioEngine {
      * <pre>
      *  L0 + L2 + ...
      *  R1 + R3 + ...
-     * </pre>   
+     * </pre>
      */
     public PcmAudioEngine() {
         data = new Data[32];
@@ -64,19 +64,19 @@ public class PcmAudioEngine extends BasicAudioEngine {
 Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
                     return -1;
                 }
-        
+
                 if (streamNumber % 2 == 0 && data[streamNumber].channels != 2 && (data[streamNumber + 1] != null && data[streamNumber + 1].channels != 2)) {
                     channels = 2;
                 }
             }
         } else {
             // from 240_2, channels always 1
-            
+
             if (streamNumber % 2 == 1 && data[streamNumber].channel % 2 == 1 && (data[streamNumber - 1] != null && data[streamNumber - 1].channel % 2 == 0)) {
 Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
                 return -1;
             }
-    
+
             if (streamNumber % 2 == 0 && data[streamNumber].channel % 2 == 0 && (data[streamNumber + 1] != null && data[streamNumber + 1].channel % 2 == 1)) {
                 channels = 2;
             }

@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 
 
 /**
- * Ym2608OutputStreamTest. 
+ * Ym2608OutputStreamTest.
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>

@@ -158,7 +158,7 @@ Debug.println("has kddi crc: " + StringUtil.toHex4(kddiCrc) + ", " + StringUtil.
 
     /** "MTR*" */
     private List<TrackChunk> scoreTrackChunks = new ArrayList<>();
-    
+
     /** */
     public List<TrackChunk> getScoreTrackChunks() {
         return scoreTrackChunks;

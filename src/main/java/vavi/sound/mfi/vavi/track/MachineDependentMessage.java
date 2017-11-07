@@ -101,7 +101,7 @@ public class MachineDependentMessage extends SysexMessage
 
         // 0 delta
         // 5 vendor | carrier
-        // 6 
+        // 6
         // 7
 Debug.println("MachineDepend: " + StringUtil.toHex2(data[0]) + ", " + StringUtil.toHex2(data[5]) + " " + StringUtil.toHex2(data[6]) + " " + StringUtil.toHex2(data[7]) + " " + (data.length > 8 ? StringUtil.toHex2(data[8]) : "") + " " + (data.length > 9 ? StringUtil.toHex2(data[9]) : "") + " " + (data.length > 10 ? StringUtil.toHex2(data[10]) : ""));
         MachineDependentMessage message = new MachineDependentMessage(data);

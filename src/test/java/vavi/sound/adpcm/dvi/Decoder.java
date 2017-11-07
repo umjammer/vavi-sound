@@ -18,7 +18,7 @@ import vavi.io.LittleEndianDataOutputStream;
 
 /**
  * T400 ADPCM decoder.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030713 nsano completes <br>
  */

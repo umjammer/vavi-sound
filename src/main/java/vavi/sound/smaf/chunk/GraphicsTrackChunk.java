@@ -27,7 +27,7 @@ import vavi.util.Debug;
  * GraphicsTrack Chunk.
  * <pre>
  * "GTR*"
- * 
+ *
  *  Format Type : 1byte
  *  Player Type : 1byte
  *  Text Encode Type : 1byte
@@ -36,7 +36,7 @@ import vavi.util.Debug;
  *  Option Size : 1byte
  *  Option Data : Option Size で指定したサイズ(0〜255b)
  * </pre>
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
  */
@@ -107,7 +107,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
 
     // header
 
-    /** 
+    /**
      * 0x00 Handy Phone Standard
      * 0x01〜0xFF Reserved
      */
@@ -127,7 +127,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     // ----
 
     /** */
-    private Chunk setupDataChunk; 
+    private Chunk setupDataChunk;
 
     /** "Gtsu" (required) */
     public void setSetupDataChunk(SetupDataChunk setupDataChunk) {
@@ -139,7 +139,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     }
 
     /** > 1 */
-    private List<Chunk> sequenceDataChunks = new ArrayList<>(); 
+    private List<Chunk> sequenceDataChunks = new ArrayList<>();
 
     /** (option) */
     private Chunk fontDataChunk;

@@ -18,7 +18,7 @@ import vavi.sound.smaf.SmafEvent;
  * 今のところ実装クラスは bean でなければならない．
  * (引数なしのコンストラクタがあること)
  * </p>
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
  */

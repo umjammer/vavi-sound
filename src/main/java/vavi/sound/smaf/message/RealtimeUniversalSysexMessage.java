@@ -57,7 +57,7 @@ import vavi.sound.smaf.SysexMessage;
  *   08H     | nn       | MIDI Tuning Standard
  *           | 02H   　 |  Note Change
  * </pre>
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
  * @see "ATS-MA5-SMAF_GL_133_HV.pdf"
@@ -73,10 +73,10 @@ public class RealtimeUniversalSysexMessage extends SysexMessage {
 [Master Fine Tuning]
       F0h 7F 7F 04 03 vh vl F7
           マスター・ファイン・チューンを設定します。
-          A440Hzからのチューニングをセント単位で指定します。 
+          A440Hzからのチューニングをセント単位で指定します。
 
 [Master Coarse Tuning]
-      F0 7F 7F 04 04 00 vl F7 
+      F0 7F 7F 04 04 00 vl F7
           マスター・コース・チューンを設定します。
           A440Hzからのチューニングを100[cent]単位で指定します。
 
@@ -87,7 +87,7 @@ public class RealtimeUniversalSysexMessage extends SysexMessage {
       F0 7E 7F 09 03 F7
 
 [GM SYSTEM OFF]
-      F0 7E 7F 09 02 F7 
+      F0 7E 7F 09 02 F7
 
      */
 }

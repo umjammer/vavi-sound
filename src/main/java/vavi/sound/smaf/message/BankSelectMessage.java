@@ -19,7 +19,7 @@ import vavi.util.StringUtil;
 
 /**
  * BankSelectMessage.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
  */
@@ -137,23 +137,23 @@ Debug.println("BankSelect: [" + duration + "] " + channel + "ch, 0x" + StringUti
                 return null;
             } else {
                 int midiChannel = context.retrieveChannel(this.channel);
-    
+
                 MidiEvent[] events = new MidiEvent[2];
-    
+
                 ShortMessage shortMessage = new ShortMessage();
                 shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                         midiChannel,
                                         0x00,       // バンクセレクト MSB
                                         data2);
                 events[0] = new MidiEvent(shortMessage, context.getCurrentTick());
-    
+
                 shortMessage = new ShortMessage();
                 shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                         midiChannel,
                                         0x20,       // バンクセレクト LSB
                                         bank & 0x7f);
                 events[1] = new MidiEvent(shortMessage, context.getCurrentTick());
-    
+
                 return events;
             }
         } else {                                // MobileStandard

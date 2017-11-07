@@ -50,7 +50,7 @@ public abstract class MfiMessage
     protected int length;
 
     /**
-     * @after {@link #length} が設定される 
+     * @after {@link #length} が設定される
      */
     protected MfiMessage(byte[] data) {
         this.data = data;

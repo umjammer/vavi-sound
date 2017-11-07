@@ -72,7 +72,7 @@ public class ChannelConfigurationMessage extends ShortMessage
 
     /**
      * コンテキストのチャンネルコンフィグレーションを設定します。
-     * @return 何も返しません 
+     * @return 何も返しません
      */
     public MidiEvent[] getMidiEvents(MidiContext context) {
 Debug.println(this);

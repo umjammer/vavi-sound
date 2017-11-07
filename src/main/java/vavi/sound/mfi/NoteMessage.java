@@ -11,7 +11,7 @@ import vavi.util.StringUtil;
 
 /**
  * 音符を表すメッセージです．
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano MFi2 compliant <br>
  *          0.11 020630 nsano refine <br>

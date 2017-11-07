@@ -102,7 +102,7 @@ class Oki implements Codec {
      * MSM6258 が期待する PCM は 12bit 符号付 PCM (slinear12 にあたる) である。
      * 従ってこの関数では同時に振幅変換(16bit -> 12bit) も行なっている。
      * </p>
-     * 
+     *
      * @param a 16bit signed linear pcm
      * @return 4bit oki adpcm
      */
@@ -112,7 +112,7 @@ class Oki implements Codec {
         int estim = this.mc_estim;
         int b;
         int s;
-        
+
         // df は、実 PCM 値 a と前回の予測 PCM 値との差分である
         int df = a - this.mc_amp;
         // dl は、差分比予測値テーブル adpcm_estim[] から、予測された
@@ -180,14 +180,14 @@ class Oki implements Codec {
         } else if (estim > 48) {
             estim = 48;
         }
-        
+
         this.mc_estim = estim;
         return s;
     }
 
     /**
      * 16 の 1 サンプルを Oki ADPCM 1 サンプルに変換します。
-     * 
+     *
      * @param pcm pcm
      * @return 4bit oki adpcm
      */
@@ -211,7 +211,7 @@ class Oki implements Codec {
      * MSM6258 が出力する PCM は 12bit 符号付 PCM (slinear12 にあたる) である。
      * 従ってこの関数では同時に振幅変換(12bit -> 16bit) も行なっている。
      * </p>
-     * 
+     *
      * @param b 4bit adpcm
      * @return 16bit linear pcm
      */

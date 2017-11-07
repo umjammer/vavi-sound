@@ -17,7 +17,7 @@ import vavi.util.Debug;
 
 
 /**
- * SimpleResamplingInputFilter. 
+ * SimpleResamplingInputFilter.
  *
  * @require tritonus_remaining-XXX.jar
  *

@@ -17,7 +17,7 @@ import vavi.sound.adpcm.ccitt.G721InputStream;
 
 /**
  * Converts an Ccitt bitstream into a PCM 16bits/sample audio stream.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 050722 nsano initial version <br>
  */
@@ -25,7 +25,7 @@ class Ccitt2PcmAudioInputStream extends AudioInputStream {
 
     /**
      * Constructor.
-     * 
+     *
      * @param in the underlying input stream.
      * @param format the target format of this stream's audio data.
      * @param length the length in sample frames of the data in this stream.

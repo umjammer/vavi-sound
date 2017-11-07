@@ -62,7 +62,7 @@ Debug.println("track: " + trackNumber + ": " + getDataLength());
         return "ATR\0"; // TODO
     }
 
-    /** 
+    /**
      * 書き出し用
      * {@link Track}[0] の不必要なデータは省かれます。
      */

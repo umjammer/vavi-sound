@@ -40,7 +40,7 @@ public class MetaMessage extends MfiMessage {
 
     /**
      * <p>
-     * {@link javax.sound.midi.MetaMessage} compatible. 
+     * {@link javax.sound.midi.MetaMessage} compatible.
      * </p>
      */
     public void setMessage(int type, byte[] data, int length)
@@ -62,7 +62,7 @@ public class MetaMessage extends MfiMessage {
     /**
      * Meta 番号
      * <p>
-     * {@link javax.sound.midi.MetaMessage} compatible. 
+     * {@link javax.sound.midi.MetaMessage} compatible.
      * </p>
      */
     public int getType() {

@@ -18,7 +18,7 @@ import vavi.sound.adpcm.Codec;
 
 /**
  * VOX OutputStream
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 051110 nsano initial version <br>
  */
@@ -33,14 +33,14 @@ public class VoxOutputStream extends AdpcmOutputStream {
      * {@link vavi.io.BitInputStream} は 4bit big endian 固定
      * TODO check endian
      * @param out ADPCM
-     * @param byteOrder #write(int) のバイトオーダ 
+     * @param byteOrder #write(int) のバイトオーダ
      */
     public VoxOutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.BIG_ENDIAN);
     }
 
     /**
-     * @param b 
+     * @param b
      */
     public void write(int b) throws IOException {
         if (!flushed) {

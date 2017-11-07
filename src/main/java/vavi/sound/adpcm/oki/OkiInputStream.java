@@ -16,7 +16,7 @@ import vavi.util.Debug;
 
 /**
  * OKI InputStream.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030817 nsano initial version <br>
  */

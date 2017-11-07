@@ -12,11 +12,11 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 /**
  * 拡張ステータス A メッセージ長 MFi Header Sub Chunk.
- * 
+ *
  * <pre>
  *  &quot;exst&quot; 2 bytes: extended status data length
  * </pre>
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */

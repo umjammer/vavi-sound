@@ -14,14 +14,14 @@ import vavi.util.StringUtil;
 
 /**
  * Undefined function processor.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
 public class UndefinedFunction implements MachineDependentFunction {
 
     /**
-     * 
+     *
      * @param message see below
      * <pre>
      * 0    delta

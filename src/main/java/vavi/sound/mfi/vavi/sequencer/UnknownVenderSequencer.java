@@ -12,7 +12,7 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 /**
  * Unknown Vender System exclusive message sequencer.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 051114 nsano initial version <br>
  */

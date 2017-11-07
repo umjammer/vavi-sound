@@ -45,7 +45,7 @@ import vavi.util.Debug;
 
 /**
  * SmafWithVoiceMaker.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 080415 nsano initial version <br>
  */
@@ -73,11 +73,11 @@ class SmafWithVoiceMaker {
 
     /** */
     private static int toReal(int base, int percent) {
-        return (int) ((float) base * percent / 100); 
+        return (int) ((float) base * percent / 100);
     }
-    
+
     /**
-     * 
+     *
      * @param sourceAis source PCM
      * @param filename output file
      */
@@ -90,7 +90,7 @@ class SmafWithVoiceMaker {
     }
 
     /**
-     * 
+     *
      * @param time time in second
      * @param bits ADPCM sampling bits
      */
@@ -143,7 +143,7 @@ t = System.currentTimeMillis();
      */
     protected int createSMAF(byte[] data, File file) throws InvalidSmafDataException, IOException {
 
-        ContentsInfoChunk contentsInfoChunk = new ContentsInfoChunk(); 
+        ContentsInfoChunk contentsInfoChunk = new ContentsInfoChunk();
         contentsInfoChunk.setContentsClass(ContentsInfoChunk.CONTENT_CLASS_YAMAHA);
         contentsInfoChunk.setContentsType(1);
         contentsInfoChunk.setContentsCodeType(0);
@@ -158,7 +158,7 @@ t = System.currentTimeMillis();
         contentsInfoChunk.addSubData("CR", cr);
 
         int timeBase = 4; // [ms]
-        
+
 Debug.println("time: " + time + ", " + data.length);
         int numberOfChunks = (int) ((time * 1000) / (NopMessage.maxSteps * timeBase));
 Debug.println("numberOfChunks: " + numberOfChunks);
@@ -294,7 +294,7 @@ Debug.println("write: " + r);
 
     /**
      * Creates .mmf w/ voice file.
-     * 
+     *
      * @param args input wave file
      *             -f output mmf filename
      *             -r adpcm sampling rate [Hz]

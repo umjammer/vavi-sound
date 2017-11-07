@@ -21,11 +21,11 @@ import javax.sound.sampled.SourceDataLine;
 
 /**
  * Play PCM.
- * 
+ *
  * <pre>
  * 4bit PCM NG
  * </pre>
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030714 nsano initial version <br>
  */
@@ -50,7 +50,7 @@ public class t150_4 {
     }
 
     /**
-     * 
+     *
      */
     void play(File file, int sampleRate, ByteOrder byteOrder) throws Exception {
         AudioFormat format = new AudioFormat(
@@ -89,7 +89,7 @@ gainControl.setValue(dB);
         line.drain();
         line.stop();
         line.close();
-        
+
         is.close();
     }
 }

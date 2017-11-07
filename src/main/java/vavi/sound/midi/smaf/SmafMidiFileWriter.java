@@ -22,9 +22,9 @@ import vavi.util.Debug;
 
 /**
  * SmafMidiFileWriter.
- * 
+ *
  * @caution MidiSystem は使っちゃだめ！
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
  */

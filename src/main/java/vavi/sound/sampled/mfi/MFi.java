@@ -12,7 +12,7 @@ import javax.sound.sampled.AudioFileFormat.Type;
 
 
 /**
- * MFi. 
+ * MFi.
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 060125 nsano initial version <br>

@@ -11,7 +11,7 @@
  * supporting documentation, and that the names of Stichting Mathematisch
  * Centrum or CWI not be used in advertising or publicity pertaining to
  * distribution of the software without specific, written prior permission.
- * 
+ *
  * STICHTING MATHEMATISCH CENTRUM DISCLAIMS ALL WARRANTIES WITH REGARD TO
  * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS, IN NO EVENT SHALL STICHTING MATHEMATISCH CENTRUM BE LIABLE
@@ -94,7 +94,7 @@ class Dvi implements Codec {
      */
     public int encode(int input) {
 
-        // 
+        //
         int valPrev = state.valPrev;
         // Current step change index
         int index = state.index;
@@ -124,7 +124,7 @@ class Dvi implements Codec {
         int delta = 0;
         // Current change to valpred
         int vpDiff = (step >> 3);
-        
+
         if (diff >= step) {
             delta = 4;
             diff -= step;
@@ -176,7 +176,7 @@ class Dvi implements Codec {
      */
     public int decode(int input) {
 
-        // 
+        //
         int valPrev = state.valPrev;
 //System.err.printf("%d\n", valPrev);
         // Current step change index

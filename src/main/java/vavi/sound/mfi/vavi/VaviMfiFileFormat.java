@@ -243,7 +243,7 @@ Debug.println("audioDataLength: " + audioDataLength);
      * {@link Sequence} が作成されるので {@link #getSequence()} で取り出して使用します。
      * @param is
      * @return {@link VaviMfiFileFormat} オブジェクト
-     * @throws InvalidMfiDataException 最初の 4 bytes が {@link HeaderChunk#TYPE} で無い場合 
+     * @throws InvalidMfiDataException 最初の 4 bytes が {@link HeaderChunk#TYPE} で無い場合
      */
     public static VaviMfiFileFormat readFrom(InputStream is)
         throws InvalidMfiDataException,
@@ -280,7 +280,7 @@ Debug.println("adat length sum: " + l + " / " + dataLength);
         // 3. track
         for (int trackNumber = 0; trackNumber < tracksCount; trackNumber++) {
 Debug.println("track number: " + trackNumber);
-            
+
             Track track = mff.sequence.createTrack();
 
             if (trackNumber == 0) {
@@ -382,7 +382,7 @@ Debug.println("no note info, use 0");
 
     /**
      * @return 0: not protected, 1: protected
-     * @throws NoSuchElementException 
+     * @throws NoSuchElementException
      * @see SorcMessage
      */
     public int getSorc() {
@@ -411,7 +411,7 @@ Debug.println("no note info, use 0");
     }
 
     /**
-     * @throws NoSuchElementException 
+     * @throws NoSuchElementException
      * @see TitlMessage
      */
     public String getTitle() {
@@ -438,7 +438,7 @@ Debug.println("no note info, use 0");
     }
 
     /**
-     * @throws NoSuchElementException 
+     * @throws NoSuchElementException
      * @see VersMessage
      */
     public String getVersion() {

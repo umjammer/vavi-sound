@@ -54,10 +54,10 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     }
 
     /** required */
-    private Chunk displayParameterDefinitionChunk; 
+    private Chunk displayParameterDefinitionChunk;
 
     /** option */
-    private Chunk colorPaletteDefinitionChunk; 
+    private Chunk colorPaletteDefinitionChunk;
 
     /** */
     public void writeTo(OutputStream os) throws IOException {

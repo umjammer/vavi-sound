@@ -33,7 +33,7 @@ import static org.junit.Assert.assertEquals;
 
 
 /**
- * MaInputStreamTest. 
+ * MaInputStreamTest.
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 060130 nsano initial version <br>
@@ -105,7 +105,7 @@ os.write(buf, 0, r);
         line.close();
 os.close();
         is.close();
-        
+
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }

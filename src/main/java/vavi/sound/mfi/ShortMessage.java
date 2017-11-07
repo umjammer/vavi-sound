@@ -11,7 +11,7 @@ package vavi.sound.mfi;
  * ShortMessage を表すクラスです。
  * <p>
  * MFi 仕様の"拡張ステータス B"を表します。
- * </p> 
+ * </p>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano refine <br>
  *          0.11 030920 nsano add {@link #getCommand()} <br>
@@ -32,7 +32,7 @@ public abstract class ShortMessage extends MfiMessage {
     public static final int SOUND_CONTROL = 0xe0;
 
     /**
-     * 
+     *
      * @param delta
      * @param status
      * @param data1 拡張ステータス番号

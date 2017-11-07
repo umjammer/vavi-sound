@@ -15,7 +15,7 @@ import vavi.sound.adpcm.Codec;
 
 /**
  * YAMAHA MA# InputStream
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 050402 nsano initial version <br>
  */

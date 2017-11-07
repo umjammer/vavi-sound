@@ -20,7 +20,7 @@ import vavi.util.Debug;
 /**
  * VN Message.
  * TODO MetaMessage じゃだめなの？
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 050412 nsano initial version <br>
  */

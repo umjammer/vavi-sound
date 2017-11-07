@@ -51,9 +51,9 @@ public class Function132 extends Function131 {
         this.channel   = (data[ 7] & 0xc0) >> 6;    // 0 ~ 3
         this.packetId  =  data[ 7] & 0x3f;          // packet id 0 ~ 15
         this.mode      = (data[ 8] & 0xc0) >> 6;    // 0 ~ 3
-        int format1    = (data[ 8] & 0x3c) >> 2;    // 
-        int format2    =  data[ 8] & 0x03;          // 
-        this.continued = (data[ 9] & 0x01) == 1;    // 
+        int format1    = (data[ 8] & 0x3c) >> 2;    //
+        int format2    =  data[ 8] & 0x03;          //
+        this.continued = (data[ 9] & 0x01) == 1;    //
         this.length    = (data[10] << 24) +
                          (data[11] << 16) +
                          (data[12] <<  8) +
@@ -105,7 +105,7 @@ Debug.println("sampling: " + StringUtil.toHex2(data[8] & 0x3f) + ": rate=" + sam
         tmp[3] = (byte) ((mode << 6) | format1 | format2);      // 8: sample rate
         tmp[4] = (byte) (continued ? 0x01 : 0x00);              // 9: continued
 
-        tmp[5] = (byte) ((length & 0xff000000) >> 24);          // 10-13: size 
+        tmp[5] = (byte) ((length & 0xff000000) >> 24);          // 10-13: size
         tmp[6] = (byte) ((length & 0x00ff0000) >> 16);
         tmp[7] = (byte) ((length & 0x0000ff00) >>  8);
         tmp[8] = (byte)  (length & 0x000000ff);

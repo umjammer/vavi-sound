@@ -33,7 +33,7 @@ import vavi.util.Debug;
 
 /**
  * mfi context for the converter.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030905 nsano initial version <br>
  *          0.01 030907 nsano add {@link MfiConvertible} handler <br>
@@ -121,7 +121,7 @@ Debug.println("type: " + type);
 
     /** is {@link #scale} changed ? */
     private boolean scaleChanged = false;
-    
+
     /**
      * @return Returns the scaleChanged.
      */
@@ -168,7 +168,7 @@ Debug.println("type: " + type);
 
     /** Math#round() で丸められた誤差 */
     private double[] roundedSum = new double[MAX_MFI_TRACKS];
-    
+
     /** Math#round() で丸められた誤差が整数値より大きくなった場合の補正 */
     private int getAdjustedDelta(int mfiTrackNumber, double doubleDelta) {
         int delta = (int) Math.round(doubleDelta);
@@ -180,12 +180,12 @@ Debug.println("type: " + type);
             roundedSum[mfiTrackNumber] -= 1;
         } else if (roundedSum[mfiTrackNumber] <= -1d) {
 //Debug.println("rounded under -1, minus 1: " + roundedSum[mfiTrackNumber] + "[" + mfiTrackNumber + "]");
-            delta -= 1; 
+            delta -= 1;
             roundedSum[mfiTrackNumber] += 1;
         }
         return delta;
     }
-    
+
     //----
 
     /**
@@ -210,7 +210,7 @@ Debug.println("type: " + type);
      * --+-
      * </pre>
      * 上記図だと 1 つの NopMessage が挿入される。
-     * 
+     *
      * @return null current event is MetaMessage or SysexMessage or delta not supported.
      */
     public MfiEvent[] getIntervalMfiEvents(int mfiTrackNumber) {
@@ -272,7 +272,7 @@ if (interval < 0) {
         MidiMessage midiMessage = midiEvent.getMessage();
         if (midiMessage instanceof ShortMessage) {
             // note
-            delta = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick()); 
+            delta = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
             // tempo
             delta = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick()); // TODO 0 でいいのか？
@@ -320,7 +320,7 @@ if (delta > 255) {
 
     /** MIDI イベントの単一シーケンス */
     private List<MidiEvent> midiEvents = new ArrayList<>();
-    
+
     /** MIDI イベントの単一シーケンスを設定します。 */
     public void setMidiSequence(Sequence midiSequence) {
 
@@ -376,7 +376,7 @@ Debug.println("(SCALE) final scale: " + scale + ", " + scaleChanged);
                 }
                 /** */
                 int getChannel(MidiEvent e) {
-                    MidiMessage m = e.getMessage(); 
+                    MidiMessage m = e.getMessage();
                     if (m instanceof ShortMessage) {
                         return ((ShortMessage) m).getChannel();
                     } else {
@@ -384,7 +384,7 @@ Debug.println("(SCALE) final scale: " + scale + ", " + scaleChanged);
                     }
                 }
             });
-            
+
         this.noteOffEventUsed = new BitSet(midiEvents.size());
     }
 

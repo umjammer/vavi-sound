@@ -50,7 +50,7 @@ public class SmafFileFormat {
     }
 
     //----
-    
+
     /** SMAF Sequence */
     private Sequence sequence;
 

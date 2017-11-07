@@ -11,7 +11,7 @@ import vavi.sound.mfi.MfiDevice;
 
 /**
  * MfiDeviceProvider.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 020629 nsano initial version <br>
  */

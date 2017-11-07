@@ -28,7 +28,7 @@ import vavi.util.Debug;
  * PcmAudioTrack Chunk.
  * <pre>
  * "ATR*"
- * 
+ *
  *      "Atsq" > 1
  * </pre>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)

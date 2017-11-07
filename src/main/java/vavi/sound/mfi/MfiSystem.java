@@ -31,7 +31,7 @@ import vavi.util.Debug;
 
 /**
  * MfiSystem.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>
  *          0.01 021222 nsano use META-INF/services files <br>
@@ -228,7 +228,7 @@ Debug.println(e);
         for (int i = 0; i < result.length; i++) {
             result[i] = types.get(i);
         }
-        
+
         return result;
     }
 
@@ -246,7 +246,7 @@ Debug.println(e);
         for (int i = 0; i < result.length; i++) {
             result[i] = types.get(i);
         }
-        
+
         return result;
     }
 

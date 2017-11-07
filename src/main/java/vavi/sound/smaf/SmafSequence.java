@@ -17,7 +17,7 @@ import vavi.util.Debug;
 
 
 /**
- * SmafSequence. 
+ * SmafSequence.
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 071012 nsano initial version <br>

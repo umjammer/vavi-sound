@@ -27,7 +27,7 @@ import vavi.util.SplitRadixFft;
 
 
 /**
- * Shibatch Sampling Rate Converter. 
+ * Shibatch Sampling Rate Converter.
  *
  * @author <a href="mailto:shibatch@users.sourceforge.net">Naoki Shibata</a>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
@@ -82,44 +82,44 @@ class SSRC {
     /** */
     private static final double[][] shapercoefs = {
         { -1 }, // triangular dither
-        
+
         {   -2.8720729351043701172,   5.0413231849670410156,  -6.2442994117736816406,   5.8483986854553222656,
             -3.7067542076110839844,   1.0495119094848632812,   1.1830236911773681641,  -2.1126792430877685547,
             1.9094531536102294922,  -0.99913084506988525391,  0.17090806365013122559,  0.32615602016448974609,
             -0.39127644896507263184,  0.26876461505889892578, -0.097676105797290802002, 0.023473845794796943665,
         }, // 48k, N=16, amp=18
-        
+
         {   -2.6773197650909423828,   4.8308925628662109375,  -6.570110321044921875,    7.4572014808654785156,
             -6.7263274192810058594,   4.8481650352478027344,  -2.0412089824676513672,  -0.7006359100341796875,
             2.9537565708160400391,  -4.0800385475158691406,   4.1845216751098632812,  -3.3311812877655029297,
             2.1179926395416259766,  -0.879302978515625,       0.031759146600961685181, 0.42382788658142089844,
             -0.47882103919982910156,  0.35490813851356506348, -0.17496839165687561035,  0.060908168554306030273,
         }, // 44.1k, N=20, amp=27
-        
+
         {   -1.6335992813110351562,   2.2615492343902587891,  -2.4077029228210449219,   2.6341717243194580078,
             -2.1440362930297851562,   1.8153258562088012695,  -1.0816224813461303711,   0.70302653312683105469,
             -0.15991993248462677002, -0.041549518704414367676, 0.29416576027870178223, -0.2518316805362701416,
             0.27766478061676025391, -0.15785403549671173096,  0.10165894031524658203, -0.016833892092108726501,
         }, // 37.8k, N=16
-        
+
         {   -0.82901298999786376953,  0.98922657966613769531, -0.59825712442398071289,  1.0028809309005737305,
             -0.59938216209411621094,  0.79502451419830322266, -0.42723315954208374023,  0.54492527246475219727,
             -0.30792605876922607422,  0.36871799826622009277, -0.18792048096656799316,  0.2261127084493637085,
             -0.10573341697454452515,  0.11435490846633911133, -0.038800679147243499756, 0.040842197835445404053,
         }, // 32k, N=16
-        
+
         {   -0.065229974687099456787, 0.54981261491775512695,  0.40278548002243041992,  0.31783768534660339355,
             0.28201797604560852051,  0.16985194385051727295,  0.15433363616466522217,  0.12507140636444091797,
             0.08903945237398147583,  0.064410120248794555664, 0.047146003693342208862, 0.032805237919092178345,
             0.028495194390416145325, 0.011695005930960178375, 0.011831838637590408325,
         }, // 22.05k, N=15
-        
+
         {   -2.3925774097442626953,   3.4350297451019287109,  -3.1853709220886230469,   1.8117271661758422852,
             0.20124770700931549072, -1.4759907722473144531,   1.7210904359817504883,  -0.97746700048446655273,
             0.13790138065814971924,  0.38185903429985046387, -0.27421241998672485352, -0.066584214568138122559,
             0.35223302245140075684, -0.37672343850135803223,  0.23964276909828186035, -0.068674825131893157959,
         }, // 48k, N=16, amp=10
-        
+
         {   -2.0833916664123535156,   3.0418450832366943359,  -3.2047898769378662109,   2.7571926116943359375,
             -1.4978630542755126953,   0.3427594602108001709,   0.71733748912811279297, -1.0737057924270629883,
             1.0225815773010253906,  -0.56649994850158691406,  0.20968692004680633545,  0.065378531813621520996,
@@ -425,7 +425,7 @@ class SSRC {
     /** */
     private int gcd(int x, int y) {
         int t;
-    
+
         while (y != 0) {
             t = x % y;
             x = y;
@@ -453,7 +453,7 @@ class SSRC {
     }
 
     /**
-     * 
+     *
      * @param fpi
      * @param fpo
      * @param nch
@@ -466,7 +466,7 @@ class SSRC {
      * @param twopass
      * @param dither
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     double upsample(InputStream fpi, OutputStream fpo, int nch, int bps, int dbps, int sfrq, int dfrq, double gain, int chanklen, boolean twopass, int dither) throws IOException {
         int frqgcd, osf = 0, fs1, fs2;
@@ -557,7 +557,7 @@ class SSRC {
                 stage1[(i + n1 / 2) % n1y][(i + n1 / 2) / n1y] = win(i, n1, alp, iza) * hn_lpf(i, lpf, fs1) * fs1 / sfrq;
             }
         }
-        
+
         // Make stage 2 filter
 
         {
@@ -609,7 +609,7 @@ class SSRC {
 
             fft.rdft(n2b, 1, stage2, fft_ip, fft_w);
         }
-        
+
         // Apply filters
 
         setstarttime();
@@ -755,7 +755,7 @@ class SSRC {
                                 stage1[s1o][4] * inbuf[ip + 4 * nch] +
                                 stage1[s1o][5] * inbuf[ip + 5 * nch] +
                                 stage1[s1o][6] * inbuf[ip + 6 * nch];
-            
+
                             ip += f1inc[s1p];
 
                             s1p++;
@@ -779,7 +779,7 @@ class SSRC {
                                   stage1[s1o][6] * inbuf[ip + 6 * nch] +
                                   stage1[s1o][7] * inbuf[ip + 7 * nch] +
                                   stage1[s1o][8] * inbuf[ip + 8 * nch];
-            
+
                             ip += f1inc[s1p];
 
                             s1p++;
@@ -1247,7 +1247,7 @@ class SSRC {
 
             rawinbuf = new byte[(nch * (n1b2 / osf + osf + 1)) * bps];
 //System.err.println((double) n1b2 * sfrq / dfrq + 1);
-            rawoutbuf = new byte[(int) (((double) n1b2 * sfrq / dfrq + 1) * (dbps * nch))]; 
+            rawoutbuf = new byte[(int) (((double) n1b2 * sfrq / dfrq + 1) * (dbps * nch))];
             inbuf = new double[nch * (n1b2 / osf + osf + 1)];
             outbuf = new double[(int) (nch * ((double) n1b2 * sfrq / dfrq + 1))];
 
@@ -1650,14 +1650,14 @@ System.err.println("no_src");
                 break;
             case 3:
                 fpi.read(buf, 0, 3);
-                f = (1 / (double) 0x7fffff) * 
+                f = (1 / (double) 0x7fffff) *
                       (((buf[0] & 0xff) <<  0) |
                        ((buf[1] & 0xff) <<  8) |
                        ((buf[2] & 0xff) << 16));
                 break;
             case 4:
                 fpi.read(buf, 0, 4);
-                f = (1 / (double) 0x7fffffff) * 
+                f = (1 / (double) 0x7fffffff) *
                       (((buf[0] & 0xff) <<  0) |
                        ((buf[1] & 0xff) <<  8) |
                        ((buf[2] & 0xff) << 16) |
@@ -1723,7 +1723,7 @@ System.err.println("no_src");
     public static void main(String[] args) throws Exception {
         new SSRC(args);
     }
-    
+
     /** */
     private static final double presets[] = {
         0.7, 0.9, 0.18
@@ -2068,7 +2068,7 @@ System.err.println("no_src");
             leos.writeBytes("data");
             dword = 0;
             leos.writeInt(dword);
-            
+
             leos.close();
         }
 
@@ -2102,7 +2102,7 @@ System.err.println("no_src");
             if (!quiet) {
                 System.err.printf("Pass 1\n");
             }
-            
+
             try {
                 if (tmpfn != null) {
                     ft = new File(tmpfn);
@@ -2132,7 +2132,7 @@ System.err.println("no_src");
                     peak[0] = no_src(fpi, fpto, nch, bps, 8, Math.pow(10, -att / 20), length / bps / nch, twopass, dither);
                 }
             }
-            
+
             fpto.close();
 
             if (!quiet) {
@@ -2282,7 +2282,7 @@ System.err.println("no_src");
 
             fpo.flush();
             fpo.close();
-            
+
             fo = new File(dfn);
 
             len =  (int) fo.length();
@@ -2296,7 +2296,7 @@ System.err.println("no_src");
             fpor.seek(40);
             dword = len - 44;
             leos.writeInt(dword);
-            
+
             leos.close();
         }
 

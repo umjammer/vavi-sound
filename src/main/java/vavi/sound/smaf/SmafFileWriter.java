@@ -18,7 +18,7 @@ import vavi.util.Debug;
 
 /**
  * SmafFileWriter.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 071012 nsano initial version <br>
  */
@@ -34,7 +34,7 @@ class SmafFileWriter {
 
     /** */
     public int[] getSmafFileTypes(Sequence sequence) {
-        // sequence を無視しているけど SMAF Sequence 一つしか型ないからいい 
+        // sequence を無視しているけど SMAF Sequence 一つしか型ないからいい
         return types;
     }
 
@@ -50,7 +50,7 @@ class SmafFileWriter {
 
     /** */
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
-        // sequence を無視しているけど SMAF Sequence 一つしか型ないからいい 
+        // sequence を無視しているけど SMAF Sequence 一つしか型ないからいい
         return isFileTypeSupported(fileType);
     }
 

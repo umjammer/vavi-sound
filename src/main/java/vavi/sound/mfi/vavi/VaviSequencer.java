@@ -34,7 +34,7 @@ import vavi.util.Debug;
  * </p>
  * <p>
  * {@link javax.sound.midi.MidiSystem} を
- * 使用しているため javax.sound.midi SPI のプログラム内で使用してはいけません。 
+ * 使用しているため javax.sound.midi SPI のプログラム内で使用してはいけません。
  * </p>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano midi compliant <br>
@@ -81,7 +81,7 @@ Debug.println("★0 close: " + midiSequencer.hashCode());
 
     /*
      * {@link javax.sound.midi.MidiSystem} を
-     * 使用しているため javax.sound.midi SPI のプログラム内で使用してはいけません。 
+     * 使用しているため javax.sound.midi SPI のプログラム内で使用してはいけません。
      */
     public void open() throws MfiUnavailableException {
         try {

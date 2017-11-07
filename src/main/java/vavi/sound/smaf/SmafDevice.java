@@ -9,7 +9,7 @@ package vavi.sound.smaf;
 
 /**
  * SmafDevice.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
  */

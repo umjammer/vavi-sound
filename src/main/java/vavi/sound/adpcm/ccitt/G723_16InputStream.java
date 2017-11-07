@@ -16,7 +16,7 @@ import vavi.sound.adpcm.Codec;
 
 /**
  * G723_16 InputStream.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030828 nsano initial version <br>
  */

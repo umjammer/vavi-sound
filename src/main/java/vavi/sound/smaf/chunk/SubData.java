@@ -20,12 +20,12 @@ import vavi.util.StringUtil;
  * <pre>
  * tag ':' data ','
  * </pre>
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 080417 nsano initial version <br>
  */
 class SubData {
-    
+
     /** */
     private int contentsCodeType;
 

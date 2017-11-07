@@ -15,15 +15,15 @@ import vavi.sound.smaf.SmafSystem;
 
 
 /**
- * test samf. 
+ * test samf.
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 090913 nsano initial version <br>
  */
 public class Test2 {
-    
+
     /**
-     * 
+     *
      * @param args
      */
     public static void main(String[] args) throws Exception {

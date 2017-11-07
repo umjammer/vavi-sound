@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * ChunkTest.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 050508 nsano initial version <br>
  */
@@ -93,7 +93,7 @@ public class ChunkTest {
      */
     @Test
     public void testReadOneToFour() throws Exception {
-        HackedChunk chunk = new HackedChunk(); 
+        HackedChunk chunk = new HackedChunk();
         assertEquals(0x00000000, chunk.readOneToFour(new ByteArrayInputStream(new byte[] { 0x00 })));
         assertEquals(0x00000040, chunk.readOneToFour(new ByteArrayInputStream(new byte[] { 0x40 })));
         assertEquals(0x0000007F, chunk.readOneToFour(new ByteArrayInputStream(new byte[] { 0x7F })));
@@ -124,7 +124,7 @@ public class ChunkTest {
      */
     @Test
     public void testReadOneToTwo() throws Exception {
-        HackedChunk chunk = new HackedChunk(); 
+        HackedChunk chunk = new HackedChunk();
         assertEquals(0x00000000, chunk.readOneToTwo(new ByteArrayInputStream(new byte[] { 0x00 })));
         assertEquals(0x00000040, chunk.readOneToTwo(new ByteArrayInputStream(new byte[] { 0x40 })));
         assertEquals(0x0000007F, chunk.readOneToTwo(new ByteArrayInputStream(new byte[] { 0x7F })));

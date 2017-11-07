@@ -15,7 +15,7 @@ import vavi.util.StringUtil;
 
 /**
  * Mitsubishi System exclusive message function 0x81 processor.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
@@ -40,7 +40,7 @@ public class Function129 implements MachineDependentFunction {
         byte[] data = message.getMessage();
 
         this.channel = (data[7] & 0xc0) >> 6;   // 0 ~ 3
-        this.volume  =  data[7] & 0x3f;         // 
+        this.volume  =  data[7] & 0x3f;         //
 Debug.println("ADPCM volume: " + channel + "ch " + StringUtil.toHex2(volume));
     }
 

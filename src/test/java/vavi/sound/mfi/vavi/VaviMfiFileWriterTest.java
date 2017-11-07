@@ -28,7 +28,7 @@ import vavi.util.win32.WAVE;
 
 
 /**
- * VaviMfiFileWriterTest. 
+ * VaviMfiFileWriterTest.
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 2007/01/25 nsano initial version <br>
@@ -116,7 +116,7 @@ Debug.println("write: " + r);
         for (MfiEvent event : MitsubishiMessage.getAdpcmEvents(pcm, delta, sampleRate, 4, 1)) {
             track.add(event);
         }
-    }    
+    }
 
     /**
      * 同じ channel で次の {@link ShortMessage#NOTE_OFF}, {@link ShortMessage#CONTROL_CHANGE}

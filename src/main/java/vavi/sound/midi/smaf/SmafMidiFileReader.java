@@ -22,7 +22,7 @@ import vavi.util.Debug;
 
 /**
  * SmafMidiFileReader implemented by vavi.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
  */

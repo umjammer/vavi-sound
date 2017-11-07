@@ -12,7 +12,7 @@ import javax.sound.sampled.AudioFileFormat.Type;
 
 
 /**
- * SMAF. 
+ * SMAF.
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 080415 nsano initial version <br>

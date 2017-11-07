@@ -14,7 +14,7 @@ import javax.swing.event.EventListenerList;
 /**
  * MetaEvent 機構のユーティリティクラスです．
  * <li>javax.sound.midi パッケージにはない。(SAMF オリジナル)
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
  */

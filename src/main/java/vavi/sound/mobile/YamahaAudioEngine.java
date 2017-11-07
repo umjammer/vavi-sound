@@ -18,7 +18,7 @@ import vavi.util.Debug;
 
 /**
  * YAMAHA AudioEngine.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 020829 nsano initial version <br>
  */
@@ -28,7 +28,7 @@ public class YamahaAudioEngine extends BasicAudioEngine {
      * <pre>
      *  L0 + L2 + ...
      *  R1 + R3 + ...
-     * </pre>   
+     * </pre>
      */
     public YamahaAudioEngine() {
         data = new Data[32];
@@ -46,19 +46,19 @@ public class YamahaAudioEngine extends BasicAudioEngine {
 Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
                     return -1;
                 }
-        
+
                 if (streamNumber % 2 == 0 && data[streamNumber].channels != 2 && (data[streamNumber + 1] != null && data[streamNumber + 1].channels != 2)) {
                     channels = 2;
                 }
             }
         } else {
             // from 240_2, channels always 1
-            
+
             if (streamNumber % 2 == 1 && data[streamNumber].channel % 2 == 1 && (data[streamNumber - 1] != null && data[streamNumber - 1].channel % 2 == 0)) {
 Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
                 return -1;
             }
-    
+
             if (streamNumber % 2 == 0 && data[streamNumber].channel % 2 == 0 && (data[streamNumber + 1] != null && data[streamNumber + 1].channel % 2 == 1)) {
                 channels = 2;
             }

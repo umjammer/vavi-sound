@@ -16,7 +16,7 @@ import vavi.sound.mfi.MetaMessage;
 
 /**
  * MetaEvent 機構のユーティリティクラスです．
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 010820 nsano initial version <br>
  */

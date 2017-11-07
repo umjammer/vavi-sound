@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 
 
 /**
- * SSRCTest. 
+ * SSRCTest.
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 060127 nsano initial version <br>
@@ -183,7 +183,7 @@ System.err.println("2:\n" + StringUtil.getDump(buf));
 System.err.printf("3: %f\n", d);
         assertEquals(0.123456789, d, 0);
     }
-    
+
     /**
      * @param buffer
      * @param offset

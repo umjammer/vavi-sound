@@ -16,7 +16,7 @@ import vavi.sound.mobile.FuetrekAudioEngine;
 
 /**
  * Sharp System exclusive message sequencer.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 051111 nsano initial version <br>
  */

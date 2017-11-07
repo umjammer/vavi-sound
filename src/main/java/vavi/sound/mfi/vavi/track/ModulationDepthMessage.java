@@ -103,7 +103,7 @@ public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
         throws InvalidMidiDataException {
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
-        
+
         MidiEvent[] events = new MidiEvent[1];
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,

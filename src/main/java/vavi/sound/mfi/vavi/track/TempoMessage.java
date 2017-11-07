@@ -50,7 +50,7 @@ public class TempoMessage extends ShortMessage
         6, 12, 24, 48, 96, 192, 384, -1,
         15, 30, 60, 120, 240, 480, 960, -1
     };
-    
+
     /**
      * Creates a tempo message.
      * for {@link vavi.sound.mfi.vavi.TrackMessage}

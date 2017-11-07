@@ -11,7 +11,7 @@ import vavi.sound.smaf.SmafMessage;
 
 /**
  * UndefinedMessage.
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 080501 nsano initial version <br>
  */

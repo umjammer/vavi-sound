@@ -12,7 +12,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 /**
  * 3D 情報 MFi Header Sub Chunk.
  * <pre>
- *  &quot;thrd&quot;  bytes: 
+ *  &quot;thrd&quot;  bytes:
  * </pre>
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 070125 nsano initial version <br>

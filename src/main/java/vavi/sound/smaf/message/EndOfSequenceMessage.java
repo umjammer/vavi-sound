@@ -24,7 +24,7 @@ import vavi.util.Debug;
  *  data1       0x00
  *  data2       0x00
  * </pre>
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
  */

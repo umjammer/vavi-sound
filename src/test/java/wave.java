@@ -17,7 +17,7 @@ import vavi.util.win32.WAVE;
 
 /**
  * wave ファイルからデータだけを抜き出すプログラム．
- * 
+ *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 020708 nsano initial version <br>
  *          0.01 030711 nsano new version compliant <br>

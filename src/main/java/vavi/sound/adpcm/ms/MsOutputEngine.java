@@ -16,7 +16,7 @@ import vavi.io.OutputEngine;
 
 
 /**
- * MsOutputEngine. 
+ * MsOutputEngine.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2011/10/16 umjammer initial version <br>
@@ -87,7 +87,7 @@ class MsOutputEngine implements OutputEngine {
                 if (l < packet.length) {
                     samplesThisBlock = Ms.getSamplesIn(0, channels, l, 0);
                 }
-                
+
                 decoder.decodeBlock(channels,
                                     nCoefs,
                                     iCoefs,

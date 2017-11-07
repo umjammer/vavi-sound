@@ -17,7 +17,7 @@ import vavi.util.StringUtil;
 
 
 /**
- * FuetrekAudioMessage. 
+ * FuetrekAudioMessage.
  *
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 070427 nsano initial version <br>
@@ -31,7 +31,7 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
     protected static final int maxAdpcmVolume = 0x3f;
 
     /**
-     * 
+     *
      * @param masterVolume in %
      */
     public static MfiEvent getMasterVolumeEvent(int masterVolume) {
@@ -41,7 +41,7 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
     }
 
     /**
-     * 
+     *
      * @param start true: start, false: end
      */
     public static MfiEvent getCuePointEvent(boolean start) {
@@ -84,7 +84,7 @@ Debug.println("over limit");
                 break;
             }
         }
-        return message; 
+        return message;
     }
 
     /** */

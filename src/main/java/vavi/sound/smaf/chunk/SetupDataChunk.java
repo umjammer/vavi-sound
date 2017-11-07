@@ -65,13 +65,13 @@ Debug.println("messages: " + messages.size());
 
     /**
      * formatType 0
-     * 
+     *
      * <pre>
      *  ff
      *  f0
      *  ##   length
      *  ...  data
-     *   
+     *
      * </pre>
      */
     private void readHandyPhoneStandard(InputStream is) throws InvalidSmafDataException, IOException {

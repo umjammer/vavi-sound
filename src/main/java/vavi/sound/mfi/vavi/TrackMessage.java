@@ -171,7 +171,7 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
 
     /**
      * Reads a message from stream
-     * TODO MfiMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか... 
+     * TODO MfiMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか...
      */
     private MfiMessage getMessage(DataInputStream dis)
         throws IOException {
@@ -195,7 +195,7 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
      * @see "vavi.properties"
      * @param status 0x3f: Class A, 0x7f: Class B, 0xbf: Class C, 0xff: Normal
      * @param dis data1 ~
-     * TODO MfiMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか... 
+     * TODO MfiMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか...
      */
     private MfiMessage getClassOrNormalMessage(int delta,
                                                int status,
@@ -239,7 +239,7 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
          * 0xc0 ~ 0xfe
          * </pre>
          * @param dis data1 ~
-         * TODO NoteMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか... 
+         * TODO NoteMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか...
          */
         public static MfiMessage getMessage(int delta,
                                             int status,
@@ -281,7 +281,7 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
                 final String path = "vavi.properties";
                 props.load(TrackMessage.class.getResourceAsStream(path));
 
-                // 
+                //
                 String key = "mfi.track.note";
                 if (props.containsKey(key)) {
                     @SuppressWarnings("unchecked")
@@ -299,7 +299,7 @@ Debug.printStackTrace(e);
 
     /** sysex */
     private static class SysexMessageFactory {
-        
+
         /**
          * 拡張情報 0xf# ~ 0xf#
          * <pre>
@@ -307,7 +307,7 @@ Debug.printStackTrace(e);
          *  data ...
          * </pre>
          * @param dis data2 ~
-         * TODO SysexMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか... 
+         * TODO SysexMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか...
          */
         public static MfiMessage getMessage(int delta,
                                             int status,
@@ -349,7 +349,7 @@ Debug.println(Level.WARNING, "sysex unhandled: delta: " + StringUtil.toHex2(delt
                 final String path = "vavi.properties";
                 props.load(TrackMessage.class.getResourceAsStream(path));
 
-                // 
+                //
                 Iterator<?> i = props.keySet().iterator();
                 while (i.hasNext()) {
                     String key = (String) i.next();
@@ -370,7 +370,7 @@ Debug.printStackTrace(e);
 
     /** short */
     private static class ShortMessageFactory {
-        
+
         /**
          * 拡張ステータス B (0x80 ~ 0xef)
          * <pre>
@@ -378,7 +378,7 @@ Debug.printStackTrace(e);
          *  data 1 byte
          * </pre>
          * @param dis data2 ~
-         * TODO ShortMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか... 
+         * TODO ShortMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか...
          */
         public static MfiMessage getMessage(int delta,
                                             int status,
@@ -439,7 +439,7 @@ Debug.printStackTrace(e);
 
     /** long */
     private static class LongMessageFactory {
-        
+
         /**
          * 拡張ステータス A (0x00 ~ 0x7f)
          * <pre>
@@ -448,7 +448,7 @@ Debug.printStackTrace(e);
          * </pre>
          * @param dis data2 ~
          * @see #exst
-         * TODO LongMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか... 
+         * TODO LongMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか...
          */
         public static MfiMessage getMessage(int delta,
                                             int status,
@@ -488,7 +488,7 @@ Debug.println(Level.WARNING, "long unhandled: delta: " + StringUtil.toHex2(delta
                 final String path = "vavi.properties";
                 props.load(TrackMessage.class.getResourceAsStream(path));
 
-                // 
+                //
                 Iterator<?> i = props.keySet().iterator();
                 while (i.hasNext()) {
                     String key = (String) i.next();
@@ -537,18 +537,18 @@ Debug.printStackTrace(e);
 
         /** unknown 1 */
         private static Constructor<MfiMessage> unknownMessageConstructor1;
-    
+
         /** unknown 2 */
         private static Constructor<MfiMessage> unknownMessageConstructor2;
-    
+
         static {
             try {
                 // props
                 Properties props = new Properties();
-    
+
                 final String path = "vavi.properties";
                 props.load(TrackMessage.class.getResourceAsStream(path));
-    
+
                 // unknown
                 String key = "mfi.track.unknown";
                 if (props.containsKey(key)) {
