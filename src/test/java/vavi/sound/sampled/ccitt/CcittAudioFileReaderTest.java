@@ -38,8 +38,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class CcittAudioFileReaderTest {
 
-    String inFile = "out.4.adpcm";
-    String correctFile = "out.4.pcm";
+    String inFile = "/vavi/sound/adpcm/ccitt/out.4.adpcm";
+    String correctFile = "/vavi/sound/adpcm/ccitt/out.4.pcm";
     File outFile;
 
     @Before

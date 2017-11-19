@@ -47,7 +47,7 @@ public class VaviMfiFileWriterTest {
     @Test
     public void test1() throws Exception {
 
-        InputStream in = new BufferedInputStream(new FileInputStream("in.wav"));
+        InputStream in = new BufferedInputStream(new FileInputStream("/tmp/ooo.wav"));
         WAVE wave = (WAVE) WAVE.readFrom(in);
         in.close();
 

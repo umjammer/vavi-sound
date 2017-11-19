@@ -9,26 +9,28 @@ package vavi.sound.smaf;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 
 /**
- * SmafFileFormatTest. 
+ * SmafFileFormatTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
+@Ignore
 public class SmafFileFormatTest {
 
     @Test
     public void test() {
         fail("Not yet implemented");
     }
-    
+
     //----
-    
+
     /**
      * load only
      * @param args 0: input mmf

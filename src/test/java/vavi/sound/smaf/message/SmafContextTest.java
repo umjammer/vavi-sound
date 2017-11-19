@@ -12,12 +12,13 @@ import java.io.FileOutputStream;
 import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.MidiSystem;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import vavi.sound.smaf.SmafSystem;
 import vavi.util.Debug;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 
 /**
@@ -26,6 +27,7 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
+@Ignore
 public class SmafContextTest {
 
     @Test

@@ -29,19 +29,15 @@ import static org.junit.Assert.assertEquals;
  */
 public class InputEngineOutputStreamTest {
 
-    String inFile = "test.sql";
-    String out1File = "test.r13";
-    String out2File = "test2.sql";
+    String inFile = "/test.sql";
+    String out1File = "tmp/test.r13";
+    String out2File = "tmp/test2.sql";
 
     /** */
     @Test
     public void test1() throws Exception {
         //
-        File file = new File(inFile);
-        if (!file.exists()) {
-            throw new IllegalStateException(inFile);
-        }
-        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(new FileInputStream(inFile), new IOStreamOutputEngine.OutputStreamFactory() {
+        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(getClass().getResourceAsStream(inFile), new IOStreamOutputEngine.OutputStreamFactory() {
             public OutputStream getOutputStream(OutputStream out) throws IOException {
                 return new Rot13.OutputStream(out);
             }
@@ -79,7 +75,7 @@ public class InputEngineOutputStreamTest {
         os.close();
 
         //
-        assertEquals(Checksum.getChecksum(new File(inFile)), Checksum.getChecksum(new File(out2File)));
+        assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(inFile)), Checksum.getChecksum(new File(out2File)));
     }
 }
 
