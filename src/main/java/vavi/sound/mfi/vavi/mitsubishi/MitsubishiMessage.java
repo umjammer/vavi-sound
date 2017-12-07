@@ -23,7 +23,7 @@ import vavi.util.Debug;
  * <p>
  * TODO 機能ごとに FunctionXXX に移す
  * </p>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030711 nsano initial version <br>
  *          0.01 030712 nsano fix sampling rate value for 16kHz <br>
  *          0.02 030901 nsano complete <br>

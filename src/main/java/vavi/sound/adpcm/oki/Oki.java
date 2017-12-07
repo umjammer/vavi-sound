@@ -41,7 +41,7 @@ import vavi.sound.adpcm.Codec;
  * TODO 8 bit 対応
  * </p>
  * @author Tetsuya Isaki
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030816 nsano port to java <br>
  * @see "http://www.pastel-flower.jp/~isaki/NetBSD/src/?sys/dev/ic/msm6258.c"
  */
@@ -199,7 +199,7 @@ class Oki implements Codec {
         } else if (AudioFormat.Encoding.PCM_SIGNED.equals(encoding)) {
             return encodeInternal(pcm);
         } else if (AudioFormat.Encoding.PCM_UNSIGNED.equals(encoding)) {
-            return encodeInternal(pcm ^ 0x8000);    // TODO
+            return encodeInternal(pcm ^ 0x8000); // TODO
         } else {
             throw new IllegalArgumentException(encoding.toString());
         }
@@ -245,8 +245,8 @@ class Oki implements Codec {
 
     /**
      * Oki ADPCM 1 サンプルを pcm の 1 サンプルに変換します。
-     * @param    adpcm    4bit adpcm
-     * @return    pcm
+     * @param adpcm 4bit adpcm
+     * @return pcm
      */
     public int decode(int adpcm) {
         if (AudioFormat.Encoding.ALAW.equals(encoding)) {
@@ -256,7 +256,7 @@ class Oki implements Codec {
         } else if (AudioFormat.Encoding.PCM_SIGNED.equals(encoding)) {
             return decodeInternal(adpcm);
         } else if (AudioFormat.Encoding.PCM_UNSIGNED.equals(encoding)) {
-            return decodeInternal(adpcm) ^ 0x8000;    // TODO
+            return decodeInternal(adpcm) ^ 0x8000; // TODO
         } else {
             throw new IllegalArgumentException(encoding.toString());
         }

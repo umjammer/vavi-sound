@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * MaOutputStreamTest. 
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>
  */
 public class MaOutputStreamTest {

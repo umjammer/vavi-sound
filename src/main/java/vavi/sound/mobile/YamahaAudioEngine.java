@@ -19,7 +19,7 @@ import vavi.util.Debug;
 /**
  * YAMAHA AudioEngine.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020829 nsano initial version <br>
  */
 public class YamahaAudioEngine extends BasicAudioEngine {

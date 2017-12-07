@@ -18,7 +18,7 @@ import vavi.util.Debug;
 /**
  * MIDI Context for the converter.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030821 nsano initial version <br>
  *          0.01 020826 nsano add pitch bend related <br>
  *          0.02 031214 nsano add resolution related <br>

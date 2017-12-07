@@ -46,7 +46,7 @@ import vavi.util.StringUtil;
  * <li>TODO {@link MetaMessage} である必要があるのか？ (MIDI っぽくはなってるが)
  * <li>↑ {@link vavi.sound.mfi.Track}[0] の最初に入れるのは {@link MetaMessage} とまとめられる
  * <li>↑ そうすると {@link vavi.sound.mfi.vavi.AudioDataMessage} は {@link MetaMessage} のサブクラスであるべき
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030819 nsano out source from {@link VaviMfiFileFormat} <br>
  *          0.10 030825 nsano merge {@link SubMessage} <br>
  *          0.11 030920 nsano extends {@link MetaMessage} <br>

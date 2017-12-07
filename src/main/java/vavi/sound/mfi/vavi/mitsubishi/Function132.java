@@ -16,7 +16,7 @@ import vavi.util.StringUtil;
  * Mitsubishi System exclusive message function 0x84 processor.
  * (Wave Packet Data3)
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030828 nsano initial version <br>
  *          0.01 030929 nsano be sub class of Function131
  */

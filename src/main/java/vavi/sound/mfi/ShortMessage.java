@@ -12,7 +12,7 @@ package vavi.sound.mfi;
  * <p>
  * MFi 仕様の"拡張ステータス B"を表します。
  * </p>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano refine <br>
  *          0.11 030920 nsano add {@link #getCommand()} <br>
  *          0.12 030920 nsano add constants <br>

@@ -40,7 +40,7 @@ package vavi.sound.adpcm.ccitt;
  * <li>ISDN A-law
  * <li>PCM 2's-complement (0-center)
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030713 nsano initial version <br>
  *          0.01 030714 nsano fine tune <br>
  */
@@ -118,7 +118,7 @@ class State {
      *
      * Using linear search for simple coding.
      *
-     * TODO package 内公開かっちょ悪いが G711 内で隠蔽されるので無視．
+     * TODO package 内公開かっちょ悪いが G711 内で隠蔽されるので無視
      */
     static int quan(int val) {
         int i;
@@ -142,11 +142,11 @@ class State {
                      (anexp >= 0) ? anmag >> anexp :
                                     anmag << -anexp;
         int wanexp = anexp + ((srn >> 6) & 0xf) - 13;
-            
+
         int wanmant = (anmant * (srn & 0x3f) + 0x30) >> 4;
         int retval = (wanexp >= 0) ? ((wanmant << wanexp) & 0x7fff) :
                                       (wanmant >> -wanexp);
-            
+
 // System.err.println(an + ", " + srn + ": " + ((an ^ srn) < 0 ? -retval : retval));
         return (an ^ srn) < 0 ? -retval : retval;
     }
@@ -156,7 +156,7 @@ class State {
      */
     public int getZeroPredictor() {
         int sezi = fmult(b[0] >> 2, dq[0]);
-        for (int i = 1; i < 6; i++) {            // ACCUM
+        for (int i = 1; i < 6; i++) { // ACCUM
             sezi += fmult(b[i] >> 2, dq[i]);
         }
         return sezi;
@@ -177,7 +177,7 @@ class State {
         int y;
         int dif;
         int al;
-        
+
         if (ap >= 256) {
             return yu;
         } else {
@@ -215,10 +215,10 @@ class State {
 
         // needed in updating predictor poles
         int pk0 = (dqsez < 0) ? 1 : 0;
-        
+
         // prediction difference magnitude
         int mag = _dq & 0x7fff;
-        
+
         // TRANS
         // exponent part of yl
         int ylint = (int) (yl >> 15);
@@ -230,8 +230,8 @@ class State {
         int thr2 = (ylint > 9) ? 31 << 10 : thr1;
         // dqthr = 0.75 * thr2
         int dqthr = (thr2 + (thr2 >> 1)) >> 1;
-        
-        int tr;                        // tone/transition detector
+
+        int tr;                     // tone/transition detector
         if (td == 0) {              // signal supposed voice
             tr = 0;
         } else if (mag <= dqthr) {  // supposed data, but small mag
@@ -239,15 +239,15 @@ class State {
         } else {                    // signal is data (modem)
             tr = 1;
         }
-        
+
         // Quantizer scale factor adaptation.
-        
+
         // FUNCTW & FILTD & DELAY
         // update non-steady state step size multiplier
         yu = y + ((wi - y) >> 5);
-        
+
         // LIMB
-        if (yu < 544) {    // 544 <= yu <= 5120
+        if (yu < 544) { // 544 <= yu <= 5120
             yu = 544;
         } else if (yu > 5120) {
             yu = 5120;
@@ -256,7 +256,7 @@ class State {
         // FILTE & DELAY
         // update steady state step size multiplier
         yl += yu + ((-yl) >> 6);
-        
+
         // Adaptive predictor coefficients.
         int a2p = 0;
         int exp;                            // Adaptive predictor, FLOAT A
@@ -271,7 +271,7 @@ class State {
             b[5] = 0;
         } else {                            // update a's and b's
             int pks1 = pk0 ^ pk[0];         // UPA2
-            
+
             // update predictor pole a[1]
             a2p = a[1] - (a[1] >> 7);       // LIMC
             if (dqsez != 0) {
@@ -283,7 +283,7 @@ class State {
                 } else {
                     a2p += fa1 >> 5;
                 }
-                
+
                 if ((pk0 ^ pk[1]) != 0) {   // LIMC
                     if (a2p <= -12160) {
                         a2p = -12288;
@@ -300,10 +300,10 @@ class State {
                     a2p += 0x80;
                 }
             }
-            
+
             // TRIGB & DELAY
             a[1] = a2p;
-            
+
             // UPA1
             // update predictor pole a[0]
             a[0] -= a[0] >> 8;
@@ -339,7 +339,7 @@ class State {
                 }
             }
         }
-        
+
         for (int i = 5; i > 0; i--) {
             dq[i] = dq[i-1];
         }

@@ -46,14 +46,14 @@ import javax.sound.sampled.AudioFormat;
  * down into modules.  Each section of code below is preceded by
  * the name of the module which it is implementing.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030713 nsano port to java <br>
  *          0.01 030714 nsano fine tune <br>
  */
 class G721 extends G711 {
 
     /** */
-    private static final int qtab_721[] = {
+    private static final int[] qtab_721 = {
         -124, 80, 178, 246, 300, 349, 400
     };
 
@@ -61,13 +61,13 @@ class G721 extends G711 {
      * Maps G.721 code word to reconstructed scale factor normalized log
      * magnitude values.
      */
-    private static final int _dqlntab[] = {
+    private static final int[] _dqlntab = {
         -2048, 4, 135, 213, 273, 323, 373, 425,
         425, 373, 323, 273, 213, 135, 4, -2048
     };
 
     /** Maps G.721 code word to log of scale factor multiplier. */
-    private static final int _witab[] = {
+    private static final int[] _witab = {
         -12, 18, 41, 64, 112, 198, 355, 1122,
         1122, 355, 198, 112, 64, 41, 18, -12
     };
@@ -77,7 +77,7 @@ class G721 extends G711 {
      * term averages are computed and then compared to give an indication
      * how stationary (steady state) the signal is.
      */
-    private static final int _fitab[] = {
+    private static final int[] _fitab = {
         0, 0, 0, 0x200, 0x200, 0x200, 0x600, 0xe00,
         0xe00, 0x600, 0x200, 0x200, 0x200, 0, 0, 0
     };

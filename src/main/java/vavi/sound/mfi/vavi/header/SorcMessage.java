@@ -27,7 +27,7 @@ import vavi.util.StringUtil;
  *
  * </pre>
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  *          0.01 030825 nsano complete <br>
  */

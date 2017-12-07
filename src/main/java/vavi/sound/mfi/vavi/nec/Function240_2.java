@@ -17,7 +17,7 @@ import vavi.util.Debug;
  * NEC System exclusive message function 0xf0, 0x_2 processor.
  * (ADPCM data)
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030827 nsano initial version <br>
  */
 public class Function240_2 implements MachineDependentFunction {

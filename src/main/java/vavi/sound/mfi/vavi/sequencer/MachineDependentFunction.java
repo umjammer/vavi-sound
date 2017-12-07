@@ -10,14 +10,15 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.properties.PrefixedPropertiesFactory;
 
+
 /**
  * Sub sequencer for machine dependent system exclusive message.
  * <p>
- * 今のところ実装クラスは bean でなければならない．
+ * 今のところ実装クラスは bean でなければならない。
  * (引数なしのコンストラクタがあること)
  * {@link #process(MachineDependentMessage)} 関連はステートレスでなければならない。
  * </p>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
 public interface MachineDependentFunction {

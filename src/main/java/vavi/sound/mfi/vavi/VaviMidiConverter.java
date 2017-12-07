@@ -35,7 +35,7 @@ import vavi.util.Debug;
 /**
  * The format converter between MIDI and MFi.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>
  *          0.10 020703 nsano complete <br>
  *          0.11 030618 nsano add vibrato related <br>

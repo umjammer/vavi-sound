@@ -3,8 +3,7 @@
 #
 # FormatConversionProvider
 #
-# 0.00	060726	nsano	initial version
+# 0.00 060726 nsano initial version
 #
 
-vavi.sound.sampled.resampling.SampleRateConversionProvider
 #vavi.sound.sampled.ccitt.CcittFormatConversionProvider

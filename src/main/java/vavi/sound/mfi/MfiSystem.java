@@ -32,7 +32,7 @@ import vavi.util.Debug;
 /**
  * MfiSystem.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>
  *          0.01 021222 nsano use META-INF/services files <br>
  *          0.02 030817 nsano uncomment isFileTypeSupported <br>

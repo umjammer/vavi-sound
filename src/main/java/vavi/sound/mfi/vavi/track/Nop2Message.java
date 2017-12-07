@@ -21,7 +21,7 @@ import vavi.util.Debug;
  *  channel false
  *  delta   true
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051116 nsano initial version <br>
  * @since MFi 3.0
  */

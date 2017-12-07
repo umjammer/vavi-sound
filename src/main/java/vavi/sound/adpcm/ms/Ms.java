@@ -38,7 +38,7 @@ import vavi.util.Debug;
  * Remark: code still turbulent, encoding very new.
  * </p>
  * @author <a href="mailto:stabro@megsinet.net">Stanley J. Brooks</a>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030715 nsano port to java <br>
  */
 class Ms {

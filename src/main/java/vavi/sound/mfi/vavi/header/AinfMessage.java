@@ -36,8 +36,8 @@ import vavi.util.StringUtil;
  *  :   :
  *  N: audio info data
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
- * @version 0.00 050721 nsano intial version <br>
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
+ * @version 0.00 050721 nsano initial version <br>
  * @since MFi 4.0
  */
 public class AinfMessage extends SubMessage {

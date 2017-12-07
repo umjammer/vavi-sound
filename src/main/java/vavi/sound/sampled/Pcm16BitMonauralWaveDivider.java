@@ -17,7 +17,7 @@ import vavi.util.Debug;
 /**
  * Pcm16BitMonauralWaveDivider.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050401 nsano initial version <br>
  */
 class Pcm16BitMonauralWaveDivider implements WaveDivider {

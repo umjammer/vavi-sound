@@ -30,7 +30,7 @@ import vavi.sound.mfi.vavi.SubMessage;
  *    channels が 2 の場合 interleave は 0
  * </pre>
  * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070125 nsano initial version <br>
  * @since MFi 5.0
  */

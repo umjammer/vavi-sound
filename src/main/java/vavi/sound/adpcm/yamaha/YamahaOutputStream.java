@@ -16,7 +16,7 @@ import vavi.sound.adpcm.Codec;
 /**
  * YAMAHA MA# OutputStream
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050402 nsano initial version <br>
  */
 public class YamahaOutputStream extends AdpcmOutputStream {

@@ -26,7 +26,7 @@ import vavi.sound.midi.VaviMidiDeviceProvider;
  *  channel true
  *  delta   ?
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070117 nsano initial version <br>
  */
 public class AudioChannelVolumeMessage extends vavi.sound.mfi.ShortMessage

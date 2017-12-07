@@ -40,7 +40,7 @@ import javax.sound.sampled.AudioFormat;
  * If any errors are found, please contact me at mrand@tamu.edu
  *      -Marc Randolph
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030713 nsano port to java <br>
  *          0.01 030714 nsano fine tune <br>
  */
@@ -50,7 +50,7 @@ class G723_16 extends G711 {
      * Maps G.723_16 code word to reconstructed scale factor normalized log
      * magnitude values.  Comes from Table 11/G.726
      */
-    private static final int _dqlntab[] = { 116, 365, 365, 116 };
+    private static final int[] _dqlntab = { 116, 365, 365, 116 };
 
     /**
      * Maps G.723_16 code word to log of scale factor multiplier.
@@ -58,7 +58,7 @@ class G723_16 extends G711 {
      * _witab[4] is actually {-22 , 439, 439, -22}, but FILTD wants it
      * as WI << 5  (multiplied by 32), so we'll do that here
      */
-    private static final int _witab[] = { -704, 14048, 14048, -704 };
+    private static final int[] _witab = { -704, 14048, 14048, -704 };
 
     /*
      * Maps G.723_16 code words to a set of values whose long and short
@@ -67,12 +67,12 @@ class G723_16 extends G711 {
      */
 
     /** Comes from FUNCTF */
-    private static final int _fitab[] = { 0, 0xe00, 0xe00, 0 };
+    private static final int[] _fitab = { 0, 0xe00, 0xe00, 0 };
 
     /**
      * Comes from quantizer decision level tables (Table 7/G.726)
      */
-    private static int qtab_723_16[] = { 261 };
+    private static int[] qtab_723_16 = { 261 };
 
     /**
      * Encodes a linear PCM, A-law or u-law input sample and returns its 2-bit
@@ -91,21 +91,21 @@ class G723_16 extends G711 {
         } else {
             throw new IllegalArgumentException(encoding.toString());
         }
-        
+
         //ACCUM
         int sezi = state.getZeroPredictor();
         int sez = sezi >> 1;
         int sei = sezi + state.getPolePredictor();
         int se = sei >> 1;                                  // se = estimated signal
-        
+
         // SUBTA
         int d = sl - se;                                    // d = estimation diff.
-        
+
         // quantize prediction difference d
         // MIX
         int y = state.getStepSize();                        // quantizer step size
         int i = quantize(d, y, qtab_723_16, 1);             // i = ADPCM code
-        
+
         // Since quantize() only produces a three level output
         // (1, 2, or 3), we must create the fourth one on our own
         if (i == 3) {                                       // i code for the zero region
@@ -113,18 +113,18 @@ class G723_16 extends G711 {
                 i = 0;
             }
         }
-        
+
         // quantized diff.
         int dq = reconstruct((i & 2) != 0, _dqlntab[i], y);
-        
+
         // ADDB reconstructed signal
         int sr = (dq < 0) ? se - (dq & 0x3fff) : se + dq;
-        
+
         // ADDC
         int dqsez = sr + sez - se;                          // pole prediction diff.
-        
+
         state.update(2, y, _witab[i], _fitab[i], dq, sr, dqsez);
-        
+
         return i;
     }
 
@@ -136,25 +136,25 @@ class G723_16 extends G711 {
     public int decode(int i) {
 
         i &= 0x03;                                          // mask to get proper bits
-        
+
         // ACCUM
         int sezi = state.getZeroPredictor();
         int sez = sezi >> 1;
         int sei = sezi + state.getPolePredictor();
         int se = sei >> 1;                                  // se = estimated signal
-        
+
         // MIX
         int y = state.getStepSize();                        // adaptive quantizer step size
         // unquantize pred diff
         int dq = reconstruct((i & 0x02) != 0, _dqlntab[i], y);
-        
+
         // ADDB reconst. signal
         int sr = (dq < 0) ? (se - (dq & 0x3fff)) : (se + dq);
-        
+
         int dqsez = sr - se + sez;                          // pole prediction diff.
-        
+
         state.update(2, y, _witab[i], _fitab[i], dq, sr, dqsez);
-        
+
         if (AudioFormat.Encoding.ALAW.equals(encoding)) {
             return adjustAlawTandem(sr, se, y, i, 2, qtab_723_16);
         } else if (AudioFormat.Encoding.ULAW.equals(encoding)) {

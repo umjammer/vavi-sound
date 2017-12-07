@@ -19,7 +19,7 @@ import vavi.sound.mfi.vavi.SubMessage;
  * @see CopyMessage
  * @see ProtMessage
  * @see AuthMessage
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070125 nsano initial version <br>
  * @since MFi 5.0
  */

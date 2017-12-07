@@ -16,7 +16,7 @@ import vavi.util.StringUtil;
  * Sharp System exclusive message function 0x84 processor.
  * (Wave Packet Data3)
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051111 nsano initial version <br>
  */
 public class Function132 extends Function131 {

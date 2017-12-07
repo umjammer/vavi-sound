@@ -16,7 +16,7 @@ import java.util.List;
  * {@link javax.sound.midi} subset compatible.
  * </p>
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>
  *          0.10 020630 nsano javax.sound.midi compliant <br>
  */

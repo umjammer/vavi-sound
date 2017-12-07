@@ -27,7 +27,7 @@ import vavi.util.Debug;
 /**
  * DividedMfiWithVoiceMaker.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050403 nsano initial version <br>
  */
 class DividedMfiWithVoiceMaker extends MfiWithVoiceMaker {

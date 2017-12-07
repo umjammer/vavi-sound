@@ -14,7 +14,7 @@ import java.io.Serializable;
  * <p>
  * MFi 仕様の"拡張情報"を表します。
  * </p> 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020703 nsano initial version <br>
  *          0.01 030820 nsano implements Serializable <br>
  */

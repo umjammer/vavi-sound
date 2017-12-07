@@ -11,7 +11,7 @@ package vavi.util;
  * Bessel I_0().
  *
  * @author <a href="mailto:ooura@mmm.t.u-tokyo.ac.jp">Takuya OOURA</a>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060127 nsano port to java version <br>
  */
 public class I0Bessel {

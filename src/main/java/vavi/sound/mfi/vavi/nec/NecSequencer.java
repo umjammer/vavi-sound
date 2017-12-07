@@ -19,7 +19,7 @@ import vavi.util.StringUtil;
 /**
  * NEC System exclusive message processor.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020703 nsano initial version <br>
  *          0.01 030711 nsano fix f1, f2 definitions <br>
  *          0.02 030827 nsano refactoring <br>

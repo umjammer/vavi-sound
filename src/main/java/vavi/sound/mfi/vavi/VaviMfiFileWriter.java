@@ -24,7 +24,7 @@ import vavi.util.Debug;
 /**
  * VaviMfiFileWriter
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020704 nsano initial version <br>
  *          0.01 030817 nsano add isFileTypeSupported <br>
  *          0.02 030819 nsano change sequence related <br>

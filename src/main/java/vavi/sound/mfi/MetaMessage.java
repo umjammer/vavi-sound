@@ -19,7 +19,7 @@ package vavi.sound.mfi;
  * +--+--+--+--+--+--+--+--+--+--+--+-
  * length (LL) = 1 (TT) + data length (DD ...)
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020629 nsano initial version <br>
  *          0.01 030921 nsano refine <br>
  */

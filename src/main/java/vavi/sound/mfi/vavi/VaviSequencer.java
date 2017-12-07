@@ -36,7 +36,7 @@ import vavi.util.Debug;
  * {@link javax.sound.midi.MidiSystem} を
  * 使用しているため javax.sound.midi SPI のプログラム内で使用してはいけません。
  * </p>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano midi compliant <br>
  *          1.00 020706 nsano use midi sequencer <br>
  *          1.01 030606 nsano change error trap <br>

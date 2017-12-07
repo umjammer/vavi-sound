@@ -28,7 +28,7 @@ import vavi.sound.midi.MidiUtil;
  *  MIDI {@link MidiConstants#META_TEXT_EVENT META_TEXT_EVENT (0x01)}
  * </pre>
  * <li> TODO use {@link CodeMessage} 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  *          0.01 030905 nsano implements {@link MfiConvertible} <br>
  */

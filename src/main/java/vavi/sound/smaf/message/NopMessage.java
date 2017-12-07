@@ -24,7 +24,7 @@ import vavi.util.StringUtil;
  *              0x00
  * </pre>
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
  */
 public class NopMessage extends ShortMessage

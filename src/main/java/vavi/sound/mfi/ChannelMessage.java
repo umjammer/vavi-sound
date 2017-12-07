@@ -13,7 +13,7 @@ package vavi.sound.mfi;
  * MIDI にあわせるためにこの名前を Voice ... の代わりに用いています。
  * </p>
  * <li>javax.sound.midi パッケージにはない... いるのか？
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 031203 nsano initial version <br>
  */
 public interface ChannelMessage {

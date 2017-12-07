@@ -11,9 +11,9 @@ package vavi.sound.mfi;
  * LongMessage.
  * <p>
  * MFi 仕様の"拡張ステータス A"を表します。
- * </p> 
+ * </p>
  * <li>javax.sound.midi パッケージにはない。(MFi オリジナル)
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070116 nsano initial version <br>
  */
 public abstract class LongMessage extends MfiMessage {

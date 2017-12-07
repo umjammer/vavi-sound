@@ -31,7 +31,7 @@ import vavi.util.StringUtil;
  * <pre>
  *  0xff, 0xff
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020703 nsano refine <br>
  *          0.01 030711 nsano add constants <br>
  *          0.02 030711 nsano add {@link #getCarrier()} <br>

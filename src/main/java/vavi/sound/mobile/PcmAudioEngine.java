@@ -36,7 +36,7 @@ wscma5_dll       WAVE                16bit or 8bit    4kHz~ 8kHz              mo
                  WAVE or AIFF        16bit            4kHz~12kHz             stereo       4bit ADPCM          SMAF/MA-5
                  WAVE or AIFF        16bit or 8bit    4kHz~6kHz              stereo       8bit PCM            SMAF/MA-5
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020829 nsano initial version <br>
  * @see "WSC-MAx.pdf"
  */

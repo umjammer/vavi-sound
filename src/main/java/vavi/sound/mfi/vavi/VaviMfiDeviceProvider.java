@@ -20,8 +20,8 @@ import vavi.util.Debug;
 
 /**
  * {@link MfiDeviceProvider} implemented by vavi.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020629 nsano initial version <br>
  *          0.10 020703 nsano complete <br>
  *          0.11 030819 nsano add {@link vavi.sound.mfi.MidiConverter} <br>
@@ -98,7 +98,7 @@ Debug.printStackTrace(e);
                 Properties props = new Properties();
                 final String path = "vavi.properties";
                 props.load(Factory.class.getResourceAsStream(path));
-    
+
                 // midi
                 Iterator<?> i = props.keySet().iterator();
                 while (i.hasNext()) {

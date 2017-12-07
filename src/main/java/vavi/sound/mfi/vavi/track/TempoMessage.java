@@ -31,7 +31,7 @@ import vavi.util.Debug;
  * <pre>
  *  0xff, 0xc#
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano refine <br>
  *          0.11 030821 nsano implements {@link MidiConvertible} <br>
  *          0.12 030920 nsano repackage <br>

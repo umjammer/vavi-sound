@@ -27,7 +27,7 @@ import vavi.util.StringUtil;
 /**
  * a MIDI MetaEvent adapter implementation.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030902 nsano initial version <br>
  */
 class MetaEventAdapter implements MetaEventListener, MfiDevice {
