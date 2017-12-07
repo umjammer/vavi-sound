@@ -26,8 +26,8 @@ import vavi.util.Debug;
 
 /**
  * DividedSmafWithVoiceMaker.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 080415 nsano initial version <br>
  */
 class DividedSmafWithVoiceMaker extends SmafWithVoiceMaker {
@@ -41,7 +41,7 @@ class DividedSmafWithVoiceMaker extends SmafWithVoiceMaker {
     private String base;
 
     /**
-     * 
+     *
      * @param sourceAis source PCM
      * @param directory output base directory, directory "mmf" will be added
      * @param base output file template
@@ -76,7 +76,7 @@ class DividedSmafWithVoiceMaker extends SmafWithVoiceMaker {
     }
 
     /**
-     * 
+     *
      * @throws IOException
      * @throws UnsupportedAudioFileException
      * @throws InvalidSmafDataException
@@ -124,7 +124,7 @@ t = System.currentTimeMillis();
 
     /**
      * Creates .mmf w/ voice file.
-     * 
+     *
      * @param args input wave file
      *             -o output base directory
      *             -t output mmf filename base (use java.lang.String#format)

@@ -15,11 +15,11 @@ import vavi.util.Debug;
 
 /**
  * HuffmanDecodingInputStream.
- * 
+ *
  * TODO 出典
  * TODO not work
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 080505 nsano initial version <br>
  */
 public class HuffmanDecodingInputStream extends FilterInputStream {
@@ -45,7 +45,7 @@ Debug.println("root: " + root);
     }
 
     /**
-     * @return -1 error 
+     * @return -1 error
      */
     private int readBit() throws IOException {
 
@@ -67,7 +67,7 @@ Debug.println("bit: " + bit + " (" + bitOffset + ")");
 
     /**
      * @param n number of bits
-     * @return 0 
+     * @return 0
      */
     private int readBits(int n) throws IOException {
         int bits = 0;
@@ -84,7 +84,7 @@ Debug.println("bit: " + bit + " (" + bitOffset + ")");
     }
 
     /** chars */
-    private static final int N = 256; 
+    private static final int N = 256;
 
     /** */
     private int[] left = new int[2 * N - 1];
@@ -95,8 +95,8 @@ Debug.println("bit: " + bit + " (" + bitOffset + ")");
     private int available; // TODO thread safe?
 
     /**
-     * 
-     * @return -1  
+     *
+     * @return -1
      */
     private int readTree(boolean init) throws IOException {
 

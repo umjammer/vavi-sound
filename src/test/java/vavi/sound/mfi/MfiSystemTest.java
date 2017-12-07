@@ -8,19 +8,21 @@ package vavi.sound.mfi;
 
 import java.io.File;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import vavi.util.Debug;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 
 /**
- * MfiSystemTest. 
+ * MfiSystemTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
+@Ignore
 public class MfiSystemTest {
 
     @Test

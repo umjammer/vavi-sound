@@ -13,8 +13,8 @@ import javax.sound.sampled.spi.FormatConversionProvider;
 
 /**
  * CcittFormatConversionProvider.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050722 nsano initial version <br>
  */
 public class CcittFormatConversionProvider extends FormatConversionProvider {
@@ -22,7 +22,7 @@ public class CcittFormatConversionProvider extends FormatConversionProvider {
     /**
      * Obtains the set of source format encodings from which format conversion
      * services are provided by this provider.
-     * 
+     *
      * @return array of source format encodings. The array will always have a
      *         length of at least 1.
      */
@@ -33,7 +33,7 @@ public class CcittFormatConversionProvider extends FormatConversionProvider {
     /**
      * Obtains the set of target format encodings to which format conversion
      * services are provided by this provider.
-     * 
+     *
      * @return array of target format encodings. The array will always have a
      *         length of at least 1.
      */
@@ -45,7 +45,7 @@ public class CcittFormatConversionProvider extends FormatConversionProvider {
      * Obtains the set of target format encodings supported by the format
      * converter given a particular source format. If no target format encodings
      * are supported for this source format, an array of length 0 is returned.
-     * 
+     *
      * @param sourceFormat format of the incoming data.
      * @return array of supported target format encodings.
      */
@@ -63,7 +63,7 @@ public class CcittFormatConversionProvider extends FormatConversionProvider {
      * Obtains the set of target formats with the encoding specified supported
      * by the format converter. If no target formats with the specified encoding
      * are supported for this source format, an array of length 0 is returned.
-     * 
+     *
      * @param targetEncoding desired encoding of the outgoing data.
      * @param sourceFormat format of the incoming data.
      * @return array of supported target formats.
@@ -102,7 +102,7 @@ public class CcittFormatConversionProvider extends FormatConversionProvider {
     /**
      * Obtains an audio input stream with the specified encoding from the given
      * audio input stream.
-     * 
+     *
      * @param targetEncoding - desired encoding of the stream after processing.
      * @param sourceStream - stream from which data to be processed should be
      *            read.
@@ -135,7 +135,7 @@ public class CcittFormatConversionProvider extends FormatConversionProvider {
     /**
      * Obtains an audio input stream with the specified format from the given
      * audio input stream.
-     * 
+     *
      * @param targetFormat - desired data format of the stream after processing.
      * @param sourceStream - stream from which data to be processed should be
      *            read.

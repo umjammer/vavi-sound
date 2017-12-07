@@ -20,7 +20,7 @@ import vavi.util.Debug;
 /**
  * TrackMessage. TODO 要るのか？
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 080415 nsano initial version <br>
  */
 public class TrackMessage {
@@ -62,7 +62,7 @@ Debug.println("track: " + trackNumber + ": " + getDataLength());
         return "ATR\0"; // TODO
     }
 
-    /** 
+    /**
      * 書き出し用
      * {@link Track}[0] の不必要なデータは省かれます。
      */

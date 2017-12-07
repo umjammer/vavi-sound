@@ -18,8 +18,8 @@ import vavi.util.StringUtil;
 
 /**
  * Undefined Chunk.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 080430 nsano initial version <br>
  */
 public class UndefinedChunk extends Chunk {

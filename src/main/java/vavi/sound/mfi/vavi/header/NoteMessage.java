@@ -11,12 +11,12 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 /**
  * ノートメッセージ長情報 MFi Header Sub Chunk.
- * 
+ *
  * <pre>
  *  &quot;note&quot; 2 bytes: note length (1 for 4byte)
  * </pre>
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  *          0.01 030907 nsano complete <br>
  */

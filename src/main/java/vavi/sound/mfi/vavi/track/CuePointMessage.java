@@ -23,7 +23,7 @@ import vavi.sound.midi.MidiConstants;
  *  channel false
  *  delta   ?
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano refine <br>
  *          0.11 030821 nsano implements {@link MidiConvertible} <br>
  *          0.12 030920 nsano repackage <br>
@@ -36,7 +36,7 @@ public class CuePointMessage extends ShortMessage
 
     /**
      * 0xd0
-     * 
+     *
      * @param delta delta time
      * @param data2 00: start, 01: end
      */
@@ -71,7 +71,7 @@ public class CuePointMessage extends ShortMessage
 
     /**
      * TODO {@link javax.sound.midi.MetaMessage} に 0x07 キューポイントってあるよ
-     * @return 何も返しません 
+     * @return 何も返しません
      */
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 
@@ -97,7 +97,7 @@ public class CuePointMessage extends ShortMessage
         MetaMessage metaMessage = new MetaMessage();
 
         String text = start ? "start" : "stop";
-        
+
         metaMessage.setMessage(MidiConstants.META_QUE_POINT, // キューポイント
                                text.getBytes(), text.getBytes().length);
 

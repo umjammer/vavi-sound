@@ -15,15 +15,15 @@ import vavi.sound.mfi.Sequencer;
 
 
 /**
- * test mfi. 
+ * test mfi.
  *
-  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
 * @version 0.00 090913 nsano initial version <br>
  */
 public class Test1 {
-    
+
     /**
-     * 
+     *
      * @param args
      */
     public static void main(String[] args) throws Exception {

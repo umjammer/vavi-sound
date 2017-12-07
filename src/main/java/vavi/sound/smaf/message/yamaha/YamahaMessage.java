@@ -25,15 +25,15 @@ import vavi.util.StringUtil;
 
 /**
  * YamahaMessage.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050501 nsano initial version <br>
  */
 public class YamahaMessage extends MachineDependentMessage
     implements MachineDependentSequencer, MidiConvertible {
 
     /**
-     * 
+     *
      * <li>[MA-3] ストリームPCM ペア
      * <p>
      * 指定した二つのストリームPCMを同期発音させるよう設定できます。
@@ -68,7 +68,7 @@ public class YamahaMessage extends MachineDependentMessage
 
 [???] (puc)
          43 01 80 31 xx F7
-                     ~~ テンポデータ？　Mtsu で指定したもの 
+                     ~~ テンポデータ？　Mtsu で指定したもの
 
 [???] (my dump)
          43 03 91 18 00 F7
@@ -165,7 +165,7 @@ Debug.println("yamaha: " + data.length + "\n" + StringUtil.getDump(data, 64));
             switch (data[3]) {
             case 0x7f:
                 switch (data[4]) {
-                case 0x20: { // 
+                case 0x20: { //
 Debug.println("YAMAHA UNKNOWN: ");
                     AudioEngine engine = WaveSequencer.Factory.getAudioEngine();
                     engine.start(2);

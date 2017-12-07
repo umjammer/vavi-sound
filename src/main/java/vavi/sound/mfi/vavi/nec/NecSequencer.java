@@ -18,8 +18,8 @@ import vavi.util.StringUtil;
 
 /**
  * NEC System exclusive message processor.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020703 nsano initial version <br>
  *          0.01 030711 nsano fix f1, f2 definitions <br>
  *          0.02 030827 nsano refactoring <br>
@@ -50,7 +50,7 @@ public class NecSequencer implements MachineDependentSequencer {
         int f2 = 0;
 
         String key;
-        
+
         if (f1 == 0x01) {
             f2 = data[7] & 0xff;        // 0 ~ 32
             int f3 = data[8] & 0x0f;    // 0 ~ 16

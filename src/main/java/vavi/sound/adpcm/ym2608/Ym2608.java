@@ -9,9 +9,9 @@ import vavi.sound.adpcm.Codec;
 
 /**
  * YAMAHA (YM2608) ADPCM Codec
- * 
+ *
  * @author <a href="http://www.memb.jp/~dearna/">Masashi Wada</a> (DEARNA)
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030823 nsano port to java <br>
  */
 class Ym2608 implements Codec {
@@ -94,7 +94,7 @@ class Ym2608 implements Codec {
 
     /**
      * @param adpcm ADPCM (LSB 4 bit 有効)
-     * @return PCM 
+     * @return PCM
      */
     public int decode(int adpcm) {
 

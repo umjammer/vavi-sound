@@ -36,7 +36,7 @@ import vavi.sound.adpcm.Codec;
  * 
  * @author <a href="mailto:bli@cpk.auc.dk">Borge Lindberg, Center for
  *         PersonKommunikation, Aalborg University.</a>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 941230 bli Functions linear2alaw, linear2ulaw have been updated
  *                      to correctly convert unquantized 16 bit values. <br>
  *                      Tables for direct u- to A-law and A- to u-law conversions have been
@@ -64,13 +64,13 @@ abstract class G711 implements Codec {
     private static final int SEG_MASK = 0x70;
 
     /** */
-    private static final int seg_aend[] = {
+    private static final int[] seg_aend = {
         0x1f, 0x3f, 0x7f, 0xff,
         0x1ff, 0x3ff, 0x7ff, 0xfff
     };
 
     /** */
-    private static final int seg_uend[] = {
+    private static final int[] seg_uend = {
         0x3f, 0x7f, 0xff, 0x1ff,
         0x3ff, 0x7ff, 0xfff, 0x1fff
     };
@@ -78,47 +78,47 @@ abstract class G711 implements Codec {
     /* copy from CCITT G.711 specifications */
 
     /** u- to A-law conversions */
-    private static final int _u2a[] = {
-        1,    1,    2,    2,    3,    3,    4,    4,
-        5,    5,    6,    6,    7,    7,    8,    8,
-        9,    10,    11,    12,    13,    14,    15,    16,
-        17,    18,    19,    20,    21,    22,    23,    24,
-        25,    27,    29,    31,    33,    34,    35,    36,
-        37,    38,    39,    40,    41,    42,    43,    44,
-        46,    48,    49,    50,    51,    52,    53,    54,
-        55,    56,    57,    58,    59,    60,    61,    62,
-        64,    65,    66,    67,    68,    69,    70,    71,
-        72,    73,    74,    75,    76,    77,    78,    79,
+    private static final int[] _u2a = {
+          1,   1,   2,   2,   3,   3,   4,   4,
+          5,   5,   6,   6,   7,   7,   8,   8,
+          9,  10,  11,  12,  13,  14,  15,  16,
+         17,  18,  19,  20,  21,  22,  23,  24,
+         25,  27,  29,  31,  33,  34,  35,  36,
+         37,  38,  39,  40,  41,  42,  43,  44,
+         46,  48,  49,  50,  51,  52,  53,  54,
+         55,  56,  57,  58,  59,  60,  61,  62,
+         64,  65,  66,  67,  68,  69,  70,  71,
+         72,  73,  74,  75,  76,  77,  78,  79,
 /* corrected:
-        81,    82,    83,    84,    85,    86,    87,    88,
+         81,  82,  83,  84,  85,  86,  87,  88,
   should be: */
-        80,    82,    83,    84,    85,    86,    87,    88,
-        89, 90, 91, 92, 93, 94, 95, 96,
-        97, 98, 99, 100, 101, 102, 103, 104,
+         80,  82,  83,  84,  85,  86,  87,  88,
+         89,  90,  91,  92,  93,  94,  95,  96,
+         97,  98,  99, 100, 101, 102, 103, 104,
         105, 106, 107, 108, 109, 110, 111, 112,
         113, 114, 115, 116, 117, 118, 119, 120,
         121, 122, 123, 124, 125, 126, 127, 128
     };
 
     /** A- to u-law conversions */
-    private static final int _a2u[] = {
-        1,    3,    5,    7,    9,    11,    13,    15,
-        16,    17,    18,    19,    20,    21,    22,    23,
-        24,    25,    26,    27,    28,    29,    30,    31,
-        32,    32,    33,    33,    34,    34,    35,    35,
-        36,    37,    38,    39,    40,    41,    42,    43,
-        44,    45,    46,    47,    48,    48,    49,    49,
-        50,    51,    52,    53,    54,    55,    56,    57,
-        58,    59,    60,    61,    62,    63,    64,    64,
-        65,    66,    67,    68,    69,    70,    71,    72,
+    private static final int[] _a2u = {
+          1,   3,   5,   7,   9,  11,  13,  15,
+         16,  17,  18,  19,  20,  21,  22,  23,
+         24,  25,  26,  27,  28,  29,  30,  31,
+         32,  32,  33,  33,  34,  34,  35,  35,
+         36,  37,  38,  39,  40,  41,  42,  43,
+         44,  45,  46,  47,  48,  48,  49,  49,
+         50,  51,  52,  53,  54,  55,  56,  57,
+         58,  59,  60,  61,  62,  63,  64,  64,
+         65,  66,  67,  68,  69,  70,  71,  72,
 /* corrected:
-        73,    74,    75,    76,    77,    78,    79,    79,
+         73,  74,  75,  76,  77,  78,  79,  79,
    should be: */
-        73,    74,    75,    76,    77,    78,    79,    80,
-        
-        80,    81,    82,    83,    84,    85,    86,    87,
-        88,    89,    90,    91,    92,    93,    94,    95,
-        96, 97, 98, 99, 100, 101, 102, 103,
+         73,  74,  75,  76,  77,  78,  79,  80,
+
+         80,  81,  82,  83,  84,  85,  86,  87,
+         88,  89,  90,  91,  92,  93,  94,  95,
+         96,  97,  98,  99, 100, 101, 102, 103,
         104, 105, 106, 107, 108, 109, 110, 111,
         112, 113, 114, 115, 116, 117, 118, 119,
         120, 121, 122, 123, 124, 125, 126, 127
@@ -160,21 +160,21 @@ abstract class G711 implements Codec {
 
         int mask;
         int aval;
-        
+
         pcm_val = pcm_val >> 3;
-        
+
         if (pcm_val >= 0) {
-            mask = 0xd5;        // sign (7th) bit = 1
+            mask = 0xd5; // sign (7th) bit = 1
         } else {
-            mask = 0x55;        // sign bit = 0
+            mask = 0x55; // sign bit = 0
             pcm_val = -pcm_val - 1;
         }
-        
+
         // Convert the scaled magnitude to segment number.
         int seg = search(pcm_val, seg_aend, 8);
-        
+
         // Combine the sign, segment, and quantization bits.
-        if (seg >= 8) {            // out of range, return maximum value.
+        if (seg >= 8) { // out of range, return maximum value.
             return 0x7f ^ mask;
         } else {
             aval = seg << SEG_SHIFT;
@@ -193,7 +193,7 @@ abstract class G711 implements Codec {
     protected int alaw2linear(int a_val) {
 
         a_val ^= 0x55;
-        
+
         int t = (a_val & QUANT_MASK) << 4;
         int seg = (a_val & SEG_MASK) >> SEG_SHIFT;
         switch (seg) {
@@ -207,7 +207,7 @@ abstract class G711 implements Codec {
             t += 0x108;
             t <<= seg - 1;
         }
-        
+
         return (a_val & SIGN_BIT) != 0 ? t : -t;
     }
 
@@ -252,7 +252,7 @@ abstract class G711 implements Codec {
 
         int mask;
         int uval;
-        
+
         // Get the sign and the magnitude of the value.
         pcm_val = pcm_val >> 2;
         if (pcm_val < 0) {
@@ -262,16 +262,16 @@ abstract class G711 implements Codec {
             mask = 0xff;
         }
         if (pcm_val > CLIP) {
-            pcm_val = CLIP;        // clip the magnitude
+            pcm_val = CLIP; // clip the magnitude
         }
         pcm_val += (BIAS >> 2);
-        
+
         // Convert the scaled magnitude to segment number.
         int seg = search(pcm_val, seg_uend, 8);
-        
+
         // Combine the sign, segment, quantization bits;
         // and complement the code word.
-        if (seg >= 8) {            // out of range, return maximum value.
+        if (seg >= 8) { // out of range, return maximum value.
             return 0x7f ^ mask;
         } else {
             uval = (seg << 4) | ((pcm_val >> (seg + 1)) & 0xf);
@@ -292,21 +292,21 @@ abstract class G711 implements Codec {
 
         // Complement to obtain normal u-law value.
         u_val = ~u_val;
-        
+
         // Extract and bias the quantization bits. Then
         // shift up by the segment number and subtract out the bias.
         int t = ((u_val & QUANT_MASK) << 3) + BIAS;
         t <<= (u_val & SEG_MASK) >> SEG_SHIFT;
-        
+
         return (u_val & SIGN_BIT) != 0 ? BIAS - t : t - BIAS;
     }
-    
+
     /** A-law to u-law conversion */
     protected int alaw2ulaw(int aval) {
         return (aval & 0x80) != 0 ? 0xff ^ _a2u[aval ^ 0xd5] :
                                     0x7f ^ _a2u[aval ^ 0x55];
     }
-    
+
     /** u-law to A-law conversion */
     protected int ulaw2alaw(int uval) {
         return (uval & 0x80) != 0 ? 0xd5 ^ (_u2a[0xff ^ uval] - 1) :
@@ -344,7 +344,7 @@ abstract class G711 implements Codec {
 
         // Log of 'dq' magnitude
         int dql = dqln + (y >> 2);      // ADDA
-        
+
         if (dql < 0) {
 // System.err.println("1: " + (sign ? -0x8000 : 0));
             return sign ? -0x8000 : 0;
@@ -386,26 +386,26 @@ abstract class G711 implements Codec {
         int exp = State.quan(dqm >> 1);
 // System.err.println("exp:\t" + exp);
         // Fractional part of base 2 log
-        int mant = ((dqm << 7) >> exp) & 0x7f;    // Fractional portion.
+        int mant = ((dqm << 7) >> exp) & 0x7f; // Fractional portion.
         // Log of magnitude of 'd'
         int dl = (exp << 7) + mant;
-        
+
         // SUBTB
         //
         // "Divide" by step size multiplier.
         //
         // Step size scale factor normalized log
         int dln = dl - (y >> 2);
-        
+
         // QUAN
         //
         // Obtain codeword i for 'd'.
         //
         int i = quan(dln, table, size);
-        if (d < 0) {            // take 1's complement of i
+        if (d < 0) { // take 1's complement of i
             return (size << 1) + 1 - i;
-        } else if (i == 0) {        // take 1's complement of 0
-            return (size << 1) + 1;    // new in 1988
+        } else if (i == 0) { // take 1's complement of 0
+            return (size << 1) + 1; // new in 1988
         } else {
             return i;
         }
@@ -430,14 +430,14 @@ abstract class G711 implements Codec {
         if (sr <= -32768) {
             sr = -1;
         }
-        
+
         // short to A-law compressed 8-bit code
         int sp = linear2alaw((sr >> 1) << 3);
         // 16-bit prediction error
         int dx = (alaw2linear(sp) >> 2) - se;
         // quantized prediction error
         int id = quantize(dx, y, qtab, sign - 1);
-        
+
         if (id == i) {              // no adjustment on sp
             return sp;
         } else {                    // sp adjustment needed

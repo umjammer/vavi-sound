@@ -16,8 +16,8 @@ import javax.sound.midi.ShortMessage;
  * <p>
  * CONTROL_CHANGE をすべて扱う
  * </p>
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050501 nsano initial version <br>
  */
 public class MidiConvertibleMessage extends vavi.sound.smaf.ShortMessage
@@ -33,8 +33,8 @@ public class MidiConvertibleMessage extends vavi.sound.smaf.ShortMessage
     private int value;
 
     /**
-     * @param duration 
-     * @param command 
+     * @param duration
+     * @param command
      * @param channel smaf channel
      * @param value
      */

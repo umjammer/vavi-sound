@@ -34,8 +34,8 @@ import vavi.util.Debug;
 
 /**
  * The format converter between MIDI and MFi.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>
  *          0.10 020703 nsano complete <br>
  *          0.11 030618 nsano add vibrato related <br>
@@ -84,7 +84,7 @@ class VaviMidiConverter implements MidiConverter {
     /** Converts midi sequence to mfi sequence. */
     public vavi.sound.mfi.Sequence toMfiSequence(Sequence midiSequence, int fileType)
         throws InvalidMidiDataException {
-        
+
         try {
             return convert(midiSequence, fileType);
         } catch (IOException e) {
@@ -114,21 +114,21 @@ Debug.println("tickLength: " + midiSequence.getTickLength());
         MfiContext mfiContext = new MfiContext();
         mfiContext.setType(fileType);
         mfiContext.setMidiSequence(midiSequence);
-            
+
         for (int i = 0; i < mfiContext.getSequenceSize(); i++) {
             MidiEvent midiEvent = mfiContext.getMidiEvent(i);
-            
+
             MidiMessage midiMessage = midiEvent.getMessage();
-            
+
             Track[] mfiTracks = mfiSequence.getTracks();
             int maxTracks = mfiTracks.length;
-            
+
             String key = null;
             int mfiTrackNumber = 0;
-            
+
             //
             if (midiMessage instanceof ShortMessage) {
-                
+
                 ShortMessage shortMessage = (ShortMessage) midiMessage;
                 int channel = shortMessage.getChannel();
                 int command = shortMessage.getCommand();
@@ -136,10 +136,10 @@ Debug.println("tickLength: " + midiSequence.getTickLength());
 //              int data2 = shortMessage.getData2();
 
                 mfiTrackNumber = mfiContext.retrieveMfiTrack(channel);
-                
+
                 if (!mfiContext.isTrackUsed(mfiTrackNumber) &&
                         maxTracks <= mfiTrackNumber) {
-                    
+
                     for (int j = maxTracks; j <= mfiTrackNumber; j++) {
                         mfiSequence.createTrack();
 Debug.println(">>>> create MFi track: " + j);
@@ -154,7 +154,7 @@ Debug.println(">>>> create MFi track: " + j);
                 // 0xb0 100, 101, 6: rpn H, rpn L, data entry
                 // 0xe_ pitch bend
                 // 0xb0 10: panpot
-                
+
                 if ((command & 0xf0) == 0xb0) {
                     key = "midi.short." + (command & 0xf0) + "." + data1;
                 } else {
@@ -164,7 +164,7 @@ Debug.println(">>>> create MFi track: " + j);
 
                 SysexMessage sysexMessage = (SysexMessage) midiMessage;
                 byte[] data = sysexMessage.getData();
-                
+
                 // GM system on
                 // master volume
                 if (maxTracks == 0) {
@@ -174,7 +174,7 @@ Debug.println("create MFi track: 0");
                     maxTracks = mfiTracks.length;
                 }
                 mfiContext.setTrackUsed(0, true);
-                
+
                 mfiTrackNumber = 0;
                 key = "midi.sysex." + data[0];
             } else if (midiMessage instanceof MetaMessage) {
@@ -182,7 +182,7 @@ Debug.println("create MFi track: 0");
                 // 2 -> CopyInfo
                 // 3 -> TitlInfo
                 // 0x51 tempo
-                
+
                 MetaMessage metaMessage = (MetaMessage) midiMessage;
                 int meta = metaMessage.getType();
 //                byte[] data = metaMessage.getData();
@@ -216,7 +216,7 @@ try {
                                     mfiTracks[t].add(nops[j]);
                                 }
                             }
-                            
+
                             mfiTracks[t].add(mfiEvents[t]);
                             mfiContext.setEofSet(t, true);
                         } else {
@@ -269,7 +269,7 @@ private void addEventToTrack(MfiContext mfiContext, long tick, Track mfiTrack, i
     deltas[mfiTrackNumber] += mfiMessage.getDelta();
     double tickDash = deltas[mfiTrackNumber] * mfiContext.getScale();
     if ((tickDash / tick) * 100 < 95 && (tickDash / tick) * 100 != 0 && !(mfiMessage instanceof NopMessage))
-Debug.println(Level.SEVERE, String.format("XXXXX track: %d, tick: %d, tick': %.2f (%.2f), %d, %s\n", 
+Debug.println(Level.SEVERE, String.format("XXXXX track: %d, tick: %d, tick': %.2f (%.2f), %d, %s\n",
             mfiTrackNumber,
             tick,
             tickDash,
@@ -317,13 +317,13 @@ Debug.println("resolution: " + resolution);
             midiContext.setCurrent(0);
 
             Track mfiTrack = mfiTracks[i];
-            
+
             for (int j = 0; j < mfiTrack.size(); j++) {
                 MfiEvent mfiEvent = mfiTrack.get(j);
                 MfiMessage mfiMessage = mfiEvent.getMessage();
-                
+
                 midiContext.addCurrent(mfiMessage.getDelta());
-                
+
                 if (mfiMessage instanceof MidiConvertible) {
 //Debug.println("midi convertible: " + message);
                     MidiEvent[] midiEvents = ((MidiConvertible) mfiMessage).getMidiEvents(midiContext);

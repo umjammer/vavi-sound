@@ -12,7 +12,7 @@ import javax.sound.sampled.AudioFileFormat;
 /**
  * FileFormatTypes used by the CCITT audio decoder.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050722 nsano initial version <br>
  */
 public class CcittFileFormatType extends AudioFileFormat.Type {
@@ -24,7 +24,7 @@ public class CcittFileFormatType extends AudioFileFormat.Type {
 
     /**
      * Constructs a file type.
-     * 
+     *
      * @param name the name of the Flac File Format.
      * @param extension the file extension for this Flac File Format.
      */

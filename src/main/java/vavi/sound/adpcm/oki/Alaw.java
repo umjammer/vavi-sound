@@ -12,7 +12,7 @@ package vavi.sound.adpcm.oki;
  * <p>
  * TODO ccitt G.711 なので統合する
  * </p>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030817 nsano initial version <br>
  */
 public class Alaw extends Xlaw {
@@ -84,7 +84,7 @@ public class Alaw extends Xlaw {
         {0x83, 0xb0}, {0x83, 0x90}, {0x83, 0xf0}, {0x83, 0xd0},
         {0x83, 0x30}, {0x83, 0x10}, {0x83, 0x70}, {0x83, 0x50},
     };
-    
+
     /** */
     private static final int[] lintoalaw = {
         0x2a, 0x2a, 0x2a, 0x2a, 0x2b, 0x2b, 0x2b, 0x2b,

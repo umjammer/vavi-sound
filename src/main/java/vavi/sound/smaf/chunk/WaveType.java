@@ -16,19 +16,19 @@ import vavi.util.StringUtil;
  * WaveType.
  * <pre>
  * 7    mono, stereo
- *    
- * 6 
+ *
+ * 6
  * 5    format
- * 4 
- *   
+ * 4
+ *
  * 3
- *    
+ *
  * 2
  * 1    freq
  * 0
  * 16 bit
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050101 nsano initial version <br>
  */
 public class WaveType {
@@ -80,7 +80,7 @@ public class WaveType {
      * <pre>
      * 7 654 3210 7654 3210
      * ~ ~~~ ~~~~ ~~~~ ~~~~
-     * | |   |    |    +--- reserved   
+     * | |   |    |    +--- reserved
      * | |   |    +-------- base bit
      * | |   +------------- sampling freq
      * | +----------------- format
@@ -117,7 +117,7 @@ Debug.println("waveType: " + this);
     }
 
     /**
-     * 
+     *
      * @param waveChannels 1, 2
      * @param waveFormat 0: Signed, 1: ADPCM, 2: TwinVQ, 3: MP3
      * @param waveSamplingFreq 4000, 8000, 11000, 22050, 44100

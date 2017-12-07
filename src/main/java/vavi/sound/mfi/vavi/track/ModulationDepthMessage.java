@@ -26,7 +26,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
  *  channel true
  *  delta   true
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030618 nsano initial version <br>
  *          0.01 030821 nsano implements {@link MidiConvertible} <br>
  *          0.02 030826 nsano complete <br>
@@ -103,7 +103,7 @@ public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
         throws InvalidMidiDataException {
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
-        
+
         MidiEvent[] events = new MidiEvent[1];
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,

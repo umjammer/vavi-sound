@@ -15,8 +15,8 @@ import java.io.InputStream;
  * <p>
  * {@link javax.sound.midi} subset compatible.
  * </p>
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
  */
 public interface Sequencer extends SmafDevice {

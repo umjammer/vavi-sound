@@ -26,8 +26,8 @@ import vavi.util.StringUtil;
 
 /**
  * MidiUtil.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041230 nsano initial version <br>
  */
 public final class MidiUtil {
@@ -75,10 +75,10 @@ public final class MidiUtil {
                 ",data1=" + type +
                 ",data2=" + sb;
         }
-        
+
         return result;
     }
-    
+
     /** */
     private static String getChannelMessage(int statusByte, int value1) {
         switch (statusByte / 16) {
@@ -175,7 +175,7 @@ Debug.println(Level.WARNING, "unknown cp: " + e.getMessage());
             Properties props = new Properties();
             final String path = "midi.properties";
             props.load(MidiUtil.class.getResourceAsStream(path));
-            
+
             // encodings
             String value = props.getProperty("decodingEncoding");
             if (value != null) {
@@ -204,7 +204,7 @@ Debug.println("defaultSequencer: " + defaultSequencer);
             }
 Debug.println("sequencerClassName: " + sequencerClassName);
 Debug.println("sequencerDeviceName: " + sequencerDeviceName);
-            
+
         } catch (Exception e) {
 Debug.printStackTrace(e);
             throw new IllegalStateException(e);
@@ -212,13 +212,13 @@ Debug.printStackTrace(e);
     }
 
     /**
-     * com.sun.media.sound.RealTimeSequencer を返したい。 
+     * com.sun.media.sound.RealTimeSequencer を返したい。
      */
     public static Sequencer getDefaultSequencer() {
 
         for (MidiDeviceProvider provider : providers) {
             for (MidiDevice.Info info : provider.getDeviceInfo()) {
-                MidiDevice device = provider.getDevice(info); 
+                MidiDevice device = provider.getDevice(info);
                 String name = null;
                 try {
                     byte[] bytes = info.getName().getBytes("ISO8859-1");
@@ -254,7 +254,7 @@ Debug.println("default sequencer: " + provider.getClass().getName() + ", " + dev
     private static MidiDeviceProvider[] providers;
 
     /**
-     * @depends /META-INF/services/javax.sound.midi.spi.MidiDeviceProvider 
+     * @depends /META-INF/services/javax.sound.midi.spi.MidiDeviceProvider
      */
     static {
         final String dir = "/META-INF/services/";

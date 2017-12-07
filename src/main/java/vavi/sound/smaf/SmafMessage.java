@@ -12,8 +12,8 @@ import java.io.OutputStream;
 
 /**
  * SMAF メッセージの基底クラスです．
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
  */
 public abstract class SmafMessage {

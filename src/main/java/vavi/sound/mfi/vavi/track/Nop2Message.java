@@ -21,14 +21,14 @@ import vavi.util.Debug;
  *  channel false
  *  delta   true
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051116 nsano initial version <br>
  * @since MFi 3.0
  */
 public class Nop2Message extends ShortMessage
     implements MidiConvertible {
 
-    public static final int maxDelta = 0xff * 0x100 + 0xff; 
+    public static final int maxDelta = 0xff * 0x100 + 0xff;
 
     /**
      * 0xdc
@@ -50,7 +50,7 @@ Debug.println("NOP2: delta: " + delta);
      * @param delta delta time
      * @param status
      * @param data1 always 0xdc
-     * @param data2 0 ~ 255 (* 0xff) 
+     * @param data2 0 ~ 255 (* 0xff)
      */
     public Nop2Message(int delta, int status, int data1, int data2) {
         super(delta, 0xff, 0xdc, data2);

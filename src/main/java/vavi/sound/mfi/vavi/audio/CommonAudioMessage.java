@@ -27,9 +27,9 @@ import vavi.util.Debug;
 
 
 /**
- * CommonMessage. 
+ * CommonMessage.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
  */
 public class CommonAudioMessage {
@@ -41,7 +41,7 @@ public class CommonAudioMessage {
     protected static final int maxAdpcmVolume = 0x3f;
 
     /**
-     * 
+     *
      * @param masterVolume in %
      */
     public static MfiEvent getMasterVolumeEvent(int masterVolume) {
@@ -51,7 +51,7 @@ public class CommonAudioMessage {
     }
 
     /**
-     * 
+     *
      * @param adpcmVolume in %
      */
     public static MfiEvent getVolumeEvent(int adpcmVolume) {
@@ -61,7 +61,7 @@ public class CommonAudioMessage {
     }
 
     /**
-     * 
+     *
      * @param pan
      */
     public static MfiEvent getPanEvent(int pan) {
@@ -76,7 +76,7 @@ public class CommonAudioMessage {
     }
 
     /**
-     * 
+     *
      * @param start true: start, false: end
      */
     public static MfiEvent getCuePointEvent(boolean start) {

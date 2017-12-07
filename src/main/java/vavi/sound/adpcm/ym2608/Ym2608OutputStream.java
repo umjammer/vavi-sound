@@ -15,8 +15,8 @@ import vavi.sound.adpcm.Codec;
 
 /**
  * YAMAHA (YM2608) OutputStream.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030827 nsano initial version <br>
  */
 public class Ym2608OutputStream extends AdpcmOutputStream {
@@ -29,7 +29,7 @@ public class Ym2608OutputStream extends AdpcmOutputStream {
     /**
      * {@link vavi.io.BitOutputStream} は 4bit big endian 固定
      * @param out ADPCM
-     * @param byteOrder #write(int) のバイトオーダ 
+     * @param byteOrder #write(int) のバイトオーダ
      */
     public Ym2608OutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.BIG_ENDIAN);

@@ -31,15 +31,15 @@ import static org.junit.Assert.assertEquals;
 
 
 /**
- * CcittAudioFileReaderTest. 
+ * CcittAudioFileReaderTest.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>
  */
 public class CcittAudioFileReaderTest {
 
-    String inFile = "out.4.adpcm";
-    String correctFile = "out.4.pcm";
+    String inFile = "/vavi/sound/adpcm/ccitt/out.4.adpcm";
+    String correctFile = "/vavi/sound/adpcm/ccitt/out.4.pcm";
     File outFile;
 
     @Before

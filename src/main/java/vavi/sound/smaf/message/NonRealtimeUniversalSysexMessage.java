@@ -18,7 +18,7 @@ import vavi.sound.smaf.SysexMessage;
  * <pre>
  *  0xf0
  *  0xfe
- *  SUB-ID#1 | SUB-ID#2   | はたらき 
+ *  SUB-ID#1 | SUB-ID#2   | はたらき
  *  ---------|------------|-----------------------
  *   00H     | --         | 未使用
  *   01H     | (not used) | Sample Dump Header
@@ -50,7 +50,7 @@ import vavi.sound.smaf.SysexMessage;
  *           | 01H  　    |  Header
  *           | 02H  　    |  Data Packet
  *           | 03H  　    |  Request
- *   08H     | nn         | MIDI Tuning Standard 
+ *   08H     | nn         | MIDI Tuning Standard
  *           | 00H      　|  Bulk Dump Request
  *           | 01H  　    |  Bulk Dump Reply
  *   09H     | nn         | General MIDI
@@ -58,12 +58,12 @@ import vavi.sound.smaf.SysexMessage;
  *           | 02H  　    |  General MIDI System Off
  *   7BH     | (not used) | End Of File
  *   7CH     | (not used) | Wait
- *   7DH     | (not used) | Cancel 
- *   7EH     | (not used) | NAK 
- *   7FH     | (not used) | ACK 
+ *   7DH     | (not used) | Cancel
+ *   7EH     | (not used) | NAK
+ *   7FH     | (not used) | ACK
  * </pre>
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
  */
 public class NonRealtimeUniversalSysexMessage extends SysexMessage {

@@ -16,7 +16,7 @@ import vavi.util.Debug;
  * NEC System exclusive message function 0x01, 0xf1, 0x06 processor.
  * (StreamPan)
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070423 nsano initial version <br>
  */
 public class Function1_241_6 implements MachineDependentFunction {

@@ -22,7 +22,7 @@ import vavi.sound.mfi.spi.MfiFileReader;
 /**
  * MfiFileReader implemented by vavi.
  * <li> TODO 特殊命令の実装
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano midi compliant <br>
  *          0.11 030618 nsano add vibrato related <br>
  *          0.12 030817 nsano change unsupported exception <br>

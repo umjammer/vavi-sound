@@ -11,7 +11,7 @@ import vavi.sound.adpcm.Codec;
  * Vox ADPCM codec.
  * 
  * @author Furuhon
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030715 nsano port to java <br>
  * @see "http://www.hundredsoft.jp/wav2mld/source/p211cnv.c"
  */
@@ -24,7 +24,7 @@ class Vox implements Codec {
     }
 
     /** */
-    private static final int table[] = {
+    private static final int[] table = {
         16, 17, 19, 21, 23, 25, 28, 31, 34, 37,
         41, 45, 50, 55, 60, 66, 73, 80, 88, 97,
         107, 118, 130, 143, 157, 173, 190, 209, 230, 253,

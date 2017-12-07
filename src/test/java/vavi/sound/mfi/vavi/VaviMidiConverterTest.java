@@ -12,21 +12,23 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import vavi.sound.mfi.MfiSystem;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 
 /**
- * VaviMidiConverterTest. 
+ * VaviMidiConverterTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
+@Ignore
 public class VaviMidiConverterTest {
 
     @Test
@@ -48,7 +50,7 @@ public class VaviMidiConverterTest {
 
         boolean convert = false;
         boolean play = false;
-        
+
         if (args[0].equals("-c")) {
             convert = true;
         } else if (args[0].equals("-p")) {
@@ -60,7 +62,7 @@ public class VaviMidiConverterTest {
         File file = new File(args[1]);
         vavi.sound.mfi.Sequence mfiSequence = MfiSystem.getSequence(file);
         Sequence midiSequence = MfiSystem.toMidiSequence(mfiSequence);
-        
+
         Sequencer midiSequencer = MidiSystem.getSequencer();
 Debug.println("midiSequencer: " + midiSequencer);
 Debug.println("midiSequencer:T: " + midiSequencer.getTransmitter());
@@ -75,9 +77,9 @@ Debug.println("midiSequencer:R: " + midiSequencer.getReceiver());
             }
             midiSequencer.stop();
         }
-        
+
         midiSequencer.close();
-        
+
         if (convert) {
             int ts[] = MidiSystem.getMidiFileTypes(midiSequence);
 Debug.println("types: " + ts.length);

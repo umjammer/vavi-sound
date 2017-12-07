@@ -28,7 +28,7 @@ import vavi.sound.mobile.AudioEngine;
  *  channel true
  *  delta   ?
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070117 nsano initial version <br>
  */
 public class AudioStopMessage extends LongMessage
@@ -79,7 +79,7 @@ public class AudioStopMessage extends LongMessage
     //----
 
     /**
-     * @throws InvalidMidiDataException 
+     * @throws InvalidMidiDataException
      */
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 

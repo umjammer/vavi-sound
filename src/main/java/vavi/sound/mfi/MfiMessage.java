@@ -16,7 +16,7 @@ import java.io.Serializable;
  * |Δ|ST|D1 D2 ...
  * +--+--+--+--+--+--+--+--+-
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.01 020627 nsano refine <br>
  *          0.02 030820 nsano implements {@link Serializable} <br>
  *          0.03 030820 nsano {@link javax.sound.midi.MidiMessage} compatible <br>
@@ -50,7 +50,7 @@ public abstract class MfiMessage
     protected int length;
 
     /**
-     * @after {@link #length} が設定される 
+     * @after {@link #length} が設定される
      */
     protected MfiMessage(byte[] data) {
         this.data = data;

@@ -20,7 +20,7 @@ import vavi.util.Debug;
  * <pre>
  * "Mwa*" *: chunk number
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050101 nsano initial version <br>
  */
 public class StreamWaveDataChunk extends WaveDataChunk {

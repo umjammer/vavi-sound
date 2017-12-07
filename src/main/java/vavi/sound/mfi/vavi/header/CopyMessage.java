@@ -29,8 +29,8 @@ import vavi.sound.midi.MidiUtil;
  *  &quot;copy&quot; n bytes: copyright
  *  MIDI {@link MidiConstants#META_COPYRIGHT META_COPYRIGHT (0x02)}
  * </pre>
- * <li> TODO use {@link CodeMessage} 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * <li> TODO use {@link CodeMessage}
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
 public class CopyMessage extends SubMessage implements MidiConvertible, MfiConvertible {

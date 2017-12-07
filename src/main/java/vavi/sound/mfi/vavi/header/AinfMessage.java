@@ -27,7 +27,7 @@ import vavi.util.StringUtil;
  *  2: audio info (*1)
  *  :   :
  *  N: audio info
- * 
+ *
  *  audio info (*1)
  *  0: audio format
  *  1: audio info length H
@@ -36,8 +36,8 @@ import vavi.util.StringUtil;
  *  :   :
  *  N: audio info data
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
- * @version 0.00 050721 nsano intial version <br>
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
+ * @version 0.00 050721 nsano initial version <br>
  * @since MFi 4.0
  */
 public class AinfMessage extends SubMessage {
@@ -59,7 +59,7 @@ public class AinfMessage extends SubMessage {
         data = getData();
         int l = 0;
         for (int i = 0; i < getAudioInfoCount(); i++) {
-            AudioInfo audioInfo = new AudioInfo(i, data, l); 
+            AudioInfo audioInfo = new AudioInfo(i, data, l);
             audioInfos.add(audioInfo);
 
             l += 1 + 2 + audioInfo.length; // format + length + ...
@@ -100,7 +100,7 @@ public class AinfMessage extends SubMessage {
         byte[] data = getData();
         return data[0] & 0x3f;
     }
-    
+
     /** */
     public int getAudioInfoCount() {
         byte[] data = getData();

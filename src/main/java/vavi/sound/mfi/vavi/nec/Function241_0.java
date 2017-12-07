@@ -15,7 +15,7 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
  * NEC System exclusive message function 0xf1, 0x_0 processor.
  * (ADPCM on)
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030827 nsano initial version <br>
  */
 public class Function241_0 implements MachineDependentFunction {

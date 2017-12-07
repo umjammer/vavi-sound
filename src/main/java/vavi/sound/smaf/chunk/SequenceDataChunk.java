@@ -44,7 +44,7 @@ import vavix.io.huffman.Huffman;
  * <pre>
  * "Mtsq"
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano initial version <br>
  */
 public class SequenceDataChunk extends Chunk {
@@ -92,7 +92,7 @@ Debug.println("decode: " + size + " -> " + decoded.length);
             readMobileStandard(new ByteArrayInputStream(decoded));
             break;
         case MobileStandard_NoCompress:
-        case Unknown3: // TODO 
+        case Unknown3: // TODO
             readMobileStandard(is);
             break;
         }
@@ -276,7 +276,7 @@ Debug.println(Level.WARNING, "reserved: 0xa_: " + StringUtil.toHex2(d1) + String
                     break;
                 case 0x06: // データエントリー MSB
                 case 0x26: // データエントリー LSB
-                case 0x40: // ホールド 1 (ダンパー) 
+                case 0x40: // ホールド 1 (ダンパー)
                 case 0x47: // フィルタ・レゾナンス MA-5
                 case 0x4a: // ブライトネス MA-5
                 case 0x64: // RPN LSB

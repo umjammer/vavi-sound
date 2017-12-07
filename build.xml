@@ -16,8 +16,8 @@
          xmlns:artifact="urn:maven-artifact-ant">
 
   <path id="maven-ant-tasks.classpath">
-    <fileset dir="${user.home}/lib/java/maven-ant-tasks">
-      <include name="*.jar" />
+    <fileset dir="${user.home}/lib/java">
+      <include name="maven-ant-tasks*.jar" />
     </fileset>
   </path>
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
@@ -25,7 +25,6 @@
 
   <property environment="env"/>
   <property file="local.properties" />
-
   <xmlproperty file="pom.xml" />
 
   <!-- Path Definitions -->
@@ -42,8 +41,10 @@
       <pom refid="maven.project"/>
     </artifact:dependencies>
     <artifact:mvn pom="pom.xml">
-      <arg value="package"/>
-      <arg value="-Dmaven.test.skip=true"/>
+      <arg value="-q" />
+      <arg value="clean" />
+      <arg value="package" />
+      <arg value="-DskipTests=true" />
     </artifact:mvn>
   </target>
 

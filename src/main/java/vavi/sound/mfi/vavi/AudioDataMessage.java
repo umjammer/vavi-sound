@@ -52,7 +52,7 @@ import vavi.util.StringUtil;
  * <li>{@link #length} は AudioData Chunk すべての長さ
  * <li>TODO extends {@link MfiMessage} いるの？ AudioDataChunk じゃないの？
  * <li>TODO このクラスそのまま {@link vavi.sound.mfi.Track} に入れたらよくないのでは？ → extends {@link MetaMessage}？
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050721 nsano initial version <br>
  * @since MFi 4.0
  */

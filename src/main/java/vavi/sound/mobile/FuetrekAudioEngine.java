@@ -19,8 +19,8 @@ import vavi.util.Debug;
 
 /**
  * Fuetrek AudioEngine.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020903 nsano initial version <br>
  */
 public class FuetrekAudioEngine extends BasicAudioEngine {
@@ -36,7 +36,7 @@ public class FuetrekAudioEngine extends BasicAudioEngine {
      *   1 Rc + Rc + Re
      *  from AudioDataMessage
      *   0 L + R
-     * </pre>   
+     * </pre>
      */
     public FuetrekAudioEngine() {
         data = new Data[MAX_ID];
@@ -51,7 +51,7 @@ public class FuetrekAudioEngine extends BasicAudioEngine {
 Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
                 return -1;
             }
-    
+
             if (streamNumber % 2 == 0 && data[streamNumber].channel % 2 == 0 && (data[streamNumber + 1] != null && data[streamNumber + 1].channel % 2 == 1)) {
                 channels = 2;
             }
@@ -85,7 +85,7 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber]
             }
         } else {
             if (data[streamNumber].bits == 4) {
-                InputStream in = new ByteArrayInputStream(data[streamNumber].adpcm, 0, data[streamNumber].adpcm.length / 2); 
+                InputStream in = new ByteArrayInputStream(data[streamNumber].adpcm, 0, data[streamNumber].adpcm.length / 2);
                 iss[0] = new G721InputStream(in, ByteOrder.LITTLE_ENDIAN);
                 InputStream inR = new ByteArrayInputStream(data[streamNumber].adpcm, data[streamNumber].adpcm.length / 2, data[streamNumber].adpcm.length / 2);
                 iss[1] = new G721InputStream(inR, ByteOrder.LITTLE_ENDIAN);

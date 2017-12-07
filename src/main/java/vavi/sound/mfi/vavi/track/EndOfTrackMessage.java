@@ -23,7 +23,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
  *  channel false
  *  delta   true
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano refine <br>
  *          0.11 030821 nsano implements {@link MidiConvertible} <br>
  *          0.12 030920 nsano repackage <br>
@@ -33,7 +33,7 @@ public class EndOfTrackMessage extends ShortMessage
     implements MidiConvertible, MfiConvertible {
 
     /**
-     * 
+     *
      * @param delta delta time
      * @param data2 always 0
      */
@@ -86,9 +86,9 @@ public class EndOfTrackMessage extends ShortMessage
     public MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context) {
 
         MfiEvent[] mfiEvents =  new MfiEvent[MfiContext.MAX_MFI_TRACKS];
-            
+
 //      float scale = context.getScale();
-        
+
         for (int track = 0; track < MfiContext.MAX_MFI_TRACKS; track++) {
             if (context.isTrackUsed(track)) {
                 long currentTick = midiEvent.getTick();

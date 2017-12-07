@@ -31,7 +31,7 @@ import vavi.util.StringUtil;
  * <pre>
  *  0xff, 0xff
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020703 nsano refine <br>
  *          0.01 030711 nsano add constants <br>
  *          0.02 030711 nsano add {@link #getCarrier()} <br>
@@ -101,7 +101,7 @@ public class MachineDependentMessage extends SysexMessage
 
         // 0 delta
         // 5 vendor | carrier
-        // 6 
+        // 6
         // 7
 Debug.println("MachineDepend: " + StringUtil.toHex2(data[0]) + ", " + StringUtil.toHex2(data[5]) + " " + StringUtil.toHex2(data[6]) + " " + StringUtil.toHex2(data[7]) + " " + (data.length > 8 ? StringUtil.toHex2(data[8]) : "") + " " + (data.length > 9 ? StringUtil.toHex2(data[9]) : "") + " " + (data.length > 10 ? StringUtil.toHex2(data[10]) : ""));
         MachineDependentMessage message = new MachineDependentMessage(data);

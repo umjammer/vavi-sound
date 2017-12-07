@@ -27,7 +27,7 @@ import vavi.util.StringUtil;
  * <pre>
  * "[MA]tsu"
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041228 nsano initial version <br>
  */
 public class SetupDataChunk extends Chunk {
@@ -65,13 +65,13 @@ Debug.println("messages: " + messages.size());
 
     /**
      * formatType 0
-     * 
+     *
      * <pre>
      *  ff
      *  f0
      *  ##   length
      *  ...  data
-     *   
+     *
      * </pre>
      */
     private void readHandyPhoneStandard(InputStream is) throws InvalidSmafDataException, IOException {

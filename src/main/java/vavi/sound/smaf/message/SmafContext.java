@@ -25,8 +25,8 @@ import vavi.util.Debug;
 
 /**
  * SMAF context for the converter.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
  */
 public class SmafContext implements SmafConvertible {
@@ -146,7 +146,7 @@ Debug.println("scale: " + scale);
 
     /** Math#round() で丸められた誤差 */
     private float[] roundedSum = new float[MAX_SMAF_TRACKS];
-    
+
     /** Math#round() で丸められた誤差が整数値より大きくなった場合の補正 */
     private int getAdjustedDelta(int smafTrackNumber, double floatDelta) {
         int delta = (int) Math.round(floatDelta);
@@ -158,12 +158,12 @@ Debug.println("rounded over 1, plus 1: " + roundedSum[smafTrackNumber] + "[" + s
             roundedSum[smafTrackNumber] -= 1;
         } else if (roundedSum[smafTrackNumber] <= -1f) {
 Debug.println("rounded under -1, minus 1: " + roundedSum[smafTrackNumber] + "[" + smafTrackNumber + "]");
-            delta -= 1; 
+            delta -= 1;
             roundedSum[smafTrackNumber] += 1;
         }
         return delta;
     }
-    
+
     //----
 
     /**
@@ -258,8 +258,8 @@ if (interval < 0) {
             // note
             ShortMessage shortMessage = (ShortMessage) midiMessage;
             int channel = shortMessage.getChannel();
-            
-            delta = retrieveAdjustedDelta(retrieveSmafTrack(channel), midiEvent.getTick()); 
+
+            delta = retrieveAdjustedDelta(retrieveSmafTrack(channel), midiEvent.getTick());
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
             // tempo
             delta = retrieveAdjustedDelta(smafTrackNumber, midiEvent.getTick()); // TODO smafTrackNumber でいいのか？

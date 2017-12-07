@@ -12,8 +12,8 @@ import javax.sound.midi.InvalidMidiDataException;
 /**
  * MidiConverter.
  * <li>javax.sound.midi パッケージにはない。(MFi オリジナル)
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030819 nsano initial version <br>
  *          0.01 031212 nsano add toMfiSequence(Sequence, int) <br>
  */

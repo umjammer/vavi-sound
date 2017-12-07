@@ -92,7 +92,7 @@ Debug.println("byteOrder: " + this.byteOrder);
                 ledis.close();
                 encoder.encodeBlock(1, pcm, pcm.length, steps, adpcm, bytesPerBlock);
 //System.err.println(StringUtil.getDump(adpcm, 128));
-    
+
                 out.write(adpcm);
             }
         }

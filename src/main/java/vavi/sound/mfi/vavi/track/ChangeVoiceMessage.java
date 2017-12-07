@@ -26,7 +26,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
  *  channel true
  *  delta   ?
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>
  *          0.11 030821 nsano implements MidiConvertible <br>
  *          0.12 030906 nsano implements MfiConvertible <br>

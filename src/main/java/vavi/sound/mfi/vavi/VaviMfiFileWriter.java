@@ -23,8 +23,8 @@ import vavi.util.Debug;
 
 /**
  * VaviMfiFileWriter
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020704 nsano initial version <br>
  *          0.01 030817 nsano add isFileTypeSupported <br>
  *          0.02 030819 nsano change sequence related <br>
@@ -56,7 +56,7 @@ public class VaviMfiFileWriter extends MfiFileWriter {
 
     /** */
     public int[] getMfiFileTypes(Sequence sequence) {
-        // sequence を無視しているけど MFi Sequence 一つしか型ないからいい 
+        // sequence を無視しているけど MFi Sequence 一つしか型ないからいい
         return types;
     }
 
@@ -72,7 +72,7 @@ public class VaviMfiFileWriter extends MfiFileWriter {
 
     /** */
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
-        // sequence を無視しているけど MFi Sequence 一つしか型ないからいい 
+        // sequence を無視しているけど MFi Sequence 一つしか型ないからいい
         return isFileTypeSupported(fileType);
     }
 
@@ -148,7 +148,7 @@ Debug.printStackTrace(e);
             Properties props = new Properties();
             final String path = "vavi.properties";
             props.load(SubMessage.class.getResourceAsStream(path));
-            
+
             String value = props.getProperty("format.type.major");
             if (value != null) {
                 defaultMajorType = Integer.parseInt(value);

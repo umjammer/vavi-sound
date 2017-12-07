@@ -18,8 +18,8 @@ import vavi.sound.mfi.Sequence;
 
 /**
  * MfiFileReader.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>
  *          0.01 020704 nsano midi compliant <br>
  */

@@ -24,7 +24,7 @@ import vavi.util.StringUtil;
  * <pre>
  * "Dch*" *: language code
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041226 nsano initial version <br>
  */
 public class DataChunk extends Chunk {
@@ -103,21 +103,21 @@ Debug.println(subDatum);
     public int getLanguageCode() {
         return languageCode;
     }
-    
+
     /** */
     public void setLanguageCode(int languageCode) {
         this.languageCode = languageCode;
         id[3] = (byte) languageCode;
     }
-    
+
     /**
      * 記述する文字コードがUnicode の場合、それぞれの文字群先頭にBOM (バイトオーダーマーク) を設定
      * すること。BOM 無しの場合、ビッグエンディアンとして解釈する。
      */
     boolean isUnicode(int languageCode) {
-        return languageCode >= 0x20 && languageCode <= 0x25; 
+        return languageCode >= 0x20 && languageCode <= 0x25;
     }
-    
+
     /**
      * <pre>
      * tag  2byte (固定)
@@ -126,15 +126,15 @@ Debug.println(subDatum);
      * </pre>
      */
     class SubData {
-        
+
         /** */
         SubData(InputStream is) throws IOException {
             byte[] temp = new byte[2];
             read(is, temp);
             this.tag = new String(temp);
-            
+
             int size = readShort(is);
-            
+
             this.data = new byte[size];
             read(is, this.data);
         }

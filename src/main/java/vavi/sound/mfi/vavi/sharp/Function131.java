@@ -20,7 +20,7 @@ import vavi.util.StringUtil;
  * Sharp System exclusive message function 0x83 processor.
  * (Wave Packet Data)
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
 public class Function131 implements MachineDependentFunction {
@@ -71,9 +71,9 @@ public class Function131 implements MachineDependentFunction {
         this.channel   = (data[7] & 0xc0) >> 6; // 0 ~ 3
         this.packetId  =  data[7] & 0x3f;       // packet id 0 ~ 15
         this.mode      = (data[8] & 0xc0) >> 6; // 0 ~ 3
-        int format1    = (data[8] & 0x3c) >> 2; // 
-        int format2    =  data[8] & 0x03;       // 
-        this.continued = (data[9] & 0x01) == 1; // 
+        int format1    = (data[8] & 0x3c) >> 2; //
+        int format2    =  data[8] & 0x03;       //
+        this.continued = (data[9] & 0x01) == 1; //
 
         int adpcmLength = data.length - HEADER_LENGTH;
 Debug.println("ADPCM voice: " + channel + "ch, No." + packetId + ", mode=" + mode + ", continued=" + continued + ", " + adpcmLength);

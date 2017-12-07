@@ -19,7 +19,7 @@ import vavi.io.BitOutputStream;
 /**
  * AdpcmOutputStream.
  * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030827 nsano initial version <br>
  *          0.10 060427 nsano refactoring <br>
  */

@@ -11,7 +11,7 @@
  * supporting documentation, and that the names of Stichting Mathematisch
  * Centrum or CWI not be used in advertising or publicity pertaining to
  * distribution of the software without specific, written prior permission.
- * 
+ *
  * STICHTING MATHEMATISCH CENTRUM DISCLAIMS ALL WARRANTIES WITH REGARD TO
  * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS, IN NO EVENT SHALL STICHTING MATHEMATISCH CENTRUM BE LIABLE
@@ -32,7 +32,7 @@ import vavi.sound.adpcm.Codec;
  * The algorithm for this coder was taken from the IMA Compatibility Project
  * proceedings, Vol 2, Number 2; May 1992.
  *
- * @version    1.20    921218
+ * @version 1.20 921218
  *
  * Change log:
  * - Fixed a stupid bug, where the delta was computed as
@@ -48,19 +48,19 @@ import vavi.sound.adpcm.Codec;
  * - Changed some of the variable names to be more meaningful.
  *
  * @author Stichting Mathematisch Centrum
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020707 nsano initial version <br>
  */
 class Dvi implements Codec {
 
     /** Intel ADPCM step variation table */
-    private static final int indexTable[] = {
+    private static final int[] indexTable = {
         -1, -1, -1, -1, 2, 4, 6, 8,
         -1, -1, -1, -1, 2, 4, 6, 8,
     };
 
     /** */
-    private static final int stepSizeTable[] = {
+    private static final int[] stepSizeTable = {
         7, 8, 9, 10, 11, 12, 13, 14, 16, 17,
         19, 21, 23, 25, 28, 31, 34, 37, 41, 45,
         50, 55, 60, 66, 73, 80, 88, 97, 107, 118,
@@ -94,7 +94,7 @@ class Dvi implements Codec {
      */
     public int encode(int input) {
 
-        // 
+        //
         int valPrev = state.valPrev;
         // Current step change index
         int index = state.index;
@@ -124,7 +124,7 @@ class Dvi implements Codec {
         int delta = 0;
         // Current change to valpred
         int vpDiff = (step >> 3);
-        
+
         if (diff >= step) {
             delta = 4;
             diff -= step;
@@ -176,7 +176,7 @@ class Dvi implements Codec {
      */
     public int decode(int input) {
 
-        // 
+        //
         int valPrev = state.valPrev;
 //System.err.printf("%d\n", valPrev);
         // Current step change index

@@ -25,10 +25,10 @@ import vavi.util.Debug;
 
 
 /**
- * BasicMidiFileReader. 
+ * BasicMidiFileReader.
  * 継承したクラスで {@link #getSequence(InputStream)} を実装してください。
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
  */
 public abstract class BasicMidiFileReader extends MidiFileReader {
@@ -37,7 +37,7 @@ public abstract class BasicMidiFileReader extends MidiFileReader {
      * 継承したクラスで実装した {@link #getSequence(InputStream)} で
      * 実装したタイプから変換された MIDI Sequence を取得します。
      * @param stream a midi stream
-     * @throws IOException when the I/O does not support marking.  
+     * @throws IOException when the I/O does not support marking.
      */
     public MidiFileFormat getMidiFileFormat(InputStream stream)
         throws InvalidMidiDataException,
@@ -45,7 +45,7 @@ public abstract class BasicMidiFileReader extends MidiFileReader {
 
 //Debug.println("here ★");
         Sequence midiSequence = getSequence(stream);
-        ByteArrayOutputStream os = new ByteArrayOutputStream(); 
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
         MidiSystem.write(midiSequence, 0, os);
         ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
         MidiFileFormat midiFF = MidiSystem.getMidiFileFormat(is);

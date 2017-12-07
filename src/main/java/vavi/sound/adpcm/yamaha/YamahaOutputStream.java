@@ -15,8 +15,8 @@ import vavi.sound.adpcm.Codec;
 
 /**
  * YAMAHA MA# OutputStream
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050402 nsano initial version <br>
  */
 public class YamahaOutputStream extends AdpcmOutputStream {
@@ -27,10 +27,10 @@ public class YamahaOutputStream extends AdpcmOutputStream {
     }
 
     /**
-     * 
+     *
      * {@link vavi.io.BitOutputStream} は 4bit little endian 固定
      * @param out ADPCM
-     * @param byteOrder {@link #write(int)} のバイトオーダ 
+     * @param byteOrder {@link #write(int)} のバイトオーダ
      */
     public YamahaOutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);

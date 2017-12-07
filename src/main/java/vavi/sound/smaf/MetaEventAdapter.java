@@ -23,8 +23,8 @@ import vavi.util.Debug;
 
 /**
  * a MIDI MetaEvent adapter implementation.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
  */
 class MetaEventAdapter implements MetaEventListener, SmafDevice {
@@ -112,7 +112,7 @@ Debug.println(Level.WARNING, String.format("unhandled manufacturer: %02x", manuf
             break;
         }
     }
-    
+
     /**
      * manufacturerId 0x5f: vavi
      * <pre>

@@ -22,7 +22,7 @@ import vavi.util.Debug;
  * <p>
  * TODO only MFi1
  * </p>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020704 nsano initial version <br>
  */
 public class ExtendedEditMessage extends SysexMessage {

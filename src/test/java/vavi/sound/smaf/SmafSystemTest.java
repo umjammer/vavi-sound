@@ -13,19 +13,21 @@ import java.io.FileInputStream;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import vavi.util.Debug;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 
 /**
- * SmafSystemTest. 
+ * SmafSystemTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
+@Ignore
 public class SmafSystemTest {
 
     @Test
@@ -47,7 +49,7 @@ public class SmafSystemTest {
 //try {
         boolean convert = false;
         boolean play = false;
-        
+
         if (args[0].equals("-c")) {
             convert = true;
         } else if (args[0].equals("-p")) {
@@ -73,7 +75,7 @@ public class SmafSystemTest {
 
             midiSequencer.close();
         }
-        
+
         if (convert) {
 //Debug.println("☆☆☆ here: " + midiSequence);
             int ts[] = MidiSystem.getMidiFileTypes(midiSequence);

@@ -16,8 +16,8 @@ import vavi.sound.adpcm.Codec;
 
 /**
  * DVI OutputStream.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060124 nsano initial version <br>
  */
 public class DviOutputStream extends AdpcmOutputStream {
@@ -30,7 +30,7 @@ public class DviOutputStream extends AdpcmOutputStream {
     /**
      * {@link vavi.io.BitOutputStream} は 4bit big endian 固定
      * @param out ADPCM
-     * @param byteOrder {@link #write(int)} のバイトオーダ 
+     * @param byteOrder {@link #write(int)} のバイトオーダ
      */
     public DviOutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.BIG_ENDIAN);

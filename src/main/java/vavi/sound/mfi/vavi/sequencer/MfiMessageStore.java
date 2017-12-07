@@ -17,8 +17,8 @@ import vavi.sound.mfi.MfiMessage;
  * <p>
  * TODO 何とかして撲滅したい -> ThreadLocal ?
  * </p>
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030821 nsano initial version <br>
  */
 public class MfiMessageStore {

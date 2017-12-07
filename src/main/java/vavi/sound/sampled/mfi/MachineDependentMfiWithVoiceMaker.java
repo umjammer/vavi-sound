@@ -16,8 +16,8 @@ import vavi.util.properties.PrefixedPropertiesFactory;
 
 /**
  * MachineDependentMfiWithVoiceMaker.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050403 nsano initial version <br>
  */
 public interface MachineDependentMfiWithVoiceMaker {
@@ -26,7 +26,7 @@ public interface MachineDependentMfiWithVoiceMaker {
      * Gets machine depend MFi events for ADPCM.
      * @param data PCM data
      * @param time second
-     * @param sampleRate sampling rate of the <code>data</code> 
+     * @param sampleRate sampling rate of the <code>data</code>
      * @param bits sampling bits for ADPCM
      */
     List<MfiEvent> getEvents(byte[] data, float time, int sampleRate, int bits, int channels, int masterVolume, int adpcmVolume)

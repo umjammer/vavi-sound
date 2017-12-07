@@ -14,13 +14,13 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 /**
  * バージョン情報 MFi Header Sub Chunk.
- * 
+ *
  * <pre>
  *  &quot;vers&quot; 4 bytes: mld version
- *  format mmnn (ex. 0100) 
+ *  format mmnn (ex. 0100)
  * </pre>
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
 public class VersMessage extends SubMessage {

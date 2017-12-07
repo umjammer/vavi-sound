@@ -23,7 +23,7 @@ import vavi.util.Debug;
  * <p>
  * TODO 機能ごとに FunctionXXX に移す
  * </p>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030711 nsano initial version <br>
  *          0.01 030712 nsano fix sampling rate value for 16kHz <br>
  *          0.02 030901 nsano complete <br>
@@ -43,10 +43,10 @@ public final class MitsubishiMessage extends FuetrekAudioMessage {
      * <p>
      * TODO 時間指定ない場合
      * </p>
-     * @param pcm wave (PCM), 16bit 
+     * @param pcm wave (PCM), 16bit
      * @param sampleRate 4k, 8k, 16k, 32k are available
-     * @param bits adcpm bits 
-     * @param channels adcpm channels 
+     * @param bits adcpm bits
+     * @param channels adcpm channels
      */
     public static List<MfiEvent> getAdpcmEvents(byte[] pcm, float time, int sampleRate, int bits, int channels) throws InvalidMfiDataException {
         int delta = getDelta(time);
@@ -85,20 +85,20 @@ Debug.println("adpcm L, R length: " + temp.length);
     }
 
     /**
-     * 0x83 sub 
+     * 0x83 sub
      * @param packetId TODO
      */
     private static List<MfiEvent> getAdpcmEventsSub(int channel, int packetId, int sampleRate, int bits, byte[] adpcm) throws InvalidMfiDataException {
         int numberOfChunks = adpcm.length / MAX_BLOCK;
         int moduloOfChunks = adpcm.length % MAX_BLOCK;
-        
+
         List<MfiEvent> events = new ArrayList<>();
 
         for (int i = 0; i < numberOfChunks; i++) {
             byte[] chunk = new byte[MAX_BLOCK];
             System.arraycopy(adpcm, MAX_BLOCK * i, chunk, 0, MAX_BLOCK);
 Debug.println("wave chunk(" + i + "): " + chunk.length);
-            
+
             // 0x83 adpcm data
             events.add(getWaveEvent(channel, packetId, sampleRate, bits, !(i == (numberOfChunks - 1) && moduloOfChunks == 0), chunk));
         }
@@ -106,7 +106,7 @@ Debug.println("wave chunk(" + i + "): " + chunk.length);
             byte[] chunk = new byte[moduloOfChunks];
             System.arraycopy(adpcm, MAX_BLOCK * numberOfChunks, chunk, 0, moduloOfChunks);
 Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
-            
+
             // 0x83 adpcm data
             events.add(getWaveEvent(channel, packetId, sampleRate, bits, false, chunk));
         }

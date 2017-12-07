@@ -22,9 +22,9 @@ import vavi.util.properties.PrefixedPropertiesFactory;
 
 /**
  * Chunk.
- * 
+ *
  * TODO make InputStream sub class of FilterInputStream
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
  */
 public abstract class Chunk {
@@ -52,7 +52,7 @@ public abstract class Chunk {
 
     /** TODO bean でもいいかも */
     protected Chunk(byte[] id, int size) {
-        
+
         this.id = id;
         this.size = size;
 
@@ -103,7 +103,7 @@ public abstract class Chunk {
         skipInternal(is, bytes);
         readSize -= bytes;
     }
-    
+
     /**
      * EOF チェック付きのユーティリティ
      */
@@ -117,7 +117,7 @@ public abstract class Chunk {
             l += r;
         }
     }
-    
+
     /**
      * EOF チェック付きのユーティリティ
      * @see #readSize カウントダウンされます
@@ -163,7 +163,7 @@ public abstract class Chunk {
             l += r;
         }
     }
-    
+
     /**
      * 最初でない親の読み込み用(マーク無し)
      * @param is
@@ -181,7 +181,7 @@ public abstract class Chunk {
      * @param mark Chunk Header を読み込んだあと破棄するかどうか(最初だけ使う)
      * @return 読み込んだ Chunk オブジェクト
      * @see #readSize parent != null ならカウントダウンされます
-     * @throws IOException when <i>is</i> does not support marking 
+     * @throws IOException when <i>is</i> does not support marking
      */
     public static Chunk readFrom(InputStream is, Chunk parent, boolean mark)
         throws InvalidSmafDataException, IOException {
@@ -196,7 +196,7 @@ public abstract class Chunk {
 
         byte[] id = new byte[4];
         readInternal(is, id);
-        
+
         DataInputStream dis = new DataInputStream(is);
         int size = dis.readInt();
 Debug.println("size: " + StringUtil.toHex8(size) + "(" + size + ")");
@@ -221,7 +221,7 @@ Debug.println("size: " + StringUtil.toHex8(size) + "(" + size + ")");
             CRC16 crc = new CRC16();
             crc.update(buffer);
 Debug.println("crc (calc): " + StringUtil.toHex4((int) ~crc.getValue()));
-            
+
             is.reset();
         }
 
@@ -333,7 +333,7 @@ Debug.println("crc (calc): " + StringUtil.toHex4((int) ~crc.getValue()));
 //Debug.println("1-4(3): " + value);
                 }
             } else {
-                value = ((d1 & 0x7f) << 7) | (d2 & 0x7f); // 128 ~ 
+                value = ((d1 & 0x7f) << 7) | (d2 & 0x7f); // 128 ~
 //Debug.println("1-4(2): " + value);
             }
         } else {

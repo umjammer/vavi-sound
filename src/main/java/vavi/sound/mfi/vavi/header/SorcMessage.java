@@ -12,11 +12,11 @@ import vavi.util.StringUtil;
 
 /**
  * 再配布不可識別子 MFi Header Sub Chunk.
- * 
+ *
  * <pre>
- * 
+ *
  *  &quot;sorc&quot; 1 byte: protect information *2
- * 
+ *
  *   *2 sorc
  *      7654321.
  *      msb 7   0000000     from network
@@ -24,10 +24,10 @@ import vavi.util.StringUtil;
  *              0000010     from external i/f
  *      .......0
  *      lsb     0: no copyright, 1: has copyright
- *  
+ *
  * </pre>
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  *          0.01 030825 nsano complete <br>
  */

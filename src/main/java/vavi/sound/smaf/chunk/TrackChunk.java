@@ -15,14 +15,14 @@ import vavi.sound.smaf.SmafEvent;
 /**
  * TrackChunk.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
  */
 public abstract class TrackChunk extends Chunk {
 
     /**
      * <pre>
-     * 0:   ma1 
+     * 0:   ma1
      * 1~4: ma2
      * 5:   ma3
      * 6:   ma5
@@ -134,7 +134,7 @@ public abstract class TrackChunk extends Chunk {
      * 0x12 40 msec
      * 0x13 50 msec
      * 0x14〜0xFF Reserved
-     * - 
+     * -
      * </pre>
      * @param timeBase real timeBase [msec]
      * @return index of timeBase
@@ -196,7 +196,7 @@ public abstract class TrackChunk extends Chunk {
     }
 
     /**
-     * 先頭に MetaMessage (META_MACHINE_DEPEND) が入る。 
+     * 先頭に MetaMessage (META_MACHINE_DEPEND) が入る。
      * TrackChunk の情報を Properties で保持している。
      */
     public abstract List<SmafEvent> getSmafEvents()

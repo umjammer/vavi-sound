@@ -48,8 +48,8 @@ FF 7F nn mm
 
 
  * </pre>
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
  * @see "ATS-MA5-SMAF_GL_133_HV.pdf"
  */
@@ -75,7 +75,7 @@ public class MetaMessage extends SmafMessage {
     /**
      * @param data TODO better way?
      * <p>
-     * {@link javax.sound.midi.MetaMessage} nearly compatible. 
+     * {@link javax.sound.midi.MetaMessage} nearly compatible.
      * </p>
      */
     public void setMessage(int type, Map<String, Object> data)
@@ -88,7 +88,7 @@ public class MetaMessage extends SmafMessage {
     /**
      * Meta 番号
      * <p>
-     * {@link javax.sound.midi.MetaMessage} compatible. 
+     * {@link javax.sound.midi.MetaMessage} compatible.
      * </p>
      */
     public int getType() {
@@ -108,7 +108,7 @@ public class MetaMessage extends SmafMessage {
 
     /** */
     public String toString() {
-        return "Meta: type=" + getType(); 
+        return "Meta: type=" + getType();
     }
 
     /* */

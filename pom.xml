@@ -11,9 +11,13 @@
   <organization>
     <name></name>
   </organization>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <url>https://github.com/umjammer/vavi-sound</url>
-  <description>1.0.3
+  <description>1.0.4
+
+    ssrc spi (wip)
+
+1.0.3
 
     make build pass
 
@@ -23,7 +27,11 @@
 
 1.0.1
 
-    refactor properties related</description>
+    refactor properties related
+
+TODO
+
+    adpcm spi</description>
   <build>
     <plugins>
       <plugin>
@@ -43,7 +51,9 @@
               <goal>native2ascii</goal>
             </goals>
             <configuration>
-              <encoding>Windows-31J</encoding>
+              <includes>
+                <include>**/*_ja.properties</include>
+              </includes>
             </configuration>
           </execution>
         </executions>

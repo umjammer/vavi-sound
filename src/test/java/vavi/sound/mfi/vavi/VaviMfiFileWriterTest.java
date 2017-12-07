@@ -28,9 +28,9 @@ import vavi.util.win32.WAVE;
 
 
 /**
- * VaviMfiFileWriterTest. 
+ * VaviMfiFileWriterTest.
  *
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 2007/01/25 nsano initial version <br>
  */
 public class VaviMfiFileWriterTest {
@@ -47,7 +47,7 @@ public class VaviMfiFileWriterTest {
     @Test
     public void test1() throws Exception {
 
-        InputStream in = new BufferedInputStream(new FileInputStream("in.wav"));
+        InputStream in = new BufferedInputStream(new FileInputStream("/tmp/ooo.wav"));
         WAVE wave = (WAVE) WAVE.readFrom(in);
         in.close();
 
@@ -116,7 +116,7 @@ Debug.println("write: " + r);
         for (MfiEvent event : MitsubishiMessage.getAdpcmEvents(pcm, delta, sampleRate, 4, 1)) {
             track.add(event);
         }
-    }    
+    }
 
     /**
      * 同じ channel で次の {@link ShortMessage#NOTE_OFF}, {@link ShortMessage#CONTROL_CHANGE}

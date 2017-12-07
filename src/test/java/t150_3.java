@@ -21,8 +21,8 @@ import javax.sound.sampled.SourceDataLine;
 
 /**
  * Play PCM.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030714 nsano initial version <br>
  */
 public class t150_3 {
@@ -54,7 +54,7 @@ System.err.println("byteOrder: " + byteOrder);
     }
 
     /**
-     * 
+     *
      */
     void play(File file, int sampleRate, ByteOrder byteOrder) throws Exception {
         AudioFormat format = new AudioFormat(

@@ -18,7 +18,7 @@ import vavi.io.BitOutputStream;
 /**
  * T400 ADPCM coder.
  * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030713 nsano completes <br>
  */
 public class Encoder {

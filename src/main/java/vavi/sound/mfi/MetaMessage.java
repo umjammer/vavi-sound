@@ -19,7 +19,7 @@ package vavi.sound.mfi;
  * +--+--+--+--+--+--+--+--+--+--+--+-
  * length (LL) = 1 (TT) + data length (DD ...)
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020629 nsano initial version <br>
  *          0.01 030921 nsano refine <br>
  */
@@ -40,7 +40,7 @@ public class MetaMessage extends MfiMessage {
 
     /**
      * <p>
-     * {@link javax.sound.midi.MetaMessage} compatible. 
+     * {@link javax.sound.midi.MetaMessage} compatible.
      * </p>
      */
     public void setMessage(int type, byte[] data, int length)
@@ -62,7 +62,7 @@ public class MetaMessage extends MfiMessage {
     /**
      * Meta 番号
      * <p>
-     * {@link javax.sound.midi.MetaMessage} compatible. 
+     * {@link javax.sound.midi.MetaMessage} compatible.
      * </p>
      */
     public int getType() {

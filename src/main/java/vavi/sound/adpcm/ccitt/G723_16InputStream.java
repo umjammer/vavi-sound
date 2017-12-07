@@ -16,8 +16,8 @@ import vavi.sound.adpcm.Codec;
 
 /**
  * G723_16 InputStream.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030828 nsano initial version <br>
  */
 public class G723_16InputStream extends AdpcmInputStream {
@@ -41,7 +41,7 @@ public class G723_16InputStream extends AdpcmInputStream {
     /** ADPCM (4bit) 換算時の長さ */
     public int available() throws IOException {
 //Debug.println("0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
-        return (in.available() * 4) + (rest ? 1 : 0); // TODO chack * 4 ???
+        return (in.available() * 4) + (rest ? 1 : 0); // TODO check * 4 ???
     }
 }
 

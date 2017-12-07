@@ -37,8 +37,8 @@ import vavi.util.Debug;
 
 /**
  * MfiWithVoiceMaker.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050403 nsano initial version <br>
  */
 class MfiWithVoiceMaker {
@@ -68,11 +68,11 @@ class MfiWithVoiceMaker {
 
     /** */
     private static int toReal(int base, int percent) {
-        return (int) ((float) base * percent / 100); 
+        return (int) ((float) base * percent / 100);
     }
-    
+
     /**
-     * 
+     *
      * @param sourceAis source PCM
      * @param filename output file
      */
@@ -85,7 +85,7 @@ class MfiWithVoiceMaker {
     }
 
     /**
-     * 
+     *
      * @param model output model
      * @param time time in second
      * @param bits ADPCM sampling bits
@@ -225,7 +225,7 @@ Debug.println("write: " + r);
 
     /**
      * Creates .mld w/ voice file.
-     * 
+     *
      * @param args input wave file
      *             -f output mld filename
      *             -m terminal model, see {@link vavi.sound.sampled.mfi.type} package
@@ -239,7 +239,7 @@ Debug.println("write: " + r);
         try {
             Arguments arguments = new Arguments();
             Options.Util.bind(args, arguments);
-    
+
             // create
             AudioInputStream ais = AudioSystem.getAudioInputStream(arguments.file);
             FilterChain filterChain = new FilterChain();

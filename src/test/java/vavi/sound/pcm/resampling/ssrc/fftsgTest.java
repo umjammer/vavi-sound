@@ -16,8 +16,8 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * test of fftsg
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060127 nsano initial version <br>
  */
 public class fftsgTest {

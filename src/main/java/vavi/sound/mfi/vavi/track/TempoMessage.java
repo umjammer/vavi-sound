@@ -31,7 +31,7 @@ import vavi.util.Debug;
  * <pre>
  *  0xff, 0xc#
  * </pre>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano refine <br>
  *          0.11 030821 nsano implements {@link MidiConvertible} <br>
  *          0.12 030920 nsano repackage <br>
@@ -50,7 +50,7 @@ public class TempoMessage extends ShortMessage
         6, 12, 24, 48, 96, 192, 384, -1,
         15, 30, 60, 120, 240, 480, 960, -1
     };
-    
+
     /**
      * Creates a tempo message.
      * for {@link vavi.sound.mfi.vavi.TrackMessage}

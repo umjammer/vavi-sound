@@ -24,8 +24,8 @@ import vavi.util.Debug;
 
 /**
  * HeaderChunk.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070118 nsano initial version <br>
  */
 class HeaderChunk {
@@ -89,7 +89,7 @@ class HeaderChunk {
      */
     public HeaderChunk(Support support) {
         this.support = support;
-        
+
         support.init(subChunks);
     }
 
@@ -122,7 +122,7 @@ class HeaderChunk {
     }
 
     /**
-     * @see #MINOR_TYPE_MUSIC 
+     * @see #MINOR_TYPE_MUSIC
      * @see #MINOR_TYPE_ALL
      * @see #MINOR_TYPE_PART
      */
@@ -219,7 +219,7 @@ Debug.println("numberTracks: "  + tracksCount);
     }
 
     /**
-     * @throws InvalidMfiDataException 最初の 4 bytes が {@link #TYPE} で無い場合 
+     * @throws InvalidMfiDataException 最初の 4 bytes が {@link #TYPE} で無い場合
      */
     public static HeaderChunk readFrom(InputStream is)
         throws InvalidMfiDataException,

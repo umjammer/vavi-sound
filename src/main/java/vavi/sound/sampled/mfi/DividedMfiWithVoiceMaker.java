@@ -26,8 +26,8 @@ import vavi.util.Debug;
 
 /**
  * DividedMfiWithVoiceMaker.
- * 
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050403 nsano initial version <br>
  */
 class DividedMfiWithVoiceMaker extends MfiWithVoiceMaker {
@@ -42,11 +42,11 @@ class DividedMfiWithVoiceMaker extends MfiWithVoiceMaker {
 
     /** */
     private static int toReal(int base, int percent) {
-        return (int) ((float) base * percent / 100); 
+        return (int) ((float) base * percent / 100);
     }
-    
+
     /**
-     * 
+     *
      * @param sourceAis source PCM
      * @param directory output base directory
      * @param base output file template
@@ -82,7 +82,7 @@ class DividedMfiWithVoiceMaker extends MfiWithVoiceMaker {
     }
 
     /**
-     * 
+     *
      * @throws IOException
      * @throws UnsupportedAudioFileException
      * @throws InvalidMfiDataException
@@ -130,7 +130,7 @@ t = System.currentTimeMillis();
 
     /**
      * Creates .mld w/ voice file.
-     * 
+     *
      * @param args input wave file
      *             -o output base directory
      *             -t output mld filename base (use java.lang.String#format)

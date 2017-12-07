@@ -26,9 +26,9 @@ import vavi.util.Debug;
  * </p>
  * <p>
  * {@link javax.sound.midi.MidiSystem} を
- * 使用しているため javax.sound.midi SPI のプログラム内で使用してはいけません。 
+ * 使用しているため javax.sound.midi SPI のプログラム内で使用してはいけません。
  * </p>
- * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
  */
 class SmafSequencer implements Sequencer {
