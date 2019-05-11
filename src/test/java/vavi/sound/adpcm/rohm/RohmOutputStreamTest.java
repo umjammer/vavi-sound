@@ -13,15 +13,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import vavi.io.IOStreamOutputEngine;
 import vavi.io.OutputEngineInputStream;
 import vavi.util.Debug;
 import vavix.util.Checksum;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
@@ -36,7 +36,7 @@ public class RohmOutputStreamTest {
     String correctFile = "out.adpcm";
     File outFile;
 
-    @Before
+    @BeforeAll
     public void setup() throws IOException {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();

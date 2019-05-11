@@ -237,7 +237,7 @@ if (interval < 0) {
             smafEvents[i] = new SmafEvent(smafMessage, 0l);    // TODO 0l
             // 255 Δ 分後ろにずらしていく
             incrementBeforeTick(track, 255);
-        };
+        }
 
 //Debug.println(nopLength + " nops inserted");
         return smafEvents;

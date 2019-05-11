@@ -19,15 +19,15 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import vavi.io.LittleEndianDataInputStream;
 import vavi.io.LittleEndianDataOutputStream;
 import vavi.util.StringUtil;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import vavix.util.Checksum;
 
@@ -49,8 +49,8 @@ public class SSRCTest {
 
     static boolean isGui;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeAll
+    public static void setUp() throws Exception {
 //        Properties props = new Properties();
 //        props.load(SSRCTest.class.getResourceAsStream("local.properties"));
 //        inFile = props.getProperty("ssrc.in.wav");
@@ -139,7 +139,7 @@ System.err.println("2:\n" + StringUtil.getDump(buf));
         double d = leis.readDouble();
         leis.close();
 System.err.printf("3: %f\n", d);
-        assertEquals(0.123456789, d, 0);
+        assertEquals(0.123456789, d, 0.000000001);
     }
 
     /**

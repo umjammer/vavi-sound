@@ -6,12 +6,12 @@
 
 package vavi.sound.mfi.vavi.sequencer;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import vavi.util.properties.PrefixedPropertiesFactory;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/04 umjammer initial version <br>
  */
-@Ignore // TODO
+@Disabled // TODO
 public class MachineDependentSequencerTest {
 
     @Test

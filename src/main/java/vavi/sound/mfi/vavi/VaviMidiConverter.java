@@ -287,12 +287,9 @@ Debug.println(Level.SEVERE, String.format("XXXXX track: %d, tick: %d, tick': %.2
 
         try {
             return convert(mfiSequence);
-        } catch (IOException e) {
+        } catch (IOException | InvalidMidiDataException e) {
 Debug.printStackTrace(e);
-            throw (InvalidMfiDataException) new InvalidMfiDataException().initCause(e);
-        } catch (InvalidMidiDataException e) {
-Debug.printStackTrace(e);
-            throw (InvalidMfiDataException) new InvalidMfiDataException().initCause(e);
+            throw new InvalidMfiDataException(e);
         }
     }
 

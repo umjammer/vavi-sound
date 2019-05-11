@@ -90,10 +90,11 @@
   <target name="mfi" depends="prepare" description="play mfi">
     <java classname="Test1" fork="yes">
       <jvmarg value="-Djava.awt.headless=true" />
+<!--
       <jvmarg value="-Djavax.sound.midi.Sequencer=#Real Time Sequencer" />
+-->
       <classpath>
         <path refid="project.class.path" />
-        <pathelement location="etc/libmfi-klab.jar" />
       </classpath>
       <arg value="${mld.file}" />
     </java>
@@ -103,9 +104,10 @@
   <target name="smaf" depends="prepare" description="play smaf">
     <java classname="Test2" fork="yes">
       <jvmarg value="-Djava.awt.headless=true" />
+<!--
       <jvmarg value="-Djavax.sound.midi.Sequencer=#Real Time Sequencer" />
       <jvmarg value="-Dfile.encoding=${project.build.plugins.plugin.configuration.encoding}" />
-
+-->
       <classpath>
         <path refid="project.class.path" />
       </classpath>

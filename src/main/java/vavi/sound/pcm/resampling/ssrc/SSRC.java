@@ -490,7 +490,7 @@ class SSRC {
             int i, j;
             int sumWritten = 0;
 
-            System.err.println("upsample");
+System.err.println("upsample");
 
             filter2len = FFTFIRLEN; // stage 2 filter length
 
@@ -1062,7 +1062,7 @@ class SSRC {
             double[] peak = new double[] { 0 };
             int sumWritten = 0;
 
-            System.err.println("downsample");
+System.err.println("downsample");
 
             filter1len = FFTFIRLEN; // stage 1 filter length
 

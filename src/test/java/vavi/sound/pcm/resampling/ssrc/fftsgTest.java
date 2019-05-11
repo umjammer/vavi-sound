@@ -6,12 +6,12 @@
 
 package vavi.sound.pcm.resampling.ssrc;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import vavi.util.SplitRadixFft;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
@@ -42,7 +42,7 @@ public class fftsgTest {
     SplitRadixFft fftsg = new SplitRadixFft();
 
     /** */
-    @Before
+    @BeforeAll
     public void setUp() throws Exception {
         ip = new int[NMAXSQRT + 2];
         a = new double[NMAX + 1];

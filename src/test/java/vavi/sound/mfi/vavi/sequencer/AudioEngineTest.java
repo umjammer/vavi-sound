@@ -6,11 +6,11 @@
 
 package vavi.sound.mfi.vavi.sequencer;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import vavi.sound.mobile.AudioEngine.Util;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 
 /**
