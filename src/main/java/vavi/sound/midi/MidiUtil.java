@@ -8,8 +8,10 @@ package vavi.sound.midi;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.ServiceLoader;
 import java.util.logging.Level;
 
 import javax.sound.midi.MetaMessage;
@@ -214,9 +216,12 @@ Debug.printStackTrace(e);
     /**
      * com.sun.media.sound.RealTimeSequencer を返したい。
      */
-    public static Sequencer getDefaultSequencer() {
+    public static Sequencer getDefaultSequencer(Class<? extends MidiDeviceProvider> self) {
 
         for (MidiDeviceProvider provider : providers) {
+            if (self.isInstance(provider)) {
+                continue;
+            }
             for (MidiDevice.Info info : provider.getDeviceInfo()) {
                 MidiDevice device = provider.getDevice(info);
                 String name = null;
@@ -246,39 +251,19 @@ Debug.println("default sequencer: " + provider.getClass().getName() + ", " + dev
     }
 
     /** */
-    public static MidiDeviceProvider[] getMidiDeviceProvider() {
+    public static List<MidiDeviceProvider> getMidiDeviceProvider() {
         return providers;
     }
 
     /** */
-    private static MidiDeviceProvider[] providers;
+    private static List<MidiDeviceProvider> providers = new ArrayList<>();
 
     /**
      * @depends /META-INF/services/javax.sound.midi.spi.MidiDeviceProvider
      */
     static {
-        final String dir = "/META-INF/services/";
-        final String readerFile = "javax.sound.midi.spi.MidiDeviceProvider";
-
-        Properties props = new Properties();
-
-        try {
-            Class<?> clazz = MidiUtil.class;
-
-            props.load(clazz.getResourceAsStream(dir + readerFile));
-Debug.println("midi device providers");
-props.list(System.err);
-            Enumeration<?> e = props.propertyNames();
-            int i = 0;
-            providers = new MidiDeviceProvider[props.size()];
-            while (e.hasMoreElements()) {
-                Class<?> c = Class.forName((String) e.nextElement());
-                providers[i++] = (MidiDeviceProvider) c.newInstance();
-            }
-        } catch (Exception e) {
-Debug.printStackTrace(e);
-            throw new IllegalStateException(e);
-        }
+        ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class).forEach(providers::add);
+providers.forEach(provider -> System.err.println(provider.getClass()));
     }
 }
 

@@ -16,9 +16,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.ServiceLoader;
 import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -149,9 +149,9 @@ public final class MfiSystem {
                IOException {
 
 //Debug.println("readers: " + readers.length);
-        for (int i = 0; i < readers.length; i++) {
+        for (MfiFileReader reader : readers) {
             try {
-                MfiFileFormat mff = readers[i].getMfiFileFormat(stream);
+                MfiFileFormat mff = reader.getMfiFileFormat(stream);
 //Debug.println(StringUtil.paramString(mff));
                 return mff;
             } catch (Exception e) {
@@ -184,9 +184,9 @@ Debug.println(e);
                IOException {
 
 //Debug.println("readers: " + readers.length);
-        for (int i = 0; i < readers.length; i++) {
+        for (MfiFileReader reader : readers) {
             try {
-                Sequence sequence = readers[i].getSequence(stream);
+                Sequence sequence = reader.getSequence(stream);
 //Debug.println(StringUtil.paramString(sequence));
                 return sequence;
             } catch (InvalidMfiDataException e) {
@@ -217,8 +217,8 @@ Debug.println(e);
     /** サポートする MFi ファイルタイプを取得します。 */
     public static int[] getMfiFileTypes() {
         List<Integer> types = new ArrayList<>();
-        for (int i = 0; i < writers.length; i++) {
-            int[] ts = writers[i].getMfiFileTypes();
+        for (MfiFileWriter writer : writers) {
+            int[] ts = writer.getMfiFileTypes();
             for (int j = 0; j < ts.length; j++) {
                 types.add(ts[j]);
             }
@@ -235,8 +235,8 @@ Debug.println(e);
     /** 指定したシーケンスに対応する MFi ファイルタイプを取得します。 */
     public static int[] getMfiFileTypes(Sequence sequence) {
         List<Integer> types = new ArrayList<>();
-        for (int i = 0; i < writers.length; i++) {
-            int[] ts = writers[i].getMfiFileTypes(sequence);
+        for (MfiFileWriter writer : writers) {
+            int[] ts = writer.getMfiFileTypes(sequence);
             for (int j = 0; j < ts.length; j++) {
                 types.add(ts[j]);
             }
@@ -252,31 +252,21 @@ Debug.println(e);
 
     /** ファイルタイプがサポートされるかどうかを返します。 */
     public static boolean isFileTypeSupported(int fileType) {
-        for (int i = 0; i < writers.length; i++) {
-            if (writers[i].isFileTypeSupported(fileType)) {
-                return true;
-            }
-        }
-        return false;
+        return writers.stream().anyMatch(w -> w.isFileTypeSupported(fileType));
     }
 
     /** ファイルタイプが指定したシーケンスでサポートされるかどうかを返します。 */
     public static boolean isFileTypeSupported(int fileType, Sequence sequence) {
-        for (int i = 0; i < writers.length; i++) {
-            if (writers[i].isFileTypeSupported(fileType, sequence)) {
-                return true;
-            }
-        }
-        return false;
+        return writers.stream().anyMatch(w -> w.isFileTypeSupported(fileType, sequence));
     }
 
     /** MFi or MIDI で書き出します。 */
     public static int write(Sequence in, int fileType, OutputStream out)
         throws IOException {
 
-        for (int i = 0; i < writers.length; i++) {
-            if (writers[i].isFileTypeSupported(fileType, in)) {
-                return writers[i].write(in, fileType, out);
+        for (MfiFileWriter writer : writers) {
+            if (writer.isFileTypeSupported(fileType, in)) {
+                return writer.write(in, fileType, out);
             }
         }
 Debug.println(Level.WARNING, "no writer found for: " + fileType);
@@ -293,11 +283,11 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
     //-------------------------------------------------------------------------
 
     /** all プロバイダ */
-    private static MfiDeviceProvider[] providers;
+    private static List<MfiDeviceProvider> providers = new ArrayList<>();
     /** all リーダ */
-    private static MfiFileReader[] readers;
+    private static List<MfiFileReader> readers = new ArrayList<>();
     /** all ライタ */
-    private static MfiFileWriter[] writers;
+    private static List<MfiFileWriter> writers = new ArrayList<>();
 
     /** default プロバイダ */
     private static MfiDeviceProvider provider;
@@ -307,12 +297,6 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
      * <li>vavi.sound.mfi.spi.MfiDeviceProvider
      */
     static {
-        final String dir = "/META-INF/services/";
-        final String providerFile = "vavi.sound.mfi.spi.MfiDeviceProvider";
-        final String readerFile = "vavi.sound.mfi.spi.MfiFileReader";
-        final String writerFile = "vavi.sound.mfi.spi.MfiFileWriter";
-
-        Properties props = new Properties();
         Properties mfiSystemProps = new Properties();
 
         try {
@@ -321,46 +305,16 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
             mfiSystemProps.load(clazz.getResourceAsStream("MfiSystem.properties"));
             String defaultProvider = mfiSystemProps.getProperty("default.provider");
 
-            props.load(clazz.getResourceAsStream(dir + providerFile));
-props.list(System.err);
-            Enumeration<?> e = props.propertyNames();
-            int i = 0;
-            providers = new MfiDeviceProvider[props.size()];
-            while (e.hasMoreElements()) {
-                @SuppressWarnings("unchecked")
-                Class<MfiDeviceProvider> c = (Class<MfiDeviceProvider>) Class.forName((String) e.nextElement());
-                providers[i] = c.newInstance();
-//Debug.println("COMPARE: " + c.getName() + ", " + defaultProvider);
-                if (c.getName().equals(defaultProvider)) {
-                    provider = providers[i];
-                }
-                i++;
-            }
+            ServiceLoader.load(vavi.sound.mfi.spi.MfiDeviceProvider.class).forEach(providers::add);
+providers.forEach(System.err::println);
+            provider = providers.stream().filter(p -> p.getClass().getName().equals(defaultProvider)).findFirst().get();
 Debug.println("default provider: " + provider.getClass().getName());
 
-            props.clear();
-            props.load(clazz.getResourceAsStream(dir + readerFile));
-props.list(System.err);
-            e = props.propertyNames();
-            i = 0;
-            readers = new MfiFileReader[props.size()];
-            while (e.hasMoreElements()) {
-                @SuppressWarnings("unchecked")
-                Class<MfiFileReader> c = (Class<MfiFileReader>) Class.forName((String) e.nextElement());
-                readers[i++] = c.newInstance();
-            }
+            ServiceLoader.load(vavi.sound.mfi.spi.MfiFileReader.class).forEach(readers::add);
+providers.forEach(System.err::println);
 
-            props.clear();
-            props.load(clazz.getResourceAsStream(dir + writerFile));
-props.list(System.err);
-            e = props.propertyNames();
-            i = 0;
-            writers = new MfiFileWriter[props.size()];
-            while (e.hasMoreElements()) {
-                @SuppressWarnings("unchecked")
-                Class<MfiFileWriter> c = (Class<MfiFileWriter>) Class.forName((String) e.nextElement());
-                writers[i++] = c.newInstance();
-            }
+            ServiceLoader.load(vavi.sound.mfi.spi.MfiFileWriter.class).forEach(writers::add);
+providers.forEach(System.err::println);
         } catch (Exception e) {
 Debug.println(Level.SEVERE, e);
             throw new IllegalStateException(e);

@@ -9,9 +9,12 @@ package vavi.sound.smaf;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Soundbank;
 
 import vavi.util.Debug;
 
@@ -31,7 +34,7 @@ import vavi.util.Debug;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
  */
-class SmafSequencer implements Sequencer {
+class SmafSequencer implements Sequencer, Synthesizer {
 
     /** the device information */
     private static final SmafDevice.Info info =
@@ -42,6 +45,9 @@ class SmafSequencer implements Sequencer {
 
     /** sound source of this sequencer */
     private javax.sound.midi.Sequencer midiSequencer;
+
+    /** */
+    private javax.sound.midi.Synthesizer midiSynthesizer;
 
     /** the sequence of SMAF */
     private Sequence sequence;
@@ -73,9 +79,11 @@ class SmafSequencer implements Sequencer {
             midiSequencer.open();
             midiSequencer.addMetaEventListener(mel);
             midiSequencer.addMetaEventListener(mea);
+
+            this.midiSynthesizer = MidiSystem.getSynthesizer();
         } catch (MidiUnavailableException e) {
 Debug.printStackTrace(e);
-            throw (SmafUnavailableException) new SmafUnavailableException().initCause(e);
+            throw new SmafUnavailableException(e);
         }
     }
 
@@ -89,7 +97,7 @@ Debug.printStackTrace(e);
             midiSequencer.setSequence(SmafSystem.toMidiSequence(sequence));
         } catch (InvalidMidiDataException e) {
 Debug.println(e);
-            throw (InvalidSmafDataException) new InvalidSmafDataException().initCause(e);
+            throw new InvalidSmafDataException(e);
         } catch (SmafUnavailableException e) {
 Debug.println(e);
             throw new IllegalStateException(e);
@@ -169,6 +177,38 @@ Debug.printStackTrace(e);
             }
         }
     };
+
+    // synthesizer
+
+    /* @see vavi.sound.smaf.Synthesizer#getChannels() */
+    @Override
+    public MidiChannel[] getChannels() throws SmafUnavailableException {
+        return midiSynthesizer.getChannels(); // TODO MFiChannel?
+    }
+
+    /* @see vavi.sound.smaf.Synthesizer#loadAllInstruments(javax.sound.midi.Soundbank) */
+    @Override
+    public boolean loadAllInstruments(Soundbank soundbank) {
+        return midiSynthesizer.loadAllInstruments(soundbank);
+    }
+
+    /* @see vavi.sound.smaf.Synthesizer#getAvailableInstruments() */
+    @Override
+    public Instrument[] getAvailableInstruments() {
+        return midiSynthesizer.getAvailableInstruments();
+    }
+
+    /* @see vavi.sound.smaf.Synthesizer#getDefaultSoundbank() */
+    @Override
+    public Soundbank getDefaultSoundbank() {
+        return midiSynthesizer.getDefaultSoundbank();
+    }
+
+    /* @see vavi.sound.smaf.Synthesizer#unloadAllInstruments(javax.sound.midi.Soundbank) */
+    @Override
+    public void unloadAllInstruments(Soundbank soundbank) {
+        midiSynthesizer.unloadAllInstruments(soundbank);
+    }
 }
 
 /* */

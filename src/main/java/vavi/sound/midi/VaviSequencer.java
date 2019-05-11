@@ -42,7 +42,7 @@ class VaviSequencer implements Sequencer {
                             "Version " + version) {};
 
     /** */
-    private Sequencer sequencer = MidiUtil.getDefaultSequencer();
+    private Sequencer sequencer = MidiUtil.getDefaultSequencer(VaviMidiDeviceProvider.class);
 
     /** */
     private VaviSequence vaviSequence; 

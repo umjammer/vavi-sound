@@ -24,6 +24,11 @@ public class MfiUnavailableException extends Exception {
     public MfiUnavailableException(String s) {
         super(s);
     }
+
+    /** */
+    public MfiUnavailableException(Throwable t) {
+        super(t);
+    }
 }
 
 /* */

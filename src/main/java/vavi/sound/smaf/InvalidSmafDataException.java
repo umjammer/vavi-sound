@@ -24,6 +24,11 @@ public class InvalidSmafDataException extends Exception {
     public InvalidSmafDataException(String s) {
         super(s);
     }
+
+    /** Creates new InvalidSmafDataException */
+    public InvalidSmafDataException(Throwable t) {
+        super(t);
+    }
 }
 
 /* */

@@ -11,9 +11,13 @@
   <organization>
     <name></name>
   </organization>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
   <url>https://github.com/umjammer/vavi-sound</url>
-  <description>1.0.4
+  <description>1.0.5
+
+    fix midi spi
+
+1.0.4
 
     ssrc spi (wip)
 

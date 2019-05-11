@@ -106,12 +106,9 @@ public final class SmafSystem {
 
         try {
             return converter.convert(sequence);
-        } catch (IOException e) {
+        } catch (IOException | InvalidMidiDataException e) {
 Debug.printStackTrace(e);
-            throw (InvalidSmafDataException) new InvalidSmafDataException().initCause(e);
-        } catch (InvalidMidiDataException e) {
-Debug.printStackTrace(e);
-            throw (InvalidSmafDataException) new InvalidSmafDataException().initCause(e);
+            throw new InvalidSmafDataException(e);
         }
     }
 

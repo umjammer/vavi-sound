@@ -2,6 +2,9 @@
 
 # vavi-sound
 
+Provides old school Japanese cell phone sounds library as javax.sound SPI.
+Includes many ADPCM codecs and the SSRC sampling converter.
+
 | **SPI** |  **Codec** |  **Description** | **IN Status** | **OUT Status** | **SPI Status** | **Comment** |
 |:--------|:-----------|:-----------------|:--------------|:---------------|:---------------|:------------|
 | midi | MFi | Japanese cell phone format |  c | o | o | spi write only |

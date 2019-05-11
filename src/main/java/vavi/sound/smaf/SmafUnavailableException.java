@@ -24,6 +24,11 @@ public class SmafUnavailableException extends Exception {
     public SmafUnavailableException(String s) {
         super(s);
     }
+
+    /** */
+    public SmafUnavailableException(Throwable t) {
+        super(t);
+    }
 }
 
 /* */

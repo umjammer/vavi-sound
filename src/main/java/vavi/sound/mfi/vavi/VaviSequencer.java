@@ -9,9 +9,12 @@ package vavi.sound.mfi.vavi;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Soundbank;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MetaEventListener;
@@ -21,6 +24,7 @@ import vavi.sound.mfi.MfiSystem;
 import vavi.sound.mfi.MfiUnavailableException;
 import vavi.sound.mfi.Sequence;
 import vavi.sound.mfi.Sequencer;
+import vavi.sound.mfi.Synthesizer;
 import vavi.util.Debug;
 
 
@@ -43,7 +47,7 @@ import vavi.util.Debug;
  *          1.02 030819 nsano change sequence related <br>
  *          1.03 030902 nsano out source {@link MetaEventListener} <br>
  */
-class VaviSequencer implements Sequencer {
+class VaviSequencer implements Sequencer, Synthesizer {
 
     /** the device information */
     private static final MfiDevice.Info info =
@@ -54,6 +58,9 @@ class VaviSequencer implements Sequencer {
 
     /** sound source of this sequencer */
     private javax.sound.midi.Sequencer midiSequencer;
+
+    /** */
+    private javax.sound.midi.Synthesizer midiSynthesizer;
 
     /** the sequence of MFi */
     private Sequence sequence;
@@ -85,15 +92,17 @@ Debug.println("★0 close: " + midiSequencer.hashCode());
      */
     public void open() throws MfiUnavailableException {
         try {
-            this.midiSequencer = MidiSystem.getSequencer();
+            this.midiSequencer = MidiSystem.getSequencer(); // TODO MidiUtil#getDefaultSequencer() ?
 Debug.println("★0 midiSequencer: " + midiSequencer);
             midiSequencer.open();
 Debug.println("★0 open: " + midiSequencer.hashCode());
             midiSequencer.addMetaEventListener(mel);
             midiSequencer.addMetaEventListener(mea);
+
+            this.midiSynthesizer = MidiSystem.getSynthesizer();
         } catch (MidiUnavailableException e) {
 Debug.printStackTrace(e);
-            throw (MfiUnavailableException) new MfiUnavailableException().initCause(e);
+            throw new MfiUnavailableException(e);
         }
     }
 
@@ -107,7 +116,7 @@ Debug.printStackTrace(e);
             midiSequencer.setSequence(MfiSystem.toMidiSequence(sequence));
         } catch (InvalidMidiDataException e) {
 Debug.println(e);
-            throw (InvalidMfiDataException) new InvalidMfiDataException().initCause(e);
+            throw new InvalidMfiDataException(e);
         } catch (MfiUnavailableException e) {
 Debug.println(e);
             throw new IllegalStateException(e);
@@ -189,6 +198,36 @@ Debug.printStackTrace(e);
             }
         }
     };
+
+    /* @see vavi.sound.mfi.Synthesizer#getChannels() */
+    @Override
+    public MidiChannel[] getChannels() throws MfiUnavailableException {
+        return midiSynthesizer.getChannels(); // TODO MFiChannel?
+    }
+
+    /* @see vavi.sound.mfi.Synthesizer#loadAllInstruments(javax.sound.midi.Soundbank) */
+    @Override
+    public boolean loadAllInstruments(Soundbank soundbank) {
+        return midiSynthesizer.loadAllInstruments(soundbank);
+    }
+
+    /* @see vavi.sound.mfi.Synthesizer#getAvailableInstruments() */
+    @Override
+    public Instrument[] getAvailableInstruments() {
+        return midiSynthesizer.getAvailableInstruments();
+    }
+
+    /* @see vavi.sound.mfi.Synthesizer#getDefaultSoundbank() */
+    @Override
+    public Soundbank getDefaultSoundbank() {
+        return midiSynthesizer.getDefaultSoundbank();
+    }
+
+    /* @see vavi.sound.mfi.Synthesizer#unloadAllInstruments(javax.sound.midi.Soundbank) */
+    @Override
+    public void unloadAllInstruments(Soundbank soundbank) {
+        midiSynthesizer.unloadAllInstruments(soundbank);
+    }
 }
 
 /* */

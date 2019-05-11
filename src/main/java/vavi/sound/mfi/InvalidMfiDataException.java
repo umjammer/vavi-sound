@@ -24,6 +24,11 @@ public class InvalidMfiDataException extends Exception {
     public InvalidMfiDataException(String s) {
         super(s);
     }
+
+    /** */
+    public InvalidMfiDataException(Throwable t) {
+        super(t);
+    }
 }
 
 /* */
