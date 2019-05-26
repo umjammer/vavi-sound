@@ -102,13 +102,13 @@ Debug.println("no meta sub handler: " + message.getType());
         int manufacturerId = data[0];
         switch (manufacturerId) {
         case 0:     // 3 byte manufacturer id
-Debug.println(Level.WARNING, String.format("unhandled manufacturer: %02x %02x %02x", data[0], data[1], data[2]));
+Debug.printf(Level.WARNING, "unhandled manufacturer: %02x %02x %02x\n", data[0], data[1], data[2]);
             break;
         case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x5f vavi
             processSpecial_Vavi(message);
             break;
         default:
-Debug.println(Level.WARNING, String.format("unhandled manufacturer: %02x", manufacturerId));
+Debug.printf(Level.WARNING, "unhandled manufacturer: %02x\n", manufacturerId);
             break;
         }
     }
@@ -132,7 +132,7 @@ Debug.println(Level.WARNING, String.format("unhandled manufacturer: %02x", manuf
             processSpecial_Vavi_Wave(message);
             break;
         default:
-Debug.println(Level.WARNING, String.format("unhandled function: %02x", functionId));
+Debug.printf(Level.WARNING, "unhandled function: %02x\n", functionId);
             break;
         }
     }

@@ -22,10 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class AdpcmOutputStreamTest {
 
-
     @Test
     public void test() throws Exception {
-        
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         AdpcmOutputStream os = new AdpcmOutputStream(baos, ByteOrder.BIG_ENDIAN, 4, ByteOrder.BIG_ENDIAN) {
             protected Codec getCodec() {

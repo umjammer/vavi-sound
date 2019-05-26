@@ -67,7 +67,6 @@ public class ChannelConfigurationMessage extends ShortMessage
                " drum="    + drum;
     }
 
-
     //----
 
     /**

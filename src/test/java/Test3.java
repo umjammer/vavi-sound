@@ -9,7 +9,7 @@ import java.util.ServiceLoader;
 
 
 /**
- * Test3.
+ * list midi device provider.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/04/08 umjammer initial version <br>

@@ -37,10 +37,10 @@ public class Encoder {
         AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
         ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
         String encoderName = "vavi.sound.adpcm.ccitt.G721";
-        
+
         InputStream in = System.in;
         OutputStream out = System.out;
-        
+
         // Process encoding argument, if any
         int argc = 0;
         do {
@@ -97,7 +97,7 @@ System.err.println("output: " + args[argc]);
                 break;
             }
         } while (++argc < args.length);
-        
+
         G711 encoder = (G711) Class.forName(encoderName).newInstance();
         encoder.setEncoding(encoding);
 

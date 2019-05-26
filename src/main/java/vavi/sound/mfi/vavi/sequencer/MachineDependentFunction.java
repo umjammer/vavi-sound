@@ -8,6 +8,7 @@ package vavi.sound.mfi.vavi.sequencer;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
+import vavi.util.Debug;
 import vavi.util.properties.PrefixedPropertiesFactory;
 
 
@@ -53,6 +54,8 @@ public interface MachineDependentFunction {
             try {
                 return get(key);
             } catch (IllegalArgumentException e) {
+Debug.println(key);
+Debug.printStackTrace(e);
                 return new UndefinedFunction(); // TODO should throw exception
             }
         }

@@ -29,6 +29,7 @@ package vavi.sound.adpcm.ccitt;
 import javax.sound.sampled.AudioFormat;
 
 
+
 /**
  * These routines comprise an implementation of the CCITT G.721 ADPCM
  * coding algorithm.  Essentially, this implementation is identical to

@@ -24,7 +24,6 @@ public class Sequence {
     /** */
     protected List<Track> tracks;
 
-    
     /** Creates a sequence. */
     public Sequence() {
         tracks = new ArrayList<>();

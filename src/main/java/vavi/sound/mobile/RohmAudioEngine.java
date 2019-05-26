@@ -48,7 +48,7 @@ public class RohmAudioEngine extends BasicAudioEngine {
             if (streamNumber % 2 == 1 && data[streamNumber].channel % 2 == 1 && (data[streamNumber - 1] != null && data[streamNumber - 1].channel % 2 == 0)) {
                 return -1;
             }
-    
+
             if (streamNumber % 2 == 0 && data[streamNumber].channel % 2 == 0 && (data[streamNumber + 1] != null && data[streamNumber + 1].channel % 2 == 1)) {
                 channels = 2;
             }

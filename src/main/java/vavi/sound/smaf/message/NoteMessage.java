@@ -37,7 +37,7 @@ public class NoteMessage extends SmafMessage
 
     /** 音長 (!= 0) */
     private int gateTime;
-    
+
     /** 0 ~ 127 */
     private int velocity;
 

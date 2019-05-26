@@ -909,7 +909,7 @@ public class SplitRadixFft {
     private void cftfsub(int n, double[] a, double[] w) {
         int j, j1, j2, j3, l;
         double x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;
-        
+
         l = 2;
         if (n > 8) {
             cft1st(n, a, w);
@@ -964,7 +964,7 @@ public class SplitRadixFft {
     private void cftbsub(int n, double[] a, double[] w) {
         int j, j1, j2, j3, l;
         double x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;
-        
+
         l = 2;
         if (n > 8) {
             cft1st(n, a, w);
@@ -1017,7 +1017,7 @@ public class SplitRadixFft {
         int j, k1, k2;
         double wk1r, wk1i, wk2r, wk2i, wk3r, wk3i;
         double x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;
-        
+
         x0r = a[0] + a[2];
         x0i = a[1] + a[3];
         x1r = a[0] - a[2];
@@ -1121,7 +1121,7 @@ public class SplitRadixFft {
         int j, j1, j2, j3, k, k1, k2, m, m2;
         double wk1r, wk1i, wk2r, wk2i, wk3r, wk3i;
         double x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;
-        
+
         m = l << 2;
         for (j = 0; j < l; j += 2) {
             j1 = j + l;

@@ -95,7 +95,7 @@ Debug.println("SeekAndPhraseInfo: subData: " + subDatum);
     public int getStopPoint() {
         return ByteBuffer.wrap(subData.get(TAG_StopPoint).getData()).getInt();
     }
-    
+
     /** */
     public void setStopPoint(int stopPoint) {
         addSubData(TAG_StopPoint, new SubData(TAG_StopPoint, ByteBuffer.allocate(4).putInt(stopPoint).array()));

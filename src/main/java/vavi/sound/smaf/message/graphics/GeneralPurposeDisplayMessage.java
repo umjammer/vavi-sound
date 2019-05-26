@@ -61,7 +61,7 @@ public class GeneralPurposeDisplayMessage extends ShortMessage {
         ImageTile,
         BitmapTile;
     }
-    
+
     //----
 
     /* */

@@ -95,7 +95,7 @@ Debug.println("ContentsInfo: subDatum: " + subDatum);
 
     /** */
     public static final int CONTENT_CLASS_YAMAHA = 0x00;
-    
+
     /** */
     private int contentsClass;
 

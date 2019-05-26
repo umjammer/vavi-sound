@@ -55,7 +55,7 @@ public class ImaOutputStreamTest {
 //        outFile = new File("src/test/resources/vavi/sound/adpcm/ima/out_vavi.adpcm");
 Debug.println("outFile: " + outFile.getCanonicalPath());
     }
-    
+
     /** */
     @Test
     public void test1() throws Exception {
@@ -153,7 +153,7 @@ Debug.println("outFile: " + outFile.length());
         is.close();
 
         InputStream is2 = new FileInputStream(outFile);
-        
+
         AudioFormat audioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
                                                   8000,
                                                   16,
@@ -226,10 +226,10 @@ Debug.println("inFile: " + length);
                     pcm[i] = ledis.readShort();
                 }
                 encoder.encodeBlock(1, pcm, pcm.length, steps, adpcm, 9);
-    
+
                 os.write(adpcm);
             }
-            
+
             ll += l;
         }
 

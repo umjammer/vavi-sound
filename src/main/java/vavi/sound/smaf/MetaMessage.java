@@ -45,8 +45,6 @@ FF 7F nn mm
 [MA-5 V 発音チャンネル指定]
       FF 7F 06 43 02 01 02 cc dd
 
-
-
  * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)

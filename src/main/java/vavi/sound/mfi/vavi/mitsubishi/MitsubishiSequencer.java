@@ -6,7 +6,6 @@
 
 package vavi.sound.mfi.vavi.mitsubishi;
 
-
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;

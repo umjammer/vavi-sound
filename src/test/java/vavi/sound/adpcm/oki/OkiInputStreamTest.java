@@ -96,7 +96,7 @@ if (os != null) {
  os.close();
 }
         is.close();
-        
+
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }

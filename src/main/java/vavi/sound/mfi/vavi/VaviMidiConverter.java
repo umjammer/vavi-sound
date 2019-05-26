@@ -199,7 +199,6 @@ Debug.println("create MFi track: 0");
                 key = "midi.meta." + meta;
             }
 
-
             // convert
 try {
             MfiConvertible converter = MfiConvertible.factory.get(key);
@@ -269,13 +268,13 @@ private void addEventToTrack(MfiContext mfiContext, long tick, Track mfiTrack, i
     deltas[mfiTrackNumber] += mfiMessage.getDelta();
     double tickDash = deltas[mfiTrackNumber] * mfiContext.getScale();
     if ((tickDash / tick) * 100 < 95 && (tickDash / tick) * 100 != 0 && !(mfiMessage instanceof NopMessage))
-Debug.println(Level.SEVERE, String.format("XXXXX track: %d, tick: %d, tick': %.2f (%.2f), %d, %s\n",
+Debug.printf(Level.SEVERE, "XXXXX track: %d, tick: %d, tick': %.2f (%.2f), %d, %s\n",
             mfiTrackNumber,
             tick,
             tickDash,
             tick != 0 ? (tickDash / tick) * 100 : 0,
             mfiContext.getPreviousTick(mfiTrackNumber),
-            mfiMessage));
+            mfiMessage);
     mfiTrack.add(mfiEvent);
 }
 

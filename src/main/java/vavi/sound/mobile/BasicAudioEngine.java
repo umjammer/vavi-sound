@@ -163,7 +163,7 @@ Debug.println("read returns -1");
                     }
                     os.write(c);
                 }
-    
+
                 return baos.toByteArray();
             } else {
                 // stereo

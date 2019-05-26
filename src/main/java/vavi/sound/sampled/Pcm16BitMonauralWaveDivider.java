@@ -48,7 +48,6 @@ class Pcm16BitMonauralWaveDivider implements WaveDivider {
         int numberChannels = targetAis.getFormat().getChannels();
 Debug.println("numberChannels: " + numberChannels);
 
-
         int samplingRate = (int) targetAis.getFormat().getSampleRate();
 Debug.println("samplingRate: " + samplingRate);
         int samplingBytes = targetAis.getFormat().getSampleSizeInBits() / 8;

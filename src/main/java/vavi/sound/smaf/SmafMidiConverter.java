@@ -59,7 +59,7 @@ class SmafMidiConverter implements SmafDevice {
 
 /** debug */
 private Set<Class<? extends SmafMessage>> uc = new HashSet<>();
-    
+
     /** Converts smaf sequence to midi sequence */
     Sequence convert(vavi.sound.smaf.Sequence smafSequence)
         throws InvalidMidiDataException,
@@ -90,10 +90,10 @@ Debug.println("resolution: " + resolution);
             for (int j = 0; j < smafTrack.size(); j++) {
                 SmafEvent smafEvent = smafTrack.get(j);
                 SmafMessage smafMessage = smafEvent.getMessage();
-                
+
                 midiContext.addCurrentTick(midiContext.getTicksOf(smafMessage.getDuration()));
 //Debug.println("■■■■■(" + i + ":" + j + ") ticks: " + midiContext.getCurrentTick() + "(" + midiContext.getTicksOf(smafMessage.getDuration()) + "," + smafMessage.getDuration() + "), " + smafMessage.getClass().getSimpleName());
-                
+
                 if (smafMessage instanceof MidiConvertible) {
 if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.ModulationMessage) &&

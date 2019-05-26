@@ -20,7 +20,7 @@ import vavi.util.Debug;
 
 /**
  * Sharp System exclusive message.
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051111 nsano initial version <br>
  */
@@ -82,14 +82,14 @@ Debug.println("adpcm L, R length: " + temp.length);
     private static List<MfiEvent> getAdpcmEventsSub(int channel, int packetId, int sampleRate, int bits, byte[] adpcm) throws InvalidMfiDataException {
         int numberOfChunks = adpcm.length / MAX_BLOCK;
         int moduloOfChunks = adpcm.length % MAX_BLOCK;
-        
+
         List<MfiEvent> events = new ArrayList<>();
 
         for (int i = 0; i < numberOfChunks; i++) {
             byte[] chunk = new byte[MAX_BLOCK];
             System.arraycopy(adpcm, MAX_BLOCK * i, chunk, 0, MAX_BLOCK);
 Debug.println("wave chunk(" + i + "): " + chunk.length);
-            
+
             // 0x84 adpcm data
             events.add(getWaveEvent(channel, packetId, sampleRate, bits, !(i == (numberOfChunks - 1) && moduloOfChunks == 0), i == 0 ? adpcm.length : 0, chunk));
         }
@@ -97,7 +97,7 @@ Debug.println("wave chunk(" + i + "): " + chunk.length);
             byte[] chunk = new byte[moduloOfChunks];
             System.arraycopy(adpcm, MAX_BLOCK * numberOfChunks, chunk, 0, moduloOfChunks);
 Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
-            
+
             // 0x84 adpcm data
             events.add(getWaveEvent(channel, packetId, sampleRate, bits, false, numberOfChunks == 0 ? adpcm.length : 0, chunk));
         }

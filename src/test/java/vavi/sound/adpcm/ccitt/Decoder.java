@@ -35,10 +35,10 @@ public class Decoder {
         AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
         ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
         String decoderName = "vavi.sound.adpcm.ccitt.G721";
-        
+
         InputStream in = System.in;
         OutputStream out = System.out;
-        
+
         // Process encoding argument, if any
         int argc = 0;
         do {
@@ -95,16 +95,16 @@ System.err.println("output: " + args[argc]);
                 break;
             }
         } while (++argc < args.length);
-        
+
         G711 decoder = (G711) Class.forName(decoderName).newInstance();
         decoder.setEncoding(encoding);
-        
+
         InputStream is = new BitInputStream(
             new BufferedInputStream(in),
             decoder.getEncodingBits(),
             ByteOrder.LITTLE_ENDIAN);
         OutputStream os = new BufferedOutputStream(out);
-        
+
         while (is.available() > 0) {
             int adpcm = is.read();
             int pcm = decoder.decode(adpcm);
@@ -119,7 +119,7 @@ System.err.println("output: " + args[argc]);
 
         os.flush();
         os.close();
-        
+
         is.close();
     }
 }

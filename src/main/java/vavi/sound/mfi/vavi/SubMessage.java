@@ -246,7 +246,7 @@ Debug.println(subChunk);
             Properties props = new Properties();
             final String path = "vavi.properties";
             props.load(SubMessage.class.getResourceAsStream(path));
-            
+
             // header/audio sub chunks
             Iterator<?> i = props.keySet().iterator();
             while (i.hasNext()) {

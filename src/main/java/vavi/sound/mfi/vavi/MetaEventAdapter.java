@@ -108,17 +108,17 @@ Debug.println("no meta sub handler: " + message.getType());
         int manufacturerId = data[0];
         switch (manufacturerId) {
         case 0:     // 3 byte manufacturer id
-Debug.println(Level.WARNING, String.format("unhandled manufacturer: %02x %02x %02x", data[0], data[1], data[2]));
+Debug.printf(Level.WARNING, "unhandled manufacturer: %02x %02x %02x\n", data[0], data[1], data[2]);
             break;
         case VaviMidiDeviceProvider.MANUFACTURER_ID:
             processSpecial_Vavi(message);
             break;
         default:
-Debug.println(Level.WARNING, String.format("unhandled manufacturer: %02x", manufacturerId));
+Debug.printf(Level.WARNING, "unhandled manufacturer: %02x\n", manufacturerId);
             break;
         }
     }
-    
+
     /**
      * <pre>
      * 0x5f
@@ -137,7 +137,7 @@ Debug.println(Level.WARNING, String.format("unhandled manufacturer: %02x", manuf
             processSpecial_Vavi_Mfi4(message);
             break;
         default:
-Debug.println(Level.WARNING, String.format("unhandled function: %02x", functionId));
+Debug.printf(Level.WARNING, "unhandled function: %02x\n", functionId);
             break;
         }
     }
@@ -159,8 +159,9 @@ Debug.println(Level.WARNING, String.format("unhandled function: %02x", functionI
         MachineDependentSequencer sequencer;
         try {
             sequencer = MachineDependentSequencer.factory.get(vendor);
-        } catch (IllegalArgumentException e) {
-Debug.println(Level.SEVERE, "error vendor: " + StringUtil.toHex2(vendor));
+        } catch (IllegalArgumentException | Error e) {
+Debug.printStackTrace(e);
+Debug.println(Level.SEVERE, "error vendor: 0x" + StringUtil.toHex2(vendor));
             sequencer = new UnknownVenderSequencer();
         }
         sequencer.sequence(mdm);

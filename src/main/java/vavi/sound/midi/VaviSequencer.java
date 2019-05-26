@@ -50,7 +50,7 @@ class VaviSequencer implements Sequencer {
     /* */
     public void start() {
         if (vaviSequence != null) {
-            sequencer.addMetaEventListener(vaviSequence.getMetaEventListener());
+            sequencer.addMetaEventListener(vaviSequence.getMetaEventListener()); // TODO more smart way
 Debug.println("★1 mel: " + vaviSequence);
         }
         sequencer.start();
@@ -63,7 +63,7 @@ Debug.println("★1 stop: " + sequencer.hashCode());
         sequencer.stop();
         if (vaviSequence != null) {
 Debug.println("★1 mel: " + vaviSequence);
-            sequencer.removeMetaEventListener(vaviSequence.getMetaEventListener());
+            sequencer.removeMetaEventListener(vaviSequence.getMetaEventListener()); // TODO more smart way
         }
     }
 

@@ -183,7 +183,7 @@ Debug.println("audioDataLength: " + audioDataLength);
         int headerLength = dis.readUnsignedShort();
         this.format = dis.readUnsignedByte();
         this.attribute = dis.readUnsignedByte();
-Debug.println(String.format("adat header: %d: f: %02x, a: %02x", headerLength, format, attribute));
+Debug.printf("adat header: %d: f: %02x, a: %02x", headerLength, format, attribute);
 
         // sub chunks
         int l = 0;

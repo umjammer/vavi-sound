@@ -88,7 +88,7 @@ Debug.println("delta: " + delta + ", time: " + time);
             byte[] chunk = audioEngine.encode(4, channels, temp);
             if (channels == 1) {
 Debug.println("wave chunk(" + i + "): " + chunk.length);
-        
+
                 // adpcm data
                 events.add(getVoiceEvent(streamNumber++, channels, sampleRate, chunk));
 
@@ -114,7 +114,7 @@ Debug.println("wave r chunk(" + i + "): " + chunkM.length);
             byte[] chunk = audioEngine.encode(4, channels, temp);
             if (channels == 1) {
 Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
-            
+
                 // adpcm data
                 events.add(getVoiceEvent(streamNumber++, channels, sampleRate, chunk));
 
@@ -356,7 +356,7 @@ Debug.println("wave chunk(" + i + "): " + chunk.length);
                 System.arraycopy(adpcm, (adpcm.length / 2) + (MAX_BLOCK / 2) * numberOfChunks, chunk, moduloOfChunks / 2, moduloOfChunks / 2);
             }
 Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
-            
+
             // adpcm data
             events.add(getVoiceEvent(streamNumber++, channels, sampleRate, chunk));
         }
