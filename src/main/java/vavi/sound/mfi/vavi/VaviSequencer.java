@@ -25,6 +25,7 @@ import vavi.sound.mfi.MfiUnavailableException;
 import vavi.sound.mfi.Sequence;
 import vavi.sound.mfi.Sequencer;
 import vavi.sound.mfi.Synthesizer;
+import vavi.sound.midi.MidiUtil;
 import vavi.util.Debug;
 
 
@@ -65,6 +66,20 @@ class VaviSequencer implements Sequencer, Synthesizer {
     /** the sequence of MFi */
     private Sequence sequence;
 
+    public VaviSequencer() {
+        try {
+            this.midiSequencer = MidiUtil.getDefaultSequencer(vavi.sound.midi.VaviMidiDeviceProvider.class);
+Debug.println("★0 midiSequencer: " + midiSequencer);
+            midiSequencer.addMetaEventListener(mel);
+            midiSequencer.addMetaEventListener(mea);
+
+            this.midiSynthesizer = MidiSystem.getSynthesizer();
+        } catch (MidiUnavailableException e) {
+Debug.printStackTrace(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
     /* */
     public MfiDevice.Info getDeviceInfo() {
         return info;
@@ -72,9 +87,8 @@ class VaviSequencer implements Sequencer, Synthesizer {
 
     /* */
     public void close() {
-        midiSequencer.removeMetaEventListener(mel);
-        midiSequencer.removeMetaEventListener(mea);
         midiSequencer.close();
+        midiSynthesizer.close();
 Debug.println("★0 close: " + midiSequencer.hashCode());
     }
 
@@ -92,14 +106,9 @@ Debug.println("★0 close: " + midiSequencer.hashCode());
      */
     public void open() throws MfiUnavailableException {
         try {
-            this.midiSequencer = MidiSystem.getSequencer(); // TODO MidiUtil#getDefaultSequencer() ?
-Debug.println("★0 midiSequencer: " + midiSequencer);
-            midiSequencer.open();
 Debug.println("★0 open: " + midiSequencer.hashCode());
-            midiSequencer.addMetaEventListener(mel);
-            midiSequencer.addMetaEventListener(mea);
-
-            this.midiSynthesizer = MidiSystem.getSynthesizer();
+            midiSequencer.open();
+            midiSynthesizer.open();
         } catch (MidiUnavailableException e) {
 Debug.printStackTrace(e);
             throw new MfiUnavailableException(e);
@@ -227,6 +236,11 @@ Debug.printStackTrace(e);
     @Override
     public void unloadAllInstruments(Soundbank soundbank) {
         midiSynthesizer.unloadAllInstruments(soundbank);
+    }
+
+    protected void finalize() {
+        midiSequencer.removeMetaEventListener(mel);
+        midiSequencer.removeMetaEventListener(mea);
     }
 }
 

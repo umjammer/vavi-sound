@@ -16,6 +16,7 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Soundbank;
 
+import vavi.sound.midi.MidiUtil;
 import vavi.util.Debug;
 
 
@@ -52,6 +53,19 @@ class SmafSequencer implements Sequencer, Synthesizer {
     /** the sequence of SMAF */
     private Sequence sequence;
 
+    public SmafSequencer() {
+        try {
+            this.midiSequencer = MidiUtil.getDefaultSequencer(vavi.sound.midi.VaviMidiDeviceProvider.class);
+            midiSequencer.addMetaEventListener(mel);
+            midiSequencer.addMetaEventListener(mea);
+
+            this.midiSynthesizer = MidiSystem.getSynthesizer();
+        } catch (MidiUnavailableException e) {
+Debug.printStackTrace(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
     /** */
     public SmafDevice.Info getDeviceInfo() {
         return info;
@@ -59,9 +73,8 @@ class SmafSequencer implements Sequencer, Synthesizer {
 
     /* */
     public void close() {
-        midiSequencer.removeMetaEventListener(mel);
-        midiSequencer.removeMetaEventListener(mea);
         midiSequencer.close();
+        midiSynthesizer.close();
     }
 
     /* */
@@ -75,12 +88,8 @@ class SmafSequencer implements Sequencer, Synthesizer {
     /* */
     public void open() throws SmafUnavailableException {
         try {
-            this.midiSequencer = MidiSystem.getSequencer();
             midiSequencer.open();
-            midiSequencer.addMetaEventListener(mel);
-            midiSequencer.addMetaEventListener(mea);
-
-            this.midiSynthesizer = MidiSystem.getSynthesizer();
+            midiSequencer.open();
         } catch (MidiUnavailableException e) {
 Debug.printStackTrace(e);
             throw new SmafUnavailableException(e);
@@ -208,6 +217,11 @@ Debug.printStackTrace(e);
     @Override
     public void unloadAllInstruments(Soundbank soundbank) {
         midiSynthesizer.unloadAllInstruments(soundbank);
+    }
+
+    protected void finalize() {
+        midiSequencer.removeMetaEventListener(mel);
+        midiSequencer.removeMetaEventListener(mea);
     }
 }
 
