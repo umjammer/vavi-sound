@@ -53,19 +53,6 @@ class SmafSequencer implements Sequencer, Synthesizer {
     /** the sequence of SMAF */
     private Sequence sequence;
 
-    public SmafSequencer() {
-        try {
-            this.midiSequencer = MidiUtil.getDefaultSequencer(vavi.sound.midi.VaviMidiDeviceProvider.class);
-            midiSequencer.addMetaEventListener(mel);
-            midiSequencer.addMetaEventListener(mea);
-
-            this.midiSynthesizer = MidiSystem.getSynthesizer();
-        } catch (MidiUnavailableException e) {
-Debug.printStackTrace(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
     /** */
     public SmafDevice.Info getDeviceInfo() {
         return info;
@@ -73,12 +60,18 @@ Debug.printStackTrace(e);
 
     /* */
     public void close() {
+        if (midiSequencer == null) {
+            throw new IllegalStateException("not opend");
+        }
         midiSequencer.close();
         midiSynthesizer.close();
     }
 
     /* */
     public boolean isOpen() {
+        if (midiSequencer == null) {
+            return false;
+        }
         return midiSequencer.isOpen();
     }
 
@@ -88,15 +81,20 @@ Debug.printStackTrace(e);
     /* */
     public void open() throws SmafUnavailableException {
         try {
+            if (midiSequencer == null) {
+                this.midiSequencer = MidiUtil.getDefaultSequencer(vavi.sound.midi.VaviMidiDeviceProvider.class);
+                this.midiSynthesizer = MidiSystem.getSynthesizer();
+            }
+
             midiSequencer.open();
-            midiSequencer.open();
+            midiSynthesizer.open();
         } catch (MidiUnavailableException e) {
 Debug.printStackTrace(e);
             throw new SmafUnavailableException(e);
         }
     }
 
-    /** */
+    /* */
     public void setSequence(Sequence sequence)
         throws InvalidSmafDataException {
 
@@ -113,7 +111,7 @@ Debug.println(e);
         }
     }
 
-    /** */
+    /* */
     public void setSequence(InputStream stream)
         throws IOException,
                InvalidSmafDataException {
@@ -121,24 +119,45 @@ Debug.println(e);
         this.setSequence(SmafSystem.getSequence(stream));
     }
 
-    /** */
+    /* */
     public Sequence getSequence() {
         return sequence;
     }
 
-    /** */
+    /* */
     public void start() {
+        if (midiSequencer == null) {
+            throw new IllegalStateException("not opend");
+        }
+        on();
         midiSequencer.start();
     }
 
-    /** */
+    /* */
     public void stop() {
+        if (midiSequencer == null) {
+            throw new IllegalStateException("not opend");
+        }
         midiSequencer.stop();
+        off();
     }
 
-    /** */
+    /* */
     public boolean isRunning() {
+        if (midiSequencer == null) {
+            throw new IllegalStateException("not opend");
+        }
         return midiSequencer.isRunning();
+    }
+
+    private void on() {
+        midiSequencer.addMetaEventListener(mel);
+        midiSequencer.addMetaEventListener(mea);
+    }
+
+    private void off() {
+        midiSequencer.removeMetaEventListener(mel);
+        midiSequencer.removeMetaEventListener(mea);
     }
 
     //-------------------------------------------------------------------------
@@ -146,12 +165,12 @@ Debug.println(e);
     /** {@link MetaMessage MetaEvent} ユーティリティ。 */
     private MetaSupport metaSupport = new MetaSupport();
 
-    /** {@link MetaEventListener} を登録します。 */
+    /* {@link MetaEventListener} を登録します。 */
     public void addMetaEventListener(MetaEventListener l) {
         metaSupport.addMetaEventListener(l);
     }
 
-    /** {@link MetaEventListener} を削除します。 */
+    /* {@link MetaEventListener} を削除します。 */
     public void removeMetaEventListener(MetaEventListener l) {
         metaSupport.removeMetaEventListener(l);
     }
@@ -172,6 +191,7 @@ Debug.println(e);
                     MetaMessage metaMessage = new MetaMessage();
                     metaMessage.setMessage(0x2f, null);
                     fireMeta(metaMessage);
+                    off();
                 } catch (InvalidSmafDataException e) {
 Debug.println(e);
                 }
@@ -219,9 +239,9 @@ Debug.printStackTrace(e);
         midiSynthesizer.unloadAllInstruments(soundbank);
     }
 
+    /* */
     protected void finalize() {
-        midiSequencer.removeMetaEventListener(mel);
-        midiSequencer.removeMetaEventListener(mea);
+        off();
     }
 }
 

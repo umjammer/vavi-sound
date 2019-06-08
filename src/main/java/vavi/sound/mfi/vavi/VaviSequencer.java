@@ -32,12 +32,6 @@ import vavi.util.Debug;
 /**
  * Sequencer implemented by vavi.
  * <p>
- * このシーケンサクラスで再生する場合は
- * システムプロパティ <code>javax.sound.midi.Sequencer</code> に <code>"#Real Time Sequencer"</code>
- * を明示するようにしてください。<code>"Java MIDI(MFi/SMAF) ADPCM Sequencer"</code> が
- * デフォルトシーケンサになった場合、{@link #mea}が重複して登録されてしまいます。
- * </p>
- * <p>
  * {@link javax.sound.midi.MidiSystem} を
  * 使用しているため javax.sound.midi SPI のプログラム内で使用してはいけません。
  * </p>
@@ -66,20 +60,6 @@ class VaviSequencer implements Sequencer, Synthesizer {
     /** the sequence of MFi */
     private Sequence sequence;
 
-    public VaviSequencer() {
-        try {
-            this.midiSequencer = MidiUtil.getDefaultSequencer(vavi.sound.midi.VaviMidiDeviceProvider.class);
-Debug.println("★0 midiSequencer: " + midiSequencer);
-            midiSequencer.addMetaEventListener(mel);
-            midiSequencer.addMetaEventListener(mea);
-
-            this.midiSynthesizer = MidiSystem.getSynthesizer();
-        } catch (MidiUnavailableException e) {
-Debug.printStackTrace(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
     /* */
     public MfiDevice.Info getDeviceInfo() {
         return info;
@@ -87,6 +67,9 @@ Debug.printStackTrace(e);
 
     /* */
     public void close() {
+        if (midiSequencer == null) {
+            throw new IllegalStateException("not opend");
+        }
         midiSequencer.close();
         midiSynthesizer.close();
 Debug.println("★0 close: " + midiSequencer.hashCode());
@@ -94,18 +77,24 @@ Debug.println("★0 close: " + midiSequencer.hashCode());
 
     /* */
     public boolean isOpen() {
+        if (midiSequencer == null) {
+            return false;
+        }
         return midiSequencer.isOpen();
     }
 
     /** ADPCM sequencer */
     private javax.sound.midi.MetaEventListener mea = new MetaEventAdapter();
 
-    /*
-     * {@link javax.sound.midi.MidiSystem} を
-     * 使用しているため javax.sound.midi SPI のプログラム内で使用してはいけません。
-     */
+    /* */
     public void open() throws MfiUnavailableException {
         try {
+            if (this.midiSequencer == null) {
+                this.midiSequencer = MidiUtil.getDefaultSequencer(vavi.sound.midi.VaviMidiDeviceProvider.class);
+                this.midiSynthesizer = MidiSystem.getSynthesizer();
+Debug.println("★0 init: " + midiSequencer.hashCode());
+            }
+
 Debug.println("★0 open: " + midiSequencer.hashCode());
             midiSequencer.open();
             midiSynthesizer.open();
@@ -115,7 +104,7 @@ Debug.printStackTrace(e);
         }
     }
 
-    /** */
+    /* */
     public void setSequence(Sequence sequence)
         throws InvalidMfiDataException {
 
@@ -132,7 +121,7 @@ Debug.println(e);
         }
     }
 
-    /** */
+    /* */
     public void setSequence(InputStream stream)
         throws IOException,
                InvalidMfiDataException {
@@ -140,26 +129,49 @@ Debug.println(e);
         this.setSequence(MfiSystem.getSequence(stream));
     }
 
-    /** */
+    /* */
     public Sequence getSequence() {
         return sequence;
     }
 
-    /** */
+    /* */
     public void start() {
+        if (midiSequencer == null) {
+            throw new IllegalStateException("not opend");
+        }
+        on();
         midiSequencer.start();
-Debug.println("★0 start: " + midiSequencer.hashCode());
     }
 
-    /** */
+    /* */
     public void stop() {
+        if (midiSequencer == null) {
+            throw new IllegalStateException("not opend");
+        }
         midiSequencer.stop();
-Debug.println("★0 stop: " + midiSequencer.hashCode());
+        off();
+    }
+
+    /* */
+    public boolean isRunning() {
+        if (midiSequencer == null) {
+            throw new IllegalStateException("not opend");
+        }
+        return midiSequencer.isRunning();
     }
 
     /** */
-    public boolean isRunning() {
-        return midiSequencer.isRunning();
+    private void on() {
+        midiSequencer.addMetaEventListener(mel);
+        midiSequencer.addMetaEventListener(mea);
+Debug.println("★0 on: " + midiSequencer.hashCode());
+    }
+
+    /** */
+    private void off() {
+        midiSequencer.removeMetaEventListener(mel);
+        midiSequencer.removeMetaEventListener(mea);
+Debug.println("★0 off: " + midiSequencer.hashCode());
     }
 
     //-------------------------------------------------------------------------
@@ -193,6 +205,7 @@ Debug.println("★0 meta: type: " + message.getType());
                     MetaMessage metaMessage = new MetaMessage();
                     metaMessage.setMessage(0x2f, new byte[0], 0);
                     fireMeta(metaMessage);
+                    off();
                 } catch (InvalidMfiDataException e) {
 Debug.println(e);
                 }
@@ -239,8 +252,7 @@ Debug.printStackTrace(e);
     }
 
     protected void finalize() {
-        midiSequencer.removeMetaEventListener(mel);
-        midiSequencer.removeMetaEventListener(mea);
+        off();
     }
 }
 

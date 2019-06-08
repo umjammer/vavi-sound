@@ -35,12 +35,13 @@ public class VaviMidiDeviceProvider extends MidiDeviceProvider {
     public MidiDevice getDevice(MidiDevice.Info info)
         throws IllegalArgumentException {
 
-Debug.println("★1 info: " + info);
         if (info == VaviSequencer.info) {
+//new Exception("*** DUMMY ***").printStackTrace();
+Debug.println("★1 info: " + info);
             VaviSequencer wrappedSequencer = new VaviSequencer();
             return wrappedSequencer;
         } else {
-Debug.println("★1 here");
+Debug.println("★1 here: " + info);
             throw new IllegalArgumentException();
         }
     }

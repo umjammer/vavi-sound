@@ -223,7 +223,6 @@ Debug.printStackTrace(e);
                 continue;
             }
             for (MidiDevice.Info info : provider.getDeviceInfo()) {
-                MidiDevice device = provider.getDevice(info);
                 String name = null;
                 try {
                     byte[] bytes = info.getName().getBytes("ISO8859-1");
@@ -231,13 +230,15 @@ Debug.printStackTrace(e);
                 } catch (IOException e) {
 Debug.println(e);
                 }
-                if (Sequencer.class.isInstance(device)) {
-                    if (sequencerDeviceName != null) {
-                        if (sequencerDeviceName.equals(name)) {
+                if (sequencerDeviceName != null) {
+                    if (sequencerDeviceName.equals(name)) {
+                        MidiDevice device = provider.getDevice(info);
 Debug.println("default sequencer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
-                            return (Sequencer) device;
-                        }
-                    } else {
+                        return (Sequencer) device;
+                    }
+                } else {
+                    MidiDevice device = provider.getDevice(info);
+                    if (Sequencer.class.isInstance(device)) {
                         if (device.getClass().getName().equals(sequencerClassName)) {
 Debug.println("default sequencer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
                             return (Sequencer) device;

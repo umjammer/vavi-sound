@@ -70,8 +70,8 @@ System.err.println("META: " + meta.getType());
             sequencer.setSequence(sequence);
             sequencer.addMetaEventListener(mel);
             sequencer.start();
-System.err.println("END: " + args[i]);
             countDownLatch.await();
+System.err.println("END: " + args[i]);
             sequencer.removeMetaEventListener(mel);
         }
         sequencer.close();
