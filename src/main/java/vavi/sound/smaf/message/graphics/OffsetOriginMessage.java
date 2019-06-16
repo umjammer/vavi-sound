@@ -60,6 +60,7 @@ public class OffsetOriginMessage extends ShortMessage {
             break;
         case MobileStandard_Compress:
         case MobileStandard_NoCompress:
+        default:
             throw new UnsupportedOperationException("not specified");
         }
         return baos.toByteArray();

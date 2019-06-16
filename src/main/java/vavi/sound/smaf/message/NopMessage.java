@@ -65,6 +65,7 @@ public class NopMessage extends ShortMessage
             break;
         case MobileStandard_Compress:
         case MobileStandard_NoCompress:
+        default:
             throw new UnsupportedOperationException("not implemented"); // TODO
 //            break;
         }

@@ -103,6 +103,8 @@ public class ChannelStatus {
             break;
         case MobileStandard_Compress:
             break;
+        default:
+            break;
         }
     }
 

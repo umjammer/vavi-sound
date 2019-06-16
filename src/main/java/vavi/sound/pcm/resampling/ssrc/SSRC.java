@@ -1896,11 +1896,7 @@ System.err.printf("%d, %d, %d, %d\n",
         sfn = argv[i];
         dfn = argv[i + 1];
 
-        try {
-            fpi = new FileInputStream(sfn).getChannel();
-        } catch (IOException e) {
-            throw new IllegalArgumentException("cannot open input file.");
-        }
+        fpi = new FileInputStream(sfn).getChannel();
 
         // read wav header
 
@@ -2035,12 +2031,8 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
         if (twopass) {
         }
 
-        try {
-            fo = new File(dfn);
-            fpo = new FileOutputStream(fo).getChannel();
-        } catch (IOException e) {
-            throw new IllegalArgumentException("cannot open output file.");
-        }
+        fo = new File(dfn);
+        fpo = new FileOutputStream(fo).getChannel();
 
         // generate wav header
 
@@ -2109,16 +2101,12 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                 System.err.printf("Pass 1\n");
             }
 
-            try {
-                if (tmpfn != null) {
-                    ft = new File(tmpfn);
-                } else {
-                    ft = File.createTempFile("ssrc_", ".tmp");
-                }
-                fpto = new FileOutputStream(ft).getChannel();
-            } catch (IOException e) {
-                throw new IllegalStateException("cannot open temporary file.");
+            if (tmpfn != null) {
+                ft = new File(tmpfn);
+            } else {
+                ft = File.createTempFile("ssrc_", ".tmp");
             }
+            fpto = new FileOutputStream(ft).getChannel();
 
 //System.err.printf("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d, ???: %d, twopass: %b, dither: %d\n", nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither);
             Resampler resampler;
