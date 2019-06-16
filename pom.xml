@@ -17,6 +17,7 @@
   <url>https://github.com/umjammer/vavi-sound</url>
   <description>1.0.6
 
+    depends on vavi-commons api change
     fix event listener duplication
 
 1.0.5
@@ -96,7 +97,7 @@ TODO
 
   <dependencies>
     <dependency>
-      <groupId>vavi</groupId>
+      <groupId>com.github.umjammer</groupId>
       <artifactId>vavi-commons</artifactId>
       <version>1.0.9</version>
     </dependency>
