@@ -11,6 +11,7 @@ import java.util.List;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
+import vavi.util.properties.PrefixedClassPropertiesFactory;
 import vavi.util.properties.PrefixedPropertiesFactory;
 
 
@@ -34,7 +35,7 @@ public interface MachineDependentMfiWithVoiceMaker {
 
     /** */
     static final PrefixedPropertiesFactory<String, MachineDependentMfiWithVoiceMaker> factory =
-        new PrefixedPropertiesFactory<String, MachineDependentMfiWithVoiceMaker>("/vavi/sound/sampled/mfi/MfiWithVoiceMaker.properties", "class.") {
+        new PrefixedClassPropertiesFactory<String, MachineDependentMfiWithVoiceMaker>("/vavi/sound/sampled/mfi/MfiWithVoiceMaker.properties", "class.") {
 
         @Override
         protected String getRestoreKey(String key) {

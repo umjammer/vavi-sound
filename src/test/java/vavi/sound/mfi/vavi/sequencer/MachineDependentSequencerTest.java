@@ -9,6 +9,7 @@ package vavi.sound.mfi.vavi.sequencer;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import vavi.util.properties.PrefixedClassPropertiesFactory;
 import vavi.util.properties.PrefixedPropertiesFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,7 +27,7 @@ public class MachineDependentSequencerTest {
     @Test
     public void test() {
         PrefixedPropertiesFactory<Integer, MachineDependentSequencer> machineDependentSequencerFactory =
-            new PrefixedPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "sequencer.vendor.");
+            new PrefixedClassPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "sequencer.vendor.");
 
         MachineDependentSequencer mds = machineDependentSequencerFactory.get(97);
         System.err.println(mds);

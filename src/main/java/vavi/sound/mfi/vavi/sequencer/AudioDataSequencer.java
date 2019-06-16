@@ -8,7 +8,7 @@ package vavi.sound.mfi.vavi.sequencer;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mobile.AudioEngine;
-import vavi.util.properties.PrefixedPropertiesFactory;
+import vavi.util.properties.PrefixedClassPropertiesFactory;
 
 
 /**
@@ -27,7 +27,7 @@ public interface AudioDataSequencer {
     void sequence() throws InvalidMfiDataException;
 
     /** */
-    class Factory extends PrefixedPropertiesFactory<Integer, AudioEngine> {
+    class Factory extends PrefixedClassPropertiesFactory<Integer, AudioEngine> {
 
         /** */
         private static ThreadLocal<AudioEngine> audioEngineStore = new ThreadLocal<>();

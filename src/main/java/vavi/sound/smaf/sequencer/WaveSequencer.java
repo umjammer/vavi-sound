@@ -8,11 +8,11 @@ package vavi.sound.smaf.sequencer;
 
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.properties.PrefixedPropertiesFactory;
+import vavi.util.properties.PrefixedClassPropertiesFactory;
 
 
 /**
- * WaveSequencer. 
+ * WaveSequencer.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
@@ -26,13 +26,13 @@ public interface WaveSequencer {
     void sequence() throws InvalidSmafDataException;
 
     /** */
-    class Factory extends PrefixedPropertiesFactory<Integer, AudioEngine> {
+    class Factory extends PrefixedClassPropertiesFactory<Integer, AudioEngine> {
 
         /** */
         private static ThreadLocal<AudioEngine> audioEngineStore = new ThreadLocal<>();
 
         /**
-         * Second time or later. 
+         * Second time or later.
          */
         public static AudioEngine getAudioEngine() {
             return audioEngineStore.get();

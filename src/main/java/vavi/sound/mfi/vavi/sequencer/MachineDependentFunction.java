@@ -9,7 +9,7 @@ package vavi.sound.mfi.vavi.sequencer;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
-import vavi.util.properties.PrefixedPropertiesFactory;
+import vavi.util.properties.PrefixedClassPropertiesFactory;
 
 
 /**
@@ -42,7 +42,7 @@ public interface MachineDependentFunction {
         throws InvalidMfiDataException;
 
     /** */
-    class Factory extends PrefixedPropertiesFactory<String, MachineDependentFunction> {
+    class Factory extends PrefixedClassPropertiesFactory<String, MachineDependentFunction> {
 
         /** */
         public Factory(String path) {

@@ -7,8 +7,10 @@
 package vavi.sound.mfi.vavi;
 
 import javax.sound.midi.MidiEvent;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
+import vavi.util.properties.PrefixedClassPropertiesFactory;
 import vavi.util.properties.PrefixedPropertiesFactory;
 
 
@@ -30,7 +32,7 @@ public interface MfiConvertible {
 
     /** */
     static final PrefixedPropertiesFactory<String, MfiConvertible> factory =
-        new PrefixedPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "midi.");
+        new PrefixedClassPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "midi.");
 }
 
 /* */
