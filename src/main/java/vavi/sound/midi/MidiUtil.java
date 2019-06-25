@@ -8,8 +8,6 @@ package vavi.sound.midi;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
@@ -252,18 +250,13 @@ Debug.println("default sequencer: " + provider.getClass().getName() + ", " + dev
     }
 
     /** */
-    public static List<MidiDeviceProvider> getMidiDeviceProvider() {
-        return providers;
-    }
-
-    /** */
-    private static List<MidiDeviceProvider> providers = new ArrayList<>();
+    private static ServiceLoader<MidiDeviceProvider> providers;
 
     /**
      * @depends /META-INF/services/javax.sound.midi.spi.MidiDeviceProvider
      */
     static {
-        ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class).forEach(providers::add);
+        providers = ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class);
 providers.forEach(provider -> System.err.println(provider.getClass()));
     }
 }

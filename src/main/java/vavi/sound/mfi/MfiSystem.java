@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
+import java.util.stream.StreamSupport;
 
 import javax.sound.midi.InvalidMidiDataException;
 
@@ -252,12 +253,12 @@ Debug.println(e);
 
     /** ファイルタイプがサポートされるかどうかを返します。 */
     public static boolean isFileTypeSupported(int fileType) {
-        return writers.stream().anyMatch(w -> w.isFileTypeSupported(fileType));
+        return StreamSupport.stream(writers.spliterator(), false).anyMatch(w -> w.isFileTypeSupported(fileType));
     }
 
     /** ファイルタイプが指定したシーケンスでサポートされるかどうかを返します。 */
     public static boolean isFileTypeSupported(int fileType, Sequence sequence) {
-        return writers.stream().anyMatch(w -> w.isFileTypeSupported(fileType, sequence));
+        return StreamSupport.stream(writers.spliterator(), false).anyMatch(w -> w.isFileTypeSupported(fileType, sequence));
     }
 
     /** MFi or MIDI で書き出します。 */
@@ -283,11 +284,11 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
     //-------------------------------------------------------------------------
 
     /** all プロバイダ */
-    private static List<MfiDeviceProvider> providers = new ArrayList<>();
+    private static ServiceLoader<MfiDeviceProvider> providers;
     /** all リーダ */
-    private static List<MfiFileReader> readers = new ArrayList<>();
+    private static ServiceLoader<MfiFileReader> readers;
     /** all ライタ */
-    private static List<MfiFileWriter> writers = new ArrayList<>();
+    private static ServiceLoader<MfiFileWriter> writers;
 
     /** default プロバイダ */
     private static MfiDeviceProvider provider;
@@ -305,15 +306,15 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
             mfiSystemProps.load(clazz.getResourceAsStream("MfiSystem.properties"));
             String defaultProvider = mfiSystemProps.getProperty("default.provider");
 
-            ServiceLoader.load(vavi.sound.mfi.spi.MfiDeviceProvider.class).forEach(providers::add);
+            providers = ServiceLoader.load(vavi.sound.mfi.spi.MfiDeviceProvider.class);
 providers.forEach(System.err::println);
-            provider = providers.stream().filter(p -> p.getClass().getName().equals(defaultProvider)).findFirst().get();
+            provider = StreamSupport.stream(providers.spliterator(), false).filter(p -> p.getClass().getName().equals(defaultProvider)).findFirst().get();
 Debug.println("default provider: " + provider.getClass().getName());
 
-            ServiceLoader.load(vavi.sound.mfi.spi.MfiFileReader.class).forEach(readers::add);
+            readers = ServiceLoader.load(vavi.sound.mfi.spi.MfiFileReader.class);
 providers.forEach(System.err::println);
 
-            ServiceLoader.load(vavi.sound.mfi.spi.MfiFileWriter.class).forEach(writers::add);
+            writers = ServiceLoader.load(vavi.sound.mfi.spi.MfiFileWriter.class);
 providers.forEach(System.err::println);
         } catch (Exception e) {
 Debug.println(Level.SEVERE, e);
