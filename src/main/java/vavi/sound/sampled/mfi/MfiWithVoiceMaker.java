@@ -63,7 +63,7 @@ class MfiWithVoiceMaker {
     /** ADPCM volume */
     protected int adpcmVolume;
 
-    /** {@link MachineDependVoiceMaker} object for model */
+    /** {@link MachineDependentMfiWithVoiceMaker} object for model */
     protected MachineDependentMfiWithVoiceMaker mdvm;
 
     /** */
