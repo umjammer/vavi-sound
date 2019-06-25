@@ -8,14 +8,18 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-sound</artifactId>
-  <version>1.0.6</version>
+  <version>1.0.7-SNAPSHOT</version>
 
   <name>Vavi Sound API</name>
   <organization>
     <name></name>
   </organization>
   <url>https://github.com/umjammer/vavi-sound</url>
-  <description>1.0.6
+  <description>1.0.7
+
+    simplify service loader
+
+1.0.6
 
     depends on vavi-commons api change
     fix event listener duplication
