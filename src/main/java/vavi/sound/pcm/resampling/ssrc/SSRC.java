@@ -694,9 +694,9 @@ System.err.println("upsample");
                     case 3:
                         for (i = 0; i < nsmplread * nch; i++) {
                             inbuf[nch * inbuflen + i] = (1 / (double) 0x7fffff) *
-                            ((rawinbuf.get(i * 3    ) <<  0) |
-                             (rawinbuf.get(i * 3 + 1) <<  8) |
-                             (rawinbuf.get(i * 3 + 2) << 16));
+                            (((rawinbuf.get(i * 3    ) & 0xff) <<  0) |
+                             ((rawinbuf.get(i * 3 + 1) & 0xff) <<  8) |
+                             ((rawinbuf.get(i * 3 + 2) & 0xff) << 16));
                         }
                         break;
 

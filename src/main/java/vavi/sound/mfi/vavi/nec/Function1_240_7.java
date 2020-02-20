@@ -58,7 +58,7 @@ public class Function1_240_7 implements MachineDependentFunction {
         this.streamNumber = data[ 9] & 0xff;            // stream number 0 ~ 31
         this.mono =        (data[10] & 0x80) == 0;      // 0: mono, 1: stereo
         this.format =      (data[10] & 0x03) >> 1;      // 0: 4bit ADPCM (0db Center 固定), 1: 4bit ADPCM
-        this.sampleRate =  (data[11] << 8) + data[12];  // 4000 ~ 16000 (stereo 時は半分)
+        this.sampleRate =  ((data[11] & 0xff) << 8) + (data[12] & 0xff);  // 4000 ~ 16000 (stereo 時は半分)
 
         int adpcmLength = data.length - HEADER_LENGTH;
 Debug.println("ADPCM: No." + streamNumber + ", " + sampleRate + "Hz, " + adpcmLength + " bytes, " + (mono ? "mono" : "stereo") + ", " + format);
