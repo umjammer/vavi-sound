@@ -22,7 +22,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import vavi.io.IOStreamInputEngine;
@@ -31,6 +31,7 @@ import vavi.io.InputEngineOutputStream;
 import vavi.io.LittleEndianDataInputStream;
 import vavi.io.OutputEngineInputStream;
 import vavi.util.Debug;
+
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,7 +49,7 @@ public class ImaOutputStreamTest {
     String correctFile = "out_sox.adpcm";
     File outFile;
 
-    @BeforeAll
+    @BeforeEach
     public void setup() throws IOException {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();

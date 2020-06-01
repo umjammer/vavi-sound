@@ -26,10 +26,10 @@ import vavi.io.LittleEndianDataInputStream;
 import vavi.io.LittleEndianDataOutputStream;
 import vavi.util.StringUtil;
 
+import vavix.util.Checksum;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import vavix.util.Checksum;
 
 
 /**
