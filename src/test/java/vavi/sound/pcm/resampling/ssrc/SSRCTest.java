@@ -20,6 +20,7 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import vavi.io.LittleEndianDataInputStream;
@@ -41,8 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SSRCTest {
 
 //    static String inFile = "/Users/nsano/Music/0/kirameki01.wav";  // error in down sampling
-//    static String inFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/44100.wav";
-    static String inFile = "/Users/nsano/Music/0/rc.wav";
+    static String inFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/44100.wav";
+//    static String inFile = "/Users/nsano/Music/0/rc.wav";
 
     static String outFile = "tmp/out.vavi.wav";
     static String correctFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/out.wav";
@@ -51,15 +52,13 @@ public class SSRCTest {
 
     @BeforeAll
     public static void setUp() throws Exception {
-//        Properties props = new Properties();
-//        props.load(SSRCTest.class.getResourceAsStream("local.properties"));
-//        inFile = props.getProperty("ssrc.in.wav");
 System.err.println(inFile);
         isGui = Boolean.valueOf(System.getProperty("eclipse.editor", "false"));
     }
 
     /** down sample */
-//    @Test
+    @Test
+    @Disabled
     public void test1() throws Exception {
         SSRC.main(new String[] { "--rate", "8000", "--twopass", "--normalize", inFile, outFile });
 
@@ -92,7 +91,8 @@ gainControl.setValue(dB);
     static String correctFile3 = "src/test/resources/vavi/sound/pcm/resampling/ssrc/out.wav";
 
     /** up sample */
-//    @Test
+    @Test
+    @Disabled
     public void test3() throws Exception {
         SSRC.main(new String[] { "--rate", "48000", "--twopass", "--normalize", inFile, outFile });
 
