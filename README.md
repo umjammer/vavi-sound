@@ -1,4 +1,4 @@
-[![Release](https://jitpack.io/v/umjammer/vavi-sound.svg)](https://jitpack.io/#umjammer/vavi-sound)
+[![Release](https://jitpack.io/v/umjammer/vavi-sound.svg)](https://jitpack.io/#umjammer/vavi-sound) [![Java CI with Maven](https://github.com/umjammer/vavi-sound/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/umjammer/vavi-sound/actions)
 
 # vavi-sound
 
