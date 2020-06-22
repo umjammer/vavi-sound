@@ -8,7 +8,6 @@ package vavi.sound.mfi.vavi;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.junit.jupiter.api.Test;
@@ -47,7 +46,7 @@ public class VaviMfiFileWriterTest {
     @Test
     public void test1() throws Exception {
 
-        InputStream in = new BufferedInputStream(new FileInputStream("/tmp/ooo.wav"));
+        InputStream in = new BufferedInputStream(VaviMfiFileWriterTest.class.getResourceAsStream("/ooo_m.wav"));
         WAVE wave = (WAVE) WAVE.readFrom(in);
         in.close();
 
@@ -68,7 +67,7 @@ Debug.println("wave: " + data.getWave().length);
         int bytesPerSecond = samplingRate * samplingBits / 8;
 Debug.println("bytesPerSecond: " + bytesPerSecond);
 Debug.println("fmt.bytesPerSecond: " + format.getBytesPerSecond());
-        double time = (double) in.available() / bytesPerSecond * 1000;
+        double time = (double) data.getWave().length / bytesPerSecond * 1000;
 Debug.println("time: " + time + " ms");
 
         //----
@@ -94,10 +93,8 @@ Debug.println("delta: " + delta);
 
         int r = MfiSystem.write(sequence,
                                 VaviMfiFileFormat.FILE_TYPE,
-                                new File("out.mid"));
+                                new File("tmp/out.mid"));
 Debug.println("write: " + r);
-
-        System.exit(r != 0 ? 0 : 1);
     }
 
     /**

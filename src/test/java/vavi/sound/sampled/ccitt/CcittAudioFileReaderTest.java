@@ -22,6 +22,7 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import vavi.util.Debug;
@@ -37,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>
  */
+@Disabled("not completed yet")
 public class CcittAudioFileReaderTest {
 
     String inFile = "/vavi/sound/adpcm/ccitt/out.4.adpcm";
@@ -77,7 +79,7 @@ System.err.println(outFormat);
             false);
 
         AudioInputStream ais = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(inFile));
-        InputStream is = AudioSystem.getAudioInputStream(outFormat, ais);
+        InputStream is = AudioSystem.getAudioInputStream(inFormat, ais);
 System.err.println("available: " + is.available());
 
         OutputStream os = new BufferedOutputStream(new FileOutputStream(outFile));

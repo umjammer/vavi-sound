@@ -23,15 +23,16 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import vavi.io.IOStreamInputEngine;
-import vavi.io.IOStreamOutputEngine;
 import vavi.io.InputEngineOutputStream;
 import vavi.io.LittleEndianDataInputStream;
 import vavi.io.OutputEngineInputStream;
 import vavi.util.Debug;
 
+import vavix.io.IOStreamInputEngine;
+import vavix.io.IOStreamOutputEngine;
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -125,6 +126,7 @@ Debug.println("outFile: " + outFile.length());
      * TODO input engine と output engine の結合がうまくいかない
      */
     @Test
+    @Disabled
     public void test2() throws Exception {
 //        final String inFile = "out.pcm";
 //        final String outFile = "src/test/resources/vavi/sound/adpcm/ima/out_vavi.pcm";
@@ -144,6 +146,9 @@ Debug.println("outFile: " + outFile.length());
         byte[] buffer = new byte[505 * 2];
         while (true) {
             int amount = is.read(buffer);
+            if (amount == 0) {
+                continue;
+            }
             if (amount < 0) {
                 break;
             }
