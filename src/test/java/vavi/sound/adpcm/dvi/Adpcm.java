@@ -37,7 +37,7 @@ public class Adpcm {
       15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767
    };
 
-   public class AdpcmState {    
+   public class AdpcmState {
       int valprev, index;
    }
 

@@ -12,10 +12,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 
-import vavi.io.IOStreamInputEngine;
 import vavi.io.InputEngine;
 import vavi.io.LittleEndianDataInputStream;
 import vavi.util.Debug;
+
+import vavix.io.IOStreamInputEngine;
 
 
 /**
@@ -62,7 +63,7 @@ Debug.println("byteOrder: " + this.byteOrder);
 
     /**
      * {@link #in} が {@link #samplesPerBlock} * 2 しか読まないので {@link IOStreamInputEngine} の
-     * {@link IOStreamInputEngine#IOStreamInputEngine(OutputStream, vavi.io.IOStreamInputEngine.InputStreamFactory, int)}
+     * {@link IOStreamInputEngine#IOStreamInputEngine(OutputStream, vavix.io.IOStreamInputEngine.InputStreamFactory, int)}
      * の bufferSize を {@link #samplesPerBlock} * 2 にすること。
      */
     public void execute() throws IOException {

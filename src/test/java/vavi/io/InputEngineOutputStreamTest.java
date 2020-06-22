@@ -15,8 +15,10 @@ import java.io.OutputStream;
 
 import org.junit.jupiter.api.Test;
 
-import vavix.io.Rot13;
+import vavix.io.IOStreamInputEngine;
+import vavix.io.IOStreamOutputEngine;
 import vavix.util.Checksum;
+import vavix.util.Rot13;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,13 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060126 nsano initial version <br>
  */
-public class InputEngineOutputStreamTest {
+class InputEngineOutputStreamTest {
 
     String inFile = "/test.sql";
     String out1File = "tmp/test.r13";
     String out2File = "tmp/test2.sql";
 
-    /** */
     @Test
     public void test1() throws Exception {
         //

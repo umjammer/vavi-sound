@@ -16,10 +16,10 @@ import java.nio.ByteOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import vavi.io.IOStreamOutputEngine;
 import vavi.io.OutputEngineInputStream;
 import vavi.util.Debug;
 
+import vavix.io.IOStreamOutputEngine;
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
