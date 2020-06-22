@@ -1,9 +1,2 @@
-jvm=${env.JAVA_HOME}/bin/java
-javac.source=src/main/java
-javac.source.test=src/test/java
-javac.resource=src/main/resources
-javac.resource.test=src/test/resources
-javac.dest=target/classes
-javac.dest.test=target/test-classes
 
 findbugs.home=/usr/local/findbugs

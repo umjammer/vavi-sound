@@ -12,10 +12,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 
-import vavi.io.IOStreamInputEngine;
 import vavi.io.InputEngine;
 import vavi.io.LittleEndianDataInputStream;
 import vavi.util.Debug;
+
+import vavix.io.IOStreamInputEngine;
 
 
 /**

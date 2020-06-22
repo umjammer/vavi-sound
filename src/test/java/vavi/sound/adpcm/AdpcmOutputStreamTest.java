@@ -8,22 +8,23 @@ package vavi.sound.adpcm;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteOrder;
+import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
- * AdpcmOutputStreamTest. 
+ * AdpcmOutputStreamTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2011/11/02 umjammer initial version <br>
  */
-public class AdpcmOutputStreamTest {
+class AdpcmOutputStreamTest {
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         AdpcmOutputStream os = new AdpcmOutputStream(baos, ByteOrder.BIG_ENDIAN, 4, ByteOrder.BIG_ENDIAN) {
@@ -38,7 +39,13 @@ public class AdpcmOutputStreamTest {
                 };
             }
         };
+        byte[] buf = new byte[8192];
+        new Random().nextBytes(buf);
+        os.write(buf);
+        os.flush();
         os.close();
+        // 16bit -> 4bit
+        assertEquals(buf.length / 4, baos.size());
     }
 }
 

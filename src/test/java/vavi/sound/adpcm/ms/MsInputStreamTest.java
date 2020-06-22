@@ -24,13 +24,14 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import vavi.io.LittleEndianDataInputStream;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
 import vavi.util.win32.WAVE;
+
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,7 +49,7 @@ public class MsInputStreamTest {
     String correctFile = "out_sox.pcm";
     File outFile;
 
-    @BeforeAll
+    @BeforeEach
     public void setup() throws IOException {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
