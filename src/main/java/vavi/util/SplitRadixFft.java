@@ -28,7 +28,7 @@ package vavi.util;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060127 nsano port to java version <br>
  */
-public class SplitRadixFft {
+public abstract class SplitRadixFft {
 
     /**
      * Complex Discrete Fourier Transform.
@@ -75,7 +75,7 @@ public class SplitRadixFft {
      * @param w w[0...n/2-1] cos/sin table (REAL *)
      *          w[],ip[] are initialized if ip[0] == 0.
      */
-    public void cdft(int n, int isgn, double[] a, int[] ip, double[] w) {
+    public static void cdft(int n, int isgn, double[] a, int[] ip, double[] w) {
         if (n > (ip[0] << 2)) {
             makewt(n >> 2, ip, w);
         }
@@ -147,7 +147,7 @@ public class SplitRadixFft {
      * @param w [0...n/2-1] cos/sin table <br>
      *  w[],ip[] are initialized if ip[0] == 0.
      */
-    public void rdft(int n, int isgn, double[] a, int[] ip, double[] w) {
+    public static void rdft(int n, int isgn, double[] a, int[] ip, double[] w) {
         int nw, nc;
         double xi;
 
@@ -234,7 +234,7 @@ public class SplitRadixFft {
      *  w[],ip[] are initialized if ip[0] == 0.
      * </pre>
      */
-    public void ddct(int n, int isgn, double[] a, int[] ip, double[] w) {
+    public static void ddct(int n, int isgn, double[] a, int[] ip, double[] w) {
         int j, nw, nc;
         double xr;
 
@@ -332,7 +332,7 @@ public class SplitRadixFft {
      * @param w [0...n*5/4-1] cos/sin table (REAL *)
      *                      w[],ip[] are initialized if ip[0] == 0.
      */
-    public void ddst(int n, int isgn, double[] a, int[] ip, double[] w) {
+    public static void ddst(int n, int isgn, double[] a, int[] ip, double[] w) {
         int j, nw, nc;
         double xr;
 
@@ -427,7 +427,7 @@ public class SplitRadixFft {
      *  w[],ip[] are initialized if ip[0] == 0.
      * </pre>
      */
-    public void dfct(int n, double[] a, double[] t, int[] ip, double[] w) {
+    public static void dfct(int n, double[] a, double[] t, int[] ip, double[] w) {
         int j, k, l, m, mh, nw, nc;
         double xr, xi, yr, yi;
 
@@ -557,7 +557,7 @@ public class SplitRadixFft {
      *  w[],ip[] are initialized if ip[0] == 0.
      * </pre>
      */
-    public void dfst(int n, double[] a, double[] t, int[] ip, double[] w) {
+    public static void dfst(int n, double[] a, double[] t, int[] ip, double[] w) {
         int j, k, l, m, mh, nw, nc;
         double xr, xi, yr, yi;
 
@@ -639,7 +639,7 @@ public class SplitRadixFft {
     // -------- initializing routines --------
 
     /** */
-    private void makewt(int nw, int[] ip, double[] w) {
+    public static void makewt(int nw, int[] ip, double[] w) {
         int j, nwh;
         double delta, x, y;
 
@@ -667,7 +667,7 @@ public class SplitRadixFft {
     }
 
     /** */
-    private void makect(int nc, int[] ip, double[] c, int cP) {
+    public static void makect(int nc, int[] ip, double[] c, int cP) {
         int j, nch;
         double delta;
 
@@ -689,7 +689,7 @@ public class SplitRadixFft {
     /**
      * 2nd
      */
-    private final void bitrv2(int n, int[] ip, int ipP, double[] a) {
+    private static final void bitrv2(int n, int[] ip, int ipP, double[] a) {
         int j, j1, k, k1, l, m, m2;
         double xr, xi, yr, yi;
 
@@ -790,7 +790,7 @@ public class SplitRadixFft {
     /**
      * 2nd
      */
-    private final void bitrv2conj(int n, int[] ip, int ipP, double[] a) {
+    private static final void bitrv2conj(int n, int[] ip, int ipP, double[] a) {
         int j, j1, k, k1, l, m, m2;
         double xr, xi, yr, yi;
 
@@ -906,7 +906,7 @@ public class SplitRadixFft {
      * @see #dfst(int, double[], double[], int[], double[])
      * @see #dfct(int, double[], double[], int[], double[])
      */
-    private void cftfsub(int n, double[] a, double[] w) {
+    private static void cftfsub(int n, double[] a, double[] w) {
         int j, j1, j2, j3, l;
         double x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;
 
@@ -961,7 +961,7 @@ public class SplitRadixFft {
      * @see #cdft(int, int, double[], int[], double[])
      * @see #ddst(int, int, double[], int[], double[])
      */
-    private void cftbsub(int n, double[] a, double[] w) {
+    private static void cftbsub(int n, double[] a, double[] w) {
         int j, j1, j2, j3, l;
         double x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;
 
@@ -1013,7 +1013,7 @@ public class SplitRadixFft {
      * 3rd
      * @see #cftfsub(int, double[], double[])
      */
-    private void cft1st(int n, double[] a, double[] w) {
+    private static void cft1st(int n, double[] a, double[] w) {
         int j, k1, k2;
         double wk1r, wk1i, wk2r, wk2i, wk3r, wk3i;
         double x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;
@@ -1117,7 +1117,7 @@ public class SplitRadixFft {
     }
 
     /** */
-    private final void cftmdl(int n, int l, double[] a, double[] w) {
+    private static final void cftmdl(int n, int l, double[] a, double[] w) {
         int j, j1, j2, j3, k, k1, k2, m, m2;
         double wk1r, wk1i, wk2r, wk2i, wk3r, wk3i;
         double x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;
@@ -1250,7 +1250,7 @@ public class SplitRadixFft {
      * @see #dfst(int, double[], double[], int[], double[])
      * @see #dfct(int, double[], double[], int[], double[])
      */
-    private void rftfsub(int n, double[] a, int nc, double[] c, int cP) {
+    private static void rftfsub(int n, double[] a, int nc, double[] c, int cP) {
         int j, k, kk, ks, m;
         double wkr, wki, xr, xi, yr, yi;
 
@@ -1279,7 +1279,7 @@ public class SplitRadixFft {
      * @see #ddct(int, int, double[], int[], double[])
      * @see #ddst(int, int, double[], int[], double[])
      */
-    private void rftbsub(int n, double[] a, int nc, double[] c, int cP) {
+    private static void rftbsub(int n, double[] a, int nc, double[] c, int cP) {
         int j, k, kk, ks, m;
         double wkr, wki, xr, xi, yr, yi;
 
@@ -1309,7 +1309,7 @@ public class SplitRadixFft {
      * @see #ddct(int, int, double[], int[], double[])
      * @see #dfct(int, double[], double[], int[], double[])
      */
-    private void dctsub(int n, double[] a, int nc, double[] c, int cP) {
+    private static void dctsub(int n, double[] a, int nc, double[] c, int cP) {
         int j, k, kk, ks, m;
         double wkr, wki, xr;
 
@@ -1333,7 +1333,7 @@ public class SplitRadixFft {
      * @see #ddst(int, int, double[], int[], double[])
      * @see #dfst(int, double[], double[], int[], double[])
      */
-    private void dstsub(int n, double[] a, int nc, double[] c, int cP) {
+    private static void dstsub(int n, double[] a, int nc, double[] c, int cP) {
         int j, k, kk, ks, m;
         double wkr, wki, xr;
 
