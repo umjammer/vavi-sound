@@ -8,12 +8,14 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import vavi.util.ByteUtil;
+
 public class Adpcm {
 
    public static final int RTP_PT = 5;
 
    public String codecName() {
-      return("DVI ADPCM");
+      return "DVI ADPCM";
    } 
 
    public int getSampleRate() {
@@ -60,7 +62,7 @@ public class Adpcm {
       int outputbuffer = 0;
       int bufferstep = 1;
 
-      Convert.short2byte((short)valprev, output, outp);
+      ByteUtil.writeBeShort((short)valprev, output, outp);
       output[outp + 2] = (byte)index;
       output[outp + 3] = (byte)0;
       outp += 4;
@@ -129,7 +131,7 @@ public class Adpcm {
       int sign;
       int delta;
       int vpdiff;
-      int valprev = Convert.byte2short(input, inp);
+      int valprev = ByteUtil.readBeShort(input, inp);
       int index = input[inp + 2];
       int inputbuffer = 0;
       int bufferstep = 0;

@@ -31,9 +31,11 @@ public class VaviMidiDeviceProvider extends MidiDeviceProvider {
         return infos;
     }
 
-    /** ADPCM 再生機構を付加した MIDI シーケンサを返します。 */
-    public MidiDevice getDevice(MidiDevice.Info info)
-        throws IllegalArgumentException {
+    /**
+     * ADPCM 再生機構を付加した MIDI シーケンサを返します。
+     * @throws IllegalArgumentException info is not suitable for this provider
+     */
+    public MidiDevice getDevice(MidiDevice.Info info) {
 
         if (info == VaviSequencer.info) {
 //new Exception("*** DUMMY ***").printStackTrace();
@@ -41,8 +43,8 @@ Debug.println("★1 info: " + info);
             VaviSequencer wrappedSequencer = new VaviSequencer();
             return wrappedSequencer;
         } else {
-Debug.println("★1 here: " + info);
-            throw new IllegalArgumentException();
+Debug.println("★1 not suitable for this provider: " + info);
+            throw new IllegalArgumentException("info is not suitable for this provider");
         }
     }
 }

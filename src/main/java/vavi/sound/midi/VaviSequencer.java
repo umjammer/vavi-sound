@@ -45,7 +45,7 @@ class VaviSequencer implements Sequencer {
     private Sequencer sequencer = MidiUtil.getDefaultSequencer(VaviMidiDeviceProvider.class);
 
     /** */
-    private VaviSequence vaviSequence; 
+    private VaviSequence vaviSequence;
 
     /* */
     public void start() {
