@@ -4,13 +4,12 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.ccitt;
+package vavi.sound.sampled.adpcm.ccitt;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 
@@ -22,7 +21,6 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import vavi.util.Debug;
@@ -38,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>
  */
-@Disabled("not completed yet")
 public class CcittAudioFileReaderTest {
 
     String inFile = "/vavi/sound/adpcm/ccitt/out.4.adpcm";
@@ -74,13 +71,15 @@ System.err.println(outFormat);
             sampleRate,
             16,
             1,
-            2,
+            AudioSystem.NOT_SPECIFIED,
             sampleRate,
             false);
+System.err.println(inFormat);
 
-        AudioInputStream ais = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(inFile));
-        InputStream is = AudioSystem.getAudioInputStream(inFormat, ais);
-System.err.println("available: " + is.available());
+        AudioInputStream iais = new AudioInputStream(getClass().getResourceAsStream(inFile), inFormat, AudioSystem.NOT_SPECIFIED);
+System.err.println("in available: " + iais.available() + ", " + iais.getFormat());
+        AudioInputStream oais = AudioSystem.getAudioInputStream(outFormat, iais);
+System.err.println("out available: " + oais.available() + ", " + oais.getFormat());
 
         OutputStream os = new BufferedOutputStream(new FileOutputStream(outFile));
 
@@ -95,8 +94,8 @@ double gain = .2d; // number between 0 and 1 (loudest)
 float dB = (float) (Math.log(gain) / Math.log(10.0) * 20.0);
 gainControl.setValue(dB);
 
-        while (is.available() > 0) {
-            l = is.read(buf, 0, 1024);
+        while (oais.available() > 0) {
+            l = oais.read(buf, 0, 1024);
 line.write(buf, 0, l);
             os.write(buf, 0, l);
         }

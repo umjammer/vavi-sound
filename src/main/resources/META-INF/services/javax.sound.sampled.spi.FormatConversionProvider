@@ -6,4 +6,12 @@
 # 0.00 060726 nsano initial version
 #
 
-#vavi.sound.sampled.ccitt.CcittFormatConversionProvider
+vavi.sound.sampled.adpcm.ccitt.CcittFormatConversionProvider
+vavi.sound.sampled.adpcm.dvi.DviFormatConversionProvider
+#vavi.sound.sampled.adpcm.ima.ImaFormatConversionProvider
+vavi.sound.sampled.adpcm.ma.MaFormatConversionProvider
+#vavi.sound.sampled.adpcm.ms.MsFormatConversionProvider
+vavi.sound.sampled.adpcm.oki.OkiFormatConversionProvider
+vavi.sound.sampled.adpcm.rohm.RohmFormatConversionProvider
+vavi.sound.sampled.adpcm.vox.VoxFormatConversionProvider
+vavi.sound.sampled.adpcm.yamaha.YamahaFormatConversionProvider
