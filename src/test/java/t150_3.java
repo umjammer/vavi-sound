@@ -84,10 +84,10 @@ double gain = .2d; // number between 0 and 1 (loudest)
 float dB = (float) (Math.log(gain) / Math.log(10.0) * 20.0);
 gainControl.setValue(dB);
         line.start();
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[line.getBufferSize()];
         int l = 0;
         while (is.available() > 0) {
-            l = is.read(buf, 0, 1024);
+            l = is.read(buf, 0, buf.length);
             line.write(buf, 0, l);
         }
         line.drain();

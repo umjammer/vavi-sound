@@ -176,8 +176,7 @@ public final class MidiConstants {
 
     /**
      * <pre>
-     * FF 54 05 hr mn se fr ff  [SMPTE オフセット(0.06 での追加 -  SMPTE
-     * 　　　　　　　　　　　　　　　　　　　　　　　　フォーマットの記述)]
+     * FF 54 05 hr mn se fr ff  [SMPTE オフセット(0.06 での追加 - SMPTE フォーマットの記述)]
      * </pre>
      * このイベントは、もしあれば、トラック・ブロックがスタートすることになっ
      * ている SMPTE タイムを示す。これは、トラックの冒頭に置かれなければなら
