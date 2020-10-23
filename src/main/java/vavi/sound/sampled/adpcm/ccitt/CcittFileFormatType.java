@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.ccitt;
+package vavi.sound.sampled.adpcm.ccitt;
 
 import javax.sound.sampled.AudioFileFormat;
 
@@ -20,13 +20,13 @@ public class CcittFileFormatType extends AudioFileFormat.Type {
     /**
      * Specifies an CCITT file.
      */
-    public static final AudioFileFormat.Type CCITT = new CcittFileFormatType("CCITT", "adpcm");
+    public static final AudioFileFormat.Type CCITT = new CcittFileFormatType("CCITT", "wav");
 
     /**
      * Constructs a file type.
      *
-     * @param name the name of the Flac File Format.
-     * @param extension the file extension for this Flac File Format.
+     * @param name the name of the CCITT File Format.
+     * @param extension the file extension for this CCITT File Format.
      */
     public CcittFileFormatType(String name, String extension) {
         super(name, extension);

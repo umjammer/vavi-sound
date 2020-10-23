@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.ccitt;
+package vavi.sound.sampled.adpcm.ccitt;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +24,9 @@ import javax.sound.sampled.spi.AudioFileReader;
  * Provider for CCITT audio file reading services. This implementation can parse
  * the format information from CCITT audio file, and can produce audio input
  * streams from files of this type.
- * 
+ *
+ * TODO how can i detect raw stream as adpcm?, may needs wav, mkv wrapper.
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050722 nsano initial version <br>
  */

@@ -4,13 +4,13 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.ccitt;
-
+package vavi.sound.sampled.adpcm.ccitt;
 
 import javax.sound.sampled.AudioFormat;
 
+
 /**
- * Encodings used by the Flac audio decoder.
+ * Encodings used by the CCITT adpcm decoder.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050722 nsano initial version <br>

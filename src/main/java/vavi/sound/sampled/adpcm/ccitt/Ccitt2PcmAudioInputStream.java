@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.ccitt;
+package vavi.sound.sampled.adpcm.ccitt;
 
 import java.io.InputStream;
 import java.nio.ByteOrder;
@@ -16,7 +16,7 @@ import vavi.sound.adpcm.ccitt.G721InputStream;
 
 
 /**
- * Converts an Ccitt bitstream into a PCM 16bits/sample audio stream.
+ * Converts an CCITT bitstream into a PCM 16bits/sample audio stream.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050722 nsano initial version <br>
