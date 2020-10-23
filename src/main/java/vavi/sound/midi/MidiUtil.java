@@ -256,8 +256,12 @@ Debug.println("default sequencer: " + provider.getClass().getName() + ", " + dev
      * @depends /META-INF/services/javax.sound.midi.spi.MidiDeviceProvider
      */
     static {
-        providers = ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class);
+        try {
+            providers = ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class);
 providers.forEach(provider -> System.err.println(provider.getClass()));
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 }
 
