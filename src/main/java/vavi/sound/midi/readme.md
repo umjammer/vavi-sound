@@ -1,36 +1,12 @@
-<html lang="ja">
-
-<head>
-<link rev="MADE" href="mailto:vavivavi@yahoo.co.jp"/>
-<link rel="INDEX" href="orverview.html"/>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta http-equiv="Content-Style-Type" content="text/css"/>
-<link rel="stylesheet" type="text/css" href="../../../vavi.css"/>
-<title>vavi.sound.midi</title>
-<!--
- * Copyright (c) 2004 by Naohide Sano, All rights reserved.
- *
- * Written by Naohide Sano
- *
- * @author	<a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
- *
- * @version	0.00	041226	nsano	initial version
--->
-</head>
-
-<body>
-
-<p>
 MIDI のサービスプロバイダとしての実装をするための基本クラスを提供します。
-</p>
 
-<h2>注意</h2>
-MFi, SMAF をこのパッケージで再生する場合、システムプロパティ <code>javax.sound.midi.Sequencer</code> に
-<code>"#Java MIDI(MFi/SMAF) ADPCM Sequencer"</code> と設定してください。ADPCM のハンドリングができなくなります。
+## 注意
+MFi, SMAF をこのパッケージで再生する場合、システムプロパティ `javax.sound.midi.Sequencer` に
+`"#Java MIDI(MFi/SMAF) ADPCM Sequencer"` と設定してください。ADPCM のハンドリングができなくなります。
 
-<h2>MIDI ファイルタイプの勝手な仕様</h2>
+## MIDI ファイルタイプの勝手な仕様
 
-<pre>
+```
  8765 4321 LSB
  ||   |||+---- SMF 0/1
  ||   ||+----- SMF 2
@@ -38,30 +14,28 @@ MFi, SMAF をこのパッケージで再生する場合、システムプロパ�
  ||   +------- MFi
  |+----------- Compress Flag (SMAF)
  +------------ for Mobile Flag (SMAF, MFi etc)
-</pre>
+```
 
-<h2>これから実装すること</h2>
+## TODO
 
-<ul>
-<li>SMAF Handyphone/Mobile の切り分け</li>
-<li> ↓は OK で
-<pre>
+ * SMAF Handyphone/Mobile の切り分け
+ * ↓は OK で
+```java
         InputStream is = new BufferedInputStream(new FileInputStream(file));
         Sequence sequence = MidiSystem.getSequence(is);
         sequencer.setSequence(sequence);
-</pre>
-↓ は NG、Smaf,MfiFileReader (プロバイダ２つ目以降？)に
- 0 バイトの ByteArrayInputStream の MIDI ストリームが渡ってくる
-<pre>
+```
+↓ は NG、Smaf, `MfiFileReader` (プロバイダ２つ目以降？)に
+ 0 バイトの `ByteArrayInputStream` の MIDI ストリームが渡ってくる
+```java
         InputStream is = new BufferedInputStream(new FileInputStream(file));
         sequencer.setSequence(is);
-</pre>
-</li>
-<li><del>DeveiceInfo 周りをちゃんとする (MidiSystem#getSequencer() で SmafMidiSequencer(一番目) が返る)</del> → 仕様</li>
-</ul>
+```
+ * ~~`DeveiceInfo` 周りをちゃんとする (`MidiSystem#getSequencer()` で `SmafMidiSequencer`(一番目) が返る)~~ → 仕様
 
-<h2>Deprecated</h2>
-<pre>
+## Deprecated
+
+```java
             File soundprops = new File(
                 System.getProperty("java.home") +
                 File.separator + "lib",
@@ -78,8 +52,4 @@ Debug.println("soundprops: " + soundprops);
 Debug.println("defaultPropertyValue: " + defaultPropertyValue);
 
             String propertyValue = System.getProperty("javax.sound.midi.Sequencer", defaultPropertyValue);
-</pre>
-
-</body>
-
-</html>
+```
