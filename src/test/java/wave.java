@@ -29,8 +29,8 @@ public class wave {
      */
     public static void main(String[] args) throws Exception {
         InputStream is = new BufferedInputStream(new FileInputStream(args[0]));
-        WAVE wave = (WAVE) WAVE.readFrom(is);
-        WAVE.data data = (WAVE.data) wave.findChildOf(WAVE.data.class);
+        WAVE wave = WAVE.readFrom(is, WAVE.class);
+        WAVE.data data = wave.findChildOf(WAVE.data.class);
         is.close();
 
         OutputStream os = new BufferedOutputStream(new FileOutputStream(args[1]));
