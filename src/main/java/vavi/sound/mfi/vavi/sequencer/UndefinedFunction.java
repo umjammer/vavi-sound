@@ -7,10 +7,9 @@
 package vavi.sound.mfi.vavi.sequencer;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
+
 
 /**
  * Undefined function processor.
@@ -42,12 +41,12 @@ public class UndefinedFunction implements MachineDependentFunction {
         int f3 = -1;
         if (data.length > 8) {
             f3 = data[8] & 0xff;
-Debug.println("undefined function: " + StringUtil.toHex2(f1) + " " + StringUtil.toHex2(f2) + " " + StringUtil.toHex2(f3));
+Debug.printf("undefined function: %02x %02x %02x\n", f1, f2, f3);
         } else if (data.length > 7) {
             f2 = data[7] & 0xff;
-Debug.println("undefined function: " + StringUtil.toHex2(f1) + " " + StringUtil.toHex2(f2));
+Debug.printf("undefined function: %02x %02x\n", f1, f2);
         } else {
-Debug.println("undefined function: " + StringUtil.toHex2(f1));
+Debug.printf("undefined function: %02x \n", f1);
         }
 Debug.dump(message.getMessage(), 128);
     }

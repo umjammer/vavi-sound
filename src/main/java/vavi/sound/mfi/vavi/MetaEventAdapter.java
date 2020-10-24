@@ -21,7 +21,6 @@ import vavi.sound.midi.MidiConstants;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -161,7 +160,7 @@ Debug.printf(Level.WARNING, "unhandled function: %02x\n", functionId);
             sequencer = MachineDependentSequencer.factory.get(vendor);
         } catch (IllegalArgumentException | Error e) {
 Debug.printStackTrace(e);
-Debug.println(Level.SEVERE, "error vendor: 0x" + StringUtil.toHex2(vendor));
+Debug.printf(Level.SEVERE, "error vendor: 0x%02x\n", vendor);
             sequencer = new UnknownVenderSequencer();
         }
         sequencer.sequence(mdm);

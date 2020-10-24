@@ -65,7 +65,7 @@ public class MasterVolumeMessage extends ShortMessage
         byte[] data = new byte[8];
 
         data[0] = (byte) 0xf0;
-        data[1] = (byte) 0x7f;      // ID number, 0x7e: no real time,0x7f: real time
+        data[1] = (byte) 0x7f;      // ID number, 0x7e: no real time, 0x7f: real time
         data[2] = (byte) 0x7f;      // device ID, 0x7f not recognized as channel
         data[3] = (byte) 0x04;      // sub-ID#1, 0x04 Device Control
         data[4] = (byte) 0x01;      // sub-ID#2, 0x01 Master Volume

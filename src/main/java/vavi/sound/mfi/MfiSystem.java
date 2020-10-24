@@ -191,7 +191,7 @@ Debug.println(e);
 //Debug.println(StringUtil.paramString(sequence));
                 return sequence;
             } catch (InvalidMfiDataException e) {
-Debug.println(e);
+Debug.println(Level.FINE, e);
                 continue;
             }
         }

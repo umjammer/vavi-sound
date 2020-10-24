@@ -51,31 +51,31 @@ class VaviSequencer implements Sequencer {
     public void start() {
         if (vaviSequence != null) {
             sequencer.addMetaEventListener(vaviSequence.getMetaEventListener()); // TODO more smart way
-Debug.println("★1 mel: " + vaviSequence);
+Debug.println(Level.FINE, "★1 mel: " + vaviSequence);
         }
         sequencer.start();
-Debug.println("★1 start: " + sequencer.hashCode());
+Debug.println(Level.FINE, "★1 start: " + sequencer.hashCode());
     }
 
-    /* */
+    @Override
     public void stop() {
-Debug.println("★1 stop: " + sequencer.hashCode());
+Debug.println(Level.FINE, "★1 stop: " + sequencer.hashCode());
         sequencer.stop();
         if (vaviSequence != null) {
-Debug.println("★1 mel: " + vaviSequence);
+Debug.println(Level.FINE, "★1 mel: " + vaviSequence);
             sequencer.removeMetaEventListener(vaviSequence.getMetaEventListener()); // TODO more smart way
         }
     }
 
-    /* */
+    @Override
     public void close() {
-Debug.println("★1 close: " + sequencer.hashCode());
+Debug.println(Level.FINE, "★1 close: " + sequencer.hashCode());
         sequencer.close();
     }
 
-    /* */
+    @Override
     public void open() throws MidiUnavailableException {
-Debug.println("★1 open: " + sequencer.hashCode());
+Debug.println(Level.FINE, "★1 open: " + sequencer.hashCode());
         sequencer.open();
     }
 
