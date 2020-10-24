@@ -6,6 +6,8 @@
 
 package vavi.sound.midi;
 
+import java.util.logging.Level;
+
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
@@ -39,11 +41,11 @@ public class VaviMidiDeviceProvider extends MidiDeviceProvider {
 
         if (info == VaviSequencer.info) {
 //new Exception("*** DUMMY ***").printStackTrace();
-Debug.println("★1 info: " + info);
+Debug.println(Level.FINE, "★1 info: " + info);
             VaviSequencer wrappedSequencer = new VaviSequencer();
             return wrappedSequencer;
         } else {
-Debug.println("★1 not suitable for this provider: " + info);
+Debug.println(Level.FINE, "★1 not suitable for this provider: " + info);
             throw new IllegalArgumentException("info is not suitable for this provider");
         }
     }

@@ -16,17 +16,15 @@ import javax.sound.midi.spi.MidiFileWriter;
 
 /**
  * BasicMidiFileWriter.
- * 
+ *
  * @caution {@link javax.sound.midi.MidiSystem} は使っちゃだめ！
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041223 nsano initial version <br>
  */
 public abstract class BasicMidiFileWriter extends MidiFileWriter {
 
-    /**
-     * {@link #write(Sequence, int, java.io.OutputStream)} に委譲
-     */
+    @Override
     public final int write(Sequence in, int fileType, File out)
         throws IOException {
 

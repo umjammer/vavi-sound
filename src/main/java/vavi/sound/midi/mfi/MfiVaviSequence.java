@@ -23,17 +23,17 @@ import vavi.sound.midi.VaviSequence;
  */
 public class MfiVaviSequence extends Sequence implements VaviSequence {
 
-    /* */
+    /** */
     public MfiVaviSequence(float divisionType, int resolution) throws InvalidMidiDataException {
         super(divisionType, resolution);
     }
 
-    /* */
+    /** */
     public MfiVaviSequence(float divisionType, int resolution, int numTracks) throws InvalidMidiDataException {
         super(divisionType, resolution, numTracks);
     }
 
-    /* */
+    @Override
     public MetaEventListener getMetaEventListener() {
         try {
             return MfiSystem.getMetaEventListener();

@@ -21,7 +21,6 @@ import javax.sound.midi.SysexMessage;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -54,7 +53,7 @@ public final class MidiUtil {
             byte[] data = msg.getData();
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < data.length; i++) {
-                sb.append(StringUtil.toHex2(data[i]));
+                sb.append(String.format("%02x", data[i]));
                 sb.append(" ");
             }
             result = "channel=n/a" +
@@ -67,7 +66,7 @@ public final class MidiUtil {
             byte[] data = msg.getData();
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < data.length; i++) {
-                sb.append(StringUtil.toHex2(data[i]));
+                sb.append(String.format("%02x", data[i]));
                 sb.append(" ");
             }
             result = "channel=n/a" +

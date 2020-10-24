@@ -28,18 +28,21 @@ public class SSRCSampleRateConversionProvider extends FormatConversionProvider {
         AudioFormat.Encoding.PCM_SIGNED,
     };
 
+    @Override
     public AudioFormat.Encoding[] getSourceEncodings() {
         AudioFormat.Encoding[] encodings = new AudioFormat.Encoding[inputEncodings.length];
         System.arraycopy(inputEncodings, 0, encodings, 0, inputEncodings.length);
         return encodings;
     }
 
+    @Override
     public AudioFormat.Encoding[] getTargetEncodings() {
         AudioFormat.Encoding[] encodings = new AudioFormat.Encoding[outputEncodings.length];
         System.arraycopy(outputEncodings, 0, encodings, 0, outputEncodings.length);
         return encodings;
     }
 
+    @Override
     public AudioFormat.Encoding[] getTargetEncodings(AudioFormat sourceFormat) {
         if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED)) {
 
@@ -51,12 +54,12 @@ public class SSRCSampleRateConversionProvider extends FormatConversionProvider {
         }
     }
 
+    @Override
     public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding, AudioFormat sourceFormat) {
         return new AudioFormat[0];
     }
 
-    /**
-     */
+    @Override
     public AudioInputStream getAudioInputStream(AudioFormat.Encoding targetEncoding, AudioInputStream sourceStream) {
 
         if (isConversionSupported(targetEncoding, sourceStream.getFormat())) {
@@ -78,6 +81,7 @@ public class SSRCSampleRateConversionProvider extends FormatConversionProvider {
         }
     }
 
+    @Override
     public AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream sourceStream) {
 
         AudioFormat inputFormat = sourceStream.getFormat();
@@ -96,13 +100,7 @@ public class SSRCSampleRateConversionProvider extends FormatConversionProvider {
         }
     }
 
-    /**
-     * Determines whether the codec supports conversion from one
-     * particular format to another.
-     *
-     * @param inputFormat format of the incoming data
-     * @return true if the conversion is supported, otherwise false
-     */
+    @Override
     public boolean isConversionSupported(AudioFormat inputFormat, AudioFormat outputFormat) {
 
         AudioFormat.Encoding inputEncoding = inputFormat.getEncoding();
