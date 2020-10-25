@@ -22,7 +22,10 @@ import vavi.util.Debug;
  */
 public class VaviMidiDeviceProvider extends MidiDeviceProvider {
 
-    /** 勝手に使用 */
+    /**
+     * TODO used without asking
+     * TODO 0x5f is occupied by "SD Card Association"
+     */
     public final static int MANUFACTURER_ID = 0x5f;
 
     /** */

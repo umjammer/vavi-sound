@@ -19,7 +19,7 @@ package vavi.sound.mfi;
 public abstract class LongMessage extends MfiMessage {
 
     /**
-     * 
+     *
      * @param delta
      * @param status
      * @param data1 拡張ステータス番号

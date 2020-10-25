@@ -81,23 +81,23 @@ public final class MidiUtil {
     /** */
     private static String getChannelMessage(int statusByte, int value1) {
         switch (statusByte / 16) {
-        case 8: // 128
+        case 8: // 128, 0x80
             return "NOTE_OFF";
-        case 9: // 144
+        case 9: // 144, 0x90
             return "NOTE_ON";
-        case 10:    // 160
+        case 10:    // 160, 0xa0
             return "POLY_PRESSURE";
-        case 11:    // 176
-            if (value1 >= 120) {
+        case 11:    // 176, 0xb0
+            if (value1 >= 120) { // 0x78
                 return "CHANNEL_MODE_MESSAGE";
             } else {
                 return "CONTROL_CHANGE";
             }
-        case 12:    // 192
+        case 12:    // 192, 0xc0
             return "PROGRAM_CHANGE";
-        case 13:    // 208
+        case 13:    // 208, 0xd0
             return "CHANNEL_PRESSURE";
-        case 14:    // 224
+        case 14:    // 224, 0xe0
             return "PITCH_BEND_CHANGE";
         default:
             return String.valueOf(statusByte);
@@ -136,7 +136,7 @@ Debug.println(Level.WARNING, "unknown cp: " + e.getMessage());
         }
     }
 
-    /** */
+    /** TODO auto detection??? */
     private static String encodingEncoding = "Windows-31J";
 
     /** */
@@ -259,7 +259,7 @@ Debug.println("default sequencer: " + provider.getClass().getName() + ", " + dev
             providers = ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class);
 providers.forEach(provider -> System.err.println(provider.getClass()));
         } catch (Throwable t) {
-            t.printStackTrace();
+Debug.printStackTrace(Level.FINE, t);
         }
     }
 }

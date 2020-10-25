@@ -67,7 +67,7 @@ public class SSRCInputStream extends FilterInputStream {
     }
 
     /**
-     * 
+     *
      * @param in source stream
      * @param ch number of channels
      * @param ifrq input frequency

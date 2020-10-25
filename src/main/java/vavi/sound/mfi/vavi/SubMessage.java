@@ -32,7 +32,7 @@ import vavi.util.StringUtil;
  * +--+--+--+--+--+--+--+--+-
  * |XX XX XX XX|LL LL|DD DD ...
  * +--+--+--+--+--+--+--+--+-
- * 
+ *
  * this class {@link #data} in [MFi meta]
  *     spec of {@link MetaMessage}
  *          |
@@ -66,7 +66,7 @@ public abstract class SubMessage extends MetaMessage {
     public static final int META_TYPE = 0x7f;
 
     /**
-     * @param subType ex. {@link vavi.sound.mfi.vavi.header.ProtMessage#TYPE "prot"} 
+     * @param subType ex. {@link vavi.sound.mfi.vavi.header.ProtMessage#TYPE "prot"}
      */
     protected SubMessage(String subType, byte[] data) {
         try {
@@ -78,7 +78,7 @@ public abstract class SubMessage extends MetaMessage {
     }
 
     /**
-     * @param subType ex. {@link vavi.sound.mfi.vavi.header.ProtMessage#TYPE "prot"} 
+     * @param subType ex. {@link vavi.sound.mfi.vavi.header.ProtMessage#TYPE "prot"}
      */
     protected SubMessage(String subType, String data) {
         try {
@@ -96,8 +96,8 @@ public abstract class SubMessage extends MetaMessage {
     protected SubMessage() {
     }
 
-    /** 
-     * @param subType ex. "prot" 
+    /**
+     * @param subType ex. "prot"
      * @return <pre>
      * +--+--+--+--+--+--+--+--+-
      * |XX XX XX XX|DD DD ...
@@ -118,7 +118,7 @@ public abstract class SubMessage extends MetaMessage {
     }
 
     /**
-     * @return subType 文字列 (ex. "prot") 
+     * @return subType 文字列 (ex. "prot")
      */
     public String getSubType() {
         return new String(this.data, HEADER_LENGTH, SUB_TYPE_LENGTH);
@@ -180,7 +180,7 @@ Debug.println(this);
     }
 
     /**
-     * @return anonymous {@link SubMessage} when input is an unknown type 
+     * @return anonymous {@link SubMessage} when input is an unknown type
      * @throws IllegalStateException when {@link SubMessage} instantiation failed
      */
     public static SubMessage readFrom(InputStream is)

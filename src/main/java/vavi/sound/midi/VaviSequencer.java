@@ -244,10 +244,10 @@ Debug.println(Level.FINE, "★1 open: " + sequencer.hashCode());
     /** */
     private void setVaviSequence() {
         if (getSequence() instanceof VaviSequence) {
-            vaviSequence = (VaviSequence) getSequence(); 
+            vaviSequence = (VaviSequence) getSequence();
 Debug.println(Level.FINE, "vaviSequence: " + vaviSequence);
         } else {
-            vaviSequence = null; 
+            vaviSequence = null;
         }
     }
 

@@ -25,7 +25,7 @@ import vavi.util.Debug;
 
 
 /**
- * SmafMidiConverter. 
+ * SmafMidiConverter.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071012 nsano initial version <br>

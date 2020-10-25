@@ -13,12 +13,12 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 /**
  * 日付情報 MFi Header Sub Chunk.
- * 
+ *
  * <pre>
  *  &quot;date&quot; 8 bytes: date created
  *  format yyyymmdd (ex. 19990716)
  * </pre>
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */

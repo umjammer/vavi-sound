@@ -59,7 +59,7 @@ Debug.println("messages: " + imageDataChunks.size());
     }
 
     /** */
-    private List<Chunk> imageDataChunks = new ArrayList<>(); 
+    private List<Chunk> imageDataChunks = new ArrayList<>();
 
     /** TODO */
     public void writeTo(OutputStream os) throws IOException {

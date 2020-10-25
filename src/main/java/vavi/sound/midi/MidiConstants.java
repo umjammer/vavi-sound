@@ -154,7 +154,7 @@ public final class MidiConstants {
      * 正しい終結点が明確になり、トラックが正確な長さを持つようになる。これは
      * トラックがループになっていたり連結されていたりする時に必要である。
      */
-    public static final int META_END_OF_TRACK = 0x2f;
+    public static final int META_END_OF_TRACK = 0x2f; // 47
 
     /**
      * <pre>
@@ -172,7 +172,7 @@ public final class MidiConstants {
      * 、というもので、この結果、この形式で保存された拍子記号やテンポ・マップ
      * は容易にほかのデバイスへ転送できることになる。
      */
-    public static final int META_TEMPO = 0x51;
+    public static final int META_TEMPO = 0x51; // 81
 
     /**
      * <pre>
@@ -189,7 +189,7 @@ public final class MidiConstants {
      * も、ff のフィールドは細分化されたフレーム(100 分の 1 フレーム単位)を
      * 持っている。
      */
-    public static final int META_SMPTE_OFFSERT = 0x54;
+    public static final int META_SMPTE_OFFSERT = 0x54; // 84
 
     /**
      * <pre>
@@ -214,7 +214,7 @@ public final class MidiConstants {
      * 符あたり 36 MIDI クロック(16進で24！)[*2]で、 MIDI 四分音符に記
      * 譜上の三十二分音符が 8 つ対応するということを示している。
      */
-    public static final int META_58 = 0x58;
+    public static final int META_58 = 0x58; // 88
 
     /**
      * <pre>
@@ -229,7 +229,7 @@ public final class MidiConstants {
      *   mi = 1   短調
      * </pre>
      */
-    public static final int META_59 = 0x59;
+    public static final int META_59 = 0x59; // 89
 
     /**
      * <pre>
@@ -244,7 +244,7 @@ public final class MidiConstants {
      * サーにおいては、このフォーマットを用いるにあたって標準仕様を守るべきで
      * あろう。
      */
-    public static final int META_MACHINE_DEPEND = 0x7f;
+    public static final int META_MACHINE_DEPEND = 0x7f; // 127
 
     //-------------------------------------------------------------------------
 

@@ -32,8 +32,9 @@ import vavi.util.Debug;
 /**
  * Sequencer implemented by vavi.
  * <p>
- * {@link javax.sound.midi.MidiSystem} を
- * 使用しているため javax.sound.midi SPI のプログラム内で使用してはいけません。
+ * don't use {@link javax.sound.midi.MidiSystem#getSequencer()},
+ * {@link javax.sound.midi.MidiSystem#getSequencer(boolean)} in this program,
+ * because this is the {@link javax.sound.midi.Sequencer}.
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano midi compliant <br>
@@ -176,20 +177,20 @@ Debug.println("★0 off: " + midiSequencer.hashCode());
 
     //-------------------------------------------------------------------------
 
-    /** {@link vavi.sound.mfi.MetaMessage MetaEvent} ユーティリティ。 */
+    /** @see vavi.sound.mfi.MetaMessage MetaEvent */
     private MetaSupport metaSupport = new MetaSupport();
 
-    /** {@link MetaEventListener} を登録します。 */
+    @Override
     public void addMetaEventListener(MetaEventListener l) {
         metaSupport.addMetaEventListener(l);
     }
 
-    /** {@link MetaEventListener} を削除します。 */
+    @Override
     public void removeMetaEventListener(MetaEventListener l) {
         metaSupport.removeMetaEventListener(l);
     }
 
-    /** {@link vavi.sound.mfi.MetaMessage MetaEvent} */
+    /** @see vavi.sound.mfi.MetaMessage MetaEvent */
     protected void fireMeta(MetaMessage meta) {
         metaSupport.fireMeta(meta);
     }
@@ -200,7 +201,7 @@ Debug.println("★0 off: " + midiSequencer.hashCode());
         public void meta(javax.sound.midi.MetaMessage message) {
 Debug.println("★0 meta: type: " + message.getType());
             switch (message.getType()) {
-            case 0x2f:  // 自動的に最後につけてくれる
+            case 0x2f: // java midi sequencer adds automatically
                 try {
                     MetaMessage metaMessage = new MetaMessage();
                     metaMessage.setMessage(0x2f, new byte[0], 0);
@@ -221,36 +222,32 @@ Debug.printStackTrace(e);
         }
     };
 
-    /* @see vavi.sound.mfi.Synthesizer#getChannels() */
     @Override
     public MidiChannel[] getChannels() throws MfiUnavailableException {
         return midiSynthesizer.getChannels(); // TODO MFiChannel?
     }
 
-    /* @see vavi.sound.mfi.Synthesizer#loadAllInstruments(javax.sound.midi.Soundbank) */
     @Override
     public boolean loadAllInstruments(Soundbank soundbank) {
         return midiSynthesizer.loadAllInstruments(soundbank);
     }
 
-    /* @see vavi.sound.mfi.Synthesizer#getAvailableInstruments() */
     @Override
     public Instrument[] getAvailableInstruments() {
         return midiSynthesizer.getAvailableInstruments();
     }
 
-    /* @see vavi.sound.mfi.Synthesizer#getDefaultSoundbank() */
     @Override
     public Soundbank getDefaultSoundbank() {
         return midiSynthesizer.getDefaultSoundbank();
     }
 
-    /* @see vavi.sound.mfi.Synthesizer#unloadAllInstruments(javax.sound.midi.Soundbank) */
     @Override
     public void unloadAllInstruments(Soundbank soundbank) {
         midiSynthesizer.unloadAllInstruments(soundbank);
     }
 
+    @Override
     protected void finalize() {
         off();
     }

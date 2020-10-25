@@ -30,7 +30,7 @@ class Ima2PcmAudioInputStream extends AudioInputStream {
      * @param in the underlying input stream.
      * @param format the target format of this stream's audio data.
      * @param length the length in sample frames of the data in this stream.
-     * @throws IOException 
+     * @throws IOException
      */
     public Ima2PcmAudioInputStream(InputStream in, AudioFormat format, long length, int samplesPerBlock, int blockSize) throws IOException {
         super(new ImaInputStream(in, samplesPerBlock, format.getChannels(), blockSize, ByteOrder.LITTLE_ENDIAN), format, length);

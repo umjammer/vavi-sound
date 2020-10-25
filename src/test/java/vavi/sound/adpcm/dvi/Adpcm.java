@@ -16,7 +16,7 @@ public class Adpcm {
 
    public String codecName() {
       return "DVI ADPCM";
-   } 
+   }
 
    public int getSampleRate() {
       return 8000;

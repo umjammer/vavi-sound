@@ -17,7 +17,7 @@ import vavi.sound.smaf.SmafMessage;
  * <p>
  * TODO 何とかして撲滅したい -> ThreadLocal ?
  * </p>
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
  */

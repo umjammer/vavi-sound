@@ -21,7 +21,7 @@ import vavi.sound.smaf.chunk.TrackChunk.FormatType;
  *  event type  0x40〜0x7F
  *  duration    1or2
  * </pre>
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 080517 nsano initial version <br>
  */

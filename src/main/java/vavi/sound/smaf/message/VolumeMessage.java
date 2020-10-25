@@ -28,7 +28,7 @@ import vavi.util.Debug;
  *  data1       cc 11 0111
  *  data2       value       0x00〜0x7f
  * </pre>
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
  */

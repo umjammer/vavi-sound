@@ -88,7 +88,7 @@ public class AudioPlayMessage extends LongMessage
     //----
 
     /**
-     * @throws InvalidMidiDataException 
+     * @throws InvalidMidiDataException
      */
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 
