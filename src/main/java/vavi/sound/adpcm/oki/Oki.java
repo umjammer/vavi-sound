@@ -30,8 +30,6 @@
 
 package vavi.sound.adpcm.oki;
 
-import javax.sound.sampled.AudioFormat;
-
 import vavi.sound.adpcm.Codec;
 
 
@@ -48,32 +46,9 @@ import vavi.sound.adpcm.Codec;
 class Oki implements Codec {
 
     /** */
-    private AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
-
-    /** */
-    public void setEncoding(AudioFormat.Encoding encoding) {
-        this.encoding = encoding;
-    }
-
-    /** */
-    private Ulaw ulaw = new Ulaw();
-    /** */
-    private Alaw alaw = new Alaw();
-
-    /** */
     private int mc_amp;
     /** */
     private int mc_estim;
-
-    /** */
-    public Oki() {
-        ulaw = new Ulaw();
-        ulaw.setEncoding(AudioFormat.Encoding.PCM_SIGNED);
-        ulaw.setBit(16);
-        alaw = new Alaw();
-        alaw.setEncoding(AudioFormat.Encoding.PCM_SIGNED);
-        alaw.setBit(16);
-    }
 
     /** 次回の PCM 値を予測するためのテーブル */
     private static final int[] adpcm_estimindex = {
@@ -106,7 +81,7 @@ class Oki implements Codec {
      * @param a 16bit signed linear pcm
      * @return 4bit oki adpcm
      */
-    private int encodeInternal(int a) {
+    public int encode(int a) {
 
         // mc->mc_estim には、前回の差分比予測値インデックスが入っている
         int estim = this.mc_estim;
@@ -186,26 +161,6 @@ class Oki implements Codec {
     }
 
     /**
-     * 16 の 1 サンプルを Oki ADPCM 1 サンプルに変換します。
-     *
-     * @param pcm pcm
-     * @return 4bit oki adpcm
-     */
-    public int encode(int pcm) {
-        if (AudioFormat.Encoding.ALAW.equals(encoding)) {
-            return encodeInternal(alaw.decode(pcm));
-        } else if (AudioFormat.Encoding.ULAW.equals(encoding)) {
-            return encodeInternal(ulaw.decode(pcm));
-        } else if (AudioFormat.Encoding.PCM_SIGNED.equals(encoding)) {
-            return encodeInternal(pcm);
-        } else if (AudioFormat.Encoding.PCM_UNSIGNED.equals(encoding)) {
-            return encodeInternal(pcm ^ 0x8000); // TODO
-        } else {
-            throw new IllegalArgumentException(encoding.toString());
-        }
-    }
-
-    /**
      * Oki ADPCM 1 サンプルを signed linear 16 の 1 サンプルに変換します。
      * <p>
      * MSM6258 が出力する PCM は 12bit 符号付 PCM (slinear12 にあたる) である。
@@ -215,7 +170,7 @@ class Oki implements Codec {
      * @param b 4bit adpcm
      * @return 16bit linear pcm
      */
-    private int decodeInternal(int b) {
+    public int decode(int b) {
         // mc->mc_estim には、前回の差分比予測値インデックスが入っている
         int estim = this.mc_estim;
 
@@ -241,25 +196,6 @@ class Oki implements Codec {
         this.mc_estim = estim;
 
         return this.mc_amp;
-    }
-
-    /**
-     * Oki ADPCM 1 サンプルを pcm の 1 サンプルに変換します。
-     * @param adpcm 4bit adpcm
-     * @return pcm
-     */
-    public int decode(int adpcm) {
-        if (AudioFormat.Encoding.ALAW.equals(encoding)) {
-            return alaw.encode(decodeInternal(adpcm));
-        } else if (AudioFormat.Encoding.ULAW.equals(encoding)) {
-            return ulaw.decode(decodeInternal(adpcm));
-        } else if (AudioFormat.Encoding.PCM_SIGNED.equals(encoding)) {
-            return decodeInternal(adpcm);
-        } else if (AudioFormat.Encoding.PCM_UNSIGNED.equals(encoding)) {
-            return decodeInternal(adpcm) ^ 0x8000; // TODO
-        } else {
-            throw new IllegalArgumentException(encoding.toString());
-        }
     }
 }
 

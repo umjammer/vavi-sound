@@ -1,41 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<html lang="ja">
+OKI ADPCM codec
 
-<head>
-<link rev="MADE" href="mailto:vavivavi@yahoo.co.jp" />
-<link rel="INDEX" href="orverview.html" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<link rel="stylesheet" type="text/css" href="../../../../vavi.css" />
-<title>vavi.sound.adpcm.oki</title>
-<!--
- * Copyright (c) 2003 by Naohide Sano, All rights reserved.
- *
- * Written by Naohide Sano
- *
- * @author	<a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
- *
- * @version	0.00	030817	nsano	initial version
--->
-</head>
+## Status
 
-<body>
+finished
 
-<p>
-OKI ADPCM フォーマット関連のクラスを提供します．
-</p>
+## TODO
 
-完成
+ * ~~separate Alaw, Ulaw~~
 
-<h2>これから実装すること</h2>
+## License
 
-<ul>
-<li>Alaw, Ulaw をはずす</li>
-<li></li>
-</ul>
-
-<h2>一次ライセンス</h2>
-<pre>
+```
 /*
  * Copyright (c) 2001 Tetsuya Isaki. All rights reserved.
  *
@@ -65,7 +40,4 @@ OKI ADPCM フォーマット関連のクラスを提供します．
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-</pre>
-</body>
-
-</html>
+```

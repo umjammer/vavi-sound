@@ -33,7 +33,6 @@ public class OkiInputStream extends AdpcmInputStream {
      */
     public OkiInputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN); // oki adpcm は little endian 固定
-        ((Oki) decoder).setEncoding(encoding);
 Debug.println(this.in);
     }
 }
