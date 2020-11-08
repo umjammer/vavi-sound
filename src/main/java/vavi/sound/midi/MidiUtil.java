@@ -6,6 +6,8 @@
 
 package vavi.sound.midi;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
@@ -17,6 +19,7 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Synthesizer;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
@@ -105,6 +108,43 @@ public final class MidiUtil {
     }
 
     /** */
+    public static int readVariableLength(DataInput input) throws IOException {
+        int b = input.readUnsignedByte();
+        int v = b & 0x7f;
+        while ((b & 0x80) != 0) {
+            b = input.readUnsignedByte();
+            v = (v << 7) + (b & 0x7F);
+        }
+        return v;
+    }
+
+    /**
+     * Writes a variable-size int to output, as defined by the Midi format.
+     * @param output - The stream to write to.
+     * @throws IOException on any write error.
+     */
+    public static void writeVarInt(DataOutput output, int value) throws IOException {
+        // The bits are laid out like this:
+        // 11112222 22233333 33444444 45555555
+        //
+        // It's easier to just enumerate them than to make a loop.
+        //
+        if ((value & 0xF0000000) != 0) {
+            output.write(0x80 | ((value >> 28) & 0x7F));
+        }
+        if ((value & 0xFFE00000) != 0) {
+            output.write(0x80 | ((value >> 21) & 0x7F));
+        }
+        if ((value & 0xFFFFC000) != 0) {
+            output.write(0x80 | ((value >> 14) & 0x7F));
+        }
+        if ((value & 0xFFFFFF80) != 0) {
+            output.write(0x80 | ((value >> 7) & 0x7F));
+        }
+        output.write(value & 0x7F);
+    }
+
+    /** */
     private static String decodingEncoding = "JISAutoDetect";
 
     /** MIDI データで先頭が 0xff の場合対応 (エンコードされている) */
@@ -167,6 +207,12 @@ Debug.println(Level.WARNING, "unknown cp: " + e.getMessage());
     /** */
     private static String sequencerDeviceName = null;
 
+    /** */
+    private static String synthesizerClassName = null;
+
+    /** */
+    private static String synthesizerDeviceName = null;
+
     /* */
     static {
         try {
@@ -179,20 +225,20 @@ Debug.println(Level.WARNING, "unknown cp: " + e.getMessage());
             String value = props.getProperty("decodingEncoding");
             if (value != null) {
                 decodingEncoding = value;
-Debug.println("decodingEncoding: " + decodingEncoding);
+Debug.println(Level.FINE, "decodingEncoding: " + decodingEncoding);
             }
 
             value = props.getProperty("encodingEncoding");
             if (value != null) {
                 encodingEncoding = value;
-Debug.println("encodingEncoding: " + encodingEncoding);
+Debug.println(Level.FINE, "encodingEncoding: " + encodingEncoding);
             }
 
             // defaultSequencer
             value = props.getProperty("defaultSequencer");
             if (value != null) {
                 String defaultSequencer = value;
-Debug.println("defaultSequencer: " + defaultSequencer);
+Debug.println(Level.FINE, "defaultSequencer: " + defaultSequencer);
                 if (defaultSequencer.indexOf("#") != -1) {
                     String[] pair = defaultSequencer.split("#");
                     sequencerClassName = pair[0];
@@ -201,13 +247,66 @@ Debug.println("defaultSequencer: " + defaultSequencer);
                     sequencerClassName = defaultSequencer;
                 }
             }
-Debug.println("sequencerClassName: " + sequencerClassName);
-Debug.println("sequencerDeviceName: " + sequencerDeviceName);
+Debug.println(Level.FINE, "sequencerClassName: " + sequencerClassName);
+Debug.println(Level.FINE, "sequencerDeviceName: " + sequencerDeviceName);
 
+            // defaultSynthesizer
+            value = props.getProperty("defaultSynthesizer");
+            if (value != null) {
+                String defaultSynthesizer = value;
+Debug.println("defaultSynthesizer: " + defaultSynthesizer);
+                if (defaultSynthesizer.indexOf("#") != -1) {
+                    String[] pair = defaultSynthesizer.split("#");
+                    synthesizerClassName = pair[0];
+                    synthesizerDeviceName = pair[1];
+                } else {
+                    synthesizerClassName = defaultSynthesizer;
+                }
+            }
+Debug.println(Level.FINE, "sequencerClassName: " + sequencerClassName);
+Debug.println(Level.FINE, "sequencerDeviceName: " + sequencerDeviceName);
         } catch (Exception e) {
 Debug.printStackTrace(e);
             throw new IllegalStateException(e);
         }
+    }
+
+    /**
+     * want to return com.sun.media.sound.SoftSynthesizer.
+     */
+    public static Synthesizer getDefaultSynthesizer(Class<? extends MidiDeviceProvider> self) {
+
+        for (MidiDeviceProvider provider : providers) {
+            if (self.isInstance(provider)) {
+                continue;
+            }
+            for (MidiDevice.Info info : provider.getDeviceInfo()) {
+                String name = null;
+                try {
+                    byte[] bytes = info.getName().getBytes("ISO8859-1");
+                    name = new String(bytes /* , "Windows-31J" */);
+                } catch (IOException e) {
+Debug.println(e);
+                }
+                if (synthesizerDeviceName != null) {
+                    if (synthesizerDeviceName.equals(name)) {
+                        MidiDevice device = provider.getDevice(info);
+Debug.println(Level.FINE, "default synthesizer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
+                        return (Synthesizer) device;
+                    }
+                } else {
+                    MidiDevice device = provider.getDevice(info);
+                    if (Synthesizer.class.isInstance(device)) {
+                        if (device.getClass().getName().equals(synthesizerClassName)) {
+Debug.println(Level.FINE, "default synthesizer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
+                            return (Synthesizer) device;
+                        }
+                    }
+                }
+            }
+        }
+
+        throw new IllegalStateException("no default midi sequencer");
     }
 
     /**
@@ -230,14 +329,14 @@ Debug.println(e);
                 if (sequencerDeviceName != null) {
                     if (sequencerDeviceName.equals(name)) {
                         MidiDevice device = provider.getDevice(info);
-Debug.println("default sequencer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
+Debug.println(Level.FINE, "default sequencer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
                         return (Sequencer) device;
                     }
                 } else {
                     MidiDevice device = provider.getDevice(info);
                     if (Sequencer.class.isInstance(device)) {
                         if (device.getClass().getName().equals(sequencerClassName)) {
-Debug.println("default sequencer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
+Debug.println(Level.FINE, "default sequencer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
                             return (Sequencer) device;
                         }
                     }
@@ -257,7 +356,9 @@ Debug.println("default sequencer: " + provider.getClass().getName() + ", " + dev
     static {
         try {
             providers = ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class);
-providers.forEach(provider -> System.err.println(provider.getClass()));
+if (Debug.isLoggable(Level.FINE)) {
+ providers.forEach(provider -> System.err.println(provider.getClass()));
+}
         } catch (Throwable t) {
 Debug.printStackTrace(Level.FINE, t);
         }
