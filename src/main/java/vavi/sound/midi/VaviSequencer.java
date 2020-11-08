@@ -33,12 +33,12 @@ import vavi.util.Debug;
  */
 class VaviSequencer implements Sequencer {
 
-    private static final String version = "1.0.0.";
+    private static final String version = "1.0.10";
 
     /** the device information */
     protected static final MidiDevice.Info info =
         new MidiDevice.Info("Java MIDI(MFi/SMAF) ADPCM Sequencer",
-                            "Vavisoft",
+                            "vavi",
                             "Software sequencer using adpcm",
                             "Version " + version) {};
 

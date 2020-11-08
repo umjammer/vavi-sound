@@ -29,7 +29,7 @@ import vavi.util.Debug;
 public class VaviMfiDeviceProvider extends MfiDeviceProvider {
 
     /** */
-    public static final String version = "3.02";
+    public static final String version = "1.0.10";
 
     /** */
     private MfiDevice.Info mfiDeviceInfos[];

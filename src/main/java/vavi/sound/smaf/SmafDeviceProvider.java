@@ -25,7 +25,7 @@ import vavi.util.Debug;
 public class SmafDeviceProvider {
 
     /** */
-    public static final String version = "0.21";
+    public static final String version = "1.0.10";
 
     /** */
     private SmafDevice.Info smafDeviceInfos[];

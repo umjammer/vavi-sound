@@ -29,7 +29,7 @@ import vavi.util.Debug;
  * デフォルトシーケンサになった場合、{@link #mea}が重複して登録されてしまいます。
  * </p>
  * <p>
- * {@link javax.sound.midi.MidiSystem} を
+ * {@link javax.sound.midi.MidiSystem#getSequencer()} を
  * 使用しているため javax.sound.midi SPI のプログラム内で使用してはいけません。
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -40,7 +40,7 @@ class SmafSequencer implements Sequencer, Synthesizer {
     /** the device information */
     private static final SmafDevice.Info info =
         new SmafDevice.Info("Java SMAF Sound Sequencer",
-                           "Vavisoft",
+                           "vavi",
                            "Software sequencer using midi",
                            "Version " + SmafDeviceProvider.version) {};
 

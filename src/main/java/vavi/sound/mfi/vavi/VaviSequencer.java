@@ -48,7 +48,7 @@ class VaviSequencer implements Sequencer, Synthesizer {
     /** the device information */
     private static final MfiDevice.Info info =
         new MfiDevice.Info("Java MFi Sound Sequencer",
-                           "Vavisoft",
+                           "vavi",
                            "Software sequencer using midi",
                            "Version " + VaviMfiDeviceProvider.version) {};
 
