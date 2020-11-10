@@ -6,7 +6,10 @@
 
 
 import java.io.File;
+import java.util.concurrent.CountDownLatch;
 
+import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
@@ -17,10 +20,11 @@ import vavi.util.Debug;
 
 
 /**
- * Test.
+ * sound font.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 080701 nsano initial version <br>
+ * @see "https://stackoverflow.com/a/45119638/6102938"
  */
 public class Test {
 
@@ -33,23 +37,25 @@ public class Test {
         Sequence sequence = MidiSystem.getSequence(file);
 Debug.println("sequence: " + sequence);
 
-        Sequencer sequencer = MidiSystem.getSequencer(true);
-Debug.println("sequencer: " + sequencer);
-
         Synthesizer synthesizer = MidiSystem.getSynthesizer();
 Debug.println("synthesizer: " + synthesizer);
+        synthesizer.open();
+
         // sf
         Soundbank soundbank = synthesizer.getDefaultSoundbank();
 //        Instrument[] instruments = synthesizer.getAvailableInstruments();
 //System.err.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
         synthesizer.unloadAllInstruments(soundbank);
-        File sf2 = new File("/Users/nsano/lib/audio/sf2/SGM-V2.01.sf2");
+//        String sf2name = "SGM-V2.01.sf2";
+        String sf2name = "Aspirin-Stereo.sf2";
+        File sf2 = new File("/Users/nsano/lib/audio/sf2", sf2name);
         soundbank = MidiSystem.getSoundbank(sf2);
         synthesizer.loadAllInstruments(soundbank);
 //        instruments = synthesizer.getAvailableInstruments();
 System.err.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
+
         // volume (not work ???)
 //        MidiChannel[] channels = synthesizer.getChannels();
 //        double gain = 0.02d;
@@ -57,13 +63,26 @@ System.err.println("---- " + soundbank.getDescription() + " ----");
 //            channels[i].controlChange(7, (int) (gain * 127.0));
 //        }
 
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        MetaEventListener mel = new MetaEventListener() {
+            public void meta(MetaMessage meta) {
+System.err.println("META: " + meta.getType());
+                if (meta.getType() == 47) {
+                    countDownLatch.countDown();
+                }
+            }
+        };
+        Sequencer sequencer = MidiSystem.getSequencer(false); // crux
+Debug.println("sequencer: " + sequencer);
         sequencer.open();
+        sequencer.getTransmitter().setReceiver(synthesizer.getReceiver());
+
         sequencer.setSequence(sequence);
+        sequencer.addMetaEventListener(mel);
         sequencer.start();
-        while (sequencer.isRunning()) {
-            try { Thread.sleep(100); } catch (Exception e) {}
-        }
+        countDownLatch.await();
         sequencer.stop();
+        sequencer.removeMetaEventListener(mel);
         sequencer.close();
     }
 }
