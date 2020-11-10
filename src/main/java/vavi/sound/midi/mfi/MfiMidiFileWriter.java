@@ -30,19 +30,21 @@ import vavi.util.StringUtil;
  */
 public class MfiMidiFileWriter extends BasicMidiFileWriter {
 
-    /** */
+    @Override
     public int[] getMidiFileTypes() {
 Debug.println("(1): " + StringUtil.expand(MfiSystem.getMfiFileTypes()));
         return MfiSystem.getMfiFileTypes();
     }
 
     /** @param sequence MIDI sequence */
+    @Override
     public int[] getMidiFileTypes(Sequence sequence) {
 Debug.println("(2): " + StringUtil.expand(MfiSystem.getMfiFileTypes()));
         return MfiSystem.getMfiFileTypes();
     }
 
     /** @param fileType 0x88:MFi (vavi) をサポートします */
+    @Override
     public boolean isFileTypeSupported(int fileType) {
 Debug.println("(1): fileType: " + fileType);
         return MfiSystem.isFileTypeSupported(fileType);
@@ -52,6 +54,7 @@ Debug.println("(1): fileType: " + fileType);
      * @param fileType 0x88:MFi (vavi) をサポートします
      * TODO sequence を無視している
      */
+    @Override
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
 Debug.println("(2): fileType: " + fileType);
 //Debug.println(sequence);
@@ -63,6 +66,7 @@ Debug.println("(2): fileType: " + fileType);
      * @param fileType {@link #isFileTypeSupported(int)},
      *        {@link #isFileTypeSupported(int, Sequence)} が true のもののみ
      */
+    @Override
     public int write(Sequence in, int fileType, OutputStream out)
         throws IOException {
 Debug.println("in: " + in);

@@ -14,7 +14,7 @@ import javax.sound.midi.MidiEvent;
  * <p>
  * HandyPhoneStandard only.
  * </p>
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
  */

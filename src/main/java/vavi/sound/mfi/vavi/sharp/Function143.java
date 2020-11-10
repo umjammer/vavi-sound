@@ -16,7 +16,6 @@ import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 
-
 /**
  * Sharp System exclusive message function 0x8f processor.
  * (Wave Setup)

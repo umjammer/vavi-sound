@@ -28,7 +28,7 @@ import vavi.util.Debug;
  */
 public class SmafMidiFileReader extends BasicMidiFileReader {
 
-    /** SMAF から変換された MIDI Sequence を取得します。 */
+    @Override
     public Sequence getSequence(InputStream is)
         throws InvalidMidiDataException,
                IOException {
@@ -45,7 +45,7 @@ public class SmafMidiFileReader extends BasicMidiFileReader {
             return SmafSystem.toMidiSequence(sequence);
         } catch (InvalidSmafDataException e) {
             is.reset();
-Debug.println(e);
+Debug.println(Level.FINE, e);
 //Debug.printStackTrace(e);
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         } catch (SmafUnavailableException e) {

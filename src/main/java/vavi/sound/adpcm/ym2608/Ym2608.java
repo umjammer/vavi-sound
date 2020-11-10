@@ -60,7 +60,7 @@ class Ym2608 implements Codec {
 
         // エンコード処理 5
         // L3 + L2 / 2 + L1 / 4 + 1 / 8 * stepSize を 8 倍して整数演算
-        i = (adpcm * 2 + 1) * state.stepSize / 8;
+        i = (adpcm * 2L + 1) * state.stepSize / 8;
 //System.err.printf("%05d: %d, %d, %d\n", ccc, i, adpcm, state.stepSize); // OK
 
         // 1 - 2 * L4 -> L4 が 1 の場合は -1 をかけるのと同じ

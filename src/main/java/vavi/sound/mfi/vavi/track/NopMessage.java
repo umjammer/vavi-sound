@@ -30,7 +30,7 @@ public class NopMessage extends ShortMessage
 
     /**
      * 0xde
-     * 
+     *
      * @param delta delta time
      * @param data2 always 0
      */

@@ -29,7 +29,7 @@ import vavi.sound.midi.MidiUtil;
  *  &quot;titl&quot; n byte: mld title, &lt; 16 bytes expected, SJIS encoded
  *  MIDI {@link MidiConstants#META_NAME META_NAME (0x03)}
  * </pre>
- * <li> TODO use {@link CodeMessage} 
+ * <li> TODO use {@link CodeMessage}
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */

@@ -18,7 +18,7 @@ import vavi.io.BitOutputStream;
 
 /**
  * AdpcmOutputStream.
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030827 nsano initial version <br>
  *          0.10 060427 nsano refactoring <br>
@@ -40,9 +40,9 @@ public abstract class AdpcmOutputStream extends FilterOutputStream {
     /**
      * TODO BitOutputStream の引数をまとめて BitOutputStream にする？
      * @param out ADPCM
-     * @param byteOrder {@link #write(int)} のバイトオーダ 
+     * @param byteOrder {@link #write(int)} のバイトオーダ
      * @param bits {@link BitOutputStream} のサイズ
-     * @param bitOrder {@link BitOutputStream} のバイトオーダ 
+     * @param bitOrder {@link BitOutputStream} のバイトオーダ
      */
     public AdpcmOutputStream(OutputStream out, ByteOrder byteOrder, int bits, ByteOrder bitOrder) {
         super(new BitOutputStream(out, bits, bitOrder));

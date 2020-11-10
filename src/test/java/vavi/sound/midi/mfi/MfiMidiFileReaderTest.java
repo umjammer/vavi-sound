@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
- * MfiMidiFileReaderTest. 
+ * MfiMidiFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
@@ -38,7 +38,7 @@ public class MfiMidiFileReaderTest {
 
     //----
 
-    /** 
+    /**
      * Play MFi file.
      * @param args [0] filename
      */

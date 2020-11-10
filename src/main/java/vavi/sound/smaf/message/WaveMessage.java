@@ -35,7 +35,7 @@ import vavi.util.StringUtil;
  *              ~~ ~~ ~~~~
  *              |  |  +--- number
  *              |  +------ octave
- *              +--------- channel   
+ *              +--------- channel
  *   gateTime   1or2
  * </pre>
  *
@@ -56,21 +56,21 @@ public class WaveMessage extends SmafMessage
 
     /**
      * for reading
-     * 
+     *
      * @param duration
      * @param data
      * @param gateTime
      */
     public WaveMessage(int duration, int data, int gateTime) {
         this.duration = duration;
-        this.channel = (data & 0xc0) >> 6; 
-        this.number = data & 0x3f; 
+        this.channel = (data & 0xc0) >> 6;
+        this.number = data & 0x3f;
         this.gateTime = gateTime;
     }
 
     /**
      * for writing
-     * 
+     *
      * @param duration
      * @param channel smaf channel
      * @param number
@@ -78,8 +78,8 @@ public class WaveMessage extends SmafMessage
      */
     public WaveMessage(int duration, int channel, int number, int gateTime) {
         this.duration = duration;
-        this.channel = channel; 
-        this.number = number; 
+        this.channel = channel;
+        this.number = number;
         this.gateTime = gateTime;
     }
 

@@ -23,7 +23,7 @@ import vavi.util.Debug;
 
 /**
  * IMA ADPCM
- * 
+ *
  * @author <a href="mailto:stabro@megsinet.net">Stanley J. Brooks</a>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030715 nsano port to java <br>
@@ -76,7 +76,7 @@ class Ima {
     }
 
     /**
-     * 
+     *
      * @param channel channel number to decode, REQUIRE 0 <= ch < chans
      * @param channels total channels
      * @param inBuffer input buffer[blockAlign]
@@ -165,7 +165,7 @@ Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") o
 
     /**
      * Outputs interleaved samples into one output buffer
-     * 
+     *
      * @param channels total channels
      * @param inBuffer input buffer[blockAlign]
      * @param outBuffer output samples, n*chans
@@ -179,7 +179,7 @@ Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") o
 
     /**
      * Outputs non-interleaved samples into chan separate output buffers
-     * 
+     *
      * @param channels total channels
      * @param inBuffer input buffer[blockAlign]
      * @param outBuffers chan output sample buffers, each takes n samples
@@ -303,7 +303,7 @@ Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") o
 
     /**
      * mash one channel... if you want to use opt > 0, 9 is a reasonable value
-     * 
+     *
      * @param channel channel number to encode, REQUIRE 0 <= ch < chans
      * @param channels total channels
      * @param inBuffer interleaved input samples
@@ -385,7 +385,7 @@ Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") o
 
     /**
      * mash one block. if you want to use opt > 0, 9 is a reasonable value
-     * 
+     *
      * @param channels total channels
      * @param inBuffer ip[] is interleaved input samples
      * @param length samples to encode PER channel, REQUIRE n % 8 == 1
@@ -436,7 +436,7 @@ Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") o
     /**
      * Returns minimum blocksize which would be required to encode number of channels
      * with given samplesPerBlock
-     * 
+     *
      * @param channels channels
      * @param samplesPerBlock samples par block
      */

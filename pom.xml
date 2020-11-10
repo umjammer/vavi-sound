@@ -8,7 +8,7 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-sound</artifactId>
-  <version>1.0.9</version>
+  <version>1.0.10</version>
 
   <name>Vavi Sound API</name>
   <url>https://github.com/umjammer/vavi-sound</url>
@@ -111,7 +111,7 @@ TODO
     <dependency>
       <groupId>com.github.umjammer</groupId>
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.2</version>
+      <version>1.1.4</version>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
@@ -122,12 +122,6 @@ TODO
       <groupId>com.github.umjammer</groupId>
       <artifactId>vavi-util-codec-sandbox</artifactId>
       <version>1.0.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.github.umjammer</groupId>
-          <artifactId>vavi-commons-sandbox</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>vavi</groupId>

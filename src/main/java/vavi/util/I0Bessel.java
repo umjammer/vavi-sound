@@ -14,7 +14,8 @@ package vavi.util;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060127 nsano port to java version <br>
  */
-public class I0Bessel {
+public abstract class I0Bessel {
+
     /** */
     private static final double[] a = {
         8.5246820682016865877e-11, 2.5966600546497407288e-9,
@@ -53,6 +54,7 @@ public class I0Bessel {
         4.0062907863712704432, 3.9952750700487845355,
         1.0016354346654179322
     };
+
     /** */
     private static final double[] b = {
         6.7852367144945531383e-8, 4.6266061382821826854e-7,

@@ -17,7 +17,7 @@ import vavi.util.Debug;
 
 
 /**
- * MonauralInputFilter. 
+ * MonauralInputFilter.
  *
  * @require tritonus_remaining-XXX.jar
  *

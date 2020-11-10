@@ -13,10 +13,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 import vavi.util.properties.PrefixedPropertiesFactory;
 
 
@@ -199,7 +199,7 @@ public abstract class Chunk {
 
         DataInputStream dis = new DataInputStream(is);
         int size = dis.readInt();
-Debug.println("size: " + StringUtil.toHex8(size) + "(" + size + ")");
+Debug.printf(Level.FINE, "size: %1$08x (%1$d)", size);
 
         if (mark) {
             is.reset();
@@ -220,7 +220,7 @@ Debug.println("size: " + StringUtil.toHex8(size) + "(" + size + ")");
 
             CRC16 crc = new CRC16();
             crc.update(buffer);
-Debug.println("crc (calc): " + StringUtil.toHex4((int) ~crc.getValue()));
+Debug.printf(Level.FINE, "crc (calc): %04x", (int) ~crc.getValue());
 
             is.reset();
         }
@@ -378,7 +378,7 @@ Debug.printStackTrace(e);
         @Override
         public Constructor<? extends Chunk> get(byte[] id) {
             String type = new String(id);
-Debug.println("Chunk ID(read): " + (Character.isLetterOrDigit(type.charAt(3)) ? type : new String(id, 0, 3) + "+0x" + StringUtil.toHex2(type.charAt(3))));
+Debug.printf(Level.FINE, "Chunk ID(read): %s+0x%02x", (Character.isLetterOrDigit(type.charAt(3)) ? type : new String(id, 0, 3)), type.charAt(3));
 
             for (String key : instances.keySet()) {
                 if (key.charAt(3) == '*' && key.substring(0, 3).equals(type.substring(0, 3))) {

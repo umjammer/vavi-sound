@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiFileFormat;
@@ -52,17 +53,17 @@ public abstract class BasicMidiFileReader extends MidiFileReader {
         return midiFF;
     }
 
-    /** {@link #getMidiFileFormat(InputStream)} に委譲 */
+    @Override
     public MidiFileFormat getMidiFileFormat(File file)
         throws InvalidMidiDataException,
                IOException {
 
-Debug.println("file: " + file);
+Debug.println(Level.FINE, "file: " + file);
         InputStream is = new BufferedInputStream(new FileInputStream(file));
         return getMidiFileFormat(is);
     }
 
-    /** {@link #getMidiFileFormat(InputStream)} に委譲 */
+    @Override
     public MidiFileFormat getMidiFileFormat(URL url)
         throws InvalidMidiDataException,
                IOException {
@@ -71,7 +72,7 @@ Debug.println("file: " + file);
         return getMidiFileFormat(is);
     }
 
-    /** {@link #getSequence(InputStream)} に委譲 */
+    @Override
     public Sequence getSequence(File file)
         throws InvalidMidiDataException,
                IOException {
@@ -80,7 +81,7 @@ Debug.println("file: " + file);
         return getSequence(is);
     }
 
-    /** {@link #getSequence(InputStream)} に委譲 */
+    @Override
     public Sequence getSequence(URL url)
         throws InvalidMidiDataException,
                IOException {

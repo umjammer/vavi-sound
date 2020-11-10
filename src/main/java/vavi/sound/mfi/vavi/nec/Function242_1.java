@@ -42,7 +42,7 @@ public class Function242_1 implements MachineDependentFunction {
 
         byte[] data = message.getMessage();
 
-        this.volume = data[8] & 0x3f;                   // 
+        this.volume = data[8] & 0x3f;                   //
 
         // 8 volume
 Debug.println("ADPCM volume: " + volume);

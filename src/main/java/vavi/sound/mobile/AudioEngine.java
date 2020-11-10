@@ -46,7 +46,7 @@ public interface AudioEngine {
      */
     void start(int streamNumber);
 
-    /** 
+    /**
      * Encodes pcm data.
      * @param bits adpcm sampling bits
      * @param channels input pcm and output adpcm channels
@@ -64,7 +64,7 @@ public interface AudioEngine {
          * channel no
          * TODO how to deal 0 ~ 3
          */
-        public int channel; 
+        public int channel;
         /** ADPCM sampling rate */
         public int sampleRate;
         /** ADPCM sampling bits */
@@ -130,8 +130,8 @@ public interface AudioEngine {
                 int l2 =  monoL[i] & 0x0f;
                 int r1 = (monoR[i] >> 4) & 0x0f;
                 int r2 =  monoR[i] & 0x0f;
-                stereo[i * 2 + 0] = (byte) (((l1 << 4) | r1) & 0xff);  
-                stereo[i * 2 + 1] = (byte) (((l2 << 4) | r2) & 0xff);  
+                stereo[i * 2 + 0] = (byte) (((l1 << 4) | r1) & 0xff);
+                stereo[i * 2 + 1] = (byte) (((l2 << 4) | r2) & 0xff);
             }
             return stereo;
         }

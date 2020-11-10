@@ -197,7 +197,7 @@ class State {
 
     /**
      * Updates the state variables for each output code.
-     * 
+     *
      * @param code_size distinguish 723_40 with others
      * @param y quantizer step size
      * @param wi scale factor multiplier

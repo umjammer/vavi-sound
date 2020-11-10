@@ -13,7 +13,7 @@ import vavi.util.properties.PrefixedClassPropertiesFactory;
 
 /**
  * AudioData message sequencer.
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070119 nsano initial version <br>
  * @since MFi 4.0
@@ -33,7 +33,7 @@ public interface AudioDataSequencer {
         private static ThreadLocal<AudioEngine> audioEngineStore = new ThreadLocal<>();
 
         /**
-         * Second time or later. 
+         * Second time or later.
          */
         public static AudioEngine getAudioEngine() {
             return audioEngineStore.get();

@@ -21,7 +21,8 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 import vavi.util.I0Bessel;
-import vavi.util.SplitRadixFft;
+
+import static vavi.util.SplitRadixFft.rdft;
 
 
 /**
@@ -31,16 +32,13 @@ import vavi.util.SplitRadixFft;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 1.30 060127 nsano port to java version <br>
  */
-class SSRC {
+public class SSRC {
 
     /** */
     private static Logger logger = Logger.getLogger(SSRC.class.getName());
 
     /** */
     private ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
-
-    /** */
-    private static SplitRadixFft fft = new SplitRadixFft();
 
     /** */
     private static final String VERSION = "1.30";
@@ -613,7 +611,7 @@ System.err.println("upsample");
                 wsize = n2b / 2;
                 fft_w = new double[wsize];
 
-                fft.rdft(n2b, 1, stage2, fft_ip, fft_w);
+                rdft(n2b, 1, stage2, fft_ip, fft_w);
             }
 
             // Apply filters
@@ -818,7 +816,7 @@ System.err.println("upsample");
 
 //for (i = 0; i < n2b2; i++) { System.err.printf("%d:%g",i,buf2[ch][i]); }
 
-                        fft.rdft(n2b, 1, buf2[ch], fft_ip, fft_w);
+                        rdft(n2b, 1, buf2[ch], fft_ip, fft_w);
 
                         buf2[ch][0] = stage2[0] * buf2[ch][0];
                         buf2[ch][1] = stage2[1] * buf2[ch][1];
@@ -835,7 +833,7 @@ System.err.println("upsample");
                             buf2[ch][i * 2 + 1] = im;
                         }
 
-                        fft.rdft(n2b, -1, buf2[ch], fft_ip, fft_w);
+                        rdft(n2b, -1, buf2[ch], fft_ip, fft_w);
 
                         for (i = osc, j = 0; i < n2b2; i += osf, j++) {
                             double f = (buf1[ch][j] + buf2[ch][i]);
@@ -1133,7 +1131,7 @@ System.err.println("downsample");
                 wsize = n1b / 2;
                 fft_w = new double[wsize];
 
-                fft.rdft(n1b, 1, stage1, fft_ip, fft_w);
+                rdft(n1b, 1, stage1, fft_ip, fft_w);
 //for (i = -(n1 / 2); i <= n1 / 2; i++) {
 // System.err.printf("1': %06d: %e\n", i + n1 / 2, stage1[i + n1 / 2]);
 //}
@@ -1357,7 +1355,7 @@ System.err.println("downsample");
                         rps = i - n1b2;
 //                        rp += j;
 
-                        fft.rdft(n1b, 1, buf1[ch], fft_ip, fft_w);
+                        rdft(n1b, 1, buf1[ch], fft_ip, fft_w);
 
                         buf1[ch][0] = stage1[0] * buf1[ch][0];
                         buf1[ch][1] = stage1[1] * buf1[ch][1];
@@ -1372,7 +1370,7 @@ System.err.println("downsample");
                             buf1[ch][i * 2 + 1] = im;
                         }
 
-                        fft.rdft(n1b, -1, buf1[ch], fft_ip, fft_w);
+                        rdft(n1b, -1, buf1[ch], fft_ip, fft_w);
 
                         for (i = 0; i < n1b2; i++) {
                             buf2[ch][n2x + 1 + i] += buf1[ch][i];

@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
- * YamahaInputStreamTest. 
+ * YamahaInputStreamTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>
@@ -106,13 +106,13 @@ gainControl.setValue(dB);
     public static void main(String[] args) throws Exception {
 
         InputStream in = new BufferedInputStream(new FileInputStream(args[0]));
-        WAVE wave = (WAVE) WAVE.readFrom(in);
+        WAVE wave = WAVE.readFrom(in, WAVE.class);
         in.close();
-        WAVE.fmt format = (WAVE.fmt) wave.findChildOf(WAVE.fmt.class);
+        WAVE.fmt format = wave.findChildOf(WAVE.fmt.class);
         if (format.getFormatId() != 0x0062) {
             throw new IllegalArgumentException("not YAMAHA MA ADPCM");
         }
-        WAVE.data data = (WAVE.data) wave.findChildOf(WAVE.data.class);
+        WAVE.data data = wave.findChildOf(WAVE.data.class);
         in = new ByteArrayInputStream(data.getWave());
 Debug.println("wave: " + in.available());
 

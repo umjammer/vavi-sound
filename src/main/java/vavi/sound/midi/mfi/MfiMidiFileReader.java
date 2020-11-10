@@ -45,7 +45,7 @@ public class MfiMidiFileReader extends BasicMidiFileReader {
             return MfiSystem.toMidiSequence(mfiSequence);
         } catch (InvalidMfiDataException e) {
             is.reset();
-Debug.println(e);
+Debug.println(Level.FINE, e);
 //Debug.printStackTrace(e);
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         } catch (MfiUnavailableException e) {

@@ -47,14 +47,14 @@ public class VaviMfiFileWriterTest {
     public void test1() throws Exception {
 
         InputStream in = new BufferedInputStream(VaviMfiFileWriterTest.class.getResourceAsStream("/ooo_m.wav"));
-        WAVE wave = (WAVE) WAVE.readFrom(in);
+        WAVE wave = WAVE.readFrom(in, WAVE.class);
         in.close();
 
-        WAVE.fmt format = (WAVE.fmt) wave.findChildOf(WAVE.fmt.class);
+        WAVE.fmt format = wave.findChildOf(WAVE.fmt.class);
         if (format.getFormatId() != 0x0001) {
             throw new IllegalArgumentException("not PCM");
         }
-        WAVE.data data = (WAVE.data) wave.findChildOf(WAVE.data.class);
+        WAVE.data data = wave.findChildOf(WAVE.data.class);
 Debug.println("wave: " + data.getWave().length);
 
         int samplingRate = format.getSamplingRate();

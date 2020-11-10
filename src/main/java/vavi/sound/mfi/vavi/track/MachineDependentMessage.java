@@ -23,7 +23,6 @@ import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -103,7 +102,7 @@ public class MachineDependentMessage extends SysexMessage
         // 5 vendor | carrier
         // 6
         // 7
-Debug.println("MachineDepend: " + StringUtil.toHex2(data[0]) + ", " + StringUtil.toHex2(data[5]) + " " + StringUtil.toHex2(data[6]) + " " + StringUtil.toHex2(data[7]) + " " + (data.length > 8 ? StringUtil.toHex2(data[8]) : "") + " " + (data.length > 9 ? StringUtil.toHex2(data[9]) : "") + " " + (data.length > 10 ? StringUtil.toHex2(data[10]) : ""));
+Debug.printf("MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x\n", data[0], data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0));
         MachineDependentMessage message = new MachineDependentMessage(data);
         return message;
     }
@@ -120,8 +119,7 @@ Debug.println("MachineDepend: " + StringUtil.toHex2(data[0]) + ", " + StringUtil
 
     /** */
     public String toString() {
-        return "MachineDepend: " +
-            "vendor: " + StringUtil.toHex2(data[5] & 0xff);
+        return String.format("MachineDepend: vendor: %02x", data[5]);
     }
 
     //----

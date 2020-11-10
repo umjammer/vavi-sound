@@ -19,7 +19,7 @@ import vavi.io.BitOutputStream;
 
 /**
  * AdpcmInputStream.
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030714 nsano initial version <br>
  *          0.01 030714 nsano fine tune <br>
@@ -43,9 +43,9 @@ public abstract class AdpcmInputStream extends FilterInputStream {
 
     /**
      * @param in PCM
-     * @param byteOrder {@link #read()} 時のバイトオーダ 
+     * @param byteOrder {@link #read()} 時のバイトオーダ
      * @param bits {@link BitOutputStream} のサイズ
-     * @param bitOrder {@link BitOutputStream} のバイトオーダ 
+     * @param bitOrder {@link BitOutputStream} のバイトオーダ
      */
     public AdpcmInputStream(InputStream in, ByteOrder byteOrder, int bits, ByteOrder bitOrder) {
         super(new BitInputStream(in, bits, bitOrder));

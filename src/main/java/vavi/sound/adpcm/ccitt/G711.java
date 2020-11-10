@@ -33,7 +33,7 @@ import vavi.sound.adpcm.Codec;
 
 /**
  * u-law, A-law and linear PCM conversions.
- * 
+ *
  * @author <a href="mailto:bli@cpk.auc.dk">Borge Lindberg, Center for
  *         PersonKommunikation, Aalborg University.</a>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -422,7 +422,7 @@ abstract class G711 implements Codec {
      * @param y quantizer step size,
      * @param i decoder input code,
      * @param sign sign bit of code i
-     * 
+     *
      * @return adjusted A-law or u-law compressed sample.
      */
     protected int adjustAlawTandem(int sr, int se, int y, int i, int sign, int[] qtab) {
@@ -463,13 +463,13 @@ abstract class G711 implements Codec {
     }
 
     /**
-     * 
+     *
      * @param sr decoder output linear PCM sample,
      * @param se predictor estimate sample,
      * @param y quantizer step size,
      * @param i decoder input code,
      * @param sign sign bit of code i
-     * 
+     *
      * @return adjusted A-law or u-law compressed sample.
      */
     protected int adjustUlawTandem(int sr, int se, int y, int i, int sign, int[] qtab) {

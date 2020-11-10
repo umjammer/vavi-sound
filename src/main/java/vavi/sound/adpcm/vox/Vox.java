@@ -9,7 +9,7 @@ import vavi.sound.adpcm.Codec;
 
 /**
  * Vox ADPCM codec.
- * 
+ *
  * @author Furuhon
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030715 nsano port to java <br>

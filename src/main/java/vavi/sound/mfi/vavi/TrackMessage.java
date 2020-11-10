@@ -28,7 +28,6 @@ import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.SysexMessage;
 import vavi.sound.mfi.Track;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -333,7 +332,7 @@ Debug.printStackTrace(e);
                 data2[1] = (byte) ((length % 0x100) & 0xff);
                 dis.readFully(data2, 2, length);
 
-Debug.println(Level.WARNING, "sysex unhandled: delta: " + StringUtil.toHex2(delta) + ", status: " + StringUtil.toHex2(status) + ", extended status: " + StringUtil.toHex2(data1));
+Debug.printf(Level.WARNING, "sysex unhandled: delta: %02x, status: %02x, extended status: %02x\n", delta, status, data1);
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
         }
@@ -394,7 +393,7 @@ Debug.printStackTrace(e);
             if (shortMessageConstructors.containsKey(key)) {
                 constructor = shortMessageConstructors.get(key);
             } else {
-Debug.println(Level.WARNING, "short unhandled: delta: " + StringUtil.toHex2(delta) + ", status: " + StringUtil.toHex2(status) + ", extended status: " + StringUtil.toHex2(data1));
+Debug.printf(Level.WARNING, "short unhandled: delta: %02x, status: %02x, extended status: %02x\n", delta, status, data1);
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
 
@@ -466,7 +465,7 @@ Debug.printStackTrace(e);
             if (longMessageConstructors.containsKey(key)) {
                 constructor = longMessageConstructors.get(key);
             } else {
-Debug.println(Level.WARNING, "long unhandled: delta: " + StringUtil.toHex2(delta) + ", status: " + StringUtil.toHex2(status) + ", extended status: " + StringUtil.toHex2(data1));
+Debug.printf(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended status: %02x\n", delta, status, data1);
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
 

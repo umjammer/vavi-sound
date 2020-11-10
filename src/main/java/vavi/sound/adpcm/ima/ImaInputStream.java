@@ -39,7 +39,7 @@ public class ImaInputStream extends FilterInputStream {
     }
 
     /**
-     * 
+     *
      * @param in
      * @param samplesPerBlock
      * @param channels
@@ -56,7 +56,7 @@ public class ImaInputStream extends FilterInputStream {
         super(new OutputEngineInputStream(new ImaOutputEngine(in, samplesPerBlock, channels, blockSize, byteOrder)));
 
         int bytesPerSample = 2;
-        int numSamples = Ima.getSamplesIn(in.available(), // TODO 
+        int numSamples = Ima.getSamplesIn(in.available(), // TODO
                                           channels,
                                           blockSize,
                                           samplesPerBlock);

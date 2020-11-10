@@ -21,7 +21,7 @@ import vavi.util.Debug;
 /**
  * NEC System exclusive message.
  * <li>TODO use StreamSlaveOn
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030711 nsano initial version <br>
  */
@@ -154,7 +154,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
 
         // 3. stream on
         initSequence();
-        int blockDelta = (int) ((float) delta * MAX_BLOCK / (pcm.length / 4 / channels)); 
+        int blockDelta = (int) ((float) delta * MAX_BLOCK / (pcm.length / 4 / channels));
         streamNumber = 0;
         for (int i = 0; i < numberOfChunks; i++) {
             if (channels == 1) {
@@ -204,7 +204,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
         MachineDependentMessage message = new NecMessage();
         Function1_240_7 function = new Function1_240_7();
         function.setStreamNumber(streamNumber);
-        function.setMono(channels == 1 ? true : false); 
+        function.setMono(channels == 1 ? true : false);
         function.setFormat(1);
         function.setSamplingRate(sampleRate);
         function.setAdpcm(adpcm);
@@ -215,7 +215,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
     /**
      * Creates max gain message.
      * <pre>
-     * 0x01 0xf3 0x_3 
+     * 0x01 0xf3 0x_3
      * </pre>
      * @param maxGain (wav2mld use 0x00)
      */
@@ -245,7 +245,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
     /**
      * Creates adpcm on message.
      * <pre>
-     * 0x01 0xf1 0x_3 
+     * 0x01 0xf1 0x_3
      * </pre>
      */
     public static MfiEvent getStreamOnEvent(int channel, int streamNumber, int velocity) throws InvalidMfiDataException {
@@ -261,7 +261,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
     /**
      * Creates adpcm slave on message.
      * <pre>
-     * 0x01 0xf1 0x_4 
+     * 0x01 0xf1 0x_4
      * </pre>
      */
     public static MfiEvent getStreamSlaveOnEvent(int channel, int streamNumber, int velocity) throws InvalidMfiDataException {
@@ -323,7 +323,7 @@ Debug.println("delta: " + delta + ", time: " + time);
 
         AudioEngine audioEngine = NecSequencer.getAudioEngine();
 
-        byte[] adpcm = audioEngine.encode(4, channels, pcm); 
+        byte[] adpcm = audioEngine.encode(4, channels, pcm);
 Debug.println("adpcm length: " + adpcm.length);
 //System.err.println("pcm:\n" + StringUtil.getDump(pcm, 64) + "adpcm L:\n" + StringUtil.getDump(adpcm, 64) +"adpcm R:\n" + StringUtil.getDump(adpcm, adpcm.length / 2, 64));
 
@@ -363,7 +363,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
 
         // 2. stream on
         initSequence();
-        int blockDelta = (int) ((float) delta * MAX_BLOCK / (adpcm.length * channels)); 
+        int blockDelta = (int) ((float) delta * MAX_BLOCK / (adpcm.length * channels));
         streamNumber = 0;
         for (int i = 0; i < numberOfChunks; i++) {
             // adpcm on

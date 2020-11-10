@@ -22,7 +22,7 @@ import vavi.util.StringUtil;
 
 /**
  * NoteMessage.
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
  */
@@ -55,7 +55,7 @@ public class NoteMessage extends SmafMessage
     /**
      * Creates a note message for HandyPhoneStandard.
      *
-     * @param duration    
+     * @param duration
      * @param status <pre>
      *  76 54 3210
      *  ~~ ~~ ~~~~

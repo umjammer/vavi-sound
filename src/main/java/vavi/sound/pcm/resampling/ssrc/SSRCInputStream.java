@@ -21,7 +21,7 @@ import vavix.io.AdvancedPipedInputStream;
 
 /**
  * SSRC InputStream
- * 
+ *
  * @author <a href="mailto:vaddvivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030816 nsano initial version <br>
  */
@@ -67,7 +67,7 @@ public class SSRCInputStream extends FilterInputStream {
     }
 
     /**
-     * 
+     *
      * @param in source stream
      * @param ch number of channels
      * @param ifrq input frequency

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
- * VoxOutputStreamTest. 
+ * VoxOutputStreamTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>

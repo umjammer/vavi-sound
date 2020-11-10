@@ -21,7 +21,7 @@ import vavi.io.BitInputStream;
 
 /**
  * CCITT ADPCM decoder.
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030713 nsano port to java <br>
  */

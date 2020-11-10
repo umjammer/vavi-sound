@@ -68,9 +68,9 @@ Debug.println("outFile: " + outFile);
     public void test1() throws Exception {
 
         InputStream in = new BufferedInputStream(getClass().getResourceAsStream(inFile));
-        WAVE wave = (WAVE) WAVE.readFrom(in);
+        WAVE wave = WAVE.readFrom(in, WAVE.class);
         in.close();
-        WAVE.fmt format = (WAVE.fmt) wave.findChildOf(WAVE.fmt.class);
+        WAVE.fmt format = wave.findChildOf(WAVE.fmt.class);
         if (format.getFormatId() != 0x0002) {
             throw new IllegalArgumentException("not Microsoft ADPCM");
         }
@@ -86,7 +86,7 @@ Debug.println("iCoef[" + i + "][" + j + "]: " + StringUtil.toHex4(iCoefs[i][j]) 
             }
         }
         ledis.close();
-        WAVE.data data = (WAVE.data) wave.findChildOf(WAVE.data.class);
+        WAVE.data data = wave.findChildOf(WAVE.data.class);
         in = new ByteArrayInputStream(data.getWave());
 Debug.println("wave: " + in.available());
 

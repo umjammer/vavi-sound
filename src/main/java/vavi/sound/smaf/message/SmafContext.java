@@ -145,7 +145,7 @@ Debug.println("scale: " + scale);
     }
 
     /** Math#round() で丸められた誤差 */
-    private float[] roundedSum = new float[MAX_SMAF_TRACKS];
+    private double[] roundedSum = new double[MAX_SMAF_TRACKS];
 
     /** Math#round() で丸められた誤差が整数値より大きくなった場合の補正 */
     private int getAdjustedDelta(int smafTrackNumber, double floatDelta) {

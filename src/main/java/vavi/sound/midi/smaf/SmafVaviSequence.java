@@ -23,17 +23,17 @@ import vavi.sound.smaf.SmafUnavailableException;
  */
 public class SmafVaviSequence extends Sequence implements VaviSequence {
 
-    /* */
+    /** */
     public SmafVaviSequence(float divisionType, int resolution) throws InvalidMidiDataException {
         super(divisionType, resolution);
     }
 
-    /* */
+    /** */
     public SmafVaviSequence(float divisionType, int resolution, int numTracks) throws InvalidMidiDataException {
         super(divisionType, resolution, numTracks);
     }
 
-    /* */
+    @Override
     public MetaEventListener getMetaEventListener() {
         try {
             return SmafSystem.getMetaEventListener();

@@ -34,15 +34,15 @@ import vavi.util.StringUtil;
  * <pre>
  *  adat
  *   type       4       "adat"
- *   length     4       
+ *   length     4
  *   header     x 1     *1
- *  
+ *
  *  header (*1)
  *   length     2
  *   format     1
  *   attribute  1
  *   sub chunk  x N     *2
- *  
+ *
  *  sub chunk (*2)
  *   type       4
  *   length     2
@@ -66,7 +66,7 @@ public class AudioDataMessage extends MfiMessage
     private int audioDataNumber;
 
     /**
-     * @since MFi 5.0 
+     * @since MFi 5.0
      */
     public static final int FORMAT_ADPCM_TYPE2 = 0x81;
 

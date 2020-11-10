@@ -110,8 +110,8 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
      * @param packetId packetId
      * @param sampleRate 4k, 8k, 16k, 32k are available
      * @param bits 4, 2
-     * @param continued 
-     * @param adpcm wave (PCM), 16bit, mono 
+     * @param continued
+     * @param adpcm wave (PCM), 16bit, mono
      */
     private static MfiEvent getWaveEvent(int channel, int packetId, int sampleRate, int bits, boolean continued, int length, byte[] adpcm) throws InvalidMfiDataException {
         MachineDependentMessage message = new SharpMessage();

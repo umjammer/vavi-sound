@@ -17,7 +17,7 @@ import vavi.util.StringUtil;
 
 /**
  * UndefinedMessage
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030821 nsano initial version <br>
  *          0.01 030920 nsano repackage <br>
@@ -26,7 +26,7 @@ public class UndefinedMessage extends MfiMessage
     implements MidiConvertible {
 
     /**
-     * 
+     *
      * @param delta delta time
      * @param status
      * @param data1 extended status
@@ -37,7 +37,7 @@ public class UndefinedMessage extends MfiMessage
     }
 
     /**
-     * 
+     *
      * @param delta delta time
      * @param status
      * @param data1 extended status

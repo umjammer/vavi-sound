@@ -23,7 +23,7 @@ import vavi.util.StringUtil;
  * ContentsInfo Chunk.
  * <pre>
  * "CNTI"
- * 
+ *
  *  Contents Class ：1 byte (必須)
  *  Contents Type ：1 byte (必須)
  *  Contents Code Type ：1 byte (必須)
@@ -31,7 +31,7 @@ import vavi.util.StringUtil;
  *  Copy Counts ：1 byte (必須)
  *  Option ：n byte (Option)
  * </pre>
- * 
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
  */
