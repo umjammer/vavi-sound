@@ -17,7 +17,6 @@ import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -66,11 +65,11 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         }
 //Debug.println("available: " + is.available());
         this.crc = readShort(is);
-Debug.println("crc (orig): " + StringUtil.toHex4(crc));
+Debug.printf("crc (orig): %04x\n", crc);
         if (is.available() > 4) {
             int kddiCrc = readShort(is);
             int kddiMark = readShort(is);
-Debug.println("has kddi crc: " + StringUtil.toHex4(kddiCrc) + ", " + StringUtil.toHex4(kddiMark));
+Debug.printf("has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
         }
     }
 

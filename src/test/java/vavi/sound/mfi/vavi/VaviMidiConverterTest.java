@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 
 import vavi.sound.mfi.MfiSystem;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -87,7 +86,7 @@ Debug.println("types: " + ts.length);
                 throw new IllegalArgumentException("no support type");
             }
             for (int i = 0; i < ts.length; i++) {
-Debug.println("type: 0x" + StringUtil.toHex2(ts[i]));
+Debug.printf("type: 0x%02x\n", ts[i]);
             }
 
             file = new File(args[2]);

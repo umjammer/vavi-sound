@@ -19,7 +19,6 @@ import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.SysexMessage;
 import vavi.sound.smaf.message.UndefinedMessage;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -93,12 +92,12 @@ Debug.println("messages: " + messages.size());
                     break;
                 default:
                     smafMessage = new UndefinedMessage(0);
-Debug.println(Level.WARNING, "unknown 0xff, 0x" + StringUtil.toHex2(e2));
+Debug.printf(Level.WARNING, "unknown 0xff, 0x%02x\n", e2);
                     break;
                 }
             } else {
                 smafMessage = new UndefinedMessage(0);
-Debug.println(Level.WARNING, "unhandled: " + StringUtil.toHex2(e1));
+Debug.printf(Level.WARNING, "unhandled: %02x\n", e1);
             }
 
             if (smafMessage != null) {
@@ -125,7 +124,7 @@ Debug.println(Level.WARNING, "unhandled: " + StringUtil.toHex2(e1));
                 smafMessage = SysexMessage.Factory.getSysexMessage(0, data);
             } else {
                 smafMessage = new UndefinedMessage(0);
-Debug.println(Level.WARNING, "unhandled: " + StringUtil.toHex2(status));
+Debug.printf(Level.WARNING, "unhandled: %02x\n", status);
             }
 
             if (smafMessage != null) {

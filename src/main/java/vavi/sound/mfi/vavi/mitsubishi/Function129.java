@@ -10,7 +10,6 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -41,7 +40,7 @@ public class Function129 implements MachineDependentFunction {
 
         this.channel = (data[7] & 0xc0) >> 6;   // 0 ~ 3
         this.volume  =  data[7] & 0x3f;         //
-Debug.println("ADPCM volume: " + channel + "ch " + StringUtil.toHex2(volume));
+Debug.printf("ADPCM volume: %dch %02x\n", channel, volume);
     }
 
     /** */

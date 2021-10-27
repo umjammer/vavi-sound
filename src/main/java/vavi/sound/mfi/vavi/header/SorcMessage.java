@@ -7,7 +7,6 @@
 package vavi.sound.mfi.vavi.header;
 
 import vavi.sound.mfi.vavi.SubMessage;
-import vavi.util.StringUtil;
 
 
 /**
@@ -63,7 +62,7 @@ public class SorcMessage extends SubMessage {
 
     /** */
     public String toString() {
-        return "sorc: " + getDataLength() + ": 0x" + StringUtil.toHex2(getSorc());
+        return String.format("sorc: %d: 0x%02x", getDataLength(), getSorc());
     }
 }
 

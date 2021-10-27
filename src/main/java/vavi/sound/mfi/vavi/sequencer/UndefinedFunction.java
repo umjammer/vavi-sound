@@ -9,6 +9,7 @@ package vavi.sound.mfi.vavi.sequencer;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
+import vavi.util.StringUtil;
 
 
 /**
@@ -48,7 +49,7 @@ Debug.printf("undefined function: %02x %02x\n", f1, f2);
         } else {
 Debug.printf("undefined function: %02x \n", f1);
         }
-Debug.dump(message.getMessage(), 128);
+Debug.println(StringUtil.getDump(message.getMessage(), 128));
     }
 }
 

@@ -17,7 +17,6 @@ import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.SmafMessage;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -194,9 +193,9 @@ public class NoteMessage extends SmafMessage
     public String toString() {
         return "Note:" +
             " duration=" + duration +
-            " note=" + StringUtil.toHex2(getNote())  +
-            " gateTime=" + StringUtil.toHex4(gateTime) +
-            " velocity=" + StringUtil.toHex4(velocity);
+            " note=" + String.format("%02x", getNote())  +
+            " gateTime=" + String.format("%04x", gateTime) +
+            " velocity=" + String.format("%04x", velocity);
     }
 
     /* */

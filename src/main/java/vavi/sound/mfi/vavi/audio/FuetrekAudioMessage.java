@@ -13,7 +13,6 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mfi.vavi.track.MasterVolumeMessage;
 import vavi.sound.mfi.vavi.track.TempoMessage;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -62,7 +61,7 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
         float aDelta;
         TempoMessage message;
         while (true) {
-Debug.println("tempo: " + baseTempo + ", timeBase: 0x" + StringUtil.toHex2(baseTimeBase));
+Debug.printf("tempo: %d, timeBase: 0x02x\n", baseTempo, baseTimeBase);
             message = new TempoMessage(0x00, 0xff, baseTimeBase, baseTempo);
             aDelta = (60f / message.getTempo()) / message.getTimeBase();
             if (Math.round(time / aDelta) > 255) {

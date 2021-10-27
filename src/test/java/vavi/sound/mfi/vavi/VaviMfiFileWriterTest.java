@@ -8,8 +8,12 @@ package vavi.sound.mfi.vavi;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import vavi.sound.mfi.InvalidMfiDataException;
@@ -33,6 +37,11 @@ import vavi.util.win32.WAVE;
  * @version 0.00 2007/01/25 nsano initial version <br>
  */
 public class VaviMfiFileWriterTest {
+
+    @BeforeAll
+    static void setup() throws IOException {
+    	Files.createDirectories(Paths.get("tmp"));
+    }
 
     /**
      * Creates .mld w/ voice file. wav ファイルはモノラルのみです

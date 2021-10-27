@@ -9,7 +9,6 @@ package vavi.sound.smaf.chunk;
 import java.io.IOException;
 
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -108,7 +107,7 @@ Debug.println("waveType: " + this);
      * </pre>
      */
     WaveType(byte[] waveType) throws IOException {
-Debug.println("waveType: " + StringUtil.toHex2(waveType[0]) + " " + StringUtil.toHex2(waveType[1]) + " " + StringUtil.toHex2(waveType[2]));
+Debug.printf("waveType: %02x %02x %02x\n", waveType[0], waveType[1], waveType[2]);
         this.waveChannels = (waveType[0] & 0x80) != 0 ? 2 : 1;
         this.waveFormat = tableForMwq[(waveType[0] & 0x70) >> 4];
         this.waveBaseBit = 4 * ((waveType[0] & 0x0f) + 1);
@@ -185,7 +184,7 @@ Debug.println("waveType: " + this);
             ", waveFormat: " + waveFormat +
             ", waveSamplingFreq: " + waveSamplingFreq +
             ", waveBaseBit: " + waveBaseBit +
-            " (waveType: " + StringUtil.toHex4(intValue()) + ")";
+            " (waveType: " + String.format("%04x", intValue()) + ")";
     }
 }
 

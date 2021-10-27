@@ -10,7 +10,6 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -43,7 +42,7 @@ public class Function1 implements MachineDependentFunction {
         int pitchBend =  data[7] & 0x3f;        // -32 ~ 31
         pitchBend *= (data[7] & 0x20) != 0 ? -1 : 0;
         // pitchBend * Pitch Bend Range * 100 / 32 [セント]
-Debug.println("Pitch Bend: " + StringUtil.toHex2(voice) + " " + pitchBend);
+Debug.printf("Pitch Bend: %02x %d\n", voice, pitchBend);
     }
 }
 

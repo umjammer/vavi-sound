@@ -10,6 +10,7 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
+import vavi.util.StringUtil;
 
 
 /**
@@ -44,7 +45,7 @@ public class Function242_5 implements MachineDependentFunction {
         // 8    ?
         // 9    ?    00
 Debug.println("LED: " + channel);
-Debug.dump(data);
+Debug.println(StringUtil.getDump(data));
     }
 }
 

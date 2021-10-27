@@ -22,7 +22,6 @@ import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 import vavi.sound.smaf.sequencer.SmafMessageStore;
 import vavi.sound.smaf.sequencer.WaveSequencer;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -104,7 +103,7 @@ public class WaveMessage extends SmafMessage
             " duration=" + duration +
             " channel=" + channel  +
             " number=" + number  +
-            " gateTime=" + StringUtil.toHex4(gateTime);
+            " gateTime=" + String.format("%04x", gateTime);
     }
 
     //----

@@ -10,6 +10,7 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
+import vavi.util.StringUtil;
 
 
 /**
@@ -42,7 +43,7 @@ public class Function240_1 implements MachineDependentFunction {
 
         int channel = (data[7] & 0xc0) >> 6;    // 0 ~ 3
 Debug.println("FM voice change: " + channel);
-Debug.dump(data);
+Debug.println(StringUtil.getDump(data));
     }
 }
 

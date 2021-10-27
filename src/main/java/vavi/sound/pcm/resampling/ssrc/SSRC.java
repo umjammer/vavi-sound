@@ -1760,7 +1760,6 @@ System.err.printf("%d, %d, %d, %d\n",
     /** as a command line program */
     public void exec(String[] argv) throws IOException {
         String sfn, dfn, tmpfn = null;
-        FileChannel fpi = null;
         File fo = null;
         FileChannel fpo = null;
         File ft = null;
@@ -1894,14 +1893,16 @@ System.err.printf("%d, %d, %d, %d\n",
         sfn = argv[i];
         dfn = argv[i + 1];
 
-        fpi = new FileInputStream(sfn).getChannel();
+        fo = new File(dfn);
 
-        // read wav header
+        try (FileInputStream fis = new FileInputStream(sfn);
+        	 FileOutputStream fos = new FileOutputStream(fo)) {
 
-        {
-            @SuppressWarnings("unused")
+        	FileChannel fpi = fis.getChannel();
+
+        	// read wav header
+
             short word;
-            @SuppressWarnings("unused")
             int dword;
 
             ByteBuffer bb = ByteBuffer.allocate(256).order(ByteOrder.LITTLE_ENDIAN);
@@ -1973,70 +1974,64 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
             if (fpi.position() == fpi.size()) {
                 throw new IllegalStateException("Couldn't find data chank");
             }
-        }
 
-        if (bps != 1 && bps != 2 && bps != 3 && bps != 4) {
-            throw new IllegalStateException("Error : Only 8bit, 16bit, 24bit and 32bit PCM are supported.");
-        }
+	        if (bps != 1 && bps != 2 && bps != 3 && bps != 4) {
+	            throw new IllegalStateException("Error : Only 8bit, 16bit, 24bit and 32bit PCM are supported.");
+	        }
+	
+	        if (dbps == -1) {
+	            if (bps != 1) {
+	                dbps = bps;
+	            } else {
+	                dbps = 2;
+	            }
+	            if (dbps == 4) {
+	                dbps = 3;
+	            }
+	        }
+	
+	        if (dfrq == -1) {
+	            dfrq = sfrq;
+	        }
+	
+	        if (dither == -1) {
+	            if (dbps < bps) {
+	                if (dbps == 1) {
+	                    dither = 4;
+	                } else {
+	                    dither = 3;
+	                }
+	            } else {
+	                dither = 1;
+	            }
+	        }
+	
+	        if (!quiet) {
+	            final String[] dtype = {
+	                "none", "no noise shaping", "triangular spectral shape", "ATH based noise shaping", "ATH based noise shaping(less amplitude)"
+	            };
+	            final String[] ptype = {
+	                "rectangular", "triangular", "gaussian"
+	            };
+	            System.err.printf("frequency : %d -> %d\n", sfrq, dfrq);
+	            System.err.printf("attenuation : %gdB\n", att);
+	            System.err.printf("bits per sample : %d -> %d\n", bps * 8, dbps * 8);
+	            System.err.printf("nchannels : %d\n", nch);
+	            System.err.printf("length : %d bytes, %g secs\n", length, (double) length / bps / nch / sfrq);
+	            if (dither == 0) {
+	                System.err.printf("dither type : none\n");
+	            } else {
+	                System.err.printf("dither type : %s, %s p.d.f, amp = %g\n", dtype[dither], ptype[pdf], noiseamp);
+	            }
+	            System.err.printf("\n");
+	        }
+	
+	        if (twopass) {
+	        }
 
-        if (dbps == -1) {
-            if (bps != 1) {
-                dbps = bps;
-            } else {
-                dbps = 2;
-            }
-            if (dbps == 4) {
-                dbps = 3;
-            }
-        }
-
-        if (dfrq == -1) {
-            dfrq = sfrq;
-        }
-
-        if (dither == -1) {
-            if (dbps < bps) {
-                if (dbps == 1) {
-                    dither = 4;
-                } else {
-                    dither = 3;
-                }
-            } else {
-                dither = 1;
-            }
-        }
-
-        if (!quiet) {
-            final String[] dtype = {
-                "none", "no noise shaping", "triangular spectral shape", "ATH based noise shaping", "ATH based noise shaping(less amplitude)"
-            };
-            final String[] ptype = {
-                "rectangular", "triangular", "gaussian"
-            };
-            System.err.printf("frequency : %d -> %d\n", sfrq, dfrq);
-            System.err.printf("attenuation : %gdB\n", att);
-            System.err.printf("bits per sample : %d -> %d\n", bps * 8, dbps * 8);
-            System.err.printf("nchannels : %d\n", nch);
-            System.err.printf("length : %d bytes, %g secs\n", length, (double) length / bps / nch / sfrq);
-            if (dither == 0) {
-                System.err.printf("dither type : none\n");
-            } else {
-                System.err.printf("dither type : %s, %s p.d.f, amp = %g\n", dtype[dither], ptype[pdf], noiseamp);
-            }
-            System.err.printf("\n");
-        }
-
-        if (twopass) {
-        }
-
-        fo = new File(dfn);
-        fpo = new FileOutputStream(fo).getChannel();
-
-        // generate wav header
-
-        {
-            short word;
-            int dword;
+	        fpo = fos.getChannel();
+	
+	        // generate wav header
 
             ByteBuffer leos = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN);
 
@@ -2066,217 +2061,218 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
 
             leos.flip();
             fpo.write(leos);
-        }
 
-        if (dither != 0) {
-            int min = 0, max = 0;
-            if (dbps == 1) {
-                min = -0x80;
-                max = 0x7f;
-            }
-            if (dbps == 2) {
-                min = -0x8000;
-                max = 0x7fff;
-            }
-            if (dbps == 3) {
-                min = -0x800000;
-                max = 0x7fffff;
-            }
-            if (dbps == 4) {
-                min = -0x80000000;
-                max = 0x7fffffff;
-            }
+	        if (dither != 0) {
+	            int min = 0, max = 0;
+	            if (dbps == 1) {
+	                min = -0x80;
+	                max = 0x7f;
+	            }
+	            if (dbps == 2) {
+	                min = -0x8000;
+	                max = 0x7fff;
+	            }
+	            if (dbps == 3) {
+	                min = -0x800000;
+	                max = 0x7fffff;
+	            }
+	            if (dbps == 4) {
+	                min = -0x80000000;
+	                max = 0x7fffffff;
+	            }
+	
+	            samp = init_shaper(dfrq, nch, min, max, dither, pdf, noiseamp);
+	        }
 
-            samp = init_shaper(dfrq, nch, min, max, dither, pdf, noiseamp);
-        }
-
-        if (twopass) {
-            double gain = 0;
-            int ch = 0;
-            int fptlen, sumread;
-
-            if (!quiet) {
-                System.err.printf("Pass 1\n");
-            }
-
-            if (tmpfn != null) {
-                ft = new File(tmpfn);
-            } else {
-                ft = File.createTempFile("ssrc_", ".tmp");
-            }
-            fpto = new FileOutputStream(ft).getChannel();
-
+	        if (twopass) {
+	            double gain = 0;
+	            int ch = 0;
+	            int fptlen, sumread;
+	
+	            if (!quiet) {
+	                System.err.printf("Pass 1\n");
+	            }
+	
+	            if (tmpfn != null) {
+	                ft = new File(tmpfn);
+	            } else {
+	                ft = File.createTempFile("ssrc_", ".tmp");
+	            }
+	            try (FileOutputStream tfos= new FileOutputStream(ft)) {
+		            fpto = tfos.getChannel();
+		
 //System.err.printf("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d, ???: %d, twopass: %b, dither: %d\n", nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither);
-            Resampler resampler;
-            if (sfrq < dfrq) {
-                resampler = new Upsampler();
-            } else if (sfrq > dfrq) {
-                resampler = new Downsampler();
-            } else {
-                resampler = new NoSrc();
-            }
-            if (normalize) {
-                resampler.init(nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither);
-            } else {
-                resampler.init(nch, bps, 8, sfrq, dfrq, Math.pow(10, -att / 20), length / bps / nch, twopass, dither);
-            }
-            resampler.resample(fpi, fpto);
-            peak[0] = resampler.peak;
-
-            fpto.close();
-
-            if (!quiet) {
-                System.err.printf("\npeak : %gdB\n", 20 * Math.log10(peak[0]));
-            }
-
-            if (!normalize) {
-                if (peak[0] < Math.pow(10, -att / 20)) {
-                    peak[0] = 1;
-                } else {
-                    peak[0] *= Math.pow(10, att / 20);
-                }
-            } else {
-                peak[0] *= Math.pow(10, att / 20);
-            }
-
-            if (!quiet) {
-                System.err.printf("\nPass 2\n");
-            }
-
-            if (dither != 0) {
-                switch (dbps) {
-                case 1:
-                    gain = (normalize || peak[0] >= (0x7f - samp) / (double) 0x7f) ? 1 / peak[0] * (0x7f - samp) : 1 / peak[0] * 0x7f;
-                    break;
-                case 2:
-                    gain = (normalize || peak[0] >= (0x7fff - samp) / (double) 0x7fff) ? 1 / peak[0] * (0x7fff - samp) : 1 / peak[0] * 0x7fff;
-                    break;
-                case 3:
-                    gain = (normalize || peak[0] >= (0x7fffff - samp) / (double) 0x7fffff) ? 1 / peak[0] * (0x7fffff - samp) : 1 / peak[0] * 0x7fffff;
-                    break;
-                }
-            } else {
-                switch (dbps) {
-                case 1:
-                    gain = 1 / peak[0] * 0x7f;
-                    break;
-                case 2:
-                    gain = 1 / peak[0] * 0x7fff;
-                    break;
-                case 3:
-                    gain = 1 / peak[0] * 0x7fffff;
-                    break;
-                }
-            }
-            randptr = 0;
-
-            setstarttime();
-
-            fptlen = (int) (ft.length() / 8);
+		            Resampler resampler;
+		            if (sfrq < dfrq) {
+		                resampler = new Upsampler();
+		            } else if (sfrq > dfrq) {
+		                resampler = new Downsampler();
+		            } else {
+		                resampler = new NoSrc();
+		            }
+		            if (normalize) {
+		                resampler.init(nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither);
+		            } else {
+		                resampler.init(nch, bps, 8, sfrq, dfrq, Math.pow(10, -att / 20), length / bps / nch, twopass, dither);
+		            }
+		            resampler.resample(fpi, fpto);
+		            peak[0] = resampler.peak;
+		
+		            fpto.close();
+	            }
+	
+	            if (!quiet) {
+	                System.err.printf("\npeak : %gdB\n", 20 * Math.log10(peak[0]));
+	            }
+	
+	            if (!normalize) {
+	                if (peak[0] < Math.pow(10, -att / 20)) {
+	                    peak[0] = 1;
+	                } else {
+	                    peak[0] *= Math.pow(10, att / 20);
+	                }
+	            } else {
+	                peak[0] *= Math.pow(10, att / 20);
+	            }
+	
+	            if (!quiet) {
+	                System.err.printf("\nPass 2\n");
+	            }
+	
+	            if (dither != 0) {
+	                switch (dbps) {
+	                case 1:
+	                    gain = (normalize || peak[0] >= (0x7f - samp) / (double) 0x7f) ? 1 / peak[0] * (0x7f - samp) : 1 / peak[0] * 0x7f;
+	                    break;
+	                case 2:
+	                    gain = (normalize || peak[0] >= (0x7fff - samp) / (double) 0x7fff) ? 1 / peak[0] * (0x7fff - samp) : 1 / peak[0] * 0x7fff;
+	                    break;
+	                case 3:
+	                    gain = (normalize || peak[0] >= (0x7fffff - samp) / (double) 0x7fffff) ? 1 / peak[0] * (0x7fffff - samp) : 1 / peak[0] * 0x7fffff;
+	                    break;
+	                }
+	            } else {
+	                switch (dbps) {
+	                case 1:
+	                    gain = 1 / peak[0] * 0x7f;
+	                    break;
+	                case 2:
+	                    gain = 1 / peak[0] * 0x7fff;
+	                    break;
+	                case 3:
+	                    gain = 1 / peak[0] * 0x7fffff;
+	                    break;
+	                }
+	            }
+	            randptr = 0;
+	
+	            setstarttime();
+	
+	            fptlen = (int) (ft.length() / 8);
 //System.err.println("tmp: " + fpt.getFilePointer());
-
-            FileChannel fpti = new FileInputStream(ft).getChannel();
-            ByteBuffer leis = ByteBuffer.allocate(8);
-            for (sumread = 0; sumread < fptlen;) {
-                double f;
-                int s;
-
-                leis.clear();
-                fpti.read(leis);
-                leis.flip();
-                f = leis.getDouble();
+	
+            	try (FileInputStream fisf = new FileInputStream(ft)) {
+		            FileChannel fpti = fisf.getChannel();
+		            ByteBuffer leis = ByteBuffer.allocate(8);
+		            for (sumread = 0; sumread < fptlen;) {
+		                double f;
+		                int s;
+		
+		                leis.clear();
+		                fpti.read(leis);
+		                leis.flip();
+		                f = leis.getDouble();
 //if (sumread < 100) {
 // System.err.printf("2: %06d: %f\n", sumread, f);
 //}
-                f *= gain;
-                sumread++;
-
-                switch (dbps) {
-                case 1: {
-                    s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
-
-                    ByteBuffer buf = ByteBuffer.allocate(1);
-                    buf.put((byte) (s + 128));
-                    buf.flip();
-
-                    fpo.write(buf);
-                }
-                    break;
-                case 2: {
-                    s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
-
-                    ByteBuffer buf = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
-                    buf.putShort((short) s);
-                    buf.flip();
-
-                    fpo.write(buf);
-                }
-                    break;
-                case 3: {
-                    s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
-
-                    ByteBuffer buf = ByteBuffer.allocate(3);
-                    buf.put((byte) (s & 255));
-                    s >>= 8;
-                    buf.put((byte) (s & 255));
-                    s >>= 8;
-                    buf.put((byte) (s & 255));
-                    buf.flip();
-
-                    fpo.write(buf);
-                }
-                    break;
-                }
-
-                ch++;
-                if (ch == nch) {
-                    ch = 0;
-                }
-
-                if ((sumread & 0x3ffff) == 0) {
-                    showprogress((double) sumread / fptlen);
-                }
-            }
-            showprogress(1);
-            if (!quiet) {
-                System.err.printf("\n");
-            }
-            fpti.close();
-            if (ft != null) {
+		                f *= gain;
+		                sumread++;
+		
+		                switch (dbps) {
+		                case 1: {
+		                    s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+		
+		                    ByteBuffer buf = ByteBuffer.allocate(1);
+		                    buf.put((byte) (s + 128));
+		                    buf.flip();
+		
+		                    fpo.write(buf);
+		                }
+		                    break;
+		                case 2: {
+		                    s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+		
+		                    ByteBuffer buf = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
+		                    buf.putShort((short) s);
+		                    buf.flip();
+		
+		                    fpo.write(buf);
+		                }
+		                    break;
+		                case 3: {
+		                    s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+		
+		                    ByteBuffer buf = ByteBuffer.allocate(3);
+		                    buf.put((byte) (s & 255));
+		                    s >>= 8;
+		                    buf.put((byte) (s & 255));
+		                    s >>= 8;
+		                    buf.put((byte) (s & 255));
+		                    buf.flip();
+		
+		                    fpo.write(buf);
+		                }
+		                    break;
+		                }
+		
+		                ch++;
+		                if (ch == nch) {
+		                    ch = 0;
+		                }
+		
+		                if ((sumread & 0x3ffff) == 0) {
+		                    showprogress((double) sumread / fptlen);
+		                }
+		            }
+		            showprogress(1);
+		            if (!quiet) {
+		                System.err.printf("\n");
+		            }
+		            fpti.close();
+            	}
+	            if (ft != null) {
 //System.err.println("ft: " + ft);
-                if (ft.delete() == false) {
-                    System.err.printf("Failed to remove %s\n", ft);
-                }
-            }
-        } else {
-            Resampler resampler;
-            if (sfrq < dfrq) {
-                resampler = new Upsampler();
-            } else if (sfrq > dfrq) {
-                resampler = new Downsampler();
-            } else {
-                resampler = new NoSrc();
-            }
-            resampler.init(nch, bps, dbps, sfrq, dfrq, Math.pow(10, -att / 20), length / bps / nch, twopass, dither);
-            resampler.resample(fpi, fpto);
-            peak[0] = resampler.peak;
-            if (!quiet) {
-                System.err.printf("\n");
-            }
-        }
+	                if (ft.delete() == false) {
+	                    System.err.printf("Failed to remove %s\n", ft);
+	                }
+	            }
+	        } else {
+	            Resampler resampler;
+	            if (sfrq < dfrq) {
+	                resampler = new Upsampler();
+	            } else if (sfrq > dfrq) {
+	                resampler = new Downsampler();
+	            } else {
+	                resampler = new NoSrc();
+	            }
+	            resampler.init(nch, bps, dbps, sfrq, dfrq, Math.pow(10, -att / 20), length / bps / nch, twopass, dither);
+	            resampler.resample(fpi, fpto);
+	            peak[0] = resampler.peak;
+	            if (!quiet) {
+	                System.err.printf("\n");
+	            }
+	        }
+	
+	        if (dither != 0) {
+	            quit_shaper(nch);
+	        }
+	
+	        if (!twopass && peak[0] > 1) {
+	            if (!quiet) {
+	                System.err.printf("clipping detected : %gdB\n", 20 * Math.log10(peak[0]));
+	            }
+	        }
 
-        if (dither != 0) {
-            quit_shaper(nch);
-        }
-
-        if (!twopass && peak[0] > 1) {
-            if (!quiet) {
-                System.err.printf("clipping detected : %gdB\n", 20 * Math.log10(peak[0]));
-            }
-        }
-
-        {
-            int dword;
             int len;
 
             fpo.close();
@@ -2284,24 +2280,26 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
             fo = new File(dfn);
 
             len =  (int) fo.length();
-            fpo = new RandomAccessFile(fo, "rw").getChannel();
-            ByteBuffer leos = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
-
-            dword = len - 8;
-            leos.position(0);
-            leos.limit(4);
-            leos.putInt(dword);
-            leos.flip();
-            fpo.write(leos, 4);
-
-            dword = len - 44;
-            leos.position(0);
-            leos.limit(4);
-            leos.putInt(dword);
-            leos.flip();
-            fpo.write(leos, 40);
-
-            fpo.close();
+            try (RandomAccessFile raf = new RandomAccessFile(fo, "rw")) {
+	            fpo = raf.getChannel();
+	            leos = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
+	
+	            dword = len - 8;
+	            leos.position(0);
+	            leos.limit(4);
+	            leos.putInt(dword);
+	            leos.flip();
+	            fpo.write(leos, 4);
+	
+	            dword = len - 44;
+	            leos.position(0);
+	            leos.limit(4);
+	            leos.putInt(dword);
+	            leos.flip();
+	            fpo.write(leos, 40);
+	
+	            fpo.close();
+            }
         }
     }
 
@@ -2393,147 +2391,150 @@ logger.fine(String.format("nch: %d, sfrq: %d, bps: %d, sfrq: %d, bps: %d\n", nch
             int fptlen, sumread;
             File file = File.createTempFile("ssrc", ".tmp");
             file.deleteOnExit();
-            FileChannel pipeIn = new FileInputStream(file).getChannel();
-            FileChannel pipeOut = new FileOutputStream(file).getChannel();
-
-            if (!quiet) {
-                System.err.printf("Pass 1\n");
-            }
-
+            try (FileInputStream fis = new FileInputStream(file);
+                 FileOutputStream fos = new FileOutputStream(file)) {
+	            FileChannel pipeIn = fis.getChannel();
+	            FileChannel pipeOut = fos.getChannel();
+	
+	            if (!quiet) {
+	                System.err.printf("Pass 1\n");
+	            }
+	
 logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d, ???: %d, twopass: %b, dither: %d\n", nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither));
-            Resampler resampler;
-            if (sfrq < dfrq) {
-                resampler = new Upsampler();
-            } else if (sfrq > dfrq) {
-                resampler = new Downsampler();
-            } else {
-                resampler = new NoSrc();
-            }
-            if (normalize) {
-                resampler.init(nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither);
-            } else {
-                resampler.init(nch, bps, 8, sfrq, dfrq, Math.pow(10, -att / 20), length / bps / nch, twopass, dither);
-            }
-            fptlen = resampler.resample(fpi, pipeOut);
-            peak[0] = resampler.peak;
-
-            pipeOut.close();
-
-            if (!quiet) {
-                System.err.printf("\npeak : %gdB\n", 20 * Math.log10(peak[0]));
-            }
-
-            if (!normalize) {
-                if (peak[0] < Math.pow(10, -att / 20)) {
-                    peak[0] = 1;
-                } else {
-                    peak[0] *= Math.pow(10, att / 20);
-                }
-            } else {
-                peak[0] *= Math.pow(10, att / 20);
-            }
-
-            if (!quiet) {
-                System.err.printf("\nPass 2\n");
-            }
-
-            if (dither != 0) {
-                switch (dbps) {
-                case 1:
-                    gain = (normalize || peak[0] >= (0x7f - samp) / (double) 0x7f) ? 1 / peak[0] * (0x7f - samp) : 1 / peak[0] * 0x7f;
-                    break;
-                case 2:
-                    gain = (normalize || peak[0] >= (0x7fff - samp) / (double) 0x7fff) ? 1 / peak[0] * (0x7fff - samp) : 1 / peak[0] * 0x7fff;
-                    break;
-                case 3:
-                    gain = (normalize || peak[0] >= (0x7fffff - samp) / (double) 0x7fffff) ? 1 / peak[0] * (0x7fffff - samp) : 1 / peak[0] * 0x7fffff;
-                    break;
-                }
-            } else {
-                switch (dbps) {
-                case 1:
-                    gain = 1 / peak[0] * 0x7f;
-                    break;
-                case 2:
-                    gain = 1 / peak[0] * 0x7fff;
-                    break;
-                case 3:
-                    gain = 1 / peak[0] * 0x7fffff;
-                    break;
-                }
-            }
-            randptr = 0;
-
-            setstarttime();
-
-            fptlen /= 8;
-
-            ByteBuffer leis = ByteBuffer.allocate(8);
-            for (sumread = 0; sumread < fptlen;) {
-                double f;
-                int s;
-
-                leis.clear();
-                pipeIn.read(leis);
-                leis.flip();
-                f = leis.getDouble();
+	            Resampler resampler;
+	            if (sfrq < dfrq) {
+	                resampler = new Upsampler();
+	            } else if (sfrq > dfrq) {
+	                resampler = new Downsampler();
+	            } else {
+	                resampler = new NoSrc();
+	            }
+	            if (normalize) {
+	                resampler.init(nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither);
+	            } else {
+	                resampler.init(nch, bps, 8, sfrq, dfrq, Math.pow(10, -att / 20), length / bps / nch, twopass, dither);
+	            }
+	            fptlen = resampler.resample(fpi, pipeOut);
+	            peak[0] = resampler.peak;
+	
+	            pipeOut.close();
+	
+	            if (!quiet) {
+	                System.err.printf("\npeak : %gdB\n", 20 * Math.log10(peak[0]));
+	            }
+	
+	            if (!normalize) {
+	                if (peak[0] < Math.pow(10, -att / 20)) {
+	                    peak[0] = 1;
+	                } else {
+	                    peak[0] *= Math.pow(10, att / 20);
+	                }
+	            } else {
+	                peak[0] *= Math.pow(10, att / 20);
+	            }
+	
+	            if (!quiet) {
+	                System.err.printf("\nPass 2\n");
+	            }
+	
+	            if (dither != 0) {
+	                switch (dbps) {
+	                case 1:
+	                    gain = (normalize || peak[0] >= (0x7f - samp) / (double) 0x7f) ? 1 / peak[0] * (0x7f - samp) : 1 / peak[0] * 0x7f;
+	                    break;
+	                case 2:
+	                    gain = (normalize || peak[0] >= (0x7fff - samp) / (double) 0x7fff) ? 1 / peak[0] * (0x7fff - samp) : 1 / peak[0] * 0x7fff;
+	                    break;
+	                case 3:
+	                    gain = (normalize || peak[0] >= (0x7fffff - samp) / (double) 0x7fffff) ? 1 / peak[0] * (0x7fffff - samp) : 1 / peak[0] * 0x7fffff;
+	                    break;
+	                }
+	            } else {
+	                switch (dbps) {
+	                case 1:
+	                    gain = 1 / peak[0] * 0x7f;
+	                    break;
+	                case 2:
+	                    gain = 1 / peak[0] * 0x7fff;
+	                    break;
+	                case 3:
+	                    gain = 1 / peak[0] * 0x7fffff;
+	                    break;
+	                }
+	            }
+	            randptr = 0;
+	
+	            setstarttime();
+	
+	            fptlen /= 8;
+	
+	            ByteBuffer leis = ByteBuffer.allocate(8);
+	            for (sumread = 0; sumread < fptlen;) {
+	                double f;
+	                int s;
+	
+	                leis.clear();
+	                pipeIn.read(leis);
+	                leis.flip();
+	                f = leis.getDouble();
 //if (sumread < 100) {
 // System.err.printf("2: %06d: %f\n", sumread, f);
 //}
-                f *= gain;
-                sumread++;
-
-                switch (dbps) {
-                case 1: {
-                    s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
-
-                    ByteBuffer buf = ByteBuffer.allocate(1);
-                    buf.put((byte) (s + 128));
-                    buf.flip();
-
-                    fpo.write(buf);
-                }
-                    break;
-                case 2: {
-                    s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
-
-                    ByteBuffer buf = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
-                    buf.putShort((short) s);
-                    buf.flip();
-
-                    fpo.write(buf);
-                }
-                    break;
-                case 3: {
-                    s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
-
-                    ByteBuffer buf = ByteBuffer.allocate(3);
-                    buf.put((byte) (s & 255));
-                    s >>= 8;
-                    buf.put((byte) (s & 255));
-                    s >>= 8;
-                    buf.put((byte) (s & 255));
-                    buf.flip();
-
-                    fpo.write(buf);
-                }
-                    break;
-                }
-
-                ch++;
-                if (ch == nch) {
-                    ch = 0;
-                }
-
-                if ((sumread & 0x3ffff) == 0) {
-                    showprogress((double) sumread / fptlen);
-                }
+	                f *= gain;
+	                sumread++;
+	
+	                switch (dbps) {
+	                case 1: {
+	                    s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+	
+	                    ByteBuffer buf = ByteBuffer.allocate(1);
+	                    buf.put((byte) (s + 128));
+	                    buf.flip();
+	
+	                    fpo.write(buf);
+	                }
+	                    break;
+	                case 2: {
+	                    s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+	
+	                    ByteBuffer buf = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
+	                    buf.putShort((short) s);
+	                    buf.flip();
+	
+	                    fpo.write(buf);
+	                }
+	                    break;
+	                case 3: {
+	                    s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+	
+	                    ByteBuffer buf = ByteBuffer.allocate(3);
+	                    buf.put((byte) (s & 255));
+	                    s >>= 8;
+	                    buf.put((byte) (s & 255));
+	                    s >>= 8;
+	                    buf.put((byte) (s & 255));
+	                    buf.flip();
+	
+	                    fpo.write(buf);
+	                }
+	                    break;
+	                }
+	
+	                ch++;
+	                if (ch == nch) {
+	                    ch = 0;
+	                }
+	
+	                if ((sumread & 0x3ffff) == 0) {
+	                    showprogress((double) sumread / fptlen);
+	                }
+	            }
+	            showprogress(1);
+	            if (!quiet) {
+	                System.err.printf("\n");
+	            }
+	            pipeIn.close();
             }
-            showprogress(1);
-            if (!quiet) {
-                System.err.printf("\n");
-            }
-            pipeIn.close();
         } else {
             Resampler resampler;
             if (sfrq < dfrq) {

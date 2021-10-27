@@ -20,7 +20,6 @@ import vavi.sound.smaf.message.graphics.OffsetOriginMessage;
 import vavi.sound.smaf.message.graphics.ResetOrigneMessage;
 import vavi.sound.smaf.message.graphics.UserMessage;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -113,7 +112,7 @@ Debug.println("messages: " + messages.size());
                 byte[] data = new byte[size];
                 read(is, data);
                 smafMessage = new UndefinedMessage(duration);
-Debug.println("reserved: " + StringUtil.toHex2(e1));
+Debug.printf("reserved: %02x\n", e1);
               } break;
             }
 

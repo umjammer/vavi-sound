@@ -35,7 +35,7 @@ import vavi.sound.smaf.message.ProgramChangeMessage;
 import vavi.sound.smaf.message.UndefinedMessage;
 import vavi.sound.smaf.message.VolumeMessage;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
+
 import vavix.io.huffman.Huffman;
 
 
@@ -135,7 +135,7 @@ Debug.println("messages: " + messages.size());
                     break;
                 default:
                     smafMessage = new UndefinedMessage(duration);
-Debug.println(Level.WARNING, "unknown 0xff, 0x" + StringUtil.toHex2(e2));
+Debug.printf(Level.WARNING, "unknown 0xff, 0x02x\n", e2);
                     break;
                 }
             } else if (e1 != 0x00) { // note
@@ -150,7 +150,7 @@ Debug.println(Level.WARNING, "unknown 0xff, 0x" + StringUtil.toHex2(e2));
                         smafMessage = new EndOfSequenceMessage(duration);
                     } else {
                         smafMessage = new UndefinedMessage(duration);
-Debug.println(Level.WARNING, "unknown 0x00, 0x00, 0x" + StringUtil.toHex2(e3));
+Debug.printf(Level.WARNING, "unknown 0x00, 0x00, 0x02x\n", e3);
                     }
                 } else {
                     int channel = (e2 & 0xc0) >> 6;
@@ -186,7 +186,7 @@ Debug.println(Level.WARNING, "unknown 0x00, 0x00, 0x" + StringUtil.toHex2(e3));
                             break;
                         default:
                             smafMessage = new UndefinedMessage(duration);
-Debug.println(Level.WARNING, "unknown 0x00, 0x" + StringUtil.toHex2(e2) + ", 3, " + StringUtil.toHex2(data));
+Debug.printf(Level.WARNING, "unknown 0x00, 0x02x, 3, %02x\n", e2, data);
                             break;
                         }
                         break;
@@ -250,7 +250,7 @@ private int cc = 0;
                 int d1 = read(is);
                 int d2 = read(is);
                 smafMessage = null;
-Debug.println(Level.WARNING, "reserved: 0xa_: " + StringUtil.toHex2(d1) + StringUtil.toHex2(d2));
+Debug.printf(Level.WARNING, "reserved: 0xa_: %02x%02x\n", d1, d2);
             } else if (status >= 0xb0 && status <= 0xbf) { // control change
                 int channel = status & 0x0f;
                 int control = read(is);
@@ -292,7 +292,7 @@ Debug.println(Level.WARNING, "reserved: 0xa_: " + StringUtil.toHex2(d1) + String
                     break;
                 default:
                     smafMessage = new UndefinedMessage(duration);
-Debug.println(Level.WARNING, "undefined control: " + StringUtil.toHex2(control) + ", " + StringUtil.toHex2(value));
+Debug.printf(Level.WARNING, "undefined control: %02x, %02x\n", control, value);
                     break;
                 }
             } else if (status >= 0xc0 && status <= 0xcf) { // program change
@@ -302,7 +302,7 @@ Debug.println(Level.WARNING, "undefined control: " + StringUtil.toHex2(control) 
             } else if (status >= 0xd0 && status <= 0xdf) { // reserved
                 int d1 = read(is);
                 smafMessage = new UndefinedMessage(duration);
-Debug.println(Level.WARNING, "reserved: 0xd_: " + StringUtil.toHex2(d1));
+Debug.printf(Level.WARNING, "reserved: 0xd_: %02x\n", d1);
             } else if (status >= 0xe0 && status <= 0xef) { // pitch vend message
                 int channel = status & 0x0f;
                 int lsb = read(is);
@@ -317,13 +317,13 @@ Debug.println(Level.WARNING, "reserved: 0xd_: " + StringUtil.toHex2(d1));
                 case 0x2f:
                     int d2 = read(is); // must be 0
                     if (d2 != 0) {
-Debug.println(Level.WARNING, "illegal state: " + StringUtil.toHex2(d2));
+Debug.printf(Level.WARNING, "illegal state: %02x\n", d2);
                     }
                     smafMessage = new EndOfSequenceMessage(duration);
                     break;
                 default:
                     smafMessage = new UndefinedMessage(duration);
-Debug.println(Level.WARNING, "unknown: 0xff: " + StringUtil.toHex2(d1));
+Debug.printf(Level.WARNING, "unknown: 0xff: %02x\n", d1);
                     break;
                 }
             } else if (status == 0xf0) { // exclusive
@@ -335,14 +335,14 @@ Debug.println(Level.WARNING, "unknown: 0xff: " + StringUtil.toHex2(d1));
             } else if (status < 0x80) { // data
                 smafMessage = null;
 if (cc < 10) {
- Debug.println(Level.WARNING, "data found, ignore: " + StringUtil.toHex2(status));
+ Debug.printf(Level.WARNING, "data found, ignore: %02x\n", status);
 }
 cc++;
             } else /* 0xf1 ~ 0xfe */ {  // reserved
                 smafMessage = new UndefinedMessage(duration);
-if (!uc.contains("reserved: " + StringUtil.toHex2(status))) {
- Debug.println(Level.WARNING, "reserved: " + StringUtil.toHex2(status));
- uc.add("reserved: " + StringUtil.toHex2(status));
+if (!uc.contains(String.format("reserved: %02x", status))) {
+ Debug.printf(Level.WARNING, "reserved: %02x\n", status);
+ uc.add(String.format("reserved: %02x", status));
 }
             }
 

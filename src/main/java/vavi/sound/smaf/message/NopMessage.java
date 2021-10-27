@@ -13,7 +13,6 @@ import javax.sound.midi.MidiEvent;
 
 import vavi.sound.smaf.ShortMessage;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
-import vavi.util.StringUtil;
 
 
 /**
@@ -44,7 +43,7 @@ public class NopMessage extends ShortMessage
     public String toString() {
         return "Nop:" +
             " duration=" + duration +
-            " (" + StringUtil.toHex4(duration) + ")";
+            " (" + String.format("%04x", duration) + ")";
     }
 
     //----

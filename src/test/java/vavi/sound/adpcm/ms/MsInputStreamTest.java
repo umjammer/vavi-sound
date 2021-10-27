@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 
 import vavi.io.LittleEndianDataInputStream;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 import vavi.util.win32.WAVE;
 
 import vavix.util.Checksum;
@@ -82,7 +81,7 @@ Debug.println("ext size: " + ledis.available());
         for (int i = 0; i < nCoefs; i++) {
             for (int j = 0; j < 2; j++) {
                 iCoefs[i][j] = ledis.readShort();
-Debug.println("iCoef[" + i + "][" + j + "]: " + StringUtil.toHex4(iCoefs[i][j]) + ": " + iCoefs[i][j]);
+Debug.printf("iCoef[%d][%d]: %04x: %d\n", i, j, iCoefs[i][j], iCoefs[i][j]);
             }
         }
         ledis.close();
@@ -105,7 +104,7 @@ Debug.println("wave: " + in.available());
             byteOrder.equals(ByteOrder.BIG_ENDIAN));
 System.err.println(audioFormat);
 
-Debug.println("samplesPerBlock: " + samplesPerBlock + ", numberChannels: " + format.getNumberChannels() + ", blockSize: " + format.getBlockSize());
+Debug.printf("samplesPerBlock: %d, numberChannels: %d, blockSize: %d\n", samplesPerBlock, format.getNumberChannels(), format.getBlockSize());
         InputStream is = new MsInputStream(in,
                                            samplesPerBlock,
                                            nCoefs,

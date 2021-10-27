@@ -6,9 +6,6 @@
 
 package vavi.sound.mfi;
 
-import vavi.util.StringUtil;
-
-
 /**
  * 音符を表すメッセージです．
  *
@@ -202,11 +199,11 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     /** */
     public String toString() {
         return "Note:" +
-            " delta="    + StringUtil.toHex2(data[0])  +
-            " voice="    + StringUtil.toHex2(voice)    +
-            " note="     + StringUtil.toHex2(note)     +
-            " gateTime=" + StringUtil.toHex2(gateTime) +
-            " velocity=" + StringUtil.toHex2(velocity);
+            " delta="    + String.format("%02x", data[0])  +
+            " voice="    + String.format("%02x", voice)    +
+            " note="     + String.format("%02x", note)     +
+            " gateTime=" + String.format("%02x", gateTime) +
+            " velocity=" + String.format("%02x", velocity);
     }
 }
 

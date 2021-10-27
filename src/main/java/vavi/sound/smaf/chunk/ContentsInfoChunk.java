@@ -55,9 +55,9 @@ public class ContentsInfoChunk extends Chunk {
         this.contentsClass = read(is);
 Debug.println("contentsClass: " + (contentsClass == 0 ? "YAMAHA" : "Vender ID(" + contentsClass + ")"));
         this.contentsType = read(is);
-Debug.println("contentsType: 0x" + StringUtil.toHex2(contentsType));
+Debug.printf("contentsType: 0x02x\n", contentsType);
         this.contentsCodeType = read(is);
-Debug.println("contentsCodeType: 0x" + StringUtil.toHex2(contentsCodeType));
+Debug.printf("contentsCodeType: 0x02x\n", contentsCodeType);
         this.copyStatus = read(is);
 Debug.println("copyStatus: " + StringUtil.toBits(copyStatus, 8));
         this.copyCounts = read(is);

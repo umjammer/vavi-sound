@@ -10,7 +10,6 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -41,7 +40,7 @@ public class Function3 implements MachineDependentFunction {
 
         int voice = (data[7] & 0xc0) >> 6;  // 0 ~ 3
         int modulation = data[7] & 0x3f;    // 0 ~ 63
-Debug.println("Vibrato: " + StringUtil.toHex2(voice) + " " + StringUtil.toHex2(modulation));
+Debug.printf("Vibrato: %d %02x\n", voice, modulation);
     }
 }
 

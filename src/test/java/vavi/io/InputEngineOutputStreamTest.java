@@ -12,7 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import vavix.io.IOStreamInputEngine;
@@ -34,6 +37,11 @@ class InputEngineOutputStreamTest {
     String inFile = "/test.sql";
     String out1File = "tmp/test.r13";
     String out2File = "tmp/test2.sql";
+
+    @BeforeAll
+    static void setup() throws IOException {
+    	Files.createDirectories(Paths.get("tmp"));
+    }
 
     @Test
     public void test1() throws Exception {

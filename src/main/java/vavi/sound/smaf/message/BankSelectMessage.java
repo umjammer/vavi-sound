@@ -14,7 +14,6 @@ import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**
@@ -123,7 +122,7 @@ public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
         throws InvalidMidiDataException {
 
         if (significant == null) {              // HandyPhoneStandard
-Debug.println("BankSelect: [" + duration + "] " + channel + "ch, 0x" + StringUtil.toHex2(bank));
+Debug.printf("BankSelect: [%d] %dch, 0x%02x", duration, channel, bank);
             int data2;
             if ((bank & 0x80) != 0) {
                 context.setDrum(channel, MidiContext.ChannelConfiguration.PERCUSSION);
