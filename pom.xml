@@ -8,7 +8,7 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-sound</artifactId>
-  <version>1.0.10</version>
+  <version>1.0.11</version>
 
   <name>Vavi Sound API</name>
   <url>https://github.com/umjammer/vavi-sound</url>
@@ -56,6 +56,7 @@ TODO
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
         <configuration>
           <source>8</source>
           <target>8</target>
@@ -98,12 +99,8 @@ TODO
       <url>https://jitpack.io</url>
     </repository>
     <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>bintray-umjammer-maven</id>
-      <name>bintray</name>
-      <url>https://dl.bintray.com/umjammer/maven</url>
+      <id>gitlab-maven</id>
+      <url>https://gitlab.com/api/v4/projects/30804899/packages/maven</url>
     </repository>
   </repositories>
 
@@ -126,7 +123,7 @@ TODO
     <dependency>
       <groupId>vavi</groupId>
       <artifactId>vavi-sound-nda</artifactId>
-      <version>1.0.8</version>
+      <version>1.0.10</version>
     </dependency>
 
     <dependency>
