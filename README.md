@@ -27,8 +27,7 @@ Includes many ADPCM codecs and the SSRC sampling rate converter.
 
 ### Install
 
- * this project uses gitlab package registry. add a personal access token to `~/.m2/settings.xml`
- * see https://docs.gitlab.com/ee/user/packages/maven_repository/index.html#authenticate-to-the-package-registry-with-maven
+ * https://jitpack.io/#umjammer/vavi-sound
 
 ### FAQ
 
