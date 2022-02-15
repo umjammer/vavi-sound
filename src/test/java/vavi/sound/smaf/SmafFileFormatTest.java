@@ -8,11 +8,12 @@ package vavi.sound.smaf;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -21,12 +22,12 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
-@Disabled
 public class SmafFileFormatTest {
 
     @Test
-    public void test() {
-        fail("Not yet implemented");
+    public void test() throws Exception, IOException {
+        Path path = Paths.get(SmafFileFormatTest.class.getResource("/test.mmf").toURI());
+        SmafSystem.getSmafFileFormat(new BufferedInputStream(Files.newInputStream(path)));
     }
 
     //----
@@ -37,7 +38,6 @@ public class SmafFileFormatTest {
      */
     public static void main(String[] args) throws Exception {
         SmafSystem.getSmafFileFormat(new BufferedInputStream(new FileInputStream(args[0])));
-        System.exit(0);
     }
 }
 

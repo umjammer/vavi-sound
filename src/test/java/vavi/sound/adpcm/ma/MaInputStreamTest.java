@@ -18,7 +18,6 @@ import java.nio.ByteOrder;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
@@ -31,6 +30,7 @@ import vavi.util.Debug;
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static vavi.sound.SoundUtil.volume;
 
 
 /**
@@ -87,10 +87,7 @@ Debug.println(ev.getType());
             }
         });
         line.start();
-FloatControl gainControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
-double gain = .2d; // number between 0 and 1 (loudest)
-float dB = (float) (Math.log(gain) / Math.log(10.0) * 20.0);
-gainControl.setValue(dB);
+        volume(line, .2d);
 
         byte[] buf = new byte[1024];
         while (is.available() > 0) {
