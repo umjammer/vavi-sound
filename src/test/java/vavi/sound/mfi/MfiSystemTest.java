@@ -6,14 +6,16 @@
 
 package vavi.sound.mfi;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.CountDownLatch;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import vavi.util.Debug;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -22,12 +24,25 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
-@Disabled
 public class MfiSystemTest {
 
     @Test
-    public void test() {
-        fail("Not yet implemented");
+    public void test() throws Exception {
+        CountDownLatch cdl = new CountDownLatch(1);
+        Path inPath = Paths.get(MfiSystemTest.class.getResource("/test.mld").toURI());
+        Sequencer sequencer = MfiSystem.getSequencer();
+        sequencer.open();
+        Sequence sequence = MfiSystem.getSequence(new BufferedInputStream(Files.newInputStream(inPath)));
+        sequencer.setSequence(sequence);
+        sequencer.addMetaEventListener(meta -> {
+Debug.println(meta.getType());
+            if (meta.getType() == 47) {
+                cdl.countDown();
+            }
+        });
+        sequencer.start();
+        cdl.await();
+        sequencer.close();
     }
 
     //-------------------------------------------------------------------------
@@ -47,9 +62,9 @@ Debug.println("START: " + args[i]);
             if (i == args.length - 1) {
                 sequencer.addMetaEventListener(meta -> {
 Debug.println(meta.getType());
-                        if (meta.getType() == 47) {
-                            sequencer.close();
-                        }
+                    if (meta.getType() == 47) {
+                        sequencer.close();
+                    }
                 });
             }
             sequencer.start();

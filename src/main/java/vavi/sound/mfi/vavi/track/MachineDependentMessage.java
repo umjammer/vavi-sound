@@ -10,6 +10,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -102,7 +103,7 @@ public class MachineDependentMessage extends SysexMessage
         // 5 vendor | carrier
         // 6
         // 7
-Debug.printf("MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x\n", data[0], data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0));
+Debug.printf(Level.FINE, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x\n", data[0], data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0));
         MachineDependentMessage message = new MachineDependentMessage(data);
         return message;
     }

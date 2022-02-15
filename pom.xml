@@ -52,6 +52,42 @@ TODO
     <url>https://github.com/umjammer/vavi-sound/issues</url>
   </issueManagement>
 
+  <profiles>
+    <profile>
+      <id>mac</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <dev.null>/dev/null</dev.null>
+      </properties>
+    </profile>
+    <profile>
+      <id>unix</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+      <properties>
+        <dev.null>/dev/null</dev.null>
+      </properties>
+    </profile>
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <dev.null>NUL</dev.null>
+      </properties>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
@@ -82,10 +118,11 @@ TODO
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M4</version>
+        <version>3.0.0-M5</version>
         <configuration>
           <argLine>
             -Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties
+            -Dvavi.test.dev.null=${dev.null}
           </argLine>
           <trimStackTrace>false</trimStackTrace>
         </configuration>
@@ -104,9 +141,18 @@ TODO
     </repository>
   </repositories>
 
+  <dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>com.github.umjammer</groupId>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.8.1</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
       <artifactId>vavi-commons</artifactId>
       <version>1.1.4</version>
     </dependency>
@@ -129,19 +175,16 @@ TODO
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-commons</artifactId>
-      <version>1.5.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

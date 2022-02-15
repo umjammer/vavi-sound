@@ -240,6 +240,9 @@ Debug.println("moduloChunkSize: " + moduloChunkSize);
         fileChunk.setContentsInfoChunk(contentsInfoChunk);
         fileChunk.addPcmAudioTrackChunk(pcmAudioTrackChunk);
 
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
         fileChunk.writeTo(new FileOutputStream(file));
         int r = fileChunk.getSize();
 Debug.println("write: " + r);

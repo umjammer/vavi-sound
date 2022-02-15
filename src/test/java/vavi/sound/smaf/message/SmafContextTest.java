@@ -6,19 +6,22 @@
 
 package vavi.sound.smaf.message;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.MidiSystem;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import vavi.sound.smaf.SmafSystem;
 import vavi.util.Debug;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -27,12 +30,31 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
-@Disabled
 public class SmafContextTest {
 
+    static Path dir;
+
+    @BeforeAll
+    static void setup() throws Exception {
+        dir = Paths.get("tmp");
+        if (Files.exists(dir)) {
+            Files.createDirectories(dir);
+        }
+    }
+
     @Test
-    public void test() {
-        fail("Not yet implemented");
+    @Disabled("not implemented yet")
+    public void test() throws Exception {
+        Path inPath = Paths.get(SmafContextTest.class.getResource("/test.mid").toURI());
+        javax.sound.midi.Sequence midiSequence = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(inPath)));
+        MidiFileFormat midiFileFormat = MidiSystem.getMidiFileFormat(new BufferedInputStream(Files.newInputStream(inPath)));
+        int type = midiFileFormat.getType();
+Debug.println("type: " + type);
+        vavi.sound.smaf.Sequence smafSequence = SmafSystem.toSmafSequence(midiSequence, type);
+
+        Path outPath = dir.resolve("SmafContextTest.mmf");
+        int r = SmafSystem.write(smafSequence, 0, Files.newOutputStream(outPath));
+Debug.println("write: " + r);
     }
 
     //-------------------------------------------------------------------------

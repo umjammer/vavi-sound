@@ -7,16 +7,17 @@
 package vavi.sound.midi.smaf;
 
 import java.io.File;
+import java.io.InputStream;
 
 import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import vavi.util.StringUtil;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 /**
@@ -25,12 +26,34 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
-@Disabled
 public class SmafVaviSequenceTest {
 
     @Test
-    public void test() {
-        fail("Not yet implemented");
+    public void test1() throws Exception {
+        InputStream is = SmafVaviSequenceTest.class.getResourceAsStream("/test.mmf");
+        Sequence sequence = new SmafMidiFileReader().getSequence(is);
+        assertNotNull(sequence);
+    }
+
+    @Test
+    public void test2() throws Exception {
+        InputStream is = SmafVaviSequenceTest.class.getResourceAsStream("/test.mmf");
+        Sequence sequence = MidiSystem.getSequence(is);
+        assertNotNull(sequence);
+    }
+
+    @Test
+    public void test3() throws Exception {
+        InputStream is = SmafVaviSequenceTest.class.getResourceAsStream("/test.mmf");
+        MidiFileFormat mff = new SmafMidiFileReader().getMidiFileFormat(is);
+        assertNotNull(mff);
+    }
+
+    @Test
+    public void test4() throws Exception {
+        InputStream is = SmafVaviSequenceTest.class.getResourceAsStream("/test.mmf");
+        MidiFileFormat mff = MidiSystem.getMidiFileFormat(is);
+        assertNotNull(mff);
     }
 
     //----
