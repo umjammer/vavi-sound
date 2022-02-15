@@ -8,7 +8,6 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,21 +56,21 @@ Debug.println("ScoreTrack[" + trackNumber + "]: " + size + " bytes");
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
-        this.formatType = FormatType.values()[read(is)];
-        this.sequenceType = SequenceType.values()[read(is)];
+        this.formatType = FormatType.values()[dis.readUnsignedByte()];
+        this.sequenceType = SequenceType.values()[dis.readUnsignedByte()];
 Debug.println("sequenceType: " + sequenceType);
-        this.durationTimeBase = read(is);
+        this.durationTimeBase = dis.readUnsignedByte();
 Debug.println("durationTimeBase: " + durationTimeBase + ", " + getDurationTimeBase() + " ms");
-        this.gateTimeTimeBase = read(is);
+        this.gateTimeTimeBase = dis.readUnsignedByte();
 Debug.println("gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBase() + " ms");
 
         switch (formatType) {
         case HandyPhoneStandard: {
             byte[] buffer = new byte[2];
-            read(is, buffer);
+            dis.readFully(buffer);
 //Debug.println(StringUtil.getDump(channelStatus));
             this.channelStatuses = new ChannelStatus[4];
             for (int i = 0; i < 4; i++) {
@@ -82,7 +81,7 @@ Debug.println("gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBa
         case MobileStandard_Compress:
         case MobileStandard_NoCompress: {
             byte[] buffer = new byte[16];
-            read(is, buffer);
+            dis.readFully(buffer);
             this.channelStatuses = new ChannelStatus[16];
             for (int i = 0; i < 16; i++) {
                 channelStatuses[i] = new ChannelStatus(i, (int) buffer[i]);
@@ -91,15 +90,15 @@ Debug.println("gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBa
           } break;
         case Unknown3: {
             byte[] buffer = new byte[32];
-            read(is, buffer);
+            dis.readFully(buffer);
             // TODO implement
           } break;
         }
 Debug.println("formatType: " + formatType);
 
-        while (available() > 0) {
+        while (dis.available() > 0) {
 //Debug.println("available: " + is.available() + ", " + available());
-            Chunk chunk = readFrom(is);
+            Chunk chunk = readFrom(dis);
             if (chunk instanceof SeekAndPhraseInfoChunk) {
                 seekAndPhraseInfoChunk = chunk;
             } else if (chunk instanceof SequenceDataChunk) {

@@ -7,7 +7,6 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 
@@ -31,17 +30,23 @@ public class UndefinedChunk extends Chunk {
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
+        if (size > dis.available()) {
+Debug.println(Level.WARNING, "read size is larger than available stream");
+//new Exception("*** DUMMY ***").printStackTrace(System.err);
+            throw new InvalidSmafDataException("read size is larger than available stream");
+        }
         byte[] data = new byte[size];
-        read(is, data);
+        dis.readFully(data);
 Debug.println(Level.WARNING, "Undefined: size: " + size + "\n" + StringUtil.getDump(data, 64));
     }
 
     /** */
     public void writeTo(OutputStream os) throws IOException {
         // TODO
+Debug.println(Level.WARNING, "not implemented skip");
     }
 }
 

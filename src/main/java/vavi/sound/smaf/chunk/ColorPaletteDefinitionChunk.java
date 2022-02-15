@@ -8,7 +8,6 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -37,9 +36,9 @@ public class ColorPaletteDefinitionChunk extends Chunk {
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
-skip(is, size);
+dis.skipBytes((int) (long) size);
     }
 
     /** */

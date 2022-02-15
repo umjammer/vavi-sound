@@ -6,9 +6,10 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
+import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
@@ -50,13 +51,13 @@ Debug.println("GraphicsTrackSequenceData[" + sequenceNumber + "]: " + size + " b
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         FormatType formatType = ((TrackChunk) parent).getFormatType();
         switch (formatType) {
         case HandyPhoneStandard:
-            readHandyPhoneStandard(is);
+            readHandyPhoneStandard(dis);
             break;
         default:
             throw new InvalidSmafDataException("FormatType: " + formatType);
@@ -65,17 +66,17 @@ Debug.println("messages: " + messages.size());
     }
 
     /** formatType 0 */
-    protected void readHandyPhoneStandard(InputStream is)
+    protected void readHandyPhoneStandard(DataInputStream dis)
         throws InvalidSmafDataException, IOException {
 
         SmafMessage smafMessage = null;
 
-        while (available() > 0) {
+        while (dis.available() > 0) {
             // -------- duration --------
-            int duration = readOneToTwo(is);
+            int duration = MidiUtil.readVariableLength(dis);
 //Debug.println("duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
             // -------- event --------
-            int e1 = read(is);
+            int e1 = dis.readUnsignedByte();
             switch (e1) {
             case 0x00: // short event
                 smafMessage = new NopMessage(duration);
@@ -84,33 +85,33 @@ Debug.println("messages: " + messages.size());
                 smafMessage = new ResetOrigneMessage(duration);
                 break;
             case 0x20: { // control event
-                int size = readOneToTwo(is);
+                int size = MidiUtil.readVariableLength(dis);
                 byte[] data = new byte[size];
-                read(is, data);
+                dis.readFully(data);
                 smafMessage = new BackDropColorDefinitionMessage(duration, data);
               } break;
             case 0x21: { // control event
-                int size = readOneToTwo(is);
+                int size = MidiUtil.readVariableLength(dis);
                 byte[] data = new byte[size];
-                read(is, data);
+                dis.readFully(data);
                 smafMessage = new OffsetOriginMessage(duration, data);
               } break;
             case 0x22: { // control event
-                int size = readOneToTwo(is);
+                int size = MidiUtil.readVariableLength(dis);
                 byte[] data = new byte[size];
-                read(is, data);
+                dis.readFully(data);
                 smafMessage = new UserMessage(duration, data);
               } break;
             case 0x40: { // display object event
-                int size = readOneToTwo(is);
+                int size = MidiUtil.readVariableLength(dis);
                 byte[] data = new byte[size];
-                read(is, data);
+                dis.readFully(data);
                 smafMessage = new GeneralPurposeDisplayMessage(duration, e1, data);
               } break;
             default: {
-                int size = readOneToTwo(is);
+                int size = MidiUtil.readVariableLength(dis);
                 byte[] data = new byte[size];
-                read(is, data);
+                dis.readFully(data);
                 smafMessage = new UndefinedMessage(duration);
 Debug.printf("reserved: %02x\n", e1);
               } break;

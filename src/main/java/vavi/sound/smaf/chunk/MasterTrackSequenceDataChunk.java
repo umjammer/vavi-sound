@@ -7,7 +7,6 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
@@ -30,9 +29,9 @@ Debug.println("MasterTrackSequenceData: " + size + " bytes");
     }
 
     /** TODO how to get formatType from parent chunk ??? */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
-skip(is, size); // TODO
+dis.skipBytes((int) (long) size); // TODO
     }
 }
 

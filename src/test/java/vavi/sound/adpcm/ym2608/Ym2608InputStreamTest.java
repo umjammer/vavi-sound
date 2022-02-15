@@ -44,9 +44,9 @@ public class Ym2608InputStreamTest {
 
     @BeforeEach
     public void setup() throws IOException {
-//        outFile = File.createTempFile("vavi", ".pcm");
-//        outFile.deleteOnExit();
-        outFile = new File("src/test/resources/vavi/sound/adpcm/ym2608/out_vavi.pcm");
+        outFile = File.createTempFile("vavi", ".pcm");
+        outFile.deleteOnExit();
+//        outFile = new File("src/test/resources/vavi/sound/adpcm/ym2608/out_vavi.pcm");
 Debug.println("outFile: " + outFile);
     }
 

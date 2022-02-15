@@ -8,12 +8,12 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.SysexMessage;
@@ -44,19 +44,19 @@ Debug.println("SetupData: " + size + " bytes");
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent) throws InvalidSmafDataException, IOException {
+    protected void init(MyDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
 
         ScoreTrackChunk.FormatType formatType = ((ScoreTrackChunk) parent).getFormatType();
         switch (formatType) {
         case HandyPhoneStandard:
-            readHandyPhoneStandard(is);
+            readHandyPhoneStandard(dis);
             break;
         case MobileStandard_Compress:
-            readMobileStandard(is); // TODO Huffman
+            readMobileStandard(dis); // TODO Huffman
             break;
         case MobileStandard_NoCompress:
         case Unknown3:
-            readMobileStandard(is);
+            readMobileStandard(dis);
             break;
         }
 Debug.println("messages: " + messages.size());
@@ -73,20 +73,20 @@ Debug.println("messages: " + messages.size());
      *
      * </pre>
      */
-    private void readHandyPhoneStandard(InputStream is) throws InvalidSmafDataException, IOException {
+    private void readHandyPhoneStandard(MyDataInputStream dis) throws InvalidSmafDataException, IOException {
 
         SmafMessage smafMessage = null;
 
-        while (available() > 0) {
+        while (dis.available() > 0) {
             // -------- event --------
-            int e1 = read(is);
+            int e1 = dis.readUnsignedByte();
             if (e1 == 0xff) { // exclusive
-                int e2 = read(is);
+                int e2 = dis.readUnsignedByte();
                 switch (e2) {
                 case 0xf0:
-                    int messageSize = read(is);
+                    int messageSize = dis.readUnsignedByte();
                     byte[] data = new byte[messageSize];
-                    read(is, data);
+                    dis.readFully(data);
                     // TODO end check 0xf7
                     smafMessage = SysexMessage.Factory.getSysexMessage(0, data);
                     break;
@@ -109,17 +109,17 @@ Debug.printf(Level.WARNING, "unhandled: %02x\n", e1);
     }
 
     /** formatType 1, 2 */
-    private void readMobileStandard(InputStream is) throws InvalidSmafDataException, IOException {
+    private void readMobileStandard(MyDataInputStream dis) throws InvalidSmafDataException, IOException {
 
         SmafMessage smafMessage = null;
 
-        while (available() > 0) {
+        while (dis.available() > 0) {
             // event
-            int status = read(is);
+            int status = dis.readUnsignedByte();
             if (status == 0xf0) { // exclusive
-                int messageSize = readOneToFour(is);
+                int messageSize = MidiUtil.readVariableLength(dis);
                 byte[] data = new byte[messageSize];
-                read(is, data);
+                dis.readFully(data);
                 // TODO end check 0xf7
                 smafMessage = SysexMessage.Factory.getSysexMessage(0, data);
             } else {

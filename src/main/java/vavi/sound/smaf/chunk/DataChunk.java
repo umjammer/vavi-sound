@@ -6,13 +6,14 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.DataInput;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
@@ -44,17 +45,17 @@ Debug.println(Level.FINE, "Data: lang: " + languageCode + ", size: " + size);
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
-//Debug.println("available: " + available());
-        while (available() > 4) { // TODO 正常ファイルは 0 でいい
-            SubData subDatum = new SubData(is);
-Debug.println(subDatum);
+Debug.println(Level.FINER, "available: " + dis.available());
+        while (dis.available() > 4) { // TODO 正常ファイルは 0 でいい
+            SubData subDatum = new SubData(dis);
+Debug.println(Level.FINE, subDatum);
             subData.put(subDatum.tag, subDatum);
 Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.length + ", " + dis.available());
         }
-        skip(is, available()); // TODO 正常ファイルなら必要なし
+        dis.skipBytes(dis.available()); // TODO 正常ファイルなら必要なし
     }
 
     /** */
@@ -128,15 +129,15 @@ Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.len
     class SubData {
 
         /** */
-        SubData(InputStream is) throws IOException {
+        SubData(DataInput di) throws IOException {
             byte[] temp = new byte[2];
-            read(is, temp);
+            di.readFully(temp);
             this.tag = new String(temp);
 
-            int size = readShort(is);
+            int size = di.readUnsignedShort();
 
             this.data = new byte[size];
-            read(is, this.data);
+            di.readFully(this.data);
         }
 
         /** */
@@ -181,7 +182,7 @@ Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.len
                 if (printable) {
                     return "SubData(" + new String(tag) + ", lang: " + getLanguageCode() + ", size: " + data.length + "): " + string;
                 } else {
-                    return "SubData(" + new String(tag) + ", lang: " + getLanguageCode() + ", size: " + data.length + ")\n" + StringUtil.getDump(data);
+                    return "SubData(" + new String(tag) + ", lang: " + getLanguageCode() + ", size: " + data.length + ")\n" + StringUtil.getDump(data, 128);
                 }
             } catch (UnsupportedEncodingException e) {
                 assert false;

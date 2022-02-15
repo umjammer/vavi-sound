@@ -70,14 +70,20 @@ public class SmafFileFormat {
 
     /** factory */
     static SmafFileFormat readFrom(InputStream is) throws InvalidSmafDataException, IOException {
-        Chunk chunk = Chunk.readFrom(is, null, true);
-        if (FileChunk.class.isInstance(chunk)) {
-            FileChunk fileChunk = FileChunk.class.cast(chunk);
-            SmafFileFormat sff = new SmafFileFormat(fileChunk.getSize());
-            sff.sequence = new SmafSequence(fileChunk);
-            return sff;
-        } else {
-            throw new InvalidSmafDataException("stream is not smaf");
+        try {
+            Chunk chunk = Chunk.readFrom(is, null);
+            if (FileChunk.class.isInstance(chunk)) {
+                FileChunk fileChunk = FileChunk.class.cast(chunk);
+                SmafFileFormat sff = new SmafFileFormat(fileChunk.getSize());
+                sff.sequence = new SmafSequence(fileChunk);
+                return sff;
+            } else {
+                throw new InvalidSmafDataException("stream is not smaf: first chunk: " + chunk.getId());
+            }
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvalidSmafDataException(e);
         }
     }
 

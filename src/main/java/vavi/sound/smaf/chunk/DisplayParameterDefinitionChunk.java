@@ -8,11 +8,11 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
 
@@ -40,19 +40,19 @@ public class DisplayParameterDefinitionChunk extends Chunk {
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         int i = 0;
         while (i < size) {
-            int eventSize = readOneToTwo(is);
-            int eventType = read(is);
+            int eventSize = MidiUtil.readVariableLength(dis);
+            int eventType = dis.readUnsignedByte();
             Event event = new Event();
             event.eventType = eventType;
 Debug.println("event: " + eventType);
             for (int j = 0; j < ((eventSize - 1) / 2); j++) {
-                int parameterId = read(is);
-                int parameterValue = read(is);
+                int parameterId = dis.readUnsignedByte();
+                int parameterValue = dis.readUnsignedByte();
                 Event.Parameter parameter = new Event.Parameter();
                 parameter.parameterID = ParameterID.valueOf(parameterId);
                 parameter.value = parameterValue;

@@ -7,7 +7,6 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.logging.Level;
@@ -34,21 +33,21 @@ Debug.println("MasterTrack: " + size);
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
-        this.formatType = FormatType.values()[read(is)];
-        this.sequenceType = SequenceType.values()[read(is)];
+        this.formatType = FormatType.values()[dis.readUnsignedByte()];
+        this.sequenceType = SequenceType.values()[dis.readUnsignedByte()];
 Debug.println("sequenceType: " + sequenceType);
-        this.durationTimeBase = read(is);
+        this.durationTimeBase = dis.readUnsignedByte();
 //Debug.println("durationTimeBase: " + StringUtil.toHex2(durationTimeBase));
-        int optionSize = read(is);
+        int optionSize = dis.readUnsignedByte();
         this.optionData = new byte[optionSize];
-        read(is, optionData);
+        dis.readFully(optionData);
 
-        while (available() > 0) {
+        while (dis.available() > 0) {
 //Debug.println("available: " + is.available() + ", " + available());
-              Chunk chunk = readFrom(is);
+              Chunk chunk = readFrom(dis);
               if (chunk instanceof MasterTrackSequenceDataChunk) { // "Mssq"
                   sequenceDataChunk = chunk;
               } else {

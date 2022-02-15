@@ -6,8 +6,8 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.DataInput;
 import java.io.DataInputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.util.ByteUtil;
 import vavi.util.Debug;
 import vavi.util.properties.PrefixedPropertiesFactory;
 
@@ -35,17 +36,6 @@ public abstract class Chunk {
     /** Chunk size */
     protected int size;
 
-    /**
-     * 親でカウントダウンしないで済むように。
-     * (結局ややこしいだけちゃうん？)
-     * @see #Chunk(byte[], int)
-     * @see #available()
-     * @see #read(InputStream)
-     * @see #skip(InputStream,long)
-     * @see #read(InputStream,byte[])
-     */
-    private int readSize;
-
     /** */
     public Chunk() {
     }
@@ -55,18 +45,16 @@ public abstract class Chunk {
 
         this.id = id;
         this.size = size;
-
-        this.readSize = size;
     }
 
     /**
-     * @param is Chunk Header は読み込み済みであること
+     * @param dis Chunk Header は読み込み済みであること
      * @throws IOException
      * @throws InvalidSmafDataException
      * TODO Chunk -> constructor ???
      * TODO parent を渡したいが為。
      */
-    protected abstract void init(InputStream is, Chunk parent)
+    protected abstract void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException;
 
     /** Chunk ID */
@@ -80,91 +68,6 @@ public abstract class Chunk {
     }
 
     /**
-     * カウントダウンした結果
-     * @see #readSize
-     */
-    protected int available() {
-        return readSize;
-    }
-
-    /**
-     * 勝手にカウントダウンしない InputStream から直接読み込んだ場合の補正用
-     * @see #readSize
-     */
-    private void consume(int size) {
-        readSize -= size;
-    }
-
-    /**
-     * EOF チェック付きのユーティリティ
-     * @see #readSize カウントダウンされます
-     */
-    protected void skip(InputStream is, long bytes) throws IOException {
-        skipInternal(is, bytes);
-        readSize -= bytes;
-    }
-
-    /**
-     * EOF チェック付きのユーティリティ
-     */
-    private static void skipInternal(InputStream is, long bytes) throws IOException {
-        long l = 0;
-        while (bytes - l > 0) {
-            long r = is.skip(bytes - l);
-            if (r < 0) {
-                throw new EOFException();
-            }
-            l += r;
-        }
-    }
-
-    /**
-     * EOF チェック付きのユーティリティ
-     * @see #readSize カウントダウンされます
-     * @return unsigned byte
-     */
-    protected int read(InputStream is) throws IOException {
-        DataInputStream dis = new DataInputStream(is);
-        consume(1);
-        return dis.readUnsignedByte();
-    }
-
-    /**
-     * EOF チェック付きのユーティリティ
-     * @see #readSize カウントダウンされます
-     * @return unsigned short
-     */
-    protected int readShort(InputStream is) throws IOException {
-        DataInputStream dis = new DataInputStream(is);
-        consume(2);
-        return dis.readUnsignedShort();
-    }
-
-    /**
-     * EOF チェック付きのユーティリティ
-     * buffer.length サイズ読み込まれます。
-     * @see #readSize カウントダウンされます
-     */
-    protected void read(InputStream is, byte[] buffer) throws IOException {
-        readInternal(is, buffer);
-        consume(buffer.length);
-    }
-
-    /**
-     * EOF チェック付きのユーティリティ
-     */
-    private static void readInternal(InputStream is, byte[] buffer) throws IOException {
-        int l = 0;
-        while (buffer.length - l > 0) {
-            int r = is.read(buffer, l, buffer.length - l);
-            if (r < 0) {
-                throw new EOFException();
-            }
-            l += r;
-        }
-    }
-
-    /**
      * 最初でない親の読み込み用(マーク無し)
      * @param is
      * @return 読み込んだ Chunk オブジェクト
@@ -172,62 +75,54 @@ public abstract class Chunk {
     protected Chunk readFrom(InputStream is)
         throws InvalidSmafDataException, IOException {
 
-        return readFrom(is, this, false);
+        return readFrom(is, this);
     }
 
     /**
      * @param is should support marking
      * @param parent 親のデータが欲しい時があるので
-     * @param mark Chunk Header を読み込んだあと破棄するかどうか(最初だけ使う)
      * @return 読み込んだ Chunk オブジェクト
-     * @see #readSize parent != null ならカウントダウンされます
-     * @throws IOException when <i>is</i> does not support marking
      */
-    public static Chunk readFrom(InputStream is, Chunk parent, boolean mark)
+    public static Chunk readFrom(InputStream is, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
-        if (mark && !is.markSupported()) {
-            throw new IOException("cannot mark to stream");
-        }
-
-        if (mark) {
-            is.mark(8);
+        DataInputStream dis;
+        if (is instanceof MyDataInputStream) {
+            MyDataInputStream mdis = MyDataInputStream.class.cast(is);
+            dis = new DataInputStream(mdis.is);
+        } else {
+            dis = new DataInputStream(is);
         }
 
         byte[] id = new byte[4];
-        readInternal(is, id);
+        dis.readFully(id); // not want to count down
 
-        DataInputStream dis = new DataInputStream(is);
         int size = dis.readInt();
-Debug.printf(Level.FINE, "size: %1$08x (%1$d)", size);
-
-        if (mark) {
-            is.reset();
-            is.mark(8 + size);
-            skipInternal(is, 8);
-        }
+Debug.printf(Level.FINE, "size: 0x%1$08x (%1$d)", size);
 
         Chunk chunk = newInstance(id, size);
-        chunk.init(is, parent);
-
-        if (mark) {
-            is.reset();
-
-            is.mark(8 + size);
-            int crcLength = size + 8 - 2;
-            byte[] buffer = new byte[crcLength];
-            readInternal(is, buffer);
-
-            CRC16 crc = new CRC16();
-            crc.update(buffer);
-Debug.printf(Level.FINE, "crc (calc): %04x", (int) ~crc.getValue());
-
-            is.reset();
-        }
+//Debug.println(chunk.getClass().getName() + "\n" + StringUtil.getDump(is, 0, 128));
+//Debug.printf(Level.FINE, "is: " + is + " / " + chunk.getClass().getName());
+        MyDataInputStream mdis = new MyDataInputStream(is, id, size);
+//Debug.printf(Level.FINE, "mdis: " + mdis + " / " + chunk.getClass().getName());
+        chunk.init(mdis, parent);
 
         if (parent != null) {
             // 親のループ内での読み込みの場合
-            parent.consume(8 + chunk.getSize());
+            if (is instanceof MyDataInputStream) {
+                mdis = MyDataInputStream.class.cast(is);
+                mdis.readSize -= 8 + chunk.getSize();
+            } else {
+                assert false : "is: " + is.getClass().getName();
+            }
+        } else {
+//Debug.printf(Level.FINE, "crc (calc): %04x, avail: %d, %s, %s", mdis.crc(), mdis.available(), mdis, chunk.getClass().getName());
+            if (chunk instanceof FileChunk) {
+                FileChunk fc = FileChunk.class.cast(chunk);
+                if (fc.getCrc() != mdis.crc()) {
+Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.getCrc(), mdis.crc());
+                }
+            }
         }
 
         return chunk;
@@ -237,6 +132,124 @@ Debug.printf(Level.FINE, "crc (calc): %04x", (int) ~crc.getValue());
     public abstract void writeTo(OutputStream os) throws IOException;
 
     //----
+
+    /** input stream with count down, crc */
+    protected static class MyDataInputStream extends InputStream implements DataInput {
+        InputStream is;
+        DataInputStream dis;
+        int readSize;
+        static ThreadLocal<CRC16> crc = new ThreadLocal<>();
+
+        protected MyDataInputStream(InputStream is, byte[] id, int size) {
+            if (is instanceof MyDataInputStream) {
+                MyDataInputStream mdis = MyDataInputStream.class.cast(is);
+                this.is = mdis.is;
+            } else {
+                this.is = is;
+            }
+//Debug.printf(Level.FINE, "is: " + this.is);
+            this.dis = new DataInputStream(this.is);
+            this.readSize = size;
+
+            if (crc.get() == null) {
+                crc.set(new CRC16());
+            }
+            crc.get().update(id);
+            crc.get().update(ByteUtil.getBeBytes(size));
+        }
+        public int crc() {
+//Debug.println("crc len: " + crc.get().getCount());
+            return (int) crc.get().getValue();
+        }
+        @Override
+        public long skip(long n) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public int available() throws IOException {
+            return readSize;
+        }
+        @Override
+        public int readUnsignedByte() throws IOException {
+            int r = dis.readUnsignedByte();
+            crc.get().update((byte) r);
+            readSize--;
+            return r;
+        }
+        @Override
+        public void readFully(byte[] b) throws IOException {
+            dis.readFully(b, 0, b.length);
+            crc.get().update(b);
+            readSize -= b.length;
+        }
+        @Override
+        public int read() throws IOException {
+            return is.read();
+        }
+        @Override
+        public void readFully(byte[] b, int off, int len) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public int skipBytes(int n) throws IOException {
+            byte[] b = new byte[n];
+            dis.readFully(b);
+            crc.get().update(b);
+            readSize -= n;
+            return n;
+        }
+        @Override
+        public boolean readBoolean() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public byte readByte() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public short readShort() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public int readUnsignedShort() throws IOException {
+            int r = dis.readUnsignedShort();
+            if (available() > 2) {
+                // crc is located at last of the file
+                // and this condition assumed to get crc uses this method.
+                crc.get().update(ByteUtil.getBeBytes((short) r));
+            }
+            readSize -= 2;
+            return r;
+        }
+        @Override
+        public char readChar() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public int readInt() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public long readLong() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public float readFloat() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public double readDouble() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public String readLine() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public String readUTF() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+    }
 
     /** CCITT X.25 */
     static class CRC16 {
@@ -264,6 +277,7 @@ Debug.printf(Level.FINE, "crc (calc): %04x", (int) ~crc.getValue());
         /** */
         int crc = 0xffff;
 
+        int count;
         /**
          * 16 ビットの CRC を方法 1 で求めます。
          * @param c データを与えます。
@@ -272,6 +286,7 @@ Debug.printf(Level.FINE, "crc (calc): %04x", (int) ~crc.getValue());
         public int update(byte[] c) {
             for (int n = 0; n < c.length; n++) {
                 crc = (crc << BYTE_BIT) ^ crcTable[((crc >> (16 - BYTE_BIT)) & 0xff) ^ (c[n] & 0xff)];
+                count++;
             }
             return ~crc & 0xffff;
         }
@@ -279,73 +294,25 @@ Debug.printf(Level.FINE, "crc (calc): %04x", (int) ~crc.getValue());
         /** */
         public int update(byte c) {
             crc = (crc << BYTE_BIT) ^ crcTable[((crc >> (16 - BYTE_BIT)) & 0xff) ^ (c & 0xff)];
+            count++;
             return ~crc & 0xffff;
         }
 
         /** */
-        public long getValue() {
-            return crc;
+        public int getValue() {
+            return ~crc & 0xffff;
         }
-    }
+
+        /** */
+        public int getCount() {
+            return count;
+        }
+}
 
     //----
 
     /**
-     * read 1 ~ 2 bytes
-     * @return 0〜127, 128〜16511 (0x407f)
-     */
-    protected int readOneToTwo(InputStream is)
-        throws IOException {
-
-        int value;
-        int d1 = read(is);
-//Debug.println("d1: " + d1 + "(" + StringUtil.toHex2(d1) + ")");
-        if ((0x80 & d1) != 0) {         // ---- 0x80 ~ 0xff,  ----
-            int d2 = read(is);
-//Debug.println("d2: " + d2 + "(" + StringUtil.toHex2(d2) + ")");
-            value = (((d1 & 0x7f) + 1) << 7) | (d2 & 0x7f);
-        } else {                        // ---- 0x01 ~ 0x7f, ----
-            value = d1 & 0x7f;
-        }
-//Debug.println("value: " + value);
-        return value;
-    }
-
-    /**
-     * read 1 ~ 4 bytes
-     * @return 0 ~ 268435455 (0x0fffffff)
-     */
-    protected int readOneToFour(InputStream is)
-        throws IOException {
-
-        int value;
-        int d1 = read(is);
-        if ((0x80 & d1) != 0) {
-            int d2 = read(is);
-            if ((0x80 & d2) != 0) {
-                int d3 = read(is);
-                if ((0x80 & d3) != 0) {
-                    int d4 = read(is);
-                    value = ((d1 & 0x7f) << 21) | ((d2 & 0x7f) << 14) | ((d3 & 0x7f) << 7) | (d4 & 0x7f);
-//Debug.println("1-4(4): " + value);
-                } else {
-                    value = ((d1 & 0x7f) << 14) | ((d2 & 0x7f) << 7) | (d3 & 0x7f);
-//Debug.println("1-4(3): " + value);
-                }
-            } else {
-                value = ((d1 & 0x7f) << 7) | (d2 & 0x7f); // 128 ~
-//Debug.println("1-4(2): " + value);
-            }
-        } else {
-            value = d1 & 0x7f; // 0 ~ 127
-//Debug.println("1-4(1): " + value);
-        }
-        return value;
-    }
-
-    //----
-
-    /**
+     * factory
      * @param id a chunk id read
      * @param size
      * @return chunk
@@ -356,29 +323,30 @@ Debug.printf(Level.FINE, "crc (calc): %04x", (int) ~crc.getValue());
         try {
             return chunkFactory.get(id).newInstance(id, size);
         } catch (IllegalArgumentException e) {
+Debug.println(Level.FINE, e);
             return new UndefinedChunk(id, size); // TODO out source
 //          throw new InvalidSmafDataException("unsupported chunk id: " + StringUtil.getDump(id));
         } catch (Exception e) {
 if (e instanceof InvocationTargetException) {
-Debug.printStackTrace(e.getCause());
+Debug.printStackTrace(Level.SEVERE, e.getCause());
 } else {
-Debug.printStackTrace(e);
+Debug.printStackTrace(Level.SEVERE, e);
 }
             throw new IllegalStateException(e);
         }
     }
 
-    /** */
+    /** prefix for property file */
     private static final String keyBase = "chunk.";
 
-    /** */
+    /** constructors for factory */
     private static final PrefixedPropertiesFactory<byte[], Constructor<? extends Chunk>> chunkFactory =
         new PrefixedPropertiesFactory<byte[], Constructor<? extends Chunk>>("/vavi/sound/smaf/smaf.properties", keyBase) {
 
         @Override
         public Constructor<? extends Chunk> get(byte[] id) {
             String type = new String(id);
-Debug.printf(Level.FINE, "Chunk ID(read): %s+0x%02x", (Character.isLetterOrDigit(type.charAt(3)) ? type : new String(id, 0, 3)), type.charAt(3));
+Debug.printf(Level.FINE, "Chunk ID(read): %s+0x%02x", (Character.isLetterOrDigit(type.charAt(3)) ? type : new String(id, 0, 3)), (int) type.charAt(3));
 
             for (String key : instances.keySet()) {
                 if (key.charAt(3) == '*' && key.substring(0, 3).equals(type.substring(0, 3))) {

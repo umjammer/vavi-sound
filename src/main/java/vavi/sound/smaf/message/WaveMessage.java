@@ -7,6 +7,7 @@
 package vavi.sound.smaf.message;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -14,6 +15,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 
+import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -116,7 +118,7 @@ public class WaveMessage extends SmafMessage
         switch (formatType) {
         case HandyPhoneStandard:
             try {
-                writeOneToTwo(baos, duration);
+                MidiUtil.writeVarInt(new DataOutputStream(baos), duration);
             } catch (IOException e) {
                 assert false;
             }
@@ -125,7 +127,7 @@ public class WaveMessage extends SmafMessage
             event |= number & 0x3f;
             baos.write(event);
             try {
-                writeOneToTwo(baos, gateTime);
+                MidiUtil.writeVarInt(new DataOutputStream(baos), gateTime);
             } catch (IOException e) {
                 assert false;
             }

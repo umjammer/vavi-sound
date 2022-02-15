@@ -8,7 +8,6 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -42,12 +41,12 @@ public class SeekAndPhraseInfoChunk extends Chunk {
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         byte[] data = new byte[size];
 Debug.println("SeekAndPhraseInfo: " + size + " bytes (subData)");
-        read(is, data);
+        dis.readFully(data);
 
         int i = 0;
         while (i < size) {

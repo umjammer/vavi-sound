@@ -6,10 +6,6 @@
 
 package vavi.sound.smaf;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-
 /**
  * SMAF メッセージの基底クラスです．
  *
@@ -42,21 +38,6 @@ public abstract class SmafMessage {
 
     /** */
     public abstract int getLength();
-
-    /** */
-    protected void writeOneToTwo(OutputStream os, int value) throws IOException {
-        if (value < 128) {
-            os.write(value);
-        } else {
-            os.write(0x80 | (value - 0x80) / 0x80);
-            os.write((value - 0x80) % 0x80);
-        }
-    }
-
-    /** */
-    protected void writeOneToFour(OutputStream os, int value) throws IOException {
-        // TODO
-    }
 }
 
 /* */

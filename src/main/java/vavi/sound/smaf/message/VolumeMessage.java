@@ -7,12 +7,14 @@
 package vavi.sound.smaf.message;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
 
+import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
@@ -93,7 +95,7 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
         switch (formatType) {
         case HandyPhoneStandard:
             try {
-                writeOneToTwo(baos, duration);
+                MidiUtil.writeVarInt(new DataOutputStream(baos), duration);
             } catch (IOException e) {
                 assert false;
             }

@@ -7,10 +7,12 @@
 package vavi.sound.smaf.message;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 import javax.sound.midi.MidiEvent;
 
+import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.ShortMessage;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 
@@ -55,7 +57,7 @@ public class NopMessage extends ShortMessage
         switch (formatType) {
         case HandyPhoneStandard:
             try {
-                writeOneToTwo(baos, duration);
+                MidiUtil.writeVarInt(new DataOutputStream(baos), duration);
             } catch (IOException e) {
                 assert false;
             }

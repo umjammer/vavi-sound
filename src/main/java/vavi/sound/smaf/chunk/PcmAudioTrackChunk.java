@@ -8,7 +8,6 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,25 +48,25 @@ Debug.println("PcmAudioTrack[" + trackNumber + "]: " + size + " bytes");
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 //skip(is, size);
 
-        this.formatType = FormatType.values()[read(is)];
+        this.formatType = FormatType.values()[dis.readUnsignedByte()];
 Debug.println("formatType: " + formatType);
-        this.sequenceType = SequenceType.values()[read(is)];
+        this.sequenceType = SequenceType.values()[dis.readUnsignedByte()];
 Debug.println("sequenceType: " + sequenceType);
 
-        this.waveType = new WaveType(readShort(is));
+        this.waveType = new WaveType(dis.readUnsignedShort());
 Debug.println("waveType: " + waveType);
 
-        this.durationTimeBase = read(is);
+        this.durationTimeBase = dis.readUnsignedByte();
 Debug.println("durationTimeBase: " + durationTimeBase + ", " + getDurationTimeBase() + " ms");
-        this.gateTimeTimeBase = read(is);
+        this.gateTimeTimeBase = dis.readUnsignedByte();
 Debug.println("gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBase() + " ms");
 
-        while (available() > 0) {
-            Chunk chunk = readFrom(is);
+        while (dis.available() > 0) {
+            Chunk chunk = readFrom(dis);
             if (chunk instanceof SeekAndPhraseInfoChunk) {
                 seekAndPhraseInfoChunk = chunk;
             } else if (chunk instanceof AudioSequenceDataChunk) {
