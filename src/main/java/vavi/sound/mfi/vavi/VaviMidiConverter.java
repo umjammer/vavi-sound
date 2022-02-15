@@ -156,9 +156,9 @@ Debug.println(">>>> create MFi track: " + j);
                 // 0xb0 10: panpot
 
                 if ((command & 0xf0) == 0xb0) {
-                    key = "midi.short." + (command & 0xf0) + "." + data1;
+                    key = "short." + (command & 0xf0) + "." + data1;
                 } else {
-                    key = "midi.short." + (command & 0xf0);
+                    key = "short." + (command & 0xf0);
                 }
             } else if (midiMessage instanceof SysexMessage) {
 
@@ -176,7 +176,7 @@ Debug.println("create MFi track: 0");
                 mfiContext.setTrackUsed(0, true);
 
                 mfiTrackNumber = 0;
-                key = "midi.sysex." + data[0];
+                key = "sysex." + data[0];
             } else if (midiMessage instanceof MetaMessage) {
                 // 1 -> ProtInfo
                 // 2 -> CopyInfo
@@ -196,13 +196,18 @@ Debug.println("create MFi track: 0");
                 mfiContext.setTrackUsed(0, true);
 
                 mfiTrackNumber = 0;
-                key = "midi.meta." + meta;
+                key = "meta." + meta;
             }
 
             // convert
 try {
             MfiConvertible converter = MfiConvertible.factory.get(key);
-            if (converter instanceof EndOfTrackMessage) { // TODO ???
+            if (converter == null) {
+if (!uc.contains(key)) {
+ Debug.println(Level.WARNING, "no converter for: [" + key + "]");
+ uc.add(key);
+}
+            } else if (converter instanceof EndOfTrackMessage) { // TODO ???
                 // converted
                 MfiEvent[] mfiEvents = converter.getMfiEvents(midiEvent, mfiContext);
                 for (int t = 0; t < mfiEvents.length && t < maxTracks; t++) {
@@ -249,12 +254,7 @@ if (mfiEvents[j] == null) {
                 }
             }
 } catch (IllegalArgumentException e) {
-if (!uc.contains(key)) {
- Debug.println(Level.WARNING, "no converter for: " + key);
- uc.add(key);
-}
-//} else {
-//Debug.println("converter: " + StringUtil.getClassName(converter.getClass()));
+ Debug.println(Level.WARNING, e);
 }
         }
 
