@@ -12,7 +12,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 
-import vavi.sound.midi.MidiConstants;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.SmafMessage;
 import vavi.util.Debug;
 
@@ -80,7 +80,7 @@ Debug.println(e);
             data = songTitle.getBytes();
         }
         MetaMessage metaMessage = new MetaMessage();
-        metaMessage.setMessage(MidiConstants.META_NAME,
+        metaMessage.setMessage(MetaEvent.META_NAME.number(),
                                data,
                                data.length);
         return new MidiEvent[] {

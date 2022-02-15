@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import vavi.sound.midi.MidiConstants;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.MetaMessage;
 import vavi.sound.smaf.SmafEvent;
@@ -195,7 +195,7 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         props.put("gateTimeTimeBase", timeBaseTable[gateTimeTimeBase]);
 
         MetaMessage metaMessage = new MetaMessage();
-        metaMessage.setMessage(MidiConstants.META_MACHINE_DEPEND, props);
+        metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
         events.add(new SmafEvent(metaMessage, 0l));
 
         //

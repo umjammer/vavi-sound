@@ -18,6 +18,7 @@ import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.midi.MidiConstants;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
 
 
@@ -80,7 +81,7 @@ public class ProtMessage extends SubMessage
 
         MetaMessage metaMessage = new MetaMessage();
 
-        metaMessage.setMessage(MidiConstants.META_TEXT_EVENT, // テキスト
+        metaMessage.setMessage(MetaEvent.META_TEXT_EVENT.number(),
                                getData(),
                                getDataLength());
 

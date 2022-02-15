@@ -20,6 +20,7 @@ import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.midi.MidiConstants;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
 
 
@@ -91,7 +92,7 @@ public class TitlMessage extends SubMessage
 
         MetaMessage metaMessage = new MetaMessage();
 
-        metaMessage.setMessage(MidiConstants.META_NAME,    // シーケンス名/トラック名
+        metaMessage.setMessage(MetaEvent.META_NAME.number(),    // シーケンス名/トラック名
                                getData(),
                                getDataLength());
 

@@ -17,7 +17,7 @@ import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.mfi.vavi.sequencer.UnknownVenderSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.sound.midi.MidiConstants;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.util.Debug;
@@ -66,8 +66,8 @@ class MetaEventAdapter implements MetaEventListener, MfiDevice {
      */
     public void meta(javax.sound.midi.MetaMessage message) {
 //Debug.println("type: " + message.getType());
-        switch (message.getType()) {
-        case MidiConstants.META_MACHINE_DEPEND: // シーケンサ固有のメタイベント
+        switch (MetaEvent.valueOf(message.getType())) {
+        case META_MACHINE_DEPEND: // シーケンサ固有のメタイベント
             try {
                 processSpecial(message);
             } catch (InvalidMfiDataException e) {
@@ -80,13 +80,13 @@ Debug.printStackTrace(e);
 throw e;
 }
             break;
-        case MidiConstants.META_TEXT_EVENT:     // テキスト・イベント
-        case MidiConstants.META_COPYRIGHT:      // 著作権表示
-        case MidiConstants.META_NAME:           // シーケンス名またはトラック名
+        case META_TEXT_EVENT:     // テキスト・イベント
+        case META_COPYRIGHT:      // 著作権表示
+        case META_NAME:           // シーケンス名またはトラック名
 Debug.println("meta " + message.getType() + ": " + MidiUtil.getDecodedMessage(message.getData()));
             break;
-        case MidiConstants.META_END_OF_TRACK:   // トラックの終わり
-        case MidiConstants.META_TEMPO:          // テンポ設定
+        case META_END_OF_TRACK:   // トラックの終わり
+        case META_TEMPO:          // テンポ設定
 Debug.println(Level.FINE, "this handler ignore meta: " + message.getType());
             break;
         default:
