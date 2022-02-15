@@ -53,26 +53,26 @@ public class ContentsInfoChunk extends Chunk {
         throws InvalidSmafDataException, IOException {
 
         this.contentsClass = read(is);
-Debug.println("contentsClass: " + (contentsClass == 0 ? "YAMAHA" : "Vender ID(" + contentsClass + ")"));
         this.contentsType = read(is);
-Debug.printf("contentsType: 0x02x\n", contentsType);
         this.contentsCodeType = read(is);
-Debug.printf("contentsCodeType: 0x02x\n", contentsCodeType);
         this.copyStatus = read(is);
-Debug.println("copyStatus: " + StringUtil.toBits(copyStatus, 8));
         this.copyCounts = read(is);
-Debug.println("copyCounts: " + copyCounts);
+Debug.println(Level.FINE, "contentsClass: " + (contentsClass == 0 ? "YAMAHA" : "Vender ID(" + contentsClass + ")"));
+Debug.printf(Level.FINE, "contentsType: 0x%02x\n", contentsType);
+Debug.printf(Level.FINE, "contentsCodeType: 0x%02x\n", contentsCodeType);
+Debug.println(Level.FINE, "copyStatus: " + StringUtil.toBits(copyStatus, 8));
+Debug.println(Level.FINE, "copyCounts: " + copyCounts);
         byte[] option = new byte[size - 5];
         read(is, option);
-Debug.println("option: " + option.length + " bytes (subData)");
+Debug.println(Level.FINE, "option: " + option.length + " bytes (subData)");
         int i = 0;
         while (i < option.length) {
-//Debug.println(i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
+Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
             SubData subDatum = new SubData(option, i, contentsCodeType);
             subData.put(subDatum.getTag(), subDatum);
-Debug.println("ContentsInfo: subDatum: " + subDatum);
+Debug.println(Level.FINE, "ContentsInfo: subDatum: " + subDatum);
             i += 2 + 1 + subDatum.getData().length + 1; // tag ':' data ','
-//Debug.println(i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
+Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
         }
     }
 

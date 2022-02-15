@@ -49,12 +49,10 @@ System.err.println(format);
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(format);
-        line.addLineListener(new LineListener() {
-            public void update(LineEvent ev) {
+        line.addLineListener(ev -> {
                 if (LineEvent.Type.STOP == ev.getType()) {
                     System.exit(0);
                 }
-            }
         });
 FloatControl gainControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
 double gain = .2d; // number between 0 and 1 (loudest)

@@ -38,20 +38,18 @@ public class MfiSystemTest {
      * usage: java -Djavax.sound.midi.Sequencer="#Real Time Sequencer" MfiSystem mfi_file ...
      */
     public static void main(String[] args) throws Exception {
-        final Sequencer sequencer = MfiSystem.getSequencer();
+        Sequencer sequencer = MfiSystem.getSequencer();
         sequencer.open();
         for (int i = 0; i < args.length; i++) {
 Debug.println("START: " + args[i]);
             Sequence sequence = MfiSystem.getSequence(new File(args[i]));
             sequencer.setSequence(sequence);
             if (i == args.length - 1) {
-                sequencer.addMetaEventListener(new MetaEventListener() {
-                    public void meta(MetaMessage meta) {
+                sequencer.addMetaEventListener(meta -> {
 Debug.println(meta.getType());
                         if (meta.getType() == 47) {
                             sequencer.close();
                         }
-                    }
                 });
             }
             sequencer.start();

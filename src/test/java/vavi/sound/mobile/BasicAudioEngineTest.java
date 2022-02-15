@@ -101,12 +101,9 @@ Debug.println("★★★★★★★★ output PCM to file: " + pcmFileName);
         sequencer.open();
         vavi.sound.mfi.Sequence sequence = vavi.sound.mfi.MfiSystem.getSequence(new File(args[0]));
         sequencer.setSequence(sequence);
-        sequencer.addMetaEventListener(new vavi.sound.mfi.MetaEventListener() {
-            public void meta(vavi.sound.mfi.MetaMessage meta) {
+        sequencer.addMetaEventListener(meta -> {
 Debug.println(meta.getType());
                 if (meta.getType() == 47) {
-                    System.exit(0);
-                }
             }
         });
         sequencer.start();

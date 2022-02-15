@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.Sequence;
@@ -180,11 +181,11 @@ class HeaderChunk {
 
         // 1. check
         if (!isValid()) {
-Debug.println("majorType: " + majorType);
-Debug.println("minorType: " + minorType);
-Debug.println("[sorc]: "    + subChunks.get(SorcMessage.TYPE));
-Debug.println("[titl]: "    + subChunks.get(TitlMessage.TYPE));
-Debug.println("[vers]: "    + subChunks.get(VersMessage.TYPE));
+Debug.println(Level.FINE, "majorType: " + majorType);
+Debug.println(Level.FINE, "minorType: " + minorType);
+Debug.println(Level.FINE, "[sorc]: "    + subChunks.get(SorcMessage.TYPE));
+Debug.println(Level.FINE, "[titl]: "    + subChunks.get(TitlMessage.TYPE));
+Debug.println(Level.FINE, "[vers]: "    + subChunks.get(VersMessage.TYPE));
             throw new InvalidMfiDataException("fields are not filled");
         }
 
@@ -207,11 +208,11 @@ Debug.println("[vers]: "    + subChunks.get(VersMessage.TYPE));
         dos.writeByte(majorType);
         dos.writeByte(minorType);
         dos.writeByte(tracksCount);
-Debug.println("mfiDataLength: " + mfiDataLength);
-Debug.println("dataLength: "    + dataLength);
-Debug.println("majorType: "     + majorType);
-Debug.println("minorType: "     + minorType);
-Debug.println("numberTracks: "  + tracksCount);
+Debug.println(Level.FINE, "mfiDataLength: " + mfiDataLength);
+Debug.println(Level.FINE, "dataLength: "    + dataLength);
+Debug.println(Level.FINE, "majorType: "     + majorType);
+Debug.println(Level.FINE, "minorType: "     + minorType);
+Debug.println(Level.FINE, "numberTracks: "  + tracksCount);
 
         for (SubMessage subChunk : subChunks.values()) {
             subChunk.writeTo(os);
@@ -239,21 +240,21 @@ Debug.println("numberTracks: "  + tracksCount);
 
         // 1.2 length
         headerChunk.mfiDataLength = dis.readInt();
-Debug.println("mfiDataLength: " + headerChunk.mfiDataLength);
+Debug.println(Level.FINE, "mfiDataLength: " + headerChunk.mfiDataLength);
 
         // 1.3.1 offset to "trac" or "adat"
         headerChunk.dataLength = dis.readUnsignedShort();
-Debug.println("dataLength: " + headerChunk.dataLength);
+Debug.println(Level.FINE, "dataLength: " + headerChunk.dataLength);
 
         // 1.3.2.1 major type
         headerChunk.majorType = dis.readUnsignedByte();
-Debug.println("majorType: " + headerChunk.majorType);
+Debug.println(Level.FINE, "majorType: " + headerChunk.majorType);
         // 1.3.2.2 minor type
         headerChunk.setMinorType(dis.readUnsignedByte());
-Debug.println("minorType: " + headerChunk.minorType);
+Debug.println(Level.FINE, "minorType: " + headerChunk.minorType);
         // 1.3.3 number of tracks
         headerChunk.tracksCount = dis.readUnsignedByte();
-Debug.println("numberTracks: " + headerChunk.tracksCount);
+Debug.println(Level.FINE, "numberTracks: " + headerChunk.tracksCount);
 
         // 1.4 header sub chunks
         long l = 0;

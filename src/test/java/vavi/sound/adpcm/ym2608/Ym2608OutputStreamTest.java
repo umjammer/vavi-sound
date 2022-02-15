@@ -45,7 +45,6 @@ public class Ym2608OutputStreamTest {
 Debug.println("outFile: " + outFile);
     }
 
-    /** */
     @Test
     public void test1() throws Exception {
         OutputStream os = new FileOutputStream(outFile);

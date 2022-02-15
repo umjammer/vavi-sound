@@ -50,9 +50,6 @@ public class Ym2608InputStreamTest {
 Debug.println("outFile: " + outFile);
     }
 
-    /**
-     * TODO incomplete
-     */
     @Test
     public void test1() throws Exception {
 

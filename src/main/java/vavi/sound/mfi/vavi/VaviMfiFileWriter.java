@@ -127,14 +127,14 @@ Debug.println(Level.WARNING, "unsupported fileType: " + fileType);
         try {
             ff.writeTo(out);
         } catch (InvalidMfiDataException e) {
-Debug.printStackTrace(e);
+Debug.printStackTrace(Level.WARNING, e);
             return 0;
         }
 
         return ff.getByteLength();
     }
 
-    /** {@link #write(Sequence, int, OutputStream)} に委譲 */
+    /** delegate to {@link #write(Sequence, int, OutputStream)} */
     public int write(Sequence in, int fileType, File out)
         throws IOException {
 
@@ -152,34 +152,34 @@ Debug.printStackTrace(e);
             String value = props.getProperty("format.type.major");
             if (value != null) {
                 defaultMajorType = Integer.parseInt(value);
-Debug.println("major: " + defaultMajorType);
+Debug.println(Level.FINE, "major: " + defaultMajorType);
             }
 
             value = props.getProperty("format.type.minor");
             if (value != null) {
                 defaultMinorType = Integer.parseInt(value);
-Debug.println("minor: " + defaultMinorType);
+Debug.println(Level.FINE, "minor: " + defaultMinorType);
             }
 
             value = props.getProperty("format.header.titl");
             if (value != null) {
                 defaultTitle = value;
-Debug.println("titl: " + defaultTitle);
+Debug.println(Level.FINE, "titl: " + defaultTitle);
             }
 
             value = props.getProperty("format.header.prot");
             if (value != null) {
                 defaultCreator = value;
-Debug.println("prot: " + defaultCreator);
+Debug.println(Level.FINE, "prot: " + defaultCreator);
             }
 
             value = props.getProperty("format.header.vers");
             if (value != null) {
                 defaultVersion = value;
-Debug.println("vers: " + defaultVersion);
+Debug.println(Level.FINE, "vers: " + defaultVersion);
             }
         } catch (Exception e) {
-Debug.printStackTrace(e);
+Debug.printStackTrace(Level.SEVERE, e);
             throw new IllegalStateException(e);
         }
     }

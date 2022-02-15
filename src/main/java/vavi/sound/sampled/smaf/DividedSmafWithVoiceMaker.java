@@ -8,6 +8,7 @@ package vavi.sound.sampled.smaf;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -68,6 +69,7 @@ class DividedSmafWithVoiceMaker extends SmafWithVoiceMaker {
         public void exec(WaveDivider.Chunk chunk) throws IOException {
             try {
                 File file = new File(directory, String.format(base, chunk.sequence + 1));
+Debug.println(Level.FINE, "file: " + file + ", " + directory + ", " + base + ", " + (chunk.sequence + 1));
                 r += createSMAF(chunk.buffer, file);
             } catch (InvalidSmafDataException e) {
                 throw (IOException) new IOException().initCause(e);

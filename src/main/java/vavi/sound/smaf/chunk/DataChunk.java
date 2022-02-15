@@ -34,7 +34,7 @@ public class DataChunk extends Chunk {
         super(id, size);
 
         this.languageCode = id[3] & 0xff;
-Debug.println("Data: lang: " + languageCode + ", size: " + size);
+Debug.println(Level.FINE, "Data: lang: " + languageCode + ", size: " + size);
     }
 
     /** */
@@ -52,7 +52,7 @@ Debug.println("Data: lang: " + languageCode + ", size: " + size);
             SubData subDatum = new SubData(is);
 Debug.println(subDatum);
             subData.put(subDatum.tag, subDatum);
-//Debug.println("SubData: " + subDatum.tag + ", " + subDatum.data.length + ", " + available());
+Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.length + ", " + dis.available());
         }
         skip(is, available()); // TODO 正常ファイルなら必要なし
     }

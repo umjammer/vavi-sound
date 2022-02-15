@@ -107,7 +107,10 @@ public final class MidiUtil {
         }
     }
 
-    /** */
+    /**
+     * read 1 ~ 4 bytes
+     * @return 0 ~ 268435455 (0x0fffffff)
+     */
     public static int readVariableLength(DataInput input) throws IOException {
         int b = input.readUnsignedByte();
         int v = b & 0x7f;

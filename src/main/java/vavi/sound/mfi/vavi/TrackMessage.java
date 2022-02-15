@@ -68,13 +68,13 @@ public class TrackMessage extends MfiMessage {
     /** */
     public void setNoteLength(int noteLength) {
         this.noteLength = noteLength;
-Debug.println("noteLength: " + noteLength);
+Debug.println(Level.FINE, "noteLength: " + noteLength);
     }
 
     /** */
     public void setExst(int exst) {
         this.exst = exst;
-Debug.println("exst: " + exst);
+Debug.println(Level.FINE, "exst: " + exst);
     }
 
     /**
@@ -87,7 +87,7 @@ Debug.println("exst: " + exst);
 
         dos.writeBytes(TYPE);
         dos.writeInt(getDataLength());
-Debug.println("track: " + trackNumber + ": " + getDataLength());
+Debug.println(Level.FINE, "track: " + trackNumber + ": " + getDataLength());
         for (int j = 0; j < track.size(); j++) {
             MfiEvent event = track.get(j);
             MfiMessage message = event.getMessage();
@@ -114,8 +114,8 @@ try {
                 trackLength += message.getLength();
             }
 } catch (RuntimeException e) {
- Debug.printStackTrace(e);
- Debug.println("j: " + j + ", track.size: " + track.size() + ", " + track.get(j));
+ Debug.printStackTrace(Level.SEVERE, e);
+ Debug.println(Level.SEVERE, "j: " + j + ", track.size: " + track.size() + ", " + track.get(j));
  throw e;
 }
         }
@@ -152,7 +152,7 @@ try {
 
         // length
         int trackLength = dis.readInt();
-Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
+Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
 
         // events
         int l = 0;
@@ -290,7 +290,7 @@ Debug.println("trackLength[" + trackNumber + "]: " + trackLength);
                     noteMessageConstructor2 = clazz.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE);
                 }
             } catch (Exception e) {
-Debug.printStackTrace(e);
+Debug.printStackTrace(Level.SEVERE, e);
                 throw new IllegalStateException(e);
             }
         }
@@ -361,7 +361,7 @@ Debug.printf(Level.WARNING, "sysex unhandled: delta: %02x, status: %02x, extende
                     }
                 }
             } catch (Exception e) {
-Debug.printStackTrace(e);
+Debug.printStackTrace(Level.SEVERE, e);
                 throw new IllegalStateException(e);
             }
         }
@@ -430,7 +430,7 @@ Debug.printf(Level.WARNING, "short unhandled: delta: %02x, status: %02x, extende
                 }
 
             } catch (Exception e) {
-Debug.printStackTrace(e);
+Debug.printStackTrace(Level.SEVERE, e);
                 throw new IllegalStateException(e);
             }
         }
@@ -501,7 +501,7 @@ Debug.printf(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended
                     }
                 }
             } catch (Exception e) {
-Debug.printStackTrace(e);
+Debug.printStackTrace(Level.SEVERE, e);
                 throw new IllegalStateException(e);
             }
         }
@@ -559,7 +559,7 @@ Debug.printStackTrace(e);
                 }
 
             } catch (Exception e) {
-Debug.printStackTrace(e);
+Debug.printStackTrace(Level.SEVERE, e);
                 throw new IllegalStateException(e);
             }
         }
