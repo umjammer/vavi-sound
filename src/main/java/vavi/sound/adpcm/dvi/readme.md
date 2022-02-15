@@ -1,47 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<html lang="ja">
+# vavi.sound.adpcm.dvi
 
-<head>
-<link rev="MADE" href="mailto:vavivavi@yahoo.co.jp" />
-<link rel="INDEX" href="orverview.html" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<link rel="stylesheet" type="text/css" href="../../../../vavi.css" />
-<title>vavi.sound.adpcm.dvi</title>
-<!--
- * Copyright (c) 2003 by Naohide Sano, All rights reserved.
- *
- * Written by Naohide Sano
- *
- * @author	<a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
- *
- * @version	0.00	030817	nsano	initial version
--->
-</head>
-
-<body>
-
-<p>
 Intel/DVI ADPCM フォーマット関連のクラスを提供します．
-</p>
+
+## Status
 
 完成
 
-<h2>わかったこと</h2>
+## Tech-know
 
-<ul>
-<li>audiocafe の Java 移植はバグってる？</li>
-</ul>
+ * audiocafe の Java 移植はバグってる？
 
-<h2>これから実装すること</h2>
+## TODO
 
-<ul>
-<li><del datetime="060124">一括読み込みを止める</del></li>
-<li><del>encode</del></li>
-</ul>
+ * ~~datetime="060124 一括読み込みを止める~~
+ * ~~encode~~
 
-<h2>一次ライセンス</h2>
-<pre>
+## License
+```
 /***********************************************************
 Copyright 1992 by Stichting Mathematisch Centrum, Amsterdam, The
 Netherlands.
@@ -65,7 +40,4 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
 OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ******************************************************************/
-</pre>
-</body>
-
-</html>
+```

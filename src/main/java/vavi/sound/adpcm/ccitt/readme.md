@@ -1,50 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
+# vavi.sound.adpcm.ccitt
 
-<html>
-<head>
-<link rev="MADE" href="mailto:vavivavi@yahoo.co.jp" />
-<link rel="INDEX" href="orverview.html" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<link rel="stylesheet" type="text/css" href="../../../../vavi.css" />
-<title>vavi.sound.adpcm.ccitt</title>
-<!--
- * Copyright (c) 2003 by Naohide Sano, All rights reserved.
- *
- * Written by Naohide Sano
- *
- * @author	<a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
- *
- * @version	0.00	030816	nsano	initial version
--->
-</head>
-
-<body>
-
-<p>
 CCITT 勧告の音声圧縮フォーマット関連のクラスを提供します。
-</p>
 
-<ul>
-<li>encoder.exe は little endian</li>
-</ul>
+## Tech-know
 
-<h2>わかったこと</h2>
+ * encoder.exe は little endian
+ * PCM_SIGNED の場合はちゃんと 16Bit Signed な数値を渡してやる
 
-<ul>
-<li>PCM_SIGNED の場合はちゃんと 16Bit Signed な数値を渡してやる</li>
-<li></li>
-</ul>
+## TODO
 
-<h2>これから実装すること</h2>
+ * 3, 5bit
 
-<ul>
-<li>3, 5bit</li>
-<li></li>
-</ul>
+## License
 
-<h2>一次ライセンス</h2>
-<pre>
+```
 /*
  * This source code is a product of Sun Microsystems, Inc. and is provided
  * for unrestricted use.  Users may copy or modify this source code without
@@ -70,8 +39,4 @@ CCITT 勧告の音声圧縮フォーマット関連のクラスを提供しま�
  * 2550 Garcia Avenue
  * Mountain View, California  94043
  */
-</pre>
-
-</body>
-
-</html>
+```

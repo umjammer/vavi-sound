@@ -1,36 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<html lang="ja">
+# vavi.sound.smaf.chunk
 
-<head>
-<link rev="MADE" href="mailto:vavivavi@yahoo.co.jp" />
-<link rel="INDEX" href="orverview.html" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<link rel="stylesheet" type="text/css" href="../../../vavi.css" />
-<title>vavi.sound.smaf.chunk</title>
-<!--
- * Copyright (c) 2008 by Naohide Sano, All rights reserved.
- *
- * Written by Naohide Sano
- *
- * @author	<a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
- *
- * @version	0.00	080417	nsano	initial version
--->
-</head>
-
-<body>
-
-<p>
 SMAF サウンド関連のファイル構造を表すクラスを提供します．
-</p>
 
-<h2>概要</h2>
+## Abstract
+
 SMAF ファイルの読み込み時に使用されます。
 
-<h2>構造</h2>
+## Structure
 
-<pre>
+```
                                                                         wav2mld
 
         FileChunk                                   (MMMD)              *
@@ -55,14 +33,6 @@ SMAF ファイルの読み込み時に使用されます。
                 [MasterTrackChunk]                  (MSTR)
                 crc                                                     *
 
-</pre>
+```
 
-<h2>これから実装すること</h2>
-
-<ul>
-<li></li>
-</ul>
-
-</body>
-
-</html>
+## TODO
