@@ -13,6 +13,10 @@ import vavi.util.properties.PrefixedClassPropertiesFactory;
 
 /**
  * AudioData message sequencer.
+ * <pre>
+ * properties file ... "/vavi/sound/mfi/vavi/vavi.properties"
+ * name prefix ... "audioEngine.format."
+ * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070119 nsano initial version <br>

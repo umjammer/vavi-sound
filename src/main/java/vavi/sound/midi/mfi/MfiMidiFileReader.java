@@ -39,6 +39,7 @@ public class MfiMidiFileReader extends BasicMidiFileReader {
 
         try {
             if (!is.markSupported()) {
+                // TODO should be wrap by BufferedInputStream?
                 throw new IOException("mark not supported: " + is);
             }
 

@@ -13,6 +13,10 @@ import vavi.util.properties.PrefixedClassPropertiesFactory;
 
 /**
  * WaveSequencer.
+ * <pre>
+ * properties file ... "/vavi/sound/smaf/smaf.properties"
+ * name prefix ... "audioEngine.format."
+ * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
@@ -25,7 +29,7 @@ public interface WaveSequencer {
     /** */
     void sequence() throws InvalidSmafDataException;
 
-    /** */
+    /** factory */
     class Factory extends PrefixedClassPropertiesFactory<Integer, AudioEngine> {
 
         /** */

@@ -24,18 +24,19 @@ import static vavi.sound.SoundUtil.volume;
 
 /**
  * PCM AudioEngine.
- *
-WSC-MAX_DLL
-DLL
-                 Input File                                                               Output File
-wscma2_dll       File Format         Bit              Sampling Frequency      Form        Conversion Format   File Format
-wscma3_dll       WAVE                16bit            4kHz or 8kHz            mono        4bit ADPCM          SMAF/MA-2
-                 WAVE                16bit            4kHz~16kHz              mono        4bit ADPCM          SMAF/MA-3
-wscma5_dll       WAVE                16bit or 8bit    4kHz~ 8kHz              mono        8bit PCM            SMAF/MA-3
-                 WAVE or AIFF        16bit            4kHz~24kHz              mono        4bit ADPCM          SMAF/MA-5
-                 WAVE or AIFF        16bit or 8bit    4kHz~12kHz              mono        8bit PCM            SMAF/MA-5
-                 WAVE or AIFF        16bit            4kHz~12kHz             stereo       4bit ADPCM          SMAF/MA-5
-                 WAVE or AIFF        16bit or 8bit    4kHz~6kHz              stereo       8bit PCM            SMAF/MA-5
+ * <pre>
+ * WSC-MAX_DLL
+ * DLL
+ *                  Input File                                                               Output File
+ * wscma2_dll       File Format         Bit              Sampling Frequency      Form        Conversion Format   File Format
+ * wscma3_dll       WAVE                16bit            4kHz or 8kHz            mono        4bit ADPCM          SMAF/MA-2
+ *                  WAVE                16bit            4kHz~16kHz              mono        4bit ADPCM          SMAF/MA-3
+ * wscma5_dll       WAVE                16bit or 8bit    4kHz~ 8kHz              mono        8bit PCM            SMAF/MA-3
+ *                  WAVE or AIFF        16bit            4kHz~24kHz              mono        4bit ADPCM          SMAF/MA-5
+ *                  WAVE or AIFF        16bit or 8bit    4kHz~12kHz              mono        8bit PCM            SMAF/MA-5
+ *                  WAVE or AIFF        16bit            4kHz~12kHz             stereo       4bit ADPCM          SMAF/MA-5
+ *                  WAVE or AIFF        16bit or 8bit    4kHz~6kHz              stereo       8bit PCM            SMAF/MA-5
+ * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020829 nsano initial version <br>
@@ -53,7 +54,7 @@ public class PcmAudioEngine extends BasicAudioEngine {
         data = new Data[32];
     }
 
-    /** */
+    @Override
     protected int getChannels(int streamNumber) {
         int channels = 1;
         if (data[streamNumber].channel == -1) {
@@ -85,7 +86,7 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber]
         return channels;
     }
 
-    /** */
+    @Override
     protected InputStream[] getInputStreams(int streamNumber, int channels) {
         InputStream[] iss = new InputStream[2];
         if (data[streamNumber].channels == 1) {
@@ -106,11 +107,12 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber]
 
     //-------------------------------------------------------------------------
 
-    /** */
+    @Override
     protected OutputStream getOutputStream(OutputStream os) {
         return os;
     }
 
+    @Override
     public void start(int streamNumber) {
 
         int channels = getChannels(streamNumber);
@@ -167,9 +169,7 @@ Debug.println(audioFormat);
             line.stop();
             line.close();
 // debug4(os);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } catch (LineUnavailableException e) {
+        } catch (IOException | LineUnavailableException e) {
             throw new IllegalStateException(e);
         }
     }

@@ -40,7 +40,7 @@ public class RohmAudioEngine extends BasicAudioEngine {
         data = new Data[MAX_ID];
     }
 
-    /** */
+    @Override
     protected int getChannels(int streamNumber) {
         int channels = 1;
         if (data[streamNumber].channel != -1) {
@@ -61,7 +61,7 @@ public class RohmAudioEngine extends BasicAudioEngine {
         return channels;
     }
 
-    /** */
+    @Override
     protected InputStream[] getInputStreams(int streamNumber, int channels) {
         InputStream[] iss = new InputStream[2];
         if (data[streamNumber].channels == 1) {
@@ -82,7 +82,7 @@ public class RohmAudioEngine extends BasicAudioEngine {
 
     //-------------------------------------------------------------------------
 
-    /** */
+    @Override
     protected OutputStream getOutputStream(OutputStream os) {
         return new RohmOutputStream(os, ByteOrder.LITTLE_ENDIAN);
     }

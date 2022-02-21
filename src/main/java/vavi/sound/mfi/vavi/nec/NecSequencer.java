@@ -17,6 +17,10 @@ import vavi.util.Debug;
 
 /**
  * NEC System exclusive message processor.
+ * <pre>
+ * properties file ... "/vavi/sound/mfi/vavi/nec/nec.properties"
+ * name prefix ... "function."
+ * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020703 nsano initial version <br>
@@ -78,7 +82,8 @@ Debug.printf("%02x %02x\n", f1, f2);
     //-------------------------------------------------------------------------
 
     /** */
-    private static MachineDependentFunction.Factory factory = new MachineDependentFunction.Factory("/vavi/sound/mfi/vavi/nec/nec.properties");
+    private static MachineDependentFunction.Factory factory =
+            new MachineDependentFunction.Factory("/vavi/sound/mfi/vavi/nec/nec.properties");
 }
 
 /* */

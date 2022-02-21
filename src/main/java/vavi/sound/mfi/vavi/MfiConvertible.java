@@ -17,20 +17,24 @@ import vavi.util.properties.PrefixedPropertiesFactory;
 /**
  * MfiConvertible
  * <p>
- * 今のところ実装クラスは bean でなければならない．
- * (引数なしのコンストラクタがあること)
+ * Currently, an implementation class of this interface should be an bean.
+ * (means having a contractor without argument)
  * </p>
+ * <pre>
+ * properties file ... "/vavi/sound/mfi/vavi/vavi.properties"
+ * name prefix ... "midi."
+ * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030905 nsano initial version <br>
  */
 public interface MfiConvertible {
 
-    /** TODO 実装法いまいち，BeanUtil 等が使えないか？ */
+    /** */
     MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context)
         throws InvalidMfiDataException;
 
-    /** */
+    /** factory */
     static final PrefixedPropertiesFactory<String, MfiConvertible> factory =
         new PrefixedClassPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "midi.");
 }

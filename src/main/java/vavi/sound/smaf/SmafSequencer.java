@@ -23,14 +23,9 @@ import vavi.util.Debug;
 /**
  * Sequencer implemented for SMAF.
  * <p>
- * このシーケンサクラスで再生する場合は
- * システムプロパティ <code>javax.sound.midi.Sequencer</code> に <code>"#Real Time Sequencer"</code>
- * を明示するようにしてください。<code>"Java MIDI(MFi/SMAF) ADPCM Sequencer"</code> が
- * デフォルトシーケンサになった場合、{@link #mea}が重複して登録されてしまいます。
- * </p>
- * <p>
- * {@link javax.sound.midi.MidiSystem#getSequencer()} を
- * 使用しているため javax.sound.midi SPI のプログラム内で使用してはいけません。
+ * don't use {@link javax.sound.midi.MidiSystem#getSequencer()},
+ * {@link javax.sound.midi.MidiSystem#getSequencer(boolean)} in this program,
+ * because this is the {@link javax.sound.midi.Sequencer}.
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
@@ -53,12 +48,12 @@ class SmafSequencer implements Sequencer, Synthesizer {
     /** the sequence of SMAF */
     private Sequence sequence;
 
-    /** */
+    @Override
     public SmafDevice.Info getDeviceInfo() {
         return info;
     }
 
-    /* */
+    @Override
     public void close() {
         if (midiSequencer == null) {
             throw new IllegalStateException("not opend");
@@ -67,7 +62,7 @@ class SmafSequencer implements Sequencer, Synthesizer {
         midiSynthesizer.close();
     }
 
-    /* */
+    @Override
     public boolean isOpen() {
         if (midiSequencer == null) {
             return false;
@@ -75,10 +70,10 @@ class SmafSequencer implements Sequencer, Synthesizer {
         return midiSequencer.isOpen();
     }
 
-    /** ADPCM sequencer */
+    /** ADPCM sequencer, TODO should be {@link javax.sound.midi.Transmitter} */
     private javax.sound.midi.MetaEventListener mea = new MetaEventAdapter();
 
-    /* */
+    @Override
     public void open() throws SmafUnavailableException {
         try {
             if (midiSequencer == null) {
@@ -94,7 +89,7 @@ Debug.printStackTrace(e);
         }
     }
 
-    /* */
+    @Override
     public void setSequence(Sequence sequence)
         throws InvalidSmafDataException {
 
@@ -111,7 +106,7 @@ Debug.println(e);
         }
     }
 
-    /* */
+    @Override
     public void setSequence(InputStream stream)
         throws IOException,
                InvalidSmafDataException {
@@ -119,12 +114,12 @@ Debug.println(e);
         this.setSequence(SmafSystem.getSequence(stream));
     }
 
-    /* */
+    @Override
     public Sequence getSequence() {
         return sequence;
     }
 
-    /* */
+    @Override
     public void start() {
         if (midiSequencer == null) {
             throw new IllegalStateException("not opend");
@@ -133,7 +128,7 @@ Debug.println(e);
         midiSequencer.start();
     }
 
-    /* */
+    @Override
     public void stop() {
         if (midiSequencer == null) {
             throw new IllegalStateException("not opend");
@@ -142,7 +137,7 @@ Debug.println(e);
         off();
     }
 
-    /* */
+    @Override
     public boolean isRunning() {
         if (midiSequencer == null) {
             throw new IllegalStateException("not opend");
@@ -186,7 +181,7 @@ Debug.println(e);
         public void meta(javax.sound.midi.MetaMessage message) {
 //Debug.println("type: " + message.getType());
             switch (message.getType()) {
-            case 0x2f:  // 自動的に最後につけてくれる
+            case 0x2f:  // added automatically at the end of the sequence
                 try {
                     MetaMessage metaMessage = new MetaMessage();
                     metaMessage.setMessage(0x2f, null);
