@@ -265,6 +265,14 @@ Debug.println(Level.WARNING, "undefined meta: " + number);
                 return META_UNDEFINED;
             }
         }
+        @Override
+        public String toString() {
+            if (ordinal() == META_UNDEFINED.ordinal()) {
+                return super.toString() + " (" + number + ")";
+            } else {
+                return super.toString();
+            }
+        }
     }
 
     //-------------------------------------------------------------------------
