@@ -8,43 +8,14 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-sound</artifactId>
-  <version>1.0.11</version>
+  <version>1.0.12</version>
 
   <name>Vavi Sound API</name>
   <url>https://github.com/umjammer/vavi-sound</url>
   <scm>
     <url>https://github.com/umjammer/vavi-sound</url>
   </scm>
-  <description>1.0.7
-
-    simplify service loader
-    fix dependencies
-
-1.0.6
-
-    depends on vavi-commons api change
-    fix event listener duplication
-
-1.0.5
-
-    fix midi spi
-
-1.0.4
-
-    ssrc spi (wip)
-
-1.0.3
-
-    make build pass
-
-1.0.2
-
-    maintenance version
-
-1.0.1
-
-    refactor properties related
-
+  <description>
 TODO
 
     adpcm spi</description>
@@ -142,9 +113,8 @@ TODO
   </repositories>
 
   <dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>com.github.umjammer</groupId>
+    <dependencies>
+      <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
         <version>5.8.1</version>
@@ -153,23 +123,49 @@ TODO
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.github.umjammer</groupId>
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.4</version>
+      <version>1.1.6</version>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
       <artifactId>klab-commons-cli</artifactId>
       <version>1.3.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.umjammer</groupId>
+          <artifactId>vavi-commons</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
       <artifactId>vavi-util-codec-sandbox</artifactId>
       <version>1.0.1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.umjammer</groupId>
+          <artifactId>vavi-commons</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>vavi</groupId>
       <artifactId>vavi-sound-nda</artifactId>
       <version>1.0.10</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.umjammer</groupId>
+          <artifactId>vavi-commons</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.github.umjammer</groupId>
+          <artifactId>vavi-sound</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
