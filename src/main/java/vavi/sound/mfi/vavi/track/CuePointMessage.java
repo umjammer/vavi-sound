@@ -13,7 +13,7 @@ import javax.sound.midi.MidiEvent;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
-import vavi.sound.midi.MidiConstants;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 
 
 /**
@@ -98,7 +98,7 @@ public class CuePointMessage extends ShortMessage
 
         String text = start ? "start" : "stop";
 
-        metaMessage.setMessage(MidiConstants.META_QUE_POINT, // キューポイント
+        metaMessage.setMessage(MetaEvent.META_QUE_POINT.number(), // キューポイント
                                text.getBytes(), text.getBytes().length);
 
         return new MidiEvent[] {

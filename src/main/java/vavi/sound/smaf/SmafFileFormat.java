@@ -68,22 +68,28 @@ public class SmafFileFormat {
         return sequence;
     }
 
-    /** */
+    /** factory */
     static SmafFileFormat readFrom(InputStream is) throws InvalidSmafDataException, IOException {
-        Chunk chunk = Chunk.readFrom(is, null, true);
-        if (FileChunk.class.isInstance(chunk)) {
-            FileChunk fileChunk = FileChunk.class.cast(chunk);
-            SmafFileFormat sff = new SmafFileFormat(fileChunk.getSize());
-            sff.sequence = new SmafSequence(fileChunk);
-            return sff;
-        } else {
-            throw new InvalidSmafDataException("stream is not smaf");
+        try {
+            Chunk chunk = Chunk.readFrom(is, null);
+            if (FileChunk.class.isInstance(chunk)) {
+                FileChunk fileChunk = FileChunk.class.cast(chunk);
+                SmafFileFormat sff = new SmafFileFormat(fileChunk.getSize());
+                sff.sequence = new SmafSequence(fileChunk);
+                return sff;
+            } else {
+                throw new InvalidSmafDataException("stream is not smaf: first chunk: " + chunk.getId());
+            }
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvalidSmafDataException(e);
         }
     }
 
     /**
      * ストリームに書き込みます。事前にシーケンスを設定しておくこと。
-     * @after out は {@link java.io.OutputStream#flush() flush} されます
+     * @after out has been {@link java.io.OutputStream#flush() flush}-ed
      * @throws IllegalStateException シーケンスが設定されていない場合スローされます
      */
     void writeTo(OutputStream out)
@@ -112,7 +118,7 @@ public class SmafFileFormat {
             track.writeTo(out);
         }
 
-        out.flush(); // TODO いる？
+        out.flush(); // TODO is needed?
 
         byteLength = smafDataLength + 4 + 4;
     }

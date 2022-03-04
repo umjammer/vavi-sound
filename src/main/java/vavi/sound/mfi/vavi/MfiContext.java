@@ -26,7 +26,7 @@ import javax.sound.midi.Track;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.vavi.track.NopMessage;
 import vavi.sound.mfi.vavi.track.TempoMessage;
-import vavi.sound.midi.MidiConstants;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
 import vavi.util.Debug;
 
@@ -331,7 +331,7 @@ if (delta > 255) {
             for (int i = 0; i < midiTracks[t].size(); i++) {
                 javax.sound.midi.MidiMessage midiMessage = midiTracks[t].get(i).getMessage();
                 if (midiMessage instanceof MetaMessage &&
-                    ((MetaMessage) midiMessage).getType() == MidiConstants.META_TEMPO) {
+                    ((MetaMessage) midiMessage).getType() == MetaEvent.META_TEMPO.number()) {
 
                     MetaMessage metaMessage = (MetaMessage) midiMessage;
                     byte data[] = metaMessage.getData();

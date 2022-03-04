@@ -7,7 +7,6 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -37,9 +36,9 @@ Debug.println("Link: " + size + " bytes");
     }
 
     /**  */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
-skip(is, size); // TODO
+dis.skipBytes((int) (long) size); // TODO
     }
 
     /** TODO */

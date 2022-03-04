@@ -14,9 +14,11 @@ import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
@@ -36,6 +38,16 @@ public final class MidiUtil {
 
     /** */
     private MidiUtil() {
+    }
+
+    /**
+     * @param volume 0 ~ 1.0
+     */
+    public static void volume(Receiver receiver, float volume) throws InvalidMidiDataException {
+        int value = (int) (16383 * volume);
+        byte[] data = { (byte) 0xf0, 0x7f, 0x7f, 0x04, 0x01, (byte) (value & 0x7f), (byte) ((value >> 7) & 0x7f), (byte) 0xf7 };
+        MidiMessage sysex = new SysexMessage(data, data.length);
+        receiver.send(sysex, -1);
     }
 
     /** */
@@ -107,7 +119,10 @@ public final class MidiUtil {
         }
     }
 
-    /** */
+    /**
+     * read 1 ~ 4 bytes
+     * @return 0 ~ 268435455 (0x0fffffff)
+     */
     public static int readVariableLength(DataInput input) throws IOException {
         int b = input.readUnsignedByte();
         int v = b & 0x7f;

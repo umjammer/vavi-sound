@@ -34,7 +34,7 @@ public class YamahaAudioEngine extends BasicAudioEngine {
         data = new Data[32];
     }
 
-    /** */
+    @Override
     protected int getChannels(int streamNumber) {
         int channels = 1;
         if (data[streamNumber].channel == -1) {
@@ -66,7 +66,7 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber]
         return channels;
     }
 
-    /** */
+    @Override
     protected InputStream[] getInputStreams(int streamNumber, int channels) {
         InputStream[] iss = new InputStream[2];
         if (data[streamNumber].channels == 1) {
@@ -87,7 +87,7 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber]
 
     //-------------------------------------------------------------------------
 
-    /** */
+    @Override
     protected OutputStream getOutputStream(OutputStream os) {
         return new MaOutputStream(os, ByteOrder.LITTLE_ENDIAN);
     }

@@ -14,27 +14,29 @@ import java.io.OutputStream;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 import vavi.util.Debug;
 
+import static vavi.sound.SoundUtil.volume;
+
 
 /**
  * PCM AudioEngine.
- *
-WSC-MAX_DLL
-DLL
-                 Input File                                                               Output File
-wscma2_dll       File Format         Bit              Sampling Frequency      Form        Conversion Format   File Format
-wscma3_dll       WAVE                16bit            4kHz or 8kHz            mono        4bit ADPCM          SMAF/MA-2
-                 WAVE                16bit            4kHz~16kHz              mono        4bit ADPCM          SMAF/MA-3
-wscma5_dll       WAVE                16bit or 8bit    4kHz~ 8kHz              mono        8bit PCM            SMAF/MA-3
-                 WAVE or AIFF        16bit            4kHz~24kHz              mono        4bit ADPCM          SMAF/MA-5
-                 WAVE or AIFF        16bit or 8bit    4kHz~12kHz              mono        8bit PCM            SMAF/MA-5
-                 WAVE or AIFF        16bit            4kHz~12kHz             stereo       4bit ADPCM          SMAF/MA-5
-                 WAVE or AIFF        16bit or 8bit    4kHz~6kHz              stereo       8bit PCM            SMAF/MA-5
+ * <pre>
+ * WSC-MAX_DLL
+ * DLL
+ *                  Input File                                                               Output File
+ * wscma2_dll       File Format         Bit              Sampling Frequency      Form        Conversion Format   File Format
+ * wscma3_dll       WAVE                16bit            4kHz or 8kHz            mono        4bit ADPCM          SMAF/MA-2
+ *                  WAVE                16bit            4kHz~16kHz              mono        4bit ADPCM          SMAF/MA-3
+ * wscma5_dll       WAVE                16bit or 8bit    4kHz~ 8kHz              mono        8bit PCM            SMAF/MA-3
+ *                  WAVE or AIFF        16bit            4kHz~24kHz              mono        4bit ADPCM          SMAF/MA-5
+ *                  WAVE or AIFF        16bit or 8bit    4kHz~12kHz              mono        8bit PCM            SMAF/MA-5
+ *                  WAVE or AIFF        16bit            4kHz~12kHz             stereo       4bit ADPCM          SMAF/MA-5
+ *                  WAVE or AIFF        16bit or 8bit    4kHz~6kHz              stereo       8bit PCM            SMAF/MA-5
+ * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020829 nsano initial version <br>
@@ -52,7 +54,7 @@ public class PcmAudioEngine extends BasicAudioEngine {
         data = new Data[32];
     }
 
-    /** */
+    @Override
     protected int getChannels(int streamNumber) {
         int channels = 1;
         if (data[streamNumber].channel == -1) {
@@ -84,7 +86,7 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber]
         return channels;
     }
 
-    /** */
+    @Override
     protected InputStream[] getInputStreams(int streamNumber, int channels) {
         InputStream[] iss = new InputStream[2];
         if (data[streamNumber].channels == 1) {
@@ -105,11 +107,12 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber]
 
     //-------------------------------------------------------------------------
 
-    /** */
+    @Override
     protected OutputStream getOutputStream(OutputStream os) {
         return os;
     }
 
+    @Override
     public void start(int streamNumber) {
 
         int channels = getChannels(streamNumber);
@@ -140,10 +143,7 @@ Debug.println(audioFormat);
             SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
             line.open(audioFormat);
             line.start();
-FloatControl gainControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
-double gain = .2d; // number between 0 and 1 (loudest)
-float dB = (float) (Math.log(gain) / Math.log(10.0) * 20.0);
-gainControl.setValue(dB);
+            volume(line, .2d);
             byte[] buf = new byte[1024];
             while (iss[0].available() > 0) {
                 if (channels == 1) {
@@ -169,9 +169,7 @@ gainControl.setValue(dB);
             line.stop();
             line.close();
 // debug4(os);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } catch (LineUnavailableException e) {
+        } catch (IOException | LineUnavailableException e) {
             throw new IllegalStateException(e);
         }
     }

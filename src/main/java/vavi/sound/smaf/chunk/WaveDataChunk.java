@@ -8,7 +8,6 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -42,9 +41,9 @@ Debug.println("WaveData[" + waveNumber + "]: " + size + " bytes");
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent) throws InvalidSmafDataException, IOException {
+    protected void init(MyDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
         data = new byte[size];
-        read(is, data);
+        dis.readFully(data);
     }
 
     /** */

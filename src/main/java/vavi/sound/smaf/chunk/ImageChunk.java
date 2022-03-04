@@ -9,7 +9,6 @@ package vavi.sound.smaf.chunk;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
@@ -46,11 +45,11 @@ Debug.println("Image[" + imageNumer + "]: " + size + " bytes");
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         this.imageData = new byte[size];
-        read(is, imageData);
+        dis.readFully(imageData);
 
 Debug.println("image: " + getImage());
     }

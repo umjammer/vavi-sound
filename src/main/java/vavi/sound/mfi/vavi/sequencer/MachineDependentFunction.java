@@ -15,10 +15,14 @@ import vavi.util.properties.PrefixedClassPropertiesFactory;
 /**
  * Sub sequencer for machine dependent system exclusive message.
  * <p>
- * 今のところ実装クラスは bean でなければならない。
- * (引数なしのコンストラクタがあること)
- * {@link #process(MachineDependentMessage)} 関連はステートレスでなければならない。
+ * Currently, an implementation class of this interface should be an bean.
+ * (means having a contractor without argument)
+ * {@link #process(MachineDependentMessage)} related should be state less.
  * </p>
+ * <pre>
+ * properties file ... any
+ * name prefix ... "function."
+ * </pre>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
@@ -41,7 +45,7 @@ public interface MachineDependentFunction {
     void process(MachineDependentMessage message)
         throws InvalidMfiDataException;
 
-    /** */
+    /** factory */
     class Factory extends PrefixedClassPropertiesFactory<String, MachineDependentFunction> {
 
         /** */
@@ -56,7 +60,7 @@ public interface MachineDependentFunction {
             } catch (IllegalArgumentException e) {
 Debug.println(key);
 Debug.printStackTrace(e);
-                return new UndefinedFunction(); // TODO should throw exception
+                return new UndefinedFunction(); // TODO should throw exception or not?
             }
         }
     }

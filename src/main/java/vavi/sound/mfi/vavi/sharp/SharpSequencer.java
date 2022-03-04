@@ -16,6 +16,10 @@ import vavi.sound.mobile.FuetrekAudioEngine;
 
 /**
  * Sharp System exclusive message sequencer.
+ * <pre>
+ * properties file ... "/vavi/sound/mfi/vavi/sharp/sharp.properties"
+ * name prefix ... "function."
+ * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051111 nsano initial version <br>
@@ -50,7 +54,8 @@ public class SharpSequencer implements MachineDependentSequencer {
     //-------------------------------------------------------------------------
 
     /** */
-    private static MachineDependentFunction.Factory factory = new MachineDependentFunction.Factory("/vavi/sound/mfi/vavi/sharp/sharp.properties");
+    private static MachineDependentFunction.Factory factory =
+            new MachineDependentFunction.Factory("/vavi/sound/mfi/vavi/sharp/sharp.properties");
 }
 
 /* */

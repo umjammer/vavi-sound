@@ -8,6 +8,7 @@ package vavi.sound.mfi.vavi.sequencer;
 
 import org.junit.jupiter.api.Test;
 
+import vavi.util.Debug;
 import vavi.util.properties.PrefixedClassPropertiesFactory;
 import vavi.util.properties.PrefixedPropertiesFactory;
 
@@ -28,7 +29,7 @@ public class MachineDependentSequencerTest {
             new PrefixedClassPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "sequencer.vendor.");
 
         MachineDependentSequencer mds = machineDependentSequencerFactory.get(97);
-        System.err.println(mds);
+Debug.println(mds);
         assertTrue(vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer.class.isInstance(mds));
 
         mds = machineDependentSequencerFactory.get(17);

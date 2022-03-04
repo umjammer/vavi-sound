@@ -84,10 +84,8 @@ public class SmafAudioFileWriter extends AudioFileWriter {
                 int r = mwvm.create();
                 return r;
             }
-        } catch (UnsupportedAudioFileException e) {
-            throw (IOException) new IOException().initCause(e);
-        } catch (InvalidSmafDataException e) {
-            throw (IOException) new IOException().initCause(e);
+        } catch (UnsupportedAudioFileException | InvalidSmafDataException e) {
+            throw new IOException(e);
         }
     }
 

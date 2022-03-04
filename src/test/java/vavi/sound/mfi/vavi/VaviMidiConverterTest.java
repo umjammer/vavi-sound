@@ -6,19 +6,22 @@
 
 package vavi.sound.mfi.vavi;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.CountDownLatch;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import vavi.sound.mfi.MfiSystem;
+import vavi.sound.mfi.MfiSystemTest;
 import vavi.util.Debug;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -27,12 +30,30 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
-@Disabled
 public class VaviMidiConverterTest {
 
     @Test
-    public void test() {
-        fail("Not yet implemented");
+    public void test() throws Exception {
+        CountDownLatch cdl = new CountDownLatch(1);
+        Path inPath = Paths.get(MfiSystemTest.class.getResource("/test.mld").toURI());
+        vavi.sound.mfi.Sequence mfiSequence = MfiSystem.getSequence(new BufferedInputStream(Files.newInputStream(inPath)));
+        Sequence midiSequence = MfiSystem.toMidiSequence(mfiSequence);
+
+        Sequencer midiSequencer = MidiSystem.getSequencer();
+Debug.println("midiSequencer: " + midiSequencer);
+Debug.println("midiSequencer:T: " + midiSequencer.getTransmitter());
+Debug.println("midiSequencer:R: " + midiSequencer.getReceiver());
+        midiSequencer.open();
+        midiSequencer.setSequence(midiSequence);
+        midiSequencer.addMetaEventListener(meta -> {
+Debug.println(meta.getType());
+            if (meta.getType() == 47) {
+                cdl.countDown();
+            }
+        });
+        midiSequencer.start();
+        cdl.await();
+        midiSequencer.close();
     }
 
     //-------------------------------------------------------------------------

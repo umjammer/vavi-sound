@@ -7,7 +7,6 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
@@ -39,14 +38,14 @@ Debug.println("AudioSequenceData: " + size + " bytes");
     }
 
     /** TODO how to get formatType from parent chunk ??? */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 //Debug.println("available: " + is.available() + ", " + available());
 //skip(is, size); // TODO
         FormatType formatType = ((TrackChunk) parent).getFormatType();
         switch (formatType) {
         case HandyPhoneStandard:
-            readHandyPhoneStandard(is);
+            readHandyPhoneStandard(dis);
             break;
         default:
             throw new InvalidSmafDataException("FormatType: " + formatType);

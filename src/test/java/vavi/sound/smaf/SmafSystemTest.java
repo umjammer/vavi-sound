@@ -9,16 +9,17 @@ package vavi.sound.smaf;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.CountDownLatch;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import vavi.util.Debug;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -27,12 +28,25 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
-@Disabled
 public class SmafSystemTest {
 
     @Test
-    public void test() {
-        fail("Not yet implemented");
+    public void test() throws Exception {
+        CountDownLatch cdl = new CountDownLatch(1);
+        Path inPath = Paths.get(SmafSystemTest.class.getResource("/test.mmf").toURI());
+        Sequencer sequencer = SmafSystem.getSequencer();
+        sequencer.open();
+        vavi.sound.smaf.Sequence sequence = SmafSystem.getSequence(new BufferedInputStream(Files.newInputStream(inPath)));
+        sequencer.setSequence(sequence);
+        sequencer.addMetaEventListener(meta -> {
+Debug.println(meta.getType());
+            if (meta.getType() == 47) {
+                cdl.countDown();
+            }
+        });
+        sequencer.start();
+        cdl.await();
+        sequencer.close();
     }
 
     //-------------------------------------------------------------------------

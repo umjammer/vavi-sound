@@ -8,11 +8,11 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
@@ -49,30 +49,30 @@ public class ContentsInfoChunk extends Chunk {
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
-        this.contentsClass = read(is);
-Debug.println("contentsClass: " + (contentsClass == 0 ? "YAMAHA" : "Vender ID(" + contentsClass + ")"));
-        this.contentsType = read(is);
-Debug.printf("contentsType: 0x02x\n", contentsType);
-        this.contentsCodeType = read(is);
-Debug.printf("contentsCodeType: 0x02x\n", contentsCodeType);
-        this.copyStatus = read(is);
-Debug.println("copyStatus: " + StringUtil.toBits(copyStatus, 8));
-        this.copyCounts = read(is);
-Debug.println("copyCounts: " + copyCounts);
+        this.contentsClass = dis.readUnsignedByte();
+Debug.println(Level.FINE, "contentsClass: " + (contentsClass == 0 ? "YAMAHA" : "Vender ID(" + contentsClass + ")"));
+        this.contentsType = dis.readUnsignedByte();
+Debug.printf(Level.FINE, "contentsType: 0x%02x\n", contentsType);
+        this.contentsCodeType = dis.readUnsignedByte();
+Debug.printf(Level.FINE, "contentsCodeType: 0x%02x\n", contentsCodeType);
+        this.copyStatus = dis.readUnsignedByte();
+Debug.println(Level.FINE, "copyStatus: " + StringUtil.toBits(copyStatus, 8));
+        this.copyCounts = dis.readUnsignedByte();
+Debug.println(Level.FINE, "copyCounts: " + copyCounts);
         byte[] option = new byte[size - 5];
-        read(is, option);
-Debug.println("option: " + option.length + " bytes (subData)");
+        dis.readFully(option);
+Debug.println(Level.FINE, "option: " + option.length + " bytes (subData)");
         int i = 0;
         while (i < option.length) {
-//Debug.println(i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
+Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
             SubData subDatum = new SubData(option, i, contentsCodeType);
             subData.put(subDatum.getTag(), subDatum);
-Debug.println("ContentsInfo: subDatum: " + subDatum);
+Debug.println(Level.FINE, "ContentsInfo: subDatum: " + subDatum);
             i += 2 + 1 + subDatum.getData().length + 1; // tag ':' data ','
-//Debug.println(i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
+Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
         }
     }
 

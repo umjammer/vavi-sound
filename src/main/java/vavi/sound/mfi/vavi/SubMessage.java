@@ -176,7 +176,7 @@ public abstract class SubMessage extends MetaMessage {
         dos.writeBytes(getSubType());
         dos.writeShort(getDataLength());
         dos.write(getData(), 0, getDataLength());
-Debug.println(this);
+Debug.println(Level.FINE, this);
     }
 
     /**
@@ -214,7 +214,7 @@ Debug.println(this);
             try {
                 subChunk = constructor.newInstance(subType, subData);
             } catch (Exception e) {
-Debug.printStackTrace(e);
+Debug.printStackTrace(Level.SEVERE, e);
                 throw new IllegalStateException(e);
             }
         } else {
@@ -231,7 +231,7 @@ Debug.println(Level.WARNING, "unknown sub chunk: " + subType);
             };
         }
 
-Debug.println(subChunk);
+Debug.println(Level.FINE, subChunk);
         return subChunk;
     }
 
@@ -265,15 +265,15 @@ Debug.println(subChunk);
             String value = props.getProperty("encoding.write");
             if (value != null) {
                 writingEncoding = value;
-Debug.println("write encoding: " + writingEncoding);
+Debug.println(Level.FINE, "write encoding: " + writingEncoding);
             }
             value = props.getProperty("encoding.read");
             if (value != null) {
                 readingEncoding = value;
-Debug.println("read encoding: " + readingEncoding);
+Debug.println(Level.FINE, "read encoding: " + readingEncoding);
             }
         } catch (Exception e) {
-Debug.printStackTrace(e);
+Debug.printStackTrace(Level.SEVERE, e);
             throw new IllegalStateException(e);
         }
     }

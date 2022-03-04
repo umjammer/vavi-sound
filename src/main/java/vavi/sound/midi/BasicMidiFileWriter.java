@@ -16,9 +16,9 @@ import javax.sound.midi.spi.MidiFileWriter;
 
 /**
  * BasicMidiFileWriter.
- *
- * @caution {@link javax.sound.midi.MidiSystem} は使っちゃだめ！
- *
+ * <p>
+ * !!!caution don't use {@link javax.sound.midi.MidiSystem} in this class.
+ * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041223 nsano initial version <br>
  */

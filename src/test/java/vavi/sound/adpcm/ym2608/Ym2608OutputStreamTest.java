@@ -39,13 +39,12 @@ public class Ym2608OutputStreamTest {
 
     @BeforeEach
     public void setup() throws IOException {
-//        outFile = File.createTempFile("vavi", ".pcm");
-//        outFile.deleteOnExit();
-        outFile = new File("src/test/resources/vavi/sound/adpcm/ym2608/out_vavi.adpcm");
+        outFile = File.createTempFile("vavi", ".pcm");
+        outFile.deleteOnExit();
+//        outFile = new File("src/test/resources/vavi/sound/adpcm/ym2608/out_vavi.adpcm");
 Debug.println("outFile: " + outFile);
     }
 
-    /** */
     @Test
     public void test1() throws Exception {
         OutputStream os = new FileOutputStream(outFile);

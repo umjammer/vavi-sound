@@ -8,7 +8,6 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import vavi.sound.midi.MidiConstants;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.MetaMessage;
 import vavi.sound.smaf.SmafEvent;
@@ -55,23 +54,23 @@ Debug.println("Graphics[" + trackNumber + "]: " + size);
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 //skip(is, size);
 
-        this.formatType = FormatType.values()[read(is)];
+        this.formatType = FormatType.values()[dis.readUnsignedByte()];
 
-        this.playerType = read(is);
-        this.textEncodeType = read(is);
-        this.colorType = read(is);
-        this.durationTimeBase = read(is);
+        this.playerType = dis.readUnsignedByte();
+        this.textEncodeType = dis.readUnsignedByte();
+        this.colorType = dis.readUnsignedByte();
+        this.durationTimeBase = dis.readUnsignedByte();
 
-        int optionSize = read(is);
+        int optionSize = dis.readUnsignedByte();
         this.optionData = new byte[optionSize];
-        read(is, optionData);
+        dis.readFully(optionData);
 
-        while (available() > 0) {
-            Chunk chunk = readFrom(is);
+        while (dis.available() > 0) {
+            Chunk chunk = readFrom(dis);
             if (chunk instanceof GraphicsSetupDataChunk) {
                 setupDataChunk = chunk;
             } else if (chunk instanceof GraphicsTrackSequenceDataChunk) {
@@ -161,7 +160,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
         props.put("timeBase", durationTimeBase);
 
         MetaMessage metaMessage = new MetaMessage();
-        metaMessage.setMessage(MidiConstants.META_MACHINE_DEPEND, props);
+        metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
         events.add(new SmafEvent(metaMessage, 0l));
 
         return null; // TODO
@@ -172,9 +171,9 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
         // "Ge**” ：Font Chunk
         // "Gu**” ：Unicode Font Chunk
         /** */
-        protected void init(InputStream is, Chunk parent)
+        protected void init(MyDataInputStream dis, Chunk parent)
             throws InvalidSmafDataException, IOException {
-skip(is, size); // TODO
+dis.skipBytes((int) (long) size); // TODO
         }
 
         /** TODO */

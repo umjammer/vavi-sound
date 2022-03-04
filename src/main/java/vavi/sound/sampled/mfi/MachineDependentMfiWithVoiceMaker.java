@@ -17,6 +17,10 @@ import vavi.util.properties.PrefixedPropertiesFactory;
 
 /**
  * MachineDependentMfiWithVoiceMaker.
+ * <pre>
+ * properties file ... "/vavi/sound/sampled/mfi/MfiWithVoiceMaker.properties"
+ * name prefix ... "class."
+ * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050403 nsano initial version <br>
@@ -33,7 +37,7 @@ public interface MachineDependentMfiWithVoiceMaker {
     List<MfiEvent> getEvents(byte[] data, float time, int sampleRate, int bits, int channels, int masterVolume, int adpcmVolume)
         throws InvalidMfiDataException, IOException;
 
-    /** */
+    /** factory */
     static final PrefixedPropertiesFactory<String, MachineDependentMfiWithVoiceMaker> factory =
         new PrefixedClassPropertiesFactory<String, MachineDependentMfiWithVoiceMaker>("/vavi/sound/sampled/mfi/MfiWithVoiceMaker.properties", "class.") {
 

@@ -10,7 +10,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 
-import vavi.sound.midi.MidiConstants;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.SmafMessage;
@@ -69,7 +69,7 @@ public class MidiContext {
             SmafMessage message = event.getMessage();
             if (message instanceof vavi.sound.smaf.MetaMessage) {
                 vavi.sound.smaf.MetaMessage metaMessage = (vavi.sound.smaf.MetaMessage) message;
-                if (metaMessage.getType() == MidiConstants.META_MACHINE_DEPEND) {
+                if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
                     //
                     this.formatType = (FormatType) metaMessage.getData().get("formatType"); // [ms]
 Debug.println("formatType: " + formatType);
@@ -537,7 +537,7 @@ int t = 0;
                 SmafMessage message = event.getMessage();
                 if (message instanceof vavi.sound.smaf.MetaMessage) {
                     vavi.sound.smaf.MetaMessage metaMessage = (vavi.sound.smaf.MetaMessage) message;
-                    if (metaMessage.getType() == MidiConstants.META_MACHINE_DEPEND) {
+                    if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
                         this.timeBase = (Integer) metaMessage.getData().get("durationTimeBase"); // [ms]
 Debug.println("timebase: " + timeBase + ", (" + t + ":" + i + ")");
                         return tempo * timeBase;

@@ -168,6 +168,10 @@ t = System.currentTimeMillis();
         message = new EndOfTrackMessage(0, 0);
         track.add(new MfiEvent(message, 0l));
 
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+
         int r = MfiSystem.write(sequence, VaviMfiFileFormat.FILE_TYPE, file);
 Debug.println("write: " + r);
         return r;

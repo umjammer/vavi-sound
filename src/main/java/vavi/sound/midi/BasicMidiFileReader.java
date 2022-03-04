@@ -26,8 +26,7 @@ import vavi.util.Debug;
 
 
 /**
- * BasicMidiFileReader.
- * 継承したクラスで {@link #getSequence(InputStream)} を実装してください。
+ * Should implement {@link #getSequence(InputStream)} at your subclass.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
@@ -35,8 +34,8 @@ import vavi.util.Debug;
 public abstract class BasicMidiFileReader extends MidiFileReader {
 
     /**
-     * 継承したクラスで実装した {@link #getSequence(InputStream)} で
-     * 実装したタイプから変換された MIDI Sequence を取得します。
+     * Gets MIDI Sequence converted by a method {@link #getSequence(InputStream)}
+     * implemented in a sub class.
      * @param stream a midi stream
      * @throws IOException when the I/O does not support marking.
      */
@@ -49,6 +48,7 @@ public abstract class BasicMidiFileReader extends MidiFileReader {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         MidiSystem.write(midiSequence, 0, os);
         ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+//Debug.println("temporary midi:\n" + StringUtil.getDump(os.toByteArray(), 128));
         MidiFileFormat midiFF = MidiSystem.getMidiFileFormat(is);
         return midiFF;
     }

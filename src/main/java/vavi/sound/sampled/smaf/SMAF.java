@@ -22,8 +22,8 @@ public class SMAF extends Type {
     /**
      * @param properties keys are followings.
      * <pre>
-     * "smaf.directory" String: output base directory
-     * "smaf.base" String: output file template (use {@link String#format(String, Object...)})
+     * "smaf.directory" String: output base directory, after this "mmf" directory will be added
+     * "smaf.base" String: output file template (use {@link String#format(String, Object...)}) need extension, like "foo_%d.mmf"
      * "smaf.time" float: dividing time in [sec]
      * "smaf.sampleRate" int: ADPCM sampling rate [Hz]
      * "smaf.bits" int: ADPCM sampling bits

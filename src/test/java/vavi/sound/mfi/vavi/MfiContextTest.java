@@ -6,18 +6,20 @@
 
 package vavi.sound.mfi.vavi;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.MidiSystem;
 
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import vavi.sound.mfi.MfiSystem;
 import vavi.util.Debug;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -26,12 +28,29 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
-@Disabled
 public class MfiContextTest {
 
+    static Path dir;
+
+    @BeforeAll
+    static void setup() throws Exception {
+        dir = Paths.get("tmp");
+        if (Files.exists(dir)) {
+            Files.createDirectories(dir);
+        }
+    }
+
     @Test
-    public void test() {
-        fail("Not yet implemented");
+    public void test() throws Exception {
+        Path inPath = Paths.get(MfiContextTest.class.getResource("/test.mid").toURI());
+        javax.sound.midi.Sequence midiSequence = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(inPath)));
+        MidiFileFormat midiFileFormat = MidiSystem.getMidiFileFormat(new BufferedInputStream(Files.newInputStream(inPath)));
+        int type = midiFileFormat.getType();
+Debug.println("type: " + type);
+        vavi.sound.mfi.Sequence mfiSequence = MfiSystem.toMfiSequence(midiSequence, type);
+        Path outPath = dir.resolve("MfiContextTest.mld");
+        int r = MfiSystem.write(mfiSequence, VaviMfiFileFormat.FILE_TYPE, Files.newOutputStream(outPath));
+Debug.println("write: " + r);
     }
 
     //-------------------------------------------------------------------------

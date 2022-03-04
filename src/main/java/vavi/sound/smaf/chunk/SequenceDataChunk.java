@@ -10,7 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
+import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.SysexMessage;
@@ -62,19 +62,19 @@ Debug.println("SequenceData: " + size + " bytes");
     }
 
     /** TODO how to get formatType from parent chunk ??? */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 //Debug.println("available: " + is.available() + ", " + available());
 //skip(is, size);
         ScoreTrackChunk.FormatType formatType = ((TrackChunk) parent).getFormatType();
         switch (formatType) {
         case HandyPhoneStandard:
-            readHandyPhoneStandard(is);
+            readHandyPhoneStandard(dis);
             break;
         case MobileStandard_Compress:
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             for (int i = 0; i < size; i++) {
-                baos.write(is.read());
+                baos.write(dis.read());
             }
 //OutputStream os1 = new FileOutputStream("/tmp/data.enc");
 //os1.write(baos.toByteArray());
@@ -89,11 +89,11 @@ Debug.println("SequenceData: " + size + " bytes");
 //Debug.println("data.dec created");
 Debug.println("decode: " + size + " -> " + decoded.length);
             size = decoded.length;
-            readMobileStandard(new ByteArrayInputStream(decoded));
+            readMobileStandard(new MyDataInputStream(new ByteArrayInputStream(decoded), id, decoded.length));
             break;
         case MobileStandard_NoCompress:
         case Unknown3: // TODO
-            readMobileStandard(is);
+            readMobileStandard(dis);
             break;
         }
 Debug.println("messages: " + messages.size());
@@ -109,24 +109,24 @@ Debug.println("messages: " + messages.size());
     }
 
     /** formatType 0 */
-    protected void readHandyPhoneStandard(InputStream is)
+    protected void readHandyPhoneStandard(MyDataInputStream dis)
         throws InvalidSmafDataException, IOException {
 
         SmafMessage smafMessage = null;
 
-        while (available() > 0) {
+        while (dis.available() > 0) {
             // -------- duration --------
-            int duration = readOneToTwo(is);
+            int duration = MidiUtil.readVariableLength(dis);
 //Debug.println("duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
             // -------- event --------
-            int e1 = read(is);
+            int e1 = dis.readUnsignedByte();
             if (e1 == 0xff) { // exclusive, nop
-                int e2 = read(is);
+                int e2 = dis.readUnsignedByte();
                 switch (e2) {
                 case 0xf0: // exclusive
-                    int messageSize = read(is);
+                    int messageSize = dis.readUnsignedByte();
                     byte[] data = new byte[messageSize];
-                    read(is, data);
+                    dis.readFully(data);
                     // TODO end check 0xf7
                     smafMessage = SysexMessage.Factory.getSysexMessage(duration, data);
                     break;
@@ -139,13 +139,13 @@ Debug.printf(Level.WARNING, "unknown 0xff, 0x02x\n", e2);
                     break;
                 }
             } else if (e1 != 0x00) { // note
-                int gateTime = readOneToTwo(is);
+                int gateTime = MidiUtil.readVariableLength(dis);
 //Debug.println("gateTime: " + gateTime + ", 0x" + StringUtil.toHex4(gateTime));
                 smafMessage = getHandyPhoneStandardMessage(duration, e1, gateTime);
             } else { // e1 == 0x00 other event
-                int e2 = read(is);
+                int e2 = dis.readUnsignedByte();
                 if (e2 == 0x00) {
-                    int e3 = read(is);
+                    int e3 = dis.readUnsignedByte();
                     if (e3 == 0x00) {
                         smafMessage = new EndOfSequenceMessage(duration);
                     } else {
@@ -158,7 +158,7 @@ Debug.printf(Level.WARNING, "unknown 0x00, 0x00, 0x02x\n", e3);
                     int data = e2 & 0x0f;
                     switch (event) {
                     case 3:
-                        int value = read(is);
+                        int value = dis.readUnsignedByte();
                         switch (data) {
                         case 0: // program change - 0x00 ~ 0x7f
                             smafMessage = new ProgramChangeMessage(duration, channel, value);
@@ -224,37 +224,37 @@ private Set<String> uc = new HashSet<>();
 private int cc = 0;
 
     /** formatType 1, 2 */
-    private void readMobileStandard(InputStream is)
+    private void readMobileStandard(MyDataInputStream dis)
         throws InvalidSmafDataException, IOException {
 
         SmafMessage smafMessage = null;
 
-        while (available() > 0) {
+        while (dis.available() > 0) {
             // duration
-            int duration = readOneToFour(is);
+            int duration = MidiUtil.readVariableLength(dis);
 //Debug.println("duration: " + duration);
             // event
-            int status = read(is);
+            int status = dis.readUnsignedByte();
             if (status >= 0x80 && status <= 0x8f) { // note w/o velocity
                 int channel = status & 0x0f;
-                int note = read(is);
-                int gateTime = readOneToFour(is);
+                int note = dis.readUnsignedByte();
+                int gateTime = MidiUtil.readVariableLength(dis);
                 smafMessage = new NoteMessage(duration, channel, note, gateTime);
             } else if (status >= 0x90 && status <= 0x9f) { // note w/ velocity
                 int channel = status & 0x0f;
-                int note = read(is);
-                int velocity = read(is);
-                int gateTime = readOneToFour(is);
+                int note = dis.readUnsignedByte();
+                int velocity = dis.readUnsignedByte();
+                int gateTime = MidiUtil.readVariableLength(dis);
                 smafMessage = new NoteMessage(duration, channel, note, gateTime, velocity);
             } else if (status >= 0xa0 && status <= 0xaf) { // reserved
-                int d1 = read(is);
-                int d2 = read(is);
+                int d1 = dis.readUnsignedByte();
+                int d2 = dis.readUnsignedByte();
                 smafMessage = null;
 Debug.printf(Level.WARNING, "reserved: 0xa_: %02x%02x\n", d1, d2);
             } else if (status >= 0xb0 && status <= 0xbf) { // control change
                 int channel = status & 0x0f;
-                int control = read(is);
-                int value   = read(is);
+                int control = dis.readUnsignedByte();
+                int value   = dis.readUnsignedByte();
                 switch (control) { // TODO no specification
                 case 0x00: // バンクセレクト MSB
                     smafMessage = new BankSelectMessage(duration, channel, value, BankSelectMessage.Significant.Least);
@@ -297,25 +297,25 @@ Debug.printf(Level.WARNING, "undefined control: %02x, %02x\n", control, value);
                 }
             } else if (status >= 0xc0 && status <= 0xcf) { // program change
                 int channel = status & 0x0f;
-                int program = read(is);
+                int program = dis.readUnsignedByte();
                 smafMessage = new ProgramChangeMessage(duration, channel, program);
             } else if (status >= 0xd0 && status <= 0xdf) { // reserved
-                int d1 = read(is);
+                int d1 = dis.readUnsignedByte();
                 smafMessage = new UndefinedMessage(duration);
 Debug.printf(Level.WARNING, "reserved: 0xd_: %02x\n", d1);
             } else if (status >= 0xe0 && status <= 0xef) { // pitch vend message
                 int channel = status & 0x0f;
-                int lsb = read(is);
-                int msb = read(is);
+                int lsb = dis.readUnsignedByte();
+                int msb = dis.readUnsignedByte();
                 smafMessage = new PitchBendMessage(duration, channel, (msb << 7) | lsb);
             } else if (status == 0xff) { // eos, nop
-                int d1 = read(is);
+                int d1 = dis.readUnsignedByte();
                 switch (d1) {
                 case 0x00:
                     smafMessage = new NopMessage(duration);
                     break;
                 case 0x2f:
-                    int d2 = read(is); // must be 0
+                    int d2 = dis.readUnsignedByte(); // must be 0
                     if (d2 != 0) {
 Debug.printf(Level.WARNING, "illegal state: %02x\n", d2);
                     }
@@ -327,9 +327,9 @@ Debug.printf(Level.WARNING, "unknown: 0xff: %02x\n", d1);
                     break;
                 }
             } else if (status == 0xf0) { // exclusive
-                int messageSize = readOneToFour(is);
+                int messageSize = MidiUtil.readVariableLength(dis);
                 byte[] data = new byte[messageSize];
-                read(is, data);
+                dis.readFully(data);
                 // TODO end check 0xf7
                 smafMessage = SysexMessage.Factory.getSysexMessage(duration, data);
             } else if (status < 0x80) { // data

@@ -7,8 +7,10 @@
 package vavi.sound.smaf.message.graphics;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
+import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.ShortMessage;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 
@@ -71,12 +73,13 @@ public class GeneralPurposeDisplayMessage extends ShortMessage {
         switch (formatType) {
         case HandyPhoneStandard:
             try {
-                writeOneToTwo(baos, duration);
+                DataOutputStream dos = new DataOutputStream(baos);
+                MidiUtil.writeVarInt(dos, duration);
                 baos.write(eventType);
-                writeOneToTwo(baos, 0); // TODO size
-                writeOneToTwo(baos, lifeTime);
-                writeOneToTwo(baos, coordinates);
-                writeOneToTwo(baos, subBlocks);
+                MidiUtil.writeVarInt(dos, 0); // TODO size
+                MidiUtil.writeVarInt(dos, lifeTime);
+                MidiUtil.writeVarInt(dos, coordinates);
+                MidiUtil.writeVarInt(dos, subBlocks);
             } catch (IOException e) {
                 assert false;
             }

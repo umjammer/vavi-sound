@@ -9,7 +9,6 @@ package vavi.sound.smaf.chunk;
 import java.io.DataOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +40,11 @@ public class FileChunk extends Chunk {
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent)
+    protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
-        while (available() > 2) {
-            Chunk chunk = readFrom(is);
+        while (dis.available() > 2) {
+            Chunk chunk = readFrom(dis);
             if (chunk instanceof ContentsInfoChunk) {
                 contentsInfoChunk = chunk;
             } else if (chunk instanceof OptionalDataChunk) {
@@ -64,11 +63,11 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
             }
         }
 //Debug.println("available: " + is.available());
-        this.crc = readShort(is);
+        this.crc = dis.readUnsignedShort();
 Debug.printf("crc (orig): %04x\n", crc);
-        if (is.available() > 4) {
-            int kddiCrc = readShort(is);
-            int kddiMark = readShort(is);
+        if (dis.available() > 4) {
+            int kddiCrc = dis.readUnsignedShort();
+            int kddiMark = dis.readUnsignedShort();
 Debug.printf("has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
         }
     }

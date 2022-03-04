@@ -16,11 +16,12 @@ import java.nio.ByteOrder;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 import vavi.util.Debug;
+
+import static vavi.sound.SoundUtil.volume;
 
 
 /**
@@ -34,7 +35,7 @@ public abstract class BasicAudioEngine implements AudioEngine {
     /** */
     protected Data[] data;
 
-    /* */
+    @Override
     public void setData(int streamNumber,
                         int channel,
                         int sampleRate,
@@ -64,7 +65,7 @@ public abstract class BasicAudioEngine implements AudioEngine {
 // debug1();
     }
 
-    /** */
+    @Override
     public void stop(int streamNumber) {
     }
 
@@ -74,7 +75,7 @@ public abstract class BasicAudioEngine implements AudioEngine {
     /** */
     protected abstract InputStream[] getInputStreams(int streamNumber, int channels);
 
-    /** */
+    @Override
     public void start(int streamNumber) {
 
         int channels = getChannels(streamNumber);
@@ -105,10 +106,7 @@ Debug.println(audioFormat);
             SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
             line.open(audioFormat);
             line.start();
-FloatControl gainControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
-double gain = .2d; // number between 0 and 1 (loudest)
-float dB = (float) (Math.log(gain) / Math.log(10.0) * 20.0);
-gainControl.setValue(dB);
+            volume(line, .2d);
             byte[] buf = new byte[1024];
             while (iss[0].available() > 0) {
                 if (channels == 1) {
@@ -146,7 +144,7 @@ gainControl.setValue(dB);
     /** */
     protected abstract OutputStream getOutputStream(OutputStream os);
 
-    /* */
+    @Override
     public byte[] encode(int bits, int channels, byte[] pcm) {
         try {
             if (channels == 1) {

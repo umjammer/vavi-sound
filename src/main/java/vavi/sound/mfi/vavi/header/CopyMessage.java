@@ -20,6 +20,7 @@ import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.midi.MidiConstants;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
 
 
@@ -75,7 +76,7 @@ public class CopyMessage extends SubMessage implements MidiConvertible, MfiConve
 
         MetaMessage metaMessage = new MetaMessage();
 
-        metaMessage.setMessage(MidiConstants.META_COPYRIGHT, // 著作権表示
+        metaMessage.setMessage(MetaEvent.META_COPYRIGHT.number(),
                                getData(), getDataLength());
 
         return new MidiEvent[] {

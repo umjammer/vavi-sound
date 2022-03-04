@@ -6,17 +6,19 @@
 
 package vavi.sound.sampled.smaf;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -25,12 +27,57 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
-@Disabled
 public class SmafAudioFileWriterTest {
 
+    String nullDevice = System.getProperty("vavi.test.dev.null");
+
+    static Path dir;
+
+    @BeforeAll
+    static void setup() throws Exception {
+        dir = Paths.get("tmp");
+        if (Files.exists(dir)) {
+            Files.createDirectories(dir);
+        }
+    }
+
+    /**
+     * mono wave -> smaf
+     */
     @Test
-    public void test() {
-        fail("Not yet implemented");
+    public void test0() throws Exception {
+        Path path = Paths.get(SmafAudioFileWriterTest.class.getResource("/mono.wav").toURI());
+        AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(Files.newInputStream(path)));
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("smaf.divided", true);
+        properties.put("smaf.directory", dir.toString());
+        properties.put("smaf.base", path.getFileName().toString().replace(".wav", "_%d.mmf"));
+        properties.put("smaf.time", (float) 10.0);
+        properties.put("smaf.sampleRate", 8000);
+        properties.put("smaf.bits", 4);
+        properties.put("smaf.channels", 1);
+        properties.put("smaf.masterVolume", 100);
+        properties.put("smaf.adpcmVolume", 100);
+        new SmafAudioFileWriter().write(ais, new SMAF(properties), new File(nullDevice));
+        ais.close();
+    }
+
+    @Test
+    public void test1() throws Exception {
+        Path path = Paths.get(SmafAudioFileWriterTest.class.getResource("/mono.wav").toURI());
+        AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(Files.newInputStream(path)));
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("smaf.divided", true);
+        properties.put("smaf.directory", dir.toString());
+        properties.put("smaf.base", path.getFileName().toString().replace(".wav", "_%d.mmf"));
+        properties.put("smaf.time", (float) 10.0);
+        properties.put("smaf.sampleRate", 8000);
+        properties.put("smaf.bits", 4);
+        properties.put("smaf.channels", 1);
+        properties.put("smaf.masterVolume", 100);
+        properties.put("smaf.adpcmVolume", 100);
+        AudioSystem.write(ais, new SMAF(properties), new File(nullDevice));
+        ais.close();
     }
 
     //----
@@ -56,7 +103,7 @@ public class SmafAudioFileWriterTest {
         properties.put("smaf.masterVolume", 100);
         properties.put("smaf.adpcmVolume", 100);
         AudioSystem.write(ais, new SMAF(properties), new File(nullDevice));
-        System.exit(0);
+        ais.close();
     }
 }
 

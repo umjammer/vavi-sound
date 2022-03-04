@@ -84,7 +84,7 @@ Debug.println("★0 close: " + midiSequencer.hashCode());
         return midiSequencer.isOpen();
     }
 
-    /** ADPCM sequencer */
+    /** ADPCM sequencer, TODO should be {@link javax.sound.midi.Transmitter}  */
     private javax.sound.midi.MetaEventListener mea = new MetaEventAdapter();
 
     /* */

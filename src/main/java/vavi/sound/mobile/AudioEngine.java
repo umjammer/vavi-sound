@@ -12,10 +12,12 @@ import java.nio.ByteOrder;
 /**
  * AudioEngine.
  * <p>
- * {@link vavi.sound.mfi.vavi.sequencer.AudioDataSequencer} で使用されます。
- * 条件は引数なしのコンストラクタがあること、
- * {@link #encode(int, int, byte[])} に関連する部分は
- * ステートレスでなければならないことです。
+ * Used in {@link vavi.sound.mfi.vavi.sequencer.AudioDataSequencer}.
+ * </p>
+ * <p>
+ * Currently, an implementation class of this interface should be an bean.
+ * (means having a contractor without argument)
+ * {@link #encode(int, int, byte[])} related should be stateless.
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051116 nsano initial version <br>
@@ -77,15 +79,15 @@ public interface AudioEngine {
         public boolean continued = false;
     }
 
-    /** */
+    /** monaural stereo conversion */
     class Util {
-        /** */
+        /** left */
         private static final int L = 0;
-        /** */
+        /** right */
         private static final int R = 1;
 
         /**
-         * インターリーブされた PCM を L R 順に分離
+         * separates interleaved PCM to an array L R order.
          * @param stereo PCM stereo, currently 16bit only
          * @param bits PCM bits, TODO currently unused
          * @param byteOrder PCM 16 bit byte order, TODO currently unused
@@ -116,7 +118,7 @@ public interface AudioEngine {
         }
 
         /**
-         * インターリーブするというらしい。
+         * this seems to say interleave.
          * @param monoL ADPCM monaural L, currently 4bit only
          * @param monoR ADPCM monaural R, currently 4bit only
          * @param bits ADPCM bits, TODO currently unused
@@ -137,7 +139,7 @@ public interface AudioEngine {
         }
 
         /**
-         * インターリーブしない。
+         * not interleaved.
          * @param monoL adpcm data L
          * @param monoR adpcm data R
          * @return L, R concatenated adpcm data

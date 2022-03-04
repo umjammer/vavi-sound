@@ -8,7 +8,6 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 
@@ -39,9 +38,9 @@ Debug.println("GraphicsSetupData: " + size + " bytes");
     }
 
     /** */
-    protected void init(InputStream is, Chunk parent) throws InvalidSmafDataException, IOException {
-        while (available() > 0) {
-            Chunk chunk = readFrom(is);
+    protected void init(MyDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
+        while (dis.available() > 0) {
+            Chunk chunk = readFrom(dis);
             if (chunk instanceof DisplayParameterDefinitionChunk) {
                 displayParameterDefinitionChunk = chunk;
             } else if (chunk instanceof ColorPaletteDefinitionChunk) {
