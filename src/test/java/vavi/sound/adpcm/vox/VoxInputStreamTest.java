@@ -8,25 +8,21 @@ package vavi.sound.adpcm.vox;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
-
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import vavi.util.Debug;
-
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,7 +67,7 @@ System.err.println(format);
 
         InputStream is = new VoxInputStream(getClass().getResourceAsStream(inFile), ByteOrder.LITTLE_ENDIAN);
 System.err.println("available: " + is.available());
-        OutputStream os = new BufferedOutputStream(new FileOutputStream(outFile));
+        OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
 
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
@@ -114,7 +110,7 @@ System.err.println("available: " + is.available());
             byteOrder.equals(ByteOrder.BIG_ENDIAN));
 System.err.println(audioFormat);
 
-        InputStream is = new VoxInputStream(new FileInputStream(args[0]),
+        InputStream is = new VoxInputStream(Files.newInputStream(Paths.get(args[0])),
                                             byteOrder);
 System.err.println("available: " + is.available());
 
@@ -124,17 +120,15 @@ System.err.println("available: " + is.available());
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(audioFormat);
-        line.addLineListener(new LineListener() {
-            public void update(LineEvent ev) {
+        line.addLineListener(ev -> {
 Debug.println(ev.getType());
-                if (LineEvent.Type.STOP == ev.getType()) {
-                    System.exit(0);
-                }
+            if (LineEvent.Type.STOP == ev.getType()) {
+                System.exit(0);
             }
         });
         line.start();
         byte[] buf = new byte[1024];
-        int l = 0;
+        int l;
 
         while (is.available() > 0) {
             l = is.read(buf, 0, 1024);

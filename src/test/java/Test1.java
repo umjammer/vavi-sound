@@ -6,13 +6,11 @@
 
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
-
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Soundbank;
 
 import vavi.sound.mfi.MetaEventListener;
-import vavi.sound.mfi.MetaMessage;
 import vavi.sound.mfi.MfiSystem;
 import vavi.sound.mfi.Sequence;
 import vavi.sound.mfi.Sequencer;
@@ -29,12 +27,12 @@ public class Test1 {
 
     /**
      *
-     * @param args
+     * @param args mfi files ...
      */
     public static void main(String[] args) throws Exception {
         final Sequencer sequencer = MfiSystem.getSequencer();
         sequencer.open();
-Synthesizer synthesizer = Synthesizer.class.cast(sequencer);
+Synthesizer synthesizer = (Synthesizer) sequencer;
 // sf
 Soundbank soundbank = synthesizer.getDefaultSoundbank();
 //Instrument[] instruments = synthesizer.getAvailableInstruments();
@@ -50,27 +48,25 @@ System.err.println("---- " + soundbank.getDescription() + " ----");
 // volume (not work ???)
 MidiChannel[] channels = synthesizer.getChannels();
 double gain = 0.02d;
-for (int i = 0; i < channels.length; i++) {
- channels[i].controlChange(7, (int) (gain * 127.0));
+for (MidiChannel channel : channels) {
+ channel.controlChange(7, (int) (gain * 127.0));
 }
 
-        for (int i = 0; i < args.length; i++) {
-System.err.println("START: " + args[i]);
+        for (String arg : args) {
+System.err.println("START: " + arg);
             CountDownLatch countDownLatch = new CountDownLatch(1);
-            MetaEventListener mel = new MetaEventListener() {
-                public void meta(MetaMessage meta) {
+            MetaEventListener mel = meta -> {
 System.err.println("META: " + meta.getType());
-                    if (meta.getType() == 47) {
-                        countDownLatch.countDown();
-                    }
+                if (meta.getType() == 47) {
+                    countDownLatch.countDown();
                 }
             };
-            Sequence sequence = MfiSystem.getSequence(new File(args[i]));
+            Sequence sequence = MfiSystem.getSequence(new File(arg));
             sequencer.setSequence(sequence);
             sequencer.addMetaEventListener(mel);
             sequencer.start();
             countDownLatch.await();
-System.err.println("END: " + args[i]);
+System.err.println("END: " + arg);
             sequencer.removeMetaEventListener(mel);
         }
         sequencer.close();

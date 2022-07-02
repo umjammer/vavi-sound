@@ -9,7 +9,6 @@ package vavi.sound.midi.mfi;
 import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.CountDownLatch;
-
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiSystem;
@@ -17,7 +16,6 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 
 import org.junit.jupiter.api.Test;
-
 import vavi.util.Debug;
 
 
@@ -67,12 +65,10 @@ Debug.println(meta.getType());
         Sequence sequence = MidiSystem.getSequence(new File(args[0]));
 Debug.println(sequence);
         sequencer.setSequence(sequence);
-        sequencer.addMetaEventListener(new MetaEventListener() {
-            public void meta(MetaMessage meta) {
+        sequencer.addMetaEventListener(meta -> {
 Debug.println(meta.getType());
-                if (meta.getType() == 47) {
-                    cdl.countDown();
-                }
+            if (meta.getType() == 47) {
+                cdl.countDown();
             }
         });
         sequencer.start();

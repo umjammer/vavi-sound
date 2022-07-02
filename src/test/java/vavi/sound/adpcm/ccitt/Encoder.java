@@ -8,12 +8,11 @@ package vavi.sound.adpcm.ccitt;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
-
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.sound.sampled.AudioFormat;
 
 import vavi.io.BitOutputStream;
@@ -88,10 +87,10 @@ System.err.println("\t-x\tProcess 16-bit PCM little endian");
                 break;
             default:
                 if (in == System.in) {
-                    in = new FileInputStream(args[argc]);
+                    in = Files.newInputStream(Paths.get(args[argc]));
 System.err.println("input: " + args[argc]);
                 } else {
-                    out = new FileOutputStream(args[argc]);
+                    out = Files.newOutputStream(Paths.get(args[argc]));
 System.err.println("output: " + args[argc]);
                 }
                 break;

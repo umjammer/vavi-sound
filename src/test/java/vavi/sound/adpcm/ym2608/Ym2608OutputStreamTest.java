@@ -7,18 +7,16 @@
 package vavi.sound.adpcm.ym2608;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import vavi.io.OutputEngineInputStream;
 import vavi.util.Debug;
-
 import vavix.io.IOStreamOutputEngine;
 import vavix.util.Checksum;
 
@@ -47,12 +45,9 @@ Debug.println("outFile: " + outFile);
 
     @Test
     public void test1() throws Exception {
-        OutputStream os = new FileOutputStream(outFile);
-        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(getClass().getResourceAsStream(inFile), new IOStreamOutputEngine.OutputStreamFactory() {
-            public OutputStream getOutputStream(OutputStream out) throws IOException {
-                return new Ym2608OutputStream(out, ByteOrder.LITTLE_ENDIAN);
-            }
-        }));
+        OutputStream os = Files.newOutputStream(outFile.toPath());
+        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(getClass().getResourceAsStream(inFile),
+                out -> new Ym2608OutputStream(out, ByteOrder.LITTLE_ENDIAN)));
         byte[] buffer = new byte[8192];
         while (true) {
             int amount = is.read(buffer);

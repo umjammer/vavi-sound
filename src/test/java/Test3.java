@@ -18,12 +18,12 @@ public class Test3 {
 
     /**
      *
-     * @param args
+     * @param args ignored
      */
     public static void main(String[] args) throws Exception {
-        ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class).forEach(provider -> {
-            Arrays.asList(provider.getDeviceInfo()).forEach(info -> System.out.println(info.getName()));
-        });
+        ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class)
+                .forEach(provider -> Arrays.asList(provider.getDeviceInfo())
+                        .forEach(info -> System.out.println(info.getName())));
     }
 }
 

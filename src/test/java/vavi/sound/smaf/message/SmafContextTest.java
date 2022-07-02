@@ -8,18 +8,15 @@ package vavi.sound.smaf.message;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.MidiSystem;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import vavi.sound.smaf.SmafSystem;
 import vavi.util.Debug;
 
@@ -79,7 +76,7 @@ Debug.println("type: " + type);
         vavi.sound.smaf.Sequence smafSequence = SmafSystem.toSmafSequence(midiSequence, type);
 
         file = new File(args[1]);
-        int r = SmafSystem.write(smafSequence, 0, new FileOutputStream(file));
+        int r = SmafSystem.write(smafSequence, 0, Files.newOutputStream(file.toPath()));
 Debug.println("write: " + r);
 
         System.exit(0);

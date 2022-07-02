@@ -8,9 +8,9 @@ package vavi.sound.adpcm.dvi;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import vavi.io.BitInputStream;
 import vavi.io.LittleEndianDataOutputStream;
@@ -38,8 +38,8 @@ public class Decoder {
 
         Dvi decoder = new Dvi();
 
-        BitInputStream is = new BitInputStream(new FileInputStream(args[0]));
-        DataOutputStream os = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(args[1])));
+        BitInputStream is = new BitInputStream(Files.newInputStream(Paths.get(args[0])));
+        DataOutputStream os = new DataOutputStream(new BufferedOutputStream(Files.newOutputStream(Paths.get(args[1]))));
 
         while (true) {
             int abuf = is.read();
@@ -60,8 +60,8 @@ public class Decoder {
      */
     static void a(String[] args) throws IOException {
 
-        BitInputStream is = new BitInputStream(new FileInputStream(args[0]));
-        LittleEndianDataOutputStream os = new LittleEndianDataOutputStream(new BufferedOutputStream(new FileOutputStream(args[1])));
+        BitInputStream is = new BitInputStream(Files.newInputStream(Paths.get(args[0])));
+        LittleEndianDataOutputStream os = new LittleEndianDataOutputStream(new BufferedOutputStream(Files.newOutputStream(Paths.get(args[1]))));
 
         Dvi decoder = new Dvi();
 

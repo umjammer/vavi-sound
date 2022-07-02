@@ -59,7 +59,7 @@ public class SSRC {
     private static final int RANDBUFLEN = 65536;
 
     /** */
-    private static final int RINT(double x) {
+    private static int RINT(double x) {
         return ((x) >= 0 ? ((int) ((x) + 0.5)) : ((int) ((x) - 0.5)));
     }
 
@@ -271,12 +271,12 @@ public class SSRC {
 
             if (s < shaper_clipmin) {
                 double d = s / shaper_clipmin;
-                peak[0] = peak[0] < d ? d : peak[0];
+                peak[0] = Math.max(peak[0], d);
                 s = shaper_clipmin;
             }
             if (s > shaper_clipmax) {
                 double d = s / shaper_clipmax;
-                peak[0] = peak[0] < d ? d : peak[0];
+                peak[0] = Math.max(peak[0], d);
                 s = shaper_clipmax;
             }
 
@@ -295,7 +295,7 @@ public class SSRC {
 
         if (s < shaper_clipmin) {
             double d = s / shaper_clipmin;
-            peak[0] = peak[0] < d ? d : peak[0];
+            peak[0] = Math.max(peak[0], d);
             s = shaper_clipmin;
             shapebuf[ch][0] = s - u;
 
@@ -305,7 +305,7 @@ public class SSRC {
                 shapebuf[ch][0] = -1;
         } else if (s > shaper_clipmax) {
             double d = s / shaper_clipmax;
-            peak[0] = peak[0] < d ? d : peak[0];
+            peak[0] = Math.max(peak[0], d);
             s = shaper_clipmax;
             shapebuf[ch][0] = s - u;
 
@@ -355,28 +355,28 @@ public class SSRC {
 
     /** */
     private static void usage() {
-        System.err.printf("http://shibatch.sourceforge.net/\n\n");
-        System.err.printf("usage: ssrc [<options>] <source wav file> <destination wav file>\n");
-        System.err.printf("options : --rate <sampling rate>     output sample rate\n");
-        System.err.printf("          --att <attenuation(dB)>    attenuate signal\n");
-        System.err.printf("          --bits <number of bits>    output quantization bit length\n");
-        System.err.printf("          --tmpfile <file name>      specify temporal file\n");
-        System.err.printf("          --twopass                  two pass processing to avoid clipping\n");
-        System.err.printf("          --normalize                normalize the wave file\n");
-        System.err.printf("          --quiet                    nothing displayed except error\n");
-        System.err.printf("          --dither [<type>]          dithering\n");
-        System.err.printf("                                       0 : no dither\n");
-        System.err.printf("                                       1 : no noise shaping\n");
-        System.err.printf("                                       2 : triangular spectral shape\n");
-        System.err.printf("                                       3 : ATH based noise shaping\n");
-        System.err.printf("                                       4 : less dither amplitude than type 3\n");
-        System.err.printf("          --pdf <type> [<amp>]       select p.d.f. of noise\n");
-        System.err.printf("                                       0 : rectangular\n");
-        System.err.printf("                                       1 : triangular\n");
-        System.err.printf("                                       2 : Gaussian\n");
-        System.err.printf("          --profile <type>           specify profile\n");
-        System.err.printf("                                       standard : the default quality\n");
-        System.err.printf("                                       fast     : fast, not so bad quality\n");
+        System.err.print("http://shibatch.sourceforge.net/\n\n");
+        System.err.print("usage: ssrc [<options>] <source wav file> <destination wav file>\n");
+        System.err.print("options : --rate <sampling rate>     output sample rate\n");
+        System.err.print("          --att <attenuation(dB)>    attenuate signal\n");
+        System.err.print("          --bits <number of bits>    output quantization bit length\n");
+        System.err.print("          --tmpfile <file name>      specify temporal file\n");
+        System.err.print("          --twopass                  two pass processing to avoid clipping\n");
+        System.err.print("          --normalize                normalize the wave file\n");
+        System.err.print("          --quiet                    nothing displayed except error\n");
+        System.err.print("          --dither [<type>]          dithering\n");
+        System.err.print("                                       0 : no dither\n");
+        System.err.print("                                       1 : no noise shaping\n");
+        System.err.print("                                       2 : triangular spectral shape\n");
+        System.err.print("                                       3 : ATH based noise shaping\n");
+        System.err.print("                                       4 : less dither amplitude than type 3\n");
+        System.err.print("          --pdf <type> [<amp>]       select p.d.f. of noise\n");
+        System.err.print("                                       0 : rectangular\n");
+        System.err.print("                                       1 : triangular\n");
+        System.err.print("                                       2 : Gaussian\n");
+        System.err.print("          --profile <type>           specify profile\n");
+        System.err.print("                                       standard : the default quality\n");
+        System.err.print("                                       fast     : fast, not so bad quality\n");
     }
 
     /** */
@@ -417,7 +417,7 @@ public class SSRC {
             System.err.printf(", ETA =%4dmsec", eta);
             lastshowed = t;
         }
-        System.err.printf("\r");
+        System.err.println();
         System.err.flush();
     }
 
@@ -434,7 +434,7 @@ public class SSRC {
     }
 
     /** */
-    abstract class Resampler {
+    abstract static class Resampler {
         int nch;
         int bps;
         int dbps;
@@ -517,8 +517,8 @@ System.err.println("upsample");
                                       sfrq, dfrq, sfrq, sfrq, dfrq, fs1 / dfrq));
                 }
 
-                df = (dfrq * osf / 2 - sfrq / 2) * 2 / guard;
-                lpf = sfrq / 2 + (dfrq * osf / 2 - sfrq / 2) / guard;
+                df = (dfrq * osf / 2f - sfrq / 2f) * 2 / guard;
+                lpf = sfrq / 2f + (dfrq * osf / 2f - sfrq / 2f) / guard;
 
 //              delta = Math.pow(10, -aa / 20);
                 if (aa <= 21) {
@@ -585,7 +585,7 @@ System.err.println("upsample");
                         n2--;
                     }
                     df = (fs2 * d) / (n2 - 1);
-                    lpf = sfrq / 2;
+                    lpf = sfrq / 2f;
                     if (df < DF) {
                         break;
                     }
@@ -855,7 +855,7 @@ System.err.println("upsample");
                     if (twopass) {
                         for (i = 0; i < nsmplwrt2 * nch; i++) {
                             double f = outbuf[i] > 0 ? outbuf[i] : -outbuf[i];
-                            peak[0] = peak[0] < f ? f : peak[0];
+                            peak[0] = Math.max(peak[0], f);
                             rawoutbuf.asDoubleBuffer().put(i, outbuf[i]);
                         }
                     } else {
@@ -874,12 +874,12 @@ System.err.println("upsample");
 
                                     if (s < -0x80) {
                                         double d = (double) s / -0x80;
-                                        peak[0] = peak[0] < d ? d : peak[0];
+                                        peak[0] = Math.max(peak[0], d);
                                         s = -0x80;
                                     }
                                     if (0x7f < s) {
                                         double d = (double) s / 0x7f;
-                                        peak[0] = peak[0] < d ? d : peak[0];
+                                        peak[0] = Math.max(peak[0], d);
                                         s = 0x7f;
                                     }
                                 }
@@ -908,12 +908,12 @@ System.err.println("upsample");
 
                                     if (s < -0x8000) {
                                         double d = (double) s / -0x8000;
-                                        peak[0] = peak[0] < d ? d : peak[0];
+                                        peak[0] = Math.max(peak[0], d);
                                         s = -0x8000;
                                     }
                                     if (0x7fff < s) {
                                         double d = (double) s / 0x7fff;
-                                        peak[0] = peak[0] < d ? d : peak[0];
+                                        peak[0] = Math.max(peak[0], d);
                                         s = 0x7fff;
                                     }
                                 }
@@ -942,12 +942,12 @@ System.err.println("upsample");
 
                                     if (s < -0x800000) {
                                         double d = (double) s / -0x800000;
-                                        peak[0] = peak[0] < d ? d : peak[0];
+                                        peak[0] = Math.max(peak[0], d);
                                         s = -0x800000;
                                     }
                                     if (0x7fffff < s) {
                                         double d = (double) s / 0x7fffff;
-                                        peak[0] = peak[0] < d ? d : peak[0];
+                                        peak[0] = Math.max(peak[0], d);
                                         s = 0x7fffff;
                                     }
                                 }
@@ -1050,8 +1050,8 @@ System.err.println("upsample");
             int n2, n2x, n2y, n1, n1b;
             int filter1len;
             int[] f2order, f2inc;
-            int[] fft_ip = null;
-            double[] fft_w = null;
+            int[] fft_ip;
+            double[] fft_w;
             ByteBuffer rawinbuf, rawoutbuf;
             double[] inbuf, outbuf;
             double[][] buf1, buf2;
@@ -1163,8 +1163,8 @@ System.err.println("downsample");
 
                 fs2 = sfrq / frqgcd * dfrq;
 
-                df = (fs1 / 2 - sfrq / 2) * 2 / guard;
-                lpf = sfrq / 2 + (fs1 / 2 - sfrq / 2) / guard;
+                df = (fs1 / 2f - sfrq / 2f) * 2 / guard;
+                lpf = sfrq / 2f + (fs1 / 2f - sfrq / 2f) / guard;
 
 //                delta = Math.pow(10, -aa / 20);
                 if (aa <= 21) {
@@ -1421,7 +1421,7 @@ System.err.println("downsample");
                     if (twopass) {
                         for (i = 0; i < nsmplwrt2 * nch; i++) {
                             double f = outbuf[i] > 0 ? outbuf[i] : -outbuf[i];
-                            peak[0] = peak[0] < f ? f : peak[0];
+                            peak[0] = Math.max(peak[0], f);
 //System.err.println("p: " + rawoutbuf.position() + ", l: " + rawoutbuf.limit());
                             rawoutbuf.asDoubleBuffer().put(i, outbuf[i]);
 //if (i < 100) {
@@ -1445,12 +1445,12 @@ System.err.println("downsample");
 
                                     if (s < -0x80) {
                                         double d = (double) s / -0x80;
-                                        peak[0] = peak[0] < d ? d : peak[0];
+                                        peak[0] = Math.max(peak[0], d);
                                         s = -0x80;
                                     }
                                     if (0x7f < s) {
                                         double d = (double) s / 0x7f;
-                                        peak[0] = peak[0] < d ? d : peak[0];
+                                        peak[0] = Math.max(peak[0], d);
                                         s = 0x7f;
                                     }
                                 }
@@ -1479,12 +1479,12 @@ System.err.println("downsample");
 
                                     if (s < -0x8000) {
                                         double d = (double) s / -0x8000;
-                                        peak[0] = peak[0] < d ? d : peak[0];
+                                        peak[0] = Math.max(peak[0], d);
                                         s = -0x8000;
                                     }
                                     if (0x7fff < s) {
                                         double d = (double) s / 0x7fff;
-                                        peak[0] = peak[0] < d ? d : peak[0];
+                                        peak[0] = Math.max(peak[0], d);
                                         s = 0x7fff;
                                     }
                                 }
@@ -1513,12 +1513,12 @@ System.err.println("downsample");
 
                                     if (s < -0x800000) {
                                         double d = (double) s / -0x800000;
-                                        peak[0] = peak[0] < d ? d : peak[0];
+                                        peak[0] = Math.max(peak[0], d);
                                         s = -0x800000;
                                     }
                                     if (0x7fffff < s) {
                                         double d = (double) s / 0x7fffff;
-                                        peak[0] = peak[0] < d ? d : peak[0];
+                                        peak[0] = Math.max(peak[0], d);
                                         s = 0x7fffff;
                                     }
                                 }
@@ -1633,9 +1633,9 @@ System.err.printf("%d, %d, %d, %d\n",
 
             setstarttime();
 
-            ByteBuffer leos = null;
+            ByteBuffer bb = null;
             if (twopass) {
-                leos = ByteBuffer.allocate(8);
+                bb = ByteBuffer.allocate(8);
             }
 
             int r = 0;
@@ -1722,10 +1722,10 @@ System.err.printf("%d, %d, %d, %d\n",
                 } else {
                     double p = f > 0 ? f : -f;
                     peak[0] = peak[0] < p ? p : peak[0];
-                    leos.position(0);
-                    leos.putDouble(f);
-                    leos.flip();
-                    sumWritten += fpo.write(leos);
+                    bb.position(0);
+                    bb.putDouble(f);
+                    bb.flip();
+                    sumWritten += fpo.write(bb);
                 }
 
                 ch++;
@@ -2019,11 +2019,11 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                 System.err.printf("nchannels : %d\n", nch);
                 System.err.printf("length : %d bytes, %g secs\n", length, (double) length / bps / nch / sfrq);
                 if (dither == 0) {
-                    System.err.printf("dither type : none\n");
+                    System.err.print("dither type : none\n");
                 } else {
                     System.err.printf("dither type : %s, %s p.d.f, amp = %g\n", dtype[dither], ptype[pdf], noiseamp);
                 }
-                System.err.printf("\n");
+                System.err.print("\n");
             }
 
             if (twopass) {
@@ -2033,34 +2033,34 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
 
             // generate wav header
 
-            ByteBuffer leos = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN);
+            bb = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN);
 
-            leos.put("RIFF".getBytes());
+            bb.put("RIFF".getBytes());
             dword = 0;
-            leos.putInt(dword);
+            bb.putInt(dword);
 
-            leos.put("WAVEfmt ".getBytes());
+            bb.put("WAVEfmt ".getBytes());
             dword = 16;
-            leos.putInt(dword);
+            bb.putInt(dword);
             word = 1;
-            leos.putShort(word); // format category, PCM
+            bb.putShort(word); // format category, PCM
             word = (short) nch;
-            leos.putShort(word); // channels
+            bb.putShort(word); // channels
             dword = dfrq;
-            leos.putInt(dword); // sampling rate
+            bb.putInt(dword); // sampling rate
             dword = dfrq * nch * dbps;
-            leos.putInt(dword); // bytes per sec
+            bb.putInt(dword); // bytes per sec
             word = (short) (dbps * nch);
-            leos.putShort(word); // block alignment
+            bb.putShort(word); // block alignment
             word = (short) (dbps * 8);
-            leos.putShort(word); // bits per sample
+            bb.putShort(word); // bits per sample
 
-            leos.put("data".getBytes());
+            bb.put("data".getBytes());
             dword = 0;
-            leos.putInt(dword);
+            bb.putInt(dword);
 
-            leos.flip();
-            fpo.write(leos);
+            bb.flip();
+            fpo.write(bb);
 
             if (dither != 0) {
                 int min = 0, max = 0;
@@ -2090,7 +2090,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                 int fptlen, sumread;
 
                 if (!quiet) {
-                    System.err.printf("Pass 1\n");
+                    System.err.print("Pass 1\n");
                 }
 
                 if (tmpfn != null) {
@@ -2136,7 +2136,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                 }
 
                 if (!quiet) {
-                    System.err.printf("\nPass 2\n");
+                    System.err.print("\nPass 2\n");
                 }
 
                 if (dither != 0) {
@@ -2173,15 +2173,15 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
 
                 try (FileInputStream fisf = new FileInputStream(ft)) {
                     FileChannel fpti = fisf.getChannel();
-                    ByteBuffer leis = ByteBuffer.allocate(8);
+                    bb = ByteBuffer.allocate(8);
                     for (sumread = 0; sumread < fptlen;) {
                         double f;
                         int s;
 
-                        leis.clear();
-                        fpti.read(leis);
-                        leis.flip();
-                        f = leis.getDouble();
+                        bb.clear();
+                        fpti.read(bb);
+                        bb.flip();
+                        f = bb.getDouble();
 //if (sumread < 100) {
 // System.err.printf("2: %06d: %f\n", sumread, f);
 //}
@@ -2236,15 +2236,13 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                     }
                     showprogress(1);
                     if (!quiet) {
-                        System.err.printf("\n");
+                        System.err.print("\n");
                     }
                     fpti.close();
                 }
-                if (ft != null) {
-//System.err.println("ft: " + ft);
-                    if (ft.delete() == false) {
-                        System.err.printf("Failed to remove %s\n", ft);
-                    }
+                //System.err.println("ft: " + ft);
+                if (ft.delete() == false) {
+                    System.err.printf("Failed to remove %s\n", ft);
                 }
             } else {
                 Resampler resampler;
@@ -2256,10 +2254,10 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                     resampler = new NoSrc();
                 }
                 resampler.init(nch, bps, dbps, sfrq, dfrq, Math.pow(10, -att / 20), length / bps / nch, twopass, dither);
-                resampler.resample(fpi, fpto);
+                resampler.resample(fpi, fpo);
                 peak[0] = resampler.peak;
                 if (!quiet) {
-                    System.err.printf("\n");
+                    System.err.print("\n");
                 }
             }
 
@@ -2282,21 +2280,21 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
             len =  (int) fo.length();
             try (RandomAccessFile raf = new RandomAccessFile(fo, "rw")) {
                 fpo = raf.getChannel();
-                leos = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
+                bb = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
 
                 dword = len - 8;
-                leos.position(0);
-                leos.limit(4);
-                leos.putInt(dword);
-                leos.flip();
-                fpo.write(leos, 4);
+                bb.position(0);
+                bb.limit(4);
+                bb.putInt(dword);
+                bb.flip();
+                fpo.write(bb, 4);
 
                 dword = len - 44;
-                leos.position(0);
-                leos.limit(4);
-                leos.putInt(dword);
-                leos.flip();
-                fpo.write(leos, 40);
+                bb.position(0);
+                bb.limit(4);
+                bb.putInt(dword);
+                bb.flip();
+                fpo.write(bb, 40);
 
                 fpo.close();
             }
@@ -2357,7 +2355,7 @@ logger.fine(String.format("nch: %d, sfrq: %d, bps: %d, sfrq: %d, bps: %d\n", nch
             System.err.printf("nchannels : %d\n", nch);
             System.err.printf("length : %d bytes, %g secs\n", length, (double) length / bps / nch / sfrq);
             if (dither == 0) {
-                System.err.printf("dither type : none\n");
+                System.err.print("dither type : none\n");
             } else {
                 System.err.printf("dither type : %s, %s p.d.f, amp = %g\n", dtype[dither], ptype[pdf], noiseamp);
             }
@@ -2397,7 +2395,7 @@ logger.fine(String.format("nch: %d, sfrq: %d, bps: %d, sfrq: %d, bps: %d\n", nch
                 FileChannel pipeOut = fos.getChannel();
 
                 if (!quiet) {
-                    System.err.printf("Pass 1\n");
+                    System.err.print("Pass 1\n");
                 }
 
 logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d, ???: %d, twopass: %b, dither: %d\n", nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither));
@@ -2434,7 +2432,7 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
                 }
 
                 if (!quiet) {
-                    System.err.printf("\nPass 2\n");
+                    System.err.print("\nPass 2\n");
                 }
 
                 if (dither != 0) {
@@ -2468,15 +2466,15 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
 
                 fptlen /= 8;
 
-                ByteBuffer leis = ByteBuffer.allocate(8);
+                ByteBuffer bb = ByteBuffer.allocate(8);
                 for (sumread = 0; sumread < fptlen;) {
                     double f;
                     int s;
 
-                    leis.clear();
-                    pipeIn.read(leis);
-                    leis.flip();
-                    f = leis.getDouble();
+                    bb.clear();
+                    pipeIn.read(bb);
+                    bb.flip();
+                    f = bb.getDouble();
 //if (sumread < 100) {
 // System.err.printf("2: %06d: %f\n", sumread, f);
 //}
@@ -2531,7 +2529,7 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
                 }
                 showprogress(1);
                 if (!quiet) {
-                    System.err.printf("\n");
+                    System.err.print("\n");
                 }
                 pipeIn.close();
             }
@@ -2548,7 +2546,7 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
             resampler.resample(fpi, fpo);
             peak[0] = resampler.peak;
             if (!quiet) {
-                System.err.printf("\n");
+                System.err.print("\n");
             }
         }
 

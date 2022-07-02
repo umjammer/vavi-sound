@@ -9,24 +9,20 @@ package vavi.sound.adpcm.ma;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
-
+import java.nio.file.Files;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import vavi.util.Debug;
-
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,16 +70,14 @@ Debug.println("outFile: " + outFile);
 Debug.println(audioFormat);
 
         InputStream is = new MaInputStream(in, ByteOrder.LITTLE_ENDIAN);
-OutputStream os = new BufferedOutputStream(new FileOutputStream(outFile));
+OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
 
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(audioFormat);
-        line.addLineListener(new LineListener() {
-            public void update(LineEvent ev) {
+        line.addLineListener(ev -> {
 Debug.println(ev.getType());
-                if (LineEvent.Type.STOP == ev.getType()) {
-                }
+            if (LineEvent.Type.STOP == ev.getType()) {
             }
         });
         line.start();

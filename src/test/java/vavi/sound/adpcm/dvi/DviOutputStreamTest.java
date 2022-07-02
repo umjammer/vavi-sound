@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,12 +48,9 @@ Debug.println("outFile: " + outFile);
     /** TODO output size is double */
     @Test
     void test1() throws Exception {
-        OutputStream os = new FileOutputStream(outFile);
-        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(getClass().getResourceAsStream(inFile), new IOStreamOutputEngine.OutputStreamFactory() {
-            public OutputStream getOutputStream(OutputStream out) throws IOException {
-                return new DviOutputStream(out, ByteOrder.LITTLE_ENDIAN);
-            }
-        }));
+        OutputStream os = Files.newOutputStream(outFile.toPath());
+        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(getClass().getResourceAsStream(inFile),
+                out -> new DviOutputStream(out, ByteOrder.LITTLE_ENDIAN)));
         byte[] buffer = new byte[8192];
         while (true) {
             int amount = is.read(buffer);

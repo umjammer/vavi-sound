@@ -115,7 +115,7 @@ Debug.println("★★★★★★★★ adpcm out to file: " + fileName);
         OutputStream os = null;
         if (pcmFileName != null) {
 Debug.println("★★★★★★★★ output PCM to file: " + pcmFileName);
-            os = new BufferedOutputStream(new FileOutputStream(pcmFileName));
+            os = new BufferedOutputStream(Files.newOutputStream(Paths.get(pcmFileName)));
         }
         return os;
     }

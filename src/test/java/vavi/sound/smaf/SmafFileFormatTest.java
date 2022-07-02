@@ -7,7 +7,6 @@
 package vavi.sound.smaf;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,7 +36,7 @@ public class SmafFileFormatTest {
      * @param args 0: input mmf
      */
     public static void main(String[] args) throws Exception {
-        SmafSystem.getSmafFileFormat(new BufferedInputStream(new FileInputStream(args[0])));
+        SmafSystem.getSmafFileFormat(new BufferedInputStream(Files.newInputStream(Paths.get(args[0]))));
     }
 }
 

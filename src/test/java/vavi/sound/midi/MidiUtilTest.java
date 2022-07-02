@@ -83,7 +83,7 @@ Debug.println("sequencer: " + sequencer);
         sequencer.setSequence(sequence);
         sequencer.start();
         while (sequencer.isRunning()) {
-            try { Thread.sleep(100); } catch (Exception e) {}
+            Thread.yield();
         }
         sequencer.stop();
         sequencer.close();

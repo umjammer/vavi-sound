@@ -8,17 +8,14 @@ package vavi.sound.smaf;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
-
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 
 import org.junit.jupiter.api.Test;
-
 import vavi.util.Debug;
 
 
@@ -73,7 +70,7 @@ Debug.println(meta.getType());
         }
 
         File file = new File(args[1]);
-        vavi.sound.smaf.Sequence smafSequence = SmafSystem.getSequence(new BufferedInputStream(new FileInputStream(file)));
+        vavi.sound.smaf.Sequence smafSequence = SmafSystem.getSequence(new BufferedInputStream(Files.newInputStream(file.toPath())));
         Sequence midiSequence = SmafSystem.toMidiSequence(smafSequence);
 
         if (play) {
@@ -83,7 +80,7 @@ Debug.println(meta.getType());
 
             midiSequencer.start();
             while (midiSequencer.isRunning()) {
-                try { Thread.sleep(100); } catch (Exception e) {}
+                Thread.yield();
             }
             midiSequencer.stop();
 
@@ -92,7 +89,7 @@ Debug.println(meta.getType());
 
         if (convert) {
 //Debug.println("☆☆☆ here: " + midiSequence);
-            int ts[] = MidiSystem.getMidiFileTypes(midiSequence);
+            int[] ts = MidiSystem.getMidiFileTypes(midiSequence);
 //Debug.println("★★★ here");
 //Debug.println("types: " + ts.length);
             if (ts.length == 0) {
