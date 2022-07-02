@@ -48,12 +48,12 @@ public class SSRCTest {
     static String outFile = "tmp/out.vavi.wav";
     static String correctFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/out.wav";
 
-    static boolean isGui;
+    static boolean onIde;
 
     @BeforeAll
     public static void setUp() throws Exception {
 System.err.println(inFile);
-        isGui = Boolean.valueOf(System.getProperty("eclipse.editor", "false"));
+        onIde = Boolean.parseBoolean(System.getProperty("vavi.test", "false"));
     }
 
     @Test
@@ -74,7 +74,7 @@ System.err.println(format);
         int l;
         while (ais.available() > 0) {
             l = ais.read(buf, 0, buf.length);
-            if (isGui)
+            if (onIde)
                 line.write(buf, 0, l);
         }
         line.drain();
@@ -105,7 +105,7 @@ System.err.println(format);
         int l;
         while (ais.available() > 0) {
             l = ais.read(buf, 0, buf.length);
-            if (isGui)
+            if (onIde)
                 line.write(buf, 0, l);
         }
         line.drain();
