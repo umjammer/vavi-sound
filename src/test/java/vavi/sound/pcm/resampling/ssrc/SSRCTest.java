@@ -19,6 +19,7 @@ import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import vavi.io.LittleEndianDataInputStream;
@@ -55,9 +56,9 @@ System.err.println(inFile);
         isGui = Boolean.valueOf(System.getProperty("eclipse.editor", "false"));
     }
 
-    /** down sample */
     @Test
-    @Disabled
+    @Disabled("ssrc uses random, so check sum never be equal")
+    @DisplayName("down sample, call by main")
     public void test1() throws Exception {
         SSRC.main(new String[] { "--rate", "8000", "--twopass", "--normalize", inFile, outFile });
 
@@ -86,9 +87,9 @@ System.err.println(format);
     static String outFile3 = "tmp/out3.vavi.wav";
     static String correctFile3 = "src/test/resources/vavi/sound/pcm/resampling/ssrc/out.wav";
 
-    /** up sample */
     @Test
-    @Disabled
+    @Disabled("ssrc uses random, so check sum never be equal")
+    @DisplayName("up sample, call by main")
     public void test3() throws Exception {
         SSRC.main(new String[] { "--rate", "48000", "--twopass", "--normalize", inFile, outFile });
 

@@ -9,17 +9,13 @@ package vavi.sound.midi;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.File;
-
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 
 import org.junit.jupiter.api.Test;
-
-import vavi.sound.smaf.SmafMessage;
 import vavi.util.Debug;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MidiUtilTest {
 
     /**
-     * Tests {@link HackedChunk#readOneToFour(DataInputStream)}.
+     * Tests {@link MidiUtil#readVariableLength(java.io.DataInput)}.
      * <pre>
      *  実際の数値 | 可変長での表現
      * ------------+-------------
@@ -90,7 +86,7 @@ Debug.println("sequencer: " + sequencer);
     }
 
     /**
-     * Tests {@link SmafMessage#writeOneToTwo(DataOutput, int)}.
+     * {@link MidiUtil#readVariableLength(java.io.DataInput)}
      */
     @Test
     public void test01() throws Exception {
@@ -103,7 +99,7 @@ Debug.println("sequencer: " + sequencer);
     }
 
     /**
-     * {@link SmafMessage#writeOneToTwo(DataOutput, int)}
+     * {@link MidiUtil#readVariableLength(java.io.DataInput)}
      */
     private int wr(int v) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

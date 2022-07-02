@@ -184,7 +184,7 @@ public class SSRC {
 
         randbuf = new double[RANDBUFLEN];
 
-        Random random = new Random(System.currentTimeMillis());
+        Random random = new Random(System.currentTimeMillis()); // TODO seed should be controlled for test
         for (i = 0; i < POOLSIZE; i++) {
             pool[i] = random.nextInt();
         }
