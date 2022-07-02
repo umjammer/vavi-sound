@@ -1,4 +1,6 @@
-[![Release](https://jitpack.io/v/umjammer/vavi-sound.svg)](https://jitpack.io/#umjammer/vavi-sound) [![Java CI with Maven](https://github.com/umjammer/vavi-sound/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/umjammer/vavi-sound/actions)
+[![Release](https://jitpack.io/v/umjammer/vavi-sound.svg)](https://jitpack.io/#umjammer/vavi-sound)
+[![Java CI with Maven](https://github.com/umjammer/vavi-sound/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/umjammer/vavi-sound/actions)
+[![CodeQL](https://github.com/umjammer/vavi-sound/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/vavi-sound/actions/workflows/codeql-analysis.yml)
 
 # vavi-sound
 
@@ -35,13 +37,13 @@ Includes many ADPCM codecs and the SSRC sampling rate converter.
 
 A. yes you can, follow those steps
 
- * create a separated jar file including ssrc classes. (**never include those .class files into your application jar file**)
+ * create a separated jar (ssrc.jar) file including ssrc classes. (**never include those .class files into your application jar file**)
    * `vavi/sound/pcm/resampling/ssrc/SSRC.class`
    * `vavi/util/SplitRadixFft.class`
    * `vavi/util/I0Bessel.class`
  * caution:
    * your application complies with the LGPL. customers **have a right to reverse engineering your application**.
-   * if you include ssrc.jar with a distribution, you **must offer the way to get ssrc source code**.
+   * if you include ssrc.jar with a distribution, you **must offer a way to get ssrc source code**.
  * see also
    * https://opensource.org/licenses/LGPL-2.1
    * http://www.gnu.org/licenses/lgpl-java.en.html
