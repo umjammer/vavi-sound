@@ -88,7 +88,7 @@ public abstract class Chunk {
 
         DataInputStream dis;
         if (is instanceof MyDataInputStream) {
-            MyDataInputStream mdis = MyDataInputStream.class.cast(is);
+            MyDataInputStream mdis = (MyDataInputStream) is;
             dis = new DataInputStream(mdis.is);
         } else {
             dis = new DataInputStream(is);
@@ -110,7 +110,7 @@ Debug.printf(Level.FINE, "size: 0x%1$08x (%1$d)", size);
         if (parent != null) {
             // 親のループ内での読み込みの場合
             if (is instanceof MyDataInputStream) {
-                mdis = MyDataInputStream.class.cast(is);
+                mdis = (MyDataInputStream) is;
                 mdis.readSize -= 8 + chunk.getSize();
             } else {
                 assert false : "is: " + is.getClass().getName();
@@ -118,7 +118,7 @@ Debug.printf(Level.FINE, "size: 0x%1$08x (%1$d)", size);
         } else {
 //Debug.printf(Level.FINE, "crc (calc): %04x, avail: %d, %s, %s", mdis.crc(), mdis.available(), mdis, chunk.getClass().getName());
             if (chunk instanceof FileChunk) {
-                FileChunk fc = FileChunk.class.cast(chunk);
+                FileChunk fc = (FileChunk) chunk;
                 if (fc.getCrc() != mdis.crc()) {
 Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.getCrc(), mdis.crc());
                 }
@@ -142,7 +142,7 @@ Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.ge
 
         protected MyDataInputStream(InputStream is, byte[] id, int size) {
             if (is instanceof MyDataInputStream) {
-                MyDataInputStream mdis = MyDataInputStream.class.cast(is);
+                MyDataInputStream mdis = (MyDataInputStream) is;
                 this.is = mdis.is;
             } else {
                 this.is = is;
@@ -159,7 +159,7 @@ Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.ge
         }
         public int crc() {
 //Debug.println("crc len: " + crc.get().getCount());
-            return (int) crc.get().getValue();
+            return crc.get().getValue();
         }
         @Override
         public long skip(long n) throws IOException {
@@ -284,8 +284,8 @@ Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.ge
          * @return CRC 値を返します。
          */
         public int update(byte[] c) {
-            for (int n = 0; n < c.length; n++) {
-                crc = (crc << BYTE_BIT) ^ crcTable[((crc >> (16 - BYTE_BIT)) & 0xff) ^ (c[n] & 0xff)];
+            for (byte b : c) {
+                crc = (crc << BYTE_BIT) ^ crcTable[((crc >> (16 - BYTE_BIT)) & 0xff) ^ (b & 0xff)];
                 count++;
             }
             return ~crc & 0xffff;
