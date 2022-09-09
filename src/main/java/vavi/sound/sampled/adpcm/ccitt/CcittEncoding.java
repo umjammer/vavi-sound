@@ -17,8 +17,16 @@ import javax.sound.sampled.AudioFormat;
  */
 public class CcittEncoding extends AudioFormat.Encoding {
 
-    /** Specifies any CCITT encoded data. */
-    public static final CcittEncoding CCITT = new CcittEncoding("CCITT");
+    /** Specifies any G721 encoded data. */
+    public static final CcittEncoding G721 = new CcittEncoding("G721");
+    /** Specifies any G711 encoded data. */
+    public static final CcittEncoding G711 = new CcittEncoding("G711");
+    /** Specifies any G723 16 encoded data. */
+    public static final CcittEncoding G723_16 = new CcittEncoding("G723_16");
+    /** Specifies any G723 24 encoded data. */
+    public static final CcittEncoding G723_24 = new CcittEncoding("G723_24");
+    /** Specifies any G723 40 encoded data. */
+    public static final CcittEncoding G723_40 = new CcittEncoding("G723_40");
 
     /**
      * Constructs a new encoding.

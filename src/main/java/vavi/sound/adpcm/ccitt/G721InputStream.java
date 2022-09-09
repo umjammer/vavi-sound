@@ -34,7 +34,7 @@ public class G721InputStream extends AdpcmInputStream {
      * {@link vavi.io.BitInputStream} は 4bit little endian 固定
      * <li>TODO BitInputStream の endian
      * <li>TODO PCM encoding
-     * @param in CCITT ADPCM
+     * @param in G721 ADPCM
      * @param byteOrder #read() 時のバイトオーダ
      */
     public G721InputStream(InputStream in, ByteOrder byteOrder) {

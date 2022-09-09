@@ -6,4 +6,4 @@
 # 0.00 111016 nsano initial version
 #
 
-#vavi.sound.sampled.ccitt.CcittAudioFileReader
+#vavi.sound.sampled.ccitt.G721AudioFileReader
