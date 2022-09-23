@@ -14,6 +14,7 @@ import java.nio.channels.Pipe;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 
+import java.util.Map;
 import javax.sound.sampled.AudioFormat;
 
 import vavix.io.AdvancedPipedInputStream;
@@ -21,13 +22,20 @@ import vavix.io.AdvancedPipedInputStream;
 
 /**
  * SSRC InputStream
- *
+ * <p>
+ * properties
+ * <li>twopass ... boolean, default true</li>
+ * <li>normalize ... boolean, default true</li>
+ * <li>dither ... int: {0 ~ 3}</li>
+ * <li>pdf ... int: {0 ~ 1}</li>
+ * <li>profile ... String: {"standard", "fast"}, default "standard"</li>
+ * </p>
  * @author <a href="mailto:vaddvivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030816 nsano initial version <br>
  */
 public class SSRCInputStream extends FilterInputStream {
 
-    /** TODO parameter from {@link AudioFormat#properties()} */
+    /** use in properties */
     public SSRCInputStream(AudioFormat in, AudioFormat out, InputStream is) throws IOException {
 
         super(init(is,
@@ -35,7 +43,8 @@ public class SSRCInputStream extends FilterInputStream {
                    (int) in.getSampleRate(),
                    in.getFrameSize() / in.getChannels(),
                    (int) out.getSampleRate(),
-                   in.getFrameSize() / in.getChannels()));
+                   in.getFrameSize() / in.getChannels(),
+                   in.properties()));
     }
 
     /**

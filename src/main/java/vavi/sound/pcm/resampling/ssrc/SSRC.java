@@ -17,6 +17,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -2308,28 +2309,45 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
         }
     }
 
-    /** as a filter */
-    void io(ReadableByteChannel fpi, WritableByteChannel fpo, int length, int nch, int sfrq, int bps, int dfrq, int dbps, boolean twopass, boolean normalize) throws IOException {
-        int dither, pdf, samp = 0;
+    /**
+     * as a filter
+     *
+     * @param fpi input stream
+     * @param fpo output stream
+     * @param length input length
+     * @param nch number of channels
+     * @param sfrq source frequency
+     * @param bps source bytes per channel
+     * @param dfrq destination frequency
+     * @param dbps destination bytes per channel
+     * @param props properties
+     */
+    void io(ReadableByteChannel fpi, WritableByteChannel fpo, int length, int nch, int sfrq, int bps, int dfrq, int dbps, Map<String, Object> props) throws IOException {
+        boolean twopass = (boolean) props.getOrDefault("twopass", true);
+        boolean normalize = (boolean) props.getOrDefault("normalize", true);
+        int dither = (int) props.getOrDefault("dither", 0); // 0 ~ 3
+        int pdf = (int) props.getOrDefault("pdf", 0); // 0 ~ 1
+        String profile = (String) props.getOrDefault("profile", "standard");
+        int samp = 0;
         double att, noiseamp;
         double[] peak = new double[] { 0 };
 
         // TODO options
         att = 0;
-        // 0 ~ 3
-        dither = 0;
-        // 0 ~ 1
-        pdf = 0;
+
         // presets[pdf]
         noiseamp = 0.18;
 
-        // --profile
-        // "fast"
-//        AA = 96;
-//        DF = 8000;
-//        FFTFIRLEN = 1024;
-        // "standard"
+        switch (profile) {
+        case "fast":
+            AA = 96;
+            DF = 8000;
+            FFTFIRLEN = 1024;
+            break;
+        case "standard":
             /* nothing to do */
+            break;
+        }
 
 logger.fine(String.format("nch: %d, sfrq: %d, bps: %d, sfrq: %d, bps: %d\n", nch, sfrq, bps, dfrq, dbps));
 
