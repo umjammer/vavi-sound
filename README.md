@@ -55,5 +55,5 @@ A. yes you can, follow those steps
 ## TODO
 
   * use `Receiver` instead of `MetaEventListener`
-  * ssrc: use nio pipe
   * ima,ms adpcm: wav reader
+  * ssrc: use nio pipe for 1st pass
