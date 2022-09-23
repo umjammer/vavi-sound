@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import vavi.io.LittleEndianDataInputStream;
 import vavi.io.LittleEndianDataOutputStream;
+import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 import vavix.util.Checksum;
@@ -41,7 +42,7 @@ import static vavi.sound.SoundUtil.volume;
  */
 public class SSRCTest {
 
-//    static String inFile = "/Users/nsano/Music/0/kirameki01.wav";  // error in down sampling
+//    static String inFile = "/Users/nsano/Music/0/kirameki01.wav";  // TODO error in down sampling
     static String inFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/44100.wav";
 //    static String inFile = "/Users/nsano/Music/0/rc.wav";
 
@@ -52,8 +53,8 @@ public class SSRCTest {
 
     @BeforeAll
     public static void setUp() throws Exception {
-System.err.println(inFile);
-        onIde = Boolean.parseBoolean(System.getProperty("vavi.test", "false"));
+        onIde = System.getProperty("vavi.test", "").equals("ide");
+Debug.println("onIde: " + onIde + ", " + System.getProperty("vavi.test") + ", file: " + inFile);
     }
 
     @Test
@@ -64,7 +65,7 @@ System.err.println(inFile);
 
         AudioInputStream ais = AudioSystem.getAudioInputStream(new File(outFile));
         AudioFormat format = ais.getFormat();
-System.err.println(format);
+Debug.println(format);
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(format);
@@ -95,7 +96,7 @@ System.err.println(format);
 
         AudioInputStream ais = AudioSystem.getAudioInputStream(new File(outFile));
         AudioFormat format = ais.getFormat();
-System.err.println(format);
+Debug.println(format);
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(format);
@@ -115,24 +116,23 @@ System.err.println(format);
         assertEquals(Checksum.getChecksum(new File(correctFile3)), Checksum.getChecksum(new File(outFile)));
     }
 
-    /** */
     @Test
     public void test2() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         LittleEndianDataOutputStream leos = new LittleEndianDataOutputStream(baos);
         leos.writeDouble(0.123456789);
         leos.close();
-System.err.println("1:\n" + StringUtil.getDump(baos.toByteArray()));
+Debug.println("1:\n" + StringUtil.getDump(baos.toByteArray()));
         //
         byte[] buf = new byte[8];
         writeDouble(buf, 0, 0.123456789);
-System.err.println("2:\n" + StringUtil.getDump(buf));
+Debug.println("2:\n" + StringUtil.getDump(buf));
         assertArrayEquals(baos.toByteArray(), buf);
         //
         LittleEndianDataInputStream leis = new LittleEndianDataInputStream(new ByteArrayInputStream(buf));
         double d = leis.readDouble();
         leis.close();
-System.err.printf("3: %f\n", d);
+Debug.printf("3: %f\n", d);
         assertEquals(0.123456789, d, 0.000000001);
     }
 
@@ -162,8 +162,8 @@ System.err.printf("3: %f\n", d);
             format.getFrameSize(),
             format.getFrameRate(),
             format.isBigEndian());
-System.err.println(format);
-System.err.println(outFormat);
+Debug.println(format);
+Debug.println(outFormat);
 
         InputStream in = new SSRCInputStream(format, outFormat, ais);
 
@@ -175,7 +175,7 @@ System.err.println(outFormat);
         line.start();
         byte[] buf = new byte[0x10000];
         int f = format.getFrameSize() * format.getChannels();
-//System.err.println("frame: " + f);
+//Debug.println("frame: " + f);
 outer:
         while (true) {
             int l = 0, a, b = 0;
@@ -187,7 +187,7 @@ outer:
                      break outer;
                  l += r;
             }
-//System.err.println(l);
+//Debug.println(l);
             // we need to keep line.write buffer size is multiply of "f"
             a = l / f * f;
             b = l % f;

@@ -7,8 +7,8 @@
 package vavi.sound.mfi.vavi;
 
 import java.io.Serializable;
-
-import javax.swing.event.EventListenerList;
+import java.util.ArrayList;
+import java.util.List;
 
 import vavi.sound.mfi.MetaEventListener;
 import vavi.sound.mfi.MetaMessage;
@@ -23,25 +23,22 @@ import vavi.sound.mfi.MetaMessage;
 class MetaSupport implements Serializable {
 
     /** The metaEvent listeners */
-    private EventListenerList listenerList = new EventListenerList();
+    private List<MetaEventListener> listeners = new ArrayList<>();
 
     /** {@link MetaEventListener} を追加します． */
     public void addMetaEventListener(MetaEventListener l) {
-        listenerList.add(MetaEventListener.class, l);
+        listeners.add(l);
     }
 
     /** {@link MetaEventListener} を削除します． */
     public void removeMetaEventListener(MetaEventListener l) {
-        listenerList.remove(MetaEventListener.class, l);
+        listeners.remove(l);
     }
 
     /** meta message を発行します． */
     public void fireMeta(MetaMessage meta) {
-        Object[] listeners = listenerList.getListenerList();
-        for (int i = listeners.length - 2; i >= 0; i -= 2) {
-            if (listeners[i] == MetaEventListener.class) {
-                ((MetaEventListener) listeners[i + 1]).meta(meta);
-            }
+        for (MetaEventListener listener : listeners) {
+            listener.meta(meta);
         }
     }
 }

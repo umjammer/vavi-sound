@@ -35,10 +35,10 @@ import static vavi.util.SplitRadixFft.rdft;
 public class SSRC {
 
     /** */
-    private static Logger logger = Logger.getLogger(SSRC.class.getName());
+    private static final Logger logger = Logger.getLogger(SSRC.class.getName());
 
     /** */
-    private ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
+    private static final ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
 
     /** */
     private static final String VERSION = "1.30";
@@ -57,11 +57,11 @@ public class SSRC {
 
     /** */
     private static final int RANDBUFLEN = 65536;
+    private static int round(double x) {
+        return x >= 0 ? (int) (x + 0.5) : (int) (x - 0.5);
+    }
 
     /** */
-    private static int RINT(double x) {
-        return ((x) >= 0 ? ((int) ((x) + 0.5)) : ((int) ((x) - 0.5)));
-    }
 
     /** */
     private static final int[] scoeffreq = {
@@ -337,17 +337,17 @@ public class SSRC {
     }
 
     /** */
-    private double win(double n, int len, double alp, double iza) {
+    private static double win(double n, int len, double alp, double iza) {
         return I0Bessel.value(alp * Math.sqrt(1 - 4 * n * n / (((double) len - 1) * ((double) len - 1)))) / iza;
     }
 
     /** */
-    private double sinc(double x) {
+    private static double sinc(double x) {
         return x == 0 ? 1 : Math.sin(x) / x;
     }
 
     /** */
-    private double hn_lpf(int n, double lpf, double fs) {
+    private static double hn_lpf(int n, double lpf, double fs) {
         double t = 1 / fs;
         double omega = 2 * Math.PI * lpf;
         return 2 * lpf * t * sinc(n * omega * t);
@@ -380,27 +380,27 @@ public class SSRC {
     }
 
     /** */
-    private static void fmterr(int x) {
+    private static void error(int x) {
         System.err.printf("unknown error %d\n", x);
         System.exit(-1);
     }
 
     /** */
-    private void setstarttime() {
-        starttime = System.currentTimeMillis();
-        lastshowed = 0;
-        lastshowed2 = -1;
+    private void setStartTime() {
+        startTime = System.currentTimeMillis();
+        lastShowed = 0;
+        lastShowed2 = -1;
     }
 
     /** */
-    private void showprogress(double p) {
+    private void showProgress(double p) {
         int eta, pc;
         long t;
         if (quiet) {
             return;
         }
 
-        t = System.currentTimeMillis() - starttime;
+        t = System.currentTimeMillis() - startTime;
         if (p == 0) {
             eta = 0;
         } else {
@@ -409,20 +409,20 @@ public class SSRC {
 
         pc = (int) (p * 100);
 
-        if (pc != lastshowed2 || t != lastshowed) {
+        if (pc != lastShowed2 || t != lastShowed) {
             System.err.printf(" %3d%% processed", pc);
-            lastshowed2 = pc;
+            lastShowed2 = pc;
         }
-        if (t != lastshowed) {
+        if (t != lastShowed) {
             System.err.printf(", ETA =%4dmsec", eta);
-            lastshowed = t;
+            lastShowed = t;
         }
         System.err.println();
         System.err.flush();
     }
 
     /** */
-    private int gcd(int x, int y) {
+    private static int gcd(int x, int y) {
         int t;
 
         while (y != 0) {
@@ -616,7 +616,7 @@ System.err.println("upsample");
 
             // Apply filters
 
-            setstarttime();
+            setStartTime();
 
             {
                 int n2b2 = n2b / 2;
@@ -870,7 +870,7 @@ System.err.println("upsample");
                                 if (dither != 0) {
                                     s = do_shaping(outbuf[i] * gain2, peak, dither, ch);
                                 } else {
-                                    s = RINT(outbuf[i] * gain2);
+                                    s = round(outbuf[i] * gain2);
 
                                     if (s < -0x80) {
                                         double d = (double) s / -0x80;
@@ -904,7 +904,7 @@ System.err.println("upsample");
                                 if (dither != 0) {
                                     s = do_shaping(outbuf[i] * gain2, peak, dither, ch);
                                 } else {
-                                    s = RINT(outbuf[i] * gain2);
+                                    s = round(outbuf[i] * gain2);
 
                                     if (s < -0x8000) {
                                         double d = (double) s / -0x8000;
@@ -938,7 +938,7 @@ System.err.println("upsample");
                                 if (dither != 0) {
                                     s = do_shaping(outbuf[i] * gain2, peak, dither, ch);
                                 } else {
-                                    s = RINT(outbuf[i] * gain2);
+                                    s = round(outbuf[i] * gain2);
 
                                     if (s < -0x800000) {
                                         double d = (double) s / -0x800000;
@@ -1026,12 +1026,12 @@ System.err.println("upsample");
                     }
 
                     if ((spcount++ & 7) == 7) {
-                        showprogress((double) sumread / chanklen);
+                        showProgress((double) sumread / chanklen);
                     }
                 }
             }
 
-            showprogress(1);
+            showProgress(1);
 
             this.peak = peak[0];
 
@@ -1212,7 +1212,7 @@ System.err.println("downsample");
 
             // Apply filters
 
-            setstarttime();
+            setStartTime();
 
             {
                 int n1b2 = n1b / 2;
@@ -1441,7 +1441,7 @@ System.err.println("downsample");
                                 if (dither != 0) {
                                     s = do_shaping(outbuf[i] * gain2, peak, dither, ch);
                                 } else {
-                                    s = RINT(outbuf[i] * gain2);
+                                    s = round(outbuf[i] * gain2);
 
                                     if (s < -0x80) {
                                         double d = (double) s / -0x80;
@@ -1475,7 +1475,7 @@ System.err.println("downsample");
                                 if (dither != 0) {
                                     s = do_shaping(outbuf[i] * gain2, peak, dither, ch);
                                 } else {
-                                    s = RINT(outbuf[i] * gain2);
+                                    s = round(outbuf[i] * gain2);
 
                                     if (s < -0x8000) {
                                         double d = (double) s / -0x8000;
@@ -1509,7 +1509,7 @@ System.err.println("downsample");
                                 if (dither != 0) {
                                     s = do_shaping(outbuf[i] * gain2, peak, dither, ch);
                                 } else {
-                                    s = RINT(outbuf[i] * gain2);
+                                    s = round(outbuf[i] * gain2);
 
                                     if (s < -0x800000) {
                                         double d = (double) s / -0x800000;
@@ -1607,12 +1607,12 @@ System.err.printf("%d, %d, %d, %d\n",
                     }
 
                     if ((spcount++ & 7) == 7) {
-                        showprogress((double) sumread / chanklen);
+                        showProgress((double) sumread / chanklen);
                     }
                 }
             }
 
-            showprogress(1);
+            showProgress(1);
 
             this.peak = peak[0];
 
@@ -1631,7 +1631,7 @@ System.err.printf("%d, %d, %d, %d\n",
             int ch = 0, sumread = 0;
             int sumWritten = 0;
 
-            setstarttime();
+            setStartTime();
 
             ByteBuffer bb = null;
             if (twopass) {
@@ -1721,7 +1721,7 @@ System.err.printf("%d, %d, %d, %d\n",
                     }
                 } else {
                     double p = f > 0 ? f : -f;
-                    peak[0] = peak[0] < p ? p : peak[0];
+                    peak[0] = Math.max(peak[0], p);
                     bb.position(0);
                     bb.putDouble(f);
                     bb.flip();
@@ -1735,11 +1735,11 @@ System.err.printf("%d, %d, %d, %d\n",
                 sumread++;
 
                 if ((sumread & 0x3ffff) == 0) {
-                    showprogress((double) sumread / (chanklen * nch));
+                    showProgress((double) sumread / (chanklen * nch));
                 }
             }
 
-            showprogress(1);
+            showProgress(1);
 
             this.peak = peak[0];
 
@@ -1760,10 +1760,10 @@ System.err.printf("%d, %d, %d, %d\n",
     /** as a command line program */
     public void exec(String[] argv) throws IOException {
         String sfn, dfn, tmpfn = null;
-        File fo = null;
-        FileChannel fpo = null;
-        File ft = null;
-        FileChannel fpto = null;
+        File fo;
+        FileChannel fpo;
+        File ft;
+        FileChannel fpto;
         boolean twopass, normalize;
         int dither, pdf, samp = 0;
         int nch, bps;
@@ -1910,21 +1910,21 @@ System.err.printf("%d, %d, %d, %d\n",
             fpi.read(bb);
             bb.flip();
 System.err.println("p: " + bb.position() + ", l: " + bb.limit());
-            if (bb.get() != 'R') fmterr(1);
-            if (bb.get() != 'I') fmterr(1);
-            if (bb.get() != 'F') fmterr(1);
-            if (bb.get() != 'F') fmterr(1);
+            if (bb.get() != 'R') error(1);
+            if (bb.get() != 'I') error(1);
+            if (bb.get() != 'F') error(1);
+            if (bb.get() != 'F') error(1);
 
             dword = bb.getInt();
 
-            if (bb.get() != 'W') fmterr(2);
-            if (bb.get() != 'A') fmterr(2);
-            if (bb.get() != 'V') fmterr(2);
-            if (bb.get() != 'E') fmterr(2);
-            if (bb.get() != 'f') fmterr(2);
-            if (bb.get() != 'm') fmterr(2);
-            if (bb.get() != 't') fmterr(2);
-            if (bb.get() != ' ') fmterr(2);
+            if (bb.get() != 'W') error(2);
+            if (bb.get() != 'A') error(2);
+            if (bb.get() != 'V') error(2);
+            if (bb.get() != 'E') error(2);
+            if (bb.get() != 'f') error(2);
+            if (bb.get() != 'm') error(2);
+            if (bb.get() != 't') error(2);
+            if (bb.get() != ' ') error(2);
 
             int sizeOfFmt = bb.getInt();
 
@@ -1935,7 +1935,7 @@ System.err.println("p: " + bb.position() + ", l: " + bb.limit());
             sfrq = bb.getInt();
             bps = bb.getInt();
             if (bps % sfrq * nch != 0) {
-                fmterr(4);
+                error(4);
             }
 
             word = bb.getShort();
@@ -2166,7 +2166,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                 }
                 randptr = 0;
 
-                setstarttime();
+                setStartTime();
 
                 fptlen = (int) (ft.length() / 8);
 //System.err.println("tmp: " + fpt.getFilePointer());
@@ -2231,17 +2231,17 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                         }
 
                         if ((sumread & 0x3ffff) == 0) {
-                            showprogress((double) sumread / fptlen);
+                            showProgress((double) sumread / fptlen);
                         }
                     }
-                    showprogress(1);
+                    showProgress(1);
                     if (!quiet) {
                         System.err.print("\n");
                     }
                     fpti.close();
                 }
                 //System.err.println("ft: " + ft);
-                if (ft.delete() == false) {
+                if (!ft.delete()) {
                     System.err.printf("Failed to remove %s\n", ft);
                 }
             } else {
@@ -2524,10 +2524,10 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
                     }
 
                     if ((sumread & 0x3ffff) == 0) {
-                        showprogress((double) sumread / fptlen);
+                        showProgress((double) sumread / fptlen);
                     }
                 }
-                showprogress(1);
+                showProgress(1);
                 if (!quiet) {
                     System.err.print("\n");
                 }
