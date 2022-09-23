@@ -56,20 +56,32 @@ public class SSRC {
 //  private static final int M = 15;
 
     /** */
-    private static final int RANDBUFLEN = 65536;
     private static int round(double x) {
         return x >= 0 ? (int) (x + 0.5) : (int) (x - 0.5);
     }
 
     /** */
+    private boolean quiet = false;
 
     /** */
-    private static final int[] scoeffreq = {
+    private int lastShowed2;
+
+    /** */
+    private long startTime, lastShowed;
+
+    /** */
+    private static class Shaper {
+
+    /** */
+        private static final int RANDBUFLEN = 65536;
+
+        /** */
+        private static final int[] sCoefFreq = {
         0, 48000, 44100, 37800, 32000, 22050, 48000, 44100
     };
 
     /** */
-    private static final int[] scoeflen = {
+        private static final int[] sCoefLen = {
         1, 16, 20, 16, 16, 15, 16, 15
     };
 
@@ -79,7 +91,7 @@ public class SSRC {
     };
 
     /** */
-    private static final double[][] shapercoefs = {
+        private static final double[][] shaperCoefs = {
         { -1 }, // triangular dither
 
         {   -2.8720729351043701172,   5.0413231849670410156,  -6.2442994117736816406,   5.8483986854553222656,
@@ -127,62 +139,53 @@ public class SSRC {
     };
 
     /** */
-    private double[][] shapebuf;
+        private double[][] shapeBuf;
 
     /** */
-    private int shaper_type, shaper_len, shaper_clipmin, shaper_clipmax;
+        private int shaperType, shaperLen, shaperClipMin, shaperClipMax;
 
     /** */
-    private double[] randbuf;
+        private double[] randBuf;
 
     /** */
-    private int randptr;
-
-    /** */
-    private boolean quiet = false;
-
-    /** */
-    private int lastshowed2;
-
-    /** */
-    private long starttime, lastshowed;
+        private int randPtr;
 
     /** */
     private static final int POOLSIZE = 97;
 
     /** */
-    private int init_shaper(int freq, int nch, int min, int max, int dtype, int pdf, double noiseamp) {
+        private int initShaper(int freq, int nch, int min, int max, int dType, int pdf, double noiseAmp) {
         int i;
         int[] pool = new int[POOLSIZE];
 
         for (i = 1; i < 6; i++) {
-            if (freq == scoeffreq[i]) {
+                if (freq == sCoefFreq[i]) {
                 break;
             }
         }
-        if ((dtype == 3 || dtype == 4) && i == 6) {
+            if ((dType == 3 || dType == 4) && i == 6) {
             logger.warning(String.format("ATH based noise shaping for destination frequency %dHz is not available, using triangular dither\n", freq));
         }
-        if (dtype == 2 || i == 6) {
+            if (dType == 2 || i == 6) {
             i = 0;
         }
-        if (dtype == 4 && (i == 1 || i == 2)) {
+            if (dType == 4 && (i == 1 || i == 2)) {
             i += 5;
         }
 
-        shaper_type = i;
+            shaperType = i;
 
-        shapebuf = new double[nch][];
-        shaper_len = scoeflen[shaper_type];
+            shapeBuf = new double[nch][];
+            shaperLen = sCoefLen[shaperType];
 
         for (i = 0; i < nch; i++) {
-            shapebuf[i] = new double[shaper_len];
+                shapeBuf[i] = new double[shaperLen];
         }
 
-        shaper_clipmin = min;
-        shaper_clipmax = max;
+            shaperClipMin = min;
+            shaperClipMax = max;
 
-        randbuf = new double[RANDBUFLEN];
+            randBuf = new double[RANDBUFLEN];
 
         Random random = new Random(System.currentTimeMillis()); // TODO seed should be controlled for test
         for (i = 0; i < POOLSIZE; i++) {
@@ -197,7 +200,7 @@ public class SSRC {
                 p = random.nextInt() % POOLSIZE;
                 r = pool[p];
                 pool[p] = random.nextInt();
-                randbuf[i] = noiseamp * (((double) r) / Integer.MAX_VALUE - 0.5);
+                    randBuf[i] = noiseAmp * (((double) r) / Integer.MAX_VALUE - 0.5);
             }
             break;
 
@@ -211,7 +214,7 @@ public class SSRC {
                 p = random.nextInt() % POOLSIZE;
                 r2 = pool[p];
                 pool[p] = random.nextInt();
-                randbuf[i] = noiseamp * ((((double) r1) / Integer.MAX_VALUE) - (((double) r2) / Integer.MAX_VALUE));
+                    randBuf[i] = noiseAmp * ((((double) r1) / Integer.MAX_VALUE) - (((double) r2) / Integer.MAX_VALUE));
             }
             break;
 
@@ -242,91 +245,95 @@ public class SSRC {
 
                     u = 2 * Math.PI * r;
 
-                    randbuf[i] = noiseamp * t * Math.cos(u);
+                        randBuf[i] = noiseAmp * t * Math.cos(u);
                 } else {
                     sw = 0;
 
-                    randbuf[i] = noiseamp * t * Math.sin(u);
+                        randBuf[i] = noiseAmp * t * Math.sin(u);
                 }
             }
         }
             break;
         }
 
-        randptr = 0;
+            randPtr = 0;
 
-        if (dtype == 0 || dtype == 1) {
+            if (dType == 0 || dType == 1) {
             return 1;
         }
-        return samp[shaper_type];
+            return samp[shaperType];
     }
 
     /** */
-    private int do_shaping(double s, double[] peak, int dtype, int ch) {
+        private int doShaping(double s, double[] peak, int dtype, int ch) {
         double u, h;
         int i;
 
         if (dtype == 1) {
-            s += randbuf[randptr++ & (RANDBUFLEN - 1)];
+                s += randBuf[randPtr++ & (RANDBUFLEN - 1)];
 
-            if (s < shaper_clipmin) {
-                double d = s / shaper_clipmin;
+                if (s < shaperClipMin) {
+                    double d = s / shaperClipMin;
                 peak[0] = Math.max(peak[0], d);
-                s = shaper_clipmin;
+                    s = shaperClipMin;
             }
-            if (s > shaper_clipmax) {
-                double d = s / shaper_clipmax;
+                if (s > shaperClipMax) {
+                    double d = s / shaperClipMax;
                 peak[0] = Math.max(peak[0], d);
-                s = shaper_clipmax;
+                    s = shaperClipMax;
             }
 
-            return RINT(s);
+                return round(s);
         }
 
         h = 0;
-        for (i = 0; i < shaper_len; i++)
-            h += shapercoefs[shaper_type][i] * shapebuf[ch][i];
+            for (i = 0; i < shaperLen; i++)
+                h += shaperCoefs[shaperType][i] * shapeBuf[ch][i];
         s += h;
         u = s;
-        s += randbuf[randptr++ & (RANDBUFLEN - 1)];
+            s += randBuf[randPtr++ & (RANDBUFLEN - 1)];
 
-        for (i = shaper_len - 2; i >= 0; i--)
-            shapebuf[ch][i + 1] = shapebuf[ch][i];
+            for (i = shaperLen - 2; i >= 0; i--)
+                shapeBuf[ch][i + 1] = shapeBuf[ch][i];
 
-        if (s < shaper_clipmin) {
-            double d = s / shaper_clipmin;
+            if (s < shaperClipMin) {
+                double d = s / shaperClipMin;
             peak[0] = Math.max(peak[0], d);
-            s = shaper_clipmin;
-            shapebuf[ch][0] = s - u;
+                s = shaperClipMin;
+                shapeBuf[ch][0] = s - u;
 
-            if (shapebuf[ch][0] > 1)
-                shapebuf[ch][0] = 1;
-            if (shapebuf[ch][0] < -1)
-                shapebuf[ch][0] = -1;
-        } else if (s > shaper_clipmax) {
-            double d = s / shaper_clipmax;
+                if (shapeBuf[ch][0] > 1)
+                    shapeBuf[ch][0] = 1;
+                if (shapeBuf[ch][0] < -1)
+                    shapeBuf[ch][0] = -1;
+            } else if (s > shaperClipMax) {
+                double d = s / shaperClipMax;
             peak[0] = Math.max(peak[0], d);
-            s = shaper_clipmax;
-            shapebuf[ch][0] = s - u;
+                s = shaperClipMax;
+                shapeBuf[ch][0] = s - u;
 
-            if (shapebuf[ch][0] > 1)
-                shapebuf[ch][0] = 1;
-            if (shapebuf[ch][0] < -1)
-                shapebuf[ch][0] = -1;
+                if (shapeBuf[ch][0] > 1)
+                    shapeBuf[ch][0] = 1;
+                if (shapeBuf[ch][0] < -1)
+                    shapeBuf[ch][0] = -1;
         } else {
-            s = RINT(s);
-            shapebuf[ch][0] = s - u;
+                s = round(s);
+                shapeBuf[ch][0] = s - u;
         }
 
         return (int) s;
     }
 
     /** */
-    private void quit_shaper(int nch) {
+        private void quitShaper(int nch) {
+        }
     }
 
     /** */
-    private double alpha(double a) {
+    private Shaper shaper = new Shaper();
+
+    /** */
+    private static double alpha(double a) {
         if (a <= 21) {
             return 0;
         }
@@ -868,7 +875,7 @@ System.err.println("upsample");
                                 int s;
 
                                 if (dither != 0) {
-                                    s = do_shaping(outbuf[i] * gain2, peak, dither, ch);
+                                    s = shaper.doShaping(outbuf[i] * gain2, peak, dither, ch);
                                 } else {
                                     s = round(outbuf[i] * gain2);
 
@@ -902,7 +909,7 @@ System.err.println("upsample");
                                 int s;
 
                                 if (dither != 0) {
-                                    s = do_shaping(outbuf[i] * gain2, peak, dither, ch);
+                                    s = shaper.doShaping(outbuf[i] * gain2, peak, dither, ch);
                                 } else {
                                     s = round(outbuf[i] * gain2);
 
@@ -936,7 +943,7 @@ System.err.println("upsample");
                                 int s;
 
                                 if (dither != 0) {
-                                    s = do_shaping(outbuf[i] * gain2, peak, dither, ch);
+                                    s = shaper.doShaping(outbuf[i] * gain2, peak, dither, ch);
                                 } else {
                                     s = round(outbuf[i] * gain2);
 
@@ -1439,7 +1446,7 @@ System.err.println("downsample");
                                 int s;
 
                                 if (dither != 0) {
-                                    s = do_shaping(outbuf[i] * gain2, peak, dither, ch);
+                                    s = shaper.doShaping(outbuf[i] * gain2, peak, dither, ch);
                                 } else {
                                     s = round(outbuf[i] * gain2);
 
@@ -1473,7 +1480,7 @@ System.err.println("downsample");
                                 int s;
 
                                 if (dither != 0) {
-                                    s = do_shaping(outbuf[i] * gain2, peak, dither, ch);
+                                    s = shaper.doShaping(outbuf[i] * gain2, peak, dither, ch);
                                 } else {
                                     s = round(outbuf[i] * gain2);
 
@@ -1507,7 +1514,7 @@ System.err.println("downsample");
                                 int s;
 
                                 if (dither != 0) {
-                                    s = do_shaping(outbuf[i] * gain2, peak, dither, ch);
+                                    s = shaper.doShaping(outbuf[i] * gain2, peak, dither, ch);
                                 } else {
                                     s = round(outbuf[i] * gain2);
 
@@ -1689,7 +1696,7 @@ System.err.printf("%d, %d, %d, %d\n",
                     switch (dbps) {
                     case 1:
                         f *= 0x7f;
-                        s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+                        s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
                         buf.position(0);
                         buf.limit(1);
                         buf.put(0, (byte) (s + 128));
@@ -1698,7 +1705,7 @@ System.err.printf("%d, %d, %d, %d\n",
                         break;
                     case 2:
                         f *= 0x7fff;
-                        s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+                        s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
                         buf.position(0);
                         buf.limit(2);
                         buf.asShortBuffer().put(0, (short) s);
@@ -1707,7 +1714,7 @@ System.err.printf("%d, %d, %d, %d\n",
                         break;
                     case 3:
                         f *= 0x7fffff;
-                        s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+                        s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
                         buf.position(0);
                         buf.limit(3);
                         buf.put(0, (byte) (s & 255));
@@ -2081,7 +2088,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                     max = 0x7fffffff;
                 }
 
-                samp = init_shaper(dfrq, nch, min, max, dither, pdf, noiseamp);
+                samp = shaper.initShaper(dfrq, nch, min, max, dither, pdf, noiseamp);
             }
 
             if (twopass) {
@@ -2164,7 +2171,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                         break;
                     }
                 }
-                randptr = 0;
+                shaper.randPtr = 0;
 
                 setStartTime();
 
@@ -2190,7 +2197,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
 
                         switch (dbps) {
                         case 1: {
-                            s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+                            s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
 
                             ByteBuffer buf = ByteBuffer.allocate(1);
                             buf.put((byte) (s + 128));
@@ -2200,7 +2207,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                         }
                             break;
                         case 2: {
-                            s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+                            s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
 
                             ByteBuffer buf = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
                             buf.putShort((short) s);
@@ -2210,7 +2217,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                         }
                             break;
                         case 3: {
-                            s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+                            s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
 
                             ByteBuffer buf = ByteBuffer.allocate(3);
                             buf.put((byte) (s & 255));
@@ -2262,7 +2269,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
             }
 
             if (dither != 0) {
-                quit_shaper(nch);
+                shaper.quitShaper(nch);
             }
 
             if (!twopass && peak[0] > 1) {
@@ -2380,7 +2387,7 @@ logger.fine(String.format("nch: %d, sfrq: %d, bps: %d, sfrq: %d, bps: %d\n", nch
                 max = 0x7fffffff;
             }
 
-            init_shaper(dfrq, nch, min, max, dither, pdf, noiseamp);
+            shaper.initShaper(dfrq, nch, min, max, dither, pdf, noiseamp);
         }
 
         if (twopass) {
@@ -2460,9 +2467,9 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
                         break;
                     }
                 }
-                randptr = 0;
+                shaper.randPtr = 0;
 
-                setstarttime();
+                setStartTime();
 
                 fptlen /= 8;
 
@@ -2483,7 +2490,7 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
 
                     switch (dbps) {
                     case 1: {
-                        s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+                        s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
 
                         ByteBuffer buf = ByteBuffer.allocate(1);
                         buf.put((byte) (s + 128));
@@ -2493,7 +2500,7 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
                     }
                         break;
                     case 2: {
-                        s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+                        s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
 
                         ByteBuffer buf = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
                         buf.putShort((short) s);
@@ -2503,7 +2510,7 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
                     }
                         break;
                     case 3: {
-                        s = dither != 0 ? do_shaping(f, peak, dither, ch) : RINT(f);
+                        s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
 
                         ByteBuffer buf = ByteBuffer.allocate(3);
                         buf.put((byte) (s & 255));
@@ -2551,7 +2558,7 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
         }
 
         if (dither != 0) {
-            quit_shaper(nch);
+            shaper.quitShaper(nch);
         }
 
         if (!twopass && peak[0] > 1) {
