@@ -7,13 +7,13 @@
 package vavi.sound.smaf;
 
 import java.io.Serializable;
-
-import javax.swing.event.EventListenerList;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * MetaEvent 機構のユーティリティクラスです．
- * <li>javax.sound.midi パッケージにはない。(SAMF オリジナル)
+ * <li>javax.sound.midi パッケージにはない。(SMAF オリジナル)
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
@@ -21,25 +21,22 @@ import javax.swing.event.EventListenerList;
 class MetaSupport implements Serializable {
 
     /** The metaEvent listeners */
-    private EventListenerList listenerList = new EventListenerList();
+    private List<MetaEventListener> listenerList = new ArrayList<>();
 
     /** {@link MetaEventListener} を追加します． */
     public void addMetaEventListener(MetaEventListener l) {
-        listenerList.add(MetaEventListener.class, l);
+        listenerList.add(l);
     }
 
     /** {@link MetaEventListener} を削除します． */
     public void removeMetaEventListener(MetaEventListener l) {
-        listenerList.remove(MetaEventListener.class, l);
+        listenerList.remove(l);
     }
 
     /** meta message を発行します． */
     public void fireMeta(MetaMessage meta) {
-        Object[] listeners = listenerList.getListenerList();
-        for (int i = listeners.length - 2; i >= 0; i -= 2) {
-            if (listeners[i] == MetaEventListener.class) {
-                ((MetaEventListener) listeners[i + 1]).meta(meta);
-            }
+        for (MetaEventListener listener : listenerList) {
+            listener.meta(meta);
         }
     }
 }

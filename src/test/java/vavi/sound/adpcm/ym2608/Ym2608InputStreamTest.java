@@ -8,12 +8,11 @@ package vavi.sound.adpcm.ym2608;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
-
+import java.nio.file.Files;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -21,9 +20,7 @@ import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import vavi.util.Debug;
-
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -68,14 +65,14 @@ System.err.println(format);
 
         InputStream is = new Ym2608InputStream(getClass().getResourceAsStream(inFile), ByteOrder.LITTLE_ENDIAN);
 System.err.println("available: " + is.available());
-        OutputStream os = new BufferedOutputStream(new FileOutputStream(outFile));
+        OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
 
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(format);
         line.start();
         byte[] buf = new byte[1024];
-        int l = 0;
+        int l;
         volume(line, .2d);
 
         while (is.available() > 0) {

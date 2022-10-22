@@ -10,12 +10,11 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -24,12 +23,10 @@ import javax.sound.sampled.SourceDataLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import vavi.io.InputEngineOutputStream;
 import vavi.io.LittleEndianDataInputStream;
 import vavi.io.OutputEngineInputStream;
 import vavi.util.Debug;
-
 import vavix.io.IOStreamInputEngine;
 import vavix.io.IOStreamOutputEngine;
 import vavix.util.Checksum;
@@ -61,13 +58,10 @@ Debug.println("outFile: " + outFile.getCanonicalPath());
     /** */
     @Test
     public void test1() throws Exception {
-        OutputStream os = new BufferedOutputStream(new FileOutputStream(outFile));
+        OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
         InputStream in = new BufferedInputStream(getClass().getResourceAsStream(inFile));
-        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(in, new IOStreamOutputEngine.OutputStreamFactory() {
-            public OutputStream getOutputStream(OutputStream out) throws IOException {
-                return new ImaOutputStream(out, 505, 1);
-            }
-        }));
+        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(in,
+                out -> new ImaOutputStream(out, 505, 1)));
         byte[] buffer = new byte[505 * 2];
         while (true) {
             int amount = is.read(buffer);
@@ -81,7 +75,7 @@ Debug.println("outFile: " + outFile.getCanonicalPath());
         os.close();
         is.close();
 
-        InputStream is2 = new ImaInputStream(new FileInputStream(outFile),
+        InputStream is2 = new ImaInputStream(Files.newInputStream(outFile.toPath()),
                                              505,
                                              1,
                                              256);
@@ -129,17 +123,11 @@ Debug.println("outFile: " + outFile.length());
 //        final String outFile = "src/test/resources/vavi/sound/adpcm/ima/out_vavi.pcm";
 
         InputStream ris = getClass().getResourceAsStream(inFile);
-        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(ris, new IOStreamOutputEngine.OutputStreamFactory() {
-            public OutputStream getOutputStream(OutputStream out) throws IOException {
-                return new ImaOutputStream(out, 505, 1);
-            }
-        }, 1010));
-        OutputStream fos = new FileOutputStream(outFile);
-        OutputStream os = new InputEngineOutputStream(new IOStreamInputEngine(fos, new IOStreamInputEngine.InputStreamFactory() {
-            public InputStream getInputStream(InputStream in) throws IOException {
-                return new ImaInputStream(in, 505, 1, 256);
-            }
-        }, 1010));
+        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(ris,
+                out -> new ImaOutputStream(out, 505, 1), 1010));
+        OutputStream fos = Files.newOutputStream(outFile.toPath());
+        OutputStream os = new InputEngineOutputStream(new IOStreamInputEngine(fos,
+                in -> new ImaInputStream(in, 505, 1, 256), 1010));
         byte[] buffer = new byte[505 * 2];
         while (true) {
             int amount = is.read(buffer);
@@ -155,7 +143,7 @@ Debug.println("outFile: " + outFile.length());
         os.close();
         is.close();
 
-        InputStream is2 = new FileInputStream(outFile);
+        InputStream is2 = Files.newInputStream(outFile.toPath());
 
         AudioFormat audioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
                                                   8000,
@@ -197,8 +185,7 @@ Debug.println("outFile: " + outFile.length());
         final String outFile = "src/test/resources/vavi/sound/adpcm/ima/out_vavi.adpcm";
 
         InputStream in = new BufferedInputStream(getClass().getResourceAsStream(inFile));
-        LittleEndianDataInputStream ledis = new LittleEndianDataInputStream(in);
-        OutputStream os = new BufferedOutputStream(new FileOutputStream(outFile));
+        OutputStream os = new BufferedOutputStream(Files.newOutputStream(Paths.get(outFile)));
 
         Ima encoder = new Ima();
         int[] steps = new int[16];
@@ -221,7 +208,7 @@ Debug.println("inFile: " + length);
             if (l > 0) {
                 byte[] adpcm = new byte[bpb];
                 int[] pcm = new int[l / 2];
-                ledis = new LittleEndianDataInputStream(new ByteArrayInputStream(buffer));
+                LittleEndianDataInputStream ledis = new LittleEndianDataInputStream(new ByteArrayInputStream(buffer));
                 for (int i = 0; i < pcm.length; i++) {
                     pcm[i] = ledis.readShort();
                 }
@@ -236,7 +223,7 @@ Debug.println("inFile: " + length);
         os.flush();
         os.close();
 
-        InputStream is = new ImaInputStream(new FileInputStream(outFile),
+        InputStream is = new ImaInputStream(Files.newInputStream(Paths.get(outFile)),
                                             505,
                                             1,
                                             256);

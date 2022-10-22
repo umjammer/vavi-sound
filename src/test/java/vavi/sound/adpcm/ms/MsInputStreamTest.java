@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -112,16 +113,14 @@ Debug.printf("samplesPerBlock: %d, numberChannels: %d, blockSize: %d\n", samples
                                            format.getNumberChannels(),
                                            format.getBlockSize(),
                                            byteOrder);
-        OutputStream os = new BufferedOutputStream(new FileOutputStream(outFile));
+        OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
 
 DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
 line.open(audioFormat);
-line.addLineListener(new LineListener() {
- public void update(LineEvent ev) {
+line.addLineListener(ev -> {
 Debug.println(ev.getType());
-  if (LineEvent.Type.STOP == ev.getType()) {
-  }
+ if (LineEvent.Type.STOP == ev.getType()) {
  }
 });
 line.start();

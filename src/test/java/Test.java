@@ -7,9 +7,7 @@
 
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
-
 import javax.sound.midi.MetaEventListener;
-import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
@@ -64,12 +62,10 @@ System.err.println("---- " + soundbank.getDescription() + " ----");
 //        }
 
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        MetaEventListener mel = new MetaEventListener() {
-            public void meta(MetaMessage meta) {
+        MetaEventListener mel = meta -> {
 System.err.println("META: " + meta.getType());
-                if (meta.getType() == 47) {
-                    countDownLatch.countDown();
-                }
+            if (meta.getType() == 47) {
+                countDownLatch.countDown();
             }
         };
         Sequencer sequencer = MidiSystem.getSequencer(false); // crux

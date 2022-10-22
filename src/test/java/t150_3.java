@@ -6,10 +6,9 @@
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.ByteOrder;
-
+import java.nio.file.Files;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -67,7 +66,7 @@ System.err.println("byteOrder: " + byteOrder);
             ByteOrder.BIG_ENDIAN.equals(byteOrder));
 System.err.println(format);
 
-        InputStream is = new BufferedInputStream(new FileInputStream(file));
+        InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
 
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);

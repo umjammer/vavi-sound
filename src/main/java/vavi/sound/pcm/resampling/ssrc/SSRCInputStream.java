@@ -11,23 +11,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.Pipe;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
-
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.sound.sampled.AudioFormat;
-
-import vavix.io.AdvancedPipedInputStream;
 
 
 /**
  * SSRC InputStream
- *
+ * <p>
+ * properties
+ * <li>twopass ... boolean, default true</li>
+ * <li>normalize ... boolean, default true</li>
+ * <li>dither ... int: {0 ~ 3}</li>
+ * <li>pdf ... int: {0 ~ 1}</li>
+ * <li>profile ... String: {"standard", "fast"}, default "standard"</li>
+ * </p>
  * @author <a href="mailto:vaddvivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 030816 nsano initial version <br>
  */
 public class SSRCInputStream extends FilterInputStream {
 
-    /** TODO parameter from {@link AudioFormat#properties()} */
+    /** use in properties */
     public SSRCInputStream(AudioFormat in, AudioFormat out, InputStream is) throws IOException {
 
         super(init(is,
@@ -35,67 +40,35 @@ public class SSRCInputStream extends FilterInputStream {
                    (int) in.getSampleRate(),
                    in.getFrameSize() / in.getChannels(),
                    (int) out.getSampleRate(),
-                   in.getFrameSize() / in.getChannels()));
+                   in.getFrameSize() / in.getChannels(),
+                   in.properties()));
     }
 
+    private static ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
     /**
-     * TODO pipe
-     *
      * @param in source stream
      * @param ch number of channels
-     * @param ifrq input frequency
-     * @param ibps input bits per sample
-     * @param ofrq output frequency
-     * @param obps output bits per second
+     * @param iFrq input frequency
+     * @param iBps input bytes per sample
+     * @param oFrq output frequency
+     * @param oBps output bytes per second
      * @return resampled stream
      */
-    static InputStream init2(InputStream in, int ch, int ifrq, int ibps, int ofrq, int obps) throws IOException {
+    private static InputStream init(InputStream in, int ch, int iFrq, int iBps, int oFrq, int oBps,
+                                    Map<String, Object> props) throws IOException {
         Pipe pipe = Pipe.open();
-        pipe.sink().configureBlocking(false);
-//        new Thread() {
-//            public void run() {
-//                try {
-                    SSRC ssrc = new SSRC();
-                    ssrc.io(Channels.newChannel(in), pipe.sink(), in.available(), ch, ifrq, ibps, ofrq, obps, true, true);
-//                    pipe.sink().close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }.start();
-        return Channels.newInputStream(pipe.source());
-    }
-
-    /**
-     *
-     * @param in source stream
-     * @param ch number of channels
-     * @param ifrq input frequency
-     * @param ibps input bits per sample
-     * @param ofrq output frequency
-     * @param obps output bits per second
-     * @return resampled stream
-     */
-    static InputStream init(InputStream in, int ch, int ifrq, int ibps, int ofrq, int obps) {
-        AdvancedPipedInputStream source = new AdvancedPipedInputStream();
-        final AdvancedPipedInputStream.OutputStreamEx sink = source.getOutputStream();
-        new Thread() {
-            public void run() {
-                try {
-                    SSRC ssrc = new SSRC();
-                    ReadableByteChannel rbc = Channels.newChannel(in);
-                    WritableByteChannel wbc = Channels.newChannel(sink);
-                    ssrc.io(rbc, wbc, in.available(), ch, ifrq, ibps, ofrq, obps, true, true);
-                    sink.close();
-                } catch (IOException ex) {
-                    try {
-                        sink.setException(ex);
-                    } catch (IOException ignored) {
-                    }
-                }
+        pipe.sink().configureBlocking(true);
+        executorService.submit(() -> {
+            try {
+                SSRC ssrc = new SSRC();
+                ssrc.io(Channels.newChannel(in), pipe.sink(), in.available(), ch, iFrq, iBps, oFrq, oBps, props);
+                pipe.sink().close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }.start();
-        return source;
+        });
+        return Channels.newInputStream(pipe.source());
     }
 }
 

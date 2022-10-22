@@ -10,26 +10,22 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
-
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import vavi.util.Debug;
 import vavi.util.win32.WAVE;
-
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,7 +70,7 @@ System.err.println(format);
 
         InputStream is = new YamahaInputStream(getClass().getResourceAsStream(inFile), ByteOrder.LITTLE_ENDIAN);
 System.err.println("available: " + is.available());
-        OutputStream os = new BufferedOutputStream(new FileOutputStream(outFile));
+        OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
 
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
@@ -102,7 +98,7 @@ System.err.println("available: " + is.available());
     /** */
     public static void main(String[] args) throws Exception {
 
-        InputStream in = new BufferedInputStream(new FileInputStream(args[0]));
+        InputStream in = new BufferedInputStream(Files.newInputStream(Paths.get(args[0])));
         WAVE wave = WAVE.readFrom(in, WAVE.class);
         in.close();
         WAVE.fmt format = wave.findChildOf(WAVE.fmt.class);
@@ -131,22 +127,20 @@ System.err.println(audioFormat);
         InputStream is = new YamahaInputStream(in, byteOrder);
 System.err.println("available: " + is.available());
 
-OutputStream os = new BufferedOutputStream(new FileOutputStream(args[1]));
+OutputStream os = new BufferedOutputStream(Files.newOutputStream(Paths.get(args[1])));
 
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(audioFormat);
-        line.addLineListener(new LineListener() {
-            public void update(LineEvent ev) {
+        line.addLineListener(ev -> {
 Debug.println(ev.getType());
-                if (LineEvent.Type.STOP == ev.getType()) {
-                    System.exit(0);
-                }
+            if (LineEvent.Type.STOP == ev.getType()) {
+                System.exit(0);
             }
         });
         line.start();
         byte[] buf = new byte[1024];
-        int l = 0;
+        int l;
 
         while (is.available() > 0) {
             l = is.read(buf, 0, 1024);

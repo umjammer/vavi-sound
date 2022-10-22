@@ -120,7 +120,7 @@ public abstract class SplitRadixFft {
      *          }
      *      .
      * </pre>
-     * @param n data length <br>
+     * @param n data length <br/>
      *  n &gt;= 2, n = power of 2
      * @param isgn
      * @param a [0...n-1] input/output data
@@ -144,7 +144,7 @@ public abstract class SplitRadixFft {
      *      2 + (1 &lt;&lt; (int) (log(n / 2 + 0.5) / log(2)) / 2).
      * </pre>
      *  ip[0],ip[1] are pointers of the cos/sin table.
-     * @param w [0...n/2-1] cos/sin table <br>
+     * @param w [0...n/2-1] cos/sin table <br/>
      *  w[],ip[] are initialized if ip[0] == 0.
      */
     public static void rdft(int n, int isgn, double[] a, int[] ip, double[] w) {

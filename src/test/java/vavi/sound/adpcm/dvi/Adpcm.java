@@ -3,10 +3,10 @@ package vavi.sound.adpcm.dvi;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import vavi.util.ByteUtil;
 
@@ -22,12 +22,12 @@ public class Adpcm {
       return 8000;
    }
 
-   private static final int indexTable[] = {
+   private static final int[] indexTable = {
       -1, -1, -1, -1, 2, 4, 6, 8,
       -1, -1, -1, -1, 2, 4, 6, 8,
    };
 
-   private static final int stepsizeTable[] = {
+   private static final int[] stepsizeTable = {
       7, 8, 9, 10, 11, 12, 13, 14, 16, 17,
       19, 21, 23, 25, 28, 31, 34, 37, 41, 45,
       50, 55, 60, 66, 73, 80, 88, 97, 107, 118,
@@ -39,7 +39,7 @@ public class Adpcm {
       15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767
    };
 
-   public class AdpcmState {
+   public static class AdpcmState {
       int valprev, index;
    }
 
@@ -201,9 +201,9 @@ public class Adpcm {
    /** */
    static void encode(String[] args) throws Exception {
        Adpcm adpcm = new Adpcm();
-       AdpcmState state = adpcm.new AdpcmState();
-       InputStream is = new BufferedInputStream(new FileInputStream(args[0]));
-       OutputStream os = new BufferedOutputStream(new FileOutputStream(args[1]));
+       AdpcmState state = new AdpcmState();
+       InputStream is = new BufferedInputStream(Files.newInputStream(Paths.get(args[0])));
+       OutputStream os = new BufferedOutputStream(Files.newOutputStream(Paths.get(args[1])));
        byte[] buf = new byte[1024];
        while (is.available() > 0) {
            int l = 0;
@@ -232,9 +232,9 @@ public class Adpcm {
    /** */
    static void decode(String[] args) throws Exception {
        Adpcm adpcm = new Adpcm();
-       AdpcmState state = adpcm.new AdpcmState();
-       InputStream is = new BufferedInputStream(new FileInputStream(args[0]));
-       OutputStream os = new BufferedOutputStream(new FileOutputStream(args[1]));
+       AdpcmState state = new AdpcmState();
+       InputStream is = new BufferedInputStream(Files.newInputStream(Paths.get(args[0])));
+       OutputStream os = new BufferedOutputStream(Files.newOutputStream(Paths.get(args[1])));
        byte[] buf = new byte[1024];
        while (is.available() > 0) {
            int l = 0;
@@ -249,9 +249,9 @@ public class Adpcm {
            }
            short[] sbuf = new short[l * 2];
            adpcm.decode(state, buf, 0, l, sbuf, 0);
-           for (int i = 0; i < sbuf.length; i++) {
-               os.write(sbuf[i] & 0x00ff);
-               os.write((sbuf[i] & 0xff00) >> 8);
+           for (short value : sbuf) {
+               os.write(value & 0x00ff);
+               os.write((value & 0xff00) >> 8);
            }
        }
        os.close();

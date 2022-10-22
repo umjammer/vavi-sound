@@ -29,7 +29,7 @@ import static vavi.util.SplitRadixFft.rdft;
 public class fftsgTest {
 
     /* random number generator, 0 <= RND < 1 */
-    double RND(int[] p) {
+    static double RND(int[] p) {
         return (p[0] = (p[0] * 7141 + 54773) % 259200) * (1.0 / 259200.0);
     }
 
@@ -57,10 +57,10 @@ public class fftsgTest {
     /** check of CDFT */
     @Test
     public void testCDFT() throws Exception {
-        putdata(0, NMAX - 1, a);
+        putData(0, NMAX - 1, a);
         cdft(NMAX, 1, a, ip, w);
         cdft(NMAX, -1, a, ip, w);
-        double err = errorcheck(0, NMAX - 1, 2.0 / NMAX, a);
+        double err = checkError(0, NMAX - 1, 2.0 / NMAX, a);
         System.out.printf("cdft err= %g \n", err);
         assertEquals(0, err, 0);
     }
@@ -68,10 +68,10 @@ public class fftsgTest {
     /** check of RDFT */
     @Test
     public void testRDFT() throws Exception {
-        putdata(0, NMAX - 1, a);
+        putData(0, NMAX - 1, a);
         rdft(NMAX, 1, a, ip, w);
         rdft(NMAX, -1, a, ip, w);
-        double err = errorcheck(0, NMAX - 1, 2.0 / NMAX, a);
+        double err = checkError(0, NMAX - 1, 2.0 / NMAX, a);
         System.out.printf("rdft err= %g \n", err);
         assertEquals(0, err, 0);
     }
@@ -79,11 +79,11 @@ public class fftsgTest {
     /** check of DDCT */
     @Test
     public void testDDCT() throws Exception {
-        putdata(0, NMAX - 1, a);
+        putData(0, NMAX - 1, a);
         ddct(NMAX, 1, a, ip, w);
         ddct(NMAX, -1, a, ip, w);
         a[0] *= 0.5;
-        double err = errorcheck(0, NMAX - 1, 2.0 / NMAX, a);
+        double err = checkError(0, NMAX - 1, 2.0 / NMAX, a);
         System.out.printf("ddct err= %g \n", err);
         assertEquals(0, err, 0);
     }
@@ -91,11 +91,11 @@ public class fftsgTest {
     /** check of DDST */
     @Test
     public void testDDST() throws Exception {
-        putdata(0, NMAX - 1, a);
+        putData(0, NMAX - 1, a);
         ddst(NMAX, 1, a, ip, w);
         ddst(NMAX, -1, a, ip, w);
         a[0] *= 0.5;
-        double err = errorcheck(0, NMAX - 1, 2.0 / NMAX, a);
+        double err = checkError(0, NMAX - 1, 2.0 / NMAX, a);
         System.out.printf("ddst err= %g \n", err);
         assertEquals(0, err, 0);
     }
@@ -103,14 +103,14 @@ public class fftsgTest {
     /** check of DFCT */
     @Test
     public void testDFCT() throws Exception {
-        putdata(0, NMAX, a);
+        putData(0, NMAX, a);
         a[0] *= 0.5;
         a[NMAX] *= 0.5;
         dfct(NMAX, a, t, ip, w);
         a[0] *= 0.5;
         a[NMAX] *= 0.5;
         dfct(NMAX, a, t, ip, w);
-        double err = errorcheck(0, NMAX, 2.0 / NMAX, a);
+        double err = checkError(0, NMAX, 2.0 / NMAX, a);
         System.out.printf("dfct err= %g \n", err);
         assertEquals(0, err, 0);
     }
@@ -118,16 +118,16 @@ public class fftsgTest {
     /** check of DFST */
     @Test
     public void testDFST() throws Exception {
-        putdata(1, NMAX - 1, a);
+        putData(1, NMAX - 1, a);
         dfst(NMAX, a, t, ip, w);
         dfst(NMAX, a, t, ip, w);
-        double err = errorcheck(1, NMAX - 1, 2.0 / NMAX, a);
+        double err = checkError(1, NMAX - 1, 2.0 / NMAX, a);
         System.out.printf("dfst err= %g \n", err);
         assertEquals(0, err, 0);
     }
 
     /** */
-    private void putdata(int nini, int nend, double[] a) {
+    private void putData(int nini, int nend, double[] a) {
         int[] seed = new int[] { 0 };
 
         for (int j = nini; j <= nend; j++) {
@@ -136,7 +136,7 @@ public class fftsgTest {
     }
 
     /** */
-    private double errorcheck(int nini, int nend, double scale, double[] a) {
+    private static double checkError(int nini, int nend, double scale, double[] a) {
         int[] seed = new int[] { 0 };
         double err = 0, e;
 

@@ -9,8 +9,8 @@ package vavi.sound.adpcm.dvi;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import vavi.io.BitOutputStream;
 
@@ -25,8 +25,8 @@ public class Encoder {
 
     public static void main(String[] args) throws Exception {
 
-        DataInputStream is = new DataInputStream(new BufferedInputStream(new FileInputStream(args[0])));
-        BitOutputStream os = new BitOutputStream(new FileOutputStream(args[1]));
+        DataInputStream is = new DataInputStream(new BufferedInputStream(Files.newInputStream(Paths.get(args[0]))));
+        BitOutputStream os = new BitOutputStream(Files.newOutputStream(Paths.get(args[1])));
 
         Dvi encoder = new Dvi();
 

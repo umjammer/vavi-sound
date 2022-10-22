@@ -74,10 +74,8 @@ Debug.println("out: " + out);
 Debug.println(Level.WARNING, "unknown fileType: " + fileType);
                 return 0;
             }
-        } catch (InvalidMidiDataException e) {
-            throw (IOException) new IOException().initCause(e);
-        } catch (SmafUnavailableException e) {
-            throw (IOException) new IOException().initCause(e);
+        } catch (InvalidMidiDataException | SmafUnavailableException e) {
+            throw new IOException(e);
         }
     }
 }

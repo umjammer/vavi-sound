@@ -6,15 +6,13 @@
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.ByteOrder;
-
+import java.nio.file.Files;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 
 import static vavi.sound.SoundUtil.volume;
@@ -64,16 +62,14 @@ public class t150_4 {
             ByteOrder.BIG_ENDIAN.equals(byteOrder));
 System.err.println(format);
 
-        InputStream is = new BufferedInputStream(new FileInputStream(file));
+        InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
 
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(format);
-        line.addLineListener(new LineListener() {
-            public void update(LineEvent ev) {
-                if (LineEvent.Type.STOP == ev.getType()) {
-                    System.exit(0);
-                }
+        line.addLineListener(ev -> {
+            if (LineEvent.Type.STOP == ev.getType()) {
+                System.exit(0);
             }
         });
         volume(line, .2d);

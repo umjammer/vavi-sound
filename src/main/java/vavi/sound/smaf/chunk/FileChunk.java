@@ -102,7 +102,7 @@ Debug.printf("has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
     }
 
     /** */
-    private class Crc16OutputStream extends FilterOutputStream {
+    private static class Crc16OutputStream extends FilterOutputStream {
         /** */
         private CRC16 crc16 = new CRC16();
         /** */

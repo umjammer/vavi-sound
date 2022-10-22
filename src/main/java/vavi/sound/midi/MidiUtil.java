@@ -67,8 +67,8 @@ public final class MidiUtil {
             SysexMessage msg = (SysexMessage) midiMessage;
             byte[] data = msg.getData();
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < data.length; i++) {
-                sb.append(String.format("%02x", data[i]));
+            for (byte datum : data) {
+                sb.append(String.format("%02x", datum));
                 sb.append(" ");
             }
             result = "channel=n/a" +
@@ -80,8 +80,8 @@ public final class MidiUtil {
             int type = msg.getType();
             byte[] data = msg.getData();
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < data.length; i++) {
-                sb.append(String.format("%02x", data[i]));
+            for (byte datum : data) {
+                sb.append(String.format("%02x", datum));
                 sb.append(" ");
             }
             result = "channel=n/a" +
@@ -254,7 +254,7 @@ Debug.println(Level.FINE, "encodingEncoding: " + encodingEncoding);
             if (value != null) {
                 String defaultSequencer = value;
 Debug.println(Level.FINE, "defaultSequencer: " + defaultSequencer);
-                if (defaultSequencer.indexOf("#") != -1) {
+                if (defaultSequencer.contains("#")) {
                     String[] pair = defaultSequencer.split("#");
                     sequencerClassName = pair[0];
                     sequencerDeviceName = pair[1];
@@ -270,7 +270,7 @@ Debug.println(Level.FINE, "sequencerDeviceName: " + sequencerDeviceName);
             if (value != null) {
                 String defaultSynthesizer = value;
 Debug.println("defaultSynthesizer: " + defaultSynthesizer);
-                if (defaultSynthesizer.indexOf("#") != -1) {
+                if (defaultSynthesizer.contains("#")) {
                     String[] pair = defaultSynthesizer.split("#");
                     synthesizerClassName = pair[0];
                     synthesizerDeviceName = pair[1];
@@ -311,7 +311,7 @@ Debug.println(Level.FINE, "default synthesizer: " + provider.getClass().getName(
                     }
                 } else {
                     MidiDevice device = provider.getDevice(info);
-                    if (Synthesizer.class.isInstance(device)) {
+                    if (device instanceof Synthesizer) {
                         if (device.getClass().getName().equals(synthesizerClassName)) {
 Debug.println(Level.FINE, "default synthesizer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
                             return (Synthesizer) device;
@@ -349,7 +349,7 @@ Debug.println(Level.FINE, "default sequencer: " + provider.getClass().getName() 
                     }
                 } else {
                     MidiDevice device = provider.getDevice(info);
-                    if (Sequencer.class.isInstance(device)) {
+                    if (device instanceof Sequencer) {
                         if (device.getClass().getName().equals(sequencerClassName)) {
 Debug.println(Level.FINE, "default sequencer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
                             return (Sequencer) device;
@@ -365,7 +365,7 @@ Debug.println(Level.FINE, "default sequencer: " + provider.getClass().getName() 
     /** */
     private static ServiceLoader<MidiDeviceProvider> providers;
 
-    /**
+    /*
      * @depends /META-INF/services/javax.sound.midi.spi.MidiDeviceProvider
      */
     static {

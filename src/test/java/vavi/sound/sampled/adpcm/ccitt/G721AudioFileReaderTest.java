@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2020 by Naohide Sano, All rights reserved.
+ * Copyright (c) 2006 by Naohide Sano, All rights reserved.
  *
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.adpcm.ma;
+package vavi.sound.sampled.adpcm.ccitt;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -28,15 +28,15 @@ import static vavi.sound.SoundUtil.volume;
 
 
 /**
- * MaAudioFileReaderTest.
+ * G721AudioFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
- * @version 0.00 201020 nsano initial version <br>
+ * @version 0.00 060120 nsano initial version <br>
  */
-public class MaAudioFileReaderTest {
+public class G721AudioFileReaderTest {
 
-    String inFile = "/vavi/sound/adpcm/ma/out.adpcm";
-    String correctFile = "/vavi/sound/adpcm/ma/out.pcm";
+    String inFile = "/vavi/sound/adpcm/ccitt/out.4.adpcm";
+    String correctFile = "/vavi/sound/adpcm/ccitt/out.4.pcm";
     File outFile;
 
     @BeforeEach
@@ -63,7 +63,7 @@ Debug.println("outFile: " + outFile);
 System.err.println(outFormat);
 
         AudioFormat inFormat = new AudioFormat(
-            MaEncoding.MA,
+            CcittEncoding.G721,
             sampleRate,
             16,
             1,
@@ -84,7 +84,7 @@ SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
 line.open(outFormat);
 line.start();
         byte[] buf = new byte[1024];
-        int l;
+        int l = 0;
         volume(line, .2d);
 
         while (oais.available() > 0) {

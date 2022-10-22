@@ -72,7 +72,6 @@ Debug.println(Level.SEVERE, e);
                 }
             } catch (IOException e) {
 Debug.println(Level.SEVERE, e);
-                throw e;
             }
         }
     }

@@ -10,12 +10,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
+import java.nio.file.Files;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -25,11 +23,9 @@ import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import vavi.io.LittleEndianDataInputStream;
 import vavi.io.OutputEngineInputStream;
 import vavi.util.Debug;
-
 import vavix.io.IOStreamOutputEngine;
 import vavix.util.Checksum;
 
@@ -60,13 +56,10 @@ Debug.println("outFile: " + outFile);
     /** */
     @Test
     public void test1() throws Exception {
-        OutputStream os = new FileOutputStream(outFile);
+        OutputStream os = Files.newOutputStream(outFile.toPath());
         InputStream in = getClass().getResourceAsStream(inFile);
-        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(in, new IOStreamOutputEngine.OutputStreamFactory() {
-            public OutputStream getOutputStream(OutputStream out) throws IOException {
-                return new MsOutputStream(out, 500, 1);
-            }
-        }));
+        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(in,
+                out -> new MsOutputStream(out, 500, 1)));
         byte[] buffer = new byte[500 * 2];
         while (true) {
             int amount = is.read(buffer);
@@ -87,7 +80,7 @@ Debug.println("outFile: " + outFile.length());
     @Test
     public void test2() throws Exception {
         InputStream is = new BufferedInputStream(getClass().getResourceAsStream(inFile));
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile));
+        OutputStream out = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
         OutputStream os = new MsOutputStream(out, 500, 1);
         byte[] buffer = new byte[500 * 2];
         while (true) {
@@ -114,8 +107,7 @@ Debug.println("outFile: " + outFile.length());
 //        final String outFile = "src/test/resources/vavi/sound/adpcm/ms/out_vavi.adpcm";
 
         InputStream in = new BufferedInputStream(getClass().getResourceAsStream(inFile));
-        LittleEndianDataInputStream ledis = new LittleEndianDataInputStream(in);
-        OutputStream os = new BufferedOutputStream(new FileOutputStream(outFile));
+        OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
 
         Ms encoder = new Ms();
         int[] steps = new int[16];
@@ -138,7 +130,7 @@ Debug.println("inFile: " + length);
             if (l > 0) {
                 byte[] adpcm = new byte[bpb];
                 int[] pcm = new int[l / 2];
-                ledis = new LittleEndianDataInputStream(new ByteArrayInputStream(buffer));
+                LittleEndianDataInputStream ledis = new LittleEndianDataInputStream(new ByteArrayInputStream(buffer));
                 for (int i = 0; i < pcm.length; i++) {
                     pcm[i] = ledis.readShort();
                 }
@@ -154,7 +146,7 @@ Debug.println("inFile: " + length);
         os.close();
 Debug.println("outFile: " + outFile.length());
 
-        InputStream is = new MsInputStream(new BufferedInputStream(new FileInputStream(outFile)),
+        InputStream is = new MsInputStream(new BufferedInputStream(Files.newInputStream(outFile.toPath())),
                                            spb,
                                            1,
                                            Ms.getBytesPerBlock(1, spb));
@@ -170,11 +162,7 @@ Debug.println("outFile: " + outFile.length());
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(audioFormat);
-        line.addLineListener(new LineListener() {
-            public void update(LineEvent ev) {
-                Debug.println(ev.getType());
-            }
-        });
+        line.addLineListener(ev -> Debug.println(ev.getType()));
         line.start();
 
         volume(line, .2d);
