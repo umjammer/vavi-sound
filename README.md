@@ -10,23 +10,23 @@ Includes many ADPCM codecs and the SSRC sampling rate converter.
 
 ## Status
 
-| **SPI** |  **Codec**   |  **Description**           | **IN Status** | **OUT Status** | **SPI Status** | **Comment** |
-|:--------|:-------------|:---------------------------|:--------------|:---------------|:---------------|:------------|
-| midi    | MFi          | Japanese cell phone format | 🚧 | ✅ | ✅ | |
-| midi    | SMAF         | YAMAHA cell phone format   | 🚧 | ✅ | ✅ | |
-| sampled | MFi          | Japanese cell phone format | ✅ | ✅ | ✅ | |
-| sampled | SMAF         | YAMAHA cell phone format   | ✅ | ✅ | ✅ | |
-| sampled | CCITT ADPCM  | G711, G721, G723           | ✅ | ✅ | ✅ | except `AudioFileReader` |
-| sampled | DVI ADPCM    | DVI ADPCM                  | ✅ | ✅ | ✅ | except `AudioFileReader`  |
-| sampled | IMA ADPCM    | IMA ADPCM                  | ✅ | ✅ | 🚧 | except `AudioFileReader`  |
-| sampled | MA ADPCM     | YAMAHA ADPCM               | ✅ | ✅ | ✅ | except `AudioFileReader`  |
-| sampled | MS ADPCM     | Microsoft ADPCM            | ✅ | ✅ | 🚧 | except `AudioFileReader`  |
-| sampled | OKI ADPCM    | OKI ADPCM                  | ✅ | ✅ | ✅ | except `AudioFileReader`  |
-| sampled | ROHM ADPCM   | ROHM ADPCM                 | ✅ | ✅ | ✅ | except `AudioFileReader`  |
-| sampled | VOX ADPCM    | VOX ADPCM                  | ✅ | ✅ | ✅ | except `AudioFileReader`  |
-| sampled | YAMAHA ADPCM | YAMAHA ADPCM               | ✅ | ✅ | - | same as ym2068 |
-| sampled | YM2068 ADPCM | YAMAHA ADPCM               | ✅ | ✅ | ✅ | except `AudioFileReader`  |
-| sampled | ssrc         | resampling                 | ✅ | -  | ✅ | waiting for phase 1 |
+| **SPI** |  **Codec**   |  **Description**           | **IN Status** | **OUT Status** | **SPI Status** | **Comment**                 |
+|:--------|:-------------|:---------------------------|:--------------|:---------------|:---------------|:----------------------------|
+| midi    | MFi          | Japanese cell phone format | 🚧 | ✅ | ✅ |                             |
+| midi    | SMAF         | YAMAHA cell phone format   | 🚧 | ✅ | ✅ |                             |
+| sampled | MFi          | Japanese cell phone format | ✅ | ✅ | ✅ |                             |
+| sampled | SMAF         | YAMAHA cell phone format   | ✅ | ✅ | ✅ |                             |
+| sampled | CCITT ADPCM  | G711, G721, G723           | ✅ | ✅ | ✅ |                             |
+| sampled | DVI ADPCM    | DVI ADPCM                  | ✅ | ✅ | ✅ |                             |
+| sampled | IMA ADPCM    | IMA ADPCM                  | ✅ | ✅ | ✅ |                             |
+| sampled | MA ADPCM     | YAMAHA ADPCM               | ✅ | ✅ | ✅ |                             |
+| sampled | MS ADPCM     | Microsoft ADPCM            | ✅ | ✅ | ✅ |                             |
+| sampled | OKI ADPCM    | OKI ADPCM                  | ✅ | ✅ | ✅ |                             |
+| sampled | ROHM ADPCM   | ROHM ADPCM                 | ✅ | ✅ | ✅ |                             |
+| sampled | VOX ADPCM    | VOX ADPCM                  | ✅ | ✅ | ✅ |                             |
+| sampled | YAMAHA ADPCM | YAMAHA ADPCM               | ✅ | ✅ | - | same as ym2068              |
+| sampled | YM2068 ADPCM | YAMAHA ADPCM               | ✅ | ✅ | ✅ |                             |
+| sampled | ssrc         | resampling                 | ✅ | -  | ✅ | need to wait for phase 1 |
 
 ## Install
 
