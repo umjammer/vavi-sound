@@ -16,16 +16,16 @@ import vavi.util.win32.WAVE;
 
 
 /**
- * wave ファイルからデータだけを抜き出すプログラム．
+ * extract data from .wav file.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020708 nsano initial version <br>
  *          0.01 030711 nsano new version compliant <br>
  *          0.02 030715 nsano fix <br>
  */
-public class wave {
+public class ExtractWave {
     /**
-     * usage: java wave in_file out_file
+     * usage: java ExtractWave in_file out_file
      */
     public static void main(String[] args) throws Exception {
         InputStream is = new BufferedInputStream(Files.newInputStream(Paths.get(args[0])));

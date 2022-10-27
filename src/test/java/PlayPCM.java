@@ -21,17 +21,13 @@ import static vavi.sound.SoundUtil.volume;
 /**
  * Play PCM.
  *
- * <pre>
- * 4bit PCM NG
- * </pre>
- *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030714 nsano initial version <br>
  */
-public class t150_4 {
+public class PlayPCM {
 
     /**
-     * usage: java t150_4 pcm_file
+     * usage: java PlayPCM pcm_file [sampleRate] [byteOrder(le,be)]
      */
     public static void main(String[] args) throws Exception {
 
@@ -39,12 +35,20 @@ public class t150_4 {
         File file = new File(args[0]);
 
         // 1
-        int sampleRate = 24000;
+        int sampleRate = 16000;
         ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
+        if (args.length >= 2) {
+            sampleRate = Integer.parseInt(args[1]);
+System.err.println("sampleRate: " + sampleRate);
+        }
 
         // 2
+        if (args.length >= 3) {
+            byteOrder = "le".equalsIgnoreCase(args[2]) ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
+System.err.println("byteOrder: " + byteOrder);
+        }
 
-        t150_4 player = new t150_4();
+        PlayPCM player = new PlayPCM();
         player.play(file, sampleRate, byteOrder);
     }
 
@@ -53,11 +57,11 @@ public class t150_4 {
      */
     void play(File file, int sampleRate, ByteOrder byteOrder) throws Exception {
         AudioFormat format = new AudioFormat(
-            AudioFormat.Encoding.PCM_UNSIGNED,
+            AudioFormat.Encoding.PCM_SIGNED,
             sampleRate,
-            8,
+            16,
             1,
-            1,
+            2,
             sampleRate,
             ByteOrder.BIG_ENDIAN.equals(byteOrder));
 System.err.println(format);

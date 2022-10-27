@@ -14,7 +14,7 @@ import java.util.ServiceLoader;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/04/08 umjammer initial version <br>
  */
-public class Test3 {
+public class ShowMIDIProviders {
 
     /**
      *

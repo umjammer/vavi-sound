@@ -24,7 +24,7 @@ import vavi.util.Debug;
  * @version 0.00 080701 nsano initial version <br>
  * @see "https://stackoverflow.com/a/45119638/6102938"
  */
-public class Test {
+public class SoundFontTest {
 
     /**
      * @param args 0: midi
