@@ -135,7 +135,7 @@ TODO
     <dependency>
       <groupId>com.github.umjammer</groupId>
       <artifactId>klab-commons-cli</artifactId>
-      <version>1.3.0</version>
+      <version>1.3.2</version>
       <exclusions>
         <exclusion>
           <groupId>com.github.umjammer</groupId>
@@ -157,7 +157,7 @@ TODO
     <dependency>
       <groupId>vavi</groupId>
       <artifactId>vavi-sound-nda</artifactId>
-      <version>1.0.10</version>
+      <version>1.0.12</version>
       <exclusions>
         <exclusion>
           <groupId>com.github.umjammer</groupId>
