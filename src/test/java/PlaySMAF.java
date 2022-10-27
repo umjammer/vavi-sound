@@ -10,28 +10,29 @@ import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Soundbank;
 
-import vavi.sound.mfi.MetaEventListener;
-import vavi.sound.mfi.MfiSystem;
-import vavi.sound.mfi.Sequence;
-import vavi.sound.mfi.Sequencer;
-import vavi.sound.mfi.Synthesizer;
+import vavi.sound.smaf.MetaEventListener;
+import vavi.sound.smaf.Sequence;
+import vavi.sound.smaf.Sequencer;
+import vavi.sound.smaf.SmafSystem;
+import vavi.sound.smaf.Synthesizer;
 
 
 /**
- * test mfi.
+ * test smaf.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 090913 nsano initial version <br>
  */
-public class Test1 {
+public class PlaySMAF {
 
     /**
      *
-     * @param args mfi files ...
+     * @param args smaf files ...
      */
     public static void main(String[] args) throws Exception {
-        final Sequencer sequencer = MfiSystem.getSequencer();
+        final Sequencer sequencer = SmafSystem.getSequencer();
         sequencer.open();
+
 Synthesizer synthesizer = (Synthesizer) sequencer;
 // sf
 Soundbank soundbank = synthesizer.getDefaultSoundbank();
@@ -61,7 +62,7 @@ System.err.println("META: " + meta.getType());
                     countDownLatch.countDown();
                 }
             };
-            Sequence sequence = MfiSystem.getSequence(new File(arg));
+            Sequence sequence = SmafSystem.getSequence(new File(arg));
             sequencer.setSequence(sequence);
             sequencer.addMetaEventListener(mel);
             sequencer.start();

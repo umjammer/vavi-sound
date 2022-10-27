@@ -23,10 +23,10 @@ import static vavi.sound.SoundUtil.volume;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030711 nsano initial version <br>
  */
-public class t150_1 {
+public class PlayLine {
 
     /**
-     * usage: java t150_1 file ...
+     * usage: java PlayLine file ...
      */
     public static void main(String[] args) throws Exception {
 
@@ -35,7 +35,7 @@ public class t150_1 {
         }
 
         // play
-        t150_1 player = new t150_1();
+        PlayLine player = new PlayLine();
         for (String arg : args) {
             player.play(arg);
         }
