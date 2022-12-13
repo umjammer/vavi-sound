@@ -315,13 +315,13 @@ Debug.println(Level.FINE, "is rest: " + is.available());
         // Track 0 の先頭に SubMessage を押し込む
         // TODO HeaderChunk ですべき予感？？？
         for (SubMessage headerSubChunk : headerSubChunks.values()) {
-            track.add(new MfiEvent(headerSubChunk, 0l));
+            track.add(new MfiEvent(headerSubChunk, 0L));
         }
 
         // Track 0 の header sub chunks の次に AudioDataMessage を押し込む
         for (AudioDataMessage audioDataChunk : audioDataChunks) {
             // TODO {@link MetaMessage} に変換？？？
-            track.add(new MfiEvent(audioDataChunk, 0l));
+            track.add(new MfiEvent(audioDataChunk, 0L));
         }
     }
 

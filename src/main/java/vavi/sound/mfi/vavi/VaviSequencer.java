@@ -211,10 +211,7 @@ Debug.println("★0 meta: type: " + message.getType());
                 } catch (InvalidMfiDataException e) {
 Debug.println(Level.SEVERE, e);
                 }
-catch (RuntimeException e) {
-Debug.printStackTrace(e);
- throw e;
-} catch (Error e) {
+catch (RuntimeException | Error e) {
 Debug.printStackTrace(e);
  throw e;
 }

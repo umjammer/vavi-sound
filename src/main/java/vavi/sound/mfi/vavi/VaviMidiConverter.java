@@ -87,10 +87,7 @@ class VaviMidiConverter implements MidiConverter {
 
         try {
             return convert(midiSequence, fileType);
-        } catch (IOException e) {
-Debug.printStackTrace(e);
-            throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
-        } catch (InvalidMfiDataException e) {
+        } catch (IOException | InvalidMfiDataException e) {
 Debug.printStackTrace(e);
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         }
@@ -216,8 +213,8 @@ if (!uc.contains(key)) {
 
                             MfiEvent[] nops = mfiContext.getIntervalMfiEvents(t);
                             if (nops != null) {
-                                for (int j = 0; j < nops.length; j++) {
-                                    mfiTracks[t].add(nops[j]);
+                                for (MfiEvent nop : nops) {
+                                    mfiTracks[t].add(nop);
                                 }
                             }
 
@@ -234,22 +231,22 @@ Debug.println(Level.FINE, "message is null[" +  mfiTracks[t].size() + "]: " + mi
                 // interval
                 MfiEvent[] mfiEvents = mfiContext.getIntervalMfiEvents(mfiTrackNumber);
                 if (mfiEvents != null) {
-                    for (int j = 0; j < mfiEvents.length; j++) {
-if (mfiEvents[j] == null) {
- Debug.println(Level.WARNING, "NOP is null[" +  mfiTracks[mfiTrackNumber].size() + "]: " + MidiUtil.paramString(midiMessage));
-}
-                        addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvents[j]);
+                    for (MfiEvent mfiEvent : mfiEvents) {
+                        if (mfiEvent == null) {
+                            Debug.println(Level.WARNING, "NOP is null[" + mfiTracks[mfiTrackNumber].size() + "]: " + MidiUtil.paramString(midiMessage));
+                        }
+                        addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvent);
                     }
                 }
 
                 // converted
                 mfiEvents = converter.getMfiEvents(midiEvent, mfiContext);
                 if (mfiEvents != null) {
-                    for (int j = 0; j < mfiEvents.length; j++) {
-if (mfiEvents[j] == null) {
- Debug.println(Level.WARNING, "event is null[" +  mfiTracks[mfiTrackNumber].size() + ", " + mfiEvents.length + "]: " + converter.getClass() + ", " + MidiUtil.paramString(midiMessage));
-}
-                        addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvents[j]);
+                    for (MfiEvent mfiEvent : mfiEvents) {
+                        if (mfiEvent == null) {
+                            Debug.println(Level.WARNING, "event is null[" + mfiTracks[mfiTrackNumber].size() + ", " + mfiEvents.length + "]: " + converter.getClass() + ", " + MidiUtil.paramString(midiMessage));
+                        }
+                        addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvent);
                     }
                 }
             }
@@ -261,7 +258,7 @@ if (mfiEvents[j] == null) {
         return mfiSequence;
     }
 
-private int deltas[] = new int[4];
+private int[] deltas = new int[4];
 
 private void addEventToTrack(MfiContext mfiContext, long tick, Track mfiTrack, int mfiTrackNumber, MfiEvent mfiEvent) {
     MfiMessage mfiMessage = mfiEvent.getMessage();
@@ -324,8 +321,8 @@ Debug.println("resolution: " + resolution);
 //Debug.println("midi convertible: " + message);
                     MidiEvent[] midiEvents = ((MidiConvertible) mfiMessage).getMidiEvents(midiContext);
                     if (midiEvents != null) {
-                        for (int k = 0; k < midiEvents.length; k++) {
-                            midiTrack.add(midiEvents[k]);
+                        for (MidiEvent midiEvent : midiEvents) {
+                            midiTrack.add(midiEvent);
                         }
                     }
                 } else if (mfiMessage instanceof SubMessage) {

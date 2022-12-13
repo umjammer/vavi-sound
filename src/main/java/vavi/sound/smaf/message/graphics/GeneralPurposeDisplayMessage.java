@@ -61,7 +61,7 @@ public class GeneralPurposeDisplayMessage extends ShortMessage {
         Rectangle,
         TextBlock,
         ImageTile,
-        BitmapTile;
+        BitmapTile
     }
 
     //----

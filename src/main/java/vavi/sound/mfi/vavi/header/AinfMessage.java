@@ -133,12 +133,11 @@ public class AinfMessage extends SubMessage {
         }
         /** */
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("ainf inf[" + index + "]: ");
-            sb.append(String.format("%02x, %d", format, length));
-            sb.append('\n');
-            sb.append(StringUtil.getDump(data));
-            return sb.toString();
+            String sb = "ainf inf[" + index + "]: " +
+                    String.format("%02x, %d", format, length) +
+                    '\n' +
+                    StringUtil.getDump(data);
+            return sb;
         }
     }
 

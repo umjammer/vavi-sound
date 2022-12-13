@@ -70,11 +70,11 @@ Debug.println(Level.FINE, "adpcm L, R length: " + temp.length);
         if (fillNop) {
             for (int i = 0; i < delta / Nop2Message.maxDelta; i++) {
                 Nop2Message nop2 = new Nop2Message(0xff, 0xff);
-                events.add(new MfiEvent(nop2, 0l));
+                events.add(new MfiEvent(nop2, 0L));
             }
             int moduloOfDelta = delta % Nop2Message.maxDelta;
             Nop2Message nop2 = new Nop2Message(moduloOfDelta % 0x100, moduloOfDelta / 0x100);
-            events.add(new MfiEvent(nop2, 0l));
+            events.add(new MfiEvent(nop2, 0L));
         }
         return events;
     }
@@ -126,7 +126,7 @@ Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length)
         function.setLength(length);
         function.setAdpcm(adpcm);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /**
@@ -147,7 +147,7 @@ Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length)
         function.setLength(length);
         function.setAdpcm(new byte[0]);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /**

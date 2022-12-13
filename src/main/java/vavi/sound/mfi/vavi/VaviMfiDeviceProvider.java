@@ -32,7 +32,7 @@ public class VaviMfiDeviceProvider extends MfiDeviceProvider {
     public static final String version = "1.0.10";
 
     /** */
-    private MfiDevice.Info mfiDeviceInfos[];
+    private MfiDevice.Info[] mfiDeviceInfos;
 
     /** */
     public VaviMfiDeviceProvider() {
@@ -68,11 +68,9 @@ public class VaviMfiDeviceProvider extends MfiDeviceProvider {
         public static MfiDevice.Info[] getMfiDeviceInfos() {
             List<MfiDevice.Info> tmp = new ArrayList<>();
 
-            for (MfiDevice.Info mfiDeviceInfo : deviceMap.keySet()) {
-                tmp.add(mfiDeviceInfo);
-            }
+            tmp.addAll(deviceMap.keySet());
 
-            return tmp.toArray(new MfiDevice.Info[tmp.size()]);
+            return tmp.toArray(new MfiDevice.Info[0]);
         }
 
         /** */
@@ -100,9 +98,8 @@ Debug.printStackTrace(e);
                 props.load(Factory.class.getResourceAsStream(path));
 
                 // midi
-                Iterator<?> i = props.keySet().iterator();
-                while (i.hasNext()) {
-                    String key = (String) i.next();
+                for (Object o : props.keySet()) {
+                    String key = (String) o;
                     if (key.startsWith("mfi.device.")) {
                         @SuppressWarnings("unchecked")
                         Class<MfiDevice> deviceClass = (Class<MfiDevice>) Class.forName(props.getProperty(key));

@@ -7,8 +7,8 @@
 package vavi.sound.sampled.smaf;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -243,7 +243,7 @@ Debug.println("moduloChunkSize: " + moduloChunkSize);
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
-        fileChunk.writeTo(new FileOutputStream(file));
+        fileChunk.writeTo(Files.newOutputStream(file.toPath()));
         int r = fileChunk.getSize();
 Debug.println("write: " + r);
         return r;
@@ -258,7 +258,7 @@ Debug.println("write: " + r);
     /** */
     protected static String defaultModel;
 
-    /** */
+    /* */
     static {
         try {
             Properties props = new Properties();

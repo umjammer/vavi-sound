@@ -161,7 +161,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
 
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
-        events.add(new SmafEvent(metaMessage, 0l));
+        events.add(new SmafEvent(metaMessage, 0L));
 
         return null; // TODO
     }

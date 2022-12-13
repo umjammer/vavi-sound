@@ -180,9 +180,9 @@ Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.len
                 }
 //System.err.println();
                 if (printable) {
-                    return "SubData(" + new String(tag) + ", lang: " + getLanguageCode() + ", size: " + data.length + "): " + string;
+                    return "SubData(" + tag + ", lang: " + getLanguageCode() + ", size: " + data.length + "): " + string;
                 } else {
-                    return "SubData(" + new String(tag) + ", lang: " + getLanguageCode() + ", size: " + data.length + ")\n" + StringUtil.getDump(data, 128);
+                    return "SubData(" + tag + ", lang: " + getLanguageCode() + ", size: " + data.length + ")\n" + StringUtil.getDump(data, 128);
                 }
             } catch (UnsupportedEncodingException e) {
                 assert false;

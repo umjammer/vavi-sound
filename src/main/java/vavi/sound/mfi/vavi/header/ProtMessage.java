@@ -26,7 +26,7 @@ import vavi.sound.midi.MidiUtil;
  * データ管理及び保護情報 MFi Header Sub Chunk.
  * <pre>
  *  &quot;prot&quot; n bytes: data managing
- *  MIDI {@link MidiConstants#META_TEXT_EVENT META_TEXT_EVENT (0x01)}
+ *  MIDI {@link MidiConstants.MetaEvent#META_TEXT_EVENT META_TEXT_EVENT (0x01)}
  * </pre>
  * <li> TODO use {@link CodeMessage}
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)

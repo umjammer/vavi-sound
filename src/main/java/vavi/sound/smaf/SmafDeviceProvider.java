@@ -28,7 +28,7 @@ public class SmafDeviceProvider {
     public static final String version = "1.0.10";
 
     /** */
-    private SmafDevice.Info smafDeviceInfos[];
+    private SmafDevice.Info[] smafDeviceInfos;
 
     /** */
     public SmafDeviceProvider() {
@@ -64,11 +64,9 @@ public class SmafDeviceProvider {
         public static SmafDevice.Info[] getSmafDeviceInfos() {
             List<SmafDevice.Info> tmp = new ArrayList<>();
 
-            for (SmafDevice.Info smafDeviceInfo : deviceMap.keySet()) {
-                tmp.add(smafDeviceInfo);
-            }
+            tmp.addAll(deviceMap.keySet());
 
-            return tmp.toArray(new SmafDevice.Info[tmp.size()]);
+            return tmp.toArray(new SmafDevice.Info[0]);
         }
 
         /** */
@@ -96,9 +94,8 @@ Debug.printStackTrace(e);
                 props.load(Factory.class.getResourceAsStream(path));
 
                 // midi
-                Iterator<?> i = props.keySet().iterator();
-                while (i.hasNext()) {
-                    String key = (String) i.next();
+                for (Object o : props.keySet()) {
+                    String key = (String) o;
                     if (key.startsWith("smaf.device.")) {
                         @SuppressWarnings("unchecked")
                         Class<SmafDevice> deviceClass = (Class<SmafDevice>) Class.forName(props.getProperty(key));

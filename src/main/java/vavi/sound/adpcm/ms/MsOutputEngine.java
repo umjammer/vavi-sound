@@ -44,12 +44,12 @@ class MsOutputEngine implements OutputEngine {
 
     /** */
     public MsOutputEngine(InputStream in,
-                          final int samplesPerBlock,
-                          final int nCoefs,
-                          final int[][] iCoefs,
-                          final int channels,
+                          int samplesPerBlock,
+                          int nCoefs,
+                          int[][] iCoefs,
+                          int channels,
                           int blockSize,
-                          final ByteOrder byteOrder) {
+                          ByteOrder byteOrder) {
         this.in = in;
         this.samplesPerBlock = samplesPerBlock;
         if (nCoefs < 7 || nCoefs > 0x100) {

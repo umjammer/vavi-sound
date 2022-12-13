@@ -191,8 +191,8 @@ Debug.println("rounded under -1, minus 1: " + roundedSum[smafTrackNumber] + "[" 
      */
     public SmafEvent[] getIntervalSmafEvents() {
 
-        int interval = 0;
-        int track = 0;
+        int interval;
+        int track;
         MidiEvent midiEvent = midiTrack.get(midiEventIndex);
 
         MidiMessage midiMessage = midiEvent.getMessage();
@@ -234,7 +234,7 @@ if (interval < 0) {
         SmafEvent[] smafEvents = new SmafEvent[nopLength];
         for (int i = 0; i < nopLength; i++) {
             NopMessage smafMessage = new NopMessage(255);
-            smafEvents[i] = new SmafEvent(smafMessage, 0l);    // TODO 0l
+            smafEvents[i] = new SmafEvent(smafMessage, 0L);    // TODO 0l
             // 255 Δ 分後ろにずらしていく
             incrementBeforeTick(track, 255);
         }
@@ -351,7 +351,7 @@ if (delta > 255) {
      */
     public MidiEvent getNextMidiEvent() throws NoSuchElementException {
 
-        ShortMessage shortMessage = null;
+        ShortMessage shortMessage;
 
         MidiEvent midiEvent = midiTrack.get(midiEventIndex);
         MidiMessage midiMessage = midiEvent.getMessage();
@@ -391,7 +391,7 @@ Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getDa
      */
     public MidiEvent getNoteOffMidiEvent() throws NoSuchElementException {
 
-        ShortMessage shortMessage = null;
+        ShortMessage shortMessage;
 
         MidiEvent midiEvent = midiTrack.get(midiEventIndex);
         MidiMessage midiMessage = midiEvent.getMessage();

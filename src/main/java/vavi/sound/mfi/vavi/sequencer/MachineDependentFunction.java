@@ -30,18 +30,18 @@ import vavi.util.properties.PrefixedClassPropertiesFactory;
  */
 public interface MachineDependentFunction {
 
-    final int VENDOR_NEC        = 0x10; // N
-    final int VENDOR_FUJITSU    = 0x20; // F
-    final int VENDOR_SONY       = 0x30; // SO
-    final int VENDOR_PANASONIC  = 0x40; // P
-    final int VENDOR_NIHONMUSEN = 0x50; // R
-    final int VENDOR_MITSUBISHI = 0x60; // D
-    final int VENDOR_SHARP      = 0x70; // SH
-    final int VENDOR_SANYO      = 0x80; // SA
-    final int VENDOR_MOTOROLA   = 0x90; // M
+    int VENDOR_NEC        = 0x10; // N
+    int VENDOR_FUJITSU    = 0x20; // F
+    int VENDOR_SONY       = 0x30; // SO
+    int VENDOR_PANASONIC  = 0x40; // P
+    int VENDOR_NIHONMUSEN = 0x50; // R
+    int VENDOR_MITSUBISHI = 0x60; // D
+    int VENDOR_SHARP      = 0x70; // SH
+    int VENDOR_SANYO      = 0x80; // SA
+    int VENDOR_MOTOROLA   = 0x90; // M
 
-    final int CARRIER_AU     = 0x00;    // au
-    final int CARRIER_DOCOMO = 0x01;    // DoCoMo
+    int CARRIER_AU     = 0x00;    // au
+    int CARRIER_DOCOMO = 0x01;    // DoCoMo
 
     /** */
     void process(MachineDependentMessage message)

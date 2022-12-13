@@ -84,7 +84,7 @@ SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
 line.open(outFormat);
 line.start();
         byte[] buf = new byte[1024];
-        int l = 0;
+        int l;
         volume(line, .2d);
 
         while (oais.available() > 0) {

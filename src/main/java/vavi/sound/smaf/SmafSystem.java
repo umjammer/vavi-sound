@@ -8,10 +8,10 @@ package vavi.sound.smaf;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
@@ -39,7 +39,7 @@ public final class SmafSystem {
     /** */
     private static SmafFileWriter writer;
 
-    /** */
+    /* */
     static {
         // TODO SmafDeviceProvider
         sequencer = new SmafSequencer();
@@ -94,7 +94,7 @@ public final class SmafSystem {
     public static vavi.sound.smaf.Sequence getSequence(File file)
         throws InvalidSmafDataException, IOException {
 
-        return getSequence(new BufferedInputStream(new FileInputStream(file)));
+        return getSequence(new BufferedInputStream(Files.newInputStream(file.toPath())));
     }
 
     /**
@@ -122,10 +122,7 @@ Debug.printStackTrace(e);
 
         try {
             return converter.convert(in, fileType);
-        } catch (IOException e) {
-Debug.printStackTrace(e);
-            throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
-        } catch (InvalidSmafDataException e) {
+        } catch (IOException | InvalidSmafDataException e) {
 Debug.printStackTrace(e);
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         }

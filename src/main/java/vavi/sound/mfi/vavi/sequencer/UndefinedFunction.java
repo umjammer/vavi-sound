@@ -41,7 +41,7 @@ public class UndefinedFunction implements MachineDependentFunction {
 
         int f1 = data[6] & 0xff;
         int f2 = -1;
-        int f3 = -1;
+        int f3;
         if (data.length > 8) {
             f3 = data[8] & 0xff;
 Debug.printf(Level.INFO, "undefined function: %02x %02x %02x\n", f1, f2, f3);

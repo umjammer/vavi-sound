@@ -60,7 +60,7 @@ class Ima {
     /** */
     private static int[][] stateAdjustTable = new int[ISSTMAX + 1][8];
 
-    /** */
+    /* */
     static {
         for (int i = 0; i <= ISSTMAX; i++) {
             for (int j = 0; j < 8; j++) {

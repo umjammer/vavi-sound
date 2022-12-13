@@ -323,7 +323,7 @@ Debug.println(Level.WARNING, "undefined meta: " + number);
 
     //-------------------------------------------------------------------------
 
-    /** */
+    /* */
     static {
         try {
             final Class<?> clazz = MidiConstants.class;

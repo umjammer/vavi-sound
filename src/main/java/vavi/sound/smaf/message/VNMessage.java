@@ -72,7 +72,7 @@ public class VNMessage extends SmafMessage
      * @throws InvalidMidiDataException
      */
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
-        byte[] data = null;
+        byte[] data;
         try {
             data = venderName.getBytes("Windows-31J");
         } catch (UnsupportedEncodingException e) {

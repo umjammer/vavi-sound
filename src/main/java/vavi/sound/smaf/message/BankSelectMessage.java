@@ -39,7 +39,7 @@ public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
     public enum Significant {
         Least(0x20),
         Most(0x00);
-        int data1;
+        final int data1;
         Significant(int data1) {
             this.data1 = data1;
         }

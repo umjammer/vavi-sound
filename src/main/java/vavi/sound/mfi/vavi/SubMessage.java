@@ -85,9 +85,7 @@ public abstract class SubMessage extends MetaMessage {
             byte[] tmp = data.getBytes(writingEncoding);
             byte[] message = getSubMessage(subType, tmp, tmp.length);
             setMessage(META_TYPE, message, message.length);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
-        } catch (InvalidMfiDataException e) {
+        } catch (UnsupportedEncodingException | InvalidMfiDataException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -191,7 +189,7 @@ Debug.println(Level.FINE, this);
 
         byte[] cs = new byte[SUB_TYPE_LENGTH];
         dis.read(cs, 0, SUB_TYPE_LENGTH);       // type
-        final String subType = new String(cs);
+        String subType = new String(cs);
 
         String key = null;
         String headerKey = "mfi.header." + subType;
@@ -203,10 +201,10 @@ Debug.println(Level.FINE, this);
             key = audioKey;
         }
 
-        SubMessage subChunk = null;
+        SubMessage subChunk;
 
         int length = dis.readShort();
-        final byte[] subData = new byte[length];
+        byte[] subData = new byte[length];
         dis.readFully(subData, 0, length);
 
         if (key != null) {
@@ -248,9 +246,8 @@ Debug.println(Level.FINE, subChunk);
             props.load(SubMessage.class.getResourceAsStream(path));
 
             // header/audio sub chunks
-            Iterator<?> i = props.keySet().iterator();
-            while (i.hasNext()) {
-                String key = (String) i.next();
+            for (Object o : props.keySet()) {
+                String key = (String) o;
                 if (key.matches("mfi\\.(header|audio)\\.\\w+")) {
                     @SuppressWarnings("unchecked")
                     Class<SubMessage> clazz = (Class<SubMessage>) Class.forName(props.getProperty(key));

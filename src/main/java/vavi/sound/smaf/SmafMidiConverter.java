@@ -110,15 +110,15 @@ if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
 //}
                     MidiEvent[] midiEvents = ((MidiConvertible) smafMessage).getMidiEvents(midiContext);
                     if (midiEvents != null) {
-                        for (int k = 0; k < midiEvents.length; k++) {
-                            midiTrack.add(midiEvents[k]);
+                        for (MidiEvent midiEvent : midiEvents) {
+                            midiTrack.add(midiEvent);
 //                          addSmafMessage(midiTrack, midiEvents[k]);
                         }
                     }
                 } else if (smafMessage instanceof MetaMessage) {
                     Debug.println("meta: " + MetaMessage.class.cast(smafMessage).getType());
-                    for (Map.Entry<String, Object> entry : MetaMessage.class.cast(smafMessage).data.entrySet()) {
                         Debug.println(entry.getKey() + "=" + entry.getValue());
+                    for (Map.Entry<String, Object> entry : ((MetaMessage) smafMessage).data.entrySet()) {
                     }
                 } else {
 if (!uc.contains(smafMessage.getClass())) {

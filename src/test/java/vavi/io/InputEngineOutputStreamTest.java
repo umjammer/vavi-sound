@@ -7,8 +7,6 @@
 package vavi.io;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -46,12 +44,8 @@ class InputEngineOutputStreamTest {
     @Test
     public void test1() throws Exception {
         //
-        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(getClass().getResourceAsStream(inFile), new IOStreamOutputEngine.OutputStreamFactory() {
-            public OutputStream getOutputStream(OutputStream out) throws IOException {
-                return new Rot13.OutputStream(out);
-            }
-        }));
-        OutputStream os = new FileOutputStream(out1File);
+        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(getClass().getResourceAsStream(inFile), out -> new Rot13.OutputStream(out)));
+        OutputStream os = Files.newOutputStream(Paths.get(out1File));
         byte[] buffer = new byte[8192];
         while (true) {
             int amount = is.read(buffer);
@@ -65,12 +59,8 @@ class InputEngineOutputStreamTest {
         os.close();
 
         //
-        is = new FileInputStream(out1File);
-        os = new InputEngineOutputStream(new IOStreamInputEngine(new FileOutputStream(out2File), new IOStreamInputEngine.InputStreamFactory() {
-            public InputStream getInputStream(InputStream in) throws IOException {
-                return new Rot13.InputStream(in);
-            }
-        }));
+        is = Files.newInputStream(Paths.get(out1File));
+        os = new InputEngineOutputStream(new IOStreamInputEngine(Files.newOutputStream(Paths.get(out2File)), in -> new Rot13.InputStream(in)));
         buffer = new byte[8192];
         while (true) {
             int amount = is.read(buffer);

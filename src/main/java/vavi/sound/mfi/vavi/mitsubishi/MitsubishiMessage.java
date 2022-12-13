@@ -76,11 +76,11 @@ Debug.println(Level.FINE, "adpcm L, R length: " + temp.length);
         // fill nop
         for (int i = 0; i < delta / Nop2Message.maxDelta; i++) {
             Nop2Message nop2 = new Nop2Message(0xff, 0xff);
-            events.add(new MfiEvent(nop2, 0l));
+            events.add(new MfiEvent(nop2, 0L));
         }
         int moduloOfDelta = delta % Nop2Message.maxDelta;
         Nop2Message nop2 = new Nop2Message(moduloOfDelta % 0x100, moduloOfDelta / 0x100);
-        events.add(new MfiEvent(nop2, 0l));
+        events.add(new MfiEvent(nop2, 0L));
 
         return events;
     }

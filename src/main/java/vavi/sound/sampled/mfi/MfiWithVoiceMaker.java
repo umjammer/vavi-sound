@@ -143,21 +143,21 @@ t = System.currentTimeMillis();
 
         // copyright
         message = new SorcMessage(sorc);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         // title
         String title = file.getName();
         title = title.substring(0, title.lastIndexOf('.'));
         message = new TitlMessage(title);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         // version
         message = new VersMessage(vers);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         // maker
         message = new ProtMessage(prot);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         // machine depend, do every thing!
         for (MfiEvent event: mdvm.getEvents(data, time, samplingRate, bits, channels, masterVolume, adpcmVolume)) {
@@ -166,7 +166,7 @@ t = System.currentTimeMillis();
 
         // eot
         message = new EndOfTrackMessage(0, 0);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
@@ -189,7 +189,7 @@ Debug.println("write: " + r);
     /** */
     protected static String defaultModel;
 
-    /** */
+    /* */
     static {
         try {
             Properties props = new Properties();

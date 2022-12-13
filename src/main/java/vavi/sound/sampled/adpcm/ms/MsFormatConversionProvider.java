@@ -98,9 +98,9 @@ public class MsFormatConversionProvider extends FormatConversionProvider {
                         throw new UncheckedIOException(e);
                     }
                 } else if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED) && targetFormat.getEncoding() instanceof MsEncoding) {
-                    throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
+                    throw new IllegalArgumentException("unable to convert " + sourceFormat + " to " + targetFormat);
                 } else {
-                    throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
+                    throw new IllegalArgumentException("unable to convert " + sourceFormat + " to " + targetFormat.toString());
                 }
             } else {
                 throw new IllegalArgumentException("target format not found");
@@ -130,9 +130,9 @@ public class MsFormatConversionProvider extends FormatConversionProvider {
                         throw new UncheckedIOException(e);
                     }
                 } else if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED) && targetFormat.getEncoding() instanceof MsEncoding) {
-                    throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
+                    throw new IllegalArgumentException("unable to convert " + sourceFormat + " to " + targetFormat);
                 } else {
-                    throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
+                    throw new IllegalArgumentException("unable to convert " + sourceFormat + " to " + targetFormat);
                 }
             } else {
                 throw new IllegalArgumentException("target format not found");

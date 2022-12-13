@@ -46,7 +46,7 @@ public class SSRCSampleRateConversionProvider extends FormatConversionProvider {
     public AudioFormat.Encoding[] getTargetEncodings(AudioFormat sourceFormat) {
         if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED)) {
 
-            AudioFormat.Encoding encs[] = new AudioFormat.Encoding[1];
+            AudioFormat.Encoding[] encs = new AudioFormat.Encoding[1];
             encs[0] = AudioFormat.Encoding.PCM_SIGNED;
             return encs;
         } else {
@@ -93,7 +93,7 @@ public class SSRCSampleRateConversionProvider extends FormatConversionProvider {
                 return new AudioInputStream(resampler, outputFormat, AudioSystem.NOT_SPECIFIED);
             } else {
                 throw new IllegalArgumentException("Unsupported conversion: " + sourceStream.getFormat().toString() + " to "
-                        + targetFormat.toString());
+                        + targetFormat);
             }
         } catch (IOException e) {
             throw new IllegalStateException(e);

@@ -35,7 +35,7 @@ public class YamahaAudioMessage extends MachineDependentMessage {
     public static MfiEvent getMasterVolumeEvent(int masterVolume) {
         int realMasterVolume = (int) (masterVolume * maxMasterVolume / 100f);
         MfiMessage message = new MasterVolumeMessage(0x00, 0xff, 0xb0, realMasterVolume);
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /** */
@@ -43,7 +43,7 @@ public class YamahaAudioMessage extends MachineDependentMessage {
 
     /** @return TempoMessage is always the same instance */
     public static MfiEvent getTempoEvent() {
-        return new MfiEvent(tempoMessage, 0l);
+        return new MfiEvent(tempoMessage, 0L);
     }
 
     /** */

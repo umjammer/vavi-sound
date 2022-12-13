@@ -482,14 +482,14 @@ public class SSRC {
 
         /* */
         int resample(ReadableByteChannel fpi, WritableByteChannel fpo) throws IOException {
-            int frqgcd, osf = 0, fs1, fs2;
+            int frqgcd, osf, fs1, fs2;
             double[][] stage1;
             double[] stage2;
             int n1, n1x, n1y, n2, n2b;
             int filter2len;
             int[] f1order, f1inc;
-            int[] fft_ip = null;
-            double[] fft_w = null;
+            int[] fft_ip;
+            double[] fft_w;
             ByteBuffer rawinbuf, rawoutbuf;
             double[] inbuf, outbuf;
             double[][] buf1, buf2;
@@ -648,7 +648,7 @@ System.err.println("upsample");
                 int s1p_backup, osc_backup;
                 int ch, p;
                 int inbuflen;
-                int delay = 0;
+                int delay;
 
                 buf1 = new double[nch][n2b2 / osf + 1];
 
@@ -1054,7 +1054,7 @@ System.err.println("upsample");
 
         /* */
         int resample(ReadableByteChannel fpi, WritableByteChannel fpo) throws IOException {
-            int frqgcd, osf = 0, fs1, fs2;
+            int frqgcd, osf, fs1, fs2;
             double[] stage1;
             double[][] stage2;
             int n2, n2x, n2y, n1, n1b;
@@ -1242,7 +1242,7 @@ System.err.println("downsample");
                 int k, ch, p;
                 int inbuflen = 0;
                 int sumread, sumwrite;
-                int delay = 0;
+                int delay;
                 int op;
 
                 // |....B....|....C....| buf1 n1b2+n1b2
@@ -1688,7 +1688,7 @@ System.err.printf("%d, %d, %d, %d\n",
                     s = buf.order(byteOrder).asIntBuffer().get(0);
                     f = (1 / (double) 0x7fffffff) * s;
                     break;
-                };
+                }
 
                 if (r <= 0) {
                     break;
@@ -2017,10 +2017,10 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
             }
 
             if (!quiet) {
-                final String[] dtype = {
+                String[] dtype = {
                     "none", "no noise shaping", "triangular spectral shape", "ATH based noise shaping", "ATH based noise shaping(less amplitude)"
                 };
-                final String[] ptype = {
+                String[] ptype = {
                     "rectangular", "triangular", "gaussian"
                 };
                 System.err.printf("frequency : %d -> %d\n", sfrq, dfrq);
@@ -2370,10 +2370,10 @@ logger.fine(String.format("nch: %d, sfrq: %d, bps: %d, sfrq: %d, bps: %d\n", nch
         }
 
         if (!quiet) {
-            final String[] dtype = {
+            String[] dtype = {
                 "none", "no noise shaping", "triangular spectral shape", "ATH based noise shaping", "ATH based noise shaping(less amplitude)"
             };
-            final String[] ptype = {
+            String[] ptype = {
                 "rectangular", "triangular", "gaussian"
             };
             System.err.printf("frequency : %d -> %d\n", sfrq, dfrq);

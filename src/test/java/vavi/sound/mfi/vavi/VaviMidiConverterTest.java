@@ -93,7 +93,7 @@ Debug.println("midiSequencer:R: " + midiSequencer.getReceiver());
         if (play) {
             midiSequencer.start();
             while (midiSequencer.isRunning()) {
-                try { Thread.sleep(100); } catch (Exception e) {}
+                try { Thread.sleep(100); } catch (Exception ignored) {}
             }
             midiSequencer.stop();
         }
@@ -101,13 +101,13 @@ Debug.println("midiSequencer:R: " + midiSequencer.getReceiver());
         midiSequencer.close();
 
         if (convert) {
-            int ts[] = MidiSystem.getMidiFileTypes(midiSequence);
 Debug.println("types: " + ts.length);
+            int[] ts = MidiSystem.getMidiFileTypes(midiSequence);
             if (ts.length == 0) {
                 throw new IllegalArgumentException("no support type");
             }
-            for (int i = 0; i < ts.length; i++) {
 Debug.printf("type: 0x%02x\n", ts[i]);
+            for (int t : ts) {
             }
 
             file = new File(args[2]);

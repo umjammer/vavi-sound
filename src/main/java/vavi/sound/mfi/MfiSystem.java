@@ -9,12 +9,11 @@ package vavi.sound.mfi;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -72,8 +71,8 @@ public final class MfiSystem {
         throws MfiUnavailableException {
 
         MfiDevice.Info[] infos = provider.getDeviceInfo();
-        for (int i = 0; i < infos.length; i++) {
-            MfiDevice device = provider.getDevice(infos[i]);
+        for (MfiDevice.Info info : infos) {
+            MfiDevice device = provider.getDevice(info);
             if (device instanceof Sequencer) {
                 return (Sequencer) device;
             }
@@ -87,8 +86,8 @@ public final class MfiSystem {
         throws MfiUnavailableException {
 
         MfiDevice.Info[] infos = provider.getDeviceInfo();
-        for (int i = 0; i < infos.length; i++) {
-            MfiDevice device = provider.getDevice(infos[i]);
+        for (MfiDevice.Info info : infos) {
+            MfiDevice device = provider.getDevice(info);
             if (device instanceof javax.sound.midi.MetaEventListener) {
                 return (javax.sound.midi.MetaEventListener) device;
             }
@@ -103,8 +102,8 @@ public final class MfiSystem {
         throws MfiUnavailableException {
 
         MfiDevice.Info[] infos = provider.getDeviceInfo();
-        for (int i = 0; i < infos.length; i++) {
-            MfiDevice device = provider.getDevice(infos[i]);
+        for (MfiDevice.Info info : infos) {
+            MfiDevice device = provider.getDevice(info);
             if (device instanceof MidiConverter) {
                 return (MidiConverter) device;
             }
@@ -168,7 +167,7 @@ Debug.println(Level.WARNING, e);
         throws InvalidMfiDataException,
                IOException {
 
-        return getMfiFileFormat(new BufferedInputStream(new FileInputStream(file)));
+        return getMfiFileFormat(new BufferedInputStream(Files.newInputStream(file.toPath())));
     }
 
     /** MFi ファイルフォーマットを取得します。 */
@@ -204,7 +203,7 @@ Debug.println(Level.FINE, e);
         throws InvalidMfiDataException,
                IOException {
 
-        return getSequence(new BufferedInputStream(new FileInputStream(file)));
+        return getSequence(new BufferedInputStream(Files.newInputStream(file.toPath())));
     }
 
     /** MFi シーケンスを取得します。 */
@@ -220,8 +219,8 @@ Debug.println(Level.FINE, e);
         List<Integer> types = new ArrayList<>();
         for (MfiFileWriter writer : writers) {
             int[] ts = writer.getMfiFileTypes();
-            for (int j = 0; j < ts.length; j++) {
-                types.add(ts[j]);
+            for (int t : ts) {
+                types.add(t);
             }
         }
 
@@ -238,8 +237,8 @@ Debug.println(Level.FINE, e);
         List<Integer> types = new ArrayList<>();
         for (MfiFileWriter writer : writers) {
             int[] ts = writer.getMfiFileTypes(sequence);
-            for (int j = 0; j < ts.length; j++) {
-                types.add(ts[j]);
+            for (int t : ts) {
+                types.add(t);
             }
         }
 
@@ -278,7 +277,7 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
     public static int write(Sequence in, int fileType, File out)
         throws IOException {
 
-        return write(in, fileType, new BufferedOutputStream(new FileOutputStream(out)));
+        return write(in, fileType, new BufferedOutputStream(Files.newOutputStream(out.toPath())));
     }
 
     //-------------------------------------------------------------------------
@@ -293,7 +292,7 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
     /** default プロバイダ */
     private static MfiDeviceProvider provider;
 
-    /**
+    /*
      * default は MfiSystem.properties で指定します。
      * <li>vavi.sound.mfi.spi.MfiDeviceProvider
      */

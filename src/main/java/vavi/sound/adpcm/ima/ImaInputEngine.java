@@ -41,7 +41,7 @@ class ImaInputEngine implements InputEngine {
     public ImaInputEngine(OutputStream out,
                           int samplesPerBlock,
                           int channels,
-                          final ByteOrder byteOrder) {
+                          ByteOrder byteOrder) {
         this.out = out;
         this.samplesPerBlock = samplesPerBlock;
         this.channels = channels;

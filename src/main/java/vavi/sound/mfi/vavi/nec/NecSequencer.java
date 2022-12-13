@@ -52,7 +52,7 @@ public class NecSequencer implements MachineDependentSequencer {
         byte[] data = message.getMessage();
 
         int f1 = data[6] & 0xff;
-        int f2 = 0;
+        int f2;
 
         String key;
 

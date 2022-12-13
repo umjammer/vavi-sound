@@ -195,13 +195,13 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
 
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
-        events.add(new SmafEvent(metaMessage, 0l));
+        events.add(new SmafEvent(metaMessage, 0L));
 
         //
         if (setupDataChunk != null) {
             List<SmafMessage> messages = ((SetupDataChunk) setupDataChunk).getSmafMessages();
             for (SmafMessage message : messages) {
-                events.add(new SmafEvent(message, 0l));
+                events.add(new SmafEvent(message, 0L));
 //Debug.println("SetupDataChunk: " + message);
             }
         }
@@ -210,7 +210,7 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         if (streamPcmDataChunk != null) {
             List<SmafMessage> messages = ((StreamPcmDataChunk) streamPcmDataChunk).getSmafMessages();
             for (SmafMessage message : messages) {
-                events.add(new SmafEvent(message, 0l)); // TODO 0l
+                events.add(new SmafEvent(message, 0L)); // TODO 0l
 //Debug.println("StreamPcmDataChunk: " + message);
             }
         }
@@ -218,7 +218,7 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         //
         List<SmafMessage> messages = ((SequenceDataChunk) sequenceDataChunk).getSmafMessages();
         for (SmafMessage message : messages) {
-            events.add(new SmafEvent(message, 0l)); // TODO 0l
+            events.add(new SmafEvent(message, 0L)); // TODO 0l
 //Debug.println("SequenceDataChunk: " + message);
         }
 

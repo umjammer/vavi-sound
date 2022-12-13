@@ -44,7 +44,7 @@ import vavi.util.Debug;
 class Ms {
 
     /** */
-    private class State {
+    private static class State {
         /** step size */
         int step;
         int[] iCoef = new int[2];

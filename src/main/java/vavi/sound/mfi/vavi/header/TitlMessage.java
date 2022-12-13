@@ -28,7 +28,7 @@ import vavi.sound.midi.MidiUtil;
  * タイトル情報 MFi Header Sub Chunk.
  * <pre>
  *  &quot;titl&quot; n byte: mld title, &lt; 16 bytes expected, SJIS encoded
- *  MIDI {@link MidiConstants#META_NAME META_NAME (0x03)}
+ *  MIDI {@link MidiConstants.MetaEvent#META_NAME META_NAME (0x03)}
  * </pre>
  * <li> TODO use {@link CodeMessage}
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)

@@ -227,7 +227,7 @@ private int cc = 0;
     private void readMobileStandard(MyDataInputStream dis)
         throws InvalidSmafDataException, IOException {
 
-        SmafMessage smafMessage = null;
+        SmafMessage smafMessage;
 
         while (dis.available() > 0) {
             // duration

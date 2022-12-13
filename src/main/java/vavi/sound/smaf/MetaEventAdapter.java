@@ -148,7 +148,7 @@ Debug.printf(Level.WARNING, "unhandled function: %02x\n", functionId);
         byte[] data = message.getData();
         int id = (data[2] & 0xff) * 0xff + (data[3] & 0xff);
 //Debug.println("message id: " + id);
-        MachineDependentSequencer sequencer = MachineDependentSequencer.class.cast(SmafMessageStore.get(id));
+        MachineDependentSequencer sequencer = (MachineDependentSequencer) SmafMessageStore.get(id);
         sequencer.sequence();
     }
 

@@ -25,7 +25,7 @@ import vavi.util.properties.PrefixedClassPropertiesFactory;
 public interface AudioDataSequencer {
 
     /** for {@link AudioDataSequencer} */
-    final int META_FUNCTION_ID_MFi4 = 0x02;
+    int META_FUNCTION_ID_MFi4 = 0x02;
 
     /** */
     void sequence() throws InvalidMfiDataException;

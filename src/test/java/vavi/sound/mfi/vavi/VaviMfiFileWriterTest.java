@@ -86,19 +86,19 @@ Debug.println("time: " + time + " ms");
         MfiMessage message;
 
         message = new CuePointMessage(0x00, 0x00);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         double aDelta = (60d / 120d) / 120d * 1000;
         int delta = (int) Math.round(time / aDelta);
 Debug.println("delta: " + delta);
 
         message = new TempoMessage(0x00, 0xff, 0xcb, 0x78);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         d505i(track, data.getWave(), samplingRate, delta);
 
         message = new EndOfTrackMessage(0, 0);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         int r = MfiSystem.write(sequence,
                                 VaviMfiFileFormat.FILE_TYPE,

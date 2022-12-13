@@ -109,7 +109,7 @@ System.err.println("output: " + args[argc]);
         while (is.available() > 0) {
             int pcm1 = is.read();
             int pcm2 = is.read();
-            int pcm = 0;
+            int pcm;
             if (ByteOrder.BIG_ENDIAN.equals(byteOrder)) {
                 pcm = (pcm1 << 8) | pcm2;
             } else {

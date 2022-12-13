@@ -18,7 +18,7 @@ import vavi.sound.adpcm.Codec;
 class Vox implements Codec {
 
     /** */
-    private class State {
+    private static class State {
         int index;
         int last;
     }

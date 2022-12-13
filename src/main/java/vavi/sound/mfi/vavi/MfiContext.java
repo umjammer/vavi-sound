@@ -8,7 +8,6 @@ package vavi.sound.mfi.vavi;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -215,7 +214,7 @@ Debug.println(Level.FINE, "type: " + type);
      */
     public MfiEvent[] getIntervalMfiEvents(int mfiTrackNumber) {
 
-        int interval = 0;
+        int interval;
         MidiEvent midiEvent = midiEvents.get(midiEventIndex);
 
         MidiMessage midiMessage = midiEvent.getMessage();
@@ -250,10 +249,10 @@ if (interval < 0) {
         MfiEvent[] mfiEvents = new MfiEvent[nopLength];
         for (int i = 0; i < nopLength; i++) {
             NopMessage mfiMessage = new NopMessage(255, 0);
-            mfiEvents[i] = new MfiEvent(mfiMessage, 0l); // TODO 0l
+            mfiEvents[i] = new MfiEvent(mfiMessage, 0L); // TODO 0l
             // 255 Δ 分後ろにずらしていく
             incrementPreviousTick(mfiTrackNumber, Math.round(255 * scale));
-        };
+        }
 
 //Debug.println(nopLength + " nops inserted");
         return mfiEvents;
@@ -326,15 +325,15 @@ if (delta > 255) {
 
         this.timeBase = midiSequence.getResolution();
 
-        Track midiTracks[] = midiSequence.getTracks();
-        for (int t = 0; t < midiTracks.length; t++) {
-            for (int i = 0; i < midiTracks[t].size(); i++) {
-                javax.sound.midi.MidiMessage midiMessage = midiTracks[t].get(i).getMessage();
+        Track[] midiTracks = midiSequence.getTracks();
+        for (Track track : midiTracks) {
+            for (int i = 0; i < track.size(); i++) {
+                MidiMessage midiMessage = track.get(i).getMessage();
                 if (midiMessage instanceof MetaMessage &&
-                    ((MetaMessage) midiMessage).getType() == MetaEvent.META_TEMPO.number()) {
+                        ((MetaMessage) midiMessage).getType() == MetaEvent.META_TEMPO.number()) {
 
                     MetaMessage metaMessage = (MetaMessage) midiMessage;
-                    byte data[] = metaMessage.getData();
+                    byte[] data = metaMessage.getData();
 
                     int timeBase = TempoMessage.getNearestTimeBase(this.timeBase);
                     int l = (data[0] & 0xff) << 16 | (data[1] & 0xff) << 8 | data[2] & 0xff;
@@ -355,13 +354,12 @@ if (delta > 255) {
         this.scale = Math.ceil(this.scale);
 Debug.println(Level.FINE, "(SCALE) final scale: " + scale + ", " + scaleChanged);
 
-        for (int t = 0; t < midiTracks.length; t++) {
-            for (int i = 0; i < midiTracks[t].size(); i++) {
-                this.midiEvents.add(midiTracks[t].get(i));
+        for (Track midiTrack : midiTracks) {
+            for (int i = 0; i < midiTrack.size(); i++) {
+                this.midiEvents.add(midiTrack.get(i));
             }
         }
-        Collections.sort(midiEvents,
-            new Comparator<MidiEvent>() {
+        midiEvents.sort(new Comparator<MidiEvent>() {
             /** */
             public int compare(MidiEvent e1, MidiEvent e2) {
                 long t1 = e1.getTick();
@@ -374,6 +372,7 @@ Debug.println(Level.FINE, "(SCALE) final scale: " + scale + ", " + scaleChanged)
                     return c1 - c2;
                 }
             }
+
             /** */
             int getChannel(MidiEvent e) {
                 MidiMessage m = e.getMessage();
@@ -420,7 +419,7 @@ Debug.println(Level.FINE, "(SCALE) final scale: " + scale + ", " + scaleChanged)
      */
     public MidiEvent getNoteOffMidiEvent() throws NoSuchElementException {
 
-        ShortMessage shortMessage = null;
+        ShortMessage shortMessage;
 
         MidiEvent midiEvent = midiEvents.get(midiEventIndex);
         MidiMessage midiMessage = midiEvent.getMessage();

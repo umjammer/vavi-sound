@@ -132,7 +132,7 @@ Debug.println("parameters: " + parameter);
         /** 透明処理の有効フラグ */
         TransparentEnable(0x32);
         /** */
-        int value;
+        final int value;
         /** */
         ParameterID(int value) {
             this.value = value;

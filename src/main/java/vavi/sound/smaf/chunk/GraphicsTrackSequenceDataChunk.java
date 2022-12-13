@@ -69,7 +69,7 @@ Debug.println("messages: " + messages.size());
     protected void readHandyPhoneStandard(DataInputStream dis)
         throws InvalidSmafDataException, IOException {
 
-        SmafMessage smafMessage = null;
+        SmafMessage smafMessage;
 
         while (dis.available() > 0) {
             // -------- duration --------

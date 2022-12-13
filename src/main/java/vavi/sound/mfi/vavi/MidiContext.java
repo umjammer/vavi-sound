@@ -38,7 +38,7 @@ public class MidiContext {
         SOUND_SET,
         /** 未使用 */
         UNUSED
-    };
+    }
 
     /** channel 9 はデフォルトでリズム */
     public static final int CHANNEL_DRUM = 9;

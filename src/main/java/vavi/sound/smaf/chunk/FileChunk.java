@@ -116,7 +116,7 @@ Debug.printf("has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
         }
         /** */
         public int getCrc() {
-            return (int) crc16.getValue();
+            return crc16.getValue();
         }
     }
 

@@ -73,7 +73,7 @@ Debug.printf(Level.FINER, "ADPCM subId: %d\n%s", subId, StringUtil.getDump(subId
         MAX_PARALLEL(0x83),
         /** max kHz / 8 kHz */
         MAX_PARALLEL_CUE(0x8b);
-        int value;
+        final int value;
         SubId(int value) {
             this.value = value;
         }
@@ -125,7 +125,7 @@ Debug.printf(Level.FINER, "ADPCM subId: %d\n%s", subId, StringUtil.getDump(subId
     private List<SubIdChunk> subIds = new ArrayList<>();
 
     /** */
-    private class SubIdChunk {
+    private static class SubIdChunk {
         SubIdChunk(SubId id, int value) {
             this.id = id.value;
             this.data = new byte[] { (byte) value };

@@ -201,7 +201,7 @@ Debug.println(Level.WARNING, "unknown cp: " + e.getMessage());
 
     /** */
     public static byte[] getEncodedMessage(String text, String encoding) {
-        byte[] textData = null;
+        byte[] textData;
         try {
             textData = text.getBytes(encoding);
         } catch (UnsupportedEncodingException e) {

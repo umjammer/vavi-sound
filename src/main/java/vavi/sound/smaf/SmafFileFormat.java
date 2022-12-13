@@ -72,8 +72,8 @@ public class SmafFileFormat {
     static SmafFileFormat readFrom(InputStream is) throws InvalidSmafDataException, IOException {
         try {
             Chunk chunk = Chunk.readFrom(is, null);
-            if (FileChunk.class.isInstance(chunk)) {
-                FileChunk fileChunk = FileChunk.class.cast(chunk);
+            if (chunk instanceof FileChunk) {
+                FileChunk fileChunk = (FileChunk) chunk;
                 SmafFileFormat sff = new SmafFileFormat(fileChunk.getSize());
                 sff.sequence = new SmafSequence(fileChunk);
                 return sff;

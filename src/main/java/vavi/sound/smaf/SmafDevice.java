@@ -16,7 +16,7 @@ package vavi.sound.smaf;
 public interface SmafDevice {
 
     /** */
-    static class Info {
+    class Info {
 
         /** */
         String name;

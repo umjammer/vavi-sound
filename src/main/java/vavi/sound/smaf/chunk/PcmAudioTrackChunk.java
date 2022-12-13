@@ -164,18 +164,18 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
 
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
-        events.add(new SmafEvent(metaMessage, 0l));
+        events.add(new SmafEvent(metaMessage, 0L));
 
         //
         for (Chunk waveDataChunk : waveDataChunks) {
             SmafMessage smafMessage = ((WaveDataChunk) waveDataChunk).toSmafMessage(waveType);
-            events.add(new SmafEvent(smafMessage, 0l));
+            events.add(new SmafEvent(smafMessage, 0L));
         }
 
         //
         List<SmafMessage> messages = ((SequenceDataChunk) sequenceDataChunk).getSmafMessages();
         for (SmafMessage message : messages) {
-            events.add(new SmafEvent(message, 0l));
+            events.add(new SmafEvent(message, 0L));
         }
 
         return events;

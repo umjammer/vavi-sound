@@ -7,9 +7,9 @@
 package vavi.sound.sampled.mfi;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioInputStream;
@@ -87,9 +87,7 @@ public class MfiAudioFileWriter extends AudioFileWriter {
                 int r = mwvm.create();
                 return r;
             }
-        } catch (UnsupportedAudioFileException e) {
-            throw (IOException) new IOException().initCause(e);
-        } catch (InvalidMfiDataException e) {
+        } catch (UnsupportedAudioFileException | InvalidMfiDataException e) {
             throw (IOException) new IOException().initCause(e);
         } catch (IllegalArgumentException e) {
 Debug.printStackTrace(e);
@@ -103,7 +101,7 @@ Debug.printStackTrace(e);
      * @param out null 出力を指定してください。 win32: "nul", *nix: "/dev/null"
      */
     public int write(AudioInputStream stream, Type fileType, File out) throws IOException {
-        return write(stream, fileType, new FileOutputStream(out));
+        return write(stream, fileType, Files.newOutputStream(out.toPath()));
     }
 }
 

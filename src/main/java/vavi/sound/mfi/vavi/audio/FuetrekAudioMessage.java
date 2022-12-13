@@ -36,7 +36,7 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
     public static MfiEvent getMasterVolumeEvent(int masterVolume) {
         int realMasterVolume = (int) (masterVolume * maxMasterVolume / 100f);
         MfiMessage message = new MasterVolumeMessage(0x00, 0xff, 0xb0, realMasterVolume);
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /**
@@ -45,13 +45,13 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
      */
     public static MfiEvent getCuePointEvent(boolean start) {
         MfiMessage message = new CuePointMessage(0x00, start ? 0x00 : 0x01);
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /** */
     public static MfiEvent getTempoEvent(float time, int sampleRate) {
         TempoMessage message = getTempoMessage(time, sampleRate);
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /** */
@@ -101,7 +101,7 @@ Debug.println("a delta: " + aDelta + ", tempo: " + message.getTempo() + ", " + m
      * @return TempoMessage is always the same instance
      */
     public static MfiEvent getTempoEvent() {
-        return new MfiEvent(tempoMessageOld, 0l);
+        return new MfiEvent(tempoMessageOld, 0L);
     }
 
     /** older version */

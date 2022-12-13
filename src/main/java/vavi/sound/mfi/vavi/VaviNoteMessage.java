@@ -103,7 +103,7 @@ Debug.println(Level.INFO, "[" + context.getMidiEventIndex() + "] no pair of ON f
             return null;
         } else /* if (command == ShortMessage.NOTE_ON) */ {
 
-            MidiEvent noteOffEvent = null;
+            MidiEvent noteOffEvent;
 
             try {
                 noteOffEvent = context.getNoteOffMidiEvent();
@@ -161,7 +161,7 @@ if (length >= 255) {
  Debug.println(channel + "ch, " + mfiMessage.getNote() + ", " + mfiMessage.getDelta() + ":[" + i + "]:" + (i == onLength - 1 ? length % 255 : 255) + "/" + length);
 }
 //Debug.println(channel + ", " + mfiMessage.getVoice() + ", " + ((mfiMessage.getMessage()[1] & 0xc0) >> 6));
-                mfiEvents[i] = new MfiEvent(mfiMessage, 0l); // TODO 0l
+                mfiEvents[i] = new MfiEvent(mfiMessage, 0L); // TODO 0l
 //if (mfiEvents[i] == null) {
 // Debug.println("[" + i + "]: " + mfiEvents[i]);
 //}
