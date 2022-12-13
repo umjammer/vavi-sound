@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
+import java.util.logging.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -43,7 +44,7 @@ public class G721AudioFileReaderTest {
     public void setup() throws IOException {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
-Debug.println("outFile: " + outFile);
+Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
     @Test

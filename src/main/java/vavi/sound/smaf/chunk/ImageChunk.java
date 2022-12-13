@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 
@@ -35,7 +36,7 @@ public class ImageChunk extends Chunk {
         super(id, size);
 
         this.imageNumer = id[3];
-Debug.println("Image[" + imageNumer + "]: " + size + " bytes");
+Debug.println(Level.FINE, "Image[" + imageNumer + "]: " + size + " bytes");
     }
 
     /** */
@@ -51,7 +52,7 @@ Debug.println("Image[" + imageNumer + "]: " + size + " bytes");
         this.imageData = new byte[size];
         dis.readFully(imageData);
 
-Debug.println("image: " + getImage());
+Debug.println(Level.FINE, "image: " + getImage());
     }
 
     /** */

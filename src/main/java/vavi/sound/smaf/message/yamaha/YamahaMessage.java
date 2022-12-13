@@ -167,13 +167,13 @@ Debug.println(Level.INFO, "yamaha: " + data.length + "\n" + StringUtil.getDump(d
             case 0x7f:
                 switch (data[4]) {
                 case 0x20: { //
-Debug.println("YAMAHA UNKNOWN: ");
+Debug.println(Level.FINE, "YAMAHA UNKNOWN: ");
                     AudioEngine engine = WaveSequencer.Factory.getAudioEngine();
                     engine.start(2);
                     break;
                 }
                 case 0x00: { // volume
-Debug.println("YAMAHA VOLUME: ");
+Debug.println(Level.FINE, "YAMAHA VOLUME: ");
                     AudioEngine engine = WaveSequencer.Factory.getAudioEngine();
                     engine.start(1);
                     break;

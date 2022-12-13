@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -114,7 +115,7 @@ class SmafWithVoiceMaker {
     public int create() throws IOException, UnsupportedAudioFileException, InvalidSmafDataException {
 long t = System.currentTimeMillis();
         // divide
-Debug.println("1: " + (System.currentTimeMillis() - t));
+Debug.println(Level.FINE, "1: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         byte[] buffer = new byte[sourceAis.available()];
         int l = 0;
@@ -123,7 +124,7 @@ t = System.currentTimeMillis();
             l += r;
         }
         int result = createSMAF(buffer, new File(filename));
-Debug.println("2: " + (System.currentTimeMillis() - t));
+Debug.println(Level.FINE, "2: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         return result;
     }
@@ -159,11 +160,11 @@ t = System.currentTimeMillis();
 
         int timeBase = 4; // [ms]
 
-Debug.println("time: " + time + ", " + data.length);
+Debug.println(Level.FINE, "time: " + time + ", " + data.length);
         int numberOfChunks = (int) ((time * 1000) / (NopMessage.maxSteps * timeBase));
-Debug.println("numberOfChunks: " + numberOfChunks);
+Debug.println(Level.FINE, "numberOfChunks: " + numberOfChunks);
         int moduloOfChunks = (int) ((time * 1000) % (NopMessage.maxSteps * timeBase) / timeBase);
-Debug.println("moduloOfChunks: " + moduloOfChunks);
+Debug.println(Level.FINE, "moduloOfChunks: " + moduloOfChunks);
 
         int messageBytes = 0;
         int streamNumber = 1;
@@ -200,13 +201,13 @@ Debug.println("moduloOfChunks: " + moduloOfChunks);
         SeekAndPhraseInfoChunk seekAndPhraseInfoChunk = new SeekAndPhraseInfoChunk();
         seekAndPhraseInfoChunk.setStartPoint(0);
         seekAndPhraseInfoChunk.setStopPoint(messageBytes);
-Debug.println("sp: " + messageBytes);
+Debug.println(Level.FINE, "sp: " + messageBytes);
 
         AudioEngine audioEngine = WaveSequencer.Factory.getAudioEngine(ADPCM);
         int chunkSize = numberOfChunks == 0 ? 0 : data.length / numberOfChunks;
-Debug.println("chunkSize: " + chunkSize);
+Debug.println(Level.FINE, "chunkSize: " + chunkSize);
         int moduloChunkSize = numberOfChunks == 0 ? data.length : data.length % chunkSize;
-Debug.println("moduloChunkSize: " + moduloChunkSize);
+Debug.println(Level.FINE, "moduloChunkSize: " + moduloChunkSize);
         streamNumber = 1;
 
         PcmAudioTrackChunk pcmAudioTrackChunk = new PcmAudioTrackChunk();
@@ -245,7 +246,7 @@ Debug.println("moduloChunkSize: " + moduloChunkSize);
         }
         fileChunk.writeTo(Files.newOutputStream(file.toPath()));
         int r = fileChunk.getSize();
-Debug.println("write: " + r);
+Debug.println(Level.FINE, "write: " + r);
         return r;
     }
 

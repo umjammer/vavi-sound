@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.audio;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -49,7 +51,7 @@ public class YamahaAudioMessage extends MachineDependentMessage {
     /** */
     public static int getDelta(float time) {
         float aDelta = (60f / tempoMessage.getTempo()) / tempoMessage.getTimeBase();
-Debug.println("a delta: " + aDelta + ", tempo: " + tempoMessage.getTempo() + ", " + tempoMessage.getTimeBase());
+Debug.println(Level.FINE, "a delta: " + aDelta + ", tempo: " + tempoMessage.getTempo() + ", " + tempoMessage.getTimeBase());
         return Math.round(time / aDelta);
     }
 }

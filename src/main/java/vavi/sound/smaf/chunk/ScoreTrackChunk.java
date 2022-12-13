@@ -46,7 +46,7 @@ public class ScoreTrackChunk extends TrackChunk {
     /** */
     public ScoreTrackChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("ScoreTrack[" + trackNumber + "]: " + size + " bytes");
+Debug.println(Level.FINE, "ScoreTrack[" + trackNumber + "]: " + size + " bytes");
     }
 
     /** */
@@ -61,11 +61,11 @@ Debug.println("ScoreTrack[" + trackNumber + "]: " + size + " bytes");
 
         this.formatType = FormatType.values()[dis.readUnsignedByte()];
         this.sequenceType = SequenceType.values()[dis.readUnsignedByte()];
-Debug.println("sequenceType: " + sequenceType);
+Debug.println(Level.FINE, "sequenceType: " + sequenceType);
         this.durationTimeBase = dis.readUnsignedByte();
-Debug.println("durationTimeBase: " + durationTimeBase + ", " + getDurationTimeBase() + " ms");
+Debug.println(Level.FINE, "durationTimeBase: " + durationTimeBase + ", " + getDurationTimeBase() + " ms");
         this.gateTimeTimeBase = dis.readUnsignedByte();
-Debug.println("gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBase() + " ms");
+Debug.println(Level.FINE, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBase() + " ms");
 
         switch (formatType) {
         case HandyPhoneStandard: {
@@ -94,7 +94,7 @@ Debug.println("gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBa
             // TODO implement
           } break;
         }
-Debug.println("formatType: " + formatType);
+Debug.println(Level.FINE, "formatType: " + formatType);
 
         while (dis.available() > 0) {
 //Debug.println("available: " + is.available() + ", " + available());

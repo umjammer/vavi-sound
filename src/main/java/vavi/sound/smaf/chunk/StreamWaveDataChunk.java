@@ -7,6 +7,7 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
@@ -27,7 +28,7 @@ public class StreamWaveDataChunk extends WaveDataChunk {
     /** */
     public StreamWaveDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("StreamWaveData: " + size);
+Debug.println(Level.FINE, "StreamWaveData: " + size);
     }
 
     /** */

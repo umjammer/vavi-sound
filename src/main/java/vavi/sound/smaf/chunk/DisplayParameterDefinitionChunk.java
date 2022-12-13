@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -49,7 +50,7 @@ public class DisplayParameterDefinitionChunk extends Chunk {
             int eventType = dis.readUnsignedByte();
             Event event = new Event();
             event.eventType = eventType;
-Debug.println("event: " + eventType);
+Debug.println(Level.FINE, "event: " + eventType);
             for (int j = 0; j < ((eventSize - 1) / 2); j++) {
                 int parameterId = dis.readUnsignedByte();
                 int parameterValue = dis.readUnsignedByte();
@@ -57,7 +58,7 @@ Debug.println("event: " + eventType);
                 parameter.parameterID = ParameterID.valueOf(parameterId);
                 parameter.value = parameterValue;
                 event.parameters.add(parameter);
-Debug.println("parameters: " + parameter);
+Debug.println(Level.FINE, "parameters: " + parameter);
             }
             i += (eventSize > 127 ? 2 : 1) + eventSize;
         }

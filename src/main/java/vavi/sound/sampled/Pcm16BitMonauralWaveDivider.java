@@ -8,6 +8,7 @@ package vavi.sound.sampled;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.logging.Level;
 
 import javax.sound.sampled.AudioInputStream;
 
@@ -46,25 +47,25 @@ class Pcm16BitMonauralWaveDivider implements WaveDivider {
     public void divide(float seconds, Event event) throws IOException {
 
         int numberChannels = targetAis.getFormat().getChannels();
-Debug.println("numberChannels: " + numberChannels);
+Debug.println(Level.FINE, "numberChannels: " + numberChannels);
 
         int samplingRate = (int) targetAis.getFormat().getSampleRate();
-Debug.println("samplingRate: " + samplingRate);
+Debug.println(Level.FINE, "samplingRate: " + samplingRate);
         int samplingBytes = targetAis.getFormat().getSampleSizeInBits() / 8;
-Debug.println("samplingBytes: " + samplingBytes);
+Debug.println(Level.FINE, "samplingBytes: " + samplingBytes);
         int bytesPerSecond = samplingRate * samplingBytes;
-Debug.println("bytesPerSecond: " + bytesPerSecond);
-Debug.println("header.bytesPerSecond: " + targetAis.getFormat().getFrameSize() * targetAis.getFormat().getFrameRate());
+Debug.println(Level.FINE, "bytesPerSecond: " + bytesPerSecond);
+Debug.println(Level.FINE, "header.bytesPerSecond: " + targetAis.getFormat().getFrameSize() * targetAis.getFormat().getFrameRate());
         long totalTime = (long) (targetAis.available() / (targetAis.getFormat().getFrameSize() * targetAis.getFormat().getFrameRate()) * 1000);
-Debug.println("totalTime= " + (totalTime / (60 * 1000)) + ":" + ((totalTime % (60 * 1000)) / 1000) + "." + ((totalTime % (60 * 1000)) % 1000));
+Debug.println(Level.FINE, "totalTime= " + (totalTime / (60 * 1000)) + ":" + ((totalTime % (60 * 1000)) / 1000) + "." + ((totalTime % (60 * 1000)) % 1000));
 
         // all channel, per second
         int blockSize = samplingRate * numberChannels * samplingBytes;
-Debug.println("blockSize: " + blockSize);
+Debug.println(Level.FINE, "blockSize: " + blockSize);
 
         int numberOfChunks = targetAis.available() / (int) (blockSize * seconds);
         int moduloOfChunks = targetAis.available() % (int) (blockSize * seconds);
-Debug.println("numberOfChunks: " + numberOfChunks + ", moduloOfChunks: " + moduloOfChunks);
+Debug.println(Level.FINE, "numberOfChunks: " + numberOfChunks + ", moduloOfChunks: " + moduloOfChunks);
 
         for (int i = 0; i < numberOfChunks; i++) {
             byte[] buffer = new byte[(int) (blockSize * seconds)];
@@ -76,7 +77,7 @@ Debug.println("numberOfChunks: " + numberOfChunks + ", moduloOfChunks: " + modul
                 }
                 l += r;
             }
-Debug.println("CHUNK[" + i + "] " + buffer.length + " bytes");
+Debug.println(Level.FINE, "CHUNK[" + i + "] " + buffer.length + " bytes");
             event.exec(new Chunk(i, buffer, samplingRate, samplingBytes * 8, numberChannels));
         }
         if (moduloOfChunks >= 0) {
@@ -90,7 +91,7 @@ Debug.println("CHUNK[" + i + "] " + buffer.length + " bytes");
                 l += r;
             }
             event.exec(new Chunk(numberOfChunks, buffer, samplingRate, samplingBytes * 8, numberChannels));
-Debug.println("modulo bytes: " + buffer.length + ", " + (((totalTime / 1000) % seconds) + 1) + " [s]");
+Debug.println(Level.FINE, "modulo bytes: " + buffer.length + ", " + (((totalTime / 1000) % seconds) + 1) + " [s]");
         }
     }
 }

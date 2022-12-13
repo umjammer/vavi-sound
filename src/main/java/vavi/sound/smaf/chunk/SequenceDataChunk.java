@@ -52,7 +52,7 @@ public class SequenceDataChunk extends Chunk {
     /** */
     public SequenceDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("SequenceData: " + size + " bytes");
+Debug.println(Level.FINE, "SequenceData: " + size + " bytes");
     }
 
     /** */
@@ -87,7 +87,7 @@ Debug.println("SequenceData: " + size + " bytes");
 //os2.flush();
 //os2.close();
 //Debug.println("data.dec created");
-Debug.println("decode: " + size + " -> " + decoded.length);
+Debug.println(Level.FINE, "decode: " + size + " -> " + decoded.length);
             size = decoded.length;
             readMobileStandard(new MyDataInputStream(new ByteArrayInputStream(decoded), id, decoded.length));
             break;
@@ -96,7 +96,7 @@ Debug.println("decode: " + size + " -> " + decoded.length);
             readMobileStandard(dis);
             break;
         }
-Debug.println("messages: " + messages.size());
+Debug.println(Level.FINE, "messages: " + messages.size());
     }
 
     /**

@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -208,7 +209,7 @@ public class WaveMessage extends SmafMessage
 
     /* */
     public void sequence() throws InvalidSmafDataException {
-Debug.println("WAVE PLAY: " + number);
+Debug.println(Level.FINE, "WAVE PLAY: " + number);
         AudioEngine engine = Factory.getAudioEngine();
         engine.start(number);
     }

@@ -44,7 +44,7 @@ public class GraphicsTrackChunk extends TrackChunk {
     /** */
     public GraphicsTrackChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("Graphics[" + trackNumber + "]: " + size);
+Debug.println(Level.FINE, "Graphics[" + trackNumber + "]: " + size);
     }
 
     /** */

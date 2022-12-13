@@ -9,6 +9,7 @@ package vavi.sound.smaf.message;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
@@ -126,7 +127,7 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
             context.getSmafTrackNumber() * 4 + this.channel != MidiContext.CHANNEL_DRUM) {
 
             // TODO psm は最後(最大？)？の volume を設定
-Debug.println("volume: " + volume);
+Debug.println(Level.FINE, "volume: " + volume);
             context.setVelocity(this.channel, volume);
 
             return null;
@@ -159,7 +160,7 @@ Debug.println("volume: " + volume);
         smafMessage.setDuration(context.getDuration());
         smafMessage.setChannel(voice);
         smafMessage.setVolume(data2);
-Debug.println("voice: " + voice + ", volume: " + data2);
+Debug.println(Level.FINE, "voice: " + voice + ", volume: " + data2);
 
         context.setBeforeTick(track, midiEvent.getTick());
 

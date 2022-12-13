@@ -9,6 +9,7 @@ package vavi.sound.smaf.chunk;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
 
 import vavi.util.Debug;
 
@@ -41,7 +42,7 @@ public class HuffmanDecodingInputStream extends FilterInputStream {
         if ((root = readTree(true)) == -1) {
             throw new IllegalStateException("can not initialize reading tree");
         }
-Debug.println("root: " + root);
+Debug.println(Level.FINE, "root: " + root);
     }
 
     /**
@@ -55,11 +56,11 @@ Debug.println("root: " + root);
             }
             bitOffset = 0;
             currentByte = in.read();
-Debug.println("currentByte: " + currentByte);
+Debug.println(Level.FINE, "currentByte: " + currentByte);
         }
 
         int bit = (currentByte >> (7 - bitOffset)) & 0x01;
-Debug.println("bit: " + bit + " (" + bitOffset + ")");
+Debug.println(Level.FINE, "bit: " + bit + " (" + bitOffset + ")");
         bitOffset++;
 
         return bit;
@@ -105,7 +106,7 @@ Debug.println("bit: " + bit + " (" + bitOffset + ")");
         }
 
         int bit = readBit();
-Debug.println("bit: " + bit);
+Debug.println(Level.FINE, "bit: " + bit);
         if (bit == -1) {
             return -1;
         }
@@ -143,7 +144,7 @@ Debug.println("bit: " + bit);
         int position = 0;
         while (position < length) {
             int node = root;
-Debug.println("node: " + node);
+Debug.println(Level.FINE, "node: " + node);
             while (node >= N) {
                 int bit = readBit();
                 if (bit == -1) {

@@ -6,6 +6,7 @@
 
 package vavi.sound.mfi.vavi.track;
 
+import java.util.logging.Level;
 import javax.sound.midi.MidiEvent;
 import vavi.sound.mfi.ChannelMessage;
 import vavi.sound.mfi.ShortMessage;
@@ -83,7 +84,7 @@ public class ChannelChangeMessage extends ShortMessage
 
     /** */
     public MidiEvent[] getMidiEvents(MidiContext context) {
-Debug.println("ignore: " + this);
+Debug.println(Level.INFO, "ignore: " + this);
         return null;
     }
 }

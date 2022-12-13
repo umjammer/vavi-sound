@@ -9,6 +9,7 @@ package vavi.sound.sampled.mfi;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -173,7 +174,7 @@ t = System.currentTimeMillis();
         }
 
         int r = MfiSystem.write(sequence, VaviMfiFileFormat.FILE_TYPE, file);
-Debug.println("write: " + r);
+Debug.println(Level.FINE, "write: " + r);
         return r;
     }
 

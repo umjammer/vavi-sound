@@ -8,6 +8,7 @@ package vavi.sound.smaf.message;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -113,7 +114,7 @@ public class WaveDataMessage extends SmafMessage
 
     /* */
     public void sequence() throws InvalidSmafDataException {
-Debug.println("WAVE DATA[" + number + "]: " + this);
+Debug.println(Level.FINE, "WAVE DATA[" + number + "]: " + this);
 //try {
 // java.io.OutputStream os = new java.io.FileOutputStream("out.pcm");
 // os.write(data);

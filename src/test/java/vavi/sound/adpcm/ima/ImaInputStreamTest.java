@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
+import java.util.logging.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -48,7 +49,7 @@ public class ImaInputStreamTest {
     public void setup() throws IOException {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
-Debug.println("outFile: " + outFile);
+Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
     /**
@@ -70,12 +71,12 @@ Debug.println("outFile: " + outFile);
         }
         LittleEndianDataInputStream ledis = new LittleEndianDataInputStream(
             new ByteArrayInputStream(format.getExtended()));
-Debug.println("ext size: " + ledis.available());
+Debug.println("Level.FINE, ext size: " + ledis.available());
         int samplesPerBlock = ledis.readShort();
         ledis.close();
         WAVE.data data = wave.findChildOf(WAVE.data.class);
         in = new ByteArrayInputStream(data.getWave());
-Debug.println("wave: " + in.available());
+Debug.println(Level.FINE, "wave: " + in.available());
 
         //----
 
@@ -106,7 +107,7 @@ DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
 line.open(audioFormat);
 line.addLineListener(ev -> {
-Debug.println(ev.getType());
+Debug.println(Level.FINE, ev.getType());
  if (LineEvent.Type.STOP == ev.getType()) {
  }
 });

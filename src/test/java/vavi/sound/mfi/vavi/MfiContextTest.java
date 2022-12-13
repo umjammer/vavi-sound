@@ -11,6 +11,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.MidiSystem;
@@ -46,11 +47,11 @@ public class MfiContextTest {
         javax.sound.midi.Sequence midiSequence = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(inPath)));
         MidiFileFormat midiFileFormat = MidiSystem.getMidiFileFormat(new BufferedInputStream(Files.newInputStream(inPath)));
         int type = midiFileFormat.getType();
-Debug.println("type: " + type);
+Debug.println(Level.FINE, "type: " + type);
         vavi.sound.mfi.Sequence mfiSequence = MfiSystem.toMfiSequence(midiSequence, type);
         Path outPath = dir.resolve("MfiContextTest.mld");
         int r = MfiSystem.write(mfiSequence, VaviMfiFileFormat.FILE_TYPE, Files.newOutputStream(outPath));
-Debug.println("write: " + r);
+Debug.println(Level.FINE, "write: " + r);
     }
 
     //-------------------------------------------------------------------------
@@ -64,18 +65,18 @@ Debug.println("write: " + r);
      */
     public static void main(String[] args) throws Exception {
 
-Debug.println("midi in: " + args[0]);
-Debug.println("mfi out: " + args[1]);
+Debug.println(Level.FINE, "midi in: " + args[0]);
+Debug.println(Level.FINE, "mfi out: " + args[1]);
 
         File file = new File(args[0]);
         javax.sound.midi.Sequence midiSequence = MidiSystem.getSequence(file);
         MidiFileFormat midiFileFormat = MidiSystem.getMidiFileFormat(file);
         int type = midiFileFormat.getType();
-Debug.println("type: " + type);
+Debug.println(Level.FINE, "type: " + type);
         vavi.sound.mfi.Sequence mfiSequence = MfiSystem.toMfiSequence(midiSequence, type);
         file = new File(args[1]);
         int r = MfiSystem.write(mfiSequence, VaviMfiFileFormat.FILE_TYPE, file);
-Debug.println("write: " + r);
+Debug.println(Level.FINE, "write: " + r);
 
         System.exit(0);
     }

@@ -6,6 +6,7 @@
 
 package vavi.sound.mfi.vavi.track;
 
+import java.util.logging.Level;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.ShortMessage;
@@ -42,7 +43,7 @@ public class Nop2Message extends ShortMessage
      */
     public Nop2Message(int delta, int data2) {
         super(delta, 0xff, 0xdc, data2);
-Debug.println("NOP2: delta: " + delta);
+Debug.println(Level.FINE, "NOP2: delta: " + delta);
     }
 
     /**
@@ -54,7 +55,7 @@ Debug.println("NOP2: delta: " + delta);
      */
     public Nop2Message(int delta, int status, int data1, int data2) {
         super(delta, 0xff, 0xdc, data2);
-Debug.println("NOP2: delta: " + delta);
+Debug.println(Level.FINE, "NOP2: delta: " + delta);
     }
 
     /** */

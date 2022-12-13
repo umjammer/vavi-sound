@@ -38,7 +38,7 @@ public class PcmAudioTrackChunk extends TrackChunk {
     /** */
     public PcmAudioTrackChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("PcmAudioTrack[" + trackNumber + "]: " + size + " bytes");
+Debug.println(Level.FINE, "PcmAudioTrack[" + trackNumber + "]: " + size + " bytes");
     }
 
     /** */
@@ -53,17 +53,17 @@ Debug.println("PcmAudioTrack[" + trackNumber + "]: " + size + " bytes");
 //skip(is, size);
 
         this.formatType = FormatType.values()[dis.readUnsignedByte()];
-Debug.println("formatType: " + formatType);
+Debug.println(Level.FINE, "formatType: " + formatType);
         this.sequenceType = SequenceType.values()[dis.readUnsignedByte()];
-Debug.println("sequenceType: " + sequenceType);
+Debug.println(Level.FINE, "sequenceType: " + sequenceType);
 
         this.waveType = new WaveType(dis.readUnsignedShort());
-Debug.println("waveType: " + waveType);
+Debug.println(Level.FINE, "waveType: " + waveType);
 
         this.durationTimeBase = dis.readUnsignedByte();
-Debug.println("durationTimeBase: " + durationTimeBase + ", " + getDurationTimeBase() + " ms");
+Debug.println(Level.FINE, "durationTimeBase: " + durationTimeBase + ", " + getDurationTimeBase() + " ms");
         this.gateTimeTimeBase = dis.readUnsignedByte();
-Debug.println("gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBase() + " ms");
+Debug.println(Level.FINE, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBase() + " ms");
 
         while (dis.available() > 0) {
             Chunk chunk = readFrom(dis);

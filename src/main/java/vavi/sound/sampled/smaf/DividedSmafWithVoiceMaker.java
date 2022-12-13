@@ -89,10 +89,10 @@ long t = System.currentTimeMillis();
         // divide
         Event event = new Event();
         WaveDivider waveDivider = WaveDivider.Factory.getWaveDivider(sourceAis);
-Debug.println("1: " + (System.currentTimeMillis() - t));
+Debug.println(Level.FINE, "1: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         waveDivider.divide(time, event);
-Debug.println("2: " + (System.currentTimeMillis() - t));
+Debug.println(Level.FINE, "2: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         return event.r;
     }

@@ -50,7 +50,7 @@ public class FileChunk extends Chunk {
             } else if (chunk instanceof OptionalDataChunk) {
                 optionalDataChunk = chunk;
             } else if (chunk instanceof ScoreTrackChunk) {
-Debug.println("TRACK: " + scoreTrackChunks.size());
+Debug.println(Level.FINE, "TRACK: " + scoreTrackChunks.size());
                 scoreTrackChunks.add((TrackChunk) chunk);
             } else if (chunk instanceof PcmAudioTrackChunk) {
                 pcmAudioTrackChunks.add((TrackChunk) chunk);
@@ -64,11 +64,11 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         }
 //Debug.println("available: " + is.available());
         this.crc = dis.readUnsignedShort();
-Debug.printf("crc (orig): %04x\n", crc);
+Debug.printf(Level.FINE, "crc (orig): %04x\n", crc);
         if (dis.available() > 4) {
             int kddiCrc = dis.readUnsignedShort();
             int kddiMark = dis.readUnsignedShort();
-Debug.printf("has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
+Debug.printf(Level.FINE, "has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
         }
     }
 

@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
+import java.util.logging.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -44,7 +45,7 @@ public class Ym2608InputStreamTest {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
 //        outFile = new File("src/test/resources/vavi/sound/adpcm/ym2608/out_vavi.pcm");
-Debug.println("outFile: " + outFile);
+Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
     @Test

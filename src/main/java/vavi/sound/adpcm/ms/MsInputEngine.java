@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
+import java.util.logging.Level;
 
 import vavi.io.InputEngine;
 import vavi.io.LittleEndianDataInputStream;
@@ -46,7 +47,7 @@ class MsInputEngine implements InputEngine {
         this.samplesPerBlock = samplesPerBlock;
         this.channels = channels;
         this.byteOrder = byteOrder;
-Debug.println("byteOrder: " + this.byteOrder);
+Debug.println(Level.FINE, "byteOrder: " + this.byteOrder);
     }
 
     /* */

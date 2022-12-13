@@ -7,6 +7,7 @@
 package vavi.sound.sampled;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -36,7 +37,7 @@ public class SimpleResamplingInputFilter implements InputFilter {
     /** */
     public AudioInputStream doFilter(AudioInputStream sourceAis) throws IOException, UnsupportedAudioFileException {
         AudioFormat inAudioFormat = sourceAis.getFormat();
-Debug.println("IN: " + inAudioFormat);
+Debug.println(Level.FINE, "IN: " + inAudioFormat);
         // 1: PCM_SIGNED ? Hz, 16 bit, stereo, 2 bytes/frame, little-endian
         AudioFormat outAudioFormat = new AudioFormat(
             inAudioFormat.getEncoding(),
@@ -46,8 +47,8 @@ Debug.println("IN: " + inAudioFormat);
             inAudioFormat.getFrameSize(),
             inAudioFormat.getFrameRate(),
             inAudioFormat.isBigEndian());
-Debug.println("OUT: " + outAudioFormat);
-Debug.println("OK: " + AudioSystem.isConversionSupported(outAudioFormat, inAudioFormat));
+Debug.println(Level.FINE, "OUT: " + outAudioFormat);
+Debug.println(Level.FINE, "OK: " + AudioSystem.isConversionSupported(outAudioFormat, inAudioFormat));
 
         return AudioSystem.getAudioInputStream(outAudioFormat, sourceAis);
     }

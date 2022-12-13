@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -48,7 +49,7 @@ public class YamahaInputStreamTest {
     public void setup() throws IOException {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
-Debug.println("outFile: " + outFile);
+Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
     /** */
@@ -107,7 +108,7 @@ System.err.println("available: " + is.available());
         }
         WAVE.data data = wave.findChildOf(WAVE.data.class);
         in = new ByteArrayInputStream(data.getWave());
-Debug.println("wave: " + in.available());
+Debug.println(Level.FINE, "wave: " + in.available());
 
         //----
 
@@ -133,7 +134,7 @@ OutputStream os = new BufferedOutputStream(Files.newOutputStream(Paths.get(args[
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(audioFormat);
         line.addLineListener(ev -> {
-Debug.println(ev.getType());
+Debug.println(Level.FINE, ev.getType());
             if (LineEvent.Type.STOP == ev.getType()) {
                 System.exit(0);
             }

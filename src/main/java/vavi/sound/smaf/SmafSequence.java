@@ -7,6 +7,7 @@
 package vavi.sound.smaf;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.chunk.Chunk;
 import vavi.sound.smaf.chunk.FileChunk;
@@ -51,7 +52,7 @@ class SmafSequence extends Sequence {
             String prot = "vavi";
             if (fileChunk.getOptionalDataChunk() != null) {
                 for (Chunk dataChunk : fileChunk.getOptionalDataChunk().getDataChunks()) {
-Debug.println(dataChunk);
+Debug.println(Level.FINE, dataChunk);
                     // TODO
                 }
             } else if (fileChunk.getContentsInfoChunk() != null) { // TODO 必須なので if 要らん

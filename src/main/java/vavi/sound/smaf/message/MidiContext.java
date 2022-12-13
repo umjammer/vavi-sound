@@ -6,6 +6,7 @@
 
 package vavi.sound.smaf.message;
 
+import java.util.logging.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -72,7 +73,7 @@ public class MidiContext {
                 if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
                     //
                     this.formatType = (FormatType) metaMessage.getData().get("formatType"); // [ms]
-Debug.println("formatType: " + formatType);
+Debug.println(Level.FINE, "formatType: " + formatType);
                     for (int i = 0; i < MAX_MIDI_CHANNELS; i++) {
                         if (formatType == FormatType.HandyPhoneStandard) {
                             velocities[i] = 0x7f;
@@ -82,7 +83,7 @@ Debug.println("formatType: " + formatType);
                     }
                     //
                     ChannelStatus[] channelStatuses = (ChannelStatus[]) metaMessage.getData().get("channelStatuses");
-Debug.println("channelStatuses: " + (channelStatuses != null ? channelStatuses.length : null));
+Debug.println(Level.FINE, "channelStatuses: " + (channelStatuses != null ? channelStatuses.length : null));
                     if (channelStatuses != null) {
                         for (int i = 0; i < channelStatuses.length; i++) {
                             setDrum(i, toChannelConfiguration(getMidiChannel(i), channelStatuses[i].getType()));
@@ -200,7 +201,7 @@ Debug.println("channelStatuses: " + (channelStatuses != null ? channelStatuses.l
         int midiChannel = getMidiChannel(smafChannel);
 
         if (drumSwapChannel != CHANNEL_UNUSED && midiChannel == drumSwapChannel) {
-Debug.println("already swapped: " + midiChannel + ", " + value);
+Debug.println(Level.FINE, "already swapped: " + midiChannel + ", " + value);
         } else {
             drums[midiChannel] = value;
 //Debug.println("temporary: " + midiChannel + ", " + value);
@@ -211,14 +212,14 @@ Debug.println("already swapped: " + midiChannel + ", " + value);
             for (int k = MAX_MIDI_CHANNELS - 1; k >= 0; k--) {
                 if (k != CHANNEL_DRUM && drums[k] == ChannelConfiguration.UNUSED) {
                     drumSwapChannel = k;
-Debug.println("channel 9 -> " + k);
+Debug.println(Level.FINE, "channel 9 -> " + k);
                     break;
                 }
             }
 if (drumSwapChannel == CHANNEL_UNUSED) {
- Debug.println("cannot swap: " + midiChannel + ", " + value);
+ Debug.println(Level.FINE, "cannot swap: " + midiChannel + ", " + value);
 }
-Debug.println("channel configuration: " + midiChannel + "ch, " + drums[midiChannel]);
+Debug.println(Level.FINE, "channel configuration: " + midiChannel + "ch, " + drums[midiChannel]);
         }
 if (value != ChannelConfiguration.UNUSED) {
 StringBuilder sb1 = new StringBuilder(16);
@@ -229,7 +230,7 @@ for (int i = 0; i < drums.length; i++) {
  sb2.append(midiChannel == i ? "*" : " ");
  sb3.append(drums[i].name().charAt(0));
 }
-Debug.println("drums: " + midiChannel + "ch, " + value + "\n" + sb1 + "\n" + sb2 + "\n" + sb3);
+Debug.println(Level.FINE, "drums: " + midiChannel + "ch, " + value + "\n" + sb1 + "\n" + sb2 + "\n" + sb3);
 }
     }
 
@@ -245,7 +246,7 @@ Debug.println("drums: " + midiChannel + "ch, " + value + "\n" + sb1 + "\n" + sb2
             return smafTrackNumber * 4 + smafChannel;
         } else {
 if (smafTrackNumber > 0) {
- Debug.println("track > 0: " + smafTrackNumber);
+ Debug.println(Level.FINE, "track > 0: " + smafTrackNumber);
 }
             return smafTrackNumber * 16 + smafChannel;
         }
@@ -260,7 +261,7 @@ if (smafTrackNumber > 0) {
 
         if (formatType != FormatType.HandyPhoneStandard) {
             if (midiChannel != drumSwapChannel && drums[midiChannel] == ChannelConfiguration.PERCUSSION) {
-Debug.println("drum always zero:[" + midiChannel + "]: " + program);
+Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
                 program = 0;
             }
         }
@@ -482,7 +483,7 @@ Debug.println("drum always zero:[" + midiChannel + "]: " + program);
 
     /* */
     static {
-Debug.println("tempoTable: " + tempoTable.length);
+Debug.println(Level.FINE, "tempoTable: " + tempoTable.length);
     }
 
     /** テンポの指定がない場合、SSDは 4 分音符 = 120 として扱います */
@@ -539,7 +540,7 @@ int t = 0;
                     vavi.sound.smaf.MetaMessage metaMessage = (vavi.sound.smaf.MetaMessage) message;
                     if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
                         this.timeBase = (Integer) metaMessage.getData().get("durationTimeBase"); // [ms]
-Debug.println("timebase: " + timeBase + ", (" + t + ":" + i + ")");
+Debug.println(Level.FINE, "timebase: " + timeBase + ", (" + t + ":" + i + ")");
                         return tempo * timeBase;
                     }
                 }
@@ -547,7 +548,7 @@ Debug.println("timebase: " + timeBase + ", (" + t + ":" + i + ")");
 t++;
         }
 
-Debug.println("no tempo message in track 0");
+Debug.println(Level.FINE, "no tempo message in track 0");
         return 120;
     }
 }

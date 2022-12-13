@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -64,7 +65,7 @@ public class VaviMfiFileWriterTest {
             throw new IllegalArgumentException("not PCM");
         }
         WAVE.data data = wave.findChildOf(WAVE.data.class);
-Debug.println("wave: " + data.getWave().length);
+Debug.println(Level.FINE, "wave: " + data.getWave().length);
 
         int samplingRate = format.getSamplingRate();
         int samplingBits = format.getSamplingBits();
@@ -74,10 +75,10 @@ Debug.println("wave: " + data.getWave().length);
         }
 
         int bytesPerSecond = samplingRate * samplingBits / 8;
-Debug.println("bytesPerSecond: " + bytesPerSecond);
-Debug.println("fmt.bytesPerSecond: " + format.getBytesPerSecond());
+Debug.println(Level.FINE, "bytesPerSecond: " + bytesPerSecond);
+Debug.println(Level.FINE, "fmt.bytesPerSecond: " + format.getBytesPerSecond());
         double time = (double) data.getWave().length / bytesPerSecond * 1000;
-Debug.println("time: " + time + " ms");
+Debug.println(Level.FINE, "time: " + time + " ms");
 
         //----
 
@@ -90,7 +91,7 @@ Debug.println("time: " + time + " ms");
 
         double aDelta = (60d / 120d) / 120d * 1000;
         int delta = (int) Math.round(time / aDelta);
-Debug.println("delta: " + delta);
+Debug.println(Level.FINE, "delta: " + delta);
 
         message = new TempoMessage(0x00, 0xff, 0xcb, 0x78);
         track.add(new MfiEvent(message, 0L));
@@ -103,7 +104,7 @@ Debug.println("delta: " + delta);
         int r = MfiSystem.write(sequence,
                                 VaviMfiFileFormat.FILE_TYPE,
                                 new File("tmp/out.mid"));
-Debug.println("write: " + r);
+Debug.println(Level.FINE, "write: " + r);
     }
 
     /**

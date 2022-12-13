@@ -266,7 +266,7 @@ if (gateTime == 0) {
             (command == ShortMessage.NOTE_ON && data2 == 0)) {
 
             if (!context.isNoteOffEventUsed()) {
-Debug.println("[" + context.getMidiEventIndex() + "] no pair of ON for: " + channel + "ch, " + data1);
+Debug.println(Level.FINE, "[" + context.getMidiEventIndex() + "] no pair of ON for: " + channel + "ch, " + data1);
             }
 
             return null;
@@ -302,12 +302,12 @@ Debug.println(Level.WARNING, "[" + context.getMidiEventIndex() + "] no pair of O
                 smafMessage.setNote(context.retrievePitch(channel, data1));
                 smafMessage.setGateTime(i == onLength - 1 ? length % 255 : 255);
 if (length >= 255) {
- Debug.println(channel + "ch, " + smafMessage.getNote() + ", " + smafMessage.getDuration() + ":[" + i + "]:" + (i == onLength - 1 ? length % 255 : 255) + "/" + length);
+ Debug.println(Level.FINE, channel + "ch, " + smafMessage.getNote() + ", " + smafMessage.getDuration() + ":[" + i + "]:" + (i == onLength - 1 ? length % 255 : 255) + "/" + length);
 }
 //Debug.println(channel + ", " + smafMessage.getVoice() + ", " + ((smafMessage.getMessage()[1] & 0xc0) >> 6));
                 smafEvents[i] = new SmafEvent(smafMessage, 0L); // TODO 0l
 if (smafEvents[i] == null) {
- Debug.println("[" + i + "]: " + smafEvents[i]);
+ Debug.println(Level.FINE, "[" + i + "]: " + smafEvents[i]);
 }
 
                 if (i == 0) {

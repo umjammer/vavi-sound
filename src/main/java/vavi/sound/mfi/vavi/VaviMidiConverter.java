@@ -139,7 +139,7 @@ Debug.println(Level.FINE, "tickLength: " + midiSequence.getTickLength());
 
                     for (int j = maxTracks; j <= mfiTrackNumber; j++) {
                         mfiSequence.createTrack();
-Debug.println(">>>> create MFi track: " + j);
+Debug.println(Level.FINE, ">>>> create MFi track: " + j);
                         mfiTracks = mfiSequence.getTracks();
                         maxTracks = mfiTracks.length;
                     }
@@ -300,7 +300,7 @@ Debug.printStackTrace(e);
         MidiContext midiContext = new MidiContext();
 
         int resolution = midiContext.getResolution(mfiTracks);
-Debug.println("resolution: " + resolution);
+Debug.println(Level.FINE, "resolution: " + resolution);
         Sequence midiSequence = new MfiVaviSequence(Sequence.PPQ, resolution, 1);
         javax.sound.midi.Track midiTrack = midiSequence.getTracks()[0];
 

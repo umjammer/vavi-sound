@@ -8,6 +8,7 @@ package vavi.sound.mfi.vavi.audio;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
@@ -95,7 +96,7 @@ public class CommonAudioMessage {
     /** */
     private static int getDelta(float time) {
         float aDelta = (60f / tempoMessage.getTempo()) / tempoMessage.getTimeBase();
-Debug.println("a delta: " + aDelta + ", tempo: " + tempoMessage.getTempo() + ", " + tempoMessage.getTimeBase());
+Debug.println(Level.FINE, "a delta: " + aDelta + ", tempo: " + tempoMessage.getTempo() + ", " + tempoMessage.getTimeBase());
         return Math.round(time / aDelta);
     }
 
@@ -104,7 +105,7 @@ Debug.println("a delta: " + aDelta + ", tempo: " + tempoMessage.getTempo() + ", 
         List<MfiEvent> events = new ArrayList<>();
 
         int delta = getDelta(time);
-Debug.println("delta: " + delta);
+Debug.println(Level.FINE, "delta: " + delta);
         for (int i = 0; i < delta / Nop2Message.maxDelta; i++) {
             events.add(new MfiEvent(new Nop2Message(0xff, 0xff), 0L));
         }

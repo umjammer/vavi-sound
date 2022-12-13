@@ -34,7 +34,7 @@ public class SetupDataChunk extends Chunk {
     /** */
     public SetupDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("SetupData: " + size + " bytes");
+Debug.println(Level.FINE, "SetupData: " + size + " bytes");
     }
 
     /** */
@@ -59,7 +59,7 @@ Debug.println("SetupData: " + size + " bytes");
             readMobileStandard(dis);
             break;
         }
-Debug.println("messages: " + messages.size());
+Debug.println(Level.FINE, "messages: " + messages.size());
     }
 
     /**

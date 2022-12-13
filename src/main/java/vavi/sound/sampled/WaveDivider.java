@@ -7,6 +7,7 @@
 package vavi.sound.sampled;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -56,7 +57,7 @@ public interface WaveDivider {
                     return new Pcm16BitMonauralWaveDivider(new MonauralInputFilter().doFilter(audioInputStream));
                 }
             } else {
-Debug.println("unsupported type: " + audioInputStream.getFormat());
+Debug.println(Level.INFO, "unsupported type: " + audioInputStream.getFormat());
                 throw new IllegalArgumentException("only pcm mono is supported.");
             }
         }

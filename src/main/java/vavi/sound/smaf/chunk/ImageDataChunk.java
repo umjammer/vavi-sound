@@ -29,7 +29,7 @@ public class ImageDataChunk extends Chunk {
     /** */
     public ImageDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("ImageData: " + size + " bytes");
+Debug.println(Level.FINE, "ImageData: " + size + " bytes");
     }
 
     /** */
@@ -54,7 +54,7 @@ Debug.println("ImageData: " + size + " bytes");
                 Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
-Debug.println("messages: " + imageDataChunks.size());
+Debug.println(Level.FINE, "messages: " + imageDataChunks.size());
     }
 
     /** */

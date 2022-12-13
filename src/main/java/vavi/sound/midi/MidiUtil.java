@@ -269,7 +269,7 @@ Debug.println(Level.FINE, "sequencerDeviceName: " + sequencerDeviceName);
             value = props.getProperty("defaultSynthesizer");
             if (value != null) {
                 String defaultSynthesizer = value;
-Debug.println("defaultSynthesizer: " + defaultSynthesizer);
+Debug.println(Level.FINE, "defaultSynthesizer: " + defaultSynthesizer);
                 if (defaultSynthesizer.contains("#")) {
                     String[] pair = defaultSynthesizer.split("#");
                     synthesizerClassName = pair[0];

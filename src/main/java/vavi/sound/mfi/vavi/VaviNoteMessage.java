@@ -158,7 +158,7 @@ if (length == 0) {
                 mfiMessage.setGateTime(i == onLength - 1 ? length % 255 : 255);
                 mfiMessage.setVelocity(data2 / 2);
 if (length >= 255) {
- Debug.println(channel + "ch, " + mfiMessage.getNote() + ", " + mfiMessage.getDelta() + ":[" + i + "]:" + (i == onLength - 1 ? length % 255 : 255) + "/" + length);
+ Debug.println(Level.INFO, channel + "ch, " + mfiMessage.getNote() + ", " + mfiMessage.getDelta() + ":[" + i + "]:" + (i == onLength - 1 ? length % 255 : 255) + "/" + length);
 }
 //Debug.println(channel + ", " + mfiMessage.getVoice() + ", " + ((mfiMessage.getMessage()[1] & 0xc0) >> 6));
                 mfiEvents[i] = new MfiEvent(mfiMessage, 0L); // TODO 0l

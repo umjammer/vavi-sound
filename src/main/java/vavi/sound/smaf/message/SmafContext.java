@@ -95,7 +95,7 @@ public class SmafContext implements SmafConvertible {
 
     /** */
     public void setScale(float scale) {
-Debug.println("scale: " + scale);
+Debug.println(Level.FINE, "scale: " + scale);
         this.scale = scale;
     }
 
@@ -153,11 +153,11 @@ Debug.println("scale: " + scale);
         double rounded = floatDelta - delta;
         roundedSum[smafTrackNumber] += rounded;
         if (roundedSum[smafTrackNumber] >= 1f) {
-Debug.println("rounded over 1, plus 1: " + roundedSum[smafTrackNumber] + "[" + smafTrackNumber + "]");
+Debug.println(Level.FINE, "rounded over 1, plus 1: " + roundedSum[smafTrackNumber] + "[" + smafTrackNumber + "]");
             delta += 1;
             roundedSum[smafTrackNumber] -= 1;
         } else if (roundedSum[smafTrackNumber] <= -1f) {
-Debug.println("rounded under -1, minus 1: " + roundedSum[smafTrackNumber] + "[" + smafTrackNumber + "]");
+Debug.println(Level.FINE, "rounded under -1, minus 1: " + roundedSum[smafTrackNumber] + "[" + smafTrackNumber + "]");
             delta -= 1;
             roundedSum[smafTrackNumber] += 1;
         }
@@ -207,12 +207,12 @@ Debug.println("rounded under -1, minus 1: " + roundedSum[smafTrackNumber] + "[" 
             // tempo
             track = smafTrackNumber;
             interval = retrieveDelta(track, midiEvent.getTick());
-Debug.println("interval for tempo[" + smafTrackNumber + "]: " + interval);
+Debug.println(Level.FINE, "interval for tempo[" + smafTrackNumber + "]: " + interval);
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 47) {
             // eot
             track = smafTrackNumber;
             interval = retrieveDelta(track, midiEvent.getTick());
-Debug.println("interval for EOT[" + smafTrackNumber + "]: " + interval);
+Debug.println(Level.FINE, "interval for EOT[" + smafTrackNumber + "]: " + interval);
         } else if (midiMessage instanceof SysexMessage) {
             return null;
         } else {
@@ -263,9 +263,9 @@ if (interval < 0) {
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
             // tempo
             delta = retrieveAdjustedDelta(smafTrackNumber, midiEvent.getTick()); // TODO smafTrackNumber でいいのか？
-Debug.println("delta for tempo[" + smafTrackNumber + "]: " + delta);
+Debug.println(Level.FINE, "delta for tempo[" + smafTrackNumber + "]: " + delta);
         } else {
-Debug.println("no delta defined for: " + midiMessage);
+Debug.println(Level.FINE, "no delta defined for: " + midiMessage);
         }
 
 if (delta > 255) {
@@ -372,7 +372,7 @@ if (delta > 255) {
                 if (shortMessage.getChannel() == channel &&
                     shortMessage.getCommand() == ShortMessage.NOTE_ON &&
                     shortMessage.getData1() != data1) {
-Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getData1());
+Debug.println(Level.FINE, "next: " + shortMessage.getChannel() + "ch, " + shortMessage.getData1());
                     return midiEvent;
                 }
             }
