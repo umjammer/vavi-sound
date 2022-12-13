@@ -68,7 +68,11 @@ Debug.printf(Level.FINE, "%02x %02x\n", f1, f2);
         }
 
         MachineDependentFunction mdf = factory.getFunction(key);
+        if (mdf != null) {
             mdf.process(message);
+        } else {
+Debug.printf(Level.WARNING, "unsupported function: %s", key);
+        }
     }
 
     //-------------------------------------------------------------------------

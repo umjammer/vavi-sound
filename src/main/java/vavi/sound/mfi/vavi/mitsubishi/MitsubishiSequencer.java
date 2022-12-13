@@ -43,7 +43,11 @@ public class MitsubishiSequencer implements MachineDependentSequencer {
 Debug.printf(Level.FINER, "function: 0x%02x", function);
 
         MachineDependentFunction mdf = factory.getFunction(String.valueOf(function));
+        if (mdf != null) {
             mdf.process(message);
+        } else {
+Debug.printf(Level.WARNING, "unsupported function: 0x%02x", function);
+        }
     }
 
     //-------------------------------------------------------------------------
