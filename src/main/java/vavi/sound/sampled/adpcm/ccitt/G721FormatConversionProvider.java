@@ -85,9 +85,9 @@ public class G721FormatConversionProvider extends FormatConversionProvider {
                 } else if (sourceFormat.getEncoding() instanceof CcittEncoding && targetFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED)) {
                     return new G721ToPcmAudioInputStream(sourceStream, targetFormat, AudioSystem.NOT_SPECIFIED);
                 } else if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED) && targetFormat.getEncoding() instanceof CcittEncoding) {
-                    throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
+                    throw new IllegalArgumentException("unable to convert " + sourceFormat + " to " + targetFormat);
                 } else {
-                    throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
+                    throw new IllegalArgumentException("unable to convert " + sourceFormat + " to " + targetFormat.toString());
                 }
             } else {
                 throw new IllegalArgumentException("target format not found");
@@ -109,9 +109,9 @@ public class G721FormatConversionProvider extends FormatConversionProvider {
                            targetFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED)) {
                     return new G721ToPcmAudioInputStream(sourceStream, targetFormat, AudioSystem.NOT_SPECIFIED);
                 } else if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED) && targetFormat.getEncoding() instanceof CcittEncoding) {
-                    throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
+                    throw new IllegalArgumentException("unable to convert " + sourceFormat + " to " + targetFormat);
                 } else {
-                    throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
+                    throw new IllegalArgumentException("unable to convert " + sourceFormat + " to " + targetFormat);
                 }
             } else {
                 throw new IllegalArgumentException("target format not found");

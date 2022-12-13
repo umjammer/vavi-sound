@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
@@ -40,9 +41,9 @@ public class VaviMidiConverterTest {
         Sequence midiSequence = MfiSystem.toMidiSequence(mfiSequence);
 
         Sequencer midiSequencer = MidiSystem.getSequencer();
-Debug.println("midiSequencer: " + midiSequencer);
-Debug.println("midiSequencer:T: " + midiSequencer.getTransmitter());
-Debug.println("midiSequencer:R: " + midiSequencer.getReceiver());
+Debug.println(Level.FINE, "midiSequencer: " + midiSequencer);
+Debug.println(Level.FINE, "midiSequencer:T: " + midiSequencer.getTransmitter());
+Debug.println(Level.FINE, "midiSequencer:R: " + midiSequencer.getReceiver());
         midiSequencer.open();
         midiSequencer.setSequence(midiSequence);
         midiSequencer.addMetaEventListener(meta -> {
@@ -84,16 +85,16 @@ Debug.println(meta.getType());
         Sequence midiSequence = MfiSystem.toMidiSequence(mfiSequence);
 
         Sequencer midiSequencer = MidiSystem.getSequencer();
-Debug.println("midiSequencer: " + midiSequencer);
-Debug.println("midiSequencer:T: " + midiSequencer.getTransmitter());
-Debug.println("midiSequencer:R: " + midiSequencer.getReceiver());
+Debug.println(Level.FINE, "midiSequencer: " + midiSequencer);
+Debug.println(Level.FINE, "midiSequencer:T: " + midiSequencer.getTransmitter());
+Debug.println(Level.FINE, "midiSequencer:R: " + midiSequencer.getReceiver());
         midiSequencer.open();
         midiSequencer.setSequence(midiSequence);
 
         if (play) {
             midiSequencer.start();
             while (midiSequencer.isRunning()) {
-                try { Thread.sleep(100); } catch (Exception e) {}
+                try { Thread.sleep(100); } catch (Exception ignored) {}
             }
             midiSequencer.stop();
         }
@@ -101,18 +102,18 @@ Debug.println("midiSequencer:R: " + midiSequencer.getReceiver());
         midiSequencer.close();
 
         if (convert) {
-            int ts[] = MidiSystem.getMidiFileTypes(midiSequence);
-Debug.println("types: " + ts.length);
+            int[] ts = MidiSystem.getMidiFileTypes(midiSequence);
+Debug.println(Level.FINE, "types: " + ts.length);
             if (ts.length == 0) {
                 throw new IllegalArgumentException("no support type");
             }
-            for (int i = 0; i < ts.length; i++) {
-Debug.printf("type: 0x%02x\n", ts[i]);
+            for (int t : ts) {
+                Debug.printf(Level.FINE, "type: 0x%02x\n", t);
             }
 
             file = new File(args[2]);
             int r = MidiSystem.write(midiSequence, 0, file);
-Debug.println("write: " + r);
+Debug.println(Level.FINE, "write: " + r);
         }
 
         System.exit(0);

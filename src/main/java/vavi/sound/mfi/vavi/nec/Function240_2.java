@@ -6,11 +6,14 @@
 
 package vavi.sound.mfi.vavi.nec;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
 import vavi.util.Debug;
+import vavi.util.StringUtil;
 
 
 /**
@@ -62,8 +65,8 @@ public class Function240_2 implements MachineDependentFunction {
         }
 
         int adpcmLength = data.length - HEADER_LENGTH;
-Debug.println("ADPCM data: No." + streamNumber + ", " + sampleRate + "Hz, " + adpcmLength);
-//Debug.dump(data, 64);
+Debug.println(Level.FINE, "ADPCM data: No." + streamNumber + ", " + sampleRate + "Hz, " + adpcmLength);
+Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(data, 64));
 
         this.adpcm = new byte[adpcmLength];
         System.arraycopy(data, HEADER_LENGTH, adpcm, 0, adpcmLength);
@@ -101,7 +104,7 @@ Debug.println("ADPCM data: No." + streamNumber + ", " + sampleRate + "Hz, " + ad
 
         AudioEngine audioEngine = NecSequencer.getAudioEngine();
         adpcm = audioEngine.encode(4, 1, pcm); // TODO bits, channel
-Debug.println("adpcm length: " + adpcm.length);
+Debug.println(Level.FINE, "adpcm length: " + adpcm.length);
 
         // [10~]
         byte[] tmp = new byte[adpcm.length + 5];

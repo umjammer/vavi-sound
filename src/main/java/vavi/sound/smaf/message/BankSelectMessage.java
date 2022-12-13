@@ -6,6 +6,7 @@
 
 package vavi.sound.smaf.message;
 
+import java.util.logging.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
@@ -39,7 +40,7 @@ public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
     public enum Significant {
         Least(0x20),
         Most(0x00);
-        int data1;
+        final int data1;
         Significant(int data1) {
             this.data1 = data1;
         }
@@ -122,7 +123,7 @@ public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
         throws InvalidMidiDataException {
 
         if (significant == null) {              // HandyPhoneStandard
-Debug.printf("BankSelect: [%d] %dch, 0x%02x", duration, channel, bank);
+Debug.printf(Level.FINE, "BankSelect: [%d] %dch, 0x%02x", duration, channel, bank);
             int data2;
             if ((bank & 0x80) != 0) {
                 context.setDrum(channel, MidiContext.ChannelConfiguration.PERCUSSION);
@@ -158,7 +159,7 @@ Debug.printf("BankSelect: [%d] %dch, 0x%02x", duration, channel, bank);
         } else {                                // MobileStandard
             int midiChannel = context.retrieveChannel(this.channel);
 
-Debug.println("BankSelect(" + significant + "): [" + duration + "] " + midiChannel + "ch, " + bank);
+Debug.println(Level.FINE, "BankSelect(" + significant + "): [" + duration + "] " + midiChannel + "ch, " + bank);
             ShortMessage shortMessage = new ShortMessage();
             shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                     midiChannel,

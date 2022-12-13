@@ -38,7 +38,7 @@ public class PcmAudioTrackChunk extends TrackChunk {
     /** */
     public PcmAudioTrackChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("PcmAudioTrack[" + trackNumber + "]: " + size + " bytes");
+Debug.println(Level.FINE, "PcmAudioTrack[" + trackNumber + "]: " + size + " bytes");
     }
 
     /** */
@@ -53,17 +53,17 @@ Debug.println("PcmAudioTrack[" + trackNumber + "]: " + size + " bytes");
 //skip(is, size);
 
         this.formatType = FormatType.values()[dis.readUnsignedByte()];
-Debug.println("formatType: " + formatType);
+Debug.println(Level.FINE, "formatType: " + formatType);
         this.sequenceType = SequenceType.values()[dis.readUnsignedByte()];
-Debug.println("sequenceType: " + sequenceType);
+Debug.println(Level.FINE, "sequenceType: " + sequenceType);
 
         this.waveType = new WaveType(dis.readUnsignedShort());
-Debug.println("waveType: " + waveType);
+Debug.println(Level.FINE, "waveType: " + waveType);
 
         this.durationTimeBase = dis.readUnsignedByte();
-Debug.println("durationTimeBase: " + durationTimeBase + ", " + getDurationTimeBase() + " ms");
+Debug.println(Level.FINE, "durationTimeBase: " + durationTimeBase + ", " + getDurationTimeBase() + " ms");
         this.gateTimeTimeBase = dis.readUnsignedByte();
-Debug.println("gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBase() + " ms");
+Debug.println(Level.FINE, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBase() + " ms");
 
         while (dis.available() > 0) {
             Chunk chunk = readFrom(dis);
@@ -164,18 +164,18 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
 
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
-        events.add(new SmafEvent(metaMessage, 0l));
+        events.add(new SmafEvent(metaMessage, 0L));
 
         //
         for (Chunk waveDataChunk : waveDataChunks) {
             SmafMessage smafMessage = ((WaveDataChunk) waveDataChunk).toSmafMessage(waveType);
-            events.add(new SmafEvent(smafMessage, 0l));
+            events.add(new SmafEvent(smafMessage, 0L));
         }
 
         //
         List<SmafMessage> messages = ((SequenceDataChunk) sequenceDataChunk).getSmafMessages();
         for (SmafMessage message : messages) {
-            events.add(new SmafEvent(message, 0l));
+            events.add(new SmafEvent(message, 0L));
         }
 
         return events;

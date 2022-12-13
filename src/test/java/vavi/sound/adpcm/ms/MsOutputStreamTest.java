@@ -14,11 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.logging.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +49,7 @@ public class MsOutputStreamTest {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
 //        outFile = new File("src/test/resources/vavi/sound/adpcm/ms/out_vavi.adpcm");
-Debug.println("outFile: " + outFile);
+Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
     /** */
@@ -72,7 +71,7 @@ Debug.println("outFile: " + outFile);
         os.flush();
         os.close();
 
-Debug.println("outFile: " + outFile.length());
+Debug.println(Level.FINE, "outFile: " + outFile.length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 
@@ -95,7 +94,7 @@ Debug.println("outFile: " + outFile.length());
         os.flush();
         os.close();
 
-Debug.println("outFile: " + outFile.length());
+Debug.println(Level.FINE, "outFile: " + outFile.length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 
@@ -115,7 +114,7 @@ Debug.println("outFile: " + outFile.length());
         int length = in.available();
         int spb = 500;
         int ll = 0;
-Debug.println("inFile: " + length);
+Debug.println(Level.FINE, "inFile: " + length);
         while (ll < length) {
             int bpb = Ms.getBytesPerBlock(1, spb);
             byte[] buffer = new byte[spb * 2];
@@ -144,7 +143,7 @@ Debug.println("inFile: " + length);
 
         os.flush();
         os.close();
-Debug.println("outFile: " + outFile.length());
+Debug.println(Level.FINE, "outFile: " + outFile.length());
 
         InputStream is = new MsInputStream(new BufferedInputStream(Files.newInputStream(outFile.toPath())),
                                            spb,

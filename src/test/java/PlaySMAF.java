@@ -30,7 +30,7 @@ public class PlaySMAF {
      * @param args smaf files ...
      */
     public static void main(String[] args) throws Exception {
-        final Sequencer sequencer = SmafSystem.getSequencer();
+        Sequencer sequencer = SmafSystem.getSequencer();
         sequencer.open();
 
 Synthesizer synthesizer = (Synthesizer) sequencer;

@@ -7,6 +7,7 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
@@ -25,7 +26,7 @@ public class MasterTrackSequenceDataChunk extends SequenceDataChunk {
     /** */
     public MasterTrackSequenceDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("MasterTrackSequenceData: " + size + " bytes");
+Debug.println(Level.FINE, "MasterTrackSequenceData: " + size + " bytes");
     }
 
     /** TODO how to get formatType from parent chunk ??? */

@@ -18,7 +18,7 @@ import vavi.sound.adpcm.Codec;
 class Yamaha implements Codec {
 
     /** */
-    private class Status {
+    private static class Status {
         int index = 127;
         int last = 0;
     }

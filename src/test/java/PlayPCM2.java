@@ -75,7 +75,7 @@ System.err.println(format);
         volume(line, .2d);
         line.start();
         byte[] buf = new byte[line.getBufferSize()];
-        int l = 0;
+        int l;
         while (is.available() > 0) {
             l = is.read(buf, 0, buf.length);
             line.write(buf, 0, l);

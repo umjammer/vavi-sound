@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.sequencer;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
@@ -39,17 +41,17 @@ public class UndefinedFunction implements MachineDependentFunction {
 
         int f1 = data[6] & 0xff;
         int f2 = -1;
-        int f3 = -1;
+        int f3;
         if (data.length > 8) {
             f3 = data[8] & 0xff;
-Debug.printf("undefined function: %02x %02x %02x\n", f1, f2, f3);
+Debug.printf(Level.INFO, "undefined function: %02x %02x %02x\n", f1, f2, f3);
         } else if (data.length > 7) {
             f2 = data[7] & 0xff;
-Debug.printf("undefined function: %02x %02x\n", f1, f2);
+Debug.printf(Level.INFO, "undefined function: %02x %02x\n", f1, f2);
         } else {
-Debug.printf("undefined function: %02x \n", f1);
+Debug.printf(Level.INFO, "undefined function: %02x \n", f1);
         }
-Debug.println(StringUtil.getDump(message.getMessage(), 128));
+Debug.println(Level.INFO, StringUtil.getDump(message.getMessage(), 128));
     }
 }
 

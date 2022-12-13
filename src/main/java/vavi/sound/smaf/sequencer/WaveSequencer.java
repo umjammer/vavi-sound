@@ -24,7 +24,7 @@ import vavi.util.properties.PrefixedClassPropertiesFactory;
 public interface WaveSequencer {
 
     /** for {@link WaveSequencer} */
-    final int META_FUNCTION_ID_SMAF = 0x03;
+    int META_FUNCTION_ID_SMAF = 0x03;
 
     /** */
     void sequence() throws InvalidSmafDataException;

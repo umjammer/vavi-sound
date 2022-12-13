@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
@@ -174,7 +175,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
                 audioDataLength += message.getLength();
             }
         }
-Debug.println("audioDataLength: " + audioDataLength);
+Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
         return audioDataLength;
     }
 
@@ -266,7 +267,7 @@ int l = 0;
 
         // 2. audio data
         for (int audioDataNumber = 0; audioDataNumber < audioDataCount; audioDataNumber++) {
-Debug.println("audio data number: " + audioDataNumber);
+Debug.println(Level.FINE, "audio data number: " + audioDataNumber);
 
             AudioDataMessage audioDataChunk = new AudioDataMessage(audioDataNumber);
             audioDataChunk.readFrom(is);
@@ -274,12 +275,12 @@ Debug.println("audio data number: " + audioDataNumber);
             audioDataChunks.add(audioDataChunk);
 
 l += audioDataChunk.getLength();
-Debug.println("adat length sum: " + l + " / " + dataLength);
+Debug.println(Level.FINE, "adat length sum: " + l + " / " + dataLength);
         }
 
         // 3. track
         for (int trackNumber = 0; trackNumber < tracksCount; trackNumber++) {
-Debug.println("track number: " + trackNumber);
+Debug.println(Level.FINE, "track number: " + trackNumber);
 
             Track track = mff.sequence.createTrack();
 
@@ -294,10 +295,10 @@ Debug.println("track number: " + trackNumber);
             trackChunk.readFrom(is);
 
 l += trackChunk.getLength();
-Debug.println("trac length sum: " + l + " / " + dataLength);
+Debug.println(Level.FINE, "trac length sum: " + l + " / " + dataLength);
         }
 
-Debug.println("is rest: " + is.available());
+Debug.println(Level.FINE, "is rest: " + is.available());
         return mff;
     }
 
@@ -314,13 +315,13 @@ Debug.println("is rest: " + is.available());
         // Track 0 の先頭に SubMessage を押し込む
         // TODO HeaderChunk ですべき予感？？？
         for (SubMessage headerSubChunk : headerSubChunks.values()) {
-            track.add(new MfiEvent(headerSubChunk, 0l));
+            track.add(new MfiEvent(headerSubChunk, 0L));
         }
 
         // Track 0 の header sub chunks の次に AudioDataMessage を押し込む
         for (AudioDataMessage audioDataChunk : audioDataChunks) {
             // TODO {@link MetaMessage} に変換？？？
-            track.add(new MfiEvent(audioDataChunk, 0l));
+            track.add(new MfiEvent(audioDataChunk, 0L));
         }
     }
 
@@ -361,7 +362,7 @@ Debug.println("is rest: " + is.available());
         if (subChunk != null) {
             return subChunk.getNoteLength();
         } else {
-Debug.println("no note info, use 0");
+Debug.println(Level.INFO, "no note info, use 0");
             return 0;
         }
     }

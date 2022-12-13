@@ -7,6 +7,7 @@
 package vavi.sound.sampled;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -41,8 +42,8 @@ public class MonauralInputFilter implements InputFilter {
             inAudioFormat.getFrameSize(),
             inAudioFormat.getFrameRate(),
             inAudioFormat.isBigEndian());
-Debug.println("OUT: " + outAudioFormat);
-Debug.println("OK: " + AudioSystem.isConversionSupported(outAudioFormat, inAudioFormat));
+Debug.println(Level.FINE, "OUT: " + outAudioFormat);
+Debug.println(Level.FINE, "OK: " + AudioSystem.isConversionSupported(outAudioFormat, inAudioFormat));
 
         return AudioSystem.getAudioInputStream(outAudioFormat, sourceAis);
     }

@@ -107,10 +107,10 @@ class SubData {
     /** */
     public String toString() {
         try {
-            return new String(tag) + "(" + data.length + "): lang: " + contentsCodeType + ": " + new String(data, "Windows-31J")
+            return tag + "(" + data.length + "): lang: " + contentsCodeType + ": " + new String(data, "Windows-31J")
                    /* + "\n" + StringUtil.getDump(data) */;
         } catch (UnsupportedEncodingException e) {
-            return new String(tag) + "(" + data.length + "): lang: " + contentsCodeType + ":\n" + StringUtil.getDump(data);
+            return tag + "(" + data.length + "): lang: " + contentsCodeType + ":\n" + StringUtil.getDump(data);
         }
     }
 }

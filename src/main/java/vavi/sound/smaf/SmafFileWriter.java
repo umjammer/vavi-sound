@@ -8,9 +8,9 @@ package vavi.sound.smaf;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.logging.Level;
 
 import vavi.util.Debug;
@@ -40,8 +40,8 @@ class SmafFileWriter {
 
     /** */
     public boolean isFileTypeSupported(int fileType) {
-        for (int i = 0; i < types.length; i++) {
-            if (types[i] == fileType) {
+        for (int type : types) {
+            if (type == fileType) {
                 return true;
             }
         }
@@ -93,7 +93,7 @@ Debug.printStackTrace(e);
     public int write(Sequence in, int fileType, File out)
         throws IOException {
 
-        OutputStream os = new BufferedOutputStream(new FileOutputStream(out));
+        OutputStream os = new BufferedOutputStream(Files.newOutputStream(out.toPath()));
         return write(in, fileType, os);
     }
 }

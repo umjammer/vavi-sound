@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.nec;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -45,7 +47,7 @@ public class Function242_1 implements MachineDependentFunction {
         this.volume = data[8] & 0x3f;                   //
 
         // 8 volume
-Debug.println("ADPCM volume: " + volume);
+Debug.println(Level.FINE, "ADPCM volume: " + volume);
     }
 
     /** */

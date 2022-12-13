@@ -97,7 +97,7 @@ Debug.println(meta.getType());
     /** */
     void debug1(byte[] adpcm) {
         try {
-            OutputStream os = null;
+            OutputStream os;
             if (fileName != null) {
 Debug.println("★★★★★★★★ adpcm out to file: " + fileName);
                 os = new BufferedOutputStream(new FileOutputStream(fileName, true));

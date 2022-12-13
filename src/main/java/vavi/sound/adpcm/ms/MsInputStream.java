@@ -10,6 +10,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
+import java.util.logging.Level;
 
 import vavi.io.OutputEngineInputStream;
 import vavi.util.Debug;
@@ -60,9 +61,9 @@ public class MsInputStream extends FilterInputStream {
                                          channels,
                                          blockSize,
                                          samplesPerBlock);
-Debug.println("numSamples: " + numSamples);
+Debug.println(Level.FINE, "numSamples: " + numSamples);
         this.available = numSamples * channels * bytesPerSample;
-Debug.println("available: " + available);
+Debug.println(Level.FINE, "available: " + available);
     }
 
     /** */

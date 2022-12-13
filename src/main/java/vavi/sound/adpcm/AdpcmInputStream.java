@@ -99,7 +99,7 @@ public abstract class AdpcmInputStream extends FilterInputStream {
     }
 
     /* */
-    public int read(byte b[], int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
         if (b == null) {
             throw new NullPointerException();
         } else if ((off < 0) || (off > b.length) || (len < 0) ||

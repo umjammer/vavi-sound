@@ -18,7 +18,7 @@ import vavi.sound.smaf.InvalidSmafDataException;
 public interface MachineDependentSequencer {
 
     /** for {@link MachineDependentSequencer} */
-    static final int META_FUNCTION_ID_MACHINE_DEPEND = 0x01;
+    int META_FUNCTION_ID_MACHINE_DEPEND = 0x01;
 
     /** */
     void sequence()

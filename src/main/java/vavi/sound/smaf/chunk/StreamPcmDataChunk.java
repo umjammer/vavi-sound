@@ -32,7 +32,7 @@ public class StreamPcmDataChunk extends Chunk {
     /** */
     public StreamPcmDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("StreamPcmData: " + size);
+Debug.println(Level.FINE, "StreamPcmData: " + size);
     }
 
     /** */

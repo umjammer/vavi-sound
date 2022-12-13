@@ -25,14 +25,14 @@ import vavi.util.properties.PrefixedPropertiesFactory;
 public interface MachineDependentSequencer {
 
     /** for {@link MachineDependentSequencer} */
-    static final int META_FUNCTION_ID_MACHINE_DEPEND = 0x01;
+    int META_FUNCTION_ID_MACHINE_DEPEND = 0x01;
 
     /** processes a message */
     void sequence(MachineDependentMessage message)
         throws InvalidMfiDataException;
 
     /** factory */
-    static final PrefixedPropertiesFactory<Integer, MachineDependentSequencer> factory =
+    PrefixedPropertiesFactory<Integer, MachineDependentSequencer> factory =
         new PrefixedClassPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "sequencer.vendor.");
 }
 

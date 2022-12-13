@@ -7,6 +7,7 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import vavi.util.Debug;
 
@@ -92,7 +93,7 @@ public class WaveType {
         this.waveFormat = (waveType & 0x7000) >> 12;
         this.waveSamplingFreq = samplingFreqs[(waveType & 0x0f00) >> 8];
         this.waveBaseBit = 4 * (((waveType & 0x00f0) >> 4) + 1);
-Debug.println("waveType: " + this);
+Debug.println(Level.FINE, "waveType: " + this);
     }
 
     /**
@@ -107,12 +108,12 @@ Debug.println("waveType: " + this);
      * </pre>
      */
     WaveType(byte[] waveType) throws IOException {
-Debug.printf("waveType: %02x %02x %02x\n", waveType[0], waveType[1], waveType[2]);
+Debug.printf(Level.FINE, "waveType: %02x %02x %02x\n", waveType[0], waveType[1], waveType[2]);
         this.waveChannels = (waveType[0] & 0x80) != 0 ? 2 : 1;
         this.waveFormat = tableForMwq[(waveType[0] & 0x70) >> 4];
         this.waveBaseBit = 4 * ((waveType[0] & 0x0f) + 1);
         this.waveSamplingFreq = ((waveType[1] & 0xff) << 8) | waveType[2] & 0xff;
-Debug.println("waveType: " + this);
+Debug.println(Level.FINE, "waveType: " + this);
     }
 
     /**

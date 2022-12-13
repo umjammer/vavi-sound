@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
+import java.util.logging.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -45,7 +46,7 @@ public class MaInputStreamTest {
     public void setup() throws IOException {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
-Debug.println("outFile: " + outFile);
+Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
     /** */
@@ -67,7 +68,7 @@ Debug.println("outFile: " + outFile);
             2,
             sampleRate,
             byteOrder.equals(ByteOrder.BIG_ENDIAN));
-Debug.println(audioFormat);
+Debug.println(Level.FINE, audioFormat);
 
         InputStream is = new MaInputStream(in, ByteOrder.LITTLE_ENDIAN);
 OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
@@ -76,7 +77,7 @@ OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath(
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(audioFormat);
         line.addLineListener(ev -> {
-Debug.println(ev.getType());
+Debug.println(Level.FINE, ev.getType());
             if (LineEvent.Type.STOP == ev.getType()) {
             }
         });

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.Debug;
@@ -29,7 +30,7 @@ public class OptionalDataChunk extends Chunk {
     /** */
     public OptionalDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("OptionalData: " + size + " bytes");
+Debug.println(Level.FINE, "OptionalData: " + size + " bytes");
     }
 
     /** */

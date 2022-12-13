@@ -18,6 +18,8 @@
 
 package vavi.sound.adpcm.ima;
 
+import java.util.logging.Level;
+
 import vavi.util.Debug;
 
 
@@ -60,7 +62,7 @@ class Ima {
     /** */
     private static int[][] stateAdjustTable = new int[ISSTMAX + 1][8];
 
-    /** */
+    /* */
     static {
         for (int i = 0; i <= ISSTMAX; i++) {
             for (int j = 0; j < 8; j++) {
@@ -104,7 +106,7 @@ class Ima {
         }
         int state = inBuffer[ip + 2] & 0xff;
         if (state > ISSTMAX) {
-Debug.println("IMA_ADPCM block ch" + channel + " initial-state (" + state + ") out of range");
+Debug.println(Level.FINE, "IMA_ADPCM block ch" + channel + " initial-state (" + state + ") out of range");
             state = 0;
         }
         // specs say to ignore ip[3] , but write it as 0

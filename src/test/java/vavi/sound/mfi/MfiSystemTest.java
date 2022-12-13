@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
 
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +36,7 @@ public class MfiSystemTest {
         Sequence sequence = MfiSystem.getSequence(new BufferedInputStream(Files.newInputStream(inPath)));
         sequencer.setSequence(sequence);
         sequencer.addMetaEventListener(meta -> {
-Debug.println(meta.getType());
+Debug.println(Level.FINE, meta.getType());
             if (meta.getType() == 47) {
                 cdl.countDown();
             }
@@ -56,19 +57,19 @@ Debug.println(meta.getType());
         Sequencer sequencer = MfiSystem.getSequencer();
         sequencer.open();
         for (int i = 0; i < args.length; i++) {
-Debug.println("START: " + args[i]);
+Debug.println(Level.FINE, "START: " + args[i]);
             Sequence sequence = MfiSystem.getSequence(new File(args[i]));
             sequencer.setSequence(sequence);
             if (i == args.length - 1) {
                 sequencer.addMetaEventListener(meta -> {
-Debug.println(meta.getType());
+Debug.println(Level.FINE, meta.getType());
                     if (meta.getType() == 47) {
                         sequencer.close();
                     }
                 });
             }
             sequencer.start();
-Debug.println("END: " + args[i]);
+Debug.println(Level.FINE, "END: " + args[i]);
         }
     }
 }

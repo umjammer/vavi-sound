@@ -8,6 +8,7 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.logging.Level;
 
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -41,7 +42,7 @@ public class GraphicsTrackSequenceDataChunk extends SequenceDataChunk {
         super(id, size);
 
         this.sequenceNumber = id[3];
-Debug.println("GraphicsTrackSequenceData[" + sequenceNumber + "]: " + size + " bytes");
+Debug.println(Level.FINE, "GraphicsTrackSequenceData[" + sequenceNumber + "]: " + size + " bytes");
     }
 
     /** */
@@ -62,14 +63,14 @@ Debug.println("GraphicsTrackSequenceData[" + sequenceNumber + "]: " + size + " b
         default:
             throw new InvalidSmafDataException("FormatType: " + formatType);
         }
-Debug.println("messages: " + messages.size());
+Debug.println(Level.FINE, "messages: " + messages.size());
     }
 
     /** formatType 0 */
     protected void readHandyPhoneStandard(DataInputStream dis)
         throws InvalidSmafDataException, IOException {
 
-        SmafMessage smafMessage = null;
+        SmafMessage smafMessage;
 
         while (dis.available() > 0) {
             // -------- duration --------
@@ -113,12 +114,12 @@ Debug.println("messages: " + messages.size());
                 byte[] data = new byte[size];
                 dis.readFully(data);
                 smafMessage = new UndefinedMessage(duration);
-Debug.printf("reserved: %02x\n", e1);
+Debug.printf(Level.FINE, "reserved: %02x\n", e1);
               } break;
             }
 
 //Debug.println(available() + ", " + smafMessage);
-Debug.println("message: " + smafMessage);
+Debug.println(Level.FINE, "message: " + smafMessage);
             messages.add(smafMessage);
         }
     }

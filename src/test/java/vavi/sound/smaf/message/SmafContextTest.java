@@ -11,6 +11,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.MidiSystem;
 
@@ -46,12 +47,12 @@ public class SmafContextTest {
         javax.sound.midi.Sequence midiSequence = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(inPath)));
         MidiFileFormat midiFileFormat = MidiSystem.getMidiFileFormat(new BufferedInputStream(Files.newInputStream(inPath)));
         int type = midiFileFormat.getType();
-Debug.println("type: " + type);
+Debug.println(Level.FINE, "type: " + type);
         vavi.sound.smaf.Sequence smafSequence = SmafSystem.toSmafSequence(midiSequence, type);
 
         Path outPath = dir.resolve("SmafContextTest.mmf");
         int r = SmafSystem.write(smafSequence, 0, Files.newOutputStream(outPath));
-Debug.println("write: " + r);
+Debug.println(Level.FINE, "write: " + r);
     }
 
     //-------------------------------------------------------------------------

@@ -18,6 +18,8 @@
 
 package vavi.sound.adpcm.ms;
 
+import java.util.logging.Level;
+
 import vavi.util.Debug;
 
 
@@ -44,7 +46,7 @@ import vavi.util.Debug;
 class Ms {
 
     /** */
-    private class State {
+    private static class State {
         /** step size */
         int step;
         int[] iCoef = new int[2];
@@ -133,7 +135,7 @@ class Ms {
         for (int channel = 0; channel < channels; channel++) {
             int bpred = inBuffer[ip++] & 0xff;
             if (bpred >= nCoef) {
-Debug.println("MSADPCM bpred >= nCoef, arbitrarily using 0");
+Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
                 bpred = 0;
             }
             state[channel] = new State();

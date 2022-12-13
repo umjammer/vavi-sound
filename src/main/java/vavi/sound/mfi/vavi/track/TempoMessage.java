@@ -200,14 +200,11 @@ if (timeBase < 0) {
             }
         }
 
-        Collections.sort(table,
-            new Comparator<Pair>() {
-                public int compare(Pair p1, Pair p2) {
-                    int v1 = p1.value;
-                    int v2 = p2.value;
-                    return v1 - v2;
-                }
-            });
+        table.sort((p1, p2) -> {
+            int v1 = p1.value;
+            int v2 = p2.value;
+            return v1 - v2;
+        });
 //for (int i = 0; i < table.size(); i++) {
 // Debug.println("(" + i + ") timeBaseTable[" + table.get(i).index + "], " + table.get(i).value);
 //}

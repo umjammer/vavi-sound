@@ -8,6 +8,7 @@ package vavi.sound.midi.mfi;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -32,21 +33,21 @@ public class MfiMidiFileWriter extends BasicMidiFileWriter {
 
     @Override
     public int[] getMidiFileTypes() {
-Debug.println("(1): " + StringUtil.expand(MfiSystem.getMfiFileTypes()));
+Debug.println(Level.FINE, "(1): " + Arrays.toString(MfiSystem.getMfiFileTypes()));
         return MfiSystem.getMfiFileTypes();
     }
 
     /** @param sequence MIDI sequence */
     @Override
     public int[] getMidiFileTypes(Sequence sequence) {
-Debug.println("(2): " + StringUtil.expand(MfiSystem.getMfiFileTypes()));
+Debug.println(Level.FINE, "(2): " + Arrays.toString(MfiSystem.getMfiFileTypes()));
         return MfiSystem.getMfiFileTypes();
     }
 
     /** @param fileType 0x88:MFi (vavi) をサポートします */
     @Override
     public boolean isFileTypeSupported(int fileType) {
-Debug.println("(1): fileType: " + fileType);
+Debug.println(Level.FINE, "(1): fileType: " + fileType);
         return MfiSystem.isFileTypeSupported(fileType);
     }
 
@@ -56,7 +57,7 @@ Debug.println("(1): fileType: " + fileType);
      */
     @Override
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
-Debug.println("(2): fileType: " + fileType);
+Debug.println(Level.FINE, "(2): fileType: " + fileType);
 //Debug.println(sequence);
         return MfiSystem.isFileTypeSupported(fileType);
     }
@@ -69,9 +70,9 @@ Debug.println("(2): fileType: " + fileType);
     @Override
     public int write(Sequence in, int fileType, OutputStream out)
         throws IOException {
-Debug.println("in: " + in);
-Debug.println("fileType: " + fileType);
-Debug.println("out: " + out);
+Debug.println(Level.FINE, "in: " + in);
+Debug.println(Level.FINE, "fileType: " + fileType);
+Debug.println(Level.FINE, "out: " + out);
         try {
             if (isFileTypeSupported(fileType)) {
                 vavi.sound.mfi.Sequence mfiSequence = MfiSystem.toMfiSequence(in, fileType);

@@ -77,14 +77,14 @@ throw e;
         case META_TEXT_EVENT:     // テキスト・イベント
         case META_COPYRIGHT:      // 著作権表示
         case META_NAME:           // シーケンス名またはトラック名
-Debug.println("meta " + message.getType() + ": " + MidiUtil.getDecodedMessage(message.getData()));
+Debug.println(Level.FINE, "meta " + message.getType() + ": " + MidiUtil.getDecodedMessage(message.getData()));
             break;
         case META_END_OF_TRACK:   // トラックの終わり
         case META_TEMPO:          // テンポ設定
 Debug.println(Level.FINE, "this handler ignore meta: " + message.getType());
             break;
         default:
-Debug.println("no meta sub handler: " + message.getType());
+Debug.println(Level.FINE, "no meta sub handler: " + message.getType());
             break;
         }
     }
@@ -148,7 +148,7 @@ Debug.printf(Level.WARNING, "unhandled function: %02x\n", functionId);
         byte[] data = message.getData();
         int id = (data[2] & 0xff) * 0xff + (data[3] & 0xff);
 //Debug.println("message id: " + id);
-        MachineDependentSequencer sequencer = MachineDependentSequencer.class.cast(SmafMessageStore.get(id));
+        MachineDependentSequencer sequencer = (MachineDependentSequencer) SmafMessageStore.get(id);
         sequencer.sequence();
     }
 

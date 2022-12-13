@@ -6,9 +6,12 @@
 
 package vavi.sound.mfi.vavi.mitsubishi;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
+import vavi.util.StringUtil;
 
 
 /**
@@ -59,12 +62,12 @@ public class Function132 extends Function131 {
                           data[13];
 
         int adpcmLength = data.length - HEADER_LENGTH;
-Debug.printf("ADPCM voice: " + channel + "ch, No.%d, mode=%d, continued=%d, playSize=%d, %d\n", packetId, mode, continued, length, adpcmLength);
-//Debug.dump(data);
+Debug.printf(Level.FINE, "ADPCM voice: " + channel + "ch, No.%d, mode=%d, continued=%d, playSize=%d, %d\n", packetId, mode, continued, length, adpcmLength);
+Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(data, 32));
 
         this.sampleRate = getSamplingRateInternal(format1);
         this.bits = getSamplingBitsInternal(format2);
-Debug.printf("sampling: %02x: rate=%d, bits=%d\n", data[8] & 0x3f, sampleRate, bits);
+Debug.printf(Level.FINE, "sampling: %02x: rate=%d, bits=%d\n", data[8] & 0x3f, sampleRate, bits);
 
         this.adpcm = new byte[adpcmLength];
         System.arraycopy(data, HEADER_LENGTH, adpcm, 0, adpcmLength);

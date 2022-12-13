@@ -38,7 +38,7 @@ public interface MachineDependentMfiWithVoiceMaker {
         throws InvalidMfiDataException, IOException;
 
     /** factory */
-    static final PrefixedPropertiesFactory<String, MachineDependentMfiWithVoiceMaker> factory =
+    PrefixedPropertiesFactory<String, MachineDependentMfiWithVoiceMaker> factory =
         new PrefixedClassPropertiesFactory<String, MachineDependentMfiWithVoiceMaker>("/vavi/sound/sampled/mfi/MfiWithVoiceMaker.properties", "class.") {
 
         @Override

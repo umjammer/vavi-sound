@@ -7,6 +7,7 @@
 
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
@@ -33,10 +34,10 @@ public class SoundFontTest {
         File file = new File(args[0]);
 
         Sequence sequence = MidiSystem.getSequence(file);
-Debug.println("sequence: " + sequence);
+Debug.println(Level.FINE, "sequence: " + sequence);
 
         Synthesizer synthesizer = MidiSystem.getSynthesizer();
-Debug.println("synthesizer: " + synthesizer);
+Debug.println(Level.FINE, "synthesizer: " + synthesizer);
         synthesizer.open();
 
         // sf
@@ -69,7 +70,7 @@ System.err.println("META: " + meta.getType());
             }
         };
         Sequencer sequencer = MidiSystem.getSequencer(false); // crux
-Debug.println("sequencer: " + sequencer);
+Debug.println(Level.FINE, "sequencer: " + sequencer);
         sequencer.open();
         sequencer.getTransmitter().setReceiver(synthesizer.getReceiver());
 

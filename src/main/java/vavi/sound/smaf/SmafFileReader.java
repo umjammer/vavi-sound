@@ -8,10 +8,10 @@ package vavi.sound.smaf;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 
 
 /**
@@ -35,7 +35,7 @@ class SmafFileReader {
         throws InvalidSmafDataException,
                IOException {
 
-        InputStream is = new BufferedInputStream(new FileInputStream(file));
+        InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
         return SmafFileFormat.readFrom(is);
     }
 
@@ -63,7 +63,7 @@ class SmafFileReader {
         throws InvalidSmafDataException,
                IOException {
 
-        InputStream is = new BufferedInputStream(new FileInputStream(file));
+        InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
         return getSequence(is);
     }
 

@@ -30,22 +30,22 @@ public class MachineDependentSequencerTest {
 
         MachineDependentSequencer mds = machineDependentSequencerFactory.get(97);
 Debug.println(mds);
-        assertTrue(vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer.class.isInstance(mds));
+        assertTrue(mds instanceof vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer);
 
         mds = machineDependentSequencerFactory.get(17);
-        assertTrue(vavi.sound.mfi.vavi.nec.NecSequencer.class.isInstance(mds));
+        assertTrue(mds instanceof vavi.sound.mfi.vavi.nec.NecSequencer);
 
         mds = machineDependentSequencerFactory.get(33);
-        assertTrue(vavi.sound.mfi.vavi.fujitsu.FujitsuSequencer.class.isInstance(mds));
+        assertTrue(mds instanceof vavi.sound.mfi.vavi.fujitsu.FujitsuSequencer);
 
         mds = machineDependentSequencerFactory.get(49);
-        assertTrue(vavi.sound.mfi.vavi.sony.SonySequencer.class.isInstance(mds));
+        assertTrue(mds instanceof vavi.sound.mfi.vavi.sony.SonySequencer);
 
         mds = machineDependentSequencerFactory.get(65);
-        assertTrue(vavi.sound.mfi.vavi.panasonic.PanasonicSequencer.class.isInstance(mds));
+        assertTrue(mds instanceof vavi.sound.mfi.vavi.panasonic.PanasonicSequencer);
 
         mds = machineDependentSequencerFactory.get(113);
-        assertTrue(vavi.sound.mfi.vavi.sharp.SharpSequencer.class.isInstance(mds));
+        assertTrue(mds instanceof vavi.sound.mfi.vavi.sharp.SharpSequencer);
     }
 }
 

@@ -35,7 +35,7 @@ public interface MfiConvertible {
         throws InvalidMfiDataException;
 
     /** factory */
-    static final PrefixedPropertiesFactory<String, MfiConvertible> factory =
+    PrefixedPropertiesFactory<String, MfiConvertible> factory =
         new PrefixedClassPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "midi.");
 }
 

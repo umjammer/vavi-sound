@@ -28,7 +28,7 @@ import vavi.sound.midi.MidiUtil;
  * Copyright 情報 MFi Header Sub Chunk.
  * <pre>
  *  &quot;copy&quot; n bytes: copyright
- *  MIDI {@link MidiConstants#META_COPYRIGHT META_COPYRIGHT (0x02)}
+ *  MIDI {@link MidiConstants.MetaEvent#META_COPYRIGHT META_COPYRIGHT (0x02)}
  * </pre>
  * <li> TODO use {@link CodeMessage}
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)

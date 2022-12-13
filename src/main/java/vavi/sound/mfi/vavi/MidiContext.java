@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
@@ -36,7 +38,7 @@ public class MidiContext {
         SOUND_SET,
         /** 未使用 */
         UNUSED
-    };
+    }
 
     /** channel 9 はデフォルトでリズム */
     public static final int CHANNEL_DRUM = 9;
@@ -100,7 +102,7 @@ public class MidiContext {
      */
     public void setDrum(int channel, ChannelConfiguration value) {
         if (drumSwapChannel != CHANNEL_UNUSED && channel == drumSwapChannel) {
-Debug.println("already swapped: " + channel + ", " + value);
+Debug.println(Level.FINE, "already swapped: " + channel + ", " + value);
         } else {
             drums[channel] = value;
         }
@@ -110,12 +112,12 @@ Debug.println("already swapped: " + channel + ", " + value);
             for (int k = MAX_MIDI_CHANNELS - 1; k >= 0; k--) {
                 if (k != CHANNEL_DRUM && drums[k] == ChannelConfiguration.UNUSED) {
                     drumSwapChannel = k; // TODO 複数対応？
-Debug.println("channel 9 -> " + k);
+Debug.println(Level.FINE, "channel 9 -> " + k);
                     break;
                 }
             }
 if (drumSwapChannel == CHANNEL_UNUSED) {
-Debug.println("cannot swap: " + channel + ", " + value);
+Debug.println(Level.FINE, "cannot swap: " + channel + ", " + value);
 }
         }
     }
@@ -153,7 +155,7 @@ Debug.println("cannot swap: " + channel + ", " + value);
      */
     public int setProgram(int channel, int program) {
         if (channel != drumSwapChannel && drums[channel] == ChannelConfiguration.PERCUSSION) {
-Debug.println("drum always zero:[" + channel + "]: " + program);
+Debug.println(Level.FINE, "drum always zero:[" + channel + "]: " + program);
             program = 0;
         }
 
@@ -170,7 +172,7 @@ Debug.println("drum always zero:[" + channel + "]: " + program);
      */
     public int setBank(int channel, int bank) {
         if (channel != drumSwapChannel && drums[channel] == ChannelConfiguration.PERCUSSION) {
-Debug.println("drum always zero:[" + channel + "]: " + bank);
+Debug.println(Level.FINE, "drum always zero:[" + channel + "]: " + bank);
             bank = 0;
         }
 
@@ -265,7 +267,7 @@ Debug.println("drum always zero:[" + channel + "]: " + bank);
         int pitch =
 //          (int) ((pb * rgb * 100f / 32f) + ((fpb * rgb * 100f) / (32f * 32f)));
             (pb * rg * 100 / 32) + ((fpb * rg * 100) / (32 * 32)) / 20;
-Debug.println("pitch[" + channel + "]: " + pitch);
+Debug.println(Level.FINE, "pitch[" + channel + "]: " + pitch);
         return pitch;
     }
 
@@ -293,7 +295,7 @@ Debug.println("pitch[" + channel + "]: " + pitch);
             }
         }
 
-Debug.println("no tempo message in track 0");
+Debug.println(Level.INFO, "no tempo message in track 0");
         return 48; // MFi default time base
     }
 }

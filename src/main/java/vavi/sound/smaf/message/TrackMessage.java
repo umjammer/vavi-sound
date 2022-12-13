@@ -9,6 +9,7 @@ package vavi.sound.smaf.message;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.SmafFileFormat;
@@ -44,7 +45,7 @@ public class TrackMessage {
 
         dos.writeBytes(getType());
         dos.writeInt(getDataLength());
-Debug.println("track: " + trackNumber + ": " + getDataLength());
+Debug.println(Level.FINE, "track: " + trackNumber + ": " + getDataLength());
         for (int j = 0; j < track.size(); j++) {
             SmafEvent event = track.get(j);
             SmafMessage message = event.getMessage();

@@ -68,7 +68,7 @@ class HeaderChunk {
     private Support support;
 
     /** */
-    public static interface Support {
+    public interface Support {
         /**
          * {@link #support} から {@link SubMessage} を取り出します。
          * {@link SubMessage} は {@link Sequence#getTracks()}[0] の先頭にあるのが仕様

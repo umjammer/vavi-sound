@@ -8,6 +8,7 @@ package vavi.sound.adpcm.oki;
 
 import java.io.InputStream;
 import java.nio.ByteOrder;
+import java.util.logging.Level;
 
 import vavi.sound.adpcm.AdpcmInputStream;
 import vavi.sound.adpcm.Codec;
@@ -33,7 +34,7 @@ public class OkiInputStream extends AdpcmInputStream {
      */
     public OkiInputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN); // oki adpcm は little endian 固定
-Debug.println(this.in);
+Debug.println(Level.FINE, this.in);
     }
 }
 

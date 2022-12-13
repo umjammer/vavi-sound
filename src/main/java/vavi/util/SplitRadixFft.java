@@ -689,7 +689,7 @@ public abstract class SplitRadixFft {
     /**
      * 2nd
      */
-    private static final void bitrv2(int n, int[] ip, int ipP, double[] a) {
+    private static void bitrv2(int n, int[] ip, int ipP, double[] a) {
         int j, j1, k, k1, l, m, m2;
         double xr, xi, yr, yi;
 
@@ -790,7 +790,7 @@ public abstract class SplitRadixFft {
     /**
      * 2nd
      */
-    private static final void bitrv2conj(int n, int[] ip, int ipP, double[] a) {
+    private static void bitrv2conj(int n, int[] ip, int ipP, double[] a) {
         int j, j1, k, k1, l, m, m2;
         double xr, xi, yr, yi;
 
@@ -1117,7 +1117,7 @@ public abstract class SplitRadixFft {
     }
 
     /** */
-    private static final void cftmdl(int n, int l, double[] a, double[] w) {
+    private static void cftmdl(int n, int l, double[] a, double[] w) {
         int j, j1, j2, j3, k, k1, k2, m, m2;
         double wk1r, wk1i, wk2r, wk2i, wk3r, wk3i;
         double x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;

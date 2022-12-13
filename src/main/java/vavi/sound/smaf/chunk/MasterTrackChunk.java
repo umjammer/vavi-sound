@@ -29,7 +29,7 @@ public class MasterTrackChunk extends TrackChunk {
     /** */
     public MasterTrackChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("MasterTrack: " + size);
+Debug.println(Level.FINE, "MasterTrack: " + size);
     }
 
     /** */
@@ -38,7 +38,7 @@ Debug.println("MasterTrack: " + size);
 
         this.formatType = FormatType.values()[dis.readUnsignedByte()];
         this.sequenceType = SequenceType.values()[dis.readUnsignedByte()];
-Debug.println("sequenceType: " + sequenceType);
+Debug.println(Level.FINE, "sequenceType: " + sequenceType);
         this.durationTimeBase = dis.readUnsignedByte();
 //Debug.println("durationTimeBase: " + StringUtil.toHex2(durationTimeBase));
         int optionSize = dis.readUnsignedByte();

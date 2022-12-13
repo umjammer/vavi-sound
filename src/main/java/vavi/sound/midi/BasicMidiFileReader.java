@@ -10,10 +10,10 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -59,7 +59,7 @@ public abstract class BasicMidiFileReader extends MidiFileReader {
                IOException {
 
 Debug.println(Level.FINE, "file: " + file);
-        InputStream is = new BufferedInputStream(new FileInputStream(file));
+        InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
         return getMidiFileFormat(is);
     }
 
@@ -77,7 +77,7 @@ Debug.println(Level.FINE, "file: " + file);
         throws InvalidMidiDataException,
                IOException {
 
-        InputStream is = new BufferedInputStream(new FileInputStream(file));
+        InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
         return getSequence(is);
     }
 

@@ -17,7 +17,7 @@ package vavi.sound.mfi;
 public interface MfiDevice {
 
     /** */
-    static class Info {
+    class Info {
 
         /** */
         String name;

@@ -30,7 +30,7 @@ public class PlayMFi {
      * @param args mfi files ...
      */
     public static void main(String[] args) throws Exception {
-        final Sequencer sequencer = MfiSystem.getSequencer();
+        Sequencer sequencer = MfiSystem.getSequencer();
         sequencer.open();
 Synthesizer synthesizer = (Synthesizer) sequencer;
 // sf

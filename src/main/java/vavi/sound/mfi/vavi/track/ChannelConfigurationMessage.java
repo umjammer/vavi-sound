@@ -6,6 +6,7 @@
 
 package vavi.sound.mfi.vavi.track;
 
+import java.util.logging.Level;
 import javax.sound.midi.MidiEvent;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
@@ -74,7 +75,7 @@ public class ChannelConfigurationMessage extends ShortMessage
      * @return 何も返しません
      */
     public MidiEvent[] getMidiEvents(MidiContext context) {
-Debug.println(this);
+Debug.println(Level.FINE, this);
         context.setDrum(getChannel(), isDrum() ? MidiContext.ChannelConfiguration.PERCUSSION :
                                                  MidiContext.ChannelConfiguration.SOUND_SET);
 

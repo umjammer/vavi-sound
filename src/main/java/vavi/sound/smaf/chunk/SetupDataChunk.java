@@ -34,7 +34,7 @@ public class SetupDataChunk extends Chunk {
     /** */
     public SetupDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("SetupData: " + size + " bytes");
+Debug.println(Level.FINE, "SetupData: " + size + " bytes");
     }
 
     /** */
@@ -59,7 +59,7 @@ Debug.println("SetupData: " + size + " bytes");
             readMobileStandard(dis);
             break;
         }
-Debug.println("messages: " + messages.size());
+Debug.println(Level.FINE, "messages: " + messages.size());
     }
 
     /**
@@ -75,7 +75,7 @@ Debug.println("messages: " + messages.size());
      */
     private void readHandyPhoneStandard(MyDataInputStream dis) throws InvalidSmafDataException, IOException {
 
-        SmafMessage smafMessage = null;
+        SmafMessage smafMessage;
 
         while (dis.available() > 0) {
             // -------- event --------
@@ -111,7 +111,7 @@ Debug.printf(Level.WARNING, "unhandled: %02x\n", e1);
     /** formatType 1, 2 */
     private void readMobileStandard(MyDataInputStream dis) throws InvalidSmafDataException, IOException {
 
-        SmafMessage smafMessage = null;
+        SmafMessage smafMessage;
 
         while (dis.available() > 0) {
             // event

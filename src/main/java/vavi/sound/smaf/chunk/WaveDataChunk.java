@@ -9,6 +9,7 @@ package vavi.sound.smaf.chunk;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
@@ -31,7 +32,7 @@ public class WaveDataChunk extends Chunk {
         super(id, size);
 
         waveNumber = id[3] & 0xff;
-Debug.println("WaveData[" + waveNumber + "]: " + size + " bytes");
+Debug.println(Level.FINE, "WaveData[" + waveNumber + "]: " + size + " bytes");
     }
 
     /** */

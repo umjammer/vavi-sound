@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
+import java.util.logging.Level;
 
 import vavi.sound.adpcm.ccitt.G721InputStream;
 import vavi.sound.adpcm.ccitt.G721OutputStream;
@@ -48,7 +49,7 @@ public class FuetrekAudioEngine extends BasicAudioEngine {
         if (data[streamNumber].channel != -1) {
             // from MachineDependent
             if (streamNumber % 2 == 1 && data[streamNumber].channel % 2 == 1 && (data[streamNumber - 1] != null && data[streamNumber - 1].channel % 2 == 0)) {
-Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
+Debug.println(Level.FINE, "always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
                 return -1;
             }
 

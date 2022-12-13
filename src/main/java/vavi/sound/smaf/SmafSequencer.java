@@ -190,10 +190,7 @@ Debug.println(e);
                 } catch (InvalidSmafDataException e) {
 Debug.println(e);
                 }
-catch (RuntimeException e) {
-Debug.printStackTrace(e);
- throw e;
-} catch (Error e) {
+catch (RuntimeException | Error e) {
 Debug.printStackTrace(e);
  throw e;
 }

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
+import java.util.logging.Level;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -20,6 +21,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 import vavi.util.Debug;
+import vavi.util.StringUtil;
 
 import static vavi.sound.SoundUtil.volume;
 
@@ -80,7 +82,7 @@ public abstract class BasicAudioEngine implements AudioEngine {
 
         int channels = getChannels(streamNumber);
         if (channels == -1) {
-Debug.println("always used: no: " + streamNumber + ", ch: " + this.data[streamNumber].channel);
+Debug.println(Level.INFO, "always used: no: " + streamNumber + ", ch: " + this.data[streamNumber].channel);
             return;
         }
 
@@ -92,7 +94,7 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + this.data[streamNu
             2 * channels,
             this.data[streamNumber].sampleRate,
             false);
-Debug.println(audioFormat);
+Debug.println(Level.FINE, audioFormat);
 
         try {
 
@@ -111,12 +113,12 @@ Debug.println(audioFormat);
             while (iss[0].available() > 0) {
                 if (channels == 1) {
                     int l = iss[0].read(buf, 0, 1024);
-//Debug.dump(buf, 64);
+Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(buf, 64));
                     line.write(buf, 0, l);
 // debug3(os);
                 } else {
                     int lL = iss[0].read(buf, 0, 512);
-                    /*int lR = */iss[1].read(buf, 512, 512);
+                    int lR = iss[1].read(buf, 512, 512);
 //System.err.println("l : " + lL + ", r: " + lR);
                     for (int i = 0; i < lL / 2; i++) {
                         byte[] temp = new byte[4];
@@ -132,9 +134,7 @@ Debug.println(audioFormat);
             line.stop();
             line.close();
 // debug4(os);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } catch (LineUnavailableException e) {
+        } catch (IOException | LineUnavailableException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -152,11 +152,11 @@ Debug.println(audioFormat);
                 InputStream is = new ByteArrayInputStream(pcm);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 OutputStream os = getOutputStream(baos);
-Debug.println("pcm length: " + is.available());
+Debug.println(Level.FINE, "pcm length: " + is.available());
                 while (is.available() > 0) {
                     int c = is.read();
                     if (c == -1) {
-Debug.println("read returns -1");
+Debug.println(Level.FINE, "read returns -1");
                         break;
                     }
                     os.write(c);
@@ -170,11 +170,11 @@ Debug.println("read returns -1");
                 InputStream is = new ByteArrayInputStream(monos[0]);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 OutputStream os = getOutputStream(baos);
-Debug.println("pcm L length: " + is.available());
+Debug.println(Level.FINE, "pcm L length: " + is.available());
                 while (is.available() > 0) {
                     int c = is.read();
                     if (c == -1) {
-Debug.println("Illegal EOF L: " + is.available());
+Debug.println(Level.FINE, "Illegal EOF L: " + is.available());
                         break;
                     }
                     os.write(c);
@@ -184,11 +184,11 @@ Debug.println("Illegal EOF L: " + is.available());
                 is = new ByteArrayInputStream(monos[1]);
                 baos = new ByteArrayOutputStream();
                 os = getOutputStream(baos);
-Debug.println("pcm R length: " + is.available());
+Debug.println(Level.FINE, "pcm R length: " + is.available());
                 while (is.available() > 0) {
                     int c = is.read();
                     if (c == -1) {
-Debug.println("Illegal EOF R: " + is.available());
+Debug.println(Level.FINE, "Illegal EOF R: " + is.available());
                         break;
                     }
                     os.write(c);

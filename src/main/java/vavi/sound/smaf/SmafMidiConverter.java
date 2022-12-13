@@ -71,7 +71,7 @@ private Set<Class<? extends SmafMessage>> uc = new HashSet<>();
         MidiContext midiContext = new MidiContext();
 
         int resolution = midiContext.getResolution(smafTracks);
-Debug.println("resolution: " + resolution);
+Debug.println(Level.FINE, "resolution: " + resolution);
         Sequence midiSequence = new SmafVaviSequence(Sequence.PPQ, resolution, 1);
         javax.sound.midi.Track midiTrack = midiSequence.getTracks()[0];
 
@@ -100,7 +100,7 @@ if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.PitchBendMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.PanMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.ExpressionMessage)) {
- Debug.println("midi convertible(" + i + ":" + j + "): " + smafMessage);
+ Debug.println(Level.FINE, "midi convertible(" + i + ":" + j + "): " + smafMessage);
 }
 //if (smafMessage instanceof vavi.sound.smaf.message.NoteMessage) {
 // int gateTime = ((vavi.sound.smaf.message.NoteMessage) smafMessage).getGateTime();
@@ -110,15 +110,15 @@ if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
 //}
                     MidiEvent[] midiEvents = ((MidiConvertible) smafMessage).getMidiEvents(midiContext);
                     if (midiEvents != null) {
-                        for (int k = 0; k < midiEvents.length; k++) {
-                            midiTrack.add(midiEvents[k]);
+                        for (MidiEvent midiEvent : midiEvents) {
+                            midiTrack.add(midiEvent);
 //                          addSmafMessage(midiTrack, midiEvents[k]);
                         }
                     }
                 } else if (smafMessage instanceof MetaMessage) {
-                    Debug.println("meta: " + MetaMessage.class.cast(smafMessage).getType());
-                    for (Map.Entry<String, Object> entry : MetaMessage.class.cast(smafMessage).data.entrySet()) {
-                        Debug.println(entry.getKey() + "=" + entry.getValue());
+Debug.println(Level.FINE, "meta: " + ((MetaMessage) smafMessage).getType());
+                    for (Map.Entry<String, Object> entry : ((MetaMessage) smafMessage).data.entrySet()) {
+Debug.println(Level.FINE, entry.getKey() + "=" + entry.getValue());
                     }
                 } else {
 if (!uc.contains(smafMessage.getClass())) {
@@ -148,7 +148,7 @@ if (!uc.contains(smafMessage.getClass())) {
             midiTrack.remove(removedMidiEvent);
             midiTrack.add(midiEvent);
             midiTrack.add(removedMidiEvent);
-Debug.println("★★★★★ : " + MidiUtil.paramString(midiEvent.getMessage()) + ", " + MidiUtil.paramString(removedMidiEvent.getMessage()));
+Debug.println(Level.INFO, "★★★★★ : " + MidiUtil.paramString(midiEvent.getMessage()) + ", " + MidiUtil.paramString(removedMidiEvent.getMessage()));
         } else {
             midiTrack.add(midiEvent);
         }

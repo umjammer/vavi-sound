@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.audio;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.vavi.track.CuePointMessage;
@@ -36,7 +38,7 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
     public static MfiEvent getMasterVolumeEvent(int masterVolume) {
         int realMasterVolume = (int) (masterVolume * maxMasterVolume / 100f);
         MfiMessage message = new MasterVolumeMessage(0x00, 0xff, 0xb0, realMasterVolume);
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /**
@@ -45,13 +47,13 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
      */
     public static MfiEvent getCuePointEvent(boolean start) {
         MfiMessage message = new CuePointMessage(0x00, start ? 0x00 : 0x01);
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /** */
     public static MfiEvent getTempoEvent(float time, int sampleRate) {
         TempoMessage message = getTempoMessage(time, sampleRate);
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /** */
@@ -61,7 +63,7 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
         float aDelta;
         TempoMessage message;
         while (true) {
-Debug.printf("tempo: %d, timeBase: 0x02x\n", baseTempo, baseTimeBase);
+Debug.printf(Level.FINE, "tempo: %d, timeBase: 0x02x\n", baseTempo, baseTimeBase);
             message = new TempoMessage(0x00, 0xff, baseTimeBase, baseTempo);
             aDelta = (60f / message.getTempo()) / message.getTimeBase();
             if (Math.round(time / aDelta) > 255) {
@@ -74,7 +76,7 @@ Debug.printf("tempo: %d, timeBase: 0x02x\n", baseTempo, baseTimeBase);
                         if ((baseTempo / 2) > 0) {
                             baseTempo /= 2;
                         } else {
-Debug.println("over limit");
+Debug.println(Level.INFO, "over limit");
                             break;
                         }
                     }
@@ -90,7 +92,7 @@ Debug.println("over limit");
     public static int getDelta(float time, int sampleRate) {
         TempoMessage message = getTempoMessage(time, sampleRate);
         float aDelta = (60f / message.getTempo()) / message.getTimeBase();
-Debug.println("a delta: " + aDelta + ", tempo: " + message.getTempo() + ", " + message.getTimeBase());
+Debug.println(Level.FINE, "a delta: " + aDelta + ", tempo: " + message.getTempo() + ", " + message.getTimeBase());
         return Math.round(time / aDelta);
     }
 
@@ -101,13 +103,13 @@ Debug.println("a delta: " + aDelta + ", tempo: " + message.getTempo() + ", " + m
      * @return TempoMessage is always the same instance
      */
     public static MfiEvent getTempoEvent() {
-        return new MfiEvent(tempoMessageOld, 0l);
+        return new MfiEvent(tempoMessageOld, 0L);
     }
 
     /** older version */
     public static int getDelta(float time) {
         float aDelta = (60f / tempoMessageOld.getTempo()) / tempoMessageOld.getTimeBase();
-Debug.println("a delta: " + aDelta + ", tempo: " + tempoMessageOld.getTempo() + ", " + tempoMessageOld.getTimeBase());
+Debug.println(Level.FINE, "a delta: " + aDelta + ", tempo: " + tempoMessageOld.getTempo() + ", " + tempoMessageOld.getTimeBase());
         return Math.round(time / aDelta);
     }
 }

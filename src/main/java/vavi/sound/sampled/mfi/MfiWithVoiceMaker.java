@@ -9,6 +9,7 @@ package vavi.sound.sampled.mfi;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -143,21 +144,21 @@ t = System.currentTimeMillis();
 
         // copyright
         message = new SorcMessage(sorc);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         // title
         String title = file.getName();
         title = title.substring(0, title.lastIndexOf('.'));
         message = new TitlMessage(title);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         // version
         message = new VersMessage(vers);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         // maker
         message = new ProtMessage(prot);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         // machine depend, do every thing!
         for (MfiEvent event: mdvm.getEvents(data, time, samplingRate, bits, channels, masterVolume, adpcmVolume)) {
@@ -166,14 +167,14 @@ t = System.currentTimeMillis();
 
         // eot
         message = new EndOfTrackMessage(0, 0);
-        track.add(new MfiEvent(message, 0l));
+        track.add(new MfiEvent(message, 0L));
 
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
 
         int r = MfiSystem.write(sequence, VaviMfiFileFormat.FILE_TYPE, file);
-Debug.println("write: " + r);
+Debug.println(Level.FINE, "write: " + r);
         return r;
     }
 
@@ -189,7 +190,7 @@ Debug.println("write: " + r);
     /** */
     protected static String defaultModel;
 
-    /** */
+    /* */
     static {
         try {
             Properties props = new Properties();

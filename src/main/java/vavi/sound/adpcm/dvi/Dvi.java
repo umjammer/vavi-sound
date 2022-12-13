@@ -73,7 +73,7 @@ class Dvi implements Codec {
     };
 
     /** */
-    private class State {
+    private static class State {
         /** */
         int valPrev;
         /** */

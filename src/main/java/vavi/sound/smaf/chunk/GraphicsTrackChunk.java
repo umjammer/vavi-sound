@@ -44,7 +44,7 @@ public class GraphicsTrackChunk extends TrackChunk {
     /** */
     public GraphicsTrackChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("Graphics[" + trackNumber + "]: " + size);
+Debug.println(Level.FINE, "Graphics[" + trackNumber + "]: " + size);
     }
 
     /** */
@@ -161,7 +161,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
 
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
-        events.add(new SmafEvent(metaMessage, 0l));
+        events.add(new SmafEvent(metaMessage, 0L));
 
         return null; // TODO
     }

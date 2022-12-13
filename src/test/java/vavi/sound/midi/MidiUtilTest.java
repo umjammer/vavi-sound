@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.util.logging.Level;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
@@ -71,10 +72,10 @@ public class MidiUtilTest {
         File file = new File(args[0]);
 
         Sequence sequence = MidiSystem.getSequence(file);
-Debug.println("sequence: " + sequence);
+Debug.println(Level.FINE, "sequence: " + sequence);
 
         Sequencer sequencer = MidiSystem.getSequencer();
-Debug.println("sequencer: " + sequencer);
+Debug.println(Level.FINE, "sequencer: " + sequencer);
         sequencer.open();
         sequencer.setSequence(sequence);
         sequencer.start();

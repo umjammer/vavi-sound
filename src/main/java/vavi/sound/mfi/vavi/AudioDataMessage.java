@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -131,15 +132,15 @@ public class AudioDataMessage extends MfiMessage
 
         // 1. recalc
         int dataLength = data.length;
-Debug.println("dataLength: " + dataLength);
+Debug.println(Level.FINE, "dataLength: " + dataLength);
         int subChunksLength = 0;
         for (SubMessage subChunk : subChunks.values()) {
             subChunksLength += 4 + 2 + subChunk.getDataLength(); // type + length + ...
         }
-Debug.println("subChunksLength: " + subChunksLength);
+Debug.println(Level.FINE, "subChunksLength: " + subChunksLength);
         int headerLength = 1 + 1 + subChunksLength; // format + attribute + ...
         int audioDataLength = 2 + headerLength + dataLength; // headerLength + ...
-Debug.println("audioDataLength: " + audioDataLength);
+Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
 
         // 2. write
         DataOutputStream dos = new DataOutputStream(os);
@@ -183,7 +184,7 @@ Debug.println("audioDataLength: " + audioDataLength);
         int headerLength = dis.readUnsignedShort();
         this.format = dis.readUnsignedByte();
         this.attribute = dis.readUnsignedByte();
-Debug.printf("adat header: %d: f: %02x, a: %02x", headerLength, format, attribute);
+Debug.printf(Level.FINE, "adat header: %d: f: %02x, a: %02x", headerLength, format, attribute);
 
         // sub chunks
         int l = 0;
@@ -191,14 +192,14 @@ Debug.printf("adat header: %d: f: %02x, a: %02x", headerLength, format, attribut
             SubMessage subChunk = SubMessage.readFrom(is);
             subChunks.put(subChunk.getSubType(), subChunk);
             l += subChunk.getDataLength() + 4 + 2; // + type + length
-Debug.println("audio subchunk length sum: " + l + " / " + (headerLength - 2));
+Debug.println(Level.FINE, "audio subchunk length sum: " + l + " / " + (headerLength - 2));
         }
 
         // data
         int dataLength = audioDataLength - (headerLength + 1 + 1); // + format + attribute
         data = new byte[dataLength]; // TODO 全部のデータ含めるべき
         dis.readFully(data, 0, dataLength);
-Debug.println("adat length[" + audioDataNumber + "]: " + dataLength + " bytes\n" + StringUtil.getDump(data, 16));
+Debug.println(Level.FINE, "adat length[" + audioDataNumber + "]: " + dataLength + " bytes\n" + StringUtil.getDump(data, 16));
 
         //
         this.length = audioDataLength + 4 + 4; // + type + length
@@ -214,15 +215,15 @@ Debug.println("adat length[" + audioDataNumber + "]: " + dataLength + " bytes\n"
 
         // calc
         int dataLength = data.length;
-Debug.println("dataLength: " + dataLength);
+Debug.println(Level.FINE, "dataLength: " + dataLength);
         int subChunksLength = 0;
         for (SubMessage subChunk : subChunks.values()) {
             subChunksLength += 4 + 2 + subChunk.getDataLength(); // type + length + ...
         }
-Debug.println("subChunksLength: " + subChunksLength);
+Debug.println(Level.FINE, "subChunksLength: " + subChunksLength);
         int headerLength = 1 + 1 + subChunksLength; // format + attribute + ...
         int audioDataLength = 2 + headerLength + dataLength; // headerLength + ...
-Debug.println("audioDataLength: " + audioDataLength);
+Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
         this.length = audioDataLength + 4 + 4; // + type + length
     }
 

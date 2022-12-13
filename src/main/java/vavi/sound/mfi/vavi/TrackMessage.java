@@ -158,7 +158,7 @@ Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
         int l = 0;
         while (l < trackLength) {
             MfiMessage message = getMessage(dis);
-            track.add(new MfiEvent(message, 0l));
+            track.add(new MfiEvent(message, 0L));
 
             l += message.getLength();
 //Debug.println("track[" + trackNumber + "] event length sum: " + l + " / " + trackLlength);
@@ -203,7 +203,7 @@ Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
 
         int data1 = dis.readUnsignedByte();    // 拡張ステータス
 
-        MfiMessage message = null;
+        MfiMessage message;
         if (data1 >= 0x00 && data1 <= 0x7f) {
             // 拡張ステータス A ... LongMessage
             message = LongMessageFactory.getMessage(delta, status, data1, dis, exst);
@@ -349,9 +349,8 @@ Debug.printf(Level.WARNING, "sysex unhandled: delta: %02x, status: %02x, extende
                 props.load(TrackMessage.class.getResourceAsStream(path));
 
                 //
-                Iterator<?> i = props.keySet().iterator();
-                while (i.hasNext()) {
-                    String key = (String) i.next();
+                for (Object o : props.keySet()) {
+                    String key = (String) o;
                     if (key.matches("mfi\\.track\\.\\d+\\.e\\.\\d+")) {
                         Class<?> clazz = Class.forName(props.getProperty(key));
 //Debug.println("sysex class: " + StringUtil.getClassName(clazz));
@@ -389,7 +388,7 @@ Debug.printStackTrace(Level.SEVERE, e);
             //
             String key = String.format("mfi.track.%d.%c.%d", status, 'b', data1);
 
-            Constructor<? extends MfiMessage> constructor = null;
+            Constructor<? extends MfiMessage> constructor;
             if (shortMessageConstructors.containsKey(key)) {
                 constructor = shortMessageConstructors.get(key);
             } else {
@@ -416,9 +415,8 @@ Debug.printf(Level.WARNING, "short unhandled: delta: %02x, status: %02x, extende
                 props.load(TrackMessage.class.getResourceAsStream(path));
 
                 //
-                Iterator<?> i = props.keySet().iterator();
-                while (i.hasNext()) {
-                    String key = (String) i.next();
+                for (Object o : props.keySet()) {
+                    String key = (String) o;
                     if (key.matches("mfi\\.track\\.\\d+\\.b\\.\\d+")) {
                         @SuppressWarnings("unchecked")
                         Class<ShortMessage> shortMessageClass = (Class<ShortMessage>) Class.forName(props.getProperty(key));
@@ -461,7 +459,7 @@ Debug.printStackTrace(Level.SEVERE, e);
             //
             String key = String.format("mfi.track.%d.%c.%d", status, 'a', data1);
 
-            Constructor<? extends MfiMessage> constructor = null;
+            Constructor<? extends MfiMessage> constructor;
             if (longMessageConstructors.containsKey(key)) {
                 constructor = longMessageConstructors.get(key);
             } else {
@@ -488,9 +486,8 @@ Debug.printf(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended
                 props.load(TrackMessage.class.getResourceAsStream(path));
 
                 //
-                Iterator<?> i = props.keySet().iterator();
-                while (i.hasNext()) {
-                    String key = (String) i.next();
+                for (Object o : props.keySet()) {
+                    String key = (String) o;
                     if (key.matches("mfi\\.track\\.\\d+\\.a\\.\\d+")) {
                         @SuppressWarnings("unchecked")
                         Class<LongMessage> longMessageClass = (Class<LongMessage>) Class.forName(props.getProperty(key));

@@ -17,7 +17,7 @@ public class ChannelStatus {
     private enum Status {
         OFF,
         ON
-    };
+    }
 
     /** */
     public enum Type {
@@ -25,7 +25,7 @@ public class ChannelStatus {
         Melody,
         NoMelody,
         Rhythm
-    };
+    }
 
     /** smaf channel */
     private int channel;

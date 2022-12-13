@@ -87,10 +87,7 @@ class VaviMidiConverter implements MidiConverter {
 
         try {
             return convert(midiSequence, fileType);
-        } catch (IOException e) {
-Debug.printStackTrace(e);
-            throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
-        } catch (InvalidMfiDataException e) {
+        } catch (IOException | InvalidMfiDataException e) {
 Debug.printStackTrace(e);
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         }
@@ -103,10 +100,10 @@ private static Set<String> uc = new HashSet<>();
     protected vavi.sound.mfi.Sequence convert(Sequence midiSequence, int fileType)
         throws InvalidMfiDataException, IOException {
 
-Debug.println("divisionType: " + midiSequence.getDivisionType());
-Debug.println("microsecondLength: " + midiSequence.getMicrosecondLength());
-Debug.println("resolution: " + midiSequence.getResolution());
-Debug.println("tickLength: " + midiSequence.getTickLength());
+Debug.println(Level.FINE, "divisionType: " + midiSequence.getDivisionType());
+Debug.println(Level.FINE, "microsecondLength: " + midiSequence.getMicrosecondLength());
+Debug.println(Level.FINE, "resolution: " + midiSequence.getResolution());
+Debug.println(Level.FINE, "tickLength: " + midiSequence.getTickLength());
 
         //
         vavi.sound.mfi.Sequence mfiSequence = new vavi.sound.mfi.Sequence();
@@ -142,7 +139,7 @@ Debug.println("tickLength: " + midiSequence.getTickLength());
 
                     for (int j = maxTracks; j <= mfiTrackNumber; j++) {
                         mfiSequence.createTrack();
-Debug.println(">>>> create MFi track: " + j);
+Debug.println(Level.FINE, ">>>> create MFi track: " + j);
                         mfiTracks = mfiSequence.getTracks();
                         maxTracks = mfiTracks.length;
                     }
@@ -169,7 +166,7 @@ Debug.println(">>>> create MFi track: " + j);
                 // master volume
                 if (maxTracks == 0) {
                     mfiSequence.createTrack();
-Debug.println("create MFi track: 0");
+Debug.println(Level.FINE, "create MFi track: 0");
                     mfiTracks = mfiSequence.getTracks();
                     maxTracks = mfiTracks.length;
                 }
@@ -189,7 +186,7 @@ Debug.println("create MFi track: 0");
 
                 if (maxTracks == 0) {
                     mfiSequence.createTrack();
-Debug.println("create MFi track: 0");
+Debug.println(Level.FINE, "create MFi track: 0");
                     mfiTracks = mfiSequence.getTracks();
                     maxTracks = mfiTracks.length;
                 }
@@ -216,8 +213,8 @@ if (!uc.contains(key)) {
 
                             MfiEvent[] nops = mfiContext.getIntervalMfiEvents(t);
                             if (nops != null) {
-                                for (int j = 0; j < nops.length; j++) {
-                                    mfiTracks[t].add(nops[j]);
+                                for (MfiEvent nop : nops) {
+                                    mfiTracks[t].add(nop);
                                 }
                             }
 
@@ -227,29 +224,29 @@ if (!uc.contains(key)) {
 //Debug.println("EOF already set[" +  t + "]");
                         }
                     } else {
-Debug.println("message is null[" +  mfiTracks[t].size() + "]: " + midiMessage);
+Debug.println(Level.FINE, "message is null[" +  mfiTracks[t].size() + "]: " + midiMessage);
                     }
                 }
             } else {
                 // interval
                 MfiEvent[] mfiEvents = mfiContext.getIntervalMfiEvents(mfiTrackNumber);
                 if (mfiEvents != null) {
-                    for (int j = 0; j < mfiEvents.length; j++) {
-if (mfiEvents[j] == null) {
- Debug.println(Level.WARNING, "NOP is null[" +  mfiTracks[mfiTrackNumber].size() + "]: " + MidiUtil.paramString(midiMessage));
-}
-                        addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvents[j]);
+                    for (MfiEvent mfiEvent : mfiEvents) {
+                        if (mfiEvent == null) {
+                            Debug.println(Level.WARNING, "NOP is null[" + mfiTracks[mfiTrackNumber].size() + "]: " + MidiUtil.paramString(midiMessage));
+                        }
+                        addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvent);
                     }
                 }
 
                 // converted
                 mfiEvents = converter.getMfiEvents(midiEvent, mfiContext);
                 if (mfiEvents != null) {
-                    for (int j = 0; j < mfiEvents.length; j++) {
-if (mfiEvents[j] == null) {
- Debug.println(Level.WARNING, "event is null[" +  mfiTracks[mfiTrackNumber].size() + ", " + mfiEvents.length + "]: " + converter.getClass() + ", " + MidiUtil.paramString(midiMessage));
-}
-                        addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvents[j]);
+                    for (MfiEvent mfiEvent : mfiEvents) {
+                        if (mfiEvent == null) {
+                            Debug.println(Level.WARNING, "event is null[" + mfiTracks[mfiTrackNumber].size() + ", " + mfiEvents.length + "]: " + converter.getClass() + ", " + MidiUtil.paramString(midiMessage));
+                        }
+                        addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvent);
                     }
                 }
             }
@@ -261,7 +258,7 @@ if (mfiEvents[j] == null) {
         return mfiSequence;
     }
 
-private int deltas[] = new int[4];
+private int[] deltas = new int[4];
 
 private void addEventToTrack(MfiContext mfiContext, long tick, Track mfiTrack, int mfiTrackNumber, MfiEvent mfiEvent) {
     MfiMessage mfiMessage = mfiEvent.getMessage();
@@ -303,7 +300,7 @@ Debug.printStackTrace(e);
         MidiContext midiContext = new MidiContext();
 
         int resolution = midiContext.getResolution(mfiTracks);
-Debug.println("resolution: " + resolution);
+Debug.println(Level.FINE, "resolution: " + resolution);
         Sequence midiSequence = new MfiVaviSequence(Sequence.PPQ, resolution, 1);
         javax.sound.midi.Track midiTrack = midiSequence.getTracks()[0];
 
@@ -324,8 +321,8 @@ Debug.println("resolution: " + resolution);
 //Debug.println("midi convertible: " + message);
                     MidiEvent[] midiEvents = ((MidiConvertible) mfiMessage).getMidiEvents(midiContext);
                     if (midiEvents != null) {
-                        for (int k = 0; k < midiEvents.length; k++) {
-                            midiTrack.add(midiEvents[k]);
+                        for (MidiEvent midiEvent : midiEvents) {
+                            midiTrack.add(midiEvent);
                         }
                     }
                 } else if (mfiMessage instanceof SubMessage) {

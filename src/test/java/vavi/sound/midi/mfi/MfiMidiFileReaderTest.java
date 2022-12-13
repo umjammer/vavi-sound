@@ -38,12 +38,10 @@ public class MfiMidiFileReaderTest {
         Sequence sequence = MidiSystem.getSequence(is);
 Debug.println(sequence);
         sequencer.setSequence(sequence);
-        sequencer.addMetaEventListener(new MetaEventListener() {
-            public void meta(MetaMessage meta) {
+        sequencer.addMetaEventListener(meta -> {
 Debug.println(meta.getType());
-                if (meta.getType() == 47) {
-                    cdl.countDown();
-                }
+            if (meta.getType() == 47) {
+                cdl.countDown();
             }
         });
         sequencer.start();

@@ -7,6 +7,7 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
@@ -28,7 +29,7 @@ public class AudioSequenceDataChunk extends SequenceDataChunk {
     /** */
     public AudioSequenceDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("AudioSequenceData: " + size + " bytes");
+Debug.println(Level.FINE, "AudioSequenceData: " + size + " bytes");
     }
 
     /** */
@@ -50,7 +51,7 @@ Debug.println("AudioSequenceData: " + size + " bytes");
         default:
             throw new InvalidSmafDataException("FormatType: " + formatType);
         }
-Debug.println("messages: " + messages.size());
+Debug.println(Level.FINE, "messages: " + messages.size());
     }
 
     /**

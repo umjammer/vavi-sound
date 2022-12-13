@@ -63,9 +63,9 @@ public class SmafMidiFileWriter extends BasicMidiFileWriter {
     @Override
     public int write(Sequence in, int fileType, OutputStream out)
         throws IOException {
-Debug.println("in: " + in);
-Debug.println("fileType: " + fileType);
-Debug.println("out: " + out);
+Debug.println(Level.FINE, "in: " + in);
+Debug.println(Level.FINE, "fileType: " + fileType);
+Debug.println(Level.FINE, "out: " + out);
         try {
             if (isFileTypeSupported(fileType)) {
                 vavi.sound.smaf.Sequence smafSequence = SmafSystem.toSmafSequence(in, fileType);

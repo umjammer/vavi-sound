@@ -8,10 +8,10 @@ package vavi.sound.mfi.vavi;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiFileFormat;
@@ -45,7 +45,7 @@ public class VaviMfiFileReader extends MfiFileReader {
         throws InvalidMfiDataException,
                IOException {
 
-        InputStream is = new BufferedInputStream(new FileInputStream(file));
+        InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
         return VaviMfiFileFormat.readFrom(is);
     }
 
@@ -73,7 +73,7 @@ public class VaviMfiFileReader extends MfiFileReader {
         throws InvalidMfiDataException,
                IOException {
 
-        InputStream is = new BufferedInputStream(new FileInputStream(file));
+        InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
         return getSequence(is);
     }
 

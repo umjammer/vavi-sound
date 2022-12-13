@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -52,7 +53,7 @@ public class ImaOutputStreamTest {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
 //        outFile = new File("src/test/resources/vavi/sound/adpcm/ima/out_vavi.adpcm");
-Debug.println("outFile: " + outFile.getCanonicalPath());
+Debug.println(Level.FINE, "outFile: " + outFile.getCanonicalPath());
     }
 
     /** */
@@ -109,7 +110,7 @@ Debug.println("outFile: " + outFile.getCanonicalPath());
         line.close();
 
         is2.close();
-Debug.println("outFile: " + outFile.length());
+Debug.println(Level.FINE, "outFile: " + outFile.length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 
@@ -174,7 +175,7 @@ Debug.println("outFile: " + outFile.length());
         line.close();
 
         is2.close();
-Debug.println("outFile: " + outFile.length());
+Debug.println(Level.FINE, "outFile: " + outFile.length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(inFile)), Checksum.getChecksum(outFile));
     }
 
@@ -193,7 +194,7 @@ Debug.println("outFile: " + outFile.length());
         int length = in.available();
         int spb = 505;
         int ll = 0;
-Debug.println("inFile: " + length);
+Debug.println(Level.FINE, "inFile: " + length);
         while (ll < length) {
             int bpb = Ima.getBytesPerBlock(1, spb);
             byte[] buffer = new byte[spb * 2];
@@ -258,7 +259,7 @@ Debug.println("inFile: " + length);
         line.close();
 
         is.close();
-Debug.println("outFile: " + new File(outFile).length());
+Debug.println(Level.FINE, "outFile: " + new File(outFile).length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(new File(outFile)));
     }
 }

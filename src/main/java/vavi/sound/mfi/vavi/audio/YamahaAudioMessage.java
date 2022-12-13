@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.audio;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -35,7 +37,7 @@ public class YamahaAudioMessage extends MachineDependentMessage {
     public static MfiEvent getMasterVolumeEvent(int masterVolume) {
         int realMasterVolume = (int) (masterVolume * maxMasterVolume / 100f);
         MfiMessage message = new MasterVolumeMessage(0x00, 0xff, 0xb0, realMasterVolume);
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /** */
@@ -43,13 +45,13 @@ public class YamahaAudioMessage extends MachineDependentMessage {
 
     /** @return TempoMessage is always the same instance */
     public static MfiEvent getTempoEvent() {
-        return new MfiEvent(tempoMessage, 0l);
+        return new MfiEvent(tempoMessage, 0L);
     }
 
     /** */
     public static int getDelta(float time) {
         float aDelta = (60f / tempoMessage.getTempo()) / tempoMessage.getTimeBase();
-Debug.println("a delta: " + aDelta + ", tempo: " + tempoMessage.getTempo() + ", " + tempoMessage.getTimeBase());
+Debug.println(Level.FINE, "a delta: " + aDelta + ", tempo: " + tempoMessage.getTempo() + ", " + tempoMessage.getTimeBase());
         return Math.round(time / aDelta);
     }
 }

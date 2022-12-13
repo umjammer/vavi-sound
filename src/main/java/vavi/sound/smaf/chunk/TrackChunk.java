@@ -64,9 +64,9 @@ public abstract class TrackChunk extends Chunk {
         /** TODO what? */
         Unknown3(32, false);
         /** */
-        boolean compressed;
+        final boolean compressed;
         /** size in file */
-        int size;
+        final int size;
         /** */
         FormatType(int size, boolean compressed) {
             this.size = size;
@@ -104,7 +104,7 @@ public abstract class TrackChunk extends Chunk {
          * Sequence Data は複数のフレーズデータを連続で表記したものである。Phrase List は外部から個
          * 別フレーズを認識する為に用いる。
          */
-        SubSequence;
+        SubSequence
     }
 
     /** */

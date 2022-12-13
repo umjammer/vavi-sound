@@ -7,8 +7,8 @@
 package vavi.sound.midi;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import javax.sound.midi.Sequence;
 import javax.sound.midi.spi.MidiFileWriter;
@@ -28,7 +28,7 @@ public abstract class BasicMidiFileWriter extends MidiFileWriter {
     public final int write(Sequence in, int fileType, File out)
         throws IOException {
 
-        return write(in, fileType, new FileOutputStream(out));
+        return write(in, fileType, Files.newOutputStream(out.toPath()));
     }
 }
 

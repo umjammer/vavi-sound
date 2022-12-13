@@ -8,6 +8,7 @@ package vavi.sound.mfi.vavi.sharp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
@@ -44,18 +45,18 @@ public class SharpMessage extends FuetrekAudioMessage {
      */
     public static List<MfiEvent> getAdpcmEvents(byte[] pcm, float time, int sampleRate, int bits, int channels, boolean fillNop) throws InvalidMfiDataException {
         int delta = getDelta(time, sampleRate);
-Debug.println("delta: " + delta);
+Debug.println(Level.FINE, "delta: " + delta);
         AudioEngine audioEngine = SharpSequencer.getAudioEngine();
         byte[] adpcm = audioEngine.encode(bits, channels, pcm);
         List<MfiEvent> events = new ArrayList<>();
         if (channels == 1) {
-Debug.println("adpcm mono length: " + adpcm.length);
+Debug.println(Level.FINE, "adpcm mono length: " + adpcm.length);
             events.addAll(getAdpcmEventsSub(L, 0, sampleRate, bits, adpcm));
             // 0x84 adpcm recycle
             events.add(getWaveEvent(L, 0, sampleRate, bits, adpcm.length));
         } else {
             byte[] temp = new byte[adpcm.length / 2];
-Debug.println("adpcm L, R length: " + temp.length);
+Debug.println(Level.FINE, "adpcm L, R length: " + temp.length);
             System.arraycopy(adpcm, 0, temp, 0, adpcm.length / 2);
             events.addAll(getAdpcmEventsSub(L, 0, sampleRate, bits, temp));
             System.arraycopy(adpcm, adpcm.length / 2, temp, 0, adpcm.length / 2);
@@ -69,11 +70,11 @@ Debug.println("adpcm L, R length: " + temp.length);
         if (fillNop) {
             for (int i = 0; i < delta / Nop2Message.maxDelta; i++) {
                 Nop2Message nop2 = new Nop2Message(0xff, 0xff);
-                events.add(new MfiEvent(nop2, 0l));
+                events.add(new MfiEvent(nop2, 0L));
             }
             int moduloOfDelta = delta % Nop2Message.maxDelta;
             Nop2Message nop2 = new Nop2Message(moduloOfDelta % 0x100, moduloOfDelta / 0x100);
-            events.add(new MfiEvent(nop2, 0l));
+            events.add(new MfiEvent(nop2, 0L));
         }
         return events;
     }
@@ -88,7 +89,7 @@ Debug.println("adpcm L, R length: " + temp.length);
         for (int i = 0; i < numberOfChunks; i++) {
             byte[] chunk = new byte[MAX_BLOCK];
             System.arraycopy(adpcm, MAX_BLOCK * i, chunk, 0, MAX_BLOCK);
-Debug.println("wave chunk(" + i + "): " + chunk.length);
+Debug.println(Level.FINE, "wave chunk(" + i + "): " + chunk.length);
 
             // 0x84 adpcm data
             events.add(getWaveEvent(channel, packetId, sampleRate, bits, !(i == (numberOfChunks - 1) && moduloOfChunks == 0), i == 0 ? adpcm.length : 0, chunk));
@@ -96,7 +97,7 @@ Debug.println("wave chunk(" + i + "): " + chunk.length);
         if (moduloOfChunks != 0) {
             byte[] chunk = new byte[moduloOfChunks];
             System.arraycopy(adpcm, MAX_BLOCK * numberOfChunks, chunk, 0, moduloOfChunks);
-Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
+Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length);
 
             // 0x84 adpcm data
             events.add(getWaveEvent(channel, packetId, sampleRate, bits, false, numberOfChunks == 0 ? adpcm.length : 0, chunk));
@@ -125,7 +126,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
         function.setLength(length);
         function.setAdpcm(adpcm);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /**
@@ -146,7 +147,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
         function.setLength(length);
         function.setAdpcm(new byte[0]);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /**
@@ -172,7 +173,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
         function.setChannel(channel);
         function.setVolume(realAdpcmVolume);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /** 0x82 */
@@ -194,7 +195,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
         function.setChannel(channel);
         function.setPanpot(pan);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /** 0x8f setting */
@@ -210,7 +211,7 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
         // 0x8B 要は 16kHz, 4bit mono の時 = 4, 8kHz, 4bit mono の時に 2
         function.setMaxParallelCue(sampleRate * (sampleRate / 8000) * channels); // TODO 適当
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 }
 

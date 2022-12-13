@@ -28,7 +28,7 @@ public class GraphicsSetupDataChunk extends Chunk {
     /** */
     public GraphicsSetupDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("GraphicsSetupData: " + size + " bytes");
+Debug.println(Level.FINE, "GraphicsSetupData: " + size + " bytes");
     }
 
     /** */

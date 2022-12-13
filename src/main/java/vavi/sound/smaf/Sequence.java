@@ -48,7 +48,7 @@ public class Sequence {
 
     /** */
     public Track[] getTracks() {
-        return tracks.toArray(new Track[tracks.size()]);
+        return tracks.toArray(new Track[0]);
     }
 }
 

@@ -8,6 +8,7 @@ package vavi.sound.sampled;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -30,7 +31,7 @@ public class TemporaryFiledInputFilter implements InputFilter {
         // 一回 temp ファイルに落とす
         File tmpFile = File.createTempFile("temp", ".wav");
         int r = AudioSystem.write(sourceAis, AudioFileFormat.Type.WAVE, tmpFile);
-Debug.println("RESULT: " + r);
+Debug.println(Level.FINE, "RESULT: " + r);
 
         return AudioSystem.getAudioInputStream(tmpFile);
     }

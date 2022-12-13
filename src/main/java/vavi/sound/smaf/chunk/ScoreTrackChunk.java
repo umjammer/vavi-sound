@@ -46,7 +46,7 @@ public class ScoreTrackChunk extends TrackChunk {
     /** */
     public ScoreTrackChunk(byte[] id, int size) {
         super(id, size);
-Debug.println("ScoreTrack[" + trackNumber + "]: " + size + " bytes");
+Debug.println(Level.FINE, "ScoreTrack[" + trackNumber + "]: " + size + " bytes");
     }
 
     /** */
@@ -61,11 +61,11 @@ Debug.println("ScoreTrack[" + trackNumber + "]: " + size + " bytes");
 
         this.formatType = FormatType.values()[dis.readUnsignedByte()];
         this.sequenceType = SequenceType.values()[dis.readUnsignedByte()];
-Debug.println("sequenceType: " + sequenceType);
+Debug.println(Level.FINE, "sequenceType: " + sequenceType);
         this.durationTimeBase = dis.readUnsignedByte();
-Debug.println("durationTimeBase: " + durationTimeBase + ", " + getDurationTimeBase() + " ms");
+Debug.println(Level.FINE, "durationTimeBase: " + durationTimeBase + ", " + getDurationTimeBase() + " ms");
         this.gateTimeTimeBase = dis.readUnsignedByte();
-Debug.println("gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBase() + " ms");
+Debug.println(Level.FINE, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBase() + " ms");
 
         switch (formatType) {
         case HandyPhoneStandard: {
@@ -94,7 +94,7 @@ Debug.println("gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBa
             // TODO implement
           } break;
         }
-Debug.println("formatType: " + formatType);
+Debug.println(Level.FINE, "formatType: " + formatType);
 
         while (dis.available() > 0) {
 //Debug.println("available: " + is.available() + ", " + available());
@@ -195,13 +195,13 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
 
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
-        events.add(new SmafEvent(metaMessage, 0l));
+        events.add(new SmafEvent(metaMessage, 0L));
 
         //
         if (setupDataChunk != null) {
             List<SmafMessage> messages = ((SetupDataChunk) setupDataChunk).getSmafMessages();
             for (SmafMessage message : messages) {
-                events.add(new SmafEvent(message, 0l));
+                events.add(new SmafEvent(message, 0L));
 //Debug.println("SetupDataChunk: " + message);
             }
         }
@@ -210,7 +210,7 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         if (streamPcmDataChunk != null) {
             List<SmafMessage> messages = ((StreamPcmDataChunk) streamPcmDataChunk).getSmafMessages();
             for (SmafMessage message : messages) {
-                events.add(new SmafEvent(message, 0l)); // TODO 0l
+                events.add(new SmafEvent(message, 0L)); // TODO 0l
 //Debug.println("StreamPcmDataChunk: " + message);
             }
         }
@@ -218,7 +218,7 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         //
         List<SmafMessage> messages = ((SequenceDataChunk) sequenceDataChunk).getSmafMessages();
         for (SmafMessage message : messages) {
-            events.add(new SmafEvent(message, 0l)); // TODO 0l
+            events.add(new SmafEvent(message, 0L)); // TODO 0l
 //Debug.println("SequenceDataChunk: " + message);
         }
 
