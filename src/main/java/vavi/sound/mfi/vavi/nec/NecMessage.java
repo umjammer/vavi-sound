@@ -8,6 +8,7 @@ package vavi.sound.mfi.vavi.nec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
@@ -37,7 +38,7 @@ public class NecMessage extends YamahaAudioMessage {
     private static void initSequence() {
         if (sequence.get() == null) {
             sequence.set(0);
-//System.err.println("thread local sequence: init");
+Debug.println(Level.FINER, "thread local sequence: init");
         }
     }
 
@@ -70,7 +71,7 @@ public class NecMessage extends YamahaAudioMessage {
      */
     public static List<MfiEvent> getAdpcmEvents(byte[] pcm, float time, int sampleRate, int bits, int channels, int adpcmVolume) throws InvalidMfiDataException {
         int delta = getDelta(time);
-Debug.println("delta: " + delta + ", time: " + time);
+Debug.println(Level.FINE, "delta: " + delta + ", time: " + time);
         int velocity = (int) (adpcmVolume * maxVelocity / 100f);
 
         AudioEngine audioEngine = NecSequencer.getAudioEngine();
@@ -87,7 +88,7 @@ Debug.println("delta: " + delta + ", time: " + time);
             System.arraycopy(pcm, (PCM_MAX_BLOCK * channels) * i, temp, 0, PCM_MAX_BLOCK * channels);
             byte[] chunk = audioEngine.encode(4, channels, temp);
             if (channels == 1) {
-Debug.println("wave chunk(" + i + "): " + chunk.length);
+Debug.println(Level.FINE, "wave chunk(" + i + "): " + chunk.length);
 
                 // adpcm data
                 events.add(getVoiceEvent(streamNumber++, channels, sampleRate, chunk));
@@ -96,13 +97,13 @@ Debug.println("wave chunk(" + i + "): " + chunk.length);
                 byte[] chunkM = new byte[chunk.length / 2];
 
                 System.arraycopy(chunk, 0, chunkM, 0, chunkM.length);
-Debug.println("wave l chunk(" + i + "): " + chunkM.length);
+Debug.println(Level.FINE, "wave l chunk(" + i + "): " + chunkM.length);
 
                 // adpcm data L
                 events.add(getVoiceEvent(streamNumber++, 1, sampleRate, chunkM)); // TODO channel is 1
 
                 System.arraycopy(chunk, chunkM.length, chunkM, 0, chunkM.length);
-Debug.println("wave r chunk(" + i + "): " + chunkM.length);
+Debug.println(Level.FINE, "wave r chunk(" + i + "): " + chunkM.length);
 
                 // adpcm data R
                 events.add(getVoiceEvent(streamNumber++, 1, sampleRate, chunkM)); // TODO channel is 1
@@ -113,7 +114,7 @@ Debug.println("wave r chunk(" + i + "): " + chunkM.length);
             System.arraycopy(pcm, (PCM_MAX_BLOCK * channels) * numberOfChunks, temp, 0, moduloOfChunks);
             byte[] chunk = audioEngine.encode(4, channels, temp);
             if (channels == 1) {
-Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
+Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length);
 
                 // adpcm data
                 events.add(getVoiceEvent(streamNumber++, channels, sampleRate, chunk));
@@ -122,13 +123,13 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
                 byte[] chunkM = new byte[chunk.length / 2];
 
                 System.arraycopy(chunk, 0, chunkM, 0, chunkM.length);
-Debug.println("wave l chunk(" + numberOfChunks + "): " + chunkM.length);
+Debug.println(Level.FINE, "wave l chunk(" + numberOfChunks + "): " + chunkM.length);
 
                 // adpcm data L
                 events.add(getVoiceEvent(streamNumber++, 1, sampleRate, chunkM)); // TODO channel is 1
 
                 System.arraycopy(chunk, chunkM.length, chunkM, 0, chunkM.length);
-Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
+Debug.println(Level.FINE, "wave r chunk(" + numberOfChunks + "): " + chunkM.length);
 
                 // adpcm data R
                 events.add(getVoiceEvent(streamNumber++, 1, sampleRate, chunkM)); // TODO channel is 1
@@ -169,11 +170,11 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
             // nop2
             for (int j = 0; j < blockDelta / Nop2Message.maxDelta; j++) {
                 Nop2Message nop2 = new Nop2Message(0xff, 0xff);
-                events.add(new MfiEvent(nop2, 0l));
+                events.add(new MfiEvent(nop2, 0L));
             }
             int moduloOfBlockDelta = blockDelta % Nop2Message.maxDelta;
             Nop2Message nop2 = new Nop2Message(moduloOfBlockDelta % 0x100, moduloOfBlockDelta / 0x100);
-            events.add(new MfiEvent(nop2, 0l));
+            events.add(new MfiEvent(nop2, 0L));
         }
         if (moduloOfChunks != 0) {
             if (channels == 1) {
@@ -189,11 +190,11 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
             int moduloOfDelta = delta % blockDelta;
             for (int j = 0; j < moduloOfDelta / Nop2Message.maxDelta; j++) {
                 Nop2Message nop2 = new Nop2Message(0xff, 0xff);
-                events.add(new MfiEvent(nop2, 0l));
+                events.add(new MfiEvent(nop2, 0L));
             }
             int moduloOfBlockDelta = moduloOfDelta % Nop2Message.maxDelta;
             Nop2Message nop2 = new Nop2Message(moduloOfBlockDelta % 0x100, moduloOfBlockDelta / 0x100);
-            events.add(new MfiEvent(nop2, 0l));
+            events.add(new MfiEvent(nop2, 0L));
         }
 
         return events;
@@ -204,12 +205,12 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
         MachineDependentMessage message = new NecMessage();
         Function1_240_7 function = new Function1_240_7();
         function.setStreamNumber(streamNumber);
-        function.setMono(channels == 1 ? true : false);
+        function.setMono(channels == 1);
         function.setFormat(1);
         function.setSamplingRate(sampleRate);
         function.setAdpcm(adpcm);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /**
@@ -224,7 +225,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
         Function1_243_3 function = new Function1_243_3();
         function.setMaxGain(maxGain);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /**
@@ -239,7 +240,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
         Function1_243_4 function = new Function1_243_4();
         function.setMaxStreamNumber(maxStreamNumber);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /**
@@ -255,7 +256,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
         function.setStreamNumber(streamNumber);
         function.setVelocity(velocity);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /**
@@ -271,7 +272,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
         function.setStreamNumber(streamNumber);
         function.setVelocity(velocity);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /**
@@ -286,7 +287,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
         Function242_1 function = new Function242_1();
         function.setVolume(volume);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     /**
@@ -302,7 +303,7 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
         function.setStreamNumber(streamNumber);
         function.setPan(pan);
         message.setMessage(0x00, function.getMessage());
-        return new MfiEvent(message, 0l);
+        return new MfiEvent(message, 0L);
     }
 
     //----
@@ -318,13 +319,13 @@ Debug.println("wave r chunk(" + numberOfChunks + "): " + chunkM.length);
      */
     public static List<MfiEvent> getAdpcmEventsEx(byte[] pcm, float time, int sampleRate, int bits, int channels, int adpcmVolume) throws InvalidMfiDataException {
         int delta = getDelta(time);
-Debug.println("delta: " + delta + ", time: " + time);
+Debug.println(Level.FINE, "delta: " + delta + ", time: " + time);
         int velocity = (int) (adpcmVolume * maxVelocity / 100f);
 
         AudioEngine audioEngine = NecSequencer.getAudioEngine();
 
         byte[] adpcm = audioEngine.encode(4, channels, pcm);
-Debug.println("adpcm length: " + adpcm.length);
+Debug.println(Level.FINE, "adpcm length: " + adpcm.length);
 //System.err.println("pcm:\n" + StringUtil.getDump(pcm, 64) + "adpcm L:\n" + StringUtil.getDump(adpcm, 64) +"adpcm R:\n" + StringUtil.getDump(adpcm, adpcm.length / 2, 64));
 
         int numberOfChunks = adpcm.length / MAX_BLOCK;
@@ -342,7 +343,7 @@ Debug.println("adpcm length: " + adpcm.length);
                 System.arraycopy(adpcm, (MAX_BLOCK / 2) * i, chunk, 0, MAX_BLOCK / 2);
                 System.arraycopy(adpcm, (adpcm.length / 2) + (MAX_BLOCK / 2) * i, chunk, MAX_BLOCK / 2, MAX_BLOCK / 2);
             }
-Debug.println("wave chunk(" + i + "): " + chunk.length);
+Debug.println(Level.FINE, "wave chunk(" + i + "): " + chunk.length);
 
             // adpcm data
             events.add(getVoiceEvent(streamNumber++, channels, sampleRate, chunk));
@@ -355,7 +356,7 @@ Debug.println("wave chunk(" + i + "): " + chunk.length);
                 System.arraycopy(adpcm, (MAX_BLOCK / 2) * numberOfChunks, chunk, 0, moduloOfChunks / 2);
                 System.arraycopy(adpcm, (adpcm.length / 2) + (MAX_BLOCK / 2) * numberOfChunks, chunk, moduloOfChunks / 2, moduloOfChunks / 2);
             }
-Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
+Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length);
 
             // adpcm data
             events.add(getVoiceEvent(streamNumber++, channels, sampleRate, chunk));
@@ -367,30 +368,30 @@ Debug.println("wave chunk(" + numberOfChunks + "): " + chunk.length);
         streamNumber = 0;
         for (int i = 0; i < numberOfChunks; i++) {
             // adpcm on
-//System.err.println("thread local sequence: " + sequence.get());
+Debug.println(Level.FINER, "thread local sequence: " + sequence.get());
             events.add(getStreamOn(streamNumber++, velocity));
             // nop2
             for (int j = 0; j < blockDelta / Nop2Message.maxDelta; j++) {
                 Nop2Message nop2 = new Nop2Message(0xff, 0xff);
-                events.add(new MfiEvent(nop2, 0l));
+                events.add(new MfiEvent(nop2, 0L));
             }
             int moduloOfDelta = blockDelta % Nop2Message.maxDelta;
             Nop2Message nop2 = new Nop2Message(moduloOfDelta % 0x100, moduloOfDelta / 0x100);
-            events.add(new MfiEvent(nop2, 0l));
+            events.add(new MfiEvent(nop2, 0L));
         }
         if (moduloOfChunks != 0) {
             // adpcm on
-//System.err.println("thread local sequence: " + sequence.get());
+Debug.println(Level.FINER, "thread local sequence: " + sequence.get());
             events.add(getStreamOn(streamNumber++, velocity));
             // nop2
             int moduloOfBlockDelta = delta % blockDelta;
             for (int j = 0; j < moduloOfBlockDelta / Nop2Message.maxDelta; j++) {
                 Nop2Message nop2 = new Nop2Message(0xff, 0xff);
-                events.add(new MfiEvent(nop2, 0l));
+                events.add(new MfiEvent(nop2, 0L));
             }
             int moduloOfDelta = moduloOfBlockDelta % Nop2Message.maxDelta;
             Nop2Message nop2 = new Nop2Message(moduloOfDelta % 0x100, moduloOfDelta / 0x100);
-            events.add(new MfiEvent(nop2, 0l));
+            events.add(new MfiEvent(nop2, 0L));
         }
 
         return events;

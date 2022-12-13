@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.mitsubishi;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -40,7 +42,7 @@ public class Function2 implements MachineDependentFunction {
 
         int voice = (data[7] & 0xc0) >> 6;          // 0 ~ 3
         int pitchBendRange = data[7] & 0x3f;        // 0 ~ 16
-Debug.printf("Pitch Bend Range: %02x %02x\n", voice, pitchBendRange);
+Debug.printf(Level.FINE, "Pitch Bend Range: %02x %02x\n", voice, pitchBendRange);
     }
 }
 

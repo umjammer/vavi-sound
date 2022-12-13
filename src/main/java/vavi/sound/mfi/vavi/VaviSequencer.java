@@ -8,6 +8,7 @@ package vavi.sound.mfi.vavi;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
 
 import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
@@ -114,10 +115,10 @@ Debug.printStackTrace(e);
         try {
             midiSequencer.setSequence(MfiSystem.toMidiSequence(sequence));
         } catch (InvalidMidiDataException e) {
-Debug.println(e);
+Debug.println(Level.SEVERE, e);
             throw new InvalidMfiDataException(e);
         } catch (MfiUnavailableException e) {
-Debug.println(e);
+Debug.println(Level.SEVERE, e);
             throw new IllegalStateException(e);
         }
     }
@@ -208,7 +209,7 @@ Debug.println("★0 meta: type: " + message.getType());
                     fireMeta(metaMessage);
                     off();
                 } catch (InvalidMfiDataException e) {
-Debug.println(e);
+Debug.println(Level.SEVERE, e);
                 }
 catch (RuntimeException e) {
 Debug.printStackTrace(e);

@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.nec;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
@@ -57,16 +59,16 @@ public class NecSequencer implements MachineDependentSequencer {
         if (f1 == 0x01) {
             f2 = data[7] & 0xff;        // 0 ~ 32
             int f3 = data[8] & 0x0f;    // 0 ~ 16
-Debug.printf("%02x %02x %02x\n", f1, f2, f3);
+Debug.printf(Level.FINE, "%02x %02x %02x\n", f1, f2, f3);
             key = f1 + "." + f2 + "." + f3;
         } else {
             f2 = data[7] & 0x0f;        // 0 ~ 16
-Debug.printf("%02x %02x\n", f1, f2);
+Debug.printf(Level.FINE, "%02x %02x\n", f1, f2);
             key = f1 + "." + f2;
         }
 
         MachineDependentFunction mdf = factory.getFunction(key);
-        mdf.process(message);
+            mdf.process(message);
     }
 
     //-------------------------------------------------------------------------

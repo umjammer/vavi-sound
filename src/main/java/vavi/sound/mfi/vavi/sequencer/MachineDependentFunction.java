@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.sequencer;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
@@ -58,8 +60,8 @@ public interface MachineDependentFunction {
             try {
                 return get(key);
             } catch (IllegalArgumentException e) {
-Debug.println(key);
-Debug.printStackTrace(e);
+Debug.println(Level.WARNING, key);
+Debug.printStackTrace(Level.WARNING, e);
                 return new UndefinedFunction(); // TODO should throw exception or not?
             }
         }

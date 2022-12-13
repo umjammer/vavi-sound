@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.mitsubishi;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -40,7 +42,7 @@ public class Function130 implements MachineDependentFunction {
 
         this.channel = (data[7] & 0xc0) >> 6;   // 0 ~ 3
         this.panpot  =  data[7] & 0x3f;         // 0x20 center
-Debug.printf("ADPCM pan: %dch %02x\n", channel, panpot);
+Debug.printf(Level.FINE, "ADPCM pan: %dch %02x\n", channel, panpot);
     }
 
     /** */

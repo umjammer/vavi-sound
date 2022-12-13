@@ -8,11 +8,13 @@ package vavi.sound.mfi.vavi.sharp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.Debug;
+import vavi.util.StringUtil;
 
 
 /**
@@ -52,7 +54,7 @@ public class Function143 implements MachineDependentFunction {
             byte[] subIdData = new byte[subIdLength];
             System.arraycopy(data, index, subIdData, 0, subIdLength);
             index += subIdLength;
-Debug.printf("ADPCM subId: %d\n%s\n", subId, subIdData);
+Debug.printf(Level.FINER, "ADPCM subId: %d\n%s", subId, StringUtil.getDump(subIdData));
             subIds.add(new SubIdChunk(subId, subIdData));
         }
     }

@@ -103,10 +103,10 @@ private static Set<String> uc = new HashSet<>();
     protected vavi.sound.mfi.Sequence convert(Sequence midiSequence, int fileType)
         throws InvalidMfiDataException, IOException {
 
-Debug.println("divisionType: " + midiSequence.getDivisionType());
-Debug.println("microsecondLength: " + midiSequence.getMicrosecondLength());
-Debug.println("resolution: " + midiSequence.getResolution());
-Debug.println("tickLength: " + midiSequence.getTickLength());
+Debug.println(Level.FINE, "divisionType: " + midiSequence.getDivisionType());
+Debug.println(Level.FINE, "microsecondLength: " + midiSequence.getMicrosecondLength());
+Debug.println(Level.FINE, "resolution: " + midiSequence.getResolution());
+Debug.println(Level.FINE, "tickLength: " + midiSequence.getTickLength());
 
         //
         vavi.sound.mfi.Sequence mfiSequence = new vavi.sound.mfi.Sequence();
@@ -169,7 +169,7 @@ Debug.println(">>>> create MFi track: " + j);
                 // master volume
                 if (maxTracks == 0) {
                     mfiSequence.createTrack();
-Debug.println("create MFi track: 0");
+Debug.println(Level.FINE, "create MFi track: 0");
                     mfiTracks = mfiSequence.getTracks();
                     maxTracks = mfiTracks.length;
                 }
@@ -189,7 +189,7 @@ Debug.println("create MFi track: 0");
 
                 if (maxTracks == 0) {
                     mfiSequence.createTrack();
-Debug.println("create MFi track: 0");
+Debug.println(Level.FINE, "create MFi track: 0");
                     mfiTracks = mfiSequence.getTracks();
                     maxTracks = mfiTracks.length;
                 }
@@ -227,7 +227,7 @@ if (!uc.contains(key)) {
 //Debug.println("EOF already set[" +  t + "]");
                         }
                     } else {
-Debug.println("message is null[" +  mfiTracks[t].size() + "]: " + midiMessage);
+Debug.println(Level.FINE, "message is null[" +  mfiTracks[t].size() + "]: " + midiMessage);
                     }
                 }
             } else {

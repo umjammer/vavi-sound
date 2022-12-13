@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.nec;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -43,8 +45,8 @@ public class Function241_2 implements MachineDependentFunction {
         int channel = (data[7] & 0xc0) >> 6;    // 0 ~ 3
 
         // 8 pitch bend
-Debug.println("Pitch Bend: " + channel + ", " + data[8]);
-Debug.println(StringUtil.getDump(data));
+Debug.println(Level.FINE, "Pitch Bend: " + channel + ", " + data[8]);
+Debug.println(Level.FINEST, StringUtil.getDump(data));
     }
 }
 

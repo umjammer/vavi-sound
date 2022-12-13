@@ -6,6 +6,7 @@
 
 package vavi.sound.smaf.message.yamaha;
 
+import java.util.logging.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -159,7 +160,7 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
 
     /* TODO 今、超適当 */
     public void sequence() throws InvalidSmafDataException {
-Debug.println("yamaha: " + data.length + "\n" + StringUtil.getDump(data, 64));
+Debug.println(Level.INFO, "yamaha: " + data.length + "\n" + StringUtil.getDump(data, 64));
         switch (data[1]) {
         case 0x79:
             switch (data[3]) {

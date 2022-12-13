@@ -57,7 +57,7 @@ public class MfiContext {
 
     /** MIDI format type */
     public void setType(int type) {
-Debug.println("type: " + type);
+Debug.println(Level.FINE, "type: " + type);
         this.type = type;
     }
 
@@ -225,7 +225,7 @@ Debug.println("type: " + type);
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
             // tempo
             interval = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
-Debug.println("interval for tempo[" + mfiTrackNumber + "]: " + interval);
+Debug.println(Level.FINE, "interval for tempo[" + mfiTrackNumber + "]: " + interval);
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 47) {
             // eot
             interval = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
@@ -353,7 +353,7 @@ if (delta > 255) {
             }
         }
         this.scale = Math.ceil(this.scale);
-Debug.println("(SCALE) final scale: " + scale + ", " + scaleChanged);
+Debug.println(Level.FINE, "(SCALE) final scale: " + scale + ", " + scaleChanged);
 
         for (int t = 0; t < midiTracks.length; t++) {
             for (int i = 0; i < midiTracks[t].size(); i++) {
@@ -362,28 +362,28 @@ Debug.println("(SCALE) final scale: " + scale + ", " + scaleChanged);
         }
         Collections.sort(midiEvents,
             new Comparator<MidiEvent>() {
-                /** */
-                public int compare(MidiEvent e1, MidiEvent e2) {
-                    long t1 = e1.getTick();
-                    long t2 = e2.getTick();
-                    if (t1 - t2 != 0) {
-                        return (int) (t1 - t2);
-                    } else {
-                        int c1 = getChannel(e1);
-                        int c2 = getChannel(e2);
-                        return c1 - c2;
-                    }
+            /** */
+            public int compare(MidiEvent e1, MidiEvent e2) {
+                long t1 = e1.getTick();
+                long t2 = e2.getTick();
+                if (t1 - t2 != 0) {
+                    return (int) (t1 - t2);
+                } else {
+                    int c1 = getChannel(e1);
+                    int c2 = getChannel(e2);
+                    return c1 - c2;
                 }
-                /** */
-                int getChannel(MidiEvent e) {
-                    MidiMessage m = e.getMessage();
-                    if (m instanceof ShortMessage) {
-                        return ((ShortMessage) m).getChannel();
-                    } else {
-                        return -1;
-                    }
+            }
+            /** */
+            int getChannel(MidiEvent e) {
+                MidiMessage m = e.getMessage();
+                if (m instanceof ShortMessage) {
+                    return ((ShortMessage) m).getChannel();
+                } else {
+                    return -1;
                 }
-            });
+            }
+        });
 
         this.noteOffEventUsed = new BitSet(midiEvents.size());
     }

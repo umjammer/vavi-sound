@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.nec;
 
+import java.util.logging.Level;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -44,8 +46,8 @@ public class Function242_5 implements MachineDependentFunction {
 
         // 8    ?
         // 9    ?    00
-Debug.println("LED: " + channel);
-Debug.println(StringUtil.getDump(data));
+Debug.println(Level.FINE, "LED: " + channel);
+Debug.println(Level.FINE, StringUtil.getDump(data));
     }
 }
 

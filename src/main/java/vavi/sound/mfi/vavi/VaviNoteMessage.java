@@ -97,7 +97,7 @@ public class VaviNoteMessage extends NoteMessage
             (command == ShortMessage.NOTE_ON && data2 == 0)) {
 
             if (!context.isNoteOffEventUsed()) {
-Debug.println("[" + context.getMidiEventIndex() + "] no pair of ON for: " + channel + "ch, " + data1);
+Debug.println(Level.INFO, "[" + context.getMidiEventIndex() + "] no pair of ON for: " + channel + "ch, " + data1);
             }
 
             return null;

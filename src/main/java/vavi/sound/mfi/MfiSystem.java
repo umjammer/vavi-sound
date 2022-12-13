@@ -156,7 +156,7 @@ public final class MfiSystem {
 //Debug.println(StringUtil.paramString(mff));
                 return mff;
             } catch (Exception e) {
-Debug.println(e);
+Debug.println(Level.WARNING, e);
             }
         }
 
@@ -309,7 +309,7 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
             providers = ServiceLoader.load(vavi.sound.mfi.spi.MfiDeviceProvider.class);
 providers.forEach(System.err::println);
             provider = StreamSupport.stream(providers.spliterator(), false).filter(p -> p.getClass().getName().equals(defaultProvider)).findFirst().get();
-Debug.println("default provider: " + provider.getClass().getName());
+Debug.println(Level.FINE, "default provider: " + provider.getClass().getName());
 
             readers = ServiceLoader.load(vavi.sound.mfi.spi.MfiFileReader.class);
 providers.forEach(System.err::println);
