@@ -35,6 +35,8 @@ import static vavi.sound.SoundUtil.volume;
  */
 public class YamahaAudioFileReaderTest {
 
+    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
     String inFile = "/vavi/sound/adpcm/ym2608/out.adpcm";
     String correctFile = "/vavi/sound/adpcm/ym2608/out.pcm";
     File outFile;
@@ -85,7 +87,7 @@ line.open(outFormat);
 line.start();
         byte[] buf = new byte[1024];
         int l;
-        volume(line, .2d);
+        volume(line, volume);
 
         while (oais.available() > 0) {
             l = oais.read(buf, 0, 1024);

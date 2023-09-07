@@ -41,6 +41,8 @@ import static vavi.sound.SoundUtil.volume;
  */
 public class ImaInputStreamTest {
 
+    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
     String inFile = "ima_8k_4_mono.wav";
     String correctFile = "linear_8k_16_mono.pcm";
     File outFile;
@@ -112,7 +114,7 @@ Debug.println(Level.FINE, ev.getType());
  }
 });
 line.start();
-volume(line, .2d);
+volume(line, volume);
 
         byte[] buf = new byte[bufferSize];
         while (true) {

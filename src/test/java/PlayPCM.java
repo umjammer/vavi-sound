@@ -26,6 +26,8 @@ import static vavi.sound.SoundUtil.volume;
  */
 public class PlayPCM {
 
+    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
     /**
      * usage: java PlayPCM pcm_file [sampleRate] [byteOrder(le,be)]
      */
@@ -76,7 +78,7 @@ System.err.println(format);
                 System.exit(0);
             }
         });
-        volume(line, .2d);
+        volume(line, volume);
         line.start();
         byte[] buf = new byte[line.getBufferSize()];
         int l;

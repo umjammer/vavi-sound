@@ -42,6 +42,8 @@ import static vavi.sound.SoundUtil.volume;
  */
 public class SSRCTest {
 
+    static double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
 //    static String inFile = "/Users/nsano/Music/0/kirameki01.wav";  // TODO error in down sampling
     static String inFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/44100.wav";
 //    static String inFile = "/Users/nsano/Music/0/rc.wav";
@@ -69,7 +71,7 @@ Debug.println(format);
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(format);
-        volume(line, .2d);
+        volume(line, volume);
         line.start();
         byte[] buf = new byte[1024];
         int l;
@@ -100,7 +102,7 @@ Debug.println(format);
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(format);
-        volume(line, .2d);
+        volume(line, volume);
         line.start();
         byte[] buf = new byte[1024];
         int l;
@@ -171,7 +173,7 @@ Debug.println(outFormat);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(outFormat);
         // volume
-        volume(line, .2d);
+        volume(line, volume);
         line.start();
         byte[] buf = new byte[0x10000];
         int f = format.getFrameSize() * format.getChannels();

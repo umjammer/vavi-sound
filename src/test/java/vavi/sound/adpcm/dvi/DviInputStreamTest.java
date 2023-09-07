@@ -36,6 +36,8 @@ import static vavi.sound.SoundUtil.volume;
  */
 public class DviInputStreamTest {
 
+    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
     String inFile = "out.adpcm";
     String correctFile = "out.pcm";
     File outFile;
@@ -72,7 +74,7 @@ OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath(
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(format);
         line.start();
-        volume(line, .2d);
+        volume(line, volume);
 
         byte[] buf = new byte[1024];
         while (true) {

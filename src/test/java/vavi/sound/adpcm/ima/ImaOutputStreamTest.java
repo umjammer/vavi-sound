@@ -44,6 +44,8 @@ import static vavi.sound.SoundUtil.volume;
  */
 public class ImaOutputStreamTest {
 
+    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
     String inFile = "out.pcm";
     String correctFile = "out_sox.adpcm";
     File outFile;
@@ -94,7 +96,7 @@ Debug.println(Level.FINE, "outFile: " + outFile.getCanonicalPath());
         line.open(audioFormat);
         line.start();
 
-        volume(line, .2d);
+        volume(line, volume);
 
         byte[] buf = new byte[8192];
         while (true) {
@@ -159,7 +161,7 @@ Debug.println(Level.FINE, "outFile: " + outFile.length());
         line.open(audioFormat);
         line.start();
 
-        volume(line, .2d);
+        volume(line, volume);
 
         byte[] buf = new byte[8192];
         while (true) {
@@ -243,7 +245,7 @@ Debug.println(Level.FINE, "inFile: " + length);
         line.open(audioFormat);
         line.start();
 
-        volume(line, .2d);
+        volume(line, volume);
 
         byte[] buf = new byte[8192];
         while (true) {

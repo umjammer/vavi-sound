@@ -37,6 +37,8 @@ import static vavi.sound.SoundUtil.volume;
 @Disabled
 public class MsAudioFileReaderTest {
 
+    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
     String inFile = "/vavi/sound/adpcm/ms/ms_8k_4_mono.wav";
     String correctFile = "/vavi/sound/adpcm/ms/out_sox.pcm";
     File outFile;
@@ -87,7 +89,7 @@ line.open(outFormat);
 line.start();
         byte[] buf = new byte[1024];
         int l;
-        volume(line, .2d);
+        volume(line, volume);
 
         while (oais.available() > 0) {
             l = oais.read(buf, 0, 1024);

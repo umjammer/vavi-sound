@@ -33,6 +33,8 @@ import vavi.util.Debug;
  */
 public class BasicAudioEngineTest {
 
+    static final float volume = (float) Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
     @Test
     public void test() throws Exception {
         CountDownLatch cdl = new CountDownLatch(1);
@@ -94,6 +96,7 @@ Debug.println(meta.getType());
             }
         }
     }
+
     /** */
     void debug1(byte[] adpcm) {
         try {
