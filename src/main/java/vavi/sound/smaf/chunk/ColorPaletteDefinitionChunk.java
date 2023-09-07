@@ -35,13 +35,13 @@ public class ColorPaletteDefinitionChunk extends Chunk {
         this.size = 0;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 dis.skipBytes((int) (long) size);
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         DataOutputStream dos = new DataOutputStream(os);
 

@@ -45,14 +45,14 @@ public class MfiVaviSequenceTest {
     @Test
     public void test3() throws Exception {
         InputStream is = MfiVaviSequenceTest.class.getResourceAsStream("/test.mld");
-        MidiFileFormat format= new MfiMidiFileReader().getMidiFileFormat(is);
+        MidiFileFormat format = new MfiMidiFileReader().getMidiFileFormat(is);
         assertNotNull(format);
     }
 
     @Test
     public void test4() throws Exception {
         InputStream is = MfiVaviSequenceTest.class.getResourceAsStream("/test.mld");
-        MidiFileFormat format= MidiSystem.getMidiFileFormat(is);
+        MidiFileFormat format = MidiSystem.getMidiFileFormat(is);
         assertNotNull(format);
     }
 

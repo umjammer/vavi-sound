@@ -74,16 +74,19 @@ public class OctaveShiftMessage extends vavi.sound.smaf.ShortMessage
     //----
 
     /* */
+    @Override
     public byte[] getMessage() {
         return null; // TODO
     }
 
     /* */
+    @Override
     public int getLength() {
         return 0;   // TODO
     }
 
     /** Modify context. */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
         context.setOctaveShift(channel, octaveShift);
 

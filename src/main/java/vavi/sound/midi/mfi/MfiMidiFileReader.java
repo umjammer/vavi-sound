@@ -31,6 +31,7 @@ import vavi.util.Debug;
 public class MfiMidiFileReader extends BasicMidiFileReader {
 
     /** Gets a MIDI Sequence converted from MFi */
+    @Override
     public Sequence getSequence(InputStream is)
         throws InvalidMidiDataException,
                IOException {

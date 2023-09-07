@@ -329,10 +329,9 @@ if (delta > 255) {
         for (Track track : midiTracks) {
             for (int i = 0; i < track.size(); i++) {
                 MidiMessage midiMessage = track.get(i).getMessage();
-                if (midiMessage instanceof MetaMessage &&
+                if (midiMessage instanceof MetaMessage metaMessage &&
                         ((MetaMessage) midiMessage).getType() == MetaEvent.META_TEMPO.number()) {
 
-                    MetaMessage metaMessage = (MetaMessage) midiMessage;
                     byte[] data = metaMessage.getData();
 
                     int timeBase = TempoMessage.getNearestTimeBase(this.timeBase);
@@ -360,7 +359,7 @@ Debug.println(Level.FINE, "(SCALE) final scale: " + scale + ", " + scaleChanged)
             }
         }
         midiEvents.sort(new Comparator<MidiEvent>() {
-            /** */
+            @Override
             public int compare(MidiEvent e1, MidiEvent e2) {
                 long t1 = e1.getTick();
                 long t2 = e2.getTick();

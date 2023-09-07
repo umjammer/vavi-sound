@@ -28,7 +28,7 @@ import vavi.util.Debug;
 
 
 /**
- * CommonMessage.
+ * CommonAudioMessage.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>

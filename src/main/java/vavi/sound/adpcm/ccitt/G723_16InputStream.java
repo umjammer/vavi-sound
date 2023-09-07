@@ -22,7 +22,7 @@ import vavi.sound.adpcm.Codec;
  */
 public class G723_16InputStream extends AdpcmInputStream {
 
-    /** */
+    @Override
     protected Codec getCodec() {
         return new G723_16();
     }
@@ -39,6 +39,7 @@ public class G723_16InputStream extends AdpcmInputStream {
     }
 
     /** ADPCM (4bit) 換算時の長さ */
+    @Override
     public int available() throws IOException {
 //Debug.println("0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
         return (in.available() * 4) + (rest ? 1 : 0); // TODO check * 4 ???

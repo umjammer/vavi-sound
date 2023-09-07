@@ -44,7 +44,7 @@ class InputEngineOutputStreamTest {
     @Test
     public void test1() throws Exception {
         //
-        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(getClass().getResourceAsStream(inFile), out -> new Rot13.OutputStream(out)));
+        InputStream is = new OutputEngineInputStream(new IOStreamOutputEngine(getClass().getResourceAsStream(inFile), Rot13.OutputStream::new));
         OutputStream os = Files.newOutputStream(Paths.get(out1File));
         byte[] buffer = new byte[8192];
         while (true) {
@@ -60,7 +60,7 @@ class InputEngineOutputStreamTest {
 
         //
         is = Files.newInputStream(Paths.get(out1File));
-        os = new InputEngineOutputStream(new IOStreamInputEngine(Files.newOutputStream(Paths.get(out2File)), in -> new Rot13.InputStream(in)));
+        os = new InputEngineOutputStream(new IOStreamInputEngine(Files.newOutputStream(Paths.get(out2File)), Rot13.InputStream::new));
         buffer = new byte[8192];
         while (true) {
             int amount = is.read(buffer);

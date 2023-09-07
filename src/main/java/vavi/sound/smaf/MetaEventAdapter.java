@@ -37,20 +37,24 @@ class MetaEventAdapter implements MetaEventListener, SmafDevice {
                            "Version " + SmafDeviceProvider.version) {};
 
     /* */
+    @Override
     public SmafDevice.Info getDeviceInfo() {
         return info;
     }
 
     /* */
+    @Override
     public void close() {
     }
 
     /* */
+    @Override
     public boolean isOpen() {
         return true;
     }
 
     /* */
+    @Override
     public void open() {
     }
 
@@ -58,6 +62,7 @@ class MetaEventAdapter implements MetaEventListener, SmafDevice {
      * {@link SmafMessageStore} を使用した再生機構を実装しています。
      * @see WaveMessage#getMidiEvents(MidiContext)
      */
+    @Override
     public void meta(javax.sound.midi.MetaMessage message) {
 //Debug.println("type: " + message.getType());
         switch (MetaEvent.valueOf(message.getType())) {

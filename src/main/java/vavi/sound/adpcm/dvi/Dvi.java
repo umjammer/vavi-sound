@@ -92,6 +92,7 @@ class Dvi implements Codec {
      * @param input pcm
      * @return adpcm
      */
+    @Override
     public int encode(int input) {
 
         //
@@ -174,6 +175,7 @@ class Dvi implements Codec {
     /**
      * @param input adpcm
      */
+    @Override
     public int decode(int input) {
 
         //

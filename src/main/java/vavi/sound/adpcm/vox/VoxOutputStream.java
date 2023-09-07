@@ -25,6 +25,7 @@ import vavi.sound.adpcm.Codec;
 public class VoxOutputStream extends AdpcmOutputStream {
 
     /** エンコーダ */
+    @Override
     protected Codec getCodec() {
         return new Vox();
     }
@@ -42,6 +43,7 @@ public class VoxOutputStream extends AdpcmOutputStream {
     /**
      * @param b
      */
+    @Override
     public void write(int b) throws IOException {
         if (!flushed) {
 

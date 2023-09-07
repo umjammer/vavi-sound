@@ -72,12 +72,13 @@ class DividedMfiWithVoiceMaker extends MfiWithVoiceMaker {
     private class Event implements WaveDivider.Event {
         /** total size written */
         int r = 0;
+        @Override
         public void exec(WaveDivider.Chunk chunk) throws IOException {
             try {
                 File file = new File(directory, String.format(base, chunk.sequence + 1));
                 r += createMFi(chunk.buffer, file);
             } catch (InvalidMfiDataException e) {
-                throw (IOException) new IOException().initCause(e);
+                throw (IOException) new IOException(e);
             }
         }
     }
@@ -89,6 +90,7 @@ class DividedMfiWithVoiceMaker extends MfiWithVoiceMaker {
      * @throws InvalidMfiDataException
      * @return total size written
      */
+    @Override
     public int create() throws IOException, UnsupportedAudioFileException, InvalidMfiDataException {
 long t = System.currentTimeMillis();
         // divide

@@ -30,6 +30,7 @@ public class sh900 implements MachineDependentMfiWithVoiceMaker {
      * @param masterVolume 100% currently recommended
      * @param adpcmVolume 100% currently recommended
      */
+    @Override
     public List<MfiEvent> getEvents(byte[] data, float time, int sampleRate, int bits, int channels, int masterVolume, int adpcmVolume)
         throws InvalidMfiDataException, IOException {
 

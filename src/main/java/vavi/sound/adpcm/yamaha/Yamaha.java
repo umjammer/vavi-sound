@@ -67,6 +67,7 @@ class Yamaha implements Codec {
      * @param code ADPCM (LSB 4bit 有効)
      * @return 16bit PCM signed
      */
+    @Override
     public int decode(int code) {
 
         int ss = stat.index;
@@ -100,6 +101,7 @@ class Yamaha implements Codec {
      * @param samp 16bit PCM signed
      * @return ADPCM (LSB 4bit 有効)
      */
+    @Override
     public int encode(int samp) {
         int diff;
         int ss = stat.index;

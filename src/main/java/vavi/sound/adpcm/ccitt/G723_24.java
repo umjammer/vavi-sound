@@ -71,6 +71,7 @@ class G723_24 extends G711 {
      * code.
      * @return -1 if invalid input coding value.
      */
+    @Override
     public int encode(int sl) {
 
         // linearize input sample to 14-bit PCM
@@ -115,6 +116,7 @@ class G723_24 extends G711 {
      * the resulting 16-bit linear PCM, A-law or u-law sample value.
      * -1 is returned if the output coding is unknown.
      */
+    @Override
     public int decode(int i) {
 
         i &= 0x07;                                          // mask to get proper bits
@@ -146,7 +148,7 @@ class G723_24 extends G711 {
         }
     }
 
-    /** */
+    @Override
     public int getEncodingBits() {
         return 3;
     }

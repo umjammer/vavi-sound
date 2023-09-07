@@ -42,6 +42,7 @@ public class Function1_241_5 implements MachineDependentFunction {
      * 9        ...43210    stream wave number
      * </pre>
      */
+    @Override
     public void process(MachineDependentMessage message)
         throws InvalidMfiDataException {
 

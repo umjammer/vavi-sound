@@ -72,6 +72,7 @@ public class CopyMessage extends SubMessage implements MidiConvertible, MfiConve
     // ----
 
     /** Meta 0x02 */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 
         MetaMessage metaMessage = new MetaMessage();
@@ -84,7 +85,7 @@ public class CopyMessage extends SubMessage implements MidiConvertible, MfiConve
         };
     }
 
-    /** */
+    @Override
     public MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context) throws InvalidMfiDataException {
 
         MetaMessage metaMessage = (MetaMessage) midiEvent.getMessage();

@@ -87,6 +87,7 @@ class G721 extends G711 {
      * Encodes the input vale of linear PCM, A-law or u-law data sl and returns
      * the resulting code. -1 is returned for unknown input coding value.
      */
+    @Override
     public int encode(int sl) {
 
         // linearize input sample to 14-bit PCM
@@ -133,7 +134,7 @@ class G721 extends G711 {
         return i;
     }
 
-/** debug */
+///** debug */
 //private int ccc = 0;
 
     /**
@@ -142,6 +143,7 @@ class G721 extends G711 {
      *
      * @return -1 for unknown out_coding value.
      */
+    @Override
     public int decode(int i) {
 
         i &= 0x0f;                                          // mask to get proper bits
@@ -184,7 +186,7 @@ System.err.println("se:\t" + se);
         }
     }
 
-    /** */
+    @Override
     public int getEncodingBits() {
         return 4;
     }

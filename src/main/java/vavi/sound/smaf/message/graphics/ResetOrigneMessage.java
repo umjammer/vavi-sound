@@ -44,6 +44,7 @@ public class ResetOrigneMessage extends ShortMessage {
     //----
 
     /* */
+    @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         FormatType formatType = FormatType.HandyPhoneStandard; // TODO
@@ -65,6 +66,7 @@ public class ResetOrigneMessage extends ShortMessage {
     }
 
     /* */
+    @Override
     public int getLength() {
         return getMessage().length;
     }

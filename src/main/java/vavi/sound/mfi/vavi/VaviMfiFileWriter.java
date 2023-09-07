@@ -49,18 +49,18 @@ public class VaviMfiFileWriter extends MfiFileWriter {
     /** @see vavi.sound.mfi.vavi.header.ProtMessage */
     private static String defaultCreator = "vavi";
 
-    /** */
+    @Override
     public int[] getMfiFileTypes() {
         return types;
     }
 
-    /** */
+    @Override
     public int[] getMfiFileTypes(Sequence sequence) {
         // sequence を無視しているけど MFi Sequence 一つしか型ないからいい
         return types;
     }
 
-    /** */
+    @Override
     public boolean isFileTypeSupported(int fileType) {
         for (int type : types) {
             if (type == fileType) {
@@ -70,7 +70,7 @@ public class VaviMfiFileWriter extends MfiFileWriter {
         return false;
     }
 
-    /** */
+    @Override
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
         // sequence を無視しているけど MFi Sequence 一つしか型ないからいい
         return isFileTypeSupported(fileType);
@@ -83,6 +83,7 @@ public class VaviMfiFileWriter extends MfiFileWriter {
      * @return 0: fileType がサポートされていない場合、書き込みデータにエラーがある場合
      *         else: 書き込んだバイト数
      */
+    @Override
     public int write(Sequence in, int fileType, OutputStream out)
         throws IOException {
 
@@ -111,7 +112,7 @@ Debug.println(Level.WARNING, "unsupported fileType: " + fileType);
             ff.setNoteLength(1);
         } catch (InvalidMfiDataException e) {
             // TODO IOException でいいのか？
-            throw (IOException) new IOException().initCause(e);
+            throw (IOException) new IOException(e);
         }
 
         int type = ff.getMajorType();
@@ -135,6 +136,7 @@ Debug.printStackTrace(Level.WARNING, e);
     }
 
     /** delegate to {@link #write(Sequence, int, OutputStream)} */
+    @Override
     public int write(Sequence in, int fileType, File out)
         throws IOException {
 

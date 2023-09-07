@@ -41,7 +41,7 @@ public class SeekAndPhraseInfoChunk extends Chunk {
         this.size = 0;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
@@ -60,7 +60,7 @@ Debug.println(Level.FINE, "SeekAndPhraseInfo: subData: " + subDatum);
         }
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         DataOutputStream dos = new DataOutputStream(os);
 
@@ -107,7 +107,7 @@ Debug.println(Level.FINE, "SeekAndPhraseInfo: subData: " + subDatum);
         size += subDatum.getSize();
     }
 
-    /** */
+//    /** */
 //    private static final String[] TAG_Phrase = {
 //        "Pa", "Pb", "Pc", "Pd", "Pe", "Pf", "Pg",
 //        "Ph", "Pi", "Pj", "Pk", "Pl", "Pm", "Pn",
@@ -121,7 +121,7 @@ Debug.println(Level.FINE, "SeekAndPhraseInfo: subData: " + subDatum);
         return null;
     }
 
-    /** [a-zABEIKSR]+ */
+//    /** [a-zABEIKSR]+ */
 //    private static final String TAG_SubSequence = "SL";
 
     /** TODO List */

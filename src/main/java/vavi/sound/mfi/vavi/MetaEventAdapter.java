@@ -38,21 +38,21 @@ class MetaEventAdapter implements MetaEventListener, MfiDevice {
                            "Software sequencer using adpcm",
                            "Version " + VaviMfiDeviceProvider.version) {};
 
-    /* */
+    @Override
     public MfiDevice.Info getDeviceInfo() {
         return info;
     }
 
-    /* */
+    @Override
     public void close() {
     }
 
-    /* */
+    @Override
     public boolean isOpen() {
         return true;
     }
 
-    /* */
+    @Override
     public void open() {
     }
 
@@ -64,6 +64,7 @@ class MetaEventAdapter implements MetaEventListener, MfiDevice {
      * @see vavi.sound.mfi.vavi.header.TitlMessage#getMidiEvents(MidiContext)
      * @see vavi.sound.mfi.vavi.track.TempoMessage#getMidiEvents(MidiContext)
      */
+    @Override
     public void meta(javax.sound.midi.MetaMessage message) {
 //Debug.println("type: " + message.getType());
         switch (MetaEvent.valueOf(message.getType())) {

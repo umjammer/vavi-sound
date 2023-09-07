@@ -90,7 +90,7 @@ public class WaveDataMessage extends SmafMessage
         return data.length;
     }
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
@@ -113,6 +113,7 @@ public class WaveDataMessage extends SmafMessage
     }
 
     /* */
+    @Override
     public void sequence() throws InvalidSmafDataException {
 Debug.println(Level.FINE, "WAVE DATA[" + number + "]: " + this);
 //try {

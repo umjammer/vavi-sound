@@ -59,7 +59,7 @@ public class UndefinedMessage extends MfiMessage
 
     //----
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
 Debug.println(this);
         return null;

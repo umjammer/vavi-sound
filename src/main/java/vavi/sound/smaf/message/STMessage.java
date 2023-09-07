@@ -71,6 +71,7 @@ public class STMessage extends SmafMessage
     /**
      * @throws InvalidMidiDataException
      */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
         byte[] data;
         try {

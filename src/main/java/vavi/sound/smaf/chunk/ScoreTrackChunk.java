@@ -55,7 +55,7 @@ Debug.println(Level.FINE, "ScoreTrack[" + trackNumber + "]: " + size + " bytes")
         this.size = 4;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
@@ -113,7 +113,7 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         }
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         DataOutputStream dos = new DataOutputStream(os);
 

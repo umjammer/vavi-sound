@@ -58,7 +58,7 @@ public class MasterVolumeMessage extends ShortMessage
 
     //----
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 

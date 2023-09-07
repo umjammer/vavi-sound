@@ -45,6 +45,7 @@ public class Function240_2 implements MachineDependentFunction {
      * 9    sample rate    0:4kHz, 1:8kHz
      * </pre>
      */
+    @Override
     public void process(MachineDependentMessage message)
         throws InvalidMfiDataException {
 

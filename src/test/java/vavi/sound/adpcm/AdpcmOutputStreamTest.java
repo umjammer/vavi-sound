@@ -28,11 +28,14 @@ class AdpcmOutputStreamTest {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         AdpcmOutputStream os = new AdpcmOutputStream(baos, ByteOrder.BIG_ENDIAN, 4, ByteOrder.BIG_ENDIAN) {
+            @Override
             protected Codec getCodec() {
                 return new Codec() {
+                    @Override
                     public int encode(int pcm) {
                         return pcm & 0xf;
                     }
+                    @Override
                     public int decode(int adpcm) {
                         return adpcm | adpcm << 4 | adpcm << 8 | adpcm << 16;
                     }

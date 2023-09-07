@@ -77,12 +77,12 @@ public class PitchBendMessage extends vavi.sound.mfi.ShortMessage
         this.data[3] = (byte) ((this.data[3] & 0xc0) | this.pitchBend);
     }
 
-    /** */
+    @Override
     public int getVoice() {
         return voice;
     }
 
-    /** */
+    @Override
     public void setVoice(int voice) {
         this.voice = voice & 0x03;
         this.data[3] = (byte) ((this.data[3] & 0x3f) | (this.voice << 6));
@@ -97,6 +97,7 @@ public class PitchBendMessage extends vavi.sound.mfi.ShortMessage
     /**
      * PsmPlayer がこう変換していたからしょうがない。
      */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
@@ -116,7 +117,7 @@ public class PitchBendMessage extends vavi.sound.mfi.ShortMessage
         };
     }
 
-    /** */
+    @Override
     public MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context)
         throws InvalidMfiDataException {
 

@@ -22,6 +22,7 @@ import vavi.sound.adpcm.Codec;
 public class OkiOutputStream extends AdpcmOutputStream {
 
     /** エンコーダ */
+    @Override
     protected Codec getCodec() {
         return new Oki();
     }

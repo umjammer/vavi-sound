@@ -118,9 +118,8 @@ public class VaviMfiFileFormat extends MfiFileFormat {
                 for (int j = 0; j < track.size(); j++) {
                     MfiEvent event = track.get(j);
                     MfiMessage message = event.getMessage();
-                    if (message instanceof SubMessage) {
-                        SubMessage subChunk = (SubMessage) message;
-//Debug.println(infoMessage);
+                    if (message instanceof SubMessage subChunk) {
+                        //Debug.println(infoMessage);
                         subChunks.put(subChunk.getSubType(), subChunk);
                     }
                 }

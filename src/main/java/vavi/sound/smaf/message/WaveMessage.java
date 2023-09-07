@@ -186,6 +186,7 @@ public class WaveMessage extends SmafMessage
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
      * @see vavi.sound.smaf.sequencer.WaveSequencer#META_FUNCTION_ID_SMAF
      */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
@@ -208,6 +209,7 @@ public class WaveMessage extends SmafMessage
     }
 
     /* */
+    @Override
     public void sequence() throws InvalidSmafDataException {
 Debug.println(Level.FINE, "WAVE PLAY: " + number);
         AudioEngine engine = Factory.getAudioEngine();

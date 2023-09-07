@@ -97,7 +97,7 @@ System.err.println("output: " + args[argc]);
             }
         } while (++argc < args.length);
 
-        G711 encoder = (G711) Class.forName(encoderName).newInstance();
+        G711 encoder = (G711) Class.forName(encoderName).getDeclaredConstructor().newInstance();
         encoder.setEncoding(encoding);
 
         InputStream is = new BufferedInputStream(in);

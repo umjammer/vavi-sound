@@ -18,7 +18,6 @@ import vavi.sound.mfi.MfiSystem;
 import vavi.sound.mfi.MfiUnavailableException;
 import vavi.sound.midi.BasicMidiFileWriter;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
 
 
 /**

@@ -21,7 +21,7 @@ import vavi.sound.adpcm.Codec;
  */
 public class DviInputStream extends AdpcmInputStream {
 
-    /** */
+    @Override
     protected Codec getCodec() {
         return new Dvi();
     }

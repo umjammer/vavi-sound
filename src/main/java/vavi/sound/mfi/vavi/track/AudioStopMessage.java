@@ -54,6 +54,7 @@ public class AudioStopMessage extends LongMessage
     }
 
     /* */
+    @Override
     public int getVoice() {
         return voice;
     }
@@ -64,6 +65,7 @@ public class AudioStopMessage extends LongMessage
     }
 
     /* */
+    @Override
     public void setVoice(int voice) {
         this.voice = voice & 0x03;
         this.data[3] = (byte) ((this.data[3] & 0x3f) | (this.voice << 6));
@@ -81,6 +83,7 @@ public class AudioStopMessage extends LongMessage
     /**
      * @throws InvalidMidiDataException
      */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 
         MetaMessage metaMessage = new MetaMessage();
@@ -102,6 +105,7 @@ public class AudioStopMessage extends LongMessage
     }
 
     /** @throws IllegalArgumentException when audio engine does not found */
+    @Override
     public void sequence() throws InvalidMfiDataException {
         int id = getIndex();
 

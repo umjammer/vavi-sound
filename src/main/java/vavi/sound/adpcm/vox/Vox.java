@@ -35,7 +35,7 @@ class Vox implements Codec {
     /** */
     private State state = new State();
 
-    /** */
+    @Override
     public int encode(int samp) {
         int code = 0;
         int ss = table[state.index];
@@ -62,7 +62,7 @@ class Vox implements Codec {
         return code;
     }
 
-    /** */
+    @Override
     public int decode(int code) {
         int diff;
         int ss = table[state.index];

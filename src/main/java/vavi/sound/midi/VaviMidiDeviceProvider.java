@@ -32,6 +32,7 @@ public class VaviMidiDeviceProvider extends MidiDeviceProvider {
     private static final MidiDevice.Info[] infos = new MidiDevice.Info[] { VaviSequencer.info };
 
     /* */
+    @Override
     public MidiDevice.Info[] getDeviceInfo() {
         return infos;
     }
@@ -40,6 +41,7 @@ public class VaviMidiDeviceProvider extends MidiDeviceProvider {
      * ADPCM 再生機構を付加した MIDI シーケンサを返します。
      * @throws IllegalArgumentException info is not suitable for this provider
      */
+    @Override
     public MidiDevice getDevice(MidiDevice.Info info) {
 
         if (info == VaviSequencer.info) {

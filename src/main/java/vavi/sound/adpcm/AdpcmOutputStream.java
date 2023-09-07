@@ -59,6 +59,7 @@ public abstract class AdpcmOutputStream extends FilterOutputStream {
     /**
      * @param b PCM H or L byte を {@link #byteOrder} 順に指定 (LSB 8bit 有効)
      */
+    @Override
     public void write(int b) throws IOException {
         if (!flushed) {
 

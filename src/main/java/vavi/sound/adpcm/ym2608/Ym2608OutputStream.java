@@ -22,6 +22,7 @@ import vavi.sound.adpcm.Codec;
 public class Ym2608OutputStream extends AdpcmOutputStream {
 
     /** エンコーダ */
+    @Override
     protected Codec getCodec() {
         return new Ym2608();
     }

@@ -1,7 +1,7 @@
 # vavi.sound.mfi.vavi.sysex
 
-SysexMessage の派生クラスを提供します．
+Provides sub classes of SysexMessage.
 
 ## TODO
 
- * まだまだ改良の余地あり
+ * there is still room for improvement

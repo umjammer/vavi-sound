@@ -46,6 +46,7 @@ public class NecSequencer implements MachineDependentSequencer {
      * 7        f2, channel
      * </pre>
      */
+    @Override
     public void sequence(MachineDependentMessage message)
         throws InvalidMfiDataException {
 

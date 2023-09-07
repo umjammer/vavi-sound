@@ -74,6 +74,7 @@ public class ChannelConfigurationMessage extends ShortMessage
      * コンテキストのチャンネルコンフィグレーションを設定します。
      * @return 何も返しません
      */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
 Debug.println(Level.FINE, this);
         context.setDrum(getChannel(), isDrum() ? MidiContext.ChannelConfiguration.PERCUSSION :

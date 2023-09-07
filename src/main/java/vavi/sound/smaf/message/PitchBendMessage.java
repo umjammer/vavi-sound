@@ -77,11 +77,13 @@ public class PitchBendMessage extends vavi.sound.smaf.ShortMessage
     //----
 
     /* */
+    @Override
     public byte[] getMessage() {
         return null; // TODO
     }
 
     /* */
+    @Override
     public int getLength() {
         return 0;   // TODO
     }
@@ -89,6 +91,7 @@ public class PitchBendMessage extends vavi.sound.smaf.ShortMessage
     /**
      * PsmPlayer がこう変換していたからしょうがない。
      */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
@@ -104,7 +107,7 @@ public class PitchBendMessage extends vavi.sound.smaf.ShortMessage
         };
     }
 
-    /** */
+    @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
 

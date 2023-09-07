@@ -23,7 +23,7 @@ import vavi.util.Debug;
  */
 public class OkiInputStream extends AdpcmInputStream {
 
-    /** */
+    @Override
     protected Codec getCodec() {
         return new Oki();
     }

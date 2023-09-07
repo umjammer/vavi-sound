@@ -55,6 +55,7 @@ public abstract class AdpcmInputStream extends FilterInputStream {
     }
 
     /** ADPCM (4bit) 換算時の長さ */
+    @Override
     public int available() throws IOException {
 //Debug.println("0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
         // TODO * 2 とか bits で計算すべき？
@@ -69,6 +70,7 @@ public abstract class AdpcmInputStream extends FilterInputStream {
     /**
      * @return PCM H or L (8bit LSB 有効)
      */
+    @Override
     public int read() throws IOException {
 //Debug.println(in);
         if (!rest) {
@@ -98,7 +100,7 @@ public abstract class AdpcmInputStream extends FilterInputStream {
         }
     }
 
-    /* */
+    @Override
     public int read(byte[] b, int off, int len) throws IOException {
         if (b == null) {
             throw new NullPointerException();

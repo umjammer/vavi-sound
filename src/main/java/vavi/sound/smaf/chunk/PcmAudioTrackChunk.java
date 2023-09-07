@@ -47,7 +47,7 @@ Debug.println(Level.FINE, "PcmAudioTrack[" + trackNumber + "]: " + size + " byte
         this.size = 6;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 //skip(is, size);
@@ -81,7 +81,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
         }
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         DataOutputStream dos = new DataOutputStream(os);
 

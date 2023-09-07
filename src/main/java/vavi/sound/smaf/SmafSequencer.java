@@ -60,6 +60,7 @@ class SmafSequencer implements Sequencer, Synthesizer {
         }
         midiSequencer.close();
         midiSynthesizer.close();
+        off();
     }
 
     @Override
@@ -161,11 +162,13 @@ Debug.println(e);
     private MetaSupport metaSupport = new MetaSupport();
 
     /* {@link MetaEventListener} を登録します。 */
+    @Override
     public void addMetaEventListener(MetaEventListener l) {
         metaSupport.addMetaEventListener(l);
     }
 
     /* {@link MetaEventListener} を削除します。 */
+    @Override
     public void removeMetaEventListener(MetaEventListener l) {
         metaSupport.removeMetaEventListener(l);
     }
@@ -177,7 +180,7 @@ Debug.println(e);
 
     /** meta 0x2f listener */
     private javax.sound.midi.MetaEventListener mel = new javax.sound.midi.MetaEventListener() {
-        /** */
+        @Override
         public void meta(javax.sound.midi.MetaMessage message) {
 //Debug.println("type: " + message.getType());
             switch (message.getType()) {
@@ -229,11 +232,6 @@ Debug.printStackTrace(e);
     @Override
     public void unloadAllInstruments(Soundbank soundbank) {
         midiSynthesizer.unloadAllInstruments(soundbank);
-    }
-
-    /* */
-    protected void finalize() {
-        off();
     }
 }
 

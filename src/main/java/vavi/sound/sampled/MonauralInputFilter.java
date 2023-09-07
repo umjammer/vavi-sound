@@ -27,7 +27,7 @@ import vavi.util.Debug;
  */
 public class MonauralInputFilter implements InputFilter {
 
-    /** */
+    @Override
     public AudioInputStream doFilter(AudioInputStream sourceAis) throws IOException, UnsupportedAudioFileException {
         AudioFormat inAudioFormat = sourceAis.getFormat();
         if (inAudioFormat.getChannels() != 2) {

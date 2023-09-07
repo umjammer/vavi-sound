@@ -8,7 +8,6 @@ package vavi.sound.smaf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -62,9 +61,8 @@ public class SmafDeviceProvider {
 
         /** */
         public static SmafDevice.Info[] getSmafDeviceInfos() {
-            List<SmafDevice.Info> tmp = new ArrayList<>();
 
-            tmp.addAll(deviceMap.keySet());
+            List<SmafDevice.Info> tmp = new ArrayList<>(deviceMap.keySet());
 
             return tmp.toArray(new SmafDevice.Info[0]);
         }
@@ -73,7 +71,7 @@ public class SmafDeviceProvider {
         public static SmafDevice getSmafDevice(SmafDevice.Info smafDeviceInfo) {
             if (deviceMap.containsKey(smafDeviceInfo)) {
                 try {
-                    return deviceMap.get(smafDeviceInfo).newInstance();
+                    return deviceMap.get(smafDeviceInfo).getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
 Debug.printStackTrace(e);
                 }
@@ -100,7 +98,7 @@ Debug.printStackTrace(e);
                         @SuppressWarnings("unchecked")
                         Class<SmafDevice> deviceClass = (Class<SmafDevice>) Class.forName(props.getProperty(key));
 //Debug.println("smaf device class: " + StringUtil.getClassName(clazz));
-                        SmafDevice.Info smafDeviceInfo = deviceClass.newInstance().getDeviceInfo();
+                        SmafDevice.Info smafDeviceInfo = deviceClass.getDeclaredConstructor().newInstance().getDeviceInfo();
 
                         deviceMap.put(smafDeviceInfo, deviceClass);
                     }

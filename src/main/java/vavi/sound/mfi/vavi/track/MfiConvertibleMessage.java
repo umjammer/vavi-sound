@@ -53,6 +53,7 @@ public class MfiConvertibleMessage implements MfiConvertible {
     private int[] nrpnMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
 
     /** bank, rpn, nrpn */
+    @Override
     public MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context)
         throws InvalidMfiDataException {
 

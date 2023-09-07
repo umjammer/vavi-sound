@@ -24,6 +24,8 @@ import java.nio.ByteOrder;
  */
 public interface AudioEngine {
 
+    double volume = Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume",  "0.2"));
+
     /**
      * Sets adpcm data.
      * @param streamNumber packet id

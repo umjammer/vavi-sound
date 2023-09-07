@@ -32,7 +32,7 @@ public class MasterTrackChunk extends TrackChunk {
 Debug.println(Level.FINE, "MasterTrack: " + size);
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
@@ -56,7 +56,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
         }
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         // TODO
     }

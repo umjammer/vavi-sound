@@ -212,7 +212,7 @@ public class NoteMessage extends SmafMessage
 
 private static int uc = 0;
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 

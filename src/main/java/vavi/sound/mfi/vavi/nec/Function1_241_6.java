@@ -43,6 +43,7 @@ public class Function1_241_6 implements MachineDependentFunction {
      * 10       0 ~ 63, 128 mono, 255 no pan
      * </pre>
      */
+    @Override
     public void process(MachineDependentMessage message)
         throws InvalidMfiDataException {
 

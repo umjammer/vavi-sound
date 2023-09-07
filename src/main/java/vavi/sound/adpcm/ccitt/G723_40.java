@@ -91,6 +91,7 @@ class G723_40 extends G711 {
      * the resulting 5-bit CCITT G.723 40Kbps code.
      * @return -1 if the input coding value is invalid.
      */
+    @Override
     public int encode(int sl) {
 
         // linearize input sample to 14-bit PCM
@@ -137,6 +138,7 @@ class G723_40 extends G711 {
      * the resulting 16-bit linear PCM, A-law or u-law sample value.
      * -1 is returned if the output coding is unknown.
      */
+    @Override
     public int decode(int i) {
 
         i &= 0x1f;                                          // mask to get proper bits
@@ -170,7 +172,7 @@ class G723_40 extends G711 {
         }
     }
 
-    /** */
+    @Override
     public int getEncodingBits() {
         return 5;
     }

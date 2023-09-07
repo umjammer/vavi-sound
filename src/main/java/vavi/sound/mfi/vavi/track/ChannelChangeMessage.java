@@ -62,12 +62,12 @@ public class ChannelChangeMessage extends ShortMessage
         return channel;
     }
 
-    /** */
+    @Override
     public int getVoice() {
         return voice;
     }
 
-    /** */
+    @Override
     public void setVoice(int voice) {
         this.voice = voice & 0x03;
         this.data[3] = (byte) ((this.data[3] & 0x3f) | (this.voice << 6));
@@ -82,7 +82,7 @@ public class ChannelChangeMessage extends ShortMessage
 
     //----
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
 Debug.println(Level.INFO, "ignore: " + this);
         return null;

@@ -45,7 +45,7 @@ Debug.println(Level.FINE, "Image[" + imageNumer + "]: " + size + " bytes");
         this.size = 0;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
@@ -69,6 +69,7 @@ Debug.println(Level.FINE, "image: " + getImage());
     }
 
     /** TODO */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
     }
 }

@@ -56,8 +56,8 @@ abstract class G711 implements Codec {
     private static final int SIGN_BIT = 0x80;
     /** Quantization field mask. */
     private static final int QUANT_MASK = 0xf;
-    /** Number of A-law segments. */
-//  private static final int NSEGS = 8;
+//    /** Number of A-law segments. */
+//    private static final int NSEGS = 8;
     /** Left shift for segment number. */
     private static final int SEG_SHIFT = 4;
     /** Segment field mask. */

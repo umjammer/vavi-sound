@@ -35,6 +35,7 @@ public class Function3 implements MachineDependentFunction {
      *  6   03
      * </pre>
      */
+    @Override
     public void process(MachineDependentMessage message)
         throws InvalidMfiDataException {
 

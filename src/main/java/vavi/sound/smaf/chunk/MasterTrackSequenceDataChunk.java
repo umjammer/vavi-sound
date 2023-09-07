@@ -30,6 +30,7 @@ Debug.println(Level.FINE, "MasterTrackSequenceData: " + size + " bytes");
     }
 
     /** TODO how to get formatType from parent chunk ??? */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 dis.skipBytes((int) (long) size); // TODO

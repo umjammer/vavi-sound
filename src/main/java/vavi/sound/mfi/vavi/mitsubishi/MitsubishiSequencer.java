@@ -35,6 +35,7 @@ public class MitsubishiSequencer implements MachineDependentSequencer {
      *
      * @param message see below
      */
+    @Override
     public void sequence(MachineDependentMessage message)
         throws InvalidMfiDataException {
 

@@ -55,8 +55,8 @@ public class SSRC {
     /** */
     private int FFTFIRLEN = 65536;
 
-    /** */
-//  private static final int M = 15;
+//    /** */
+//    private static final int M = 15;
 
     /** */
     private static int round(double x) {
@@ -153,10 +153,10 @@ public class SSRC {
         /** */
         private int randPtr;
 
-        /**  */
+        /** */
         private static final int POOLSIZE = 97;
 
-        /**  */
+        /** */
         private int initShaper(int freq, int nch, int min, int max, int dType, int pdf, double noiseAmp) {
             int i;
             int[] pool = new int[POOLSIZE];
@@ -267,7 +267,7 @@ public class SSRC {
             return samp[shaperType];
         }
 
-        /**  */
+        /** */
         private int doShaping(double s, double[] peak, int dtype, int ch) {
             double u, h;
             int i;
@@ -327,7 +327,7 @@ public class SSRC {
             return (int) s;
         }
 
-        /**  */
+        /** */
         private void quitShaper(int nch) {
         }
     }
@@ -481,6 +481,7 @@ public class SSRC {
     class Upsampler extends Resampler {
 
         /* */
+        @Override
         int resample(ReadableByteChannel fpi, WritableByteChannel fpo) throws IOException {
             int frqgcd, osf, fs1, fs2;
             double[][] stage1;
@@ -1053,6 +1054,7 @@ System.err.println("upsample");
     class Downsampler extends Resampler {
 
         /* */
+        @Override
         int resample(ReadableByteChannel fpi, WritableByteChannel fpo) throws IOException {
             int frqgcd, osf, fs1, fs2;
             double[] stage1;
@@ -1307,7 +1309,7 @@ System.err.println("downsample");
                         for (i = 0; i < nsmplread * nch; i++) {
                             int v = rawinbuf.order(byteOrder).asShortBuffer().get(i);
                             inbuf[nch * inbuflen + i] = (1 / (double) 0x7fff) * v;
-    //System.err.printf("I: %f\n", inbuf[nch * inbuflen + i]);
+//System.err.printf("I: %f\n", inbuf[nch * inbuflen + i]);
                         }
                         break;
 
@@ -1634,6 +1636,7 @@ System.err.printf("%d, %d, %d, %d\n",
     class NoSrc extends Resampler {
 
         /* */
+        @Override
         int resample(ReadableByteChannel fpi, WritableByteChannel fpo) throws IOException {
             double[] peak = new double[] {
                 0

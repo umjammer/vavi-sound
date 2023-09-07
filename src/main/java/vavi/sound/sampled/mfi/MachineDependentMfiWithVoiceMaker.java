@@ -39,18 +39,18 @@ public interface MachineDependentMfiWithVoiceMaker {
 
     /** factory */
     PrefixedPropertiesFactory<String, MachineDependentMfiWithVoiceMaker> factory =
-        new PrefixedClassPropertiesFactory<String, MachineDependentMfiWithVoiceMaker>("/vavi/sound/sampled/mfi/MfiWithVoiceMaker.properties", "class.") {
+            new PrefixedClassPropertiesFactory<>("/vavi/sound/sampled/mfi/MfiWithVoiceMaker.properties", "class.") {
 
-        @Override
-        protected String getRestoreKey(String key) {
-            return key;
-        }
+                @Override
+                protected String getRestoreKey(String key) {
+                    return key;
+                }
 
-        @Override
-        protected String getStoreKey(String key) {
-            return key.substring(key.indexOf('.') + 1);
-        }
-    };
+                @Override
+                protected String getStoreKey(String key) {
+                    return key.substring(key.indexOf('.') + 1);
+                }
+            };
 }
 
 /* */

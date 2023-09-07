@@ -30,17 +30,17 @@ public class MidiContext {
     /** */
     public static final int MAX_MIDI_CHANNELS = 16;
 
-    /** チャンネルコンフィギュレーション */
+    /** channel configuration */
     public enum ChannelConfiguration {
-        /** リズム */
+        /** rhythm */
         PERCUSSION,
-        /** その他 */
+        /** others */
         SOUND_SET,
-        /** 未使用 */
+        /** unused */
         UNUSED
     }
 
-    /** channel 9 はデフォルトでリズム */
+    /** channel 9 defaults to rhythm */
     public static final int CHANNEL_DRUM = 9;
 
     /** */
@@ -48,10 +48,10 @@ public class MidiContext {
         drums[CHANNEL_DRUM] = ChannelConfiguration.PERCUSSION;
     }
 
-    /** リズムチャンネルが複数の場合の保存用 TODO */
+//    /** TODO for saving when there are multiple rhythm channels */
 //    drumProgram = 0;
 
-    /** 現在のトラック No. */
+    /** current track number */
     private int mfiTrackNumber;
 
     /** */
@@ -64,7 +64,7 @@ public class MidiContext {
         this.mfiTrackNumber = trackNumber;
     }
 
-    /** 現在のΔタイム */
+    /** current Δ time */
     private long[] currents = new long[4];
 
     /** mfiTrackNumber must be set */
@@ -82,7 +82,7 @@ public class MidiContext {
         this.currents[mfiTrackNumber] += value;
     }
 
-    /** channel がリズムかどうか, index is pseudo MIDI channel */
+    /** whether channel is a rhythm, index is pseudo MIDI channel */
     private ChannelConfiguration[] drums = new ChannelConfiguration[MAX_MIDI_CHANNELS];
 
     /* initializing */ {
@@ -94,7 +94,7 @@ public class MidiContext {
     /** */
     private static final int CHANNEL_UNUSED = -1;
 
-    /** DRUM_CHANNEL がリズムでない場合の交換先チャンネル */
+    /** destination channel if DRUM_CHANNEL is not rhythm */
     private int drumSwapChannel = CHANNEL_UNUSED;
 
     /**
@@ -107,11 +107,11 @@ Debug.println(Level.FINE, "already swapped: " + channel + ", " + value);
             drums[channel] = value;
         }
 
-        // DRUM_CHANNEL がリズムでなければ空いてる channel と交換
+        // ff DRUM_CHANNEL is not a rhythm, replace it with an empty channel
         if (channel == CHANNEL_DRUM && drums[CHANNEL_DRUM] == ChannelConfiguration.SOUND_SET && drumSwapChannel == CHANNEL_UNUSED) {
             for (int k = MAX_MIDI_CHANNELS - 1; k >= 0; k--) {
                 if (k != CHANNEL_DRUM && drums[k] == ChannelConfiguration.UNUSED) {
-                    drumSwapChannel = k; // TODO 複数対応？
+                    drumSwapChannel = k; // TODO support multiple？
 Debug.println(Level.FINE, "channel 9 -> " + k);
                     break;
                 }
@@ -122,7 +122,7 @@ Debug.println(Level.FINE, "cannot swap: " + channel + ", " + value);
         }
     }
 
-    /** channel に割り当てられた volume, index is pseudo MIDI channel */
+    /** volumes assigned to channel, index is pseudo MIDI channel */
     private int[] volumes = new int[MAX_MIDI_CHANNELS];
 
     /**
@@ -146,12 +146,12 @@ Debug.println(Level.FINE, "cannot swap: " + channel + ", " + value);
         return volumes[channel];
     }
 
-    /** channel に割り当てられた program no, index is real MIDI channel */
+    /** program numbers assigned to channel, index is real MIDI channel */
     private int[] programs = new int[MAX_MIDI_CHANNELS];
 
     /**
      * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
-     * @return ドラム置き換え後のチャンネル (real MIDI channel)
+     * @return channel after drum replacement (real MIDI channel)
      */
     public int setProgram(int channel, int program) {
         if (channel != drumSwapChannel && drums[channel] == ChannelConfiguration.PERCUSSION) {
@@ -168,7 +168,7 @@ Debug.println(Level.FINE, "drum always zero:[" + channel + "]: " + program);
 
     /**
      * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
-     * @return ドラム置き換え後のチャンネル (real MIDI channel)
+     * @return channel after drum replacement (real MIDI channel)
      */
     public int setBank(int channel, int bank) {
         if (channel != drumSwapChannel && drums[channel] == ChannelConfiguration.PERCUSSION) {
@@ -197,7 +197,7 @@ Debug.println(Level.FINE, "drum always zero:[" + channel + "]: " + bank);
 
     /**
      * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
-     * @return ドラム置き換え後のチャンネル (real MIDI channel)
+     * @return channel after drum replacement (real MIDI channel)
      */
     public int retrieveChannel(int channel) {
 
@@ -220,7 +220,7 @@ Debug.println(Level.FINE, "drum always zero:[" + channel + "]: " + bank);
      */
     public int retrievePitch(int channel, int pitch) {
         if (drums[channel] == ChannelConfiguration.PERCUSSION) {
-            pitch -= 10; // TODO 仕様
+            pitch -= 10; // TODO spec
         }
 
         return pitch + 45;

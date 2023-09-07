@@ -69,12 +69,12 @@ public class AudioChannelPanpotMessage extends vavi.sound.mfi.ShortMessage
         this.data[3] = (byte) ((this.data[3] & 0xc0) | this.panpot);
     }
 
-    /** */
+    @Override
     public int getVoice() {
         return voice;
     }
 
-    /** */
+    @Override
     public void setVoice(int voice) {
         this.voice = voice & 0x03;
         this.data[3] = (byte) ((this.data[3] & 0x3f) | (this.voice << 6));
@@ -89,7 +89,7 @@ public class AudioChannelPanpotMessage extends vavi.sound.mfi.ShortMessage
 
     //----
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
@@ -111,7 +111,7 @@ public class AudioChannelPanpotMessage extends vavi.sound.mfi.ShortMessage
         };
     }
 
-    /** */
+    @Override
     public void sequence() throws InvalidMfiDataException {
         // TODO Auto-generated method stub
     }

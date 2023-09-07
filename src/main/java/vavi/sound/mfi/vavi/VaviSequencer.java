@@ -63,21 +63,25 @@ class VaviSequencer implements Sequencer, Synthesizer {
     private Sequence sequence;
 
     /* */
+    @Override
     public MfiDevice.Info getDeviceInfo() {
         return info;
     }
 
     /* */
+    @Override
     public void close() {
         if (midiSequencer == null) {
             throw new IllegalStateException("not opend");
         }
         midiSequencer.close();
         midiSynthesizer.close();
+        off();
 Debug.println("★0 close: " + midiSequencer.hashCode());
     }
 
     /* */
+    @Override
     public boolean isOpen() {
         if (midiSequencer == null) {
             return false;
@@ -89,6 +93,7 @@ Debug.println("★0 close: " + midiSequencer.hashCode());
     private javax.sound.midi.MetaEventListener mea = new MetaEventAdapter();
 
     /* */
+    @Override
     public void open() throws MfiUnavailableException {
         try {
             if (this.midiSequencer == null) {
@@ -107,6 +112,7 @@ Debug.printStackTrace(e);
     }
 
     /* */
+    @Override
     public void setSequence(Sequence sequence)
         throws InvalidMfiDataException {
 
@@ -124,6 +130,7 @@ Debug.println(Level.SEVERE, e);
     }
 
     /* */
+    @Override
     public void setSequence(InputStream stream)
         throws IOException,
                InvalidMfiDataException {
@@ -132,11 +139,13 @@ Debug.println(Level.SEVERE, e);
     }
 
     /* */
+    @Override
     public Sequence getSequence() {
         return sequence;
     }
 
     /* */
+    @Override
     public void start() {
         if (midiSequencer == null) {
             throw new IllegalStateException("not opend");
@@ -146,6 +155,7 @@ Debug.println(Level.SEVERE, e);
     }
 
     /* */
+    @Override
     public void stop() {
         if (midiSequencer == null) {
             throw new IllegalStateException("not opend");
@@ -155,6 +165,7 @@ Debug.println(Level.SEVERE, e);
     }
 
     /* */
+    @Override
     public boolean isRunning() {
         if (midiSequencer == null) {
             throw new IllegalStateException("not opend");
@@ -198,7 +209,7 @@ Debug.println("★0 off: " + midiSequencer.hashCode());
 
     /** meta 0x2f listener */
     private javax.sound.midi.MetaEventListener mel = new javax.sound.midi.MetaEventListener() {
-        /** */
+        @Override
         public void meta(javax.sound.midi.MetaMessage message) {
 Debug.println("★0 meta: type: " + message.getType());
             switch (message.getType()) {
@@ -243,11 +254,6 @@ Debug.printStackTrace(e);
     @Override
     public void unloadAllInstruments(Soundbank soundbank) {
         midiSynthesizer.unloadAllInstruments(soundbank);
-    }
-
-    @Override
-    protected void finalize() {
-        off();
     }
 }
 

@@ -53,7 +53,7 @@ Debug.println(Level.FINE, "Graphics[" + trackNumber + "]: " + size);
         this.size = 5;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 //skip(is, size);
@@ -85,7 +85,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
         }
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         DataOutputStream dos = new DataOutputStream(os);
 
@@ -170,13 +170,14 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     public static class FontDataChunk extends Chunk {
         // "Ge**” ：Font Chunk
         // "Gu**” ：Unicode Font Chunk
-        /** */
+        @Override
         protected void init(MyDataInputStream dis, Chunk parent)
             throws InvalidSmafDataException, IOException {
 dis.skipBytes((int) (long) size); // TODO
         }
 
         /** TODO */
+        @Override
         public void writeTo(OutputStream os) throws IOException {
         }
     }
