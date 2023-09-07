@@ -1,10 +1,10 @@
 # vavi.sound.adpcm.vox
 
-VOX ADPCM フォーマット関連のクラスを提供します．
+Provides VOX ADPCM codec related classes.
 
 # Status
 
-完成
+completed
 
 ## TODO
 

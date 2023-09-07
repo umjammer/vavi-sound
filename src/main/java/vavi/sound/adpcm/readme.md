@@ -1,10 +1,10 @@
 # vavi.sound.adpcm
 
-ADPCM サウンド CODEC 関連のクラスを提供します．
+Provides ADPCM CODEC related packages.
 
 ## TODO
 
- * javax.sound.sampled.spi に組み込み</li>
- * サンプリングレートの変換</li>
- * ~~"060427 Codec インターフェースの抜き出し~~
- * ~~"060427 AdpcmInputStream/AdpcmOutputStream インターフェースの抜き出し~~
+ * ~~make those as javax.sound.sampled.spi~~
+ * sampling rate conversion
+ * ~~060427 extract Codec interface~~
+ * ~~060427 extract AdpcmInputStream/AdpcmOutputStream interface~~

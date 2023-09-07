@@ -1,5 +1,5 @@
 # vavi.sound.mfi.spi
 
-MFi のサービスプロバイダのクラスを提供します．
+Provides MFi service provider related classes.
 
 ## TODO

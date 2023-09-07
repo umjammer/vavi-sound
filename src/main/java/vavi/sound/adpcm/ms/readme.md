@@ -1,23 +1,24 @@
-<title>vavi.sound.adpcm.ms</title>
+# vavi.sound.adpcm.ms
 
-MS ADPCM フォーマット関連のクラスを提供します．
+Provices MS ADPCM codec related classes.
 
 ## Status
 
-sox と同じ結果になったので完成とみなす。
+we assume completed because result is the same as sox.
 
 ## Tech-know
 
- * ACM の M$ ADPCM とは結果が違う</li>
+ * result is different from ACM M$ ADPCM</li>
 
 ## TODO
 
- * ~~datetime="111016">一括読み込みを止める~~
- * ~~datetime="111016">↑もしくは EngineeringIO を使う~~
- * ~~datetime="060124">音が汚い~~
- * ~~最後のフラグメントが切れている~~ → #drain()
+ * ~~111016 stop reading at once~~
+ * ~~111016 ↑ or use EngineeringIO~~
+ * ~~060124 sound is dirty~~
+ * ~~end of the sound is cut~~ → #drain()
 
-## TODO
+## License
+
 ```
 /*
  * adpcm.c  codex functions for MS_ADPCM data

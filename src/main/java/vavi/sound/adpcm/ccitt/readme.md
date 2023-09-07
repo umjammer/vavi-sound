@@ -1,11 +1,11 @@
 # vavi.sound.adpcm.ccitt
 
-CCITT 勧告の音声圧縮フォーマット関連のクラスを提供します。
+Provides CCITT recommendation audio compression related classes.
 
 ## Tech-know
 
- * encoder.exe は little endian
- * PCM_SIGNED の場合はちゃんと 16Bit Signed な数値を渡してやる
+ * encoder.exe is little endian
+ * it's necessary to provide '16Bit Signed' value when `PCM_SIGNED`
 
 ## TODO
 

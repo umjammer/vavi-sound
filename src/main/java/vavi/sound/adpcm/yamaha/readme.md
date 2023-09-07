@@ -1,14 +1,15 @@
 # vavi.sound.adpcm.yamaha
 
-YAMAHA MA Chip ADPCM フォーマット関連のクラスを提供します．
+Provides YAMAHA MA Chip ADPCM codec related classes.
 
-# Status
+## Status
 
-完成
+completed
 
-<p>
-よう見たら YM2608 のコードと一緒やん、何が2年の研究やねん</li>
+## Tech-Know
+
+If you look at it, it's the same code as YM2608, wtf two years of research?
 
 ## License
 
-記載なし
+none
