@@ -5,16 +5,22 @@
  */
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
-import javax.sound.midi.MidiChannel;
+
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Soundbank;
 
+import org.junit.jupiter.api.BeforeEach;
 import vavi.sound.mfi.MetaEventListener;
 import vavi.sound.mfi.MfiSystem;
 import vavi.sound.mfi.Sequence;
 import vavi.sound.mfi.Sequencer;
 import vavi.sound.mfi.Synthesizer;
+import vavi.sound.midi.MidiUtil;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 
 
 /**
@@ -23,6 +29,7 @@ import vavi.sound.mfi.Synthesizer;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 090913 nsano initial version <br>
  */
+@PropsEntity(url = "file:local.properties")
 public class PlayMFi {
 
     /**
@@ -30,28 +37,35 @@ public class PlayMFi {
      * @param args mfi files ...
      */
     public static void main(String[] args) throws Exception {
+        PlayMFi app = new PlayMFi();
+        PropsEntity.Util.bind(app);
+        app.exec(args);
+    }
+
+    static final float volume = Float.parseFloat(System.getProperty("vavi.test.volume",  "0.2"));
+
+    @Property(name = "sf2")
+    String sf2 = System.getProperty("user.home") + "/Library/Audio/Sounds/Banks/Orchestra/default.sf2";
+
+    /** */
+    void exec(String[] args) throws Exception {
         Sequencer sequencer = MfiSystem.getSequencer();
         sequencer.open();
 Synthesizer synthesizer = (Synthesizer) sequencer;
 // sf
-Soundbank soundbank = synthesizer.getDefaultSoundbank();
+File file = new File(sf2);
+ if (file.exists()) {
+ Soundbank soundbank = synthesizer.getDefaultSoundbank();
 //Instrument[] instruments = synthesizer.getAvailableInstruments();
-System.err.println("---- " + soundbank.getDescription() + " ----");
+ System.err.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
-synthesizer.unloadAllInstruments(soundbank);
-File file = new File("/Users/nsano/lib/audio/sf2/SGM-V2.01.sf2");
-soundbank = MidiSystem.getSoundbank(file);
-synthesizer.loadAllInstruments(soundbank);
+ synthesizer.unloadAllInstruments(soundbank);
+ soundbank = MidiSystem.getSoundbank(file);
+ synthesizer.loadAllInstruments(soundbank);
 //instruments = synthesizer.getAvailableInstruments();
-System.err.println("---- " + soundbank.getDescription() + " ----");
+ System.err.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
-// volume (not work ???)
-MidiChannel[] channels = synthesizer.getChannels();
-double gain = 0.02d;
-for (MidiChannel channel : channels) {
- channel.controlChange(7, (int) (gain * 127.0));
 }
-
         for (String arg : args) {
 System.err.println("START: " + arg);
             CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -65,6 +79,7 @@ System.err.println("META: " + meta.getType());
             sequencer.setSequence(sequence);
             sequencer.addMetaEventListener(mel);
             sequencer.start();
+MidiUtil.volume(synthesizer.getReceiver(), volume);
             countDownLatch.await();
 System.err.println("END: " + arg);
             sequencer.removeMetaEventListener(mel);

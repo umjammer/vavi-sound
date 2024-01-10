@@ -14,6 +14,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Soundbank;
 
 import vavi.sound.midi.MidiUtil;
@@ -204,34 +205,34 @@ Debug.printStackTrace(e);
 
     // synthesizer
 
-    /* @see vavi.sound.smaf.Synthesizer#getChannels() */
     @Override
-    public MidiChannel[] getChannels() throws SmafUnavailableException {
-        return midiSynthesizer.getChannels(); // TODO MFiChannel?
+    public MidiChannel[] getChannels() {
+        return midiSynthesizer.getChannels(); // TODO SmafChannel?
     }
 
-    /* @see vavi.sound.smaf.Synthesizer#loadAllInstruments(javax.sound.midi.Soundbank) */
     @Override
     public boolean loadAllInstruments(Soundbank soundbank) {
         return midiSynthesizer.loadAllInstruments(soundbank);
     }
 
-    /* @see vavi.sound.smaf.Synthesizer#getAvailableInstruments() */
     @Override
     public Instrument[] getAvailableInstruments() {
         return midiSynthesizer.getAvailableInstruments();
     }
 
-    /* @see vavi.sound.smaf.Synthesizer#getDefaultSoundbank() */
     @Override
     public Soundbank getDefaultSoundbank() {
         return midiSynthesizer.getDefaultSoundbank();
     }
 
-    /* @see vavi.sound.smaf.Synthesizer#unloadAllInstruments(javax.sound.midi.Soundbank) */
     @Override
     public void unloadAllInstruments(Soundbank soundbank) {
         midiSynthesizer.unloadAllInstruments(soundbank);
+    }
+
+    @Override
+    public Receiver getReceiver() throws MidiUnavailableException {
+        return midiSynthesizer.getReceiver();
     }
 }
 

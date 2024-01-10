@@ -15,7 +15,11 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 
+import vavi.sound.SoundUtil;
+import vavi.sound.midi.MidiUtil;
 import vavi.util.Debug;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 
 
 /**
@@ -25,6 +29,7 @@ import vavi.util.Debug;
  * @version 0.00 080701 nsano initial version <br>
  * @see "https://stackoverflow.com/a/45119638/6102938"
  */
+@PropsEntity(url = "file:local.properties")
 public class SoundFontTest {
 
     /**
@@ -33,6 +38,18 @@ public class SoundFontTest {
     public static void main(String[] args) throws Exception {
         File file = new File(args[0]);
 
+        SoundFontTest app = new SoundFontTest();
+        PropsEntity.Util.bind(app);
+        app.exec(file);
+    }
+
+    static final float volume = Float.parseFloat(System.getProperty("vavi.test.volume",  "0.2"));
+
+    @Property(name = "sf2")
+    String sf2name = System.getProperty("user.home") + "/Library/Audio/Sounds/Banks/Orchestra/default.sf2";
+
+    /** */
+    void exec(File file) throws Exception {
         Sequence sequence = MidiSystem.getSequence(file);
 Debug.println(Level.FINE, "sequence: " + sequence);
 
@@ -46,21 +63,12 @@ Debug.println(Level.FINE, "synthesizer: " + synthesizer);
 //System.err.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
         synthesizer.unloadAllInstruments(soundbank);
-//        String sf2name = "SGM-V2.01.sf2";
-        String sf2name = "Aspirin-Stereo.sf2";
-        File sf2 = new File("/Users/nsano/lib/audio/sf2", sf2name);
+        File sf2 = new File(sf2name);
         soundbank = MidiSystem.getSoundbank(sf2);
         synthesizer.loadAllInstruments(soundbank);
 //        instruments = synthesizer.getAvailableInstruments();
 System.err.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
-
-        // volume (not work ???)
-//        MidiChannel[] channels = synthesizer.getChannels();
-//        double gain = 0.02d;
-//        for (int i = 0; i < channels.length; i++) {
-//            channels[i].controlChange(7, (int) (gain * 127.0));
-//        }
 
         CountDownLatch countDownLatch = new CountDownLatch(1);
         MetaEventListener mel = meta -> {
@@ -77,6 +85,7 @@ Debug.println(Level.FINE, "sequencer: " + sequencer);
         sequencer.setSequence(sequence);
         sequencer.addMetaEventListener(mel);
         sequencer.start();
+MidiUtil.volume(synthesizer.getReceiver(), volume);
         countDownLatch.await();
         sequencer.stop();
         sequencer.removeMetaEventListener(mel);

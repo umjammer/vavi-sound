@@ -15,6 +15,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Soundbank;
 
 import vavi.sound.mfi.InvalidMfiDataException;
@@ -62,13 +63,11 @@ class VaviSequencer implements Sequencer, Synthesizer {
     /** the sequence of MFi */
     private Sequence sequence;
 
-    /* */
     @Override
     public MfiDevice.Info getDeviceInfo() {
         return info;
     }
 
-    /* */
     @Override
     public void close() {
         if (midiSequencer == null) {
@@ -80,7 +79,6 @@ class VaviSequencer implements Sequencer, Synthesizer {
 Debug.println("★0 close: " + midiSequencer.hashCode());
     }
 
-    /* */
     @Override
     public boolean isOpen() {
         if (midiSequencer == null) {
@@ -92,7 +90,6 @@ Debug.println("★0 close: " + midiSequencer.hashCode());
     /** ADPCM sequencer, TODO should be {@link javax.sound.midi.Transmitter}  */
     private javax.sound.midi.MetaEventListener mea = new MetaEventAdapter();
 
-    /* */
     @Override
     public void open() throws MfiUnavailableException {
         try {
@@ -114,7 +111,6 @@ Debug.printStackTrace(e);
         }
     }
 
-    /* */
     @Override
     public void setSequence(Sequence sequence)
         throws InvalidMfiDataException {
@@ -132,7 +128,6 @@ Debug.println(Level.SEVERE, e);
         }
     }
 
-    /* */
     @Override
     public void setSequence(InputStream stream)
         throws IOException,
@@ -141,13 +136,11 @@ Debug.println(Level.SEVERE, e);
         this.setSequence(MfiSystem.getSequence(stream));
     }
 
-    /* */
     @Override
     public Sequence getSequence() {
         return sequence;
     }
 
-    /* */
     @Override
     public void start() {
         if (midiSequencer == null) {
@@ -157,7 +150,6 @@ Debug.println(Level.SEVERE, e);
         midiSequencer.start();
     }
 
-    /* */
     @Override
     public void stop() {
         if (midiSequencer == null) {
@@ -167,7 +159,6 @@ Debug.println(Level.SEVERE, e);
         off();
     }
 
-    /* */
     @Override
     public boolean isRunning() {
         if (midiSequencer == null) {
@@ -235,7 +226,7 @@ Debug.printStackTrace(e);
     };
 
     @Override
-    public MidiChannel[] getChannels() throws MfiUnavailableException {
+    public MidiChannel[] getChannels() {
         return midiSynthesizer.getChannels(); // TODO MFiChannel?
     }
 
@@ -257,6 +248,11 @@ Debug.printStackTrace(e);
     @Override
     public void unloadAllInstruments(Soundbank soundbank) {
         midiSynthesizer.unloadAllInstruments(soundbank);
+    }
+
+    @Override
+    public Receiver getReceiver() throws MidiUnavailableException {
+        return midiSynthesizer.getReceiver();
     }
 }
 
