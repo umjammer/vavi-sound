@@ -99,12 +99,15 @@ Debug.println("★0 close: " + midiSequencer.hashCode());
             if (this.midiSequencer == null) {
                 this.midiSequencer = MidiUtil.getDefaultSequencer(vavi.sound.midi.VaviMidiDeviceProvider.class);
                 this.midiSynthesizer = MidiSystem.getSynthesizer();
+Debug.println(Level.FINE, "midiSequencer: " + midiSequencer.getClass().getName());
+Debug.println(Level.FINE, "midiSynthesizer: " + midiSynthesizer.getClass().getName());
 Debug.println("★0 init: " + midiSequencer.hashCode());
             }
 
 Debug.println("★0 open: " + midiSequencer.hashCode());
             midiSequencer.open();
             midiSynthesizer.open();
+            midiSequencer.getTransmitter().setReceiver(midiSynthesizer.getReceiver());
         } catch (MidiUnavailableException e) {
 Debug.printStackTrace(e);
             throw new MfiUnavailableException(e);
