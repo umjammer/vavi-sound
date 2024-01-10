@@ -8,9 +8,10 @@ package vavi.sound.pcm.resampling.ssrc;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -18,15 +19,16 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import vavi.io.LittleEndianDataInputStream;
 import vavi.io.LittleEndianDataOutputStream;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
-
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -40,82 +42,97 @@ import static vavi.sound.SoundUtil.volume;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060127 nsano initial version <br>
  */
+@PropsEntity(url = "file:local.properties")
 public class SSRCTest {
 
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
+    @Property
+    String ssrc = "src/test/resources/vavi/sound/pcm/resampling/ssrc/44100.wav";
+
+    static final Path outPath = Paths.get("tmp/out.vavi.wav");
+    static final String inFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/44100.wav";
+    static final String correctDownFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/down.wav";
+    static final String correctUpFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/up.wav";
+
     static double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
-
-//    static String inFile = "/Users/nsano/Music/0/kirameki01.wav";  // TODO error in down sampling
-    static String inFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/44100.wav";
-//    static String inFile = "/Users/nsano/Music/0/rc.wav";
-
-    static String outFile = "tmp/out.vavi.wav";
-    static String correctFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/out.wav";
-
-    static boolean onIde;
+    static boolean onIde = System.getProperty("vavi.test", "").equals("ide");
 
     @BeforeAll
-    public static void setUp() throws Exception {
-        onIde = System.getProperty("vavi.test", "").equals("ide");
-Debug.println("onIde: " + onIde + ", " + System.getProperty("vavi.test") + ", file: " + inFile);
+    static void setUp() throws Exception {
+        Path tmp = outPath.getParent();
+        if (!Files.exists(tmp)) {
+            Files.createDirectory(tmp);
+        }
+    }
+
+    @BeforeEach
+    void setup() throws Exception {
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(this);
+        }
     }
 
     @Test
-    @Disabled("ssrc uses random, so check sum never be equal")
     @DisplayName("down sample, call by main")
     public void test1() throws Exception {
-        SSRC.main(new String[] { "--rate", "8000", "--twopass", "--normalize", inFile, outFile });
+        SSRC.main(new String[] {"--rate", "8000", "--twopass", "--normalize", inFile, outPath.toString()});
 
-        AudioInputStream ais = AudioSystem.getAudioInputStream(new File(outFile));
-        AudioFormat format = ais.getFormat();
+        if (onIde) {
+            AudioInputStream ais = AudioSystem.getAudioInputStream(outPath.toFile());
+            AudioFormat format = ais.getFormat();
 Debug.println(format);
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-        SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
-        line.open(format);
-        volume(line, volume);
-        line.start();
-        byte[] buf = new byte[1024];
-        int l;
-        while (ais.available() > 0) {
-            l = ais.read(buf, 0, buf.length);
-            if (onIde)
+            DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+            SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
+            line.open(format);
+            volume(line, volume);
+            line.start();
+            byte[] buf = new byte[1024];
+            int l;
+            while (true) {
+                l = ais.read(buf, 0, buf.length);
+                if (l < 0)
+                    break;
                 line.write(buf, 0, l);
+            }
+            line.drain();
+            line.stop();
+            line.close();
         }
-        line.drain();
-        line.stop();
-        line.close();
 
-        assertEquals(Checksum.getChecksum(new File(correctFile)), Checksum.getChecksum(new File(outFile)));
+        assertEquals(Checksum.getChecksum(Paths.get(correctDownFile)), Checksum.getChecksum(outPath));
     }
 
-    static String outFile3 = "tmp/out3.vavi.wav";
-    static String correctFile3 = "src/test/resources/vavi/sound/pcm/resampling/ssrc/out.wav";
-
     @Test
-    @Disabled("ssrc uses random, so check sum never be equal")
     @DisplayName("up sample, call by main")
     public void test3() throws Exception {
-        SSRC.main(new String[] { "--rate", "48000", "--twopass", "--normalize", inFile, outFile });
+        SSRC.main(new String[] { "--rate", "48000", "--twopass", "--normalize", ssrc, outPath.toString() });
 
-        AudioInputStream ais = AudioSystem.getAudioInputStream(new File(outFile));
-        AudioFormat format = ais.getFormat();
+        if (onIde) {
+            AudioInputStream ais = AudioSystem.getAudioInputStream(outPath.toFile());
+            AudioFormat format = ais.getFormat();
 Debug.println(format);
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-        SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
-        line.open(format);
-        volume(line, volume);
-        line.start();
-        byte[] buf = new byte[1024];
-        int l;
-        while (ais.available() > 0) {
-            l = ais.read(buf, 0, buf.length);
-            if (onIde)
+            DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+            SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
+            line.open(format);
+            volume(line, volume);
+            line.start();
+            byte[] buf = new byte[1024];
+            int l;
+            while (true) {
+                l = ais.read(buf, 0, buf.length);
+                if (l < 0)
+                    break;
                 line.write(buf, 0, l);
+            }
+            line.drain();
+            line.stop();
+            line.close();
         }
-        line.drain();
-        line.stop();
-        line.close();
 
-        assertEquals(Checksum.getChecksum(new File(correctFile3)), Checksum.getChecksum(new File(outFile)));
+        assertEquals(Checksum.getChecksum(Paths.get(correctUpFile)), Checksum.getChecksum(outPath));
     }
 
     @Test
@@ -154,12 +171,12 @@ Debug.printf("3: %f\n", d);
     @Test
     @DisplayName("call by stream")
     public void test4() throws Exception {
-        AudioInputStream ais = AudioSystem.getAudioInputStream(new File(inFile));
+        AudioInputStream ais = AudioSystem.getAudioInputStream(Paths.get(ssrc).toFile());
         AudioFormat format = ais.getFormat();
         AudioFormat outFormat = new AudioFormat(
-            format.getEncoding(),
+            AudioFormat.Encoding.PCM_SIGNED,
             8000,
-            format.getSampleSizeInBits(),
+            16,
             format.getChannels(),
             format.getFrameSize(),
             format.getFrameRate(),

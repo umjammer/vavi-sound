@@ -29,7 +29,7 @@ import static vavi.util.SplitRadixFft.rdft;
 /**
  * Shibatch Sampling Rate Converter.
  *
- * TODO 2pass 1st phase use pipe
+ * TODO 2pass 1st phase use pipe (but on m2 ultra, it's in a blink of an eye)
  *
  * @author <a href="mailto:shibatch@users.sourceforge.net">Naoki Shibata</a>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -45,6 +45,9 @@ public class SSRC {
 
     /** */
     private static final String VERSION = "1.30";
+
+    /** for producing same result use fixed seed */
+    private static final long SEED = 314159265358979L;
 
     /** */
     private double AA = 170;
@@ -63,13 +66,13 @@ public class SSRC {
         return x >= 0 ? (int) (x + 0.5) : (int) (x - 0.5);
     }
 
-    /** */
+    /** @view */
     private boolean quiet = false;
 
-    /** */
+    /** @view */
     private int lastShowed2;
 
-    /** */
+    /** @view */
     private long startTime, lastShowed;
 
     /** */
@@ -190,7 +193,7 @@ public class SSRC {
 
             randBuf = new double[RANDBUFLEN];
 
-            Random random = new Random(System.currentTimeMillis()); // TODO seed should be controlled for test
+            Random random = new Random(SEED);
             for (i = 0; i < POOLSIZE; i++) {
                 pool[i] = random.nextInt();
             }
@@ -363,7 +366,7 @@ public class SSRC {
         return 2 * lpf * t * sinc(n * omega * t);
     }
 
-    /** */
+    /** @view */
     private static void usage() {
         System.err.print("http://shibatch.sourceforge.net/\n\n");
         System.err.print("usage: ssrc [<options>] <source wav file> <destination wav file>\n");
@@ -389,20 +392,20 @@ public class SSRC {
         System.err.print("                                       fast     : fast, not so bad quality\n");
     }
 
-    /** */
+    /** @view */
     private static void error(int x) {
         System.err.printf("unknown error %d\n", x);
         System.exit(-1);
     }
 
-    /** */
+    /** @view */
     private void setStartTime() {
         startTime = System.currentTimeMillis();
         lastShowed = 0;
         lastShowed2 = -1;
     }
 
-    /** */
+    /** @view */
     private void showProgress(double p) {
         int eta, pc;
         long t;
@@ -433,10 +436,8 @@ public class SSRC {
 
     /** */
     private static int gcd(int x, int y) {
-        int t;
-
         while (y != 0) {
-            t = x % y;
+            int t = x % y;
             x = y;
             y = t;
         }
@@ -444,7 +445,7 @@ public class SSRC {
     }
 
     /** */
-    abstract static class Resampler {
+    private abstract static class Resampler {
         int nch;
         int bps;
         int dbps;
@@ -477,8 +478,8 @@ public class SSRC {
         double peak;
     }
 
-    /** */
-    class Upsampler extends Resampler {
+    /** up */
+    private class Upsampler extends Resampler {
 
         /* */
         @Override
@@ -523,8 +524,10 @@ System.err.println("upsample");
                     osf = 3;
                 } else {
                     throw new IllegalArgumentException(
-                        String.format("Resampling from %dHz to %dHz is not supported.\n" +
-                                      "%d/gcd(%d,%d)=%d must be divided by 2 or 3.\n",
+                        String.format("""
+                                        Resampling from %dHz to %dHz is not supported.
+                                        %d/gcd(%d,%d)=%d must be divided by 2 or 3.
+                                        """,
                                       sfrq, dfrq, sfrq, sfrq, dfrq, fs1 / dfrq));
                 }
 
@@ -631,15 +634,15 @@ System.err.println("upsample");
 
             {
                 int n2b2 = n2b / 2;
-                // inbufのfs1での次に読むサンプルの場所を保持
+                // keeps the location of the next sample to read in fs1 of inbuf
                 int rp;
-                // 次にdisposeするsfrqでのサンプル数
+                // number of samples in sfrq to dispose next
                 int ds;
-                // 実際にファイルからinbufに読み込まれた値から計算した stage2 filterに渡されるサンプル数
+                // number of samples passed to stage2 filter calculated from the value actually read into inbuf from the file
                 int nsmplwrt1;
-                // 実際にファイルからinbufに読み込まれた値から計算した stage2 filterに渡されるサンプル数
+                // number of samples passed to stage2 filter calculated from the value actually read into inbuf from the file
                 int nsmplwrt2 = 0;
-                // stage1 filterから出力されたサンプルの数をn1y*osfで割った余り
+                // remainder of number of samples output from stage1 filter divided by n1y*osf
                 int s1p;
                 boolean init;
                 boolean ending;
@@ -1050,8 +1053,8 @@ System.err.println("upsample");
         }
     }
 
-    /** */
-    class Downsampler extends Resampler {
+    /** down */
+    private class Downsampler extends Resampler {
 
         /* */
         @Override
@@ -1228,18 +1231,18 @@ System.err.println("downsample");
 
             {
                 int n1b2 = n1b / 2;
-//                int rp; // inbufのfs1での次に読むサンプルの場所を保持
-                int rps; // rpを(fs1/sfrq=osf)で割った余り
-                int rp2; // buf2のfs2での次に読むサンプルの場所を保持
-                int ds; // 次にdisposeするsfrqでのサンプル数
-                // 実際にファイルからinbufに読み込まれた値から計算した stage2 filterに渡されるサンプル数
+//                int rp; // keeps the location of the next sample to read in fs1 of inbuf
+                int rps; // remainder when dividing rp by (fs1/sfrq=osf)
+                int rp2; // keeps the location of the next sample to read in fs2 of buf2
+                int ds; // number of samples in sfrq to dispose next
+                // number of samples passed to stage2 filter calculated from the value actually read into inbuf from the file
 //                int nsmplwrt1;
-                // 実際にファイルからinbufに読み込まれた値から計算した stage2 filterに渡されるサンプル数
+                // number of samples passed to stage2 filter calculated from the value actually read into inbuf from the file
                 int nsmplwrt2 = 0;
-                int s2p; // stage1 filterから出力されたサンプルの数をn1y*osfで割った余り
+                int s2p; // remainder of number of samples output from stage1 filter divided by n1y*osf
                 boolean init, ending;
 //                int osc;
-                int bp; // rp2から計算される．buf2の次に読むサンプルの位置
+                int bp; // calculated from rp2. Position of sample to read next after buf2
                 int rps_backup, s2p_backup;
                 int k, ch, p;
                 int inbuflen = 0;
@@ -1250,13 +1253,13 @@ System.err.println("downsample");
                 // |....B....|....C....| buf1 n1b2+n1b2
                 // |.A.|....D....| buf2 n2x+n1b2
                 //
-                // まずinbufからBにosf倍サンプリングしながらコピー
-                // Cはクリア
-                // BCにstage 1 filterをかける
-                // DにBを足す
-                // ADにstage 2 filterをかける
-                // Dの後ろをAに移動
-                // CをDにコピー
+                // first, copy from inbuf to B while sampling osf times
+                // clear C
+                // multiply stage 1 filter to BC
+                // add B to D
+                // multiply stage 2 filter to AD
+                // move last D to A
+                // copy C to D
 
                 buf1 = new double[nch][n1b];
 
@@ -1632,8 +1635,8 @@ System.err.printf("%d, %d, %d, %d\n",
         }
     }
 
-    /** */
-    class NoSrc extends Resampler {
+    /** no src */
+    private class NoSrc extends Resampler {
 
         /* */
         @Override
@@ -1760,12 +1763,13 @@ System.err.printf("%d, %d, %d, %d\n",
         }
     }
 
+    /** */
     public static void main(String[] args) throws Exception {
         SSRC app = new SSRC();
         app.exec(args);
     }
 
-    /** */
+    /** exec#noiseamp */
     private static final double[] presets = {
         0.7, 0.9, 0.18
     };
