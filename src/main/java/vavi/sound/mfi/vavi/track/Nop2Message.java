@@ -65,7 +65,7 @@ Debug.println(Level.FINE, "NOP2: delta: " + delta);
 
     //----
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
 //Debug.println("ignore: " + this);
         return null;

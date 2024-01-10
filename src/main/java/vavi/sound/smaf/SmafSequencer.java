@@ -14,6 +14,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Soundbank;
 
 import vavi.sound.midi.MidiUtil;
@@ -60,6 +61,7 @@ class SmafSequencer implements Sequencer, Synthesizer {
         }
         midiSequencer.close();
         midiSynthesizer.close();
+        off();
     }
 
     @Override
@@ -161,11 +163,13 @@ Debug.println(e);
     private MetaSupport metaSupport = new MetaSupport();
 
     /* {@link MetaEventListener} を登録します。 */
+    @Override
     public void addMetaEventListener(MetaEventListener l) {
         metaSupport.addMetaEventListener(l);
     }
 
     /* {@link MetaEventListener} を削除します。 */
+    @Override
     public void removeMetaEventListener(MetaEventListener l) {
         metaSupport.removeMetaEventListener(l);
     }
@@ -177,7 +181,7 @@ Debug.println(e);
 
     /** meta 0x2f listener */
     private javax.sound.midi.MetaEventListener mel = new javax.sound.midi.MetaEventListener() {
-        /** */
+        @Override
         public void meta(javax.sound.midi.MetaMessage message) {
 //Debug.println("type: " + message.getType());
             switch (message.getType()) {
@@ -201,39 +205,34 @@ Debug.printStackTrace(e);
 
     // synthesizer
 
-    /* @see vavi.sound.smaf.Synthesizer#getChannels() */
     @Override
-    public MidiChannel[] getChannels() throws SmafUnavailableException {
-        return midiSynthesizer.getChannels(); // TODO MFiChannel?
+    public MidiChannel[] getChannels() {
+        return midiSynthesizer.getChannels(); // TODO SmafChannel?
     }
 
-    /* @see vavi.sound.smaf.Synthesizer#loadAllInstruments(javax.sound.midi.Soundbank) */
     @Override
     public boolean loadAllInstruments(Soundbank soundbank) {
         return midiSynthesizer.loadAllInstruments(soundbank);
     }
 
-    /* @see vavi.sound.smaf.Synthesizer#getAvailableInstruments() */
     @Override
     public Instrument[] getAvailableInstruments() {
         return midiSynthesizer.getAvailableInstruments();
     }
 
-    /* @see vavi.sound.smaf.Synthesizer#getDefaultSoundbank() */
     @Override
     public Soundbank getDefaultSoundbank() {
         return midiSynthesizer.getDefaultSoundbank();
     }
 
-    /* @see vavi.sound.smaf.Synthesizer#unloadAllInstruments(javax.sound.midi.Soundbank) */
     @Override
     public void unloadAllInstruments(Soundbank soundbank) {
         midiSynthesizer.unloadAllInstruments(soundbank);
     }
 
-    /* */
-    protected void finalize() {
-        off();
+    @Override
+    public Receiver getReceiver() throws MidiUnavailableException {
+        return midiSynthesizer.getReceiver();
     }
 }
 

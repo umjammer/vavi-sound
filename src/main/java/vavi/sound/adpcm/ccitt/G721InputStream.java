@@ -26,6 +26,7 @@ import vavi.sound.adpcm.Codec;
 public class G721InputStream extends AdpcmInputStream {
 
     /** デコーダ */
+    @Override
     protected Codec getCodec() {
         return new G721();
     }

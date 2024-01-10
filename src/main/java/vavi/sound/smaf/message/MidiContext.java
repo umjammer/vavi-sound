@@ -68,8 +68,7 @@ public class MidiContext {
         for (int j = 0; j < smafTrack.size(); j++) {
             SmafEvent event = smafTrack.get(j);
             SmafMessage message = event.getMessage();
-            if (message instanceof vavi.sound.smaf.MetaMessage) {
-                vavi.sound.smaf.MetaMessage metaMessage = (vavi.sound.smaf.MetaMessage) message;
+            if (message instanceof vavi.sound.smaf.MetaMessage metaMessage) {
                 if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
                     //
                     this.formatType = (FormatType) metaMessage.getData().get("formatType"); // [ms]
@@ -536,8 +535,7 @@ int t = 0;
             for (int i = 0; i < track.size(); i++) {
                 SmafEvent event = track.get(i);
                 SmafMessage message = event.getMessage();
-                if (message instanceof vavi.sound.smaf.MetaMessage) {
-                    vavi.sound.smaf.MetaMessage metaMessage = (vavi.sound.smaf.MetaMessage) message;
+                if (message instanceof vavi.sound.smaf.MetaMessage metaMessage) {
                     if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
                         this.timeBase = (Integer) metaMessage.getData().get("durationTimeBase"); // [ms]
 Debug.println(Level.FINE, "timebase: " + timeBase + ", (" + t + ":" + i + ")");

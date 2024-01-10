@@ -37,7 +37,7 @@ Debug.println(Level.FINE, "StreamWaveData: " + size);
         size = 0;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
         byte[] weveTypeBytes = new byte[3];
         dis.readFully(weveTypeBytes);

@@ -25,6 +25,8 @@ import static vavi.sound.SoundUtil.volume;
  */
 public class PlayLine {
 
+    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
     /**
      * usage: java PlayLine file ...
      */
@@ -54,7 +56,7 @@ System.err.println(format);
                 System.exit(0);
             }
         });
-        volume(line, .2d);
+        volume(line, volume);
         line.start();
         byte[] buf = new byte[line.getBufferSize()];
         int l;

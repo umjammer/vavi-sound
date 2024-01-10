@@ -51,6 +51,7 @@ Debug.println(Level.FINE, "byteOrder: " + this.byteOrder);
     }
 
     /* */
+    @Override
     public void initialize(InputStream in) throws IOException {
         if (this.in != null) {
             throw new IOException("Already initialized");
@@ -67,6 +68,7 @@ Debug.println(Level.FINE, "byteOrder: " + this.byteOrder);
      * {@link IOStreamInputEngine#IOStreamInputEngine(OutputStream, vavix.io.IOStreamInputEngine.InputStreamFactory, int)}
      * の bufferSize を {@link #samplesPerBlock} * 2 にすること。
      */
+    @Override
     public void execute() throws IOException {
         if (in == null) {
             throw new IOException("Not yet initialized");
@@ -100,7 +102,7 @@ Debug.println(Level.FINE, "byteOrder: " + this.byteOrder);
         }
     }
 
-    /* */
+    @Override
     public void finish() throws IOException {
         out.flush();
         out.close();

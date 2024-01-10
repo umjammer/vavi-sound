@@ -128,7 +128,7 @@ Debug.println(Level.FINE, "bit: " + bit);
         }
     }
 
-    /** */
+    @Override
     public int read() throws IOException {
         byte[] buf = new byte[1];
         int r = read(buf, 0, 1);
@@ -139,7 +139,7 @@ Debug.println(Level.FINE, "bit: " + bit);
         }
     }
 
-    /** */
+    @Override
     public int read(byte[] b, int offset, int length) throws IOException {
         int position = 0;
         while (position < length) {

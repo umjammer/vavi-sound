@@ -32,7 +32,7 @@ import vavi.sound.mfi.spi.MfiFileReader;
  */
 public class VaviMfiFileReader extends MfiFileReader {
 
-    /** */
+    @Override
     public MfiFileFormat getMfiFileFormat(InputStream stream)
         throws InvalidMfiDataException,
                IOException {
@@ -40,7 +40,7 @@ public class VaviMfiFileReader extends MfiFileReader {
         return VaviMfiFileFormat.readFrom(stream);
     }
 
-    /** */
+    @Override
     public MfiFileFormat getMfiFileFormat(File file)
         throws InvalidMfiDataException,
                IOException {
@@ -49,7 +49,7 @@ public class VaviMfiFileReader extends MfiFileReader {
         return VaviMfiFileFormat.readFrom(is);
     }
 
-    /** */
+    @Override
     public MfiFileFormat getMfiFileFormat(URL url)
         throws InvalidMfiDataException,
                IOException {
@@ -58,7 +58,7 @@ public class VaviMfiFileReader extends MfiFileReader {
         return VaviMfiFileFormat.readFrom(is);
     }
 
-    /** */
+    @Override
     public Sequence getSequence(InputStream is)
         throws InvalidMfiDataException,
                IOException {
@@ -68,7 +68,7 @@ public class VaviMfiFileReader extends MfiFileReader {
         return mff.getSequence();
     }
 
-    /** */
+    @Override
     public Sequence getSequence(File file)
         throws InvalidMfiDataException,
                IOException {
@@ -77,7 +77,7 @@ public class VaviMfiFileReader extends MfiFileReader {
         return getSequence(is);
     }
 
-    /** */
+    @Override
     public Sequence getSequence(URL url)
         throws InvalidMfiDataException,
                IOException {

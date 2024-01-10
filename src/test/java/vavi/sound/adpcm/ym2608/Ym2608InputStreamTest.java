@@ -36,6 +36,8 @@ import static vavi.sound.SoundUtil.volume;
  */
 public class Ym2608InputStreamTest {
 
+    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
     String inFile = "out.adpcm";
     String correctFile = "out.pcm";
     File outFile;
@@ -74,7 +76,7 @@ System.err.println("available: " + is.available());
         line.start();
         byte[] buf = new byte[1024];
         int l;
-        volume(line, .2d);
+        volume(line, volume);
 
         while (is.available() > 0) {
             l = is.read(buf, 0, 1024);

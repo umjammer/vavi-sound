@@ -108,7 +108,7 @@ Debug.println(Level.FINE, audioFormat);
             SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
             line.open(audioFormat);
             line.start();
-            volume(line, .2d);
+            volume(line, volume);
             byte[] buf = new byte[1024];
             while (iss[0].available() > 0) {
                 if (channels == 1) {

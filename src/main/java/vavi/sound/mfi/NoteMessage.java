@@ -149,6 +149,7 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
      * ボイスナンバを取得します．
      * @return ボイスナンバ
      */
+    @Override
     public int getVoice() {
         return voice;
     }
@@ -157,6 +158,7 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
      * ボイスナンバを設定します．
      * @param voice ボイスナンバ
      */
+    @Override
     public void setVoice(int voice) {
         this.voice = voice & 0x03;
         this.data[1] = (byte) ((this.data[1] & 0x3f) | (this.voice << 6));

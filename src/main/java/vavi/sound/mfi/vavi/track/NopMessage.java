@@ -58,7 +58,7 @@ public class NopMessage extends ShortMessage
 
     //----
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
 //Debug.println("ignore: " + this);
         return null;

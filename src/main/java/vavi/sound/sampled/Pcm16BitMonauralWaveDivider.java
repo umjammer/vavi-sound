@@ -44,6 +44,7 @@ class Pcm16BitMonauralWaveDivider implements WaveDivider {
      * @param seconds time for divide
      * @param event event for each chunks
      */
+    @Override
     public void divide(float seconds, Event event) throws IOException {
 
         int numberChannels = targetAis.getFormat().getChannels();

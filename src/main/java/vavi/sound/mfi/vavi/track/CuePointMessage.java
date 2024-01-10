@@ -73,6 +73,7 @@ public class CuePointMessage extends ShortMessage
      * TODO {@link javax.sound.midi.MetaMessage} に 0x07 キューポイントってあるよ
      * @return 何も返しません
      */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 
 //      if (start) {

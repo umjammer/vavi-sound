@@ -39,6 +39,7 @@ public abstract class BasicMidiFileReader extends MidiFileReader {
      * @param stream a midi stream
      * @throws IOException when the I/O does not support marking.
      */
+    @Override
     public MidiFileFormat getMidiFileFormat(InputStream stream)
         throws InvalidMidiDataException,
                IOException {

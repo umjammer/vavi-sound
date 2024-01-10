@@ -15,6 +15,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Soundbank;
 
 import vavi.sound.mfi.InvalidMfiDataException;
@@ -62,22 +63,23 @@ class VaviSequencer implements Sequencer, Synthesizer {
     /** the sequence of MFi */
     private Sequence sequence;
 
-    /* */
+    @Override
     public MfiDevice.Info getDeviceInfo() {
         return info;
     }
 
-    /* */
+    @Override
     public void close() {
         if (midiSequencer == null) {
             throw new IllegalStateException("not opend");
         }
         midiSequencer.close();
         midiSynthesizer.close();
+        off();
 Debug.println("★0 close: " + midiSequencer.hashCode());
     }
 
-    /* */
+    @Override
     public boolean isOpen() {
         if (midiSequencer == null) {
             return false;
@@ -88,25 +90,28 @@ Debug.println("★0 close: " + midiSequencer.hashCode());
     /** ADPCM sequencer, TODO should be {@link javax.sound.midi.Transmitter}  */
     private javax.sound.midi.MetaEventListener mea = new MetaEventAdapter();
 
-    /* */
+    @Override
     public void open() throws MfiUnavailableException {
         try {
             if (this.midiSequencer == null) {
                 this.midiSequencer = MidiUtil.getDefaultSequencer(vavi.sound.midi.VaviMidiDeviceProvider.class);
                 this.midiSynthesizer = MidiSystem.getSynthesizer();
+Debug.println(Level.FINE, "midiSequencer: " + midiSequencer.getClass().getName());
+Debug.println(Level.FINE, "midiSynthesizer: " + midiSynthesizer.getClass().getName());
 Debug.println("★0 init: " + midiSequencer.hashCode());
             }
 
 Debug.println("★0 open: " + midiSequencer.hashCode());
             midiSequencer.open();
             midiSynthesizer.open();
+            midiSequencer.getTransmitter().setReceiver(midiSynthesizer.getReceiver());
         } catch (MidiUnavailableException e) {
 Debug.printStackTrace(e);
             throw new MfiUnavailableException(e);
         }
     }
 
-    /* */
+    @Override
     public void setSequence(Sequence sequence)
         throws InvalidMfiDataException {
 
@@ -123,7 +128,7 @@ Debug.println(Level.SEVERE, e);
         }
     }
 
-    /* */
+    @Override
     public void setSequence(InputStream stream)
         throws IOException,
                InvalidMfiDataException {
@@ -131,12 +136,12 @@ Debug.println(Level.SEVERE, e);
         this.setSequence(MfiSystem.getSequence(stream));
     }
 
-    /* */
+    @Override
     public Sequence getSequence() {
         return sequence;
     }
 
-    /* */
+    @Override
     public void start() {
         if (midiSequencer == null) {
             throw new IllegalStateException("not opend");
@@ -145,7 +150,7 @@ Debug.println(Level.SEVERE, e);
         midiSequencer.start();
     }
 
-    /* */
+    @Override
     public void stop() {
         if (midiSequencer == null) {
             throw new IllegalStateException("not opend");
@@ -154,7 +159,7 @@ Debug.println(Level.SEVERE, e);
         off();
     }
 
-    /* */
+    @Override
     public boolean isRunning() {
         if (midiSequencer == null) {
             throw new IllegalStateException("not opend");
@@ -198,7 +203,7 @@ Debug.println("★0 off: " + midiSequencer.hashCode());
 
     /** meta 0x2f listener */
     private javax.sound.midi.MetaEventListener mel = new javax.sound.midi.MetaEventListener() {
-        /** */
+        @Override
         public void meta(javax.sound.midi.MetaMessage message) {
 Debug.println("★0 meta: type: " + message.getType());
             switch (message.getType()) {
@@ -221,7 +226,7 @@ Debug.printStackTrace(e);
     };
 
     @Override
-    public MidiChannel[] getChannels() throws MfiUnavailableException {
+    public MidiChannel[] getChannels() {
         return midiSynthesizer.getChannels(); // TODO MFiChannel?
     }
 
@@ -246,8 +251,8 @@ Debug.printStackTrace(e);
     }
 
     @Override
-    protected void finalize() {
-        off();
+    public Receiver getReceiver() throws MidiUnavailableException {
+        return midiSynthesizer.getReceiver();
     }
 }
 

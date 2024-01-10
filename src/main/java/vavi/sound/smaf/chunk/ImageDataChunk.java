@@ -39,6 +39,7 @@ Debug.println(Level.FINE, "ImageData: " + size + " bytes");
     }
 
     /**  */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
@@ -61,6 +62,7 @@ Debug.println(Level.FINE, "messages: " + imageDataChunks.size());
     private List<Chunk> imageDataChunks = new ArrayList<>();
 
     /** TODO */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
     }
 }

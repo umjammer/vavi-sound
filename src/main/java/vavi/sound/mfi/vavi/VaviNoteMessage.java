@@ -46,6 +46,7 @@ public class VaviNoteMessage extends NoteMessage
     }
 
     /* */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
@@ -82,6 +83,7 @@ public class VaviNoteMessage extends NoteMessage
      *      ゲートタイムより小さい場合は直前の NoteMessage からの継続音とする
      * TODO 次の音まで余裕があったら伸ばして、無かったら切る？(未実装)
      */
+    @Override
     public MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context)
         throws InvalidMfiDataException {
 

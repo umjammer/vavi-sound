@@ -128,6 +128,7 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
      * @see "ATS-MA5-SMAF_GL_133_HV.pdf"
      * @see "http://murachue.ddo.jp/web/softlist.cgi?mode=desc&title=mmftool"
      */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 
 //        MidiEvent[] events = new MidiEvent[1];
@@ -159,6 +160,7 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
     }
 
     /* TODO 今、超適当 */
+    @Override
     public void sequence() throws InvalidSmafDataException {
 Debug.println(Level.INFO, "yamaha: " + data.length + "\n" + StringUtil.getDump(data, 64));
         switch (data[1]) {

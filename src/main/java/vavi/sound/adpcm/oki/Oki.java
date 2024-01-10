@@ -81,6 +81,7 @@ class Oki implements Codec {
      * @param a 16bit signed linear pcm
      * @return 4bit oki adpcm
      */
+    @Override
     public int encode(int a) {
 
         // mc->mc_estim には、前回の差分比予測値インデックスが入っている
@@ -170,6 +171,7 @@ class Oki implements Codec {
      * @param b 4bit adpcm
      * @return 16bit linear pcm
      */
+    @Override
     public int decode(int b) {
         // mc->mc_estim には、前回の差分比予測値インデックスが入っている
         int estim = this.mc_estim;

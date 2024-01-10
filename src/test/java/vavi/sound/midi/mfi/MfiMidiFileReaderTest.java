@@ -9,8 +9,6 @@ package vavi.sound.midi.mfi;
 import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.CountDownLatch;
-import javax.sound.midi.MetaEventListener;
-import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;

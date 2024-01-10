@@ -41,13 +41,13 @@ Debug.println(Level.FINE, "WaveData[" + waveNumber + "]: " + size + " bytes");
         size = 0;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
         data = new byte[size];
         dis.readFully(data);
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         DataOutputStream dos = new DataOutputStream(os);
 

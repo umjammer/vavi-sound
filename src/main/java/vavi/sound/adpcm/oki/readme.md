@@ -1,8 +1,10 @@
-OKI ADPCM codec
+# vavi.sound.adpcm.oki
+
+Provices OKI ADPCM codec related classes.
 
 ## Status
 
-finished
+completed
 
 ## TODO
 

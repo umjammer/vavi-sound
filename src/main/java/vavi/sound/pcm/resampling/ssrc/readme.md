@@ -4,7 +4,7 @@ Shibatch Sampling Rate Converter
 
 ## Reference
 
- * [Original](http://shibatch.sourceforge.net)
+ * [Original](https://github.com/shibatch/SSRC)
 
 ## TODO
 

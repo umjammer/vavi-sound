@@ -29,7 +29,7 @@ public class UndefinedChunk extends Chunk {
 //new Exception("*** DUMMY ***").printStackTrace(System.err);
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
@@ -43,7 +43,7 @@ Debug.println(Level.WARNING, "read size is larger than available stream");
 Debug.println(Level.WARNING, "Undefined: size: " + size + "\n" + StringUtil.getDump(data, 64));
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         // TODO
 Debug.println(Level.WARNING, "not implemented skip");

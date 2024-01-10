@@ -54,6 +54,7 @@ public class Function132 extends Function131 {
      * 10-13    size (big endian)
      * </pre>
      */
+    @Override
     public void process(MachineDependentMessage message)
         throws InvalidMfiDataException {
 
@@ -98,6 +99,7 @@ Debug.printf(Level.FINE, "sampling: %02x: rate=%d, bits=%d\n", data[8] & 0x3f, s
      * 事前に {@link #setAdpcm(byte[])}, {@link #setSamplingRate(int)},
      * {@link #setSamplingBits(int)} を用いてフィールドを設定しておいて下さい。
      */
+    @Override
     public byte[] getMessage() throws InvalidMfiDataException {
 
         // [10~]

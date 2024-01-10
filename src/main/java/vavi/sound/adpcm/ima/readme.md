@@ -1,18 +1,18 @@
-IMA ADPCM フォーマット関連のクラスを提供します．
+# vavi.sound.adpcm.ima
+
+Provides IMA ADPCM codec related classes.
 
 ## TODO
 
- * ~~111016 一括読み込みを止める~~
- * ~~111016 ↑もしくは EngineeringIO を使う~~
- * ~~060121 ちょっと違うところがある bdiff linear_8k_16_mono.pcm, out.vavi.pcm~~
- * ~~030831 全部再生されない？~~ → SourceDataLine#drain()
- * ~~111101 encode 111031 あとちょっと、初期値とか？~~
+ * ~~111016 stop reading at one~~
+ * ~~111016 ↑or use EngineeringIO~~
+ * ~~060121 `bdiff linear_8k_16_mono.pcm, out.vavi.pcm` are a bit different~~
+ * ~~030831 not play all?~~ → SourceDataLine#drain()
+ * ~~111101 encode 111031 a little more, initial value?~~
  * tritonus WaveAudioFileReader has ima adpcm detection
  * tritonus has ima adpcm coverter (ImaAdpcmFormatConversionProvider)
 
 ## License
-
-<b style="color:red">WARNING THIS PROGRAM LICENCE IS LGPL</b>
 
 ```
 /*

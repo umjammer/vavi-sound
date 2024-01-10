@@ -76,6 +76,7 @@ public class ProtMessage extends SubMessage
     // ----
 
     /** Meta 0x01 */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
@@ -90,7 +91,7 @@ public class ProtMessage extends SubMessage
         };
     }
 
-    /** */
+    @Override
     public MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context)
         throws InvalidMfiDataException {
 

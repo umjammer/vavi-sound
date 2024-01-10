@@ -117,8 +117,7 @@ Debug.printf(Level.FINE, "size: 0x%1$08x (%1$d)", size);
             }
         } else {
 //Debug.printf(Level.FINE, "crc (calc): %04x, avail: %d, %s, %s", mdis.crc(), mdis.available(), mdis, chunk.getClass().getName());
-            if (chunk instanceof FileChunk) {
-                FileChunk fc = (FileChunk) chunk;
+            if (chunk instanceof FileChunk fc) {
                 if (fc.getCrc() != mdis.crc()) {
 Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.getCrc(), mdis.crc());
                 }
@@ -141,8 +140,7 @@ Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.ge
         static ThreadLocal<CRC16> crc = new ThreadLocal<>();
 
         protected MyDataInputStream(InputStream is, byte[] id, int size) {
-            if (is instanceof MyDataInputStream) {
-                MyDataInputStream mdis = (MyDataInputStream) is;
+            if (is instanceof MyDataInputStream mdis) {
                 this.is = mdis.is;
             } else {
                 this.is = is;
@@ -341,42 +339,42 @@ Debug.printStackTrace(Level.SEVERE, e);
 
     /** constructors for factory */
     private static final PrefixedPropertiesFactory<byte[], Constructor<? extends Chunk>> chunkFactory =
-        new PrefixedPropertiesFactory<byte[], Constructor<? extends Chunk>>("/vavi/sound/smaf/smaf.properties", keyBase) {
+            new PrefixedPropertiesFactory<>("/vavi/sound/smaf/smaf.properties", keyBase) {
 
-        @Override
-        public Constructor<? extends Chunk> get(byte[] id) {
-            String type = new String(id);
-Debug.printf(Level.FINE, "Chunk ID(read): %s+0x%02x", (Character.isLetterOrDigit(type.charAt(3)) ? type : new String(id, 0, 3)), (int) type.charAt(3));
+                @Override
+                public Constructor<? extends Chunk> get(byte[] id) {
+                    String type = new String(id);
+                    Debug.printf(Level.FINE, "Chunk ID(read): %s+0x%02x", (Character.isLetterOrDigit(type.charAt(3)) ? type : new String(id, 0, 3)), (int) type.charAt(3));
 
-            for (String key : instances.keySet()) {
-                if (key.charAt(3) == '*' && key.substring(0, 3).equals(type.substring(0, 3))) {
-                    return instances.get(key);
-                } else if (key.equals(type)) {
-                    return instances.get(key);
+                    for (String key : instances.keySet()) {
+                        if (key.charAt(3) == '*' && key.substring(0, 3).equals(type.substring(0, 3))) {
+                            return instances.get(key);
+                        } else if (key.equals(type)) {
+                            return instances.get(key);
+                        }
+                    }
+
+                    throw new IllegalArgumentException(type);
                 }
-            }
 
-            throw new IllegalArgumentException(type);
-        }
-
-        @Override
-        protected Constructor<? extends Chunk> getStoreValue(String value) {
-            try {
-                @SuppressWarnings("unchecked")
-                Class<? extends Chunk> clazz = (Class<? extends Chunk>) Class.forName(value);
+                @Override
+                protected Constructor<? extends Chunk> getStoreValue(String value) {
+                    try {
+                        @SuppressWarnings("unchecked")
+                        Class<? extends Chunk> clazz = (Class<? extends Chunk>) Class.forName(value);
 //Debug.println("chunk class: " + StringUtil.getClassName(clazz));
-                return clazz.getConstructor(byte[].class, Integer.TYPE);
-            } catch (Exception e) {
-Debug.printStackTrace(e);
-                throw new IllegalStateException(e);
-            }
-        }
+                        return clazz.getConstructor(byte[].class, Integer.TYPE);
+                    } catch (Exception e) {
+                        Debug.printStackTrace(e);
+                        throw new IllegalStateException(e);
+                    }
+                }
 
-        @Override
-        protected String getStoreKey(String key) {
-            return key.substring(keyBase.length());
-        }
-    };
+                @Override
+                protected String getStoreKey(String key) {
+                    return key.substring(keyBase.length());
+                }
+            };
 }
 
 /* */

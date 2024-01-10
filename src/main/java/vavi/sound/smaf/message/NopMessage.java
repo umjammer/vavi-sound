@@ -51,6 +51,7 @@ public class NopMessage extends ShortMessage
     //----
 
     /* */
+    @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         FormatType formatType = FormatType.HandyPhoneStandard; // TODO
@@ -74,11 +75,12 @@ public class NopMessage extends ShortMessage
     }
 
     /* */
+    @Override
     public int getLength() {
         return getMessage().length;
     }
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
         return null;
     }

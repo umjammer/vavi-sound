@@ -140,7 +140,7 @@ Debug.printf(Level.FINE, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x\n"
      * 行う。
      * </p>
      * <p>
-     * 再生機構は {@link vavi.sound.mfi.vavi.MetaEventAdapter} を参照。
+     * see also {@code vavi.sound.mfi.vavi.MetaEventAdapter} for playing functionality.
      * </p>
      * <pre>
      * MIDI Meta
@@ -167,6 +167,7 @@ Debug.printf(Level.FINE, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x\n"
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
      * @see MachineDependentSequencer#META_FUNCTION_ID_MACHINE_DEPEND
      */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 

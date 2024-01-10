@@ -87,6 +87,7 @@ public class TitlMessage extends SubMessage
     //----
 
     /** Meta 0x03 */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
@@ -101,7 +102,7 @@ public class TitlMessage extends SubMessage
         };
     }
 
-    /** */
+    @Override
     public MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context)
         throws InvalidMfiDataException {
 

@@ -236,14 +236,15 @@ Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
         return data;
     }
 
-    /** @throws UnsupportedOperationException */
+    /** @throws UnsupportedOperationException no mean for this class. */
+    @Override
     public byte[] getMessage() {
         throw new UnsupportedOperationException("no mean");
     }
 
     //----
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
         MetaMessage metaMessage = new MetaMessage();
 
@@ -263,7 +264,7 @@ Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
         };
     }
 
-    /** */
+    @Override
     public void sequence() throws InvalidMfiDataException {
         int id = getAudioDataNumber();
         int format = getFormat();

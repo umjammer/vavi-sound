@@ -38,6 +38,7 @@ public class Function240_1 implements MachineDependentFunction {
      * 6    f1
      * </pre>
      */
+    @Override
     public void process(MachineDependentMessage message)
         throws InvalidMfiDataException {
 

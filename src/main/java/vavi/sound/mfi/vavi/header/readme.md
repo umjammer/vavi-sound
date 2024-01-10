@@ -1,7 +1,7 @@
 # vavi.sound.mfi.vavi.header
 
-MFi Header の Sub Chunk (SubMessage の派生クラス)を提供します．
+Provides MFi Header Sub Chunks (sub classes of `SubMessage`).．
 
 ## TODO
 
- * thrd 3D定位機能利用情報
+ * `thrd` 3D orientation function usage info

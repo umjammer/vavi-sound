@@ -51,7 +51,7 @@ Debug.println(Level.FINE, "GraphicsTrackSequenceData[" + sequenceNumber + "]: " 
         this.size = 0;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 

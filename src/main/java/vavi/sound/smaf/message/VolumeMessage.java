@@ -90,6 +90,7 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
     //----
 
     /* */
+    @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         FormatType formatType = FormatType.HandyPhoneStandard; // TODO
@@ -114,11 +115,12 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
     }
 
     /* */
+    @Override
     public int getLength() {
         return getMessage().length;
     }
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
@@ -145,7 +147,7 @@ Debug.println(Level.FINE, "volume: " + volume);
         }
     }
 
-    /** */
+    @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
 

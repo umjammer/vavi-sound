@@ -37,7 +37,7 @@ Debug.println(Level.FINE, "GraphicsSetupData: " + size + " bytes");
         this.size = 0;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
         while (dis.available() > 0) {
             Chunk chunk = readFrom(dis);
@@ -58,7 +58,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     /** option */
     private Chunk colorPaletteDefinitionChunk;
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         DataOutputStream dos = new DataOutputStream(os);
 

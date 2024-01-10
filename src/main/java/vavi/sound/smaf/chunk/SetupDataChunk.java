@@ -43,7 +43,7 @@ Debug.println(Level.FINE, "SetupData: " + size + " bytes");
         this.size = 0;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
 
         ScoreTrackChunk.FormatType formatType = ((ScoreTrackChunk) parent).getFormatType();
@@ -136,6 +136,7 @@ Debug.printf(Level.WARNING, "unhandled: %02x\n", status);
     }
 
     /** TODO formatType */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         DataOutputStream dos = new DataOutputStream(os);
 

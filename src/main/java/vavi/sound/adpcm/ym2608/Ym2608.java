@@ -43,6 +43,7 @@ class Ym2608 implements Codec {
      * @param pcm PCM 16bit
      * @return ADPCM 4bit
      */
+    @Override
     public int encode(int pcm) {
 
         // エンコード処理 2
@@ -96,6 +97,7 @@ class Ym2608 implements Codec {
      * @param adpcm ADPCM (LSB 4 bit 有効)
      * @return PCM
      */
+    @Override
     public int decode(int adpcm) {
 
         // デコード処理 2, 3

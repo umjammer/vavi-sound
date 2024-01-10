@@ -66,19 +66,18 @@ public class ImaInputStream extends FilterInputStream {
     /** */
     private int available;
 
-    /** */
+    @Override
     public int available() throws IOException {
         return available;
     }
 
-    /**
-     */
+    @Override
     public int read() throws IOException {
         available--;
         return in.read();
     }
 
-    /** */
+    @Override
     public int read(byte[] b, int off, int len) throws IOException {
         if (b == null) {
             throw new NullPointerException("b");

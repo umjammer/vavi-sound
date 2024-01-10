@@ -39,6 +39,7 @@ Debug.println(Level.FINE, "AudioSequenceData: " + size + " bytes");
     }
 
     /** TODO how to get formatType from parent chunk ??? */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 //Debug.println("available: " + is.available() + ", " + available());
@@ -58,6 +59,7 @@ Debug.println(Level.FINE, "messages: " + messages.size());
      * internal use
      * Atsq の場合
      */
+    @Override
     protected SmafMessage getHandyPhoneStandardMessage(int duration, int data, int gateTime) {
         return new WaveMessage(duration, data, gateTime);
     }

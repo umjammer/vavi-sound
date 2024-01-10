@@ -34,7 +34,7 @@ public class SimpleResamplingInputFilter implements InputFilter {
         this.outSamplingRate = outSamplingRate;
     }
 
-    /** */
+    @Override
     public AudioInputStream doFilter(AudioInputStream sourceAis) throws IOException, UnsupportedAudioFileException {
         AudioFormat inAudioFormat = sourceAis.getFormat();
 Debug.println(Level.FINE, "IN: " + inAudioFormat);

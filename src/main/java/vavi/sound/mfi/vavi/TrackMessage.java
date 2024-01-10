@@ -14,7 +14,6 @@ import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -219,6 +218,7 @@ Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
     }
 
     /** @throws UnsupportedOperationException */
+    @Override
     public byte[] getMessage() {
         throw new UnsupportedOperationException("no mean");
     }

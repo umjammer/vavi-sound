@@ -64,7 +64,7 @@ import vavi.sound.smaf.SysexMessage;
  */
 public class RealtimeUniversalSysexMessage extends SysexMessage {
 
-    /**
+    /*
 
 [マスターボリューム]
       F0 7F 7F 04 01 ll mm F7

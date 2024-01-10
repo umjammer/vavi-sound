@@ -48,7 +48,7 @@ public class ContentsInfoChunk extends Chunk {
         this.size = 5;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
@@ -76,7 +76,7 @@ Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump
         }
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         DataOutputStream dos = new DataOutputStream(os);
 

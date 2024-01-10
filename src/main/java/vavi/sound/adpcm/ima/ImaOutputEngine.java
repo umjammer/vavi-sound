@@ -53,7 +53,7 @@ class ImaOutputEngine implements OutputEngine {
         this.byteOrder = byteOrder;
     }
 
-    /** */
+    @Override
     public void initialize(OutputStream out) throws IOException {
         if (this.out != null) {
             throw new IOException("Already initialized");
@@ -65,7 +65,7 @@ class ImaOutputEngine implements OutputEngine {
         }
     }
 
-    /** */
+    @Override
     public void execute() throws IOException {
         if (out == null) {
             throw new IOException("Not yet initialized");
@@ -96,7 +96,7 @@ class ImaOutputEngine implements OutputEngine {
         }
     }
 
-    /** */
+    @Override
     public void finish() throws IOException {
         in.close();
     }

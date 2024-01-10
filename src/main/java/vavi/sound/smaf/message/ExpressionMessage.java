@@ -76,16 +76,18 @@ public class ExpressionMessage extends vavi.sound.smaf.ShortMessage
     //----
 
     /* */
+    @Override
     public byte[] getMessage() {
         return null; // TODO
     }
 
     /* */
+    @Override
     public int getLength() {
         return 0;   // TODO
     }
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
@@ -102,7 +104,7 @@ public class ExpressionMessage extends vavi.sound.smaf.ShortMessage
         return events;
     }
 
-    /** */
+    @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
 

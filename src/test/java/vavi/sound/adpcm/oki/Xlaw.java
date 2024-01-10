@@ -44,7 +44,7 @@ public abstract class Xlaw implements Codec {
     /** */
     protected int[] encodeTable;
 
-    /** */
+    @Override
     public int decode(int xlaw) {
         if (AudioFormat.Encoding.PCM_SIGNED.equals(encoding)) {
             if (bit == 8) {
@@ -69,7 +69,7 @@ public abstract class Xlaw implements Codec {
         }
     }
 
-    /** */
+    @Override
     public int encode(int linear) {
         if (AudioFormat.Encoding.PCM_SIGNED.equals(encoding)) {
             if (bit == 8) {

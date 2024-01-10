@@ -78,12 +78,12 @@ public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
         this.data[3] = (byte) ((this.data[3] & 0xc0) | this.modulationDepth);
     }
 
-    /** */
+    @Override
     public int getVoice() {
         return voice;
     }
 
-    /** */
+    @Override
     public void setVoice(int voice) {
         this.voice = voice & 0x03;
         this.data[3] = (byte) ((this.data[3] & 0x3f) | (this.voice << 6));
@@ -98,7 +98,7 @@ public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
 
     //----
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
@@ -120,7 +120,7 @@ public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
         return events;
     }
 
-    /** */
+    @Override
     public MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context)
         throws InvalidMfiDataException {
 

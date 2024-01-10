@@ -44,6 +44,7 @@ public class Function1_243_4 implements MachineDependentFunction {
      *                +---- max stream number, 0 ~ 2, default 0
      * </pre>
      */
+    @Override
     public void process(MachineDependentMessage message)
         throws InvalidMfiDataException {
 

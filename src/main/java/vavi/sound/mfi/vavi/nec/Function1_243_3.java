@@ -43,6 +43,7 @@ public class Function1_243_3 implements MachineDependentFunction {
      * 9        maxGain 0x00 ~ 0x60 (-48db), default 0x18 (-12db)
      * </pre>
      */
+    @Override
     public void process(MachineDependentMessage message)
         throws InvalidMfiDataException {
 

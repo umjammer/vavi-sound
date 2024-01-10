@@ -33,11 +33,13 @@ public class SmafAudioFileWriter extends AudioFileWriter {
     };
 
     /** このオーディオファイルライタがファイル書き込みサポートを提供するファイル型を取得します。 */
+    @Override
     public Type[] getAudioFileTypes() {
         return outputTypes;
     }
 
     /** 指定されたオーディオ入力ストリームからこのオーディオファイルライタが書き込みできるファイル型を取得します。 */
+    @Override
     public Type[] getAudioFileTypes(AudioInputStream stream) {
         return getAudioFileTypes(); // TODO check stream
     }
@@ -49,6 +51,7 @@ public class SmafAudioFileWriter extends AudioFileWriter {
      * @throws IllegalArgumentException fileType が SMAF でない場合スローされます。
      * @throws NullPointerException fileType に properties が設定されていない場合スローされます。
      */
+    @Override
     public int write(AudioInputStream stream, Type fileType, OutputStream out) throws IOException {
         if (!isFileTypeSupported(fileType, stream)) {
             throw new IllegalArgumentException("unsupported fileType: " + fileType.getClass().getName());
@@ -94,6 +97,7 @@ public class SmafAudioFileWriter extends AudioFileWriter {
      * @param fileType must be instance of {@link SMAF}
      * @param out null 出力を指定してください。 win32: "nul", *nix: "/dev/null"
      */
+    @Override
     public int write(AudioInputStream stream, Type fileType, File out) throws IOException {
         return write(stream, fileType, Files.newOutputStream(out.toPath()));
     }

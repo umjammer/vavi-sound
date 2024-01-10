@@ -196,9 +196,8 @@ Debug.println(Level.FINE, "rounded under -1, minus 1: " + roundedSum[smafTrackNu
         MidiEvent midiEvent = midiTrack.get(midiEventIndex);
 
         MidiMessage midiMessage = midiEvent.getMessage();
-        if (midiMessage instanceof ShortMessage) {
+        if (midiMessage instanceof ShortMessage shortMessage) {
             // note
-            ShortMessage shortMessage = (ShortMessage) midiMessage;
             int channel = shortMessage.getChannel();
 
             track = retrieveSmafTrack(channel);
@@ -254,9 +253,8 @@ if (interval < 0) {
         MidiEvent midiEvent = midiTrack.get(midiEventIndex);
 
         MidiMessage midiMessage = midiEvent.getMessage();
-        if (midiMessage instanceof ShortMessage) {
+        if (midiMessage instanceof ShortMessage shortMessage) {
             // note
-            ShortMessage shortMessage = (ShortMessage) midiMessage;
             int channel = shortMessage.getChannel();
 
             delta = retrieveAdjustedDelta(retrieveSmafTrack(channel), midiEvent.getTick());
@@ -460,6 +458,7 @@ Debug.println(Level.FINE, "next: " + shortMessage.getChannel() + "ch, " + shortM
     private int[] nrpnMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
 
     /** bank, rpn, nrpn */
+    @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
 

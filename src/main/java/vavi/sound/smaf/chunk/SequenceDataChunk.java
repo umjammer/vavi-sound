@@ -62,6 +62,7 @@ Debug.println(Level.FINE, "SequenceData: " + size + " bytes");
     }
 
     /** TODO how to get formatType from parent chunk ??? */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 //Debug.println("available: " + is.available() + ", " + available());
@@ -355,7 +356,7 @@ if (!uc.contains(String.format("reserved: %02x", status))) {
         }
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         DataOutputStream dos = new DataOutputStream(os);
 

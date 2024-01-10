@@ -1,29 +1,29 @@
-# `vavi.sound`
+# vavi.sound
 
-このドキュメントは着メロライブラリの API 仕様です。
+those are sound API specs for the japanese old school cellphone ringtones.
 
 ## Feature
 
- * {@link javax.sound.midi.spi} として実装されているため特にプログラムで意識することなく MFi ファイルを midi ファイルとして取り扱い可能です。
- * MFi バージョン 3.1 までの形式をサポートしています。
- * MFi ←→ SMF の相互変換が可能です。
- * 機種依存データのハンドラを追加する事で各機種に対応した着声が作成可能です。
+ * we can play MFi/SMAF as a midi file because it's implemented as `javax.sound.midi.spi`
+ * supports until MFi version 3.1
+ * mutual conversion between MFi ←→ SMF is possible
+ * by adding a handler for model-dependent data, you can create voice calls that are compatible with each model.
 
 ## Abstract
 
-三つの大きなパートから構成されます。
+`vavi.sound` consists of three parts.
 
  1. ADPCM codecs
  2. MFi library
- 3. {@link javax.sound.midi.spi} implementation
+ 3. `javax.sound.midi.spi` implementation
 
 ### 1. ADPCM codecs
 
-パッケージ
+packages
 
- * {@link vavi.sound.adpcm.ccitt}
- * {@link vavi.sound.adpcm.ma}
- * {@link vavi.sound.adpcm.vox}
+ * `vavi.sound.adpcm.ccitt`
+ * `vavi.sound.adpcm.ma`
+ * `vavi.sound.adpcm.vox`
 
 着声に使用される ADPCM コーデックを取り扱うパッケージ群です。
 Java の標準 IO ({@link java.io.InputStream}/{@link java.io.OutputStream}) として実装されているため
@@ -33,8 +33,8 @@ Java の標準 IO ({@link java.io.InputStream}/{@link java.io.OutputStream}) と
 
 packages
 
- * {@link vavi.sound.mfi}
- * {@link vavi.sound.mfi.vavi}
+ * `vavi.sound.mfi`
+ * `vavi.sound.mfi.vavi`
  *   :
 
 着メロライブラリの核となる部分です。MFi のファイル構造を取り扱い、MIDI 構造に変換する事が出来ます。
@@ -42,14 +42,14 @@ packages
 機種依存データを扱うパッケージとして {@link vavi.sound.mfi.vavi.mitsubishi D社} と
 {@link vavi.sound.mfi.vavi.nec N社} がサンプル実装されています。
 
-### 3. {@link javax.sound.midi.spi} implementation
+### 3. `javax.sound.midi.spi` implementation
 
 packages
 
- * {@link vavi.sound.midi}
- * {@link vavi.sound.midi.mfi}
+ * `vavi.sound.midi`
+ * `vavi.sound.midi.mfi`
 
-{@link javax.sound.midi.spi} の一実装として機能させるためのパッケージです。
+`javax.sound.midi.spi` の一実装として機能させるためのパッケージです。
 [SPI](http://java.sun.com/j2se/1.5.0/ja/docs/ja/guide/sound/programmer_guide/chapter1.html#111901)
 仕様に従い登録すれば midi の一ファイル形式として MFi ファイルを
 再生する事が可能になります。

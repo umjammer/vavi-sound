@@ -125,13 +125,13 @@ Debug.println(Level.FINE, "write: " + r);
         }
     }
 
-    /**
-     * 同じ channel で次の {@link ShortMessage#NOTE_OFF}, {@link ShortMessage#CONTROL_CHANGE}
-     * である MIDI イベントを取得します。
-     *
-     * @throws NoSuchElementException 次のイベントがない
-     * @throws IllegalStateException 現在のイベントは {@link ShortMessage} ではない
-     */
+//    /**
+//     * 同じ channel で次の {@link ShortMessage#NOTE_OFF}, {@link ShortMessage#CONTROL_CHANGE}
+//     * である MIDI イベントを取得します。
+//     *
+//     * @throws NoSuchElementException 次のイベントがない
+//     * @throws IllegalStateException 現在のイベントは {@link ShortMessage} ではない
+//     */
 /*
     public MidiEvent getNoteOffOrControllChangeMidiEvent() throws NoSuchElementException {
 
@@ -193,12 +193,12 @@ Debug.println("(NEXT): " + MidiUtil.paramString(midiMessage) + ", " + convertibl
     }
 */
 
-    /**
-     * 同じ channel で次の {@link ShortMessage} である MIDI イベントを取得します。
-     * (not used)
-     * @throws NoSuchElementException 次の MIDI イベントがない
-     * @throws IllegalStateException 現在のイベントは {@link ShortMessage} ではない
-     */
+//    /**
+//     * 同じ channel で次の {@link ShortMessage} である MIDI イベントを取得します。
+//     * (not used)
+//     * @throws NoSuchElementException 次の MIDI イベントがない
+//     * @throws IllegalStateException 現在のイベントは {@link ShortMessage} ではない
+//     */
 /*
     public MidiEvent getNextMidiEvent() throws NoSuchElementException {
 
@@ -232,10 +232,10 @@ Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getDa
         throw new NoSuchElementException("no next event of channel: " + channel);
     }
 */
-    /**
-     * @return 補正なし Δタイム
-     * TODO 何でこれでうまくいくの？
-     */
+//    /**
+//     * @return 補正なし Δタイム
+//     * TODO 何でこれでうまくいくの？
+//     */
 /*
     private int retrieveDelta(int mfiTrackNumber, long currentTick) {
         return (int) Math.round((currentTick - previousTicks[mfiTrackNumber]) / scale);

@@ -86,7 +86,7 @@ public class LoopPointMessage extends ShortMessage
 
     //----
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
 Debug.println(Level.INFO, "ignore: " + this);
         return null;

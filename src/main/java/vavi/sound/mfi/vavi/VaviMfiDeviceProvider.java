@@ -8,7 +8,6 @@ package vavi.sound.mfi.vavi;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -39,7 +38,7 @@ public class VaviMfiDeviceProvider extends MfiDeviceProvider {
         this.mfiDeviceInfos = Factory.getMfiDeviceInfos();
     }
 
-    /** */
+    @Override
     public boolean isDeviceSupported(MfiDevice.Info info) {
         for (MfiDevice.Info mfiDeviceInfo : mfiDeviceInfos) {
             if (mfiDeviceInfo.equals(info)) {
@@ -49,12 +48,12 @@ public class VaviMfiDeviceProvider extends MfiDeviceProvider {
         return false;
     }
 
-    /** */
+    @Override
     public MfiDevice.Info[] getDeviceInfo() {
         return mfiDeviceInfos;
     }
 
-    /** */
+    @Override
     public MfiDevice getDevice(MfiDevice.Info info)
         throws IllegalArgumentException {
 
@@ -66,9 +65,8 @@ public class VaviMfiDeviceProvider extends MfiDeviceProvider {
 
         /** */
         public static MfiDevice.Info[] getMfiDeviceInfos() {
-            List<MfiDevice.Info> tmp = new ArrayList<>();
 
-            tmp.addAll(deviceMap.keySet());
+            List<MfiDevice.Info> tmp = new ArrayList<>(deviceMap.keySet());
 
             return tmp.toArray(new MfiDevice.Info[0]);
         }
@@ -77,7 +75,7 @@ public class VaviMfiDeviceProvider extends MfiDeviceProvider {
         public static MfiDevice getMfiDevice(MfiDevice.Info mfiDeviceInfo) {
             if (deviceMap.containsKey(mfiDeviceInfo)) {
                 try {
-                    return deviceMap.get(mfiDeviceInfo).newInstance();
+                    return deviceMap.get(mfiDeviceInfo).getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
 Debug.printStackTrace(e);
                 }
@@ -104,7 +102,7 @@ Debug.printStackTrace(e);
                         @SuppressWarnings("unchecked")
                         Class<MfiDevice> deviceClass = (Class<MfiDevice>) Class.forName(props.getProperty(key));
 //Debug.println("mfi device class: " + StringUtil.getClassName(deviceClass));
-                        MfiDevice.Info mfiDeviceInfo = deviceClass.newInstance().getDeviceInfo();
+                        MfiDevice.Info mfiDeviceInfo = deviceClass.getDeclaredConstructor().newInstance().getDeviceInfo();
 
                         deviceMap.put(mfiDeviceInfo, deviceClass);
                     }

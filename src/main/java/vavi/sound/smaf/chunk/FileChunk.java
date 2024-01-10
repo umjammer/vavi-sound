@@ -39,7 +39,7 @@ public class FileChunk extends Chunk {
         this.size = 2; // crc
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
@@ -72,7 +72,7 @@ Debug.printf(Level.FINE, "has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
         }
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         Crc16OutputStream cos = new Crc16OutputStream(os);
 
@@ -109,7 +109,7 @@ Debug.printf(Level.FINE, "has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
         public Crc16OutputStream(OutputStream out) {
             super(out);
         }
-        /** */
+        @Override
         public void write(int b) throws IOException {
             out.write(b);
             crc16.update((byte) b);

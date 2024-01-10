@@ -22,6 +22,7 @@ import vavi.sound.adpcm.Codec;
 public class YamahaOutputStream extends AdpcmOutputStream {
 
     /** エンコーダ */
+    @Override
     protected Codec getCodec() {
         return new Yamaha();
     }

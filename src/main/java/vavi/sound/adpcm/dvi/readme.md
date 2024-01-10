@@ -1,18 +1,18 @@
 # vavi.sound.adpcm.dvi
 
-Intel/DVI ADPCM フォーマット関連のクラスを提供します．
+Provices Intel/DVI ADPCM codec related classes.
 
 ## Status
 
-完成
+completed
 
 ## Tech-know
 
- * audiocafe の Java 移植はバグってる？
+ * the porting to java by audiocafe has bugs?
 
 ## TODO
 
- * ~~datetime="060124 一括読み込みを止める~~
+ * ~~060124 stop reading at once~~
  * ~~encode~~
 
 ## License

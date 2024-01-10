@@ -51,6 +51,7 @@ public class EndOfSequenceMessage extends vavi.sound.smaf.ShortMessage
     //----
 
     /* */
+    @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         FormatType formatType = FormatType.HandyPhoneStandard; // TODO
@@ -75,11 +76,13 @@ public class EndOfSequenceMessage extends vavi.sound.smaf.ShortMessage
     }
 
     /* */
+    @Override
     public int getLength() {
         return getMessage().length;
     }
 
     /** NOP 等の対策で EOT の tick をカウントしたものに設定する。 */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
         javax.sound.midi.Track midiTrack = context.getMidiTrack();
         MidiEvent midiEvent = midiTrack.get(midiTrack.size() - 1); // should be EoT
@@ -93,6 +96,7 @@ Debug.println(Level.FINE, "EOT: " + midiEvent.getMessage().getClass().getName())
      * @return このメソッドの戻り値のみ SMAF トラック 0 ~ 3 の EndOfSequenceMessage の
      * SmafEvent になる。トラックがない場合は null が入っている
      */
+    @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context) {
 
         SmafEvent[] smafEvents = new SmafEvent[SmafContext.MAX_SMAF_TRACKS];

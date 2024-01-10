@@ -52,20 +52,24 @@ class VaviMidiConverter implements MidiConverter {
         "Version " + VaviMfiDeviceProvider.version) {};
 
     /* */
+    @Override
     public MfiDevice.Info getDeviceInfo() {
         return info;
     }
 
     /* */
+    @Override
     public void close() {
     }
 
     /* */
+    @Override
     public boolean isOpen() {
         return true;
     }
 
     /* */
+    @Override
     public void open() {
     }
 
@@ -74,6 +78,7 @@ class VaviMidiConverter implements MidiConverter {
     /**
      * Converts midi sequence to mfi sequence.
      */
+    @Override
     @Deprecated
     public vavi.sound.mfi.Sequence toMfiSequence(Sequence midiSequence)
         throws InvalidMidiDataException {
@@ -82,6 +87,7 @@ class VaviMidiConverter implements MidiConverter {
     }
 
     /** Converts midi sequence to mfi sequence. */
+    @Override
     public vavi.sound.mfi.Sequence toMfiSequence(Sequence midiSequence, int fileType)
         throws InvalidMidiDataException {
 
@@ -124,9 +130,8 @@ Debug.println(Level.FINE, "tickLength: " + midiSequence.getTickLength());
             int mfiTrackNumber = 0;
 
             //
-            if (midiMessage instanceof ShortMessage) {
+            if (midiMessage instanceof ShortMessage shortMessage) {
 
-                ShortMessage shortMessage = (ShortMessage) midiMessage;
                 int channel = shortMessage.getChannel();
                 int command = shortMessage.getCommand();
                 int data1 = shortMessage.getData1();
@@ -157,9 +162,8 @@ Debug.println(Level.FINE, ">>>> create MFi track: " + j);
                 } else {
                     key = "short." + (command & 0xf0);
                 }
-            } else if (midiMessage instanceof SysexMessage) {
+            } else if (midiMessage instanceof SysexMessage sysexMessage) {
 
-                SysexMessage sysexMessage = (SysexMessage) midiMessage;
                 byte[] data = sysexMessage.getData();
 
                 // GM system on
@@ -174,13 +178,12 @@ Debug.println(Level.FINE, "create MFi track: 0");
 
                 mfiTrackNumber = 0;
                 key = "sysex." + data[0];
-            } else if (midiMessage instanceof MetaMessage) {
+            } else if (midiMessage instanceof MetaMessage metaMessage) {
                 // 1 -> ProtInfo
                 // 2 -> CopyInfo
                 // 3 -> TitlInfo
                 // 0x51 tempo
 
-                MetaMessage metaMessage = (MetaMessage) midiMessage;
                 int meta = metaMessage.getType();
 //                byte[] data = metaMessage.getData();
 
@@ -278,6 +281,7 @@ Debug.printf(Level.SEVERE, "XXXXX track: %d, tick: %d, tick': %.2f (%.2f), %d, %
     //----
 
     /** Converts mfi sequence to midi sequence  */
+    @Override
     public Sequence toMidiSequence(vavi.sound.mfi.Sequence mfiSequence)
         throws InvalidMfiDataException {
 

@@ -66,13 +66,14 @@ class DividedSmafWithVoiceMaker extends SmafWithVoiceMaker {
     private class Event implements WaveDivider.Event {
         /** total size written */
         int r = 0;
+        @Override
         public void exec(WaveDivider.Chunk chunk) throws IOException {
             try {
                 File file = new File(directory, String.format(base, chunk.sequence + 1));
 Debug.println(Level.FINE, "file: " + file + ", " + directory + ", " + base + ", " + (chunk.sequence + 1));
                 r += createSMAF(chunk.buffer, file);
             } catch (InvalidSmafDataException e) {
-                throw (IOException) new IOException().initCause(e);
+                throw (IOException) new IOException(e);
             }
         }
     }
@@ -84,6 +85,7 @@ Debug.println(Level.FINE, "file: " + file + ", " + directory + ", " + base + ", 
      * @throws InvalidSmafDataException
      * @return total size written
      */
+    @Override
     public int create() throws IOException, UnsupportedAudioFileException, InvalidSmafDataException {
 long t = System.currentTimeMillis();
         // divide

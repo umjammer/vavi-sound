@@ -40,7 +40,7 @@ public class DisplayParameterDefinitionChunk extends Chunk {
         this.size = 0;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
@@ -64,7 +64,7 @@ Debug.println(Level.FINE, "parameters: " + parameter);
         }
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         DataOutputStream dos = new DataOutputStream(os);
 

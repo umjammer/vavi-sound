@@ -37,12 +37,14 @@ Debug.println(Level.FINE, "Link: " + size + " bytes");
     }
 
     /**  */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 dis.skipBytes((int) (long) size); // TODO
     }
 
     /** TODO */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
     }
 }

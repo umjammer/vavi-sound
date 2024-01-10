@@ -36,6 +36,8 @@ import static vavi.sound.SoundUtil.volume;
  */
 public class G721AudioFileReaderTest {
 
+    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
     String inFile = "/vavi/sound/adpcm/ccitt/out.4.adpcm";
     String correctFile = "/vavi/sound/adpcm/ccitt/out.4.pcm";
     File outFile;
@@ -86,7 +88,7 @@ line.open(outFormat);
 line.start();
         byte[] buf = new byte[1024];
         int l;
-        volume(line, .2d);
+        volume(line, volume);
 
         while (oais.available() > 0) {
             l = oais.read(buf, 0, 1024);

@@ -44,7 +44,7 @@ Debug.println(Level.FINE, "Data: lang: " + languageCode + ", size: " + size);
         this.size = 0;
     }
 
-    /** */
+    @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
@@ -58,7 +58,7 @@ Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.len
         dis.skipBytes(dis.available()); // TODO 正常ファイルなら必要なし
     }
 
-    /** */
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         DataOutputStream dos = new DataOutputStream(os);
 

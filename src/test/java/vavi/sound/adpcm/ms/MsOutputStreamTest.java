@@ -40,6 +40,8 @@ import static vavi.sound.SoundUtil.volume;
  */
 public class MsOutputStreamTest {
 
+    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
     String inFile = "out.pcm";
     String correctFile = "out_sox.adpcm";
     File outFile;
@@ -164,7 +166,7 @@ Debug.println(Level.FINE, "outFile: " + outFile.length());
         line.addLineListener(ev -> Debug.println(ev.getType()));
         line.start();
 
-        volume(line, .2d);
+        volume(line, volume);
 
         byte[] buf = new byte[1024];
         while (true) {

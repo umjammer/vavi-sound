@@ -22,7 +22,7 @@ import vavi.sound.adpcm.Codec;
  */
 public class VoxInputStream extends AdpcmInputStream {
 
-    /** */
+    @Override
     protected Codec getCodec() {
         return new Vox();
     }
@@ -35,7 +35,7 @@ public class VoxInputStream extends AdpcmInputStream {
         super(in, byteOrder, 4, ByteOrder.BIG_ENDIAN);
     }
 
-    /** */
+    @Override
     public int available() throws IOException {
 //Debug.println("0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
         return (in.available() * 2) + (rest ? 1 : 0);
@@ -44,6 +44,7 @@ public class VoxInputStream extends AdpcmInputStream {
     /**
      * TODO endian
      */
+    @Override
     public int read() throws IOException {
 //Debug.println(in);
         if (!rest) {

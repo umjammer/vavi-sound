@@ -8,6 +8,8 @@ package vavi.sound.mfi;
 
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Soundbank;
 
 
@@ -22,20 +24,23 @@ import javax.sound.midi.Soundbank;
  */
 public interface Synthesizer extends MfiDevice {
 
-    /** for volume controle */
-    MidiChannel[] getChannels() throws MfiUnavailableException;
+    /** @see javax.sound.midi.Synthesizer#getChannels() */
+    MidiChannel[] getChannels();
 
-    /** */
+    /** @see javax.sound.midi.Synthesizer#getDefaultSoundbank() */
     Soundbank getDefaultSoundbank();
 
-    /** */
+    /** @see javax.sound.midi.Synthesizer#getAvailableInstruments() */
     Instrument[] getAvailableInstruments();
 
-    /** */
+    /** @see javax.sound.midi.Synthesizer#getChannels() */
     boolean loadAllInstruments(Soundbank soundbank);
 
-    /** */
+    /** @see javax.sound.midi.Synthesizer#unloadAllInstruments(Soundbank) */
     void unloadAllInstruments(Soundbank soundbank);
+
+    /** @see javax.sound.midi.Synthesizer#getReceiver() */
+    Receiver getReceiver() throws MidiUnavailableException;
 }
 
 /* */

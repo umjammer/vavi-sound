@@ -14,7 +14,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -135,6 +134,7 @@ public abstract class SubMessage extends MetaMessage {
      * データ部分のみ。{@link #getSubType() subType} 文字列も含みません。
      * @return コピー
      */
+    @Override
     public byte[] getData() {
         byte[] tmp = new byte[getDataLength()];
         System.arraycopy(this.data, HEADER_LENGTH + SUB_TYPE_LENGTH,

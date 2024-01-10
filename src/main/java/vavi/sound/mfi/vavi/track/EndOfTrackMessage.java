@@ -64,7 +64,7 @@ public class EndOfTrackMessage extends ShortMessage
 
     //----
 
-    /** */
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
 //        MetaMessage metaMessage = new MetaMessage();
 //        metaMessage.setMessage(
@@ -83,6 +83,7 @@ public class EndOfTrackMessage extends ShortMessage
      * @return このメソッドの戻り値のみ MFi トラック 0 ~ 3 の EndOfTrackMessage の
      * MfiEvent になる。トラックがない場合は null が入っている
      */
+    @Override
     public MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context) {
 
         MfiEvent[] mfiEvents =  new MfiEvent[MfiContext.MAX_MFI_TRACKS];
