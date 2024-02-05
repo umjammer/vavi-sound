@@ -126,5 +126,3 @@ public class PanMessage extends vavi.sound.smaf.ShortMessage
         };
     }
 }
-
-/* */

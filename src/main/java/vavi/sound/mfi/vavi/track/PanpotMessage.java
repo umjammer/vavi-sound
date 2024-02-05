@@ -144,5 +144,3 @@ public class PanpotMessage extends vavi.sound.mfi.ShortMessage
         };
     }
 }
-
-/* */

@@ -268,5 +268,3 @@ Debug.println(Level.FINE, "numberTracks: " + headerChunk.tracksCount);
         return headerChunk;
     }
 }
-
-/* */

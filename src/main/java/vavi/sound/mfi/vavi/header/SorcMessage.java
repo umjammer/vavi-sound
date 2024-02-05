@@ -65,5 +65,3 @@ public class SorcMessage extends SubMessage {
         return String.format("sorc: %d: 0x%02x", getDataLength(), getSorc());
     }
 }
-
-/* */

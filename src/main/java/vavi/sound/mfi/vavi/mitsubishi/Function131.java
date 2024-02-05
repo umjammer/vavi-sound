@@ -262,5 +262,3 @@ Debug.println(Level.WARNING, "unknown bits: " + format2);
         return tmp;
     }
 }
-
-/* */

@@ -59,5 +59,3 @@ Debug.println(Level.FINE, "dummy " + dummy + ", part " + part + ", switch " + zw
         return "ExtendedEdit:";
     }
 }
-
-/* */

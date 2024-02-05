@@ -108,5 +108,3 @@ Debug.println(Level.FINE, "byteOrder: " + this.byteOrder);
         out.close();
     }
 }
-
-/* */

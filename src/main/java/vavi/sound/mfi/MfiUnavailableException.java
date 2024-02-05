@@ -30,5 +30,3 @@ public class MfiUnavailableException extends Exception {
         super(t);
     }
 }
-
-/* */

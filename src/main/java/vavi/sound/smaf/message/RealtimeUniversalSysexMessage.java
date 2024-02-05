@@ -91,5 +91,3 @@ public class RealtimeUniversalSysexMessage extends SysexMessage {
 
      */
 }
-
-/* */

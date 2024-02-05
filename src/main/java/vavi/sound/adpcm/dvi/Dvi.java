@@ -243,5 +243,3 @@ class Dvi implements Codec {
         return valPrev;
     }
 }
-
-/* */

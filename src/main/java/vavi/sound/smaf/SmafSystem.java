@@ -147,5 +147,3 @@ Debug.printStackTrace(e);
         return writer.write(smafSequence, fileType, out);
     }
 }
-
-/* */

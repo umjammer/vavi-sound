@@ -186,5 +186,3 @@ Debug.println(Level.FINE, "outFile: " + outFile.length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }
-
-/* */

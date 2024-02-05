@@ -36,5 +36,3 @@ Debug.println(Level.FINE, "RESULT: " + r);
         return AudioSystem.getAudioInputStream(tmpFile);
     }
 }
-
-/* */

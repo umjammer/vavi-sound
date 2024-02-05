@@ -105,5 +105,3 @@ public class ChangeBankMessage extends ShortMessage
         return null;
     }
 }
-
-/* */

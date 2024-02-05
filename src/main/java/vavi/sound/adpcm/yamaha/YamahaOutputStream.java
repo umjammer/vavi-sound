@@ -37,5 +37,3 @@ public class YamahaOutputStream extends AdpcmOutputStream {
         super(out, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);
     }
 }
-
-/* */

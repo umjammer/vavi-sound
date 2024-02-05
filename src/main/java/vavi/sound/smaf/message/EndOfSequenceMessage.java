@@ -116,5 +116,3 @@ Debug.println(Level.FINE, "EOT: " + midiEvent.getMessage().getClass().getName())
         return smafEvents;
     }
 }
-
-/* */

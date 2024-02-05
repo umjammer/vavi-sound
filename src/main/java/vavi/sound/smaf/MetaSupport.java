@@ -40,5 +40,3 @@ class MetaSupport implements Serializable {
         }
     }
 }
-
-/* */

@@ -105,5 +105,3 @@ public class EndOfTrackMessage extends ShortMessage
         return mfiEvents;
     }
 }
-
-/* */

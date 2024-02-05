@@ -550,5 +550,3 @@ Debug.println(Level.FINE, "no tempo message in track 0");
         return 120;
     }
 }
-
-/* */

@@ -93,5 +93,3 @@ System.err.println(format);
         is.close();
     }
 }
-
-/* */

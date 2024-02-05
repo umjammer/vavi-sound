@@ -49,5 +49,3 @@ public class DateMessage extends SubMessage {
         return "date: " + length + ": " + new String(data);
     }
 }
-
-/* */

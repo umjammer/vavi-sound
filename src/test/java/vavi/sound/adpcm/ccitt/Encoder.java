@@ -129,5 +129,3 @@ System.err.println("output: " + args[argc]);
         os.close();
     }
 }
-
-/* */

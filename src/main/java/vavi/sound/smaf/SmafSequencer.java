@@ -235,5 +235,3 @@ Debug.printStackTrace(e);
         return midiSynthesizer.getReceiver();
     }
 }
-
-/* */

@@ -97,5 +97,3 @@ Debug.printStackTrace(e);
         return write(in, fileType, os);
     }
 }
-
-/* */

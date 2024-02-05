@@ -102,12 +102,10 @@ Debug.println(Level.FINE, "sequencer: " + sequencer);
     /**
      * {@link MidiUtil#readVariableLength(java.io.DataInput)}
      */
-    private int wr(int v) throws Exception {
+    private static int wr(int v) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MidiUtil.writeVarInt(new DataOutputStream(baos), v);
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         return MidiUtil.readVariableLength(new DataInputStream(bais));
     }
 }
-
-/* */

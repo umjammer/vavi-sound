@@ -34,5 +34,3 @@ class Yamaha2PcmAudioInputStream extends AudioInputStream {
         super(new Ym2608InputStream(in, ByteOrder.LITTLE_ENDIAN), format, length);
     }
 }
-
-/* */

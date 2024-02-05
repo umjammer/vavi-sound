@@ -97,5 +97,3 @@ public class CopyMessage extends SubMessage implements MidiConvertible, MfiConve
         };
     }
 }
-
-/* */

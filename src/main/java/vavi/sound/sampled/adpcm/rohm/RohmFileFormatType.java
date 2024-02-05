@@ -32,5 +32,3 @@ public class RohmFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

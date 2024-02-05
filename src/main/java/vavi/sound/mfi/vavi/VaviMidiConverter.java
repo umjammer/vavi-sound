@@ -277,7 +277,6 @@ Debug.printf(Level.SEVERE, "XXXXX track: %d, tick: %d, tick': %.2f (%.2f), %d, %
             mfiMessage);
     mfiTrack.add(mfiEvent);
 }
-
     //----
 
     /** Converts mfi sequence to midi sequence  */
@@ -340,5 +339,3 @@ Debug.println(Level.WARNING, "unknown sequence: " + mfiMessage);
         return midiSequence;
     }
 }
-
-/* */

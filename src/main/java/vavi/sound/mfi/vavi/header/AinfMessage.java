@@ -159,5 +159,3 @@ public class AinfMessage extends SubMessage {
         return sb.toString();
     }
 }
-
-/* */

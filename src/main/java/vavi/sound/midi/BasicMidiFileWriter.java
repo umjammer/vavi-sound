@@ -31,5 +31,3 @@ public abstract class BasicMidiFileWriter extends MidiFileWriter {
         return write(in, fileType, Files.newOutputStream(out.toPath()));
     }
 }
-
-/* */

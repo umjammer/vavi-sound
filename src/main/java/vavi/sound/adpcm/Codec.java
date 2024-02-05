@@ -26,5 +26,3 @@ public interface Codec {
      */
     int decode(int adpcm);
 }
-
-/* */

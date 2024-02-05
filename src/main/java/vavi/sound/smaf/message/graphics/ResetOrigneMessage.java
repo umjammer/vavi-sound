@@ -71,5 +71,3 @@ public class ResetOrigneMessage extends ShortMessage {
         return getMessage().length;
     }
 }
-
-/* */

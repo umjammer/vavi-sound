@@ -12,7 +12,6 @@ import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 
 
-
 /**
  * SmafConvertible.
  * <p>
@@ -28,5 +27,3 @@ public interface SmafConvertible {
     /** TODO 実装法いまいち，BeanUtil 等が使えないか？ */
     SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context) throws InvalidSmafDataException;
 }
-
-/* */

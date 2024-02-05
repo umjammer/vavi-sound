@@ -30,5 +30,3 @@ public class InvalidSmafDataException extends Exception {
         super(t);
     }
 }
-
-/* */

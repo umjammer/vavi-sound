@@ -225,5 +225,3 @@ Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         return events;
     }
 }
-
-/* */

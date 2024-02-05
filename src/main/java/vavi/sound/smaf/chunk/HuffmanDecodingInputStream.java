@@ -163,5 +163,3 @@ Debug.println(Level.FINE, "node: " + node);
         return position; // TODO ???
     }
 }
-
-/* */

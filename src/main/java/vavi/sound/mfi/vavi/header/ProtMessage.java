@@ -104,5 +104,3 @@ public class ProtMessage extends SubMessage
         };
     }
 }
-
-/* */

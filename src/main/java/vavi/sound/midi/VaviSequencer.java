@@ -343,5 +343,3 @@ Debug.println(Level.FINE, "vaviSequence: " + vaviSequence);
         return "VaviSequencer: wrapped: " + sequencer.getClass().getName();
     }
 }
-
-/* */

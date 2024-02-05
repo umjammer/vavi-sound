@@ -115,5 +115,3 @@ public class TitlMessage extends SubMessage
         };
     }
 }
-
-/* */

@@ -37,5 +37,3 @@ public class FilterChain {
         // TODO implement
     }
 }
-
-/* */

@@ -189,5 +189,3 @@ Debug.printf(Level.FINE, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x\n"
         };
     }
 }
-
-/* */

@@ -549,5 +549,3 @@ Debug.println(Level.INFO, "no note info, use 0");
         }
     }
 }
-
-/* */

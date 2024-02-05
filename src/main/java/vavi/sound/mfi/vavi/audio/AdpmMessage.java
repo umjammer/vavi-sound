@@ -89,5 +89,3 @@ public class AdpmMessage extends SubMessage {
             getChannels();
     }
 }
-
-/* */

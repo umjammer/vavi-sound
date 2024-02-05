@@ -450,5 +450,3 @@ Debug.println(Level.FINE, "IMA_ADPCM block ch" + channel + " initial-state (" + 
         return (samplesPerBlock + 14) / 8 * 4 * channels;
     }
 }
-
-/* */

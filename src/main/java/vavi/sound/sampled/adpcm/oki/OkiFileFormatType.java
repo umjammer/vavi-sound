@@ -32,5 +32,3 @@ public class OkiFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

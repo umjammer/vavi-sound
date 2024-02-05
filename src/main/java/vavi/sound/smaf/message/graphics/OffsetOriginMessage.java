@@ -75,5 +75,3 @@ public class OffsetOriginMessage extends ShortMessage {
         return getMessage().length;
     }
 }
-
-/* */

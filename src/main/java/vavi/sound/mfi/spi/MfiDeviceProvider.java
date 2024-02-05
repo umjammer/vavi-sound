@@ -28,5 +28,3 @@ public abstract class MfiDeviceProvider {
     /** */
     public abstract MfiDevice getDevice(MfiDevice.Info info);
 }
-
-/* */

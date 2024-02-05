@@ -397,5 +397,3 @@ Debug.println(Level.FINER, "thread local sequence: " + sequence.get());
         return events;
     }
 }
-
-/* */

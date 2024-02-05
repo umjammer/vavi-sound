@@ -96,5 +96,3 @@ Debug.println(Level.FINE, "modulo bytes: " + buffer.length + ", " + (((totalTime
         }
     }
 }
-
-/* */

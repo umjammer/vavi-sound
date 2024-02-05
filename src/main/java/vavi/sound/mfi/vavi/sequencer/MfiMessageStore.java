@@ -49,5 +49,3 @@ public class MfiMessageStore {
         return stores.get(id);
     }
 }
-
-/* */

@@ -129,5 +129,3 @@ Debug.println(Level.FINE, "WAVE DATA[" + number + "]: " + this);
         engine.setData(number, -1, samplingRate, samplingBits, channels, data, false);
     }
 }
-
-/* */

@@ -72,5 +72,3 @@ public class NopMessage extends ShortMessage {
         return getMessage().length;
     }
 }
-
-/* */

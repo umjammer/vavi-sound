@@ -69,5 +69,3 @@ import vavi.sound.smaf.SysexMessage;
 public class NonRealtimeUniversalSysexMessage extends SysexMessage {
 
 }
-
-/* */

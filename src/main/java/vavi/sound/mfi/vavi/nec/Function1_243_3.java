@@ -75,5 +75,3 @@ Debug.println(Level.FINE, "MaxGain: " + maxGain);
         return tmp;
     }
 }
-
-/* */

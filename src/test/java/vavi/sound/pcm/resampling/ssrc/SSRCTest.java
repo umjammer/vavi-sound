@@ -220,5 +220,3 @@ outer:
         line.close();
     }
 }
-
-/* */

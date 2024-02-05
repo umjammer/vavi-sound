@@ -48,5 +48,3 @@ public class Function1 implements MachineDependentFunction {
 Debug.printf(Level.FINE, "Pitch Bend: %02x %d\n", voice, pitchBend);
     }
 }
-
-/* */

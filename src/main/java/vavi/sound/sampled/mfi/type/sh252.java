@@ -54,5 +54,3 @@ public class sh252 implements MachineDependentMfiWithVoiceMaker {
         return events;
     }
 }
-
-/* */

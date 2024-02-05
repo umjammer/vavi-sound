@@ -154,5 +154,3 @@ public class PitchBendRangeMessage extends vavi.sound.mfi.ShortMessage
         };
     }
 }
-
-/* */

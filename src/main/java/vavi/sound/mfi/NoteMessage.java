@@ -208,5 +208,3 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
             " velocity=" + String.format("%02x", velocity);
     }
 }
-
-/* */

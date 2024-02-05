@@ -62,5 +62,3 @@ public class ExstMessage extends SubMessage {
         return TYPE + ": " + getDataLength() + ": " + getExst();
     }
 }
-
-/* */

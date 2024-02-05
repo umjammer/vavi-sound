@@ -135,5 +135,3 @@ class Ym2608 implements Codec {
         return pcm;
     }
 }
-
-/* */

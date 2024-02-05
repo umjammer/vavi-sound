@@ -29,5 +29,3 @@ public class MaEncoding extends AudioFormat.Encoding {
         super(name);
     }
 }
-
-/* */

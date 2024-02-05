@@ -92,5 +92,3 @@ public abstract class Xlaw implements Codec {
         }
     }
 }
-
-/* */

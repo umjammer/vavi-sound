@@ -36,5 +36,3 @@ public class OkiOutputStream extends AdpcmOutputStream {
         super(out, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);
     }
 }
-
-/* */

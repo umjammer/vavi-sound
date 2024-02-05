@@ -37,5 +37,3 @@ public class CcittEncoding extends AudioFormat.Encoding {
         super(name);
     }
 }
-
-/* */

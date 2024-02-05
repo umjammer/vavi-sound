@@ -47,5 +47,3 @@ public class VoiceEditMessage extends SysexMessage {
         return "VoiceEdit:";
     }
 }
-
-/* */

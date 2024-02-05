@@ -146,5 +146,3 @@ line.close();
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }
-
-/* */

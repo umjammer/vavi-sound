@@ -57,5 +57,3 @@ public abstract class ShortMessage extends MfiMessage {
         return data[3] & 0xff;
     }
 }
-
-/* */

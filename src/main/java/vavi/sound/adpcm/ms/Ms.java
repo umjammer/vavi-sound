@@ -441,5 +441,3 @@ Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
         return n;
     }
 }
-
-/* */

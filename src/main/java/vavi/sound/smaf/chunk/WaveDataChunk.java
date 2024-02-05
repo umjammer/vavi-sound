@@ -100,5 +100,3 @@ Debug.println(Level.FINE, "WaveData[" + waveNumber + "]: " + size + " bytes");
         return waveDataMessage;
     }
 }
-
-/* */

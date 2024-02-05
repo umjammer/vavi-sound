@@ -145,5 +145,3 @@ public class ChangeVoiceMessage extends vavi.sound.mfi.ShortMessage
         };
     }
 }
-
-/* */

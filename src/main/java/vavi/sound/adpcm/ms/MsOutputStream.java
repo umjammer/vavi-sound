@@ -46,5 +46,3 @@ public class MsOutputStream extends FilterOutputStream {
         out.write(b, off, len);
     }
 }
-
-/* */

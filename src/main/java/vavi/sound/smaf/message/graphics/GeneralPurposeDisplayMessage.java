@@ -99,5 +99,3 @@ public class GeneralPurposeDisplayMessage extends ShortMessage {
         return getMessage().length;
     }
 }
-
-/* */

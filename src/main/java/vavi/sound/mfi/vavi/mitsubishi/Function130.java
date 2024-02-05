@@ -72,5 +72,3 @@ Debug.printf(Level.FINE, "ADPCM pan: %dch %02x\n", channel, panpot);
         return tmp;
     }
 }
-
-/* */

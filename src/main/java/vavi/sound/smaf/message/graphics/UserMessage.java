@@ -81,5 +81,3 @@ public class UserMessage extends ShortMessage {
         return getMessage().length;
     }
 }
-
-/* */

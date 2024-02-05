@@ -119,5 +119,3 @@ Debug.printf(Level.FINE, "sampling: %02x: rate=%d, bits=%d\n", data[8] & 0x3f, s
         return tmp;
     }
 }
-
-/* */

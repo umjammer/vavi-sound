@@ -158,5 +158,3 @@ public class ExpressionMessage extends vavi.sound.mfi.ShortMessage
         };
     }
 }
-
-/* */

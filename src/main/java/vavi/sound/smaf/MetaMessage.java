@@ -121,5 +121,3 @@ public class MetaMessage extends SmafMessage {
         return 0;   // TODO
     }
 }
-
-/* */

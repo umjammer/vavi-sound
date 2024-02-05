@@ -30,5 +30,3 @@ public class SmafUnavailableException extends Exception {
         super(t);
     }
 }
-
-/* */

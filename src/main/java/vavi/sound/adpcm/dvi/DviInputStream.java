@@ -33,5 +33,3 @@ public class DviInputStream extends AdpcmInputStream {
         super(in, byteOrder, 4, ByteOrder.BIG_ENDIAN);
     }
 }
-
-/* */

@@ -143,5 +143,3 @@ public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
         };
     }
 }
-
-/* */

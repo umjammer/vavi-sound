@@ -45,5 +45,3 @@ public class G723_16InputStream extends AdpcmInputStream {
         return (in.available() * 4) + (rest ? 1 : 0); // TODO check * 4 ???
     }
 }
-
-/* */

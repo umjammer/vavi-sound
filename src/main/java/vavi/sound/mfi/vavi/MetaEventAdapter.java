@@ -184,5 +184,3 @@ Debug.printf(Level.SEVERE, "error vendor: 0x%02x\n", vendor);
         sequencer.sequence();
     }
 }
-
-/* */

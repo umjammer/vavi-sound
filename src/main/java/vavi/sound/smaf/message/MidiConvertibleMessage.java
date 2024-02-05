@@ -104,5 +104,3 @@ public class MidiConvertibleMessage extends vavi.sound.smaf.ShortMessage
         return events;
     }
 }
-
-/* */

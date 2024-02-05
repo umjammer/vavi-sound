@@ -22,5 +22,3 @@ public interface InputFilter {
     /** */
     AudioInputStream doFilter(AudioInputStream audioInputStream) throws IOException, UnsupportedAudioFileException;
 }
-
-/* */

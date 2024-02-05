@@ -495,5 +495,3 @@ Debug.println(Level.FINE, "next: " + shortMessage.getChannel() + "ch, " + shortM
         return null;
     }
 }
-
-/* */

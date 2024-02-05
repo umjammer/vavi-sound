@@ -36,5 +36,3 @@ public class Ym2608OutputStream extends AdpcmOutputStream {
         super(out, byteOrder, 4, ByteOrder.BIG_ENDIAN);
     }
 }
-
-/* */

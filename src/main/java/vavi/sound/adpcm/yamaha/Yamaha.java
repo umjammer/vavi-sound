@@ -127,5 +127,3 @@ class Yamaha implements Codec {
         return code;
     }
 }
-
-/* */

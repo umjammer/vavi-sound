@@ -29,5 +29,3 @@ public class OkiEncoding extends AudioFormat.Encoding {
         super(name);
     }
 }
-
-/* */

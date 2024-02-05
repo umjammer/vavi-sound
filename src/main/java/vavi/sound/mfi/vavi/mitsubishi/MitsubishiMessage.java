@@ -229,5 +229,3 @@ Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length)
         return new MfiEvent(message, 0L);
     }
 }
-
-/* */

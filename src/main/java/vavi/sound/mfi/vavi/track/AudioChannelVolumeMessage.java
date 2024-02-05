@@ -114,5 +114,3 @@ public class AudioChannelVolumeMessage extends vavi.sound.mfi.ShortMessage
         // TODO Auto-generated method stub
     }
 }
-
-/* */

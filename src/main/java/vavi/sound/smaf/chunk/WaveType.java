@@ -188,5 +188,3 @@ Debug.println(Level.FINE, "waveType: " + this);
             " (waveType: " + String.format("%04x", intValue()) + ")";
     }
 }
-
-/* */

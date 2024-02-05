@@ -29,5 +29,3 @@ public class VoxEncoding extends AudioFormat.Encoding {
         super(name);
     }
 }
-
-/* */

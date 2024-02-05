@@ -173,5 +173,3 @@ Debug.printf(Level.WARNING, "unhandled function: %02x\n", functionId);
         sequencer.sequence();
     }
 }
-
-/* */

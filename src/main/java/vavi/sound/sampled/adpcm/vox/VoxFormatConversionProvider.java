@@ -121,5 +121,3 @@ public class VoxFormatConversionProvider extends FormatConversionProvider {
         }
     }
 }
-
-/* */

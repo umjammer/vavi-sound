@@ -32,5 +32,3 @@ public class MsFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

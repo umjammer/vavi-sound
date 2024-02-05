@@ -101,5 +101,3 @@ public abstract class SysexMessage extends SmafMessage {
         }
     }
 }
-
-/* */

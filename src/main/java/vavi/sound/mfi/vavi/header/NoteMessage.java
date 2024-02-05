@@ -59,5 +59,3 @@ public class NoteMessage extends SubMessage {
         return "note: " + getDataLength() + ": " + getNoteLength();
     }
 }
-
-/* */

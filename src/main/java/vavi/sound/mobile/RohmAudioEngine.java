@@ -87,5 +87,3 @@ public class RohmAudioEngine extends BasicAudioEngine {
         return new RohmOutputStream(os, ByteOrder.LITTLE_ENDIAN);
     }
 }
-
-/* */

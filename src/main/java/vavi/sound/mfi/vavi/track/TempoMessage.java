@@ -210,5 +210,3 @@ if (timeBase < 0) {
         return timeBaseTable[table.get(0).index];
     }
 }
-
-/* */

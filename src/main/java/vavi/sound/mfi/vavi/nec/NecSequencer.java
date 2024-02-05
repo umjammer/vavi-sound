@@ -92,5 +92,3 @@ Debug.printf(Level.WARNING, "unsupported function: %s", key);
     private static MachineDependentFunction.Factory factory =
             new MachineDependentFunction.Factory("/vavi/sound/mfi/vavi/nec/nec.properties");
 }
-
-/* */

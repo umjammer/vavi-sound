@@ -96,5 +96,3 @@ Debug.println(Level.FINE, "StreamOn: " + channel + "ch, No." + streamNumber + ",
         return tmp;
     }
 }
-
-/* */

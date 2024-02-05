@@ -167,5 +167,3 @@ Debug.println(Level.INFO, "★★★★★ : " + MidiUtil.paramString(midiEvent.
         throw new UnsupportedOperationException("not implemented yet");
     }
 }
-
-/* */

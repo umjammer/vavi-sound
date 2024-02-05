@@ -53,5 +53,3 @@ Debug.println(Level.FINE, "OK: " + AudioSystem.isConversionSupported(outAudioFor
         return AudioSystem.getAudioInputStream(outAudioFormat, sourceAis);
     }
 }
-
-/* */

@@ -130,5 +130,3 @@ public class PitchBendMessage extends vavi.sound.smaf.ShortMessage
         };
     }
 }
-
-/* */

@@ -82,5 +82,3 @@ public class MetaMessage extends MfiMessage {
         return tmp;
     }
 }
-
-/* */

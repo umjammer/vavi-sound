@@ -202,5 +202,3 @@ public abstract class TrackChunk extends Chunk {
     public abstract List<SmafEvent> getSmafEvents()
         throws InvalidSmafDataException;
 }
-
-/* */

@@ -34,5 +34,3 @@ public class YamahaInputStream extends AdpcmInputStream {
         super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);
     }
 }
-
-/* */

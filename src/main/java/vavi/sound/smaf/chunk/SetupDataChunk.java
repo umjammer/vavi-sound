@@ -158,5 +158,3 @@ Debug.printf(Level.WARNING, "unhandled: %02x\n", status);
         return messages;
     }
 }
-
-/* */

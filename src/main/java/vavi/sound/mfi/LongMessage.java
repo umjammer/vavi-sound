@@ -49,5 +49,3 @@ public abstract class LongMessage extends MfiMessage {
         return tmp;
     }
 }
-
-/* */

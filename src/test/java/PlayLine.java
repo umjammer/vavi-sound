@@ -69,5 +69,3 @@ System.err.println(format);
         line.close();
     }
 }
-
-/* */

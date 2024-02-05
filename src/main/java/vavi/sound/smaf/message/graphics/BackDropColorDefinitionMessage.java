@@ -80,5 +80,3 @@ public class BackDropColorDefinitionMessage extends ShortMessage {
         return getMessage().length;
     }
 }
-
-/* */

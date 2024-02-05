@@ -172,5 +172,3 @@ Debug.println(Level.FINE, "delta: " + delta);
         return events;
     }
 }
-
-/* */

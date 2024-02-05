@@ -32,5 +32,3 @@ public class VoxFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

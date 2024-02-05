@@ -75,5 +75,3 @@ Debug.println(Level.INFO, "unsupported type: " + audioInputStream.getFormat());
      */
     void divide(float seconds, Event event) throws IOException;
 }
-
-/* */

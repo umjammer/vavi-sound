@@ -74,5 +74,3 @@ public class VersMessage extends SubMessage {
                ": " + getVersion();
     }
 }
-
-/* */

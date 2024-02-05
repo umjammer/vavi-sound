@@ -103,5 +103,3 @@ public class MfiConvertibleMessage implements MfiConvertible {
         return null;
     }
 }
-
-/* */

@@ -81,5 +81,3 @@ Debug.println(Level.FINE, "write: " + r);
         System.exit(0);
     }
 }
-
-/* */

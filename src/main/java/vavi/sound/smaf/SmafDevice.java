@@ -86,5 +86,3 @@ public interface SmafDevice {
     /** */
     void open() throws SmafUnavailableException;
 }
-
-/* */

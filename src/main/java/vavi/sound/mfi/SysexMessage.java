@@ -25,5 +25,3 @@ public abstract class SysexMessage extends MfiMessage implements Serializable {
         super(message);
     }
 }
-
-/* */

@@ -32,5 +32,3 @@ public class ImaFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

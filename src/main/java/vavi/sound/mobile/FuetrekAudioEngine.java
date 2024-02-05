@@ -107,5 +107,3 @@ Debug.println(Level.FINE, "always used: no: " + streamNumber + ", ch: " + data[s
         return new G721OutputStream(os, ByteOrder.LITTLE_ENDIAN);
     }
 }
-
-/* */

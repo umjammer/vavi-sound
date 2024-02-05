@@ -126,5 +126,3 @@ public class ModulationMessage extends vavi.sound.smaf.ShortMessage
         };
     }
 }
-
-/* */

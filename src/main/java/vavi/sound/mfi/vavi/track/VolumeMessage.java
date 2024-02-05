@@ -145,5 +145,3 @@ public class VolumeMessage extends vavi.sound.mfi.ShortMessage
         };
     }
 }
-
-/* */

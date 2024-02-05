@@ -147,5 +147,3 @@ public class fftsgTest {
         return err;
     }
 }
-
-/* */

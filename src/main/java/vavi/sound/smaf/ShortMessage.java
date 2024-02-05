@@ -18,5 +18,3 @@ public abstract class ShortMessage extends SmafMessage {
     public ShortMessage() {
     }
 }
-
-/* */

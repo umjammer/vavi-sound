@@ -24,5 +24,3 @@ public interface ChannelMessage {
     /** */
     void setVoice(int voice);
 }
-
-/* */

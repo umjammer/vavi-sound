@@ -249,5 +249,3 @@ Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump
         size += subDatum.getSize();
     }
 }
-
-/* */

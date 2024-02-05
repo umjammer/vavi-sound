@@ -46,7 +46,7 @@ Debug.println(meta.getType());
         sequencer.close();
     }
 
-    //-------------------------------------------------------------------------
+    //----
 
     /**
      * Tests this class.
@@ -111,5 +111,3 @@ Debug.println("write: " + r + " bytes as '" + args[2] + "'");
 //}
     }
 }
-
-/* */

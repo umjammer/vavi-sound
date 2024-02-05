@@ -43,5 +43,3 @@ public class G721InputStream extends AdpcmInputStream {
         ((G721) decoder).setEncoding(encoding);
     }
 }
-
-/* */

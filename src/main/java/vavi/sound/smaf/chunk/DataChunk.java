@@ -191,5 +191,3 @@ Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.len
         }
     }
 }
-
-/* */

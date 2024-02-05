@@ -197,5 +197,3 @@ Debug.println(Level.FINE, "BankSelect(" + significant + "): [" + duration + "] "
         };
     }
 }
-
-/* */

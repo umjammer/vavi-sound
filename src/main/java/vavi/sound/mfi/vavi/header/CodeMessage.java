@@ -72,5 +72,3 @@ public class CodeMessage extends SubMessage {
         return TYPE + ": " + getDataLength() + ": " + getCode();
     }
 }
-
-/* */

@@ -39,5 +39,3 @@ public abstract class SmafMessage {
     /** */
     public abstract int getLength();
 }
-
-/* */

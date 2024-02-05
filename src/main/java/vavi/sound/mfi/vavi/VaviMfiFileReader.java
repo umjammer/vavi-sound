@@ -86,5 +86,3 @@ public class VaviMfiFileReader extends MfiFileReader {
         return getSequence(is);
     }
 }
-
-/* */

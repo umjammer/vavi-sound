@@ -89,5 +89,3 @@ public abstract class AdpcmOutputStream extends FilterOutputStream {
         }
     }
 }
-
-/* */

@@ -222,5 +222,3 @@ Debug.printf(Level.FINE, "has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
         return crc;
     }
 }
-
-/* */

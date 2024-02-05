@@ -71,5 +71,3 @@ Debug.println(Level.FINE, "NOP2: delta: " + delta);
         return null;
     }
 }
-
-/* */

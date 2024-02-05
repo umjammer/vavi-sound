@@ -72,5 +72,3 @@ Debug.printf(Level.FINE, "ADPCM volume: %dch %02x\n", channel, volume);
         return tmp;
     }
 }
-
-/* */

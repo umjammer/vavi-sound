@@ -32,5 +32,3 @@ public interface MidiConverter extends MfiDevice {
     javax.sound.midi.Sequence toMidiSequence(Sequence sequence)
         throws InvalidMfiDataException;
 }
-
-/* */

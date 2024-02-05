@@ -51,5 +51,3 @@ public class ImaOutputStream extends FilterOutputStream {
         out.write(b, off, len);
     }
 }
-
-/* */

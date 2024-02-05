@@ -108,5 +108,3 @@ Debug.printStackTrace(e);
         return write(stream, fileType, Files.newOutputStream(out.toPath()));
     }
 }
-
-/* */

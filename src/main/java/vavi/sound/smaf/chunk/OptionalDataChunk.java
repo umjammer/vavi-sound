@@ -93,5 +93,3 @@ Debug.println(Level.FINE, "OptionalData: " + size + " bytes");
     //  stop 4 bytes
     //  ??? 4 bytes
 }
-
-/* */

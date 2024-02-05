@@ -379,5 +379,3 @@ Debug.printStackTrace(Level.FINE, t);
         }
     }
 }
-
-/* */

@@ -81,5 +81,3 @@ Debug.println(Level.FINE, "track: " + trackNumber + ": " + getDataLength());
         return trackLength;
     }
 }
-
-/* */

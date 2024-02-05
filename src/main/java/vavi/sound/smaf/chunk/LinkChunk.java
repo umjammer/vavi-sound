@@ -48,5 +48,3 @@ dis.skipBytes((int) (long) size); // TODO
     public void writeTo(OutputStream os) throws IOException {
     }
 }
-
-/* */

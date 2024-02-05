@@ -92,5 +92,3 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber]
         return new MaOutputStream(os, ByteOrder.LITTLE_ENDIAN);
     }
 }
-
-/* */

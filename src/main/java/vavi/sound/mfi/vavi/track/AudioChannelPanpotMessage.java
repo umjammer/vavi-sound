@@ -116,5 +116,3 @@ public class AudioChannelPanpotMessage extends vavi.sound.mfi.ShortMessage
         // TODO Auto-generated method stub
     }
 }
-
-/* */

@@ -187,5 +187,3 @@ Debug.println(Level.FINE, "YAMAHA VOLUME: ");
         }
     }
 }
-
-/* */

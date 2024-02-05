@@ -14,5 +14,3 @@ package vavi.sound.smaf;
  */
 class ChunkTest {
 }
-
-/* */

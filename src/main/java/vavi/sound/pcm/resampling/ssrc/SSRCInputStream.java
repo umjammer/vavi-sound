@@ -71,5 +71,3 @@ public class SSRCInputStream extends FilterInputStream {
         return Channels.newInputStream(pipe.source());
     }
 }
-
-/* */

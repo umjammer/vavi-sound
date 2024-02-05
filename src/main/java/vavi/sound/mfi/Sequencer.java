@@ -48,5 +48,3 @@ public interface Sequencer extends MfiDevice {
     /** {@link MetaEventListener Listener} を削除します。 */
     void removeMetaEventListener(MetaEventListener l);
 }
-
-/* */

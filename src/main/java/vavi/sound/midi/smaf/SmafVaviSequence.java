@@ -42,5 +42,3 @@ public class SmafVaviSequence extends Sequence implements VaviSequence {
         }
     }
 }
-
-/* */

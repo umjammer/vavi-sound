@@ -76,5 +76,3 @@ Debug.println(Level.FINE, "maxStreamNumber: " + maxStreamNumber);
         return tmp;
     }
 }
-
-/* */

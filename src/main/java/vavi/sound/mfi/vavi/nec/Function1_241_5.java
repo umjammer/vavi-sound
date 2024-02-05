@@ -84,5 +84,3 @@ Debug.println(Level.FINE, "StreamOff: " + channel + "ch, No." + streamNumber);
         return tmp;
     }
 }
-
-/* */

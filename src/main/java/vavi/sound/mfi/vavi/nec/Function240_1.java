@@ -49,5 +49,3 @@ Debug.println(Level.FINE, "FM voice change: " + channel);
 Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(data, 32));
     }
 }
-
-/* */

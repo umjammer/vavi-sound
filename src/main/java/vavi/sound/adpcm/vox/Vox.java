@@ -111,5 +111,3 @@ class Vox implements Codec {
         return (c - 3) * 2;
     }
 }
-
-/* */

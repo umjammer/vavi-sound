@@ -50,5 +50,3 @@ Debug.println(Level.FINE, "Vibrato: " + channel + ", " + data[8]);
 Debug.println(Level.FINEST, "\n" + StringUtil.getDump(data, 32));
     }
 }
-
-/* */

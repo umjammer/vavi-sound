@@ -37,5 +37,3 @@ public class OkiInputStream extends AdpcmInputStream {
 Debug.println(Level.FINE, this.in);
     }
 }
-
-/* */

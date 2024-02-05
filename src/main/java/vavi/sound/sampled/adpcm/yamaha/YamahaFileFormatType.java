@@ -32,5 +32,3 @@ public class YamahaFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

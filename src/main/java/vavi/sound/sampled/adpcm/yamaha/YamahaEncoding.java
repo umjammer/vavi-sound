@@ -29,5 +29,3 @@ public class YamahaEncoding extends AudioFormat.Encoding {
         super(name);
     }
 }
-
-/* */

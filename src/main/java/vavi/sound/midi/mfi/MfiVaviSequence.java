@@ -42,5 +42,3 @@ public class MfiVaviSequence extends Sequence implements VaviSequence {
         }
     }
 }
-
-/* */

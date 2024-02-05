@@ -48,5 +48,3 @@ public class MfiEvent {
         return tick;
     }
 }
-
-/* */

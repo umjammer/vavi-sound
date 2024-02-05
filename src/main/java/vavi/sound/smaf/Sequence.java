@@ -51,5 +51,3 @@ public class Sequence {
         return tracks.toArray(new Track[0]);
     }
 }
-
-/* */

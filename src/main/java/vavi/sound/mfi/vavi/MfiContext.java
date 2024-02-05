@@ -458,5 +458,3 @@ Debug.println(Level.FINE, "(SCALE) final scale: " + scale + ", " + scaleChanged)
         return noteOffEventUsed.get(midiEventIndex);
     }
 }
-
-/* */

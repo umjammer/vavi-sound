@@ -46,5 +46,3 @@ public class Function3 implements MachineDependentFunction {
 Debug.printf(Level.FINE, "Vibrato: %d %02x\n", voice, modulation);
     }
 }
-
-/* */

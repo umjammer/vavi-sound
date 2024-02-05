@@ -51,5 +51,3 @@ Debug.println(Level.FINE, "Vibrator: " + channel);
 Debug.println(Level.FINEST, StringUtil.getDump(data));
     }
 }
-
-/* */

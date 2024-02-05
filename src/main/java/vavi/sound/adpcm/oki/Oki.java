@@ -200,5 +200,3 @@ class Oki implements Codec {
         return this.mc_amp;
     }
 }
-
-/* */

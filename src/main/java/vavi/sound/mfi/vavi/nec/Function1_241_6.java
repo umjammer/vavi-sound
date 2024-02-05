@@ -93,5 +93,3 @@ Debug.println(Level.FINE, "StreamPan: " + channel + "ch, No." + streamNumber + "
         return tmp;
     }
 }
-
-/* */

@@ -74,5 +74,3 @@ public class VoxOutputStream extends AdpcmOutputStream {
         }
     }
 }
-
-/* */

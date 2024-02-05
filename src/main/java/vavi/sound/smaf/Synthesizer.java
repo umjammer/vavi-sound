@@ -42,5 +42,3 @@ public interface Synthesizer extends SmafDevice {
     /** @see javax.sound.midi.Synthesizer#getReceiver() */
     Receiver getReceiver() throws MidiUnavailableException;
 }
-
-/* */

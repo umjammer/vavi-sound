@@ -127,5 +127,3 @@ public class Alaw extends Xlaw {
         this.encodeTable = lintoalaw;
     }
 }
-
-/* */

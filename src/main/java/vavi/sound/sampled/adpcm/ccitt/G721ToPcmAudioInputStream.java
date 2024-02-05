@@ -34,5 +34,3 @@ class G721ToPcmAudioInputStream extends AudioInputStream {
         super(new G721InputStream(in, ByteOrder.LITTLE_ENDIAN), format, length);
     }
 }
-
-/* */

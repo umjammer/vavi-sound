@@ -102,5 +102,3 @@ public class SmafAudioFileWriter extends AudioFileWriter {
         return write(stream, fileType, Files.newOutputStream(out.toPath()));
     }
 }
-
-/* */

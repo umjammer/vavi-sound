@@ -159,5 +159,3 @@ public abstract class I0Bessel {
         return y;
     }
 }
-
-/* */

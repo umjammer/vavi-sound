@@ -46,5 +46,3 @@ public class UndefinedMessage extends SmafMessage {
         return 0;   // TODO
     }
 }
-
-/* */

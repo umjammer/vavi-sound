@@ -35,5 +35,3 @@ public class DviOutputStream extends AdpcmOutputStream {
         super(out, byteOrder, 4, ByteOrder.BIG_ENDIAN);
     }
 }
-
-/* */

@@ -31,5 +31,3 @@ public class ThrdMessage extends SubMessage {
         super(TYPE, data);
     }
 }
-
-/* */

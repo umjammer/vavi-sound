@@ -32,5 +32,3 @@ public class CcittFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

@@ -306,7 +306,6 @@ Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.ge
             return count;
         }
 }
-
     //----
 
     /**
@@ -376,5 +375,3 @@ Debug.printStackTrace(Level.SEVERE, e);
                 }
             };
 }
-
-/* */

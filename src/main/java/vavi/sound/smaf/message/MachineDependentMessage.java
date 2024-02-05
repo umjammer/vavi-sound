@@ -18,5 +18,3 @@ import vavi.sound.smaf.SysexMessage;
 public abstract class MachineDependentMessage extends SysexMessage {
 
 }
-
-/* */

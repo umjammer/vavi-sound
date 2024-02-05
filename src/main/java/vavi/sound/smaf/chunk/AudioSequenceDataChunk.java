@@ -64,5 +64,3 @@ Debug.println(Level.FINE, "messages: " + messages.size());
         return new WaveMessage(duration, data, gateTime);
     }
 }
-
-/* */

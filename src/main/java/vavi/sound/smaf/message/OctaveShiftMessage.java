@@ -93,5 +93,3 @@ public class OctaveShiftMessage extends vavi.sound.smaf.ShortMessage
         return null;
     }
 }
-
-/* */

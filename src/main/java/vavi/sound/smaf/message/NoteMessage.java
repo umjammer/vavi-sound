@@ -309,7 +309,6 @@ if (length >= 255) {
 if (smafEvents[i] == null) {
  Debug.println(Level.FINE, "[" + i + "]: " + smafEvents[i]);
 }
-
                 if (i == 0) {
                     context.setBeforeTick(track, midiEvent.getTick());
                     break;
@@ -322,5 +321,3 @@ if (smafEvents[i] == null) {
         }
     }
 }
-
-/* */

@@ -51,5 +51,3 @@ public abstract class MfiFileWriter {
                               File out)
         throws IOException;
 }
-
-/* */

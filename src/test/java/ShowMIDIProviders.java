@@ -26,5 +26,3 @@ public class ShowMIDIProviders {
                         .forEach(info -> System.out.println(info.getName())));
     }
 }
-
-/* */

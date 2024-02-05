@@ -73,5 +73,3 @@ Debug.println(Level.FINE, "image: " + getImage());
     public void writeTo(OutputStream os) throws IOException {
     }
 }
-
-/* */

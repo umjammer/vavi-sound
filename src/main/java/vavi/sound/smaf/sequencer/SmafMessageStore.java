@@ -49,5 +49,3 @@ public class SmafMessageStore {
         return stores.get(id);
     }
 }
-
-/* */

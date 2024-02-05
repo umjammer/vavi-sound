@@ -384,5 +384,3 @@ if (!uc.contains(String.format("reserved: %02x", status))) {
         size += smafMessage.getLength(); // TODO
     }
 }
-
-/* */

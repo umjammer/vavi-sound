@@ -55,5 +55,3 @@ Debug.printf(Level.INFO, "undefined function: %02x \n", f1);
 Debug.println(Level.INFO, StringUtil.getDump(message.getMessage(), 128));
     }
 }
-
-/* */

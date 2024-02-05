@@ -79,5 +79,3 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
         return null; // TODO
     }
 }
-
-/* */
