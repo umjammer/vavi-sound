@@ -1,5 +1,5 @@
 # vavi.sound.smapled.smaf
 
-SMAF ADPCM サウンド関連の javax.sound.sampled.spi 実装クラスを提供します．
+Provides SMAF ADPCM sound related javax.sound.sampled.spi implementations.
 
 ## TODO

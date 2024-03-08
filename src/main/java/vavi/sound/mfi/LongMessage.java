@@ -10,9 +10,9 @@ package vavi.sound.mfi;
 /**
  * LongMessage.
  * <p>
- * MFi 仕様の"拡張ステータス A"を表します。
+ * Represents MFi specs. "Extended Status A".
  * </p>
- * <li>javax.sound.midi パッケージにはない。(MFi オリジナル)
+ * <li>not in javax.sound.midi package.(MFi original)
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070116 nsano initial version <br>
  */
@@ -22,8 +22,8 @@ public abstract class LongMessage extends MfiMessage {
      *
      * @param delta
      * @param status
-     * @param data1 拡張ステータス番号
-     * @param data2 機能の値
+     * @param data1 extended status number
+     * @param data2 function number
      */
     public LongMessage(int delta, int status, int data1, byte[] data2) {
         super(new byte[3 + data2.length]);
@@ -40,8 +40,8 @@ public abstract class LongMessage extends MfiMessage {
     }
 
     /**
-     * data (0 ~ 2 ヘッダ無し)
-     * @return コピー
+     * data (0 ~ 2 no header)
+     * @return copied data
      */
     public byte[] getData() {
         byte[] tmp = new byte[this.length - 3];

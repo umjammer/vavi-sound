@@ -20,12 +20,13 @@ import vavi.util.Debug;
 /**
  * SimpleResamplingInputFilter.
  *
- * @require tritonus_remaining-XXX.jar
+ * @require tritonus:tritonus-remaining
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060124 nsano initial version <br>
  */
 public class SimpleResamplingInputFilter implements InputFilter {
+
     /** */
     protected int outSamplingRate;
 

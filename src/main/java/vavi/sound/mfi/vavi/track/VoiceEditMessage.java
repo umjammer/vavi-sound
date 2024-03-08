@@ -33,7 +33,7 @@ public class VoiceEditMessage extends SysexMessage {
 
     /**
      * for {@link vavi.sound.mfi.vavi.TrackMessage}
-     * @param is 実際のデータ (ヘッダ無し)
+     * @param is actual data (without header)
      */
     public static VoiceEditMessage readFrom(int delta, int status, int data1, InputStream is)
         throws InvalidMfiDataException,

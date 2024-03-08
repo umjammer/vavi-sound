@@ -42,9 +42,9 @@ public interface Sequencer extends MfiDevice {
     /** */
     boolean isRunning();
 
-    /** {@link MetaEventListener Listener} を登録します。 */
+    /** Adds a {@link MetaEventListener Listener}. */
     void addMetaEventListener(MetaEventListener l);
 
-    /** {@link MetaEventListener Listener} を削除します。 */
+    /** Removes a {@link MetaEventListener Listener}. */
     void removeMetaEventListener(MetaEventListener l);
 }

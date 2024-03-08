@@ -11,7 +11,7 @@ import javax.sound.midi.InvalidMidiDataException;
 
 /**
  * MidiConverter.
- * <li>javax.sound.midi パッケージにはない。(MFi オリジナル)
+ * <li>not in javax.sound.midi package (MFi original)
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030819 nsano initial version <br>
@@ -19,16 +19,16 @@ import javax.sound.midi.InvalidMidiDataException;
  */
 public interface MidiConverter extends MfiDevice {
 
-    /** */
+    /** Converts to a MFi sequence from a MIDI sequence. */
     @Deprecated
     Sequence toMfiSequence(javax.sound.midi.Sequence sequence)
         throws InvalidMidiDataException;
 
-    /** */
+    /** Converts to a MFi sequence from a MIDI sequence. */
     Sequence toMfiSequence(javax.sound.midi.Sequence sequence, int type)
         throws InvalidMidiDataException;
 
-    /** */
+    /** Converts to a MFi sequence from a MIDI sequence. */
     javax.sound.midi.Sequence toMidiSequence(Sequence sequence)
         throws InvalidMfiDataException;
 }

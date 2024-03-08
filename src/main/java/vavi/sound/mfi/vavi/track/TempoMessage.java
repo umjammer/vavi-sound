@@ -25,7 +25,7 @@ import vavi.util.Debug;
 
 
 /**
- * テンポメッセージを表すクラスです．
+ * Represents tempo message.
  * <pre>
  *  0xff, 0xc#
  * </pre>
@@ -38,12 +38,12 @@ import vavi.util.Debug;
 public class TempoMessage extends ShortMessage
     implements MidiConvertible, MfiConvertible {
 
-    /** 4 分音符の分解能 @see #timeBaseTable */
+    /** quarter note resolution @see #timeBaseTable */
     private int timeBase;
-    /** 1 分間の 4 分音符の数 20 ~ 125 ~ 255 */
+    /** quarter note count per minute 20 ~ 125 ~ 255 */
     private int tempo;
 
-    /** 4 分音符の分解能 @index 0xc0 ~ 0xcf */
+    /** quarter note resolutions @index 0xc0 ~ 0xcf */
     private static final int[] timeBaseTable = {
         6, 12, 24, 48, 96, 192, 384, -1,
         15, 30, 60, 120, 240, 480, 960, -1
@@ -80,7 +80,7 @@ public class TempoMessage extends ShortMessage
     /** */
     public void setTimeBase(int timeBase) {
         this.timeBase = timeBase;
-        // TODO -1 が通るぞ
+        // TODO accepts -1
         for (int i = 0; i < timeBaseTable.length; i++) {
             if (timeBase == timeBaseTable[i]) {
 if (timeBase < 0) {
@@ -119,7 +119,7 @@ if (timeBase < 0) {
 
         int tempo    = getTempo();
         int timeBase = getTimeBase();
-        // 四分音符の長さをμsecで指定 TODO round でいいのか?, TODO 48??? (ホンマは 60 * 10^6 / tempo)
+        // quarter note length in μsec TODO is round OK?, TODO 48??? (actually 60 * 10^6 / tempo)
         int l = (int) Math.round(60d * 1000000d / ((48d / timeBase) * tempo));
 //Debug.println(this);
 //Debug.println(l + " = " +
@@ -153,7 +153,7 @@ if (timeBase < 0) {
                  (data[2] & 0xff);
 //Debug.println("(CALC) timeBase: " + timeBase + ", tempo: " + tempo + ", l; " + l);
 
-        // TODO 一回スケール変更したら変えない？
+        // TODO no more change if scale is changed once?
         if (context.isScaleChanged()) {
             timeBase = getNearestTimeBase((int) (context.getTimeBase() / context.getScale()));
             tempo = (int) Math.round(60d * 1000000d / ((48d / timeBase) * l));

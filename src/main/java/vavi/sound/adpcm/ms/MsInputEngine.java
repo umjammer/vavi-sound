@@ -50,7 +50,6 @@ class MsInputEngine implements InputEngine {
 Debug.println(Level.FINE, "byteOrder: " + this.byteOrder);
     }
 
-    /* */
     @Override
     public void initialize(InputStream in) throws IOException {
         if (this.in != null) {
@@ -64,9 +63,9 @@ Debug.println(Level.FINE, "byteOrder: " + this.byteOrder);
     private int[] steps = new int[16];
 
     /**
-     * {@link #in} が {@link #samplesPerBlock} * 2 しか読まないので {@link IOStreamInputEngine} の
+     * because {@link #in} reads only {@link #samplesPerBlock} * 2 bytes, bufferSize for
      * {@link IOStreamInputEngine#IOStreamInputEngine(OutputStream, vavix.io.IOStreamInputEngine.InputStreamFactory, int)}
-     * の bufferSize を {@link #samplesPerBlock} * 2 にすること。
+     * of {@link IOStreamInputEngine} must be set {@link #samplesPerBlock} * 2.
      */
     @Override
     public void execute() throws IOException {

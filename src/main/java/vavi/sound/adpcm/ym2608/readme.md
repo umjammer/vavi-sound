@@ -16,90 +16,116 @@ completed (maybe)
 
 none
 
-## ADPCMの基礎知識、およびYM2608のADPCM仕様
+## Basic knowledge of ADPCM and the ADPCM specifications of YM2608
 
-[source](http://hackipedia.org/Platform/Sega/Genesis/hardware,%20FM%20synthesis,%20YM2608/html/adpcm.html)
+[source](https://web.archive.org/web/20111013151432/http://hackipedia.org/Platform/Sega/Genesis/hardware,%20FM%20synthesis,%20YM2608/html/adpcm.html)
 
 ### ADPCM
 
-ADPCMはMPEGと違い、リニアPCMデータに対して1サンプルの振幅情報を圧縮する方式である。
-ADPCMはサンプル間の差分を用いてデータ圧縮を行うという基本は変わらないが、コーデックの種類は多数存在し、YM2608のADPCM仕様もそのコーデックの1つである。
-多くのコーデックは1サンプルのデータを2～4ビットに変換し、このADPCM化されたデータは完全に元の波形に戻る事は無く、コーデックの性能は「元波形の再現性」に現れる。
+ADPCM differs from MPEG in that it compresses the amplitude information of one sample of linear PCM data. The basic
+principle of ADPCM is that data compression is performed using differences between samples, but there are many types of
+codecs, and the YM2608 ADPCM specification is one of these codecs. Many codecs convert one sample of data into 2 to 4
+bits, and this ADPCM data does not completely return to its original waveform, and the performance of the codec is
+reflected in its "reproducibility of the original waveform."
 
-16ビットのリニアPCMの場合、前サンプルとの差分を表現するには最大16ビット分の情報が必要となるが、これをそのまま記録(DPCM形式)したのではデータを小さくする事ができない。
-そこでADPCMは「差分の精度を犠牲」にする事でデータを圧縮する。
-具体的にはステップサイズをコーデックのエンコード演算ルールに従い動的変化させ、各差分値を2～4ビットの精度へ変換する処理である。
+In the case of 16-bit linear PCM, a maximum of 16 bits of information is required to express the difference from the
+previous sample, but if this is recorded as is (DPCM format), the data cannot be reduced. Therefore, ADPCM compresses
+data by sacrificing the accuracy of the difference. Specifically, this process dynamically changes the step size
+according to the encoding calculation rules of the codec, and converts each difference value to 2 to 4 bits of
+precision.
 
-たとえばYM2608のADPCMでは4ビットの情報を持つので、ステップサイズにて分割された予測される振幅値は16種類存在する。
-差分の正負で半分に分かれる為、実際に適用する予測値は8種類になり、エンコーダはこの8種類の予測値にもっとも近い場所を選びだす。
-さらにこのうち2点の予測値は、よりLowerかよりHigherな予測値範囲外の意味として扱われるため、もっとも誤差の小さい予測値は6種類になる。
-このように実際の差分値と予測値を比較しながら4ビットの値に変換処理を行うのがADPCMエンコードである。
+For example, YM2608 ADPCM has 4 bits of information, so there are 16 types of predicted amplitude values divided by
+step size. Since the difference is divided into halves depending on whether the difference is positive or negative,
+there are eight types of predicted values that are actually applied, and the encoder selects the location closest to
+these eight types of predicted values. Furthermore, the predicted values for two of these points are treated as
+meaning outside the predicted value range, which is either lower or higher, so there are six types of predicted values
+with the smallest error. ADPCM encoding performs conversion processing into a 4-bit value while comparing the actual
+difference value and the predicted value in this way.
 
-ステップサイズとは1サンプルの分解能幅の事であり、ステップサイズが1の16ビットPCMは0～65535の65536段階で表現する。
-ステップサイズが4の16ビットPCMは下位2ビットが0である0x0000～0xFFFCの16384段階で表現する。
-ステップサイズが8192の場合、下位12ビットを0にした0x0000～0xF000の16段階で表現する。
-強引な表現では、8ビットPCMはステップサイズが256の16ビットPCMという表現も可能である(ただし記録する範囲は上位8ビットだが)。
-ステップサイズは量子化幅とも呼ばれる。
+The step size is the resolution width of one sample, and 16-bit PCM with a step size of 1 is expressed in 65536 steps
+from 0 to 65535. 16-bit PCM with a step size of 4 is expressed in 16384 steps from 0x0000 to 0xFFFC, where the lower two
+bits are 0. If the step size is 8192, it is expressed in 16 steps from 0x0000 to 0xF000 with the lower 12 bits set to 0.
+In brute force, 8-bit PCM can also be expressed as 16-bit PCM with a step size of 256 (although the recording range is
+the upper 8 bits). The step size is also called the quantization width.
 
-この為、ステップサイズを小さい値から大きい値に変換(ADPCMエンコード)した場合、差分値とステップサイズの境界値との誤差が大きいほど波形精度が悪くなる。
-またステップサイズを元に戻す変換(ADPCMデコード)をした場合も、落とされた精度分の情報を再現する事ができない。
-これが「元波形の再現性」と「差分の精度を犠牲」にするという意味である。
+For this reason, when converting the step size from a small value to a large value (ADPCM encoding), the waveform
+accuracy deteriorates as the error between the difference value and the boundary value of the step size increases.
+Furthermore, even when conversion (ADPCM decoding) is performed to restore the step size to its original value, the
+information corresponding to the lost precision cannot be reproduced. This means
+sacrificing "the reproducibility of the original waveform" and "the accuracy of the difference."
 
-ステップサイズの動的変更は、各サンプル毎のコーデックエンコード演算によって更新される。
-これはステップサイズまでデータとして記録すると、データ圧縮として効率的で無くなる為である。
-エンコードの際に、元波形に対する適切なステップサイズが適宜使用されれば、その変換精度をなるべく高く保つ事が可能である。
-これはそのエンコーダと、その波形予測ルールが優秀であるほど、ADPCM化されたデータの復元率が高くなる事を表す。
-
-ADPCMはMPEGと違いリアルタイムエンコード時のレイテンシーの低さが特徴である。
-MPEG形式の周波数帯域圧縮はある一定時間(512サンプル)のサンプリングデータに対して圧縮しなければならない。
-これに対してADPCMは、1～3サンプル程度のデータから圧縮が可能であり、音声通信によるレイテンシを大きく下げる事が可能である。
+Dynamic changes in step size are updated by codec encoding operations for each sample. This is because if the step size
+is recorded as data, data compression will not be efficient. If an appropriate step size for the original waveform is
+used during encoding, the conversion accuracy can be kept as high as possible. This means that the better the encoder
+and its waveform prediction rules, the higher the recovery rate of ADPCM data.
 
 ### Encoding
 
-YM2608のADPCMアルゴリズムは比較的単純である。
-YM2608のADPCMは16ビットのPCMを4ビットのADPCMデータに変換する。
-またステップサイズは1/4単位の線形範囲による境界となる。
-以下にこのエンコード手順を記載する。
+YM2608's ADPCM algorithm is relatively simple. YM2608's ADPCM converts 16-bit PCM to 4-bit ADPCM data. Also, the step
+size is bounded by a linear range of 1/4 unit. This encoding procedure is described below.
 
- * 最初のサンプル X1 の取得と共に、予測値とステップサイズを初期化する。<br/>
-予測値の初期値 x0=0、ステップサイズの初期値 S0=127である。
- * ADPCMデータ An を求めるには Xn と予測値 xn の差を演算し、差分 ⊿n を求める。<br/>
-⊿n の絶対値を Sn で分割し( I=|⊿n|/Sn )、以下の表のようにIの演算結果から下位3ビットを決定する。<br/>
+1. Initialize the predicted value and step size along with obtaining the first sample X1. The initial value of the
+   predicted value x0=0, and the initial value of the step size S0=127.
 
-|An|L3|L2|L1|I=|⊿n&#124;/Sn&#124;f|
-|:--:|:--:|:--:|:--:|:--:|:--:|
-|0|0|0|0|I &lt; 1/4|57/64|
-|1|0|0|1|1/4 &lt;= I &lt; 2/4|57/64|
-|2|0|1|0|2/4 &lt;= I &lt; 1/4|57/64|
-|3|0|1|1|3/4 &lt;= I &lt; 4/4|57/64|
-|4|1|0|0|4/4 &lt;= I &lt; 5/4|77/64|
-|5|1|0|1|5/4 &lt;= I &lt; 6/4|102/64|
-|6|1|1|0|6/4 &lt;= I &lt; 7/4|128/64|
-|7|1|1|1|7/4 &lt;= I|153/64|
+2. To find the ADPCM data An, calculate the difference between Xn and the predicted value xn, and find the difference
+   ⊿n.
 
-⊿n と Sn の分割値 I が1/4以上かつ2/4未満であれば An は1というように求める。
-つまり実際の差分が予測ステップサイズを超える精度になった場合(1/4未満や7/4以上)、予測値を大きく外れている可能性があり、これはデータ再現性に影響が出始める事を表す。
- * `⊿n` が正の場合は An の最上位ビット(ビット4)を0、負の場合は1にする。
- * 予測値 x(n+1) を求める。予測値の更新には An の各ビット値と以下の式を用いて求める。<br/>
-```x
-x(n+1) = ( 1-2xL4 ) x ( L3 + L2/2 + L1/4 + 1/8 ) x ⊿n + xn
+3. Divide the absolute value of ⊿n by Sn (I=|⊿n|/Sn) and determine the lower 3 bits from the operation result of I as
+   shown in the table below.
+
+| An | L3 | L2 | L1 | I= ⊿n&#124;/Sn       |   f    |
+|:--:|:--:|:--:|:--:|:---------------------|:------:|
+| 0  | 0  | 0  | 0  | I &lt; 1/4           | 57/64  |
+| 1  | 0  | 0  | 1  | 1/4 &lt;= I &lt; 2/4 | 57/64  |
+| 2  | 0  | 1  | 0  | 2/4 &lt;= I &lt; 1/4 | 57/64  |
+| 3  | 0  | 1  | 1  | 3/4 &lt;= I &lt; 4/4 | 57/64  |
+| 4  | 1  | 0  | 0  | 4/4 &lt;= I &lt; 5/4 | 77/64  |
+| 5  | 1  | 0  | 1  | 5/4 &lt;= I &lt; 6/4 | 102/64 |
+| 6  | 1  | 1  | 0  | 6/4 &lt;= I &lt; 7/4 | 128/64 |
+| 7  | 1  | 1  | 1  | 7/4 &lt;= I          | 153/64 |
+
+If the division value I between ⊿n and Sn is 1/4 or more and less than 2/4, An is determined to be 1. In other words, if
+the actual difference exceeds the predicted step size (less than 1/4 or more than 7/4), it may deviate significantly
+from the predicted value, and this will begin to affect data reproducibility. represents.
+
+4. If ⊿n is positive, set the most significant bit (bit 4) of An to 0; if ⊿n is negative, set it to 1.
+
+5. Find the predicted value x(n+1). The predicted value is updated using each bit value of An and the following formula.
+
 ```
-  * ステップサイズ `S(n+1)` を求める。ステップサイズの更新には、An の下位3ビットと上記表の f との関係を用いて求める。<br/>
+x(n+1) = (1 - 2 x L4) x (L3 + L2 / 2 + L1 / 4 + 1 / 8) x ⊿n + xn
 ```
-S(n+1) = f( An ) x Sn
+
+6. Find the step size S(n+1). The step size is updated using the relationship between the lower 3 bits of An and f in
+   the table above.
+
 ```
- * ステップサイズ Sn を飽和する。YM2608のADPCMステップサイズは最小127、最大24576と決められている。
- * データの終端まで2～7を繰り返す。
+S(n+1) = f(An) x Sn
+```
+
+7. Saturate the step size Sn. The ADPCM step size of YM2608 is determined to be a minimum of 127 and a maximum of 24576.
+
+8. Repeat steps 2 to 7 until the end of the data.
 
 ### Decoding
 
-エンコードの5と6が予測値とステップサイズを求める式となり、予測値 xn が復元値 Xn になる。
+Encoding 5 and 6 are the formulas for calculating the predicted value and step size, and the predicted value xn becomes
+the restored value Xn.
 
- * 最初のADPCMサンプル `A1` の取得と共に、予測値とステップサイズを初期化する。<br/>
-予測値の初期値 `x0=0`、ステップサイズの初期値 `S0=127`である。
- * 予測値 `x(n+1)` を求める。予測値の更新にはエンコード同様 `An` の各ビット値と表を用いて求める。
- * 予測値 `x(n+1)` を復元値 `X(n)` とする。
- * 復元値 `X(n)` を`-32768～32767`の範囲に適宜クリッピングする。
- * ステップサイズ `S(n+1)` を求める。ステップサイズの更新には、An の下位3ビットと上記表の f との関係を用いて求める。
- * ステップサイズ `S(n+1)` を飽和する。YM2608のADPCMステップサイズは最小127、最大24576と決められている。
- * ADPCMデータの終端まで2～6を繰り返す。
+1. Initialize the predicted value and step size while acquiring the first ADPCM sample A1. The initial value of the
+   predicted value x0=0, and the initial value of the step size S0=127.
+
+2. Find the predicted value x(n+1). To update the predicted value, use each bit value of An and the table as in
+   encoding.
+
+3. Let the predicted value x(n+1) be the restored value X(n).
+
+4. Clip the restored value X(n) to the range of -32768 to 32767 as appropriate.
+
+5. Find the step size S(n+1). The step size is updated using the relationship between the lower 3 bits of An and f in
+   the table above.
+
+6.Saturate the step size S(n+1). The ADPCM step size of YM2608 is determined to be a minimum of 127 and a maximum of
+24576.
+
+7.Repeat steps 2 to 6 until the end of ADPCM data.

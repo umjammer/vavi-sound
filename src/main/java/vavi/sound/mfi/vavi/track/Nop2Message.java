@@ -18,7 +18,7 @@ import vavi.util.Debug;
 /**
  * Nop2Message.
  * <pre>
- *  0xff, 0xd# 演奏管理情報
+ *  0xff, 0xd# Play Control Information
  *  channel false
  *  delta   true
  * </pre>

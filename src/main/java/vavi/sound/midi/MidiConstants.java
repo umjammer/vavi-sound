@@ -29,242 +29,219 @@ public final class MidiConstants {
     /** instrument names */
     private static Properties props = new Properties();
 
-    /** */
+    /**  */
     public static String getInstrumentName(int index) {
         return props.getProperty("midi.inst.gm." + index);
     }
 
     //-------------------------------------------------------------------------
 
-    // メタ・イベント
+    // Meta Event
     //
-    // ここでは、いくつかのメタ・イベントについて定義がなされる。すべてのプロ
-    // グラムがすべてのメタ・イベントをサポートしなければならないということで
-    // はない。最初に定義されたメタ・イベントには以下のものがある。
+    // Here, some meta-events are defined.
+    // Not all programs have to support all meta events.
+    // The first meta-events defined are
 
     public enum MetaEvent {
         /**
          * <pre>
-         * FF 00 02 ssss  [シーケンス・ナンバー]
+         * FF 00 02 ssss  [sequence number]
          * </pre>
-         * このオプション・イベントは、トラックの冒頭、任意の 0 でないデルタ・タイ
-         * ムの前で、かつ任意の転送可能な MIDI イベントの前に置かれなければならず
-         * 、これがシーケンスのナンバーを特定する。このトラック中のナンバーは
-         * 1987 年夏の MMA ミーティングで協議された新 Cue メッセージの中のシーケンス
-         * ・ナンバーに対応する。これは、フォーマット 2 の MIDI ファイルにおいては
-         * 、各々の「パターン」を識別することによって、Cue メッセージを用いている
-         * 「ソング」シーケンスがパターンを参照できるようにするために用いられる。
-         * ID ナンバーが省略されているときは、そのシーケンスのファイル中での位置
-         * [訳注：先頭から何番目のシーケンスか]がデフォールトとして用いられる。
-         * フォーマット 0 または 1 の MIDI ファイルにおいては、１つのシーケンスしか
-         * 含まれないため、このナンバーは第 1 の(つまり唯一の)トラックに含まれ
-         * ることになる。いくつかのマルチトラック・シーケンスの転送が必要な場合は
-         * 、各々が異なるシーケンス・ナンバーを持つフォーマット１のファイルのグル
-         * ープとして行われなければならない。
+         * This optional event must be placed at the beginning of the track, before any non-zero delta time,
+         * and before any transportable MIDI event, which specifies the number of the sequence.
+         * The numbers in this track correspond to the sequence numbers in the new Cue messages discussed
+         * at the Summer 1987 MMA meeting. This is used in Format 2 MIDI files to identify each "pattern"
+         * so that "song" sequences using cue messages can reference the patterns.
+         * If the ID number is omitted, the sequence's position in the file is used as the default.
+         * In a format 0 or 1 MIDI file, there is only one sequence, so this number will be on the first
+         * (and thus only) track. If the transfer of several multi-track sequences is required,
+         * it must be done as a group of format 1 files, each with a different sequence number.
          */
         META_SEQUENCE_NO(0x00),
 
         /**
          * <pre>
-         * FF 01 len text  [テキスト・イベント]
+         * FF 01 len text  [text event]
          * </pre>
-         * 任意の大きさおよび内容のテキスト。トラックのいちばん初めに、トラック名
-         * 、意図するオーケストレイション、その他ユーザがそこに置きたいと思う情報
-         * を書いておくと良い。テキスト・イベントは、トラック中でその他の時に入れ
-         * て歌詞やキュー・ポイントの記述として用いることもできる。このイベント中
-         * のテキストは、最大限の互換性を確保するために、印刷可能なアスキー・キャ
-         * ラクタでなければならない。しかし、高位ビットを用いる他のキャラクタ・コ
-         * ード(訳注：漢字コードのような 2 バイト・コードなど)も、拡張されたキャ
-         * ラクタ・セットをサポートする同じコンピュータ上の異なるプログラム間でフ
-         * ァイルを交換するために用いることができる。非アスキー・キャラクタをサポ
-         * ートしない機種上のプログラムは、このようなコードを無視しなければならな
-         * い。
-         *
-         * (0.06 での追加事項） メタ・イベントのタイプ 01 から 0F までは様々なタ
-         * イプのテキスト・イベントのために予約されている。この各々は上記のテキス
-         * ト・イベントの特性と重複しているが、以下のように、異なる目的のために用
-         * いられる。
+         * Text of any size and content. It's a good idea to write the track name, intended orchestration,
+         * and any other information you want there at the beginning of the track. Text events can also be
+         * included at other times in a track to describe lyrics or cue points. The text in this event
+         * must be printable ASCII characters to ensure maximum compatibility. However, other character codes
+         * that use high-order bits can also be used to exchange files between different programs on the same computer
+         * that support extended character sets. Can be used. Programs on machines that do not support non-ASCII
+         * characters must ignore such codes.
+         * <p>
+         * (Added in 0.06) Meta event types 01 through 0F are reserved for various types of text events.
+         * Each of these overlaps with the text event characteristics described above, but is used for
+         * different purposes, as follows:
          */
         META_TEXT_EVENT(0x01),
 
         /**
          * <pre>
-         * FF 02 len text  [著作権表示]
+         * FF 02 len text  [show copyright]
          * </pre>
-         * 著作権表示を、印刷可能なアスキー・テキストとして持つ。この表示には(C)
-         * の文字と、著作物発行年と、著作権所有者名とが含まれなければならない。ひ
-         * とつの MIDI ファイルに幾つかの楽曲がある時には、すべての著作権表示をこ
-         * のイベントに置いて、それがファイルの先頭に来るようにしなければならない
-         * 。このイベントは第１トラック・ブロックの最初のイベントとして、デルタ・
-         * タイム = 0 で置かれなければならない。
+         * Contains the copyright notice as printable ASCII text. This notice must include the letter (C),
+         * the year of publication of the work, and the name of the copyright owner. When you have several
+         * pieces of music in one MIDI file, you must place all copyright notices in this event so that
+         * they appear at the beginning of the file. This event must be placed as the first event in the
+         * first track block with delta time = 0.
          */
         META_COPYRIGHT(0x02),
 
         /**
          * <pre>
-         * FF 03 len text  [シーケンス名またはトラック名]
+         * FF 03 len text  [sequence name or track name]
          * </pre>
-         * フォーマット 0 のトラック、もしくはフォーマット 1 のファイルの第 1 トラッ
-         * クにおいては、シーケンスの名称。その他の場合は、トラックの名称。
+         * For format 0 tracks or the first track of a format 1 file, the name of the sequence.
+         * Otherwise, the name of the track.
          */
         META_NAME(0x03),
 
         /**
          * <pre>
-         * FF 04 len text  [楽器名]
+         * FF 04 len text  [instrument name]
          * </pre>
-         * そのトラックで用いられるべき楽器編成の種類を記述する。 MIDI の冒頭に置
-         * かれるメタ・イベントとともに用いて、どの MIDI チャネルにその記述が適用
-         * されるかを特定することもある。あるいは、チャネルをこのイベント中のテキ
-         * ストで特定しても良い。
+         * Describes the type of instrumentation that should be used on the track. It may also be used in
+         * conjunction with a meta-event placed at the beginning of a MIDI statement to specify which
+         * MIDI channel the description applies to. Alternatively, the channel may be identified by text in this event.
          */
         META_INSTRUMENT(0x04),
 
         /**
          * <pre>
-         * FF 05 len text  [歌詞]
+         * FF 05 len text  [lyrics]
          * </pre>
-         * 歌詞。一般的には、各音節がそのイベントのタイムから始まる独立した歌詞イ
-         * ベントとなる。
+         * lyrics. Generally, each syllable is an independent lyric event starting at the time of that event.
          */
         META_LYRICS(0x05),
 
         /**
          * <pre>
-         * FF 06 len text  [マーカー]
+         * FF 06 len text  [marker]
          * </pre>
-         * 通常フォーマット 0 のトラック、もしくはフォーマット 1 のファイルの第１ト
-         * ラックにある。リハーサル記号やセクション名のような、シーケンスのその時
-         * 点の名称。(「First Verse」等)
+         * Usually located on a format 0 track or the first track of a format 1 file. The name of the current point
+         * in the sequence, such as a rehearsal mark or section name. (“First Verse” etc.)
          */
         META_MARKER(0x06),
 
         /**
          * <pre>
-         * FF 07 len text  [キュー・ポイント]
+         * FF 07 len text  [queue point]
          * </pre>
-         * スコアのその位置において、フィルム、ヴィデオ・スクリーン、あるいはステ
-         * ージ上で起こっていることの記述。(「車が家に突っ込む」「幕が開く」「女
-         * は男に平手打ちを食わせる」等)
+         * A description of what is happening on film, on a video screen, or on stage at that point in the score.
+         * (“A car crashes into a house,” “The curtain opens,” “A woman makes a man slap her,” etc.)
          */
         META_QUE_POINT(0x07),
 
         /**
          * <pre>
-         * FF 2F 00  [トラックの終わり]
+         * FF 2F 00  [end of track]
          * </pre>
-         * このイベントは省略することができない。これがあることによってトラックの
-         * 正しい終結点が明確になり、トラックが正確な長さを持つようになる。これは
-         * トラックがループになっていたり連結されていたりする時に必要である。
+         * This event cannot be omitted. This ensures that the correct end of the track is clear and the track
+         * has the correct length. This is necessary when tracks are looped or concatenated.
          */
         META_END_OF_TRACK(0x2f), // 47
 
         /**
          * <pre>
-         * FF 51 03 tttttt  [テンポ設定(単位は μsec / MIDI 四分音符)]
+         * FF 51 03 tttttt  [tempo (unit is μsec / MIDI quoter note)]
          * </pre>
-         * このイベントはテンポ・チェンジを指示する。「μsec / MIDI 四分音符」は
-         * 言い換えれば「(μsec / MIDI クロック)の 24 分の 1」である。テンポを
-         * 「拍 / 時間」ではなく「時間 / 拍」によって与えることで、 SMPTE タイム・
-         * コードや MIDI タイム・コードのような実時間ベースの同期プロトコルを用い
-         * て、絶対的に正確な長時間同期を得ることができる。このテンポ設定で得られ
-         * る正確さは、120 拍 / 分で 4 分の曲を終わった時に誤差が 500 μsec 以内
-         * にとどまる、というものである。理想的には、これらのイベントは Cue の
-         * 上で MIDI クロックがある位置にのみ、おかれるべきである。このことは、ほか
-         * の同期デバイスとの互換性を保証しよう、少なくとも、その見込みを増やそう
-         * 、というもので、この結果、この形式で保存された拍子記号やテンポ・マップ
-         * は容易にほかのデバイスへ転送できることになる。
+         * This event indicates a tempo change. In other words, "μsec / MIDI quarter note" is "1/24 of
+         * (μsec / MIDI clock)". By giving tempo in terms of time/beats rather than beats/time,
+         * you can achieve absolutely accurate long-term synchronization using real-time based synchronization
+         * protocols such as SMPTE time code or MIDI time code. Obtainable. The accuracy achieved with this tempo
+         * setting is such that at 120 beats per minute he can complete a 4 minute song with an error of less
+         * than 500 microseconds. Ideally, these events should only be placed on cues where there is a MIDI clock.
+         * This is intended to ensure, or at least increase the likelihood of, compatibility with other synchronizing
+         * devices, so that time signatures and tempo maps saved in this format can easily be transferred to other
+         * devices. It will be possible to transfer.
          */
         META_TEMPO(0x51), // 81
 
         /**
          * <pre>
-         * FF 54 05 hr mn se fr ff  [SMPTE オフセット(0.06 での追加 - SMPTE フォーマットの記述)]
+         * FF 54 05 hr mn se fr ff  [SMPTE offset (added 0.06 - SMPTE format description)]
          * </pre>
-         * このイベントは、もしあれば、トラック・ブロックがスタートすることになっ
-         * ている SMPTE タイムを示す。これは、トラックの冒頭に置かれなければなら
-         * ない。すなわち、任意の 0 でないデルタ・タイムの前で、かつ任意の転送可能
-         * な MIDI イベントの前である。時間は、 MIDI タイム・コードと全く同様に
-         * SMPTE フォーマットでエンコードされなければならない。フォーマット 1 のフ
-         * ァイルにおいては、 SMPTE オフセットはテンポ・マップとともにストアされ
-         * る必要があり、他のトラックにあっては意味をなさない。デルタ・タイムのた
-         * めに異なるフレーム分解能を指定している SMPTE ベースのトラックにおいて
-         * も、ff のフィールドは細分化されたフレーム(100 分の 1 フレーム単位)を
-         * 持っている。
+         * This event indicates the SMPTE time, if any, that the track block is to start. This must be placed at
+         * the beginning of the track. That is, before any non-zero delta time and before any transportable MIDI
+         * event. Time must be encoded in SMPTE format, just like MIDI time code. In format 1 files, SMPTE offsets
+         * must be stored with the tempo map and have no meaning on other tracks. Even in SMPTE-based tracks that
+         * specify different frame resolutions for delta time, the ff field has subdivided frames
+         * (in hundredths of a frame).
          */
         META_SMPTE_OFFSERT(0x54), // 84
 
         /**
          * <pre>
-         * FF 58 04 nn dd cc bb  [拍子記号]
+         * FF 58 04 nn dd cc bb  [time signature]
          * </pre>
-         * 拍子記号は、4 つの数字で表現される。nn と dd は、記譜する時のように、拍子
-         * 記号の分子と分母を表す。分母は 2 のマイナス乗である。すなわち、2 は四分
-         * 音符を表し、3 は八分音符を表す、等々。パラメータ cc は、1 メトロノーム・
-         * クリックあたりの MIDI クロック数を表現している。パラメータ bb は、 MIDI
-         * 四分音符(24 MIDI クロック)の中に記譜上の三十二分音符がいくつ入るかを
-         * 表現している。このパラメータは、 MIDI 上の四分音符(24 クロック)を他
-         * のものとして記譜し、あるいは表現上他の音符に対応させるようユーザ定義で
-         * きるプログラムが既に数多く存在することから加えられた。
-         *
-         * 従って、6 / 8 拍子で、メトロノームは八分音符 3 つ毎に刻むけれども四分音
-         * 符 24 クロックで、1 小節あたりでは 72 クロックになる拍子は、16 進で次
-         * のようになる。
-         *
-         *   FF 58 04 06 03 24 08
-         *
-         * これは、8 分の 6 拍子で(8 は 2 の 3 乗なので、06 03となる)、付点四分音
-         * 符あたり 36 MIDI クロック(16進で24！)[*2]で、 MIDI 四分音符に記
-         * 譜上の三十二分音符が 8 つ対応するということを示している。
+         * A time signature is represented by four numbers. nn and dd represent the numerator and denominator of the
+         * time signature, as in notation. The denominator is 2 to the negative power. That is, 2 represents a quarter
+         * note, 3 represents an eighth note, and so on. The parameter cc represents the number of MIDI clocks per
+         * metronome click. The parameter bb represents how many notated thirty-second notes fit into a MIDI quarter
+         * note (24 MIDI clocks). This parameter was added because there are already a number of programs that allow
+         * the user to define MIDI quarter notes (24 clocks) to be notated as something else, or to correspond
+         * expressively to other notes.
+         * <p>
+         * Therefore, in 6/8 time, the metronome ticks every third eighth note, but with 24 quarter note clocks and
+         * 72 clocks per measure, the time signature in hexadecimal is as follows:
+         * <p>
+         * FF 58 04 06 03 24 08
+         * <p>
+         * This is a 6/8 time signature (8 is 2 to the power of 3, so 06 03), 36 MIDI clocks per dotted quarter note
+         * (24 in hex!) [*2], and a MIDI quarter note. This shows that there are eight thirty-second notes in musical
+         * notation.
          */
         META_58(0x58), // 88
 
         /**
          * <pre>
-         * FF 59 02 sf mi  [調号]
-         *   sf = -7  フラット７つ
-         *   sf = -1  フラット１つ
-         *   sf = 0   ハ調
-         *   sf = 1   シャープ１つ
-         *   sf = 7   シャープ７つ
+         * FF 59 02 sf mi  [key signature]
+         *   sf = -7  7 flats
+         *   sf = -1  1 flat
+         *   sf = 0   C key
+         *   sf = 1   1 sharp
+         *   sf = 7   7 sharps
          *
-         *   mi = 0   長調
-         *   mi = 1   短調
+         *   mi = 0   major key
+         *   mi = 1   minor key
          * </pre>
          */
         META_59(0x59), // 89
 
         /**
          * <pre>
-         * FF 7F len data  [シーケンサー特定メタ・イベント]
+         * FF 7F len data  [sequencer specific meta events]
          * </pre>
-         * 特定のシーケンサーのための特別な要求にこのイベント・タイプを用いること
-         * ができる。データ・バイトの最初の１バイトはメーカーIDである。しかしな
-         * がら、これは交換用フォーマットなのであるから、このイベント・タイプの使
-         * 用よりもスペック本体の拡張の方が望ましい。このタイプのイベントは、これ
-         * を唯一のファイル・フォーマットとして用いることを選択したシーケンサーに
-         * よって使用されるかもしれない。仕様詳細のフォーマットが確定したシーケン
-         * サーにおいては、このフォーマットを用いるにあたって標準仕様を守るべきで
-         * あろう。
+         * This event type can be used for special needs for a particular sequencer. The first data byte is the
+         * manufacturer ID. However, since this is an interchange format, extending the spec body is preferable
+         * to using this event type. This type of event may be used by sequencers that choose to use this as their
+         * only file format. For sequencers that have a fixed specification format, the standard specifications
+         * should be followed when using this format.
          */
         META_MACHINE_DEPEND(0x7f), // 127
         META_UNDEFINED(-1);
         int number;
+
         public int number() {
             return number;
         }
+
         MetaEvent(int number) {
             this.number = number;
         }
+
         public static MetaEvent valueOf(int number) {
             try {
                 return Arrays.stream(values()).filter(e -> e.number == number).findFirst().get();
             } catch (NoSuchElementException e) {
                 META_UNDEFINED.number = number; // TODO evil and not thread safe.
-Debug.println(Level.WARNING, "undefined meta: " + number);
+                Debug.println(Level.WARNING, "undefined meta: " + number);
                 return META_UNDEFINED;
             }
         }
+
         @Override
         public String toString() {
             if (ordinal() == META_UNDEFINED.ordinal()) {
@@ -275,53 +252,52 @@ Debug.println(Level.WARNING, "undefined meta: " + number);
         }
     }
 
-    //-------------------------------------------------------------------------
+    //----
 
     /**
-     * 01H〜1FH
-     * 00H 00H 01H〜00H 1FH 7FH
+     * 01H ~ 1FH
+     * 00H 00H 01H ~ 00H 1FH 7FH
      */
     public static final int SYSEX_MAKER_ID_American = 0x01;
 
     /**
-     * 20H〜3FH
-     * 00H 20H 00H〜00H 3FH 7FH
+     * 20H ~ 3FH
+     * 00H 20H 00H ~ 00H 3FH 7FH
      */
     public static final int SYSEX_MAKER_ID_European = 0x20;
 
     /**
-     * 40H〜5FH
-     * 00H 40H 00H〜00H 5FH 7FH
+     * 40H ~ 5FH
+     * 00H 40H 00H ~ 00H 5FH 7FH
      */
     public static final int SYSEX_MAKER_ID_Japanese = 0x40;
 
     /**
-     * 60H〜7CH
-     * 00H 60H 00H〜00H 7FH 7FH
+     * 60H ~ 7CH
+     * 00H 60H 00H ~ 00H 7FH 7FH
      */
     public static final int SYSEX_MAKER_ID_Other = 0x60;
 
     /**
-     * 7DH〜7FH
+     * 7DH ~ 7FH
      */
     public static final int SYSEX_MAKER_ID_Special = 0x70;
 
     // 7DH
-    // メーカー ID の 7DH は、学校教育機関などでの研究用に使用される ID で、
-    // 非営利目的でのみ使用できます。
+    // Manufacturer ID 7DH is an ID used for research in schools and educational institutions,
+    // and can only be used for non-commercial purposes.
     //
     // 7EH
-    // 7EH はノンリアルタイムユニバーサルシステムエクスクルーシブです。
-    // エクスクルーシブのうち、メーカーや機種を超えてやり取りできると
-    // 便利なデータ転送に使用されます。なお、7EHは実時間に関係のないデータ転送に使用されます。
+    // 7EH is a non-real-time universal system exclusive. Exclusive is used for data transfer,
+    // which is convenient if it can be exchanged across manufacturers and models.
+    // Note that 7EH is used for data transfers that are not related to real time.
     //
     // 7FH
-    // 7FH はリアルタイムユニバーサルシステムエクスクルーシブです。
-    // 7EH のノンリアルタイムユニバーサルシステムエクスクルーシブと同様に、
-    // メーカーや機種を超えてデータをやり取りするときに使用され、
-    // 7FHでは実時間に関係のあるデータ転送に利用されます。
+    // 7FH is a real-time universal system exclusive. Similar to 7EH's non-real-time universal system exclusive,
+    // it is used when exchanging data across manufacturers and models, and in 7FH it is used for data transfer
+    // related to real time.
 
-    //-------------------------------------------------------------------------
+    //----
 
     /* */
     static {
@@ -329,7 +305,7 @@ Debug.println(Level.WARNING, "undefined meta: " + number);
             final Class<?> clazz = MidiConstants.class;
             props.load(clazz.getResourceAsStream("midi.properties"));
         } catch (IOException e) {
-Debug.println(e);
+            Debug.println(e);
             throw new IllegalStateException(e);
         }
     }

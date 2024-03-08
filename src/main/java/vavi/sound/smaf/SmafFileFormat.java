@@ -87,9 +87,9 @@ public class SmafFileFormat {
     }
 
     /**
-     * ストリームに書き込みます。事前にシーケンスを設定しておくこと。
+     * Writes to the stream. Set the sequence in advance.
      * @after out has been {@link java.io.OutputStream#flush() flush}-ed
-     * @throws IllegalStateException シーケンスが設定されていない場合スローされます
+     * @throws IllegalStateException throws if no sequence is set
      */
     void writeTo(OutputStream out)
         throws InvalidSmafDataException, IOException {

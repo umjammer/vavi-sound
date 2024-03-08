@@ -17,7 +17,7 @@ import vavi.util.StringUtil;
 
 /**
  * NEC System exclusive message function 0x01, 0xf0, 0x07 processor.
- * (拡張ストリーム波形制御情報)
+ * (extended stream wave control information)
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030827 nsano initial version <br>
@@ -25,11 +25,11 @@ import vavi.util.StringUtil;
  */
 public class Function1_240_7 implements MachineDependentFunction {
 
-    /** このデータのヘッダ分長さ */
+    /** header length of this data */
     public static final int HEADER_LENGTH = 13;
 
     /**
-     * 0x01, 0xf0, 0x07 拡張ストリーム波形制御情報
+     * 0x01, 0xf0, 0x07 extended stream wave control information
      *
      * @param message see below
      * <pre>
@@ -61,8 +61,8 @@ public class Function1_240_7 implements MachineDependentFunction {
 
         this.streamNumber = data[ 9] & 0xff;            // stream number 0 ~ 31
         this.mono =        (data[10] & 0x80) == 0;      // 0: mono, 1: stereo
-        this.format =      (data[10] & 0x03) >> 1;      // 0: 4bit ADPCM (0db Center 固定), 1: 4bit ADPCM
-        this.sampleRate =  ((data[11] & 0xff) << 8) + (data[12] & 0xff);  // 4000 ~ 16000 (stereo 時は半分)
+        this.format =      (data[10] & 0x03) >> 1;      // 0: 4bit ADPCM (0db Center fixed), 1: 4bit ADPCM
+        this.sampleRate =  ((data[11] & 0xff) << 8) + (data[12] & 0xff);  // 4000 ~ 16000 (make it half when stereo)
 
         int adpcmLength = data.length - HEADER_LENGTH;
 Debug.println(Level.FINE, "ADPCM: No." + streamNumber + ", " + sampleRate + "Hz, " + adpcmLength + " bytes, " + (mono ? "mono" : "stereo") + ", " + format);
@@ -78,9 +78,9 @@ Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(data, 32));
     private int streamNumber;
     /** 0: mono, 1: stereo */
     private boolean mono;
-    /** 0: 4bit ADPCM (0db Center 固定), 1: 4bit ADPCM */
+    /** 0: 4bit ADPCM (0db Center fixed), 1: 4bit ADPCM */
     private int format;
-    /** 4000 ~ 16000 (stereo 時は半分) */
+    /** 4000 ~ 16000 (make it half when stereo) */
     private int sampleRate;
     /** little endian */
     private byte[] adpcm;
@@ -93,7 +93,7 @@ Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(data, 32));
     }
 
     /**
-     * @param format 0: 4bit ADPCM (0db Center 固定), 1: 4bit ADPCM (wav2mld use 1)
+     * @param format 0: 4bit ADPCM (0db Center fixed), 1: 4bit ADPCM (wav2mld use 1)
      */
     public void setFormat(int format) {
         this.format = format & 0x03;
@@ -117,8 +117,8 @@ Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(data, 32));
     }
 
     /**
-     * 事前に #setPcm(InputStream), #setSamplingRate(int)
-     * を用いてフィールドを設定しておいて下さい。
+     * set fields using #setPcm(InputStream), #setSamplingRate(int)
+     * in advance.
      */
     public byte[] getMessage()
         throws InvalidMfiDataException {

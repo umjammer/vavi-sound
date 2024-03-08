@@ -22,7 +22,7 @@ import vavi.util.Debug;
 /**
  * Mitsubishi System exclusive message.
  * <p>
- * TODO 機能ごとに FunctionXXX に移す
+ * TODO move each function to FunctionXXX
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030711 nsano initial version <br>
@@ -42,7 +42,7 @@ public final class MitsubishiMessage extends FuetrekAudioMessage {
     /**
      * 0x83
      * <p>
-     * TODO 時間指定ない場合
+     * TODO if no time is specified
      * </p>
      * @param pcm wave (PCM), 16bit
      * @param sampleRate 4k, 8k, 16k, 32k are available
@@ -221,10 +221,10 @@ Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length)
         function.setMaxSample(sampleRate);
         // 0x89
         function.setMaxSampleCue(sampleRate);
-        // 0x83 要は 16kHz, 4bit mono の時 = 4, 8kHz, 4bit mono の時に 2
-        function.setMaxParallel(sampleRate * (bits / 2) * channels); // TODO bit 適当
-        // 0x8B 要は 16kHz, 4bit mono の時 = 4, 8kHz, 4bit mono の時に 2
-        function.setMaxParallelCue(sampleRate * (bits / 2) * channels); // TODO bit 適当
+        // 0x83 Briefly when "16kHz, 4bit mono" is 4, when "8kHz, 4bit mono" is 2
+        function.setMaxParallel(sampleRate * (bits / 2) * channels); // TODO bit sloppy
+        // 0x8B Briefly when "16kHz, 4bit mono" is 4, when "8kHz, 4bit mono" is 2
+        function.setMaxParallelCue(sampleRate * (bits / 2) * channels); // TODO bit sloppy
         message.setMessage(0x00, function.getMessage());
         return new MfiEvent(message, 0L);
     }

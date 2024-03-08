@@ -89,7 +89,7 @@ public class PitchBendMessage extends vavi.sound.smaf.ShortMessage
     }
 
     /**
-     * PsmPlayer がこう変換していたからしょうがない。
+     * because PsmPlayer converted it like this.
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)

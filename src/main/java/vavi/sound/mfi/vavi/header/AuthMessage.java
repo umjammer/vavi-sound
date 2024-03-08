@@ -12,7 +12,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * 著作権管理情報 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for copyright control information.
  * <li> TODO use {@link CodeMessage}
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>

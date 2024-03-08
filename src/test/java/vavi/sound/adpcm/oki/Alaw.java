@@ -10,7 +10,7 @@ package vavi.sound.adpcm.oki;
 /**
  * A-law codec.
  * <p>
- * TODO ccitt G.711 なので統合する
+ * TODO since this class is ccitt G.711, it will be integrated.
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030817 nsano initial version <br>

@@ -29,7 +29,7 @@ import vavi.util.Debug;
 
 /**
  * WaveMessage.
- * TODO SysexMessage とかじゃないの？
+ * TODO isn't it something like SysexMessage?
  * <pre>
  *  format 0x00
  *   duration   1or2
@@ -150,38 +150,37 @@ public class WaveMessage extends SmafMessage
 
     /**
      * <p>
-     * この {@link WaveMessage} のインスタンスに対応する
-     * MIDI メッセージとして Meta type 0x7f の {@link MetaMessage} を作成する。
-     * {@link MetaMessage} の実データとして {@link SmafMessageStore}
-     * にこの {@link WaveMessage} のインスタンスをストアして採番された id を
-     * 2 bytes big endian で格納する。
+     * Create {@link MetaMessage} of Meta type 0x7f as a MIDI message corresponding to
+     * this instance of {@link WaveMessage}.
+     * Store this instance of {@link WaveMessage} in {@link SmafMessageStore}
+     * as the actual data of {@link MetaMessage}
+     * and store the numbered ID in 2 bytes big endian.
      * </p>
      * <p>
-     * 再生の場合は {@link javax.sound.midi.MetaEventListener} で Meta type 0x7f を
-     * リッスンして対応する id のメッセージを {@link SmafMessageStore} から見つける。
-     * それを {@link vavi.sound.smaf.sequencer.WaveSequencer} にかけて再生処理を
-     * 行う。
+     * For playback, listen to Meta type 0x7f with {@link javax.sound.midi.MetaEventListener}
+     * and find the message with the corresponding id from {@link SmafMessageStore}.
+     * Apply it to {@link vavi.sound.smaf.sequencer.WaveSequencer} for playback processing.
      * </p>
      * <p>
-     * 再生機構は vavi.sound.smaf.MetaEventAdapter を参照。
+     * See vavi.sound.smaf.MetaEventAdapter for the playback mechanism.
      * </p>
      * <pre>
      * MIDI Meta
      * +--+--+--+--+--+--+--+--+--+--+--+-
      * |ff|7f|LL|ID|DD DD ...
      * +--+--+--+--+--+--+--+--+--+--+--+-
-     *  0x7f シーケンサー固有メタイベント
-     *  LL ホンマに 1 byte ？
-     *  ID メーカーID
+     *  0x7f sequencer specific meta event
+     *  LL really 1 byte?
+     *  ID manufacturer ID
      * </pre>
      * <pre>
-     * 現状
+     * current specs.
      * +--+--+--+--+--+--+--+
      * |ff|7f|LL|5f|01|DH DL|
      * +--+--+--+--+--+--+--+
-     *  0x5f 勝手につけたメーカ ID
-     *  0x01 {@link WaveMessage} データであることを表す
-     *  DH DL 採番された id
+     *  0x5f manufacturer ID added arbitrarily
+     *  0x01 indicates {@link WaveMessage}  data
+     *  DH DL numbered id
      * </pre>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
      * @see vavi.sound.smaf.sequencer.WaveSequencer#META_FUNCTION_ID_SMAF
@@ -199,7 +198,7 @@ public class WaveMessage extends SmafMessage
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // シーケンサー固有メタイベント
+        metaMessage.setMessage(0x7f,    // sequencer specific meta event
                                data,
                                data.length);
 

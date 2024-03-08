@@ -57,7 +57,7 @@ public abstract class TrackChunk extends Chunk {
     public enum FormatType {
         /** */
         HandyPhoneStandard(2, false),
-        /** ハフマン符号化による圧縮を行う */
+        /** perform compression using Huffman encoding */
         MobileStandard_Compress(16, true),
         /** */
         MobileStandard_NoCompress(16, false),
@@ -85,9 +85,9 @@ public abstract class TrackChunk extends Chunk {
     }
 
     /**
-     * このステータスでこの Track Chunk の実フォーマットを定義する。データ・サイズ削減のため、LSI
-     * Native Format での記述や、将来パワフルな Control CPU を想定して、その他のシーケンス・フォーマ
-     * ットを記述可能とする。Compress はハフマン符号化による圧縮を行うことと定める。
+     * This status defines the actual format of this Track Chunk. To reduce data size, it is possible to write in
+     * LSI Native Format and other sequence formats assuming a powerful Control CPU in the future.
+     * Compress specifies that compression is performed using Huffman encoding.
      */
     public void setFormatType(FormatType formatType) {
         this.formatType = formatType;
@@ -96,13 +96,13 @@ public abstract class TrackChunk extends Chunk {
     /** */
     public enum SequenceType {
         /**
-         * Sequence Data は１つの連続したシーケンス・データである。Seek Point や Phrase List はシーケン
-         * ス中の意味のある位置を外部から参照する目的で利用する。
+         * Sequence Data is one continuous sequence data. Seek Point and Phrase List are used to refer to
+         * meaningful positions in a sequence from the outside.
          */
         StreamSequence,
         /**
-         * Sequence Data は複数のフレーズデータを連続で表記したものである。Phrase List は外部から個
-         * 別フレーズを認識する為に用いる。
+         * Sequence Data is a continuous representation of multiple phrase data. Phrase List is used to
+         * recognize individual phrases from the outside.
          */
         SubSequence
     }
@@ -128,12 +128,12 @@ public abstract class TrackChunk extends Chunk {
      * 0x01 2 msec
      * 0x02 4 msec
      * 0x03 5 msec
-     * 0x04〜0x0F Reserved
+     * 0x04 ~ 0x0F Reserved
      * 0x10 10 msec
      * 0x11 20 msec
      * 0x12 40 msec
      * 0x13 50 msec
-     * 0x14〜0xFF Reserved
+     * 0x14 ~ 0xFF Reserved
      * -
      * </pre>
      * @param timeBase real timeBase [msec]
@@ -159,7 +159,7 @@ public abstract class TrackChunk extends Chunk {
     }
 
     /**
-     * Timebase_D と Timebase_G は同一であること。
+     * Timebase_D and Timebase_G must be the same.
      * @param durationTimeBase in [msec]
      * @throws IllegalArgumentException wrong durationTimeBase
      */
@@ -196,8 +196,8 @@ public abstract class TrackChunk extends Chunk {
     }
 
     /**
-     * 先頭に MetaMessage (META_MACHINE_DEPEND) が入る。
-     * TrackChunk の情報を Properties で保持している。
+     * MetaMessage (META_MACHINE_DEPEND) is placed at the beginning.
+     * TrackChunk information is maintained in Properties.
      */
     public abstract List<SmafEvent> getSmafEvents()
         throws InvalidSmafDataException;

@@ -11,7 +11,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * 文字コード情報 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for character code information.
  * <pre>
  *  &quot;code&quot; 4 bytes: code
  * </pre>

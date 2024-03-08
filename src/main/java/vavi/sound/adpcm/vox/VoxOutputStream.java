@@ -24,25 +24,21 @@ import vavi.sound.adpcm.Codec;
  */
 public class VoxOutputStream extends AdpcmOutputStream {
 
-    /** エンコーダ */
     @Override
     protected Codec getCodec() {
         return new Vox();
     }
 
     /**
-     * {@link vavi.io.BitInputStream} は 4bit big endian 固定
+     * {@link vavi.io.BitInputStream} is 4bit big endian fixed
      * TODO check endian
      * @param out ADPCM
-     * @param byteOrder #write(int) のバイトオーダ
+     * @param byteOrder byte order for #write(int)
      */
     public VoxOutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.BIG_ENDIAN);
     }
 
-    /**
-     * @param b
-     */
     @Override
     public void write(int b) throws IOException {
         if (!flushed) {

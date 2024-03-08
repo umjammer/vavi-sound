@@ -145,14 +145,14 @@ Debug.printf(Level.FINE, "BankSelect: [%d] %dch, 0x%02x", duration, channel, ban
                 ShortMessage shortMessage = new ShortMessage();
                 shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                         midiChannel,
-                                        0x00,       // バンクセレクト MSB
+                                        0x00,       // bank select MSB
                                         data2);
                 events[0] = new MidiEvent(shortMessage, context.getCurrentTick());
 
                 shortMessage = new ShortMessage();
                 shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                         midiChannel,
-                                        0x20,       // バンクセレクト LSB
+                                        0x20,       // bank select LSB
                                         bank & 0x7f);
                 events[1] = new MidiEvent(shortMessage, context.getCurrentTick());
 
@@ -165,7 +165,7 @@ Debug.println(Level.FINE, "BankSelect(" + significant + "): [" + duration + "] "
             ShortMessage shortMessage = new ShortMessage();
             shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                     midiChannel,
-                                    significant.data1,  // バンクセレクト MSB or LSB
+                                    significant.data1,  // bank select MSB or LSB
                                     bank);
             return new MidiEvent[] {
                 new MidiEvent(shortMessage, context.getCurrentTick())

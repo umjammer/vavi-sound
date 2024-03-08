@@ -159,16 +159,16 @@ Debug.println(e);
 
     //-------------------------------------------------------------------------
 
-    /** {@link MetaMessage MetaEvent} ユーティリティ。 */
+    /** {@link MetaMessage MetaEvent} utility */
     private MetaSupport metaSupport = new MetaSupport();
 
-    /* {@link MetaEventListener} を登録します。 */
+    /* Adds a {@link MetaEventListener}. */
     @Override
     public void addMetaEventListener(MetaEventListener l) {
         metaSupport.addMetaEventListener(l);
     }
 
-    /* {@link MetaEventListener} を削除します。 */
+    /* Removes a {@link MetaEventListener}. */
     @Override
     public void removeMetaEventListener(MetaEventListener l) {
         metaSupport.removeMetaEventListener(l);

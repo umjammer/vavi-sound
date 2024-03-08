@@ -21,16 +21,15 @@ import vavi.sound.adpcm.Codec;
  */
 public class Ym2608OutputStream extends AdpcmOutputStream {
 
-    /** エンコーダ */
     @Override
     protected Codec getCodec() {
         return new Ym2608();
     }
 
     /**
-     * {@link vavi.io.BitOutputStream} は 4bit big endian 固定
+     * {@link vavi.io.BitOutputStream} is 4bit big endian fixed
      * @param out ADPCM
-     * @param byteOrder #write(int) のバイトオーダ
+     * @param byteOrder byte order for #write(int)
      */
     public Ym2608OutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.BIG_ENDIAN);

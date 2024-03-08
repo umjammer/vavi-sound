@@ -30,13 +30,13 @@ class ImaInputEngine implements InputEngine {
 
     private OutputStream out;
 
-    private Ima encoder = new Ima();
+    private final Ima encoder = new Ima();
 
     private InputStream in;
 
-    private int samplesPerBlock;
-    private int channels;
-    private ByteOrder byteOrder;
+    private final int samplesPerBlock;
+    private final int channels;
+    private final ByteOrder byteOrder;
 
     /** */
     public ImaInputEngine(OutputStream out,
@@ -60,12 +60,12 @@ Debug.println(Level.FINE, "byteOrder: " + this.byteOrder);
     }
 
     /** */
-    private int[] steps = new int[16];
+    private final int[] steps = new int[16];
 
     /**
-     * {@link #in} が {@link #samplesPerBlock} * 2 しか読まないので {@link IOStreamInputEngine} の
+     * because {@link #in} reads only {@link #samplesPerBlock} * 2 bytes, bufferSize for
      * {@link IOStreamInputEngine#IOStreamInputEngine(OutputStream, vavix.io.IOStreamInputEngine.InputStreamFactory, int)}
-     * の bufferSize を {@link #samplesPerBlock} * 2 にすること。
+     * of {@link IOStreamInputEngine} must be set {@link #samplesPerBlock} * 2.
      */
     @Override
     public void execute() throws IOException {

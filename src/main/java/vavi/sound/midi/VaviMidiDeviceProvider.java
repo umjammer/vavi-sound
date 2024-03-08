@@ -38,7 +38,7 @@ public class VaviMidiDeviceProvider extends MidiDeviceProvider {
     }
 
     /**
-     * ADPCM 再生機構を付加した MIDI シーケンサを返します。
+     * Returns a MIDI sequencer with an ADPCM playback mechanism.
      * @throws IllegalArgumentException info is not suitable for this provider
      */
     @Override

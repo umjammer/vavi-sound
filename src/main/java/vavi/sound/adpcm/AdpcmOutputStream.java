@@ -25,24 +25,24 @@ import vavi.io.BitOutputStream;
  */
 public abstract class AdpcmOutputStream extends FilterOutputStream {
 
-    /** #write(int) に渡す PCM のフォーマット */
+    /** PCM format for #write(int) */
     protected AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
 
-    /** #write(int) に渡す PCM のバイトオーダ */
+    /** PCM byte order for #write(int) */
     protected ByteOrder byteOrder;
 
-    /** エンコーダ */
+    /** encoder */
     protected Codec encoder;
 
     /** */
     protected abstract Codec getCodec();
 
     /**
-     * TODO BitOutputStream の引数をまとめて BitOutputStream にする？
+     * TODO make gathered all BitOutputStream arguments BitOutputStream?
      * @param out ADPCM
-     * @param byteOrder {@link #write(int)} のバイトオーダ
-     * @param bits {@link BitOutputStream} のサイズ
-     * @param bitOrder {@link BitOutputStream} のバイトオーダ
+     * @param byteOrder byte order for {@link #write(int)}
+     * @param bits {@link BitOutputStream} size
+     * @param bitOrder byte order for {@link BitOutputStream}
      */
     public AdpcmOutputStream(OutputStream out, ByteOrder byteOrder, int bits, ByteOrder bitOrder) {
         super(new BitOutputStream(out, bits, bitOrder));
@@ -51,13 +51,13 @@ public abstract class AdpcmOutputStream extends FilterOutputStream {
 //Debug.println(this.out);
     }
 
-    /** 残っていないかどうか (PCM L or H 片方保持してるかどうか) */
+    /** remaining or not (having PCM L or H at least one side) */
     protected boolean flushed = true;
-    /** 現在の値 (PCM L or H 片方しか来てない時の保持用) */
+    /** current value (when PCM L or H one part is coming) */
     protected int current;
 
     /**
-     * @param b PCM H or L byte を {@link #byteOrder} 順に指定 (LSB 8bit 有効)
+     * @param b let "PCM H or L byte" {@link #byteOrder} order (LSB 8bit available)
      */
     @Override
     public void write(int b) throws IOException {

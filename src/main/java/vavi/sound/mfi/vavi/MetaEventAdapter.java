@@ -57,7 +57,7 @@ class MetaEventAdapter implements MetaEventListener, MfiDevice {
     }
 
     /**
-     * {@link MfiMessageStore} を使用した再生機構を実装しています。
+     * Implements a player using {@link MfiMessageStore}.
      * @see MachineDependentMessage#getMidiEvents(MidiContext)
      * @see vavi.sound.mfi.vavi.header.CopyMessage#getMidiEvents(MidiContext)
      * @see vavi.sound.mfi.vavi.header.ProtMessage#getMidiEvents(MidiContext)
@@ -68,7 +68,7 @@ class MetaEventAdapter implements MetaEventListener, MfiDevice {
     public void meta(javax.sound.midi.MetaMessage message) {
 //Debug.println("type: " + message.getType());
         switch (MetaEvent.valueOf(message.getType())) {
-        case META_MACHINE_DEPEND: // シーケンサ固有のメタイベント
+        case META_MACHINE_DEPEND: // sequencer specific meta event
             try {
                 processSpecial(message);
             } catch (InvalidMfiDataException e) {
@@ -81,13 +81,13 @@ Debug.printStackTrace(e);
 throw e;
 }
             break;
-        case META_TEXT_EVENT:     // テキスト・イベント
-        case META_COPYRIGHT:      // 著作権表示
-        case META_NAME:           // シーケンス名またはトラック名
+        case META_TEXT_EVENT:     // text event
+        case META_COPYRIGHT:      // copyright
+        case META_NAME:           // sequence name or track name
 Debug.println(Level.FINE, "meta " + message.getType() + ": " + MidiUtil.getDecodedMessage(message.getData()));
             break;
-        case META_END_OF_TRACK:   // トラックの終わり
-        case META_TEMPO:          // テンポ設定
+        case META_END_OF_TRACK:   // end of track
+        case META_TEMPO:          // tempo was set
 Debug.println(Level.FINE, "this handler ignore meta: " + message.getType());
             break;
         default:

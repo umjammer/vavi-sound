@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.nio.ByteOrder;
 
 import vavi.io.OutputEngineInputStream;
+import vavi.util.Debug;
 
 
 /**
@@ -23,7 +24,7 @@ import vavi.io.OutputEngineInputStream;
 public class ImaInputStream extends FilterInputStream {
 
     /**
-     * バイトオーダーは little endian
+     * byte order is little endian
      */
     public ImaInputStream(InputStream in,
                           int samplesPerBlock,
@@ -106,7 +107,7 @@ public class ImaInputStream extends FilterInputStream {
                 }
             }
         } catch (IOException e) {
-e.printStackTrace(System.err);
+            Debug.printStackTrace(e);
         }
         return i;
     }

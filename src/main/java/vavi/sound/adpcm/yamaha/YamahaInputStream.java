@@ -27,8 +27,8 @@ public class YamahaInputStream extends AdpcmInputStream {
     }
 
     /**
-     * {@link vavi.io.BitInputStream} は 4bit little endian 固定
-     * TODO ma は little endian ?
+     * {@link vavi.io.BitInputStream} is 4bit little endian fixed
+     * TODO ma is little endian?
      */
     public YamahaInputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);

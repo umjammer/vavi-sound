@@ -213,7 +213,7 @@ Debug.printf(Level.FINE, "has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
     }
 
     /**
-     * Chunk Header 及び Body の Byte 列に対し、下記に示す割数で割り算した余り。(16 bit)
+     * the remainder when the Byte columns of Chunk Header and Body are divided by the divisor shown below. (16 bit)
      */
     private int crc;
 

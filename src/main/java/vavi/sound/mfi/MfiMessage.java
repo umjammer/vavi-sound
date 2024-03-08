@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 
 /**
- * Mfi メッセージの基底クラスです．
+ * Mfi Message base class.
  * <pre>
  * +--+--+--+--+--+--+--+--+-
  * |Δ|ST|D1 D2 ...
@@ -50,7 +50,7 @@ public abstract class MfiMessage
     protected int length;
 
     /**
-     * @after {@link #length} が設定される
+     * @after {@link #length} will be set
      */
     protected MfiMessage(byte[] data) {
         this.data = data;
@@ -60,7 +60,7 @@ public abstract class MfiMessage
     }
 
     /**
-     * メッセージのバイト配列を設定します．
+     * Sets message of byte array.
      */
     protected void setMessage(byte[] data, int length)
         throws InvalidMfiDataException {
@@ -77,8 +77,8 @@ public abstract class MfiMessage
     }
 
     /**
-     * メッセージのバイト配列を取得します．
-     * @return コピー
+     * Gets message of byte array.
+     * @return copied data
      */
     public byte[] getMessage() {
         byte[] returnedArray = new byte[length];
@@ -86,31 +86,31 @@ public abstract class MfiMessage
         return returnedArray;
     }
 
-    /** 前のデータが実行されてからの時間を取得します． */
+    /** Gets time since previous data is proceeded. */
     public int getDelta() {
         if (length > 0) {
             return data[0] & 0xff;
         }
-        return 0;  // TODO this.data が設定されていない場合
+        return 0;  // TODO when this.data is not set
     }
 
     /**
-     * delta を設定します．
+     * Sets delta.．
      * @param delta delta
      */
     public void setDelta(int delta) {
         this.data[0] = (byte) (delta & 0xff);
     }
 
-    /** ステータス情報を取得します． */
+    /** Gets status information. */
     public int getStatus() {
         if (length > 1) {
             return data[1] & 0xff;
         }
-        return 0;  // TODO this.data が設定されていない場合
+        return 0;  // TODO when this.data is not set
     }
 
-    /** メッセージの長さを取得します． */
+    /** Gets message length. */
     public int getLength() {
         return length;
     }

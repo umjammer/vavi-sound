@@ -27,9 +27,9 @@ public class DviOutputStream extends AdpcmOutputStream {
     }
 
     /**
-     * {@link vavi.io.BitOutputStream} は 4bit big endian 固定
+     * {@link vavi.io.BitOutputStream} is 4bit big endian fixed
      * @param out ADPCM
-     * @param byteOrder {@link #write(int)} のバイトオーダ
+     * @param byteOrder byte order for {@link #write(int)}
      */
     public DviOutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.BIG_ENDIAN);

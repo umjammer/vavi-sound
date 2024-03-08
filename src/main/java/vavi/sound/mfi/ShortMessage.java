@@ -8,9 +8,9 @@ package vavi.sound.mfi;
 
 
 /**
- * ShortMessage を表すクラスです。
+ * Represents short message.
  * <p>
- * MFi 仕様の"拡張ステータス B"を表します。
+ * Represents MFi specs. "Extended Status B".
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano refine <br>
@@ -35,8 +35,8 @@ public abstract class ShortMessage extends MfiMessage {
      *
      * @param delta
      * @param status
-     * @param data1 拡張ステータス番号
-     * @param data2 機能の値
+     * @param data1 extended status number
+     * @param data2 function number
      */
     public ShortMessage(int delta, int status, int data1, int data2) {
         super(new byte[] {

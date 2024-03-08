@@ -23,7 +23,7 @@ import vavi.util.Debug;
 /**
  * SmafMidiFileWriter.
  *
- * @caution MidiSystem は使っちゃだめ！
+ * @caution don't use MidiSystem in this class!
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>
@@ -41,15 +41,15 @@ public class SmafMidiFileWriter extends BasicMidiFileWriter {
         return new int[] { SmafFileFormat.FILE_TYPE };
     }
 
-    /** @param fileType 0x84:SMAF をサポートします */
+    /** @param fileType supports 0x84:SMAF */
     @Override
     public boolean isFileTypeSupported(int fileType) {
         return fileType == SmafFileFormat.FILE_TYPE;
     }
 
     /**
-     * @param fileType 0x84:SMAF をサポートします
-     * TODO sequence を無視している
+     * @param fileType supports 0x84:SMAF
+     * TODO ignoring sequence
      */
     @Override
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
@@ -58,7 +58,7 @@ public class SmafMidiFileWriter extends BasicMidiFileWriter {
 
     /**
      * @param in MIDI Sequence
-     * @param fileType #isFileTypeSupported が true のもののみ
+     * @param fileType only #isFileTypeSupported is true
      */
     @Override
     public int write(Sequence in, int fileType, OutputStream out)

@@ -22,7 +22,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * ExpressionMessage.
  * <pre>
- *  0xff, 0xe# 音源制御情報
+ *  0xff, 0xe# Sound Source Control Information
  *  channel true
  *  delta   true
  * </pre>
@@ -102,7 +102,7 @@ public class ExpressionMessage extends vavi.sound.mfi.ShortMessage
 
     //----
 
-    /** TODO エクスプレッションとみなしたけどいいの？ */
+    /** TODO i considered it an expression, but is that okay? */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
@@ -116,20 +116,20 @@ public class ExpressionMessage extends vavi.sound.mfi.ShortMessage
 //      ShortMessage shortMessage = new ShortMessage();
 //      shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
 //                  channel,
-//                  7,    // メインボリューム MSB
+//                  7,    // main volume MSB
 //                  context.getVolume(channel) * 2);
 //      events[0] = new MidiEvent(shortMessage, context.getCurrent());
 //      shortMessage = new ShortMessage();
 //      shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
 //                  channel,
-//                  39,    // メインボリューム LSB
+//                  39,    // main volume LSB
 //                  0);
 //      events[1] = new MidiEvent(shortMessage, context.getCurrent());
         MidiEvent[] events = new MidiEvent[1];
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 channel,
-                                11,    // エクスプレッション MSB
+                                11,    // expression MSB
                                 getVolume() < 0 ? getVolume() * 2 + 128 :
                                                   getVolume() * 2);
         events[0] = new MidiEvent(shortMessage, context.getCurrent());

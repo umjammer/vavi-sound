@@ -28,15 +28,15 @@ import vavi.util.Debug;
  * <pre>
  * "MTR*"
  *
- *  Format Type              : 1 byte (必須)
- *  Sequence Type            : 1 byte (必須)
- *  TimeBase_D               : 1 byte (必須)
- *  TimeBase_G               : 1 byte (必須)
- *  Channel Status           : n byte (必須)(Format Type に依存)
- *  Seek &amp; Phrase Info Chunk : n byte (Option)
- *  Setup Data Chunk         : n byte (Option)
- *  Sequence Data Chunk      : n byte (必須)
- *  Stream PCM Data Chunk    : n byte (Option) (Format Type = &quot;Mobile Standard&quot; の場合のみ)
+ *  Format Type              : 1 byte (required)
+ *  Sequence Type            : 1 byte (required)
+ *  TimeBase_D               : 1 byte (required)
+ *  TimeBase_G               : 1 byte (required)
+ *  Channel Status           : n byte (required)(dependence on Format Type)
+ *  Seek &amp; Phrase Info Chunk : n byte (option)
+ *  Setup Data Chunk         : n byte (option)
+ *  Sequence Data Chunk      : n byte (required)
+ *  Stream PCM Data Chunk    : n byte (option) (only for Format Type = &quot;Mobile Standard&quot;)
  * </pre>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041222 nsano initial version <br>

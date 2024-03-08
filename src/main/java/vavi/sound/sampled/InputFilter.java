@@ -19,6 +19,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * @version 0.00 060124 nsano initial version <br>
  */
 public interface InputFilter {
+
     /** */
     AudioInputStream doFilter(AudioInputStream audioInputStream) throws IOException, UnsupportedAudioFileException;
 }

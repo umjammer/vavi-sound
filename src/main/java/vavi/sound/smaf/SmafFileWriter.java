@@ -34,7 +34,7 @@ class SmafFileWriter {
 
     /** */
     public int[] getSmafFileTypes(Sequence sequence) {
-        // sequence を無視しているけど SMAF Sequence 一つしか型ないからいい
+        // ignoring sequence, but there's only one type of SMAF Sequence, so that's fine
         return types;
     }
 
@@ -50,16 +50,15 @@ class SmafFileWriter {
 
     /** */
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
-        // sequence を無視しているけど SMAF Sequence 一つしか型ないからいい
+        // ignoring sequence, but there's only one type of SMAF Sequence, so that's fine
         return isFileTypeSupported(fileType);
     }
 
     /**
-     * @param in {@link Sequence#getTracks() Sequence#tracks}[0] に
-     *           各種 {@link SmafMessage TODO} を設定することで
-     *           ヘッダチャンクの内容を指定することが出来ます。
-     * @return 0: fileType がサポートされていない場合、書き込みデータにエラーがある場合
-     *         else: 書き込んだバイト数
+     * @param in You can specify the contents of the header chunk by setting various {@link SmafMessage TODO}
+     *           to {@link Sequence#getTracks() Sequence#tracks}[0].
+     * @return 0: if fileType is not supported, if there is an error in the write data
+     *         else: number of bytes written
      */
     public int write(Sequence in, int fileType, OutputStream out)
         throws IOException {
@@ -71,10 +70,10 @@ Debug.println(Level.WARNING, "unsupported fileType: " + fileType);
 
         SmafFileFormat ff = new SmafFileFormat(in);
 
-        // header (最低限必要なものはデフォルトを設定)
+        // header (set the defaults for the minimum requirements)
 //        try {
 //        } catch (InvalidSmafDataException e) {
-//            // TODO IOException でいいのか？
+//            // TODO is IOException ok?
 //            throw (IOException) new IOException().initCause(e);
 //        }
 
@@ -89,7 +88,7 @@ Debug.printStackTrace(e);
         return ff.getByteLength();
     }
 
-    /** {@link #write(Sequence, int, OutputStream)} に委譲 */
+    /** Delegates to {@link #write(Sequence, int, OutputStream)} */
     public int write(Sequence in, int fileType, File out)
         throws IOException {
 

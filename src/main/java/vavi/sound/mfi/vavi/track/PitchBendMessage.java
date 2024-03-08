@@ -22,7 +22,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * PitchBendMessage.
  * <pre>
- *  0xff, 0xe# 音源制御情報
+ *  0xff, 0xe# Sound Source Control Information
  *  channel true
  *  delta   true
  * </pre>
@@ -95,7 +95,7 @@ public class PitchBendMessage extends vavi.sound.mfi.ShortMessage
     // ----
 
     /**
-     * PsmPlayer がこう変換していたからしょうがない。
+     * because PsmPlayer converted it like this.
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
@@ -110,7 +110,7 @@ public class PitchBendMessage extends vavi.sound.mfi.ShortMessage
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.PITCH_BEND,
                                 channel,
-                                0,                      // LSB
+                                0,                // LSB
                                 getPitchBend() * 2);    // MSB
         return new MidiEvent[] {
             new MidiEvent(shortMessage, context.getCurrent())

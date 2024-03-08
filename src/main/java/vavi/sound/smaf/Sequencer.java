@@ -42,9 +42,9 @@ public interface Sequencer extends SmafDevice {
     /** */
     boolean isRunning();
 
-    /** {@link MetaEventListener Listener} を登録します。 */
+    /** Adds {@link MetaEventListener Listener}. */
     void addMetaEventListener(MetaEventListener l);
 
-    /** {@link MetaEventListener Listener} を削除します。 */
+    /** Removes {@link MetaEventListener Listener}. */
     void removeMetaEventListener(MetaEventListener l);
 }

@@ -10,24 +10,24 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * ADPCM 情報 MFi Audio Sub Chunk.
+ * ADPCM information MFi Audio Sub Chunk.
  *
  * <pre>
  *  &quot;adpm&quot; 3 bytes
  *  0: sampling rate 0 ~ 255 kHz
- *   {@link vavi.sound.mfi.vavi.AudioDataMessage#FORMAT_ADPCM_TYPE2} の場合
- *    32, 16, 8 のみ使用可能
+ *   in case of {@link vavi.sound.mfi.vavi.AudioDataMessage#FORMAT_ADPCM_TYPE2},
+ *    only 32, 16, 8 are available
  *  1: sampling bits 0 ~ 255 bits
- *   {@link vavi.sound.mfi.vavi.AudioDataMessage#FORMAT_ADPCM_TYPE2} の場合
- *    2, 4 のみ使用可能
+ *   in cace of {@link vavi.sound.mfi.vavi.AudioDataMessage#FORMAT_ADPCM_TYPE2},
+ *    only 2, 4 are available
  *  2: .... 3 210
  *          ~ ~~~
  *          | +- channels 1: mono, 2: stereo, else: reserved
  *          +- 0: non interleave, 1: interleave
  *
- *    channels が 1 の場合 interleave は 0
- *   {@link vavi.sound.mfi.vavi.AudioDataMessage#FORMAT_ADPCM_TYPE2} の場合
- *    channels が 2 の場合 interleave は 0
+ *    when channels is 1, interleave is 0
+ *   in case of {@link vavi.sound.mfi.vavi.AudioDataMessage#FORMAT_ADPCM_TYPE2},
+ *    when channels is 2, interleave is 0
  * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)

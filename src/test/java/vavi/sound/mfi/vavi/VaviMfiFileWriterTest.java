@@ -12,7 +12,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
+
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,6 +32,7 @@ import vavi.sound.mfi.vavi.mitsubishi.MitsubishiMessage;
 import vavi.sound.mfi.vavi.track.CuePointMessage;
 import vavi.sound.mfi.vavi.track.EndOfTrackMessage;
 import vavi.sound.mfi.vavi.track.TempoMessage;
+import vavi.sound.midi.MidiUtil;
 import vavi.util.Debug;
 import vavi.util.win32.WAVE;
 
@@ -45,10 +51,10 @@ public class VaviMfiFileWriterTest {
     }
 
     /**
-     * Creates .mld w/ voice file. wav ファイルはモノラルのみです
-     * サンプリングレートは変更されません
+     * Creates .mld w/ voice file. wav files are mono only
+     * sampling rate remains unchanged
      * <p>
-     * TODO 65535 bytes を超えたときの処理
+     * TODO processing when exceeding 65535 bytes
      * </p>
      * input wav(PCM mono) file
      * output mld file
@@ -126,120 +132,114 @@ Debug.println(Level.FINE, "write: " + r);
     }
 
 //    /**
-//     * 同じ channel で次の {@link ShortMessage#NOTE_OFF}, {@link ShortMessage#CONTROL_CHANGE}
-//     * である MIDI イベントを取得します。
+//     * Get the following MIDI events on the same channel:
+//     * {@link ShortMessage#NOTE_OFF}, {@link ShortMessage#CONTROL_CHANGE}.
 //     *
-//     * @throws NoSuchElementException 次のイベントがない
-//     * @throws IllegalStateException 現在のイベントは {@link ShortMessage} ではない
+//     * @throws NoSuchElementException no next event
+//     * @throws IllegalStateException current event is not {@link ShortMessage}
 //     */
-/*
-    public MidiEvent getNoteOffOrControllChangeMidiEvent() throws NoSuchElementException {
-
-        ShortMessage shortMessage = null;
-
-        MidiEvent midiEvent = midiEvents.get(midiEventIndex);
-        MidiMessage midiMessage = midiEvent.getMessage();
-        if (midiMessage instanceof ShortMessage) {
-            shortMessage = (ShortMessage) midiMessage;
-        } else {
-            throw new IllegalStateException("current is not ShortMessage");
-        }
-
-        int channel = shortMessage.getChannel();
-        int data1 = shortMessage.getData1();
-
-        for (int i = midiEventIndex + 1; i < midiEvents.size(); i++) {
-            midiEvent = midiEvents.get(i);
-            midiMessage = midiEvent.getMessage();
-            if (midiMessage instanceof ShortMessage) {
-                shortMessage = (ShortMessage) midiMessage;
-                if (shortMessage.getChannel() == channel &&
-                    shortMessage.getData1() == data1) {
-                    // next note off
-                    noteOffEventUsed.set(i);    // 消費フラグ on
-                    return midiEvent;
-                } else if (shortMessage.getChannel() == channel &&
-                           shortMessage.getCommand() == ShortMessage.CONTROL_CHANGE) {
-                    // next control change
-                    String key = "midi.short." + shortMessage.getCommand() + "." + shortMessage.getData1();
-                    MfiConvertible convertible = MfiConvertibleFactory.getConverter(key);
-                    // TODO Converter があるかどうか
-                    if (convertible == null) {
-                        continue;
-                    }
-Debug.println("(NEXT): " + MidiUtil.paramString(midiMessage) + ", " + convertible.toString());
-
-                    // next note off
-                    for (int j = i + 1; j < midiEvents.size(); j++) {
-                        MidiEvent farMidiEvent = midiEvents.get(j);
-                        MidiMessage farMidiMessage = farMidiEvent.getMessage();
-                        if (farMidiMessage instanceof ShortMessage) {
-                            ShortMessage farShortMessage = (ShortMessage) farMidiMessage;
-                            if (farShortMessage.getChannel() == channel &&
-                                farShortMessage.getData1() == data1) {
-                                // far next note off
-                                noteOffEventUsed.set(i);    // 消費フラグ on
-                            }
-                        }
-                    }
-
-                    //
-                    return midiEvent;
-                }
-            }
-        }
-
-        throw new NoSuchElementException(channel + "ch, " + data1);
-    }
-*/
-
+//    public MidiEvent getNoteOffOrControllChangeMidiEvent() throws NoSuchElementException {
+//
+//        ShortMessage shortMessage = null;
+//
+//        MidiEvent midiEvent = midiEvents.get(midiEventIndex);
+//        MidiMessage midiMessage = midiEvent.getMessage();
+//        if (midiMessage instanceof ShortMessage) {
+//            shortMessage = (ShortMessage) midiMessage;
+//        } else {
+//            throw new IllegalStateException("current is not ShortMessage");
+//        }
+//
+//        int channel = shortMessage.getChannel();
+//        int data1 = shortMessage.getData1();
+//
+//        for (int i = midiEventIndex + 1; i < midiEvents.size(); i++) {
+//            midiEvent = midiEvents.get(i);
+//            midiMessage = midiEvent.getMessage();
+//            if (midiMessage instanceof ShortMessage) {
+//                shortMessage = (ShortMessage) midiMessage;
+//                if (shortMessage.getChannel() == channel &&
+//                    shortMessage.getData1() == data1) {
+//                    // next note off
+//                    noteOffEventUsed.set(i);    // consumed flag on
+//                    return midiEvent;
+//                } else if (shortMessage.getChannel() == channel &&
+//                           shortMessage.getCommand() == ShortMessage.CONTROL_CHANGE) {
+//                    // next control change
+//                    String key = "midi.short." + shortMessage.getCommand() + "." + shortMessage.getData1();
+//                    MfiConvertible convertible = MfiConvertibleFactory.getConverter(key);
+//                    // TODO Converter whether exists
+//                    if (convertible == null) {
+//                        continue;
+//                    }
+//Debug.println("(NEXT): " + MidiUtil.paramString(midiMessage) + ", " + convertible.toString());
+//
+//                    // next note off
+//                    for (int j = i + 1; j < midiEvents.size(); j++) {
+//                        MidiEvent farMidiEvent = midiEvents.get(j);
+//                        MidiMessage farMidiMessage = farMidiEvent.getMessage();
+//                        if (farMidiMessage instanceof ShortMessage) {
+//                            ShortMessage farShortMessage = (ShortMessage) farMidiMessage;
+//                            if (farShortMessage.getChannel() == channel &&
+//                                farShortMessage.getData1() == data1) {
+//                                // far next note off
+//                                noteOffEventUsed.set(i);    // consumed flag on
+//                            }
+//                        }
+//                    }
+//
+//                    //
+//                    return midiEvent;
+//                }
+//            }
+//        }
+//
+//        throw new NoSuchElementException(channel + "ch, " + data1);
+//    }
+//
 //    /**
-//     * 同じ channel で次の {@link ShortMessage} である MIDI イベントを取得します。
+//     * Get the next {@link ShortMessage} MIDI event on the same channel.
 //     * (not used)
-//     * @throws NoSuchElementException 次の MIDI イベントがない
-//     * @throws IllegalStateException 現在のイベントは {@link ShortMessage} ではない
+//     * @throws NoSuchElementException no next MIDI event
+//     * @throws IllegalStateException current event is not {@link ShortMessage}
 //     */
-/*
-    public MidiEvent getNextMidiEvent() throws NoSuchElementException {
-
-        ShortMessage shortMessage = null;
-
-        MidiEvent midiEvent = midiEvents.get(midiEventIndex);
-        MidiMessage midiMessage = midiEvent.getMessage();
-        if (midiMessage instanceof ShortMessage) {
-            shortMessage = (ShortMessage) midiMessage;
-        } else {
-            throw new IllegalStateException("current is not ShortMessage");
-        }
-
-        int channel = shortMessage.getChannel();
-        int data1 = shortMessage.getData1();
-
-        for (int i = midiEventIndex + 1; i < midiEvents.size(); i++) {
-            midiEvent = midiEvents.get(i);
-            midiMessage = midiEvent.getMessage();
-            if (midiMessage instanceof ShortMessage) {
-                shortMessage = (ShortMessage) midiMessage;
-                if (shortMessage.getChannel() == channel &&
-                    shortMessage.getCommand() == ShortMessage.NOTE_ON &&
-                    shortMessage.getData1() != data1) {
-Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getData1());
-                    return midiEvent;
-                }
-            }
-        }
-
-        throw new NoSuchElementException("no next event of channel: " + channel);
-    }
-*/
+//    public MidiEvent getNextMidiEvent() throws NoSuchElementException {
+//
+//        ShortMessage shortMessage = null;
+//
+//        MidiEvent midiEvent = midiEvents.get(midiEventIndex);
+//        MidiMessage midiMessage = midiEvent.getMessage();
+//        if (midiMessage instanceof ShortMessage) {
+//            shortMessage = (ShortMessage) midiMessage;
+//        } else {
+//            throw new IllegalStateException("current is not ShortMessage");
+//        }
+//
+//        int channel = shortMessage.getChannel();
+//        int data1 = shortMessage.getData1();
+//
+//        for (int i = midiEventIndex + 1; i < midiEvents.size(); i++) {
+//            midiEvent = midiEvents.get(i);
+//            midiMessage = midiEvent.getMessage();
+//            if (midiMessage instanceof ShortMessage) {
+//                shortMessage = (ShortMessage) midiMessage;
+//                if (shortMessage.getChannel() == channel &&
+//                    shortMessage.getCommand() == ShortMessage.NOTE_ON &&
+//                    shortMessage.getData1() != data1) {
+//Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getData1());
+//                    return midiEvent;
+//                }
+//            }
+//        }
+//
+//        throw new NoSuchElementException("no next event of channel: " + channel);
+//    }
+//
 //    /**
-//     * @return 補正なし Δタイム
-//     * TODO 何でこれでうまくいくの？
+//     * @return no correction Δ time
+//     * TODO why does this work?
 //     */
-/*
-    private int retrieveDelta(int mfiTrackNumber, long currentTick) {
-        return (int) Math.round((currentTick - previousTicks[mfiTrackNumber]) / scale);
-    }
-
-*/
+//    private int retrieveDelta(int mfiTrackNumber, long currentTick) {
+//        return (int) Math.round((currentTick - previousTicks[mfiTrackNumber]) / scale);
+//    }
 }

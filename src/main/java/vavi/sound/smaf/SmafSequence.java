@@ -25,7 +25,7 @@ import vavi.util.Debug;
  */
 class SmafSequence extends Sequence {
 
-    /** TODO 内容は SmafFileFormat/FileChunk に移すべき */
+    /** TODO content should be moved to SmafFileFormat/FileChunk */
     SmafSequence(FileChunk fileChunk) {
         try {
             for (TrackChunk scoreTrackChunk : fileChunk.getScoreTrackChunks()) {
@@ -42,11 +42,11 @@ class SmafSequence extends Sequence {
             }
             // SMF XF Information | SMAF Contents Info Chunk
             // -------------------+-------------------------
-            // 曲名               | ST: 曲名
-            // 作曲者             | SW: 作曲
-            // 作詞者             | WW: 作詞
-            // 編曲者             | AW: 編曲
-            // 演奏者・歌唱者     | AN: アーティスト名
+            // sond title         | ST: song title
+            // sond writer        | SW: song writer
+            // words writer       | WW: words writer
+            // arrangement writer | AW: arrangement writer
+            // artist name        | AN: artist name
             Track track0 = tracks.get(0);
             String title = "title";
             String prot = "vavi";
@@ -55,7 +55,7 @@ class SmafSequence extends Sequence {
 Debug.println(Level.FINE, dataChunk);
                     // TODO
                 }
-            } else if (fileChunk.getContentsInfoChunk() != null) { // TODO 必須なので if 要らん
+            } else if (fileChunk.getContentsInfoChunk() != null) { // TODO no need for if as it is required
                 title = fileChunk.getContentsInfoChunk().getSubDataByTag("ST");
                 prot = fileChunk.getContentsInfoChunk().getSubDataByTag("SW");
                 // TODO create meta for ContentsInfoChunk

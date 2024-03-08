@@ -104,7 +104,7 @@ class State {
     /** delayed tone detect, new in 1988 version */
     private int td;
 
-    //-------------------------------------------------------------------------
+    //----
 
     /** */
     private static final int[] power2 = {
@@ -118,7 +118,7 @@ class State {
      *
      * Using linear search for simple coding.
      *
-     * TODO package 内公開かっちょ悪いが G711 内で隠蔽されるので無視
+     * TODO package level is not good, but ignore because it's capsuled in G711
      */
     static int quan(int val) {
         int i;

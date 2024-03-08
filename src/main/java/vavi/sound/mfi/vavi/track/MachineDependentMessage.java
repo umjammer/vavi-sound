@@ -53,7 +53,7 @@ public class MachineDependentMessage extends SysexMessage
     }
 
     /**
-     * メッセージを設定します。データは6バイト目からのもの(実際のデータ)を指定します。
+     * Set the message. Specify the data starting from the 6th byte (actual data).
      * @param delta delta time
      * @param message data from 6th byte
      */
@@ -77,7 +77,7 @@ public class MachineDependentMessage extends SysexMessage
 
     /**
      * for {@link vavi.sound.mfi.vavi.TrackMessage}
-     * @param is 実際のデータ (ヘッダ無し, data2 ~)
+     * @param is actual data (without header, data2 ~)
      */
     public static MachineDependentMessage readFrom(int delta, int status, int data1, InputStream is)
         throws InvalidMfiDataException,
@@ -95,7 +95,7 @@ public class MachineDependentMessage extends SysexMessage
         data[1] = (byte) 0xff;                      // normal 0xff
         data[2] = (byte) 0xff;                      // machine depend 0xff
         data[3] = (byte) ((length / 0x100) & 0xff); // length LSB
-        data[4] = (byte) ((length % 0x100) & 0xff); // lenght MSB
+        data[4] = (byte) ((length % 0x100) & 0xff); // length MSB
 
         dis.readFully(data, 5, length);
 
@@ -127,17 +127,16 @@ Debug.printf(Level.FINE, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x\n"
 
     /**
      * <p>
-     * この {@link MachineDependentMessage} のインスタンスに対応する
-     * MIDI メッセージとして Meta type 0x7f の {@link MetaMessage} を作成する。
-     * {@link MetaMessage} の実データとして {@link MfiMessageStore}
-     * にこの {@link MachineDependentMessage} のインスタンスをストアして採番された id を
-     * 2 bytes big endian で格納する。
+     * Create {@link MetaMessage} of Meta type 0x7f as a MIDI message
+     * corresponding to this instance of {@link MachineDependentMessage}.
+     * Store this {@link MachineDependentMessage} instance in {@link MfiMessageStore}
+     * as the actual data of {@link MetaMessage}
+     * and store the numbered ID in 2 bytes big endian.
      * </p>
      * <p>
-     * 再生の場合は {@link javax.sound.midi.MetaEventListener} で Meta type 0x7f を
-     * リッスンして対応する id のメッセージを {@link MfiMessageStore} から見つける。
-     * それを {@link vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer} にかけて再生処理を
-     * 行う。
+     * For playback, listen to Meta type 0x7f with {@link javax.sound.midi.MetaEventListener}
+     * and find the message with the corresponding id from {@link MfiMessageStore}.
+     * Playback is performed by applying it to {@link vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer}.
      * </p>
      * <p>
      * see also {@code vavi.sound.mfi.vavi.MetaEventAdapter} for playing functionality.
@@ -147,22 +146,22 @@ Debug.printf(Level.FINE, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x\n"
      * +--+--+--+--+--+--+--+--+--+--+--+-
      * |ff|7f|LL|ID|DD DD ...
      * +--+--+--+--+--+--+--+--+--+--+--+-
-     *  0x7f シーケンサー固有メタイベント
-     *  LL ホンマに 1 byte ？
-     *  ID メーカーID
+     *  0x7f sequencer specific meta event
+     *  LL is really 1 byte?
+     *  ID manufacturer ID
      * </pre>
      * <pre>
-     * 現状
+     * Current Spec.
      * +--+--+--+--+--+--+--+
      * |ff|7f|LL|5f|01|DH DL|
      * +--+--+--+--+--+--+--+
-     *  0x5f 勝手につけたメーカ ID
-     *  0x01 {@link MachineDependentMessage} データであることを表す
-     *  DH DL 採番された id
+     *  0x5f manufacturer ID added arbitrarily
+     *  0x01 indicates {@link MachineDependentMessage} data
+     *  DH DL numbered id
      * </pre>
      * <p>
-     * デフォルトの MIDI シーケンサを使用するため、メタイベントしかフックできないので
-     * メタイベントに変換している。
+     * Since the default MIDI sequencer is used, only meta-events can be hooked,
+     * so they are converted to meta-events.
      * </p>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
      * @see MachineDependentSequencer#META_FUNCTION_ID_MACHINE_DEPEND
@@ -180,7 +179,7 @@ Debug.printf(Level.FINE, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x\n"
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // シーケンサー固有メタイベント
+        metaMessage.setMessage(0x7f,    // sequencer specific meta event
                                data,
                                data.length);
 

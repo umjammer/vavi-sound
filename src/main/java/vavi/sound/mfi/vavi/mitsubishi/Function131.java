@@ -25,16 +25,16 @@ import vavi.util.StringUtil;
  */
 public class Function131 implements MachineDependentFunction {
 
-    /** すぐにデータを利用せずに、一時的に保存しておく */
+    /** not use data immediately, store temporarily */
     public static final int MODE_STORE = 0;
-    /** すぐにデータを利用する */
+    /** use data immediately */
     public static final int MODE_SET = 1;
-    /** リサイクルモード wave size = 0 */
+    /** recycle mode wave size = 0 */
     public static final int MODE_RECYCLE = 2;
-    /** 予約 */
+    /** reserved */
     public static final int MODE_RESERVED = 3;
 
-    /** このデータのヘッダ分長さ */
+    /** header length of this data */
     public static final int HEADER_LENGTH = 10;
 
     /**
@@ -90,7 +90,7 @@ Debug.printf(Level.FINE, "sampling: %02x: rate=%d, bits=%d\n", data[8] & 0x3f, s
         play();
     }
 
-    /** mode 別に再生します。 */
+    /** Plays by mode. */
     protected void play() {
 
         AudioEngine player = MitsubishiSequencer.getAudioEngine();
@@ -114,16 +114,16 @@ Debug.printf(Level.FINE, "sampling: %02x: rate=%d, bits=%d\n", data[8] & 0x3f, s
     protected int packetId;
     /** @see #MODE_RECYCLE MODE_* */
     protected int mode = MODE_SET;
-    /** サンプリングレート {4k, 8k, 16k, 32k} */
+    /** sampling rate {4k, 8k, 16k, 32k} */
     protected int sampleRate = 16000;
-    /** adpcm の最小単位 {2bit, 4bit} */
+    /** adpcm minimum unit {2bit, 4bit} */
     protected int bits = 4;
     /** */
     protected boolean continued = false;
-    /** ADPCM のバッファ */
+    /** ADPCM buffer */
     protected byte[] adpcm;
 
-    /** サンプリングレートを取得します。 */
+    /** Gets sampling rate. */
     protected int getSamplingRateInternal(int format1) {
         int sampleRate = 8000;
         switch (format1) {
@@ -146,7 +146,7 @@ Debug.println(Level.WARNING, "unknown sampling rate: " + format1);
         return sampleRate;
     }
 
-    /** サンプリングビット数を取得します。 */
+    /** Get sampling bits. */
     protected int getSamplingBitsInternal(int format2) {
         int bits = 4;
         switch (format2) {
@@ -163,7 +163,7 @@ Debug.println(Level.WARNING, "unknown bits: " + format2);
         return bits;
     }
 
-    //-------------------------------------------------------------------------
+    //----
 
     /** ADPCM channel */
     public void setChannel(int channel) {
@@ -235,9 +235,9 @@ Debug.println(Level.WARNING, "unknown bits: " + format2);
     }
 
     /**
-     * 事前に {@link #setAdpcm(byte[])}, {@link #setSamplingRate(int)},
-     * {@link #setSamplingBits(int)} を用いてフィールドを設定しておいて下さい。
-     * <li> wav2mld は continued のとき mode が MODE_STORE で、最後に MODE_RECYCLE
+     * Set fields {@link #setAdpcm(byte[])}, {@link #setSamplingRate(int)},
+     * using {@link #setSamplingBits(int)} in advance.
+     * <li> wav2mld: when continued, mode is MODE_STORE, and at last MODE_RECYCLE
      */
     public byte[] getMessage() throws InvalidMfiDataException {
 

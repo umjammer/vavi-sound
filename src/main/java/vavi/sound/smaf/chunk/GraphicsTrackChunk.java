@@ -33,7 +33,7 @@ import vavi.util.Debug;
  *  Color Type : 1byte
  *  TimeBase : 1byte
  *  Option Size : 1byte
- *  Option Data : Option Size で指定したサイズ(0〜255b)
+ *  Option Data : size specified in Option Size (0 ~ 255b)
  * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -108,7 +108,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
 
     /**
      * 0x00 Handy Phone Standard
-     * 0x01〜0xFF Reserved
+     * 0x01 ~ 0xFF Reserved
      */
     private int playerType;
     /** */
@@ -116,7 +116,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     /**
      * 0x00 Direct RGB:=3:3:2
      * 0x01 Index Color
-     * 0x02〜FF Reserved
+     * 0x02 ~ FF Reserved
      */
     private int colorType;
 

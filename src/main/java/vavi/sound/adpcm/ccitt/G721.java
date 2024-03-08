@@ -117,7 +117,7 @@ class G721 extends G711 {
         // quantize the prediction difference
         // MIX
         int y = state.getStepSize();                        // quantizer step size
-        int i = quantize(d, y, qtab_721, 7);                // i = ADPCM code
+        int i = quantize(d, y, qtab_721, 7);           // i = ADPCM code
 
         // quantized est diff
         int dq = reconstruct((i & 8) != 0, _dqlntab[i], y);
@@ -153,14 +153,13 @@ class G721 extends G711 {
         int sei = sezi + state.getPolePredictor();
         int se = sei >> 1;                                  // se = estimated signal
 
-/*
-System.err.println("---- (" + (ccc++) + ")");
-System.err.println("i:\t" + StringUtil.toHex2(i));
-System.err.println("sezi:\t" + sezi);
-System.err.println("sez:\t" + sez);
-System.err.println("sei:\t" + sei);
-System.err.println("se:\t" + se);
-*/
+//System.err.println("---- (" + (ccc++) + ")");
+//System.err.println("i:\t" + StringUtil.toHex2(i));
+//System.err.println("sezi:\t" + sezi);
+//System.err.println("sez:\t" + sez);
+//System.err.println("sei:\t" + sei);
+//System.err.println("se:\t" + se);
+
         // MIX
         int y = state.getStepSize();                        // dynamic quantizer step size
 

@@ -29,11 +29,11 @@ public class OkiInputStream extends AdpcmInputStream {
     }
 
     /**
-     * {@link vavi.io.BitInputStream} は 4bit little endian 固定
+     * {@link vavi.io.BitInputStream} is 4bit little endian fixed
      * TODO PCM encoding
      */
     public OkiInputStream(InputStream in, ByteOrder byteOrder) {
-        super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN); // oki adpcm は little endian 固定
+        super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN); // oki adpcm is little endian fixed
 Debug.println(Level.FINE, this.in);
     }
 }

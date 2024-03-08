@@ -35,17 +35,16 @@ public class VaviNoteMessage extends NoteMessage
         super(delta, status, data);
     }
 
-    /** MFi2 note = 1 の場合 */
+    /** case of MFi2 note = 1 */
     public VaviNoteMessage(int delta, int status, int data1, int data2) {
         super(delta, status, data1, data2);
     }
 
     /** for {@link MfiConvertible}, note = 1 */
-    public VaviNoteMessage() { // TODO public ぐぬぬ...
+    public VaviNoteMessage() { // TODO public mhh...
         super();
     }
 
-    /* */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
@@ -79,9 +78,9 @@ public class VaviNoteMessage extends NoteMessage
     }
 
     /**
-     * TODO Δタイムが、直前の同ボイス、同キーの NoteMessage の
-     *      ゲートタイムより小さい場合は直前の NoteMessage からの継続音とする
-     * TODO 次の音まで余裕があったら伸ばして、無かったら切る？(未実装)
+     * TODO if the Δ time is smaller than the gate time of the previous NoteMessage of the same voice and same key,
+     *      it will be the continuation sound from the previous NoteMessage.
+     * TODO if there is room for the next note, do you extend it, and if there is not, cut it? (unimplemented)
      */
     @Override
     public MfiEvent[] getMfiEvents(MidiEvent midiEvent, MfiContext context)
@@ -95,7 +94,7 @@ public class VaviNoteMessage extends NoteMessage
 //Debug.println(midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
 
         if (command == ShortMessage.NOTE_OFF ||
-            // note on で velocity 0 の場合
+            // note on with velocity 0
             (command == ShortMessage.NOTE_ON && data2 == 0)) {
 
             if (!context.isNoteOffEventUsed()) {

@@ -58,7 +58,7 @@ class DividedSmafWithVoiceMaker extends SmafWithVoiceMaker {
 
         this.sourceAis = sourceAis;
 
-        this.directory = directory + File.separator + "mmf"; // TODO mmf に依存は良くない
+        this.directory = directory + File.separator + "mmf"; // TODO dependence on mmf is not good
         this.base = base;
     }
 

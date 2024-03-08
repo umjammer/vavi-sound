@@ -16,7 +16,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * NopMessage.
  * <pre>
- *  0xff, 0xd# 演奏管理情報
+ *  0xff, 0xd# Play Control Information
  *  channel false
  *  delta   true
  * </pre>

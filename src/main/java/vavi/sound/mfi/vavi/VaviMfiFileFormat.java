@@ -49,7 +49,7 @@ import vavi.util.Debug;
  *  offset to tracks    08 02
  *  major type          0A 01   see below
  *  minor type          0B 01   see below
- *  number of tracks    0C 01   01:4和音, 02:8和音(MFi2), 04:16和音(MFi2)
+ *  number of tracks    0C 01   01:4 voices, 02:8 voices(MFi2), 04:16 voices(MFi2)
  *
  * 2. data information
  *  type                00 04   see below *1
@@ -82,7 +82,7 @@ import vavi.util.Debug;
 public class VaviMfiFileFormat extends MfiFileFormat {
 
     /**
-     * MIDI ファイルタイプ
+     * MIDI file type
      * @see "vavi/sound/midi/package.html"
      */
     public static final int FILE_TYPE = 0x88;
@@ -98,19 +98,19 @@ public class VaviMfiFileFormat extends MfiFileFormat {
         return sequence;
     }
 
-    /** 読み込み用 */
+    /** for reading */
     private VaviMfiFileFormat() {
         super(FILE_TYPE, -1);
 
         this.sequence = new Sequence();
     }
 
-    /** 書き込み用 */
+    /** for writing */
     public VaviMfiFileFormat(Sequence sequence) {
         super(FILE_TYPE, -1);
 
         this.sequence = sequence;
-        // ヘッダ情報の取り出し
+        // retrieve header information
         this.headerChunk = new HeaderChunk(new HeaderChunk.Support() {
             @Override
             public void init(Map<String, SubMessage> subChunks) {
@@ -145,11 +145,11 @@ public class VaviMfiFileFormat extends MfiFileFormat {
         // 3. track
         int trackChunksLength = getTracksLength();
 
-        // 要するにファイル全部
+        // whole file in brief
         this.byteLength = headerChunkLength + audioChunksLength + trackChunksLength;
     }
 
-    /** すべてのトラックチャンクの合計の長さを取得します。 */
+    /** Gets the total length of all track chunks. */
     private int getTracksLength() {
         Track[] tracks = sequence.getTracks();
         int tracksLength = 0;
@@ -161,7 +161,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
     }
 
     /**
-     * すべてのオーディオデータチャンクの合計の長さを取得します。
+     * Gets the total length of all audio data chunks.
      * @since MFi 4.0
      */
     private int getAudioDataLength() {
@@ -179,7 +179,7 @@ Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
     }
 
     /**
-     * すべてのオーディオデータチャンクを取得します。
+     * Gets all audio data chunks.
      * @since MFi 4.0
      */
     private List<AudioDataMessage> getAudioDatum() {
@@ -195,22 +195,22 @@ Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
         return result;
     }
 
-    /** {@link Track}[0] で書き出し時省かれるメッセージの型 */
+    /** types of messages omitted when exporting with {@link Track}[0] */
     static boolean isIgnored(MfiMessage message) {
-        // TODO MetaMessage だけを省くのが理想？
+        // TODO is it ideal to omit just MetaMessage?
         return message instanceof SubMessage || message instanceof AudioDataMessage;
     }
 
     /**
-     * ストリームに書き込みます。事前にシーケンスを設定しておくこと。
-     * @after {@link #byteLength} が設定されます
-     * @after os は {@link java.io.OutputStream#flush() flush} されます
-     * @throws IllegalStateException シーケンスが設定されていない場合スローされます
-     * @throws InvalidMfiDataException 最低限の {@link SubMessage}
+     * Write to the stream. Set the sequence in advance.
+     * @after {@link #byteLength} will be set
+     * @after <code>os</code> will be {@link java.io.OutputStream#flush() flush}
+     * @throws IllegalStateException when sequence is not set
+     * @throws InvalidMfiDataException minimum {@link SubMessage}
      *         { {@link #setSorc(int) "sorc"},
      *         {@link #setTitle(String) "titl"},
      *         {@link #setVersion(String) "vers"} }
-     *         が設定されていない場合スローされます
+     *         are not set
      */
     public void writeTo(OutputStream os)
         throws InvalidMfiDataException,
@@ -235,19 +235,17 @@ Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
             track.writeTo(os);
         }
 
-        os.flush(); // TODO いる？
+        os.flush(); // TODO is this needed?
     }
 
     /**
-     * ストリームから {@link MfiFileFormat} オブジェクトを取得します。
-     * {@link Sequence} が作成されるので {@link #getSequence()} で取り出して使用します。
-     * @param is
-     * @return {@link VaviMfiFileFormat} オブジェクト
-     * @throws InvalidMfiDataException 最初の 4 bytes が {@link HeaderChunk#TYPE} で無い場合
+     * Gets a {@link MfiFileFormat} object from the stream.
+     * {@link Sequence} will be created, so use {@link #getSequence()} to retrieve it and use it.
+     * @param is MFi stream
+     * @return {@link VaviMfiFileFormat} object
+     * @throws InvalidMfiDataException at the beginning of 4 bytes is not {@link HeaderChunk#TYPE}
      */
-    public static VaviMfiFileFormat readFrom(InputStream is)
-        throws InvalidMfiDataException,
-               IOException {
+    public static VaviMfiFileFormat readFrom(InputStream is) throws InvalidMfiDataException, IOException {
 
         VaviMfiFileFormat mff = new VaviMfiFileFormat();
 
@@ -287,7 +285,7 @@ Debug.println(Level.FINE, "track number: " + trackNumber);
                 doSpecial(headerSubChunks, audioDataChunks, track);
             }
 
-            // 通常処理
+            // normal process
             TrackMessage trackChunk = new TrackMessage(trackNumber, track);
             trackChunk.setNoteLength(noteLength);
             trackChunk.setExst(exst);
@@ -302,8 +300,8 @@ Debug.println(Level.FINE, "is rest: " + is.available());
     }
 
     /**
-     * {@link Track} 0 に対する特別な処理。
-     * TODO こういう分離あまり好きくない...
+     * Special process to {@link Track} 0.
+     * TODO i don't like separation like this...
      * @param headerSubChunks source 1
      * @param audioDataChunks source 2
      * @param track dest, must be track 0 and empty
@@ -311,15 +309,15 @@ Debug.println(Level.FINE, "is rest: " + is.available());
     private static void doSpecial(Map<String, SubMessage> headerSubChunks,
                                   List<AudioDataMessage> audioDataChunks,
                                   Track track) {
-        // Track 0 の先頭に SubMessage を押し込む
-        // TODO HeaderChunk ですべき予感？？？
+        // insert SubMessage at top of Track 0
+        // TODO it seems to be done in HeaderChunk???
         for (SubMessage headerSubChunk : headerSubChunks.values()) {
             track.add(new MfiEvent(headerSubChunk, 0L));
         }
 
-        // Track 0 の header sub chunks の次に AudioDataMessage を押し込む
+        // insert AudioDataMessage at next header sub chunks of Track 0
         for (AudioDataMessage audioDataChunk : audioDataChunks) {
-            // TODO {@link MetaMessage} に変換？？？
+            // TODO convert to {@link MetaMessage}???
             track.add(new MfiEvent(audioDataChunk, 0L));
         }
     }
@@ -494,7 +492,7 @@ Debug.println(Level.INFO, "no note info, use 0");
     }
 
     /**
-     * 拡張ステータス A の長さを取得します。
+     * Gets Extended Status A length.
      * @see ExstMessage
      */
     public int getExst() {
@@ -507,7 +505,7 @@ Debug.println(Level.INFO, "no note info, use 0");
     }
 
     /**
-     * 拡張ステータス A の長さを設定します。
+     * Sets Extended Status A length.
      * @see ExstMessage
      */
     public void setExst(int exst)
@@ -522,7 +520,7 @@ Debug.println(Level.INFO, "no note info, use 0");
     }
 
     /**
-     * AudioDataChunk の数を取得します。
+     * Gets AudioDataChunk count.
      * @see AinfMessage
      * @since MFi 4.0
      */
@@ -536,7 +534,7 @@ Debug.println(Level.INFO, "no note info, use 0");
     }
 
     /**
-     * AudioDataChunk のみで構成されているかどうか。
+     * Whether does it consist of AudioDataChunk only?
      * @see AinfMessage
      * @since MFi 4.0
      */

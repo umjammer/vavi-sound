@@ -64,7 +64,7 @@ class DividedMfiWithVoiceMaker extends MfiWithVoiceMaker {
 
         this.sourceAis = sourceAis;
 
-        this.directory = directory + File.separator + model; // TODO model に依存は良くない
+        this.directory = directory + File.separator + model; // TODO dependence on model is not good
         this.base = base;
     }
 

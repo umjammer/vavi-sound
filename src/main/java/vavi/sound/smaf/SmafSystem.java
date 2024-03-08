@@ -54,14 +54,14 @@ public final class SmafSystem {
     private SmafSystem() {
     }
 
-    /** シーケンサを取得します。 */
+    /** Gets a sequencer. */
     public static Sequencer getSequencer()
         throws SmafUnavailableException {
 
         return sequencer;
     }
 
-    /** MIDI シーケンサに付加するリスナを取得します。 */
+    /** Gets a listener to attach to a MIDI sequencer. */
     public static MetaEventListener getMetaEventListener()
         throws SmafUnavailableException {
 
@@ -69,7 +69,7 @@ public final class SmafSystem {
     }
 
     /**
-     * @param is
+     * @param is sequencer
      * @return SmafFileFormat
      */
     public static SmafFileFormat getSmafFileFormat(InputStream is)
@@ -80,7 +80,7 @@ public final class SmafSystem {
     }
 
     /**
-     * @param is
+     * @param is sequencer
      * @return SMAF Sequence
      */
     public static vavi.sound.smaf.Sequence getSequence(InputStream is)
@@ -90,7 +90,7 @@ public final class SmafSystem {
         return ff.getSequence();
     }
 
-    /** SMAF シーケンスを取得します。 */
+    /** Gets a SMAF sequence. */
     public static vavi.sound.smaf.Sequence getSequence(File file)
         throws InvalidSmafDataException, IOException {
 
@@ -114,7 +114,7 @@ Debug.printStackTrace(e);
 
     /**
      * @param in MIDI Sequence
-     * @param fileType
+     * @param fileType SMAF file type
      * @return SMAF sequence
      */
     public static vavi.sound.smaf.Sequence toSmafSequence(Sequence in, int fileType)
@@ -129,9 +129,9 @@ Debug.printStackTrace(e);
     }
 
     /**
-     * @param smafSequence
-     * @param fileType
-     * @param out
+     * @param smafSequence SMAF Sequence
+     * @param fileType SMAF file type
+     * @param out stream to output
      * @return SMAF sequence
      */
     public static int write(vavi.sound.smaf.Sequence smafSequence, int fileType, OutputStream out)
@@ -140,7 +140,7 @@ Debug.printStackTrace(e);
         return writer.write(smafSequence, fileType, out);
     }
 
-    /** SMAF or MIDI で書き出します。 */
+    /** Writes as SMAF or MIDI. */
     public static int write(vavi.sound.smaf.Sequence smafSequence, int fileType, File out)
         throws IOException {
 

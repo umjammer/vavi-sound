@@ -15,8 +15,8 @@ import vavi.sound.smaf.SmafEvent;
 /**
  * SmafConvertible.
  * <p>
- * 今のところ実装クラスは bean でなければならない．
- * (引数なしのコンストラクタがあること)
+ * currently the implementation class must be a bean.
+ * (have a no-argument constructor)
  * </p>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -24,6 +24,6 @@ import vavi.sound.smaf.SmafEvent;
  */
 public interface SmafConvertible {
 
-    /** TODO 実装法いまいち，BeanUtil 等が使えないか？ */
+    /** TODO the implementation method is not good enough, use BeanUtil etc.? */
     SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context) throws InvalidSmafDataException;
 }

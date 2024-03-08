@@ -11,7 +11,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * 拡張ステータス A メッセージ長 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for "Extended Status A" message length.
  *
  * <pre>
  *  &quot;exst&quot; 2 bytes: extended status data length
@@ -57,7 +57,7 @@ public class ExstMessage extends SubMessage {
         });
     }
 
-    /** */
+    @Override
     public String toString() {
         return TYPE + ": " + getDataLength() + ": " + getExst();
     }

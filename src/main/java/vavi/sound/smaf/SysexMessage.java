@@ -47,7 +47,7 @@ public abstract class SysexMessage extends SmafMessage {
      * </pre>
      *
      * @param status 0xf0
-     * @param data 0xf0 以降
+     * @param data after 0xf0
      */
     public void setMessage(int status, byte[] data, int length) throws InvalidSmafDataException {
         byte[] tmp = new byte[length];

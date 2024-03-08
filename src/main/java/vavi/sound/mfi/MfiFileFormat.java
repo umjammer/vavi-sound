@@ -15,7 +15,7 @@ package vavi.sound.mfi;
  */
 public class MfiFileFormat {
 
-    /** ファイルすべての長さ */
+    /** total file length */
     protected int byteLength;
 
     /** */
@@ -27,7 +27,7 @@ public class MfiFileFormat {
         this.byteLength = bytes;
     }
 
-    /** ファイルすべての長さを取得します。 */
+    /** Gets total file length. */
     public int getByteLength() {
         return byteLength;
     }

@@ -32,24 +32,23 @@ public class SmafAudioFileWriter extends AudioFileWriter {
         new SMAF(null) // TODO null
     };
 
-    /** このオーディオファイルライタがファイル書き込みサポートを提供するファイル型を取得します。 */
     @Override
     public Type[] getAudioFileTypes() {
         return outputTypes;
     }
 
-    /** 指定されたオーディオ入力ストリームからこのオーディオファイルライタが書き込みできるファイル型を取得します。 */
     @Override
     public Type[] getAudioFileTypes(AudioInputStream stream) {
         return getAudioFileTypes(); // TODO check stream
     }
 
     /**
-     * 指定されたファイル形式のオーディオファイルを表すバイトストリームを、指定された外部ファイルへ書き込みます。
+     * {@inheritDoc}
+     *
      * @param fileType must be instance of {@link SMAF}
-     * @param out null 出力を指定してください。 win32: "nul", *nix: "/dev/null"
-     * @throws IllegalArgumentException fileType が SMAF でない場合スローされます。
-     * @throws NullPointerException fileType に properties が設定されていない場合スローされます。
+     * @param out specify null device. e.g. win32: "nul", *nix: "/dev/null"
+     * @throws IllegalArgumentException when fileType is not SMAF
+     * @throws NullPointerException when fileType is not set in properties
      */
     @Override
     public int write(AudioInputStream stream, Type fileType, OutputStream out) throws IOException {
@@ -60,7 +59,7 @@ public class SmafAudioFileWriter extends AudioFileWriter {
             // properties
             boolean divided = (Boolean) ((SMAF) fileType).getProperty("smaf.divided");
             if (divided) {
-                // 分割
+                // division
                 String directory = (String) ((SMAF) fileType).getProperty("smaf.directory");
                 String base = (String) ((SMAF) fileType).getProperty("smaf.base");
                 float time = (Float) ((SMAF) fileType).getProperty("smaf.time");
@@ -74,7 +73,7 @@ public class SmafAudioFileWriter extends AudioFileWriter {
                 int r = mwvm.create();
                 return r;
             } else {
-                // 単体
+                // single unit
                 String filename = (String) ((SMAF) fileType).getProperty("smaf.filename");
                 float time = (Float) ((SMAF) fileType).getProperty("smaf.time");
                 int sampleRate = (Integer) ((SMAF) fileType).getProperty("smaf.sampleRate");
@@ -93,9 +92,10 @@ public class SmafAudioFileWriter extends AudioFileWriter {
     }
 
     /**
-     * 指定されたファイル型のオーディオファイルを表すバイトのストリームを、指定された出力ストリームへ書き込みます。
+     * {@inheritDoc}
+     *
      * @param fileType must be instance of {@link SMAF}
-     * @param out null 出力を指定してください。 win32: "nul", *nix: "/dev/null"
+     * @param out specify null device. e.g. win32: "nul", *nix: "/dev/null"
      */
     @Override
     public int write(AudioInputStream stream, Type fileType, File out) throws IOException {

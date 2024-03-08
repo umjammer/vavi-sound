@@ -25,7 +25,7 @@ import vavi.util.Debug;
 public class MsInputStream extends FilterInputStream {
 
     /**
-     * バイトオーダーは little endian
+     * byte order little endian
      */
     public MsInputStream(InputStream in,
                          int samplesPerBlock,

@@ -19,7 +19,7 @@ import vavi.util.Debug;
 
 
 /**
- * TrackMessage. TODO 要るのか？
+ * TrackMessage. TODO is it necessary?
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 080415 nsano initial version <br>
@@ -57,15 +57,15 @@ Debug.println(Level.FINE, "track: " + trackNumber + ": " + getDataLength());
     }
 
     /**
-     * track の中身を見て ScoreTrack, PcmAudio, Graphic に振り分け
+     * Look at the contents of the track and sort it into ScoreTrack, PcmAudio, and Graphic.
      */
     private String getType() {
         return "ATR\0"; // TODO
     }
 
     /**
-     * 書き出し用
-     * {@link Track}[0] の不必要なデータは省かれます。
+     * for writing
+     * Unnecessary data in {@link Track}[0] will be omitted.
      */
     public int getDataLength() {
         int trackLength = 0;

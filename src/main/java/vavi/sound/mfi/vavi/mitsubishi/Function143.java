@@ -25,7 +25,7 @@ import vavi.util.StringUtil;
  */
 public class Function143 implements MachineDependentFunction {
 
-    /** このデータのヘッダ分長さ */
+    /** header length of this data */
     private static final int HEADER_LENGTH = 7;
 
     /**

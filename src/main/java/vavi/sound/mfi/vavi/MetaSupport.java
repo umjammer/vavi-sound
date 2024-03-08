@@ -15,7 +15,7 @@ import vavi.sound.mfi.MetaMessage;
 
 
 /**
- * MetaEvent 機構のユーティリティクラスです．
+ * Utility class for MetaEvent mechanism.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 010820 nsano initial version <br>
@@ -25,17 +25,17 @@ class MetaSupport implements Serializable {
     /** The metaEvent listeners */
     private List<MetaEventListener> listeners = new ArrayList<>();
 
-    /** {@link MetaEventListener} を追加します． */
+    /** Adds {@link MetaEventListener}. */
     public void addMetaEventListener(MetaEventListener l) {
         listeners.add(l);
     }
 
-    /** {@link MetaEventListener} を削除します． */
+    /** Removes {@link MetaEventListener}. */
     public void removeMetaEventListener(MetaEventListener l) {
         listeners.remove(l);
     }
 
-    /** meta message を発行します． */
+    /** Fires a meta message. */
     public void fireMeta(MetaMessage meta) {
         for (MetaEventListener listener : listeners) {
             listener.meta(meta);

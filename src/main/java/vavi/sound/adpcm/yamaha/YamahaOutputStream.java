@@ -21,7 +21,6 @@ import vavi.sound.adpcm.Codec;
  */
 public class YamahaOutputStream extends AdpcmOutputStream {
 
-    /** エンコーダ */
     @Override
     protected Codec getCodec() {
         return new Yamaha();
@@ -29,9 +28,9 @@ public class YamahaOutputStream extends AdpcmOutputStream {
 
     /**
      *
-     * {@link vavi.io.BitOutputStream} は 4bit little endian 固定
+     * {@link vavi.io.BitOutputStream} is 4bit little endian fixed
      * @param out ADPCM
-     * @param byteOrder {@link #write(int)} のバイトオーダ
+     * @param byteOrder byte order for {@link #write(int)}
      */
     public YamahaOutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);
