@@ -120,11 +120,7 @@ Debug.printf(Level.FINE, "samplesPerBlock: %d, numberChannels: %d, blockSize: %d
 DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
 line.open(audioFormat);
-line.addLineListener(ev -> {
-Debug.println(Level.FINE, ev.getType());
- if (LineEvent.Type.STOP == ev.getType()) {
- }
-});
+line.addLineListener(ev -> Debug.println(Level.FINE, ev.getType()));
 line.start();
 volume(line, volume);
 

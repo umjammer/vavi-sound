@@ -6,9 +6,11 @@
 
 package vavi.sound.sampled.adpcm.vox;
 
+import java.util.Map;
 import javax.sound.sampled.AudioFormat.Encoding;
 
 import vavi.sound.sampled.adpcm.AdpcmWaveAudioFileReader;
+import vavi.util.win32.WAVE.fmt;
 
 
 /**
@@ -30,5 +32,10 @@ public class VoxWaveAudioFileReader extends AdpcmWaveAudioFileReader {
     @Override
     protected Encoding getEncoding() {
         return VoxEncoding.VOX;
+    }
+
+    @Override
+    protected Map<String, Object> toProperties(fmt fmt) {
+        return null;
     }
 }

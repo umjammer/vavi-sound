@@ -12,6 +12,7 @@ import javax.sound.sampled.AudioFormat.Encoding;
 
 import vavi.sound.sampled.adpcm.AdpcmWaveAudioFileReader;
 import vavi.util.ByteUtil;
+import vavi.util.win32.WAVE;
 
 
 /**
@@ -40,18 +41,19 @@ public class MsWaveAudioFileReader extends AdpcmWaveAudioFileReader {
     }
 
     @Override
-    protected Map<String, Object> toProperties(byte[] b) {
+    protected Map<String, Object> toProperties(WAVE.fmt fmt) {
         Map<String, Object> properties = new HashMap<>();
-        int samplesPerBlock = ByteUtil.readLeShort(b, 38);
-        int nCoefs = ByteUtil.readLeShort(b, 40);
+        byte[] b = fmt.getExtended();
+        int samplesPerBlock = ByteUtil.readLeShort(b, 0);
+        int nCoefs = ByteUtil.readLeShort(b, 2);
         assert nCoefs < 8 : "cannot deal coefs > 7";
         int[][] iCoefs = new int[nCoefs][2];
         for (int i = 0; i < nCoefs; i++) {
             for (int j = 0; j < 2; j++) {
-                iCoefs[i][j] = ByteUtil.readLeShort(b, 42 + (i * 2 + j) * Short.BYTES);
+                iCoefs[i][j] = ByteUtil.readLeShort(b, 4 + (i * 2 + j) * Short.BYTES);
             }
         }
-        int blockSize = ByteUtil.readLeShort(b, 32);
+        int blockSize = fmt.getBlockSize();
         properties.put("samplesPerBlock", samplesPerBlock);
         properties.put("nCoefs", nCoefs);
         properties.put("iCoefs", iCoefs);

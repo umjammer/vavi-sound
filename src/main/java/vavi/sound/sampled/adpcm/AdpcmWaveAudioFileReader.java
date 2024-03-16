@@ -7,7 +7,6 @@
 package vavi.sound.sampled.adpcm;
 
 import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,9 +22,9 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.spi.AudioFileReader;
 
-import vavi.util.ByteUtil;
 import vavi.util.Debug;
-import vavi.util.StringUtil;
+import vavi.util.win32.Chunk;
+import vavi.util.win32.WAVE;
 
 
 /**
@@ -67,13 +66,14 @@ public abstract class AdpcmWaveAudioFileReader extends AudioFileReader {
 
     /** @return size needed for wave file header analysis */
     protected int getBufferSize() {
-        return 44;
+        return 512;
     }
 
-    /** @param b wave file header */
-    protected Map<String, Object> toProperties(byte[] b) {
-        return null;
-    }
+    /** @param fmt wave file header */
+    protected abstract Map<String, Object> toProperties(WAVE.fmt fmt);
+
+    /** */
+    private static final String WAVE_DATA_NOT_LOAD_KEY = "vavi.util.win32.WAVE.data.notLoadData";
 
     /**
      * Returns the AudioFileFormat from the given InputStream. Implementation.
@@ -95,39 +95,25 @@ Debug.println(Level.FINER, "enter available: " + bitStream.available() + ", " + 
         try {
             int bufferSize = getBufferSize();
             bitStream.mark(bufferSize);
-            DataInputStream dis = new DataInputStream(bitStream);
-            byte[] b = new byte[bufferSize];
-            dis.readFully(b);
-            if (b[0] != 'R' || b[1] != 'I' || b[2] != 'F' || b[3] != 'F' ||
-                    b[8] != 'W' || b[9] != 'A' || b[10] != 'V' || b[11] != 'E') {
-Debug.println(Level.FINER, "not RIFF/WAVE");
-                throw new UnsupportedAudioFileException("not RIFF/WAVE");
-            }
-            if (b[12] != 'f' || b[13] != 'm' || b[14] != 't' || b[15] != ' ') {
-                // TODO more flexible
-Debug.println(Level.FINER, "cannot parse because fmt chunk not found as first sub chunk");
-                throw new UnsupportedAudioFileException("cannot parse because fmt chunk not found as first sub chunk");
-            }
-            int formatCode = ByteUtil.readLeShort(b, 20);
-Debug.println(Level.FINER, "formatCode: " + formatCode);
+            System.setProperty(WAVE_DATA_NOT_LOAD_KEY, "true");
+            WAVE wave = Chunk.readFrom(bitStream, WAVE.class);
+            WAVE.fmt fmt = wave.findChildOf(WAVE.fmt.class);
+            int formatCode = fmt.getFormatId();
+ Debug.println(Level.FINER, "formatCode: " + formatCode);
             if (formatCode != getFormatCode()) {
-Debug.println(Level.FINER, "unsupported wave format code: " + formatCode);
+ Debug.println(Level.FINER, "unsupported wave format code: " + formatCode);
                 throw new UnsupportedAudioFileException("unsupported wave format code: " + formatCode);
             }
-            sampleRate = ByteUtil.readLeInt(b, 24) & 0xffff_ffffL;
-            channels = ByteUtil.readLeShort(b, 22);
-            properties = toProperties(b);
-Debug.println(Level.FINER, "properties: " + properties);
-            int l = b.length;
-            if (b[l - 8 + 0] != 'd' || b[l - 8 + 1] != 'a' || b[l - 8 + 2] != 't' || b[l - 8 + 3] != 'a') {
-Debug.println(Level.FINER, "cannot parse because data chunk not found as second sub chunk\n" + StringUtil.getDump(b));
-                throw new UnsupportedAudioFileException("cannot parse because data chunk not found as second sub chunk");
-            }
+            sampleRate = fmt.getSamplingRate();
+            channels = fmt.getNumberChannels();
+            properties = toProperties(fmt);
+ Debug.println(Level.FINER, "properties: " + properties);
             bitStream.reset();
         } catch (IOException | IllegalArgumentException e) {
 Debug.println(Level.FINER, e);
             throw (UnsupportedAudioFileException) new UnsupportedAudioFileException(e.getMessage()).initCause(e);
         } finally {
+            System.setProperty(WAVE_DATA_NOT_LOAD_KEY, "false");
             try {
                 bitStream.reset();
             } catch (IOException e) {
@@ -185,7 +171,14 @@ Debug.println(Level.FINER, "finally available: " + bitStream.available());
      * @throws IOException                   if an I/O exception occurs.
      */
     protected AudioInputStream getAudioInputStream(InputStream inputStream, int mediaLength) throws UnsupportedAudioFileException, IOException {
-        AudioFileFormat audioFileFormat = getAudioFileFormat(inputStream, mediaLength);
-        return new AudioInputStream(inputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
+        try {
+            AudioFileFormat audioFileFormat = getAudioFileFormat(inputStream, mediaLength);
+            // TODO super cutting corner, should get data position in above method and set it in props and skip here
+            System.setProperty(WAVE_DATA_NOT_LOAD_KEY, "true");
+            WAVE wave = Chunk.readFrom(inputStream, WAVE.class);
+            return new AudioInputStream(inputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
+        } finally {
+            System.setProperty(WAVE_DATA_NOT_LOAD_KEY, "false");
+        }
     }
 }

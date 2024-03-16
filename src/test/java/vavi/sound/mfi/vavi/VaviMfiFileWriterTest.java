@@ -61,6 +61,7 @@ public class VaviMfiFileWriterTest {
      */
     @Test
     public void test1() throws Exception {
+Debug.println(Level.FINER, "vavi.util.win32.WAVE.data.notLoadData: " + System.getProperty("vavi.util.win32.WAVE.data.notLoadData"));
 
         InputStream in = new BufferedInputStream(VaviMfiFileWriterTest.class.getResourceAsStream("/ooo_m.wav"));
         WAVE wave = WAVE.readFrom(in, WAVE.class);

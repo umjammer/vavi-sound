@@ -12,6 +12,7 @@ import javax.sound.sampled.AudioFormat.Encoding;
 
 import vavi.sound.sampled.adpcm.AdpcmWaveAudioFileReader;
 import vavi.util.ByteUtil;
+import vavi.util.win32.WAVE;
 
 
 /**
@@ -40,10 +41,10 @@ public class ImaWaveAudioFileReader extends AdpcmWaveAudioFileReader {
     }
 
     @Override
-    protected Map<String, Object> toProperties(byte[] b) {
+    protected Map<String, Object> toProperties(WAVE.fmt fmt) {
         Map<String, Object> properties = new HashMap<>();
-        int samplesPerBlock = ByteUtil.readLeShort(b, 38);
-        int blockSize = ByteUtil.readLeShort(b, 32);
+        int samplesPerBlock = ByteUtil.readLeShort(fmt.getExtended());
+        int blockSize = fmt.getBlockSize();
         properties.put("samplesPerBlock", samplesPerBlock);
         properties.put("blockSize", blockSize);
         return properties;

@@ -6,9 +6,11 @@
 
 package vavi.sound.sampled.adpcm.yamaha;
 
+import java.util.Map;
 import javax.sound.sampled.AudioFormat.Encoding;
 
 import vavi.sound.sampled.adpcm.AdpcmWaveAudioFileReader;
+import vavi.util.win32.WAVE.fmt;
 
 
 /**
@@ -29,5 +31,10 @@ public class YamahaWaveAudioFileReader extends AdpcmWaveAudioFileReader {
     @Override
     protected Encoding getEncoding() {
         return YamahaEncoding.YAMAHA;
+    }
+
+    @Override
+    protected Map<String, Object> toProperties(fmt fmt) {
+        return null;
     }
 }
