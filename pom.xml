@@ -23,6 +23,11 @@ TODO
     <url>https://github.com/umjammer/vavi-sound/issues</url>
   </issueManagement>
 
+  <properties>
+    <vavi.test.volume>0.02</vavi.test.volume>
+    <vavi.test.volume.midi>0.2</vavi.test.volume.midi>
+  </properties>
+
   <profiles>
     <profile>
       <id>mac</id>
@@ -56,6 +61,38 @@ TODO
       <properties>
         <dev.null>NUL</dev.null>
       </properties>
+    </profile>
+
+    <profile>
+      <id>local</id>
+      <activation>
+        <file>
+          <exists>${basedir}/local.properties</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.1.0</version>
+            <executions>
+              <execution>
+                <id>read-properties</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>read-project-properties</goal>
+                </goals>
+                <configuration>
+                  <files>
+                    <file>${basedir}/local.properties</file>
+                  </files>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
     <profile>
@@ -123,12 +160,14 @@ TODO
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.2.2</version>
         <configuration>
           <argLine>
             -Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties
             -Dvavi.test.dev.null=${dev.null}
-            -Dvavi.test.volume=0.02
+            -Dvavi.test.volume=${vavi.test.volume}
+            -Dvavi.test.volume.midi=${vavi.test.volume.midi}
+            -Dvavi.test.version=${project.version}
           </argLine>
           <trimStackTrace>false</trimStackTrace>
         </configuration>
@@ -142,7 +181,7 @@ TODO
       <url>https://jitpack.io</url>
     </repository>
     <repository>
-      <id>gitlab-maven</id>
+      <id>gitlab-maven-packages</id>
       <url>https://gitlab.com/api/v4/projects/30804899/packages/maven</url>
     </repository>
   </repositories>
@@ -152,7 +191,7 @@ TODO
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.10.0</version>
+        <version>5.10.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -161,9 +200,9 @@ TODO
 
   <dependencies>
     <dependency>
-      <groupId>com.github.umjammer</groupId>
+      <groupId>com.github.umjammer</groupId> <!-- vavi / com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.9</version>
+      <version>1.1.11</version>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
@@ -177,7 +216,7 @@ TODO
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.github.umjammer</groupId> <!-- com.github.umjammer -->
+      <groupId>com.github.umjammer</groupId> <!-- vavi / com.github.umjammer -->
       <artifactId>vavi-util-codec-sandbox</artifactId>
       <version>1.0.2</version>
     </dependency>
