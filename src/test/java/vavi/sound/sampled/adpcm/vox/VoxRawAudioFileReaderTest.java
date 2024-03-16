@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.adpcm.ms;
+package vavi.sound.sampled.adpcm.vox;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
+import java.util.logging.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -19,7 +20,6 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import vavi.util.Debug;
 import vavix.util.Checksum;
@@ -29,25 +29,24 @@ import static vavi.sound.SoundUtil.volume;
 
 
 /**
- * MsAudioFileReaderTest.
+ * VoxRawAudioFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
-@Disabled
-public class MsAudioFileReaderTest {
+public class VoxRawAudioFileReaderTest {
 
     static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
 
-    String inFile = "/vavi/sound/adpcm/ms/ms_8k_4_mono.wav";
-    String correctFile = "/vavi/sound/adpcm/ms/out_sox.pcm";
+    String inFile = "/vavi/sound/adpcm/vox/out.adpcm";
+    String correctFile = "/vavi/sound/adpcm/vox/out.pcm";
     File outFile;
 
     @BeforeEach
     public void setup() throws IOException {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
-Debug.println("outFile: " + outFile);
+Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
     @Test
@@ -67,7 +66,7 @@ Debug.println("outFile: " + outFile);
 System.err.println(outFormat);
 
         AudioFormat inFormat = new AudioFormat(
-            MsEncoding.MS,
+            VoxEncoding.VOX,
             sampleRate,
             16,
             1,

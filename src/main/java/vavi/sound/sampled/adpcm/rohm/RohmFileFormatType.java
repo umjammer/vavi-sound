@@ -18,9 +18,9 @@ import javax.sound.sampled.AudioFileFormat;
 public class RohmFileFormatType extends AudioFileFormat.Type {
 
     /**
-     * Specifies an Rohm file.
+     * Specifies a Rohm file.
      */
-    public static final AudioFileFormat.Type ROHM = new RohmFileFormatType("ROHM", "wav");
+    public static final AudioFileFormat.Type ROHM = new RohmFileFormatType("ROHM", "adpcm");
 
     /**
      * Constructs a file type.

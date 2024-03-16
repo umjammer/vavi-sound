@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.adpcm.rhom;
+package vavi.sound.sampled.adpcm.ms;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
-import java.util.logging.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -20,8 +19,8 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import vavi.sound.sampled.adpcm.rohm.RohmEncoding;
 import vavi.util.Debug;
 import vavix.util.Checksum;
 
@@ -30,24 +29,24 @@ import static vavi.sound.SoundUtil.volume;
 
 
 /**
- * RohmAudioFileReaderTest.
+ * MsWaveAudioFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
-public class RohmAudioFileReaderTest {
+public class MsWaveAudioFileReaderTest {
 
     static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
 
-    String inFile = "/vavi/sound/adpcm/rohm/out.adpcm";
-    String correctFile = "/vavi/sound/adpcm/rohm/out.pcm";
+    String inFile = "/vavi/sound/adpcm/ms/ms_8k_4_mono.wav";
+    String correctFile = "/vavi/sound/adpcm/ms/out_sox.pcm";
     File outFile;
 
     @BeforeEach
     public void setup() throws IOException {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
-Debug.println(Level.FINE, "outFile: " + outFile);
+Debug.println("outFile: " + outFile);
     }
 
     @Test
@@ -66,17 +65,7 @@ Debug.println(Level.FINE, "outFile: " + outFile);
             byteOrder.equals(ByteOrder.BIG_ENDIAN));
 System.err.println(outFormat);
 
-        AudioFormat inFormat = new AudioFormat(
-            RohmEncoding.ROHM,
-            sampleRate,
-            16,
-            1,
-            AudioSystem.NOT_SPECIFIED,
-            sampleRate,
-            false);
-System.err.println(inFormat);
-
-        AudioInputStream iais = new AudioInputStream(getClass().getResourceAsStream(inFile), inFormat, AudioSystem.NOT_SPECIFIED);
+        AudioInputStream iais = AudioSystem.getAudioInputStream(getClass().getResource(inFile));
 System.err.println("in available: " + iais.available() + ", " + iais.getFormat());
         AudioInputStream oais = AudioSystem.getAudioInputStream(outFormat, iais);
 System.err.println("out available: " + oais.available() + ", " + oais.getFormat());
@@ -87,9 +76,9 @@ DataLine.Info info = new DataLine.Info(SourceDataLine.class, outFormat);
 SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
 line.open(outFormat);
 line.start();
+volume(line, volume);
         byte[] buf = new byte[1024];
         int l;
-        volume(line, volume);
 
         while (oais.available() > 0) {
             l = oais.read(buf, 0, 1024);

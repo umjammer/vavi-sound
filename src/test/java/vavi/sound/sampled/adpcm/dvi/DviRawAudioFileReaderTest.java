@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.adpcm.vox;
+package vavi.sound.sampled.adpcm.dvi;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
-import java.util.logging.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -29,24 +28,24 @@ import static vavi.sound.SoundUtil.volume;
 
 
 /**
- * VoxAudioFileReaderTest.
+ * DviRawAudioFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
-public class VoxAudioFileReaderTest {
+public class DviRawAudioFileReaderTest {
 
     static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
 
-    String inFile = "/vavi/sound/adpcm/vox/out.adpcm";
-    String correctFile = "/vavi/sound/adpcm/vox/out.pcm";
+    String inFile = "/vavi/sound/adpcm/dvi/out.adpcm";
+    String correctFile = "/vavi/sound/adpcm/dvi/out.pcm";
     File outFile;
 
     @BeforeEach
     public void setup() throws IOException {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
-Debug.println(Level.FINE, "outFile: " + outFile);
+Debug.println("outFile: " + outFile);
     }
 
     @Test
@@ -66,7 +65,7 @@ Debug.println(Level.FINE, "outFile: " + outFile);
 System.err.println(outFormat);
 
         AudioFormat inFormat = new AudioFormat(
-            VoxEncoding.VOX,
+            DviEncoding.DVI,
             sampleRate,
             16,
             1,

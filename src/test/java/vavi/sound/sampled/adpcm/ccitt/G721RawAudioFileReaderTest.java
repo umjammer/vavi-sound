@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2020 by Naohide Sano, All rights reserved.
+ * Copyright (c) 2006 by Naohide Sano, All rights reserved.
  *
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.adpcm.oki;
+package vavi.sound.sampled.adpcm.ccitt;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -29,17 +29,17 @@ import static vavi.sound.SoundUtil.volume;
 
 
 /**
- * OkiAudioFileReaderTest.
+ * G721RawAudioFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
- * @version 0.00 201020 nsano initial version <br>
+ * @version 0.00 060120 nsano initial version <br>
  */
-public class OkiAudioFileReaderTest {
+public class G721RawAudioFileReaderTest {
 
     static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
 
-    String inFile = "/vavi/sound/adpcm/oki/out.adpcm";
-    String correctFile = "/vavi/sound/adpcm/oki/out.pcm";
+    String inFile = "/vavi/sound/adpcm/ccitt/out.4.adpcm";
+    String correctFile = "/vavi/sound/adpcm/ccitt/out.4.pcm";
     File outFile;
 
     @BeforeEach
@@ -66,7 +66,7 @@ Debug.println(Level.FINE, "outFile: " + outFile);
 System.err.println(outFormat);
 
         AudioFormat inFormat = new AudioFormat(
-            OkiEncoding.OKI,
+            CcittEncoding.G721,
             sampleRate,
             16,
             1,

@@ -18,9 +18,9 @@ import javax.sound.sampled.AudioFileFormat;
 public class YamahaFileFormatType extends AudioFileFormat.Type {
 
     /**
-     * Specifies an Yamaha file.
+     * Specifies a Yamaha file.
      */
-    public static final AudioFileFormat.Type YAMAHA = new YamahaFileFormatType("YAMAHA", "wav");
+    public static final AudioFileFormat.Type YAMAHA = new YamahaFileFormatType("YAMAHA", "adpcm");
 
     /**
      * Constructs a file type.

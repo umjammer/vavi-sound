@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.adpcm.ma;
+package vavi.sound.sampled.adpcm.yamaha;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -28,17 +28,17 @@ import static vavi.sound.SoundUtil.volume;
 
 
 /**
- * MaAudioFileReaderTest.
+ * YamahaRawAudioFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
-public class MaAudioFileReaderTest {
+public class YamahaRawAudioFileReaderTest {
 
     static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
 
-    String inFile = "/vavi/sound/adpcm/ma/out.adpcm";
-    String correctFile = "/vavi/sound/adpcm/ma/out.pcm";
+    String inFile = "/vavi/sound/adpcm/ym2608/out.adpcm";
+    String correctFile = "/vavi/sound/adpcm/ym2608/out.pcm";
     File outFile;
 
     @BeforeEach
@@ -65,7 +65,7 @@ Debug.println("outFile: " + outFile);
 System.err.println(outFormat);
 
         AudioFormat inFormat = new AudioFormat(
-            MaEncoding.MA,
+            YamahaEncoding.YAMAHA,
             sampleRate,
             16,
             1,

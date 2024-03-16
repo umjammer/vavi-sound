@@ -8,9 +8,9 @@
 
 vavi.sound.sampled.adpcm.ccitt.G721FormatConversionProvider
 vavi.sound.sampled.adpcm.dvi.DviFormatConversionProvider
-#vavi.sound.sampled.adpcm.ima.ImaFormatConversionProvider
+vavi.sound.sampled.adpcm.ima.ImaFormatConversionProvider
 vavi.sound.sampled.adpcm.ma.MaFormatConversionProvider
-#vavi.sound.sampled.adpcm.ms.MsFormatConversionProvider
+vavi.sound.sampled.adpcm.ms.MsFormatConversionProvider
 vavi.sound.sampled.adpcm.oki.OkiFormatConversionProvider
 vavi.sound.sampled.adpcm.rohm.RohmFormatConversionProvider
 vavi.sound.sampled.adpcm.vox.VoxFormatConversionProvider

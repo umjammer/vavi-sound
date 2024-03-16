@@ -20,7 +20,7 @@ public class VoxFileFormatType extends AudioFileFormat.Type {
     /**
      * Specifies an VOX file.
      */
-    public static final AudioFileFormat.Type VOX = new VoxFileFormatType("VOX", "wav");
+    public static final AudioFileFormat.Type VOX = new VoxFileFormatType("VOX", "adpcm");
 
     /**
      * Constructs a file type.

@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.adpcm.ima;
+package vavi.sound.sampled.adpcm.ma;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -19,7 +19,6 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import vavi.util.Debug;
 import vavix.util.Checksum;
@@ -29,18 +28,17 @@ import static vavi.sound.SoundUtil.volume;
 
 
 /**
- * ImaAudioFileReaderTest.
+ * MaRawAudioFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
-@Disabled
-public class ImaAudioFileReaderTest {
+public class MaRawAudioFileReaderTest {
 
     static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
 
-    String inFile = "/vavi/sound/adpcm/ima/ima_8k_4_mono.wav";
-    String correctFile = "/vavi/sound/adpcm/ima/linear_8k_16_mono.pcm";
+    String inFile = "/vavi/sound/adpcm/ma/out.adpcm";
+    String correctFile = "/vavi/sound/adpcm/ma/out.pcm";
     File outFile;
 
     @BeforeEach
@@ -67,7 +65,7 @@ Debug.println("outFile: " + outFile);
 System.err.println(outFormat);
 
         AudioFormat inFormat = new AudioFormat(
-            ImaEncoding.IMA,
+            MaEncoding.MA,
             sampleRate,
             16,
             1,

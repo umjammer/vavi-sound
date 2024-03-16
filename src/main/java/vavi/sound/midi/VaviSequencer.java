@@ -9,6 +9,7 @@ package vavi.sound.midi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 
 import javax.sound.midi.ControllerEventListener;
@@ -33,7 +34,23 @@ import vavi.util.Debug;
  */
 class VaviSequencer implements Sequencer {
 
-    private static final String version = "1.0.10";
+    static {
+        try {
+            try (InputStream is = VaviSequencer.class.getResourceAsStream("/META-INF/maven/vavi/vavi-sound/pom.properties")) {
+                if (is != null) {
+                    Properties props = new Properties();
+                    props.load(is);
+                    version = props.getProperty("version", "undefined in pom.properties");
+                } else {
+                    version = System.getProperty("vavi.test.version", "undefined");
+                }
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static final String version;
 
     /** the device information */
     protected static final MidiDevice.Info info =
