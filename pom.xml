@@ -8,7 +8,7 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-sound</artifactId>
-  <version>1.0.16</version>
+  <version>1.0.17</version>
 
   <name>Vavi Sound API</name>
   <url>https://github.com/umjammer/vavi-sound</url>
