@@ -48,5 +48,3 @@ Debug.println(mds);
         assertTrue(mds instanceof vavi.sound.mfi.vavi.sharp.SharpSequencer);
     }
 }
-
-/* */

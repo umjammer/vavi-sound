@@ -63,5 +63,3 @@ public interface AudioDataSequencer {
         }
     }
 }
-
-/* */

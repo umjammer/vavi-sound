@@ -23,7 +23,7 @@ import vavi.util.StringUtil;
  */
 public class Function132 extends Function131 {
 
-    /** このデータのヘッダ分長さ */
+    /** header length of this data */
     @SuppressWarnings("hiding")
     public static final int HEADER_LENGTH = 14;
 
@@ -89,15 +89,15 @@ Debug.printf(Level.FINE, "sampling: %02x: rate=%d, bits=%d\n", data[8] & 0x3f, s
     protected int length;
 
     /**
-     * @param length 一番最初のチャンクに後続全てを足した長さ、それ以外は 0 を指定してください。
+     * @param length specify the length of the first chunk plus all subsequent chunks, and 0 for other chunks.
      */
     public void setLength(int length) {
         this.length = length;
     }
 
     /**
-     * 事前に {@link #setAdpcm(byte[])}, {@link #setSamplingRate(int)},
-     * {@link #setSamplingBits(int)} を用いてフィールドを設定しておいて下さい。
+     * set fields using {@link #setAdpcm(byte[])}, {@link #setSamplingRate(int)},
+     * {@link #setSamplingBits(int)} in advance.
      */
     @Override
     public byte[] getMessage() throws InvalidMfiDataException {
@@ -128,5 +128,3 @@ Debug.printf(Level.FINE, "sampling: %02x: rate=%d, bits=%d\n", data[8] & 0x3f, s
         return tmp;
     }
 }
-
-/* */

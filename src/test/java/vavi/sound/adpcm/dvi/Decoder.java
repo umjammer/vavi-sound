@@ -32,7 +32,7 @@ public class Decoder {
     }
 
     /**
-     * big-endian 出力
+     * big-endian output
      */
     static void b(String[] args) throws IOException {
 
@@ -56,7 +56,7 @@ public class Decoder {
     }
 
     /**
-     * little-endian 出力
+     * little-endian output
      */
     static void a(String[] args) throws IOException {
 
@@ -79,5 +79,3 @@ public class Decoder {
         is.close();
     }
 }
-
-/* */

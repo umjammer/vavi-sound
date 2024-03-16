@@ -6,4 +6,10 @@
 # 0.00 111016 nsano initial version
 #
 
-#vavi.sound.sampled.ccitt.G721AudioFileReader
+#vavi.sound.sampled.ccitt.G721RawAudioFileReader
+vavi.sound.sampled.adpcm.ccitt.G721WaveAudioFileReader
+vavi.sound.sampled.adpcm.ima.ImaWaveAudioFileReader
+vavi.sound.sampled.adpcm.ms.MsWaveAudioFileReader
+vavi.sound.sampled.adpcm.oki.OkiWaveAudioFileReader
+vavi.sound.sampled.adpcm.vox.VoxWaveAudioFileReader
+vavi.sound.sampled.adpcm.yamaha.YamahaWaveAudioFileReader

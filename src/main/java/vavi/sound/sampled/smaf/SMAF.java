@@ -50,5 +50,3 @@ public class SMAF extends Type {
         return properties.get(key);
     }
 }
-
-/* */

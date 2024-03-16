@@ -33,20 +33,20 @@ public class MidiUtilTest {
     /**
      * Tests {@link MidiUtil#readVariableLength(java.io.DataInput)}.
      * <pre>
-     *  実際の数値 | 可変長での表現
-     * ------------+-------------
-     *  00000000   | 00
-     *  00000040   | 40
-     *  0000007F   | 7F
-     *  00000080   | 81 00
-     *  00002000   | C0 00
-     *  00003FFF   | FF 7F
-     *  00004000   | 81 80 00
-     *  00100000   | C0 80 00
-     *  001FFFFF   | FF FF 7F
-     *  00200000   | 81 80 80 00
-     *  08000000   | C0 80 80 00
-     *  0FFFFFFF   | FF FF FF 7F
+     *  actual number | variable length expression
+     * ---------------+----------------------------
+     *  00000000      | 00
+     *  00000040      | 40
+     *  0000007F      | 7F
+     *  00000080      | 81 00
+     *  00002000      | C0 00
+     *  00003FFF      | FF 7F
+     *  00004000      | 81 80 00
+     *  00100000      | C0 80 00
+     *  001FFFFF      | FF FF 7F
+     *  00200000      | 81 80 80 00
+     *  08000000      | C0 80 80 00
+     *  0FFFFFFF      | FF FF FF 7F
      * </pre>
      */
     @Test
@@ -102,12 +102,10 @@ Debug.println(Level.FINE, "sequencer: " + sequencer);
     /**
      * {@link MidiUtil#readVariableLength(java.io.DataInput)}
      */
-    private int wr(int v) throws Exception {
+    private static int wr(int v) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MidiUtil.writeVarInt(new DataOutputStream(baos), v);
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         return MidiUtil.readVariableLength(new DataInputStream(bais));
     }
 }
-
-/* */

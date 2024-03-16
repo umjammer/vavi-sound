@@ -15,7 +15,7 @@ import vavi.sound.mfi.MfiMessage;
 /**
  * temporary store.
  * <p>
- * TODO 何とかして撲滅したい -> ThreadLocal ?
+ * TODO I want to remove this class somehow -> ThreadLocal?
  * </p>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -33,7 +33,7 @@ public class MfiMessageStore {
     }
 
     /**
-     * @return {@link javax.sound.midi.MetaMessage} で使用される id
+     * @return id used by {@link javax.sound.midi.MetaMessage}
      */
     public static /* synchronized */ int put(MfiMessage message) {
         try {
@@ -49,5 +49,3 @@ public class MfiMessageStore {
         return stores.get(id);
     }
 }
-
-/* */

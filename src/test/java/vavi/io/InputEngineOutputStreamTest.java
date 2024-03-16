@@ -77,5 +77,3 @@ class InputEngineOutputStreamTest {
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(inFile)), Checksum.getChecksum(new File(out2File)));
     }
 }
-
-/* */

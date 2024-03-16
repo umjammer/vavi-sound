@@ -22,7 +22,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * PanpotMessage.
  * <pre>
- *  0xff, 0xe# 音源制御情報
+ *  0xff, 0xe# Sound Source Control Information
  *  channel true
  *  delta   true
  * </pre>
@@ -109,13 +109,13 @@ public class PanpotMessage extends vavi.sound.mfi.ShortMessage
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 channel,
-                                10,    // パンポット MSB
+                                10,    // pan pot MSB
                                 getPanpot() * 2);
         events[0] = new MidiEvent(shortMessage, context.getCurrent());
 //      shortMessage = new ShortMessage();
 //      shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
 //                              channel,
-//                              42,    // パンポット LSB
+//                              42,    // pan pot LSB
 //                              0);
 //      events[1] = new MidiEvent(shortMessage, context.getCurrent());
         return events;
@@ -144,5 +144,3 @@ public class PanpotMessage extends vavi.sound.mfi.ShortMessage
         };
     }
 }
-
-/* */

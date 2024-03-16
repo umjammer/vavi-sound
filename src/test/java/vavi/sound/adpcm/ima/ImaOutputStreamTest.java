@@ -117,7 +117,7 @@ Debug.println(Level.FINE, "outFile: " + outFile.length());
     }
 
     /**
-     * TODO input engine と output engine の結合がうまくいかない
+     * TODO The combination of input engine and output engine does not work properly.
      */
     @Test
     @Disabled
@@ -265,5 +265,3 @@ Debug.println(Level.FINE, "outFile: " + new File(outFile).length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(new File(outFile)));
     }
 }
-
-/* */

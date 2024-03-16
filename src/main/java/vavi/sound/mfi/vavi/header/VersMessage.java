@@ -13,7 +13,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * バージョン情報 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for version information.
  *
  * <pre>
  *  &quot;vers&quot; 4 bytes: mld version
@@ -74,5 +74,3 @@ public class VersMessage extends SubMessage {
                ": " + getVersion();
     }
 }
-
-/* */

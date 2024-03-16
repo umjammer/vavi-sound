@@ -66,5 +66,3 @@ Debug.println(Level.FINE, "messages: " + imageDataChunks.size());
     public void writeTo(OutputStream os) throws IOException {
     }
 }
-
-/* */

@@ -15,7 +15,7 @@ import vavi.sound.smaf.SmafMessage;
 /**
  * temporary store.
  * <p>
- * TODO 何とかして撲滅したい -> ThreadLocal ?
+ * TODO to remove this class somehow -> ThreadLocal?
  * </p>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -33,7 +33,7 @@ public class SmafMessageStore {
     }
 
     /**
-     * @return {@link javax.sound.midi.MetaMessage} で使用される id
+     * @return id used in {@link javax.sound.midi.MetaMessage}
      */
     public static /* synchronized */ int put(SmafMessage message) {
         try {
@@ -49,5 +49,3 @@ public class SmafMessageStore {
         return stores.get(id);
     }
 }
-
-/* */

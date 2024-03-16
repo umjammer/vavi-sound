@@ -23,7 +23,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public class FilterChain {
 
     /** */
-    private List<InputFilter> inputFilters = new ArrayList<>();
+    private final List<InputFilter> inputFilters = new ArrayList<>();
 
     /** */
     public AudioInputStream doFilter(AudioInputStream audioInputStream) throws IOException, UnsupportedAudioFileException {
@@ -37,5 +37,3 @@ public class FilterChain {
         // TODO implement
     }
 }
-
-/* */

@@ -25,7 +25,7 @@ import vavi.util.StringUtil;
  */
 public class Function240_2 implements MachineDependentFunction {
 
-    /** このデータのヘッダ分長さ */
+    /** header length of this data */
     private static final int HEADER_LENGTH = 10;
 
     /**
@@ -121,5 +121,3 @@ Debug.println(Level.FINE, "adpcm length: " + adpcm.length);
         return tmp;
     }
 }
-
-/* */

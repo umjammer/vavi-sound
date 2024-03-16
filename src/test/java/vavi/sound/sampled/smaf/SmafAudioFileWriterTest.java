@@ -106,5 +106,3 @@ public class SmafAudioFileWriterTest {
         ais.close();
     }
 }
-
-/* */

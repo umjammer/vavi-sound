@@ -104,7 +104,7 @@ public class AudioPlayMessage extends LongMessage
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // シーケンサー固有メタイベント
+        metaMessage.setMessage(0x7f,    // sequencer specific meta event
                                data,
                                data.length);
 
@@ -122,5 +122,3 @@ public class AudioPlayMessage extends LongMessage
         engine.start(id);
     }
 }
-
-/* */

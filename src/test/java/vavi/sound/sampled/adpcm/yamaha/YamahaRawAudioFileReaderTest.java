@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2006 by Naohide Sano, All rights reserved.
+ * Copyright (c) 2020 by Naohide Sano, All rights reserved.
  *
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.adpcm.ccitt;
+package vavi.sound.sampled.adpcm.yamaha;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
-import java.util.logging.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -29,24 +28,24 @@ import static vavi.sound.SoundUtil.volume;
 
 
 /**
- * G721AudioFileReaderTest.
+ * YamahaRawAudioFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
- * @version 0.00 060120 nsano initial version <br>
+ * @version 0.00 201020 nsano initial version <br>
  */
-public class G721AudioFileReaderTest {
+public class YamahaRawAudioFileReaderTest {
 
     static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
 
-    String inFile = "/vavi/sound/adpcm/ccitt/out.4.adpcm";
-    String correctFile = "/vavi/sound/adpcm/ccitt/out.4.pcm";
+    String inFile = "/vavi/sound/adpcm/ym2608/out.adpcm";
+    String correctFile = "/vavi/sound/adpcm/ym2608/out.pcm";
     File outFile;
 
     @BeforeEach
     public void setup() throws IOException {
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
-Debug.println(Level.FINE, "outFile: " + outFile);
+Debug.println("outFile: " + outFile);
     }
 
     @Test
@@ -66,7 +65,7 @@ Debug.println(Level.FINE, "outFile: " + outFile);
 System.err.println(outFormat);
 
         AudioFormat inFormat = new AudioFormat(
-            CcittEncoding.G721,
+            YamahaEncoding.YAMAHA,
             sampleRate,
             16,
             1,
@@ -103,5 +102,3 @@ line.close();
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }
-
-/* */

@@ -28,20 +28,20 @@ import vavi.util.Debug;
 public class NoteMessage extends SmafMessage
     implements MidiConvertible {
 
-    /** 音階 */
+    /** note */
     private int note;
 
     /** smaf channel */
     private int channel;
 
-    /** 音長 (!= 0) */
+    /** note length (!= 0) */
     private int gateTime;
 
     /** 0 ~ 127 */
     private int velocity;
 
     /**
-     * オクターブ
+     * Octave
      * <pre>
      * 01 Low
      * 00 Mid Low
@@ -101,8 +101,8 @@ public class NoteMessage extends SmafMessage
     }
 
     /**
-     * 音階を取得します．
-     * @return 音階
+     * Gets a note.
+     * @return note
      */
     public int getNote() {
         switch (octave) {
@@ -120,8 +120,8 @@ public class NoteMessage extends SmafMessage
     }
 
     /**
-     * 音階を設定します．
-     * @param note SMAF の音階
+     * Sets a note.
+     * @param note SMAF note
      */
     public void setNote(int note) {
         if (octave != -1) {
@@ -144,32 +144,32 @@ public class NoteMessage extends SmafMessage
     }
 
     /**
-     * ボイスナンバを取得します．
-     * @return ボイスナンバ
+     * Gets voice number.
+     * @return voice number
      */
     public int getChannel() {
         return channel;
     }
 
     /**
-     * ボイスナンバを設定します．
-     * @param channel ボイスナンバ
+     * Sets voice number.
+     * @param channel voce number
      */
     public void setChannel(int channel) {
         this.channel = channel & 0x03;
     }
 
     /**
-     * 音長を取得します．
-     * @return 音長
+     * Gets note length.
+     * @return note length
      */
     public int getGateTime() {
         return gateTime;
     }
 
     /**
-     * 音長を設定します．
-     * @param gateTime 音長
+     * Sets note length.
+     * @param gateTime note length
      */
     public void setGateTime(int gateTime) {
         this.gateTime = gateTime;
@@ -198,13 +198,11 @@ public class NoteMessage extends SmafMessage
             " velocity=" + String.format("%04x", velocity);
     }
 
-    /* */
     @Override
     public byte[] getMessage() {
         return null; // TODO
     }
 
-    /* */
     @Override
     public int getLength() {
         return 0;   // TODO
@@ -248,8 +246,9 @@ if (gateTime == 0) {
     }
 
     /**
-     * TODO Δタイムが、直前の同ボイス、同キーの NoteMessage のゲートタイムより小さい場合は直前の NoteMessage からの継続音とする
-     * TODO 次の音まで余裕があったら伸ばして、無かったら切る？(未実装)
+     * TODO if the Δ time is smaller than the gate time of the previous NoteMessage of the same voice and same key,
+     *      it will be the continuation sound from the previous NoteMessage.
+     * TODO if there is room for the next note, do you extend it, and if there is not, cut it? (unimplemented)
      */
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
@@ -262,7 +261,7 @@ if (gateTime == 0) {
 //Debug.println(midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
 
         if (command == ShortMessage.NOTE_OFF ||
-            // note on で velocity 0 の場合
+            // note on with velocity 0
             (command == ShortMessage.NOTE_ON && data2 == 0)) {
 
             if (!context.isNoteOffEventUsed()) {
@@ -309,7 +308,6 @@ if (length >= 255) {
 if (smafEvents[i] == null) {
  Debug.println(Level.FINE, "[" + i + "]: " + smafEvents[i]);
 }
-
                 if (i == 0) {
                     context.setBeforeTick(track, midiEvent.getTick());
                     break;
@@ -322,5 +320,3 @@ if (smafEvents[i] == null) {
         }
     }
 }
-
-/* */

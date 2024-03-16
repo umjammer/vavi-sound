@@ -25,7 +25,7 @@ import vavi.sound.midi.MidiUtil;
 
 
 /**
- * Copyright 情報 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for copyright information.
  * <pre>
  *  &quot;copy&quot; n bytes: copyright
  *  MIDI {@link MidiConstants.MetaEvent#META_COPYRIGHT META_COPYRIGHT (0x02)}
@@ -97,5 +97,3 @@ public class CopyMessage extends SubMessage implements MidiConvertible, MfiConve
         };
     }
 }
-
-/* */

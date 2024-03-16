@@ -22,7 +22,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * ModulationDepthMessage.
  * <pre>
- *  0xff, 0xe# 音源制御情報
+ *  0xff, 0xe# Sound Source Control Information
  *  channel true
  *  delta   true
  * </pre>
@@ -108,13 +108,13 @@ public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 channel,
-                                1,    // モジュレーション・デプス MSB
+                                1,    // modulation depth MSB
                                 getModulationDepth() * 2);
         events[0] = new MidiEvent(shortMessage, context.getCurrent());
 //      shortMessage = new ShortMessage();
 //      shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
 //                  channel,
-//                  33,    // モジュレーション・デプス LSB
+//                  33,    // modulation depth LSB
 //                  0);
 //      events[1] = new MidiEvent(shortMessage, context.getCurrent());
         return events;
@@ -143,5 +143,3 @@ public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
         };
     }
 }
-
-/* */

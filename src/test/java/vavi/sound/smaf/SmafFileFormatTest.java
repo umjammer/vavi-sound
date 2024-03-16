@@ -39,5 +39,3 @@ public class SmafFileFormatTest {
         SmafSystem.getSmafFileFormat(new BufferedInputStream(Files.newInputStream(Paths.get(args[0]))));
     }
 }
-
-/* */

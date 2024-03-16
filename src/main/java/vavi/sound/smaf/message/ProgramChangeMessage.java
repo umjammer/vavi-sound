@@ -136,5 +136,3 @@ public class ProgramChangeMessage extends vavi.sound.smaf.ShortMessage
         };
     }
 }
-
-/* */

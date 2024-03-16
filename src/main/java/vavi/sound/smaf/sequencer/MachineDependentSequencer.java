@@ -24,5 +24,3 @@ public interface MachineDependentSequencer {
     void sequence()
         throws InvalidSmafDataException;
 }
-
-/* */

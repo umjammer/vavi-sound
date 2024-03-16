@@ -36,5 +36,3 @@ class Ima2PcmAudioInputStream extends AudioInputStream {
         super(new ImaInputStream(in, samplesPerBlock, format.getChannels(), blockSize, ByteOrder.LITTLE_ENDIAN), format, length);
     }
 }
-
-/* */

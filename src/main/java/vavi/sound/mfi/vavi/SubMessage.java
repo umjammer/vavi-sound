@@ -40,11 +40,11 @@ import vavi.util.StringUtil;
  * |00 ff fd|LL LL|7f|XX XX XX XX|DD DD ...
  * +--+--+--+--+--+--+--+--+--+--+--+-
  * </pre>
- * <li>{@link #getLength()} はデータ + 10 ({@link MetaMessage#HEADER_LENGTH meta header} +
- *     {@link #SUB_TYPE_LENGTH type の文字長分}) を返します。
- * <li>TODO {@link MetaMessage} である必要があるのか？ (MIDI っぽくはなってるが)
- * <li>↑ {@link vavi.sound.mfi.Track}[0] の最初に入れるのは {@link MetaMessage} とまとめられる
- * <li>↑ そうすると {@link vavi.sound.mfi.vavi.AudioDataMessage} は {@link MetaMessage} のサブクラスであるべき
+ * <li>{@link #getLength()} returns data + 10 ({@link MetaMessage#HEADER_LENGTH meta header} +
+ *     {@link #SUB_TYPE_LENGTH type's string length}).
+ * <li>TODO does it have to be {@link MetaMessage}? (although it looks like MIDI)
+ * <li>TODO ↑ the first thing to put in {@link vavi.sound.mfi.Track}[0] is summarized as {@link MetaMessage}
+ * <li>TODO ↑ then {@link vavi.sound.mfi.vavi.AudioDataMessage} should be a subclass of {@link MetaMessage}
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030819 nsano out source from {@link VaviMfiFileFormat} <br>
  *          0.10 030825 nsano merge {@link SubMessage} <br>
@@ -61,7 +61,7 @@ public abstract class SubMessage extends MetaMessage {
     /** "port".length */
     protected static final int SUB_TYPE_LENGTH = 4;
 
-    /** シーケンサ固有のメタイベント */
+    /** sequencer specific meta event */
     public static final int META_TYPE = 0x7f;
 
     /**
@@ -115,24 +115,24 @@ public abstract class SubMessage extends MetaMessage {
     }
 
     /**
-     * @return subType 文字列 (ex. "prot")
+     * @return subType string (ex. "prot")
      */
     public String getSubType() {
         return new String(this.data, HEADER_LENGTH, SUB_TYPE_LENGTH);
     }
 
     /**
-     * データ部分のみ。{@link #getSubType() subType} 文字列も含みません。
+     * Data part only. It also does not include the {@link #getSubType() subType} string.
      * @return {@link #getLength()} - 10 ({@link MetaMessage#HEADER_LENGTH meta header} +
-     *         {@link #SUB_TYPE_LENGTH type の文字長分})
+     *         {@link #SUB_TYPE_LENGTH type string length})
      */
     public int getDataLength() {
         return getLength() - (HEADER_LENGTH + SUB_TYPE_LENGTH);
     }
 
     /**
-     * データ部分のみ。{@link #getSubType() subType} 文字列も含みません。
-     * @return コピー
+     * Data part only. It also does not include the {@link #getSubType() subType} string.
+     * @return copied data
      */
     @Override
     public byte[] getData() {
@@ -144,8 +144,8 @@ public abstract class SubMessage extends MetaMessage {
     }
 
     /**
-     * データ部分のみ、長さが変わった場合正しく処理される。
-     * @param data {@link #getSubType() subType} 文字列を含めない
+     * Only the data part will be processed correctly if the length changes.
+     * @param data not included {@link #getSubType() subType} string
      */
     public void setData(byte[] data)
         throws InvalidMfiDataException {
@@ -235,7 +235,7 @@ Debug.println(Level.FINE, subChunk);
 
     //----
 
-    /** {@link SubMessage} のコンストラクタ集 */
+    /** {@link SubMessage} constructors */
     private static Map<String, Constructor<SubMessage>> subChunkConstructors = new HashMap<>();
 
     static {
@@ -275,5 +275,3 @@ Debug.printStackTrace(Level.SEVERE, e);
         }
     }
 }
-
-/* */

@@ -32,5 +32,3 @@ public class MaFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

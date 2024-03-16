@@ -28,8 +28,8 @@ public class G723_16InputStream extends AdpcmInputStream {
     }
 
     /**
-     * {@link vavi.io.BitInputStream} は 2bit little endian 固定
-     * <li>TODO BitInputStream の endian
+     * {@link vavi.io.BitInputStream} is 2bit little endian fixed
+     * <li>TODO endian for BitInputStream
      * <li>TODO PCM encoding
      */
     public G723_16InputStream(InputStream in, ByteOrder byteOrder) {
@@ -38,12 +38,10 @@ public class G723_16InputStream extends AdpcmInputStream {
 //Debug.println(this.in);
     }
 
-    /** ADPCM (4bit) 換算時の長さ */
+    /** ADPCM (4bit) length */
     @Override
     public int available() throws IOException {
 //Debug.println("0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
         return (in.available() * 4) + (rest ? 1 : 0); // TODO check * 4 ???
     }
 }
-
-/* */

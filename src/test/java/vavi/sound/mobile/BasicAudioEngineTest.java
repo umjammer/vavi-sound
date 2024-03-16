@@ -33,7 +33,7 @@ import vavi.util.Debug;
  */
 public class BasicAudioEngineTest {
 
-    static final float volume = (float) Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+    static final float volume = (float) Double.parseDouble(System.getProperty("vavi.test.volume.midi",  "0.2"));
 
     @Test
     public void test() throws Exception {
@@ -168,5 +168,3 @@ Debug.println(meta.getType());
         sequencer.close();
     }
 }
-
-/* */

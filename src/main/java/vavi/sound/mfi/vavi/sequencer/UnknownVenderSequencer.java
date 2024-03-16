@@ -26,5 +26,3 @@ public class UnknownVenderSequencer implements MachineDependentSequencer {
         mdf.process(message);
     }
 }
-
-/* */

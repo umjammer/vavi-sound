@@ -10,7 +10,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * ノートメッセージ長情報 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for note message length information.
  *
  * <pre>
  *  &quot;note&quot; 2 bytes: note length (1 for 4byte)
@@ -59,5 +59,3 @@ public class NoteMessage extends SubMessage {
         return "note: " + getDataLength() + ": " + getNoteLength();
     }
 }
-
-/* */

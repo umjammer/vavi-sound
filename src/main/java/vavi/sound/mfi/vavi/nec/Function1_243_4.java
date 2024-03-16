@@ -16,7 +16,7 @@ import vavi.util.Debug;
 
 /**
  * NEC System exclusive message function 0x01, 0xf3, 0x04 processor.
- * (ストリーム数指定)
+ * (specifying stream count)
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051113 nsano initial version <br>
@@ -76,5 +76,3 @@ Debug.println(Level.FINE, "maxStreamNumber: " + maxStreamNumber);
         return tmp;
     }
 }
-
-/* */

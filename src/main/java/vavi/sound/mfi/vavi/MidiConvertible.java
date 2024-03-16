@@ -23,5 +23,3 @@ public interface MidiConvertible {
     MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException;
 }
-
-/* */

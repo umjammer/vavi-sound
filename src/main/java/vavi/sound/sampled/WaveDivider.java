@@ -24,17 +24,17 @@ import vavi.util.Debug;
  */
 public interface WaveDivider {
 
-    /** 分割された PCM データを表すクラスです。 */
+    /** Represents divided PCM data */
     class Chunk {
-        /** 順番 */
+        /** Sequence number */
         public int sequence;
-        /** サンプリングレート */
+        /** sampling rate */
         public int samplingRate;
-        /** サンプリング bits */
+        /** sampling bits */
         public int bits;
-        /** チャンネル数 */
+        /** channel number */
         public int channels;
-        /** PCM データ */
+        /** PCM dara */
         public byte[] buffer;
         /** */
         Chunk(int sequence, byte[] buffer, int samplingRate, int bits, int channels) {
@@ -49,7 +49,7 @@ public interface WaveDivider {
     /** */
     class Factory {
         public static WaveDivider getWaveDivider(AudioInputStream audioInputStream) throws IOException, UnsupportedAudioFileException {
-            // TODO ちゃんとプロパティとかから選ぶ
+            // TODO use property
             if (audioInputStream.getFormat().getEncoding().equals(Encoding.PCM_SIGNED)) {
                 if (audioInputStream.getFormat().getChannels() == 1) {
                     return new Pcm16BitMonauralWaveDivider(audioInputStream);
@@ -69,11 +69,9 @@ Debug.println(Level.INFO, "unsupported type: " + audioInputStream.getFormat());
     }
 
     /**
-     * WAVE ファイル中の PCM データを分割します。
+     * Divides PCM data in WAVE file.
      * @param seconds time for divide
      * @param event event for each chunks
      */
     void divide(float seconds, Event event) throws IOException;
 }
-
-/* */

@@ -24,12 +24,12 @@ import vavi.util.StringUtil;
  * <pre>
  * "CNTI"
  *
- *  Contents Class ：1 byte (必須)
- *  Contents Type ：1 byte (必須)
- *  Contents Code Type ：1 byte (必須)
- *  Copy Status ：1 byte (必須)
- *  Copy Counts ：1 byte (必須)
- *  Option ：n byte (Option)
+ *  Contents Class ：1 byte (required)
+ *  Contents Type ：1 byte (required)
+ *  Contents Code Type ：1 byte (required)
+ *  Copy Status ：1 byte (required)
+ *  Copy Counts ：1 byte (required)
+ *  Option ：n byte (option)
  * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -100,8 +100,9 @@ Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump
     private int contentsClass;
 
     /**
-     * コンテンツのクラスを表現する。
-     * ※PDA 端末等、将来の多機能端末で同様のデータフォーマットまで流用する場合の区別に用いる。
+     * Represents a class of content.
+     * *Used to differentiate when similar data formats are used in future
+     *  multi-function terminals such as PDA terminals.
      */
     public void setContentsClass(int contentsClass) {
         this.contentsClass = contentsClass;
@@ -112,31 +113,31 @@ Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump
 
     /**
      * <pre>
-     * 0x01 ISO 8859-1 (Latin-1) 英語、フランス語、ドイツ語 イタリア語、スペイン語、ポルトガル語
-     * 0x02 EUC-KR(KS) 韓国語
-     * 0x03 HZ-GB-2312 中国語(簡体字)
-     * 0x04 Big5 中国語(繁体字)
-     * 0x05 KOI8-R ロシア語など
-     * 0x06 TCVN-5773:1993 ベトナム語
-     * 0x07〜0x1F Reserved Reserved
+     * 0x01 ISO 8859-1 (Latin-1) English, French, German Italian, Spanish, Portuguese
+     * 0x02 EUC-KR(KS) Korean
+     * 0x03 HZ-GB-2312 Chinese(Simplified)
+     * 0x04 Big5 Chinese(Traditional)
+     * 0x05 KOI8-R Russian etc.
+     * 0x06 TCVN-5773:1993 Vietnamese
+     * 0x07 ~ 0x1F Reserved Reserved
      * 0x20 UCS-2 Unicode
      * 0x21 UCS-4 Unicode
      * 0x22 UTF-7 Unicode
      * 0x23 UTF-8 Unicode
      * 0x24 UTF-16 Unicode
      * 0x25 UTF-32 Unicode
-     * 0x26〜0xFF Reserved Reserved
+     * 0x26 ~ 0xFF Reserved Reserved
      * </pre>
-     * ただし、Contents Info Chunk のOption においては、どのタイプも 『,(0x2C)』 はOption のデリミタとし
-     * て定義しているため、エスケープキャラクタとしてのバックスラッシュ『\(0x5C)』 と合わせて使用する。
+     * However, for all types of Option in Contents Info Chunk, ",(0x2C)" is defined as the Option delimiter,
+     * so it is used together with backslash "\(0x5C)" as an escape character.
      * <pre>
-     *  表記 機能
-     *  \, “,” を表す
-     *  \\ \を表す
-     *  \ 無視する
+     *  Notation Function
+     *  \,       represents “,”
+     *  \\       represents "\"
+     *  \        ignored
      * </pre>
-     * デリミタを正しく識別出来ないことが想定される文字コードが設定されている場合にはContents Info
-     * Chunk のOption にデータを記述せず、Optional Data Chunk にデータを記述するものとする。
+     * If a character code that is assumed to be unable to correctly identify the delimiter is set,
+     * data shall not be written in Option of Contents Info Chunk, but data shall be written in Optional Data Chunk.
      */
     public void setContentsCodeType(int contentsCodeType) {
         this.contentsCodeType = contentsCodeType;
@@ -146,12 +147,12 @@ Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump
     private int contentsType;
 
     /**
-     * コンテンツのタイプを表現する。
+     * Represents the type of content.
      * <pre>
-     * 0x00〜0x0F, 0x30〜0x33 着信メロディ
-     * 0x10〜0x1F, 0x40〜0x42 カラオケ系
-     * 0x20〜0x2F, 0x50〜0x53 CM 系
-     * 上記以外の未使用値 Reserved
+     * 0x00 ~ 0x0F, 0x30 ~ 0x33 ringtone melody
+     * 0x10 ~ 0x1F, 0x40 ~ 0x42 karaoke type
+     * 0x20 ~ 0x2F, 0x50 ~ 0x53 CM type
+     * unused values other than the above reserved
      * </pre>
      */
     public void setContentsType(int contentsType) {
@@ -162,13 +163,13 @@ Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump
     private int copyCounts;
 
     /**
-     * コピー回数を表現する。
+     * Expresses the number of copies.
      * <pre>
      * Copy Counts Description
-     * 0x00〜0xFE Copy Counts
-     * 0xFF Copy Counts(255 以上)
+     * 0x00 ~ 0xFE Copy Counts
+     * 0xFF Copy Counts(255 or more)
      * </pre>
-     * ※ コピー／移動が発生するたびに１カウント進める。
+     * *increments the count by 1 each time a copy/move occurs.
      */
     public void setCopyCounts(int copyCounts) {
         this.copyCounts = copyCounts;
@@ -178,14 +179,14 @@ Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump
     private int copyStatus;
 
     /**
-     * コンテンツの持つコピー定義を表現する。
+     * Expresses the copy definition of the content.
      * <pre>
-     *         | b7       | b6       | b5       | b4       | b3       | b2       | b1      |  b0
-     * --------+----------+----------+----------+----------+----------+----------+---------+-----
-     * 不可bit | Reserved | Reserved | Reserved | Reserved | Reserved | 編集     | 保存    | 転送
+     *                | b7       | b6       | b5       | b4       | b3       | b2       | b1      |  b0
+     * ---------------+----------+----------+----------+----------+----------+----------+---------+----------
+     * impossible bit | Reserved | Reserved | Reserved | Reserved | Reserved | edit     | save    | transfer
      * </pre>
-     * b0 は転送の可/不可、b1 は保存の可/不可b2 は編集の可/不可を定義する。(0:可 1:不可)
-     * Reserved bit は”1”で埋める。
+     * b0 defines whether it can be transferred, b1 whether it can be saved or not, and b2 whether it can be edited.
+     * (0: Possible 1: Not possible) Reserved bit is filled with “1”.
      */
     public void setCopyStatus(int copyStatus) {
         this.copyStatus = copyStatus;
@@ -210,33 +211,33 @@ Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump
     }
 
     /**
-     * Option (Contents Type 0x00, Contents Class 0x00 ~ 0xFF 用)
+     * Option (Contents Type 0x00, for Contents Class 0x00 ~ 0xFF)
      * <p>
-     * ジャンル名、曲名、アーティスト名、作詞/作曲者名等を格納する。必ずしも表示に使用するものではなく、個
-     * 別データの認識に使用するものである。
-     * データは可変長とし、『タグ (2byte)』+『 : (0x3A)』+『Data』+『 , (0x2C)』で区切って記述する。タグ名を以
-     * 下とする。タグは2byte 固定のバイト列とする。
-     * 『Data』内において『 , (0x2C)』を文字として使用する場合 のエスケープキャラクタを§4.2.3に定義する。
+     * Stores genre name, song title, artist name, lyricist/composer name, etc.
+     * It is not necessarily used for display, but for recognition of individual data.
+     * The data has a variable length and is written separated by "Tag(2byte)" + ":(0x3A)" + "Data" + ",(0x2C)".
+     * The tag name is as follows. The tag is a fixed 2-byte byte string.
+     * The escape character when using ",(0x2C)" as a character in "Data" is defined in §4.2.3.
      * </p>
      * <pre>
-     *  名称           | タグ名 | Hex
-     * ----------------+--------+-----------
-     *  ベンダー名     | VN     | 0x56 0x4E
-     *  キャリア名     | CN     | 0x43 0x4E
-     *  カテゴリー名   | CA     | 0x43 0x41
-     *  曲名           | ST     | 0x53 0x54
-     *  アーティスト名 | AN     | 0x41 0x4E
-     *  作詞           | WW     | 0x57 0x57
-     *  作曲           | SW     | 0x53 0x57
-     *  編曲           | AW     | 0x41 0x57
-     *  Copyright&copy;     | CR     | 0x43 0x52
-     *  管理者団体名   | GR     | 0x47 0x52
-     *  管理情報       | MI     | 0x4D 0x49
-     *  作成日時       | CD     | 0x43 0x44
-     *  更新日時       | UD     | 0x55 0x44
+     *  name               | tag name | Hex
+     * --------------------+----------+-----------
+     *  vendor name        | VN       | 0x56 0x4E
+     *  carrier name       | CN       | 0x43 0x4E
+     *  category name      | CA       | 0x43 0x41
+     *  song title         | ST       | 0x53 0x54
+     *  artist name        | AN       | 0x41 0x4E
+     *  words writer       | WW       | 0x57 0x57
+     *  song writer        | SW       | 0x53 0x57
+     *  arrangement writer | AW       | 0x41 0x57
+     *  copyright&copy;    | CR       | 0x43 0x52
+     *  group name         | GR       | 0x47 0x52
+     *  management info    | MI       | 0x4D 0x49
+     *  creation date      | CD       | 0x43 0x44
+     *  update date        | UD       | 0x55 0x44
      * </pre>
-     * Unicode の追加にあたり、Option 内のデリミタを識別できない文字コードが存在するため
-     * Optional Data Chunk を追加した。
+     * when adding unicode, Optional Data Chunk was added because there are character codes
+     * that cannot identify the delimiter in option.
      */
     public void addSubData(String tag, String data) {
         SubData subDatum;
@@ -249,5 +250,3 @@ Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump
         size += subDatum.getSize();
     }
 }
-
-/* */

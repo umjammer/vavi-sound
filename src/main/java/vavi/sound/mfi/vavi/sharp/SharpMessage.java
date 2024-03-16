@@ -206,13 +206,11 @@ Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length)
         function.setMaxSample(sampleRate);
         // 0x89
         function.setMaxSampleCue(sampleRate);
-        // 0x83 要は 16kHz, 4bit mono の時 = 4, 8kHz, 4bit mono の時に 2
-        function.setMaxParallel(sampleRate * (sampleRate / 8000) * channels); // TODO 適当
-        // 0x8B 要は 16kHz, 4bit mono の時 = 4, 8kHz, 4bit mono の時に 2
-        function.setMaxParallelCue(sampleRate * (sampleRate / 8000) * channels); // TODO 適当
+        // 0x83 Briefly when "16kHz, 4bit mono" is 4, when "8kHz, 4bit mono" is 2
+        function.setMaxParallel(sampleRate * (sampleRate / 8000) * channels); // TODO sloppy
+        // 0x8B Briefly when "16kHz, 4bit mono" is 4, when "8kHz, 4bit mono" is 2
+        function.setMaxParallelCue(sampleRate * (sampleRate / 8000) * channels); // TODO sloppy
         message.setMessage(0x00, function.getMessage());
         return new MfiEvent(message, 0L);
     }
 }
-
-/* */

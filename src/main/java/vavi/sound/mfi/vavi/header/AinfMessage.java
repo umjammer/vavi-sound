@@ -17,7 +17,7 @@ import vavi.util.StringUtil;
 
 
 /**
- * オーディオチャンク情報 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for audio chunk information.
  * <pre>
  *  0: 7 6 543210
  *       ^ ~~~~~~
@@ -159,5 +159,3 @@ public class AinfMessage extends SubMessage {
         return sb.toString();
     }
 }
-
-/* */

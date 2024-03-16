@@ -309,7 +309,7 @@ Debug.println(Level.FINE, "wave r chunk(" + numberOfChunks + "): " + chunkM.leng
     //----
 
     /**
-     * Creates adpcm data message. (original pure stereo, TODO 鳴らん...)
+     * Creates adpcm data message. (original pure stereo, TODO cannot play...)
      * <pre>
      * 0x01 0xf0 0x_7
      * </pre>
@@ -397,5 +397,3 @@ Debug.println(Level.FINER, "thread local sequence: " + sequence.get());
         return events;
     }
 }
-
-/* */

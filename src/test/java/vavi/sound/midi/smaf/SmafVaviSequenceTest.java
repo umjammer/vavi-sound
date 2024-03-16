@@ -62,8 +62,5 @@ public class SmafVaviSequenceTest {
     public static void main(String[] args) throws Exception {
         MidiFileFormat mff = MidiSystem.getMidiFileFormat(new File(args[0]));
 System.err.println(StringUtil.paramString(mff));
-        System.exit(0);
     }
 }
-
-/* */

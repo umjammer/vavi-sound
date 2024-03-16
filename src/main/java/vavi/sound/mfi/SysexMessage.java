@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * System exclusive message.
  * <p>
- * MFi 仕様の"拡張情報"を表します。
+ * Represents MFi specs. "Extended Status Information".
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020703 nsano initial version <br>
@@ -25,5 +25,3 @@ public abstract class SysexMessage extends MfiMessage implements Serializable {
         super(message);
     }
 }
-
-/* */

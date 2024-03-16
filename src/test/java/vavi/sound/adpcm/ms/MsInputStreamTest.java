@@ -79,11 +79,12 @@ Debug.println(Level.FINE, "outFile: " + outFile);
 Debug.println(Level.FINE, "ext size: " + ledis.available());
         int samplesPerBlock = ledis.readShort();
         int nCoefs = ledis.readShort();
+Debug.println(Level.FINE, "nCoefs: " + nCoefs);
         int[][] iCoefs = new int[nCoefs][2];
         for (int i = 0; i < nCoefs; i++) {
             for (int j = 0; j < 2; j++) {
                 iCoefs[i][j] = ledis.readShort();
-Debug.printf(Level.FINE, "iCoef[%d][%d]: %04x: %d\n", i, j, iCoefs[i][j], iCoefs[i][j]);
+Debug.printf(Level.FINE, "iCoef[%d][%d]: %04x: %d\n", i, j, iCoefs[i][j] & 0xffff, iCoefs[i][j] & 0xffff);
             }
         }
         ledis.close();
@@ -119,11 +120,7 @@ Debug.printf(Level.FINE, "samplesPerBlock: %d, numberChannels: %d, blockSize: %d
 DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
 line.open(audioFormat);
-line.addLineListener(ev -> {
-Debug.println(Level.FINE, ev.getType());
- if (LineEvent.Type.STOP == ev.getType()) {
- }
-});
+line.addLineListener(ev -> Debug.println(Level.FINE, ev.getType()));
 line.start();
 volume(line, volume);
 
@@ -146,5 +143,3 @@ line.close();
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }
-
-/* */

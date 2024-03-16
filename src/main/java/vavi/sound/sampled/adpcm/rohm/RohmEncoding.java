@@ -29,5 +29,3 @@ public class RohmEncoding extends AudioFormat.Encoding {
         super(name);
     }
 }
-
-/* */

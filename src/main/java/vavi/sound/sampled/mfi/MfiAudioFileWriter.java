@@ -33,24 +33,23 @@ public class MfiAudioFileWriter extends AudioFileWriter {
         new MFi(null) // TODO null
     };
 
-    /** このオーディオファイルライタがファイル書き込みサポートを提供するファイル型を取得します。 */
     @Override
     public Type[] getAudioFileTypes() {
         return outputTypes;
     }
 
-    /** 指定されたオーディオ入力ストリームからこのオーディオファイルライタが書き込みできるファイル型を取得します。 */
     @Override
     public Type[] getAudioFileTypes(AudioInputStream stream) {
         return getAudioFileTypes(); // TODO check stream
     }
 
     /**
-     * 指定されたファイル形式のオーディオファイルを表すバイトストリームを、指定された外部ファイルへ書き込みます。
+     * {@inheritDoc}
+     *
      * @param fileType must be instance of {@link MFi}
-     * @param out null 出力を指定してください。 win32: "nul", *nix: "/dev/null"
-     * @throws IllegalArgumentException fileType が MFi でない場合スローされます。
-     * @throws NullPointerException fileType に properties が設定されていない場合スローされます。
+     * @param out specify null device. e.g. win32: "nul", *nix: "/dev/null"
+     * @throws IllegalArgumentException when fileType is not MFi
+     * @throws NullPointerException when fileType is not set in properties
      */
     @Override
     public int write(AudioInputStream stream, Type fileType, OutputStream out) throws IOException {
@@ -61,7 +60,7 @@ public class MfiAudioFileWriter extends AudioFileWriter {
             // properties
             boolean divided = (Boolean) ((MFi) fileType).getProperty("mfi.divided");
             if (divided) {
-                // 分割
+                // division
                 String directory = (String) ((MFi) fileType).getProperty("mfi.directory");
                 String base = (String) ((MFi) fileType).getProperty("mfi.base");
                 String model = (String) ((MFi) fileType).getProperty("mfi.model");
@@ -76,7 +75,7 @@ public class MfiAudioFileWriter extends AudioFileWriter {
                 int r = mwvm.create();
                 return r;
             } else {
-                // 単体
+                // single unit
                 String filename = (String) ((MFi) fileType).getProperty("mfi.filename");
                 String model = (String) ((MFi) fileType).getProperty("mfi.model");
                 float time = (Float) ((MFi) fileType).getProperty("mfi.time");
@@ -99,14 +98,13 @@ Debug.printStackTrace(e);
     }
 
     /**
-     * 指定されたファイル型のオーディオファイルを表すバイトのストリームを、指定された出力ストリームへ書き込みます。
+     * {@inheritDoc}
+     *
      * @param fileType must be instance of {@link MFi}
-     * @param out null 出力を指定してください。 win32: "nul", *nix: "/dev/null"
+     * @param out specify null device. e.g. win32: "nul", *nix: "/dev/null"
      */
     @Override
     public int write(AudioInputStream stream, Type fileType, File out) throws IOException {
         return write(stream, fileType, Files.newOutputStream(out.toPath()));
     }
 }
-
-/* */

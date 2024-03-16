@@ -519,5 +519,3 @@ abstract class G711 implements Codec {
         this.encoding = encoding;
     }
 }
-
-/* */

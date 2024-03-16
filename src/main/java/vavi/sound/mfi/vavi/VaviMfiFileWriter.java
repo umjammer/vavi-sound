@@ -56,7 +56,7 @@ public class VaviMfiFileWriter extends MfiFileWriter {
 
     @Override
     public int[] getMfiFileTypes(Sequence sequence) {
-        // sequence を無視しているけど MFi Sequence 一つしか型ないからいい
+        // ignoring sequence, but there's only one type of MFi sequence, so that's fine.
         return types;
     }
 
@@ -72,20 +72,18 @@ public class VaviMfiFileWriter extends MfiFileWriter {
 
     @Override
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
-        // sequence を無視しているけど MFi Sequence 一つしか型ないからいい
+        // ignoring sequence, but there's only one type of MFi sequence, so that's fine.
         return isFileTypeSupported(fileType);
     }
 
     /**
-     * @param in {@link Sequence#getTracks() Sequence#tracks}[0] に
-     *           各種 {@link SubMessage} を設定することで
-     *           ヘッダチャンクの内容を指定することが出来ます。
-     * @return 0: fileType がサポートされていない場合、書き込みデータにエラーがある場合
-     *         else: 書き込んだバイト数
+     * @param in You can specify the contents of the header chunk by setting
+     *           various {@link SubMessage} to {@link Sequence#getTracks() Sequence#tracks}[0].
+     * @return 0: if fileType is not supported, if there is an error in the write data
+     *         else: number of bytes written
      */
     @Override
-    public int write(Sequence in, int fileType, OutputStream out)
-        throws IOException {
+    public int write(Sequence in, int fileType, OutputStream out) throws IOException {
 
         if (!isFileTypeSupported(fileType)) {
 Debug.println(Level.WARNING, "unsupported fileType: " + fileType);
@@ -94,7 +92,7 @@ Debug.println(Level.WARNING, "unsupported fileType: " + fileType);
 
         VaviMfiFileFormat ff = new VaviMfiFileFormat(in);
 
-        // header (最低限必要なものはデフォルトを設定)
+        // header (set the defaults for the minimum requirements)
         try {
             // sorc
             try { ff.getSorc(); }
@@ -111,8 +109,8 @@ Debug.println(Level.WARNING, "unsupported fileType: " + fileType);
             // note length
             ff.setNoteLength(1);
         } catch (InvalidMfiDataException e) {
-            // TODO IOException でいいのか？
-            throw (IOException) new IOException(e);
+            // TODO is IOException ok?
+            throw new IOException(e);
         }
 
         int type = ff.getMajorType();
@@ -186,5 +184,3 @@ Debug.printStackTrace(Level.SEVERE, e);
         }
     }
 }
-
-/* */

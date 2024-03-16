@@ -30,5 +30,3 @@ public final class SoundUtil {
         gainControl.setValue(dB);
     }
 }
-
-/* */

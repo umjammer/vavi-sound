@@ -29,5 +29,3 @@ public class DviEncoding extends AudioFormat.Encoding {
         super(name);
     }
 }
-
-/* */

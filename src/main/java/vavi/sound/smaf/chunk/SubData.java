@@ -40,7 +40,7 @@ class SubData {
         this(buffer, offset, 0); // TODO 0 ?
     }
 
-    /** TODO 文字コードとか */
+    /** TODO about charset */
     SubData(byte[] buffer, int offset, int contentsCodeType) throws IOException {
         this.contentsCodeType = contentsCodeType;
 
@@ -91,7 +91,7 @@ class SubData {
     /** */
     private String tag;
 
-    /** タグ */
+    /** tag */
     public String getTag() {
         return tag;
     }
@@ -114,5 +114,3 @@ class SubData {
         }
     }
 }
-
-/* */

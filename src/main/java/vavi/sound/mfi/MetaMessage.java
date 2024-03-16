@@ -10,7 +10,7 @@ package vavi.sound.mfi;
 /**
  * MetaMessage.
  * <p>
- * 拡張情報に準拠。
+ * Extended Information compliant
  * </p>
  * <pre>
  * this class {@link #data} in [MFi meta]
@@ -50,7 +50,7 @@ public class MetaMessage extends MfiMessage {
 
         tmp[0] = (byte) 0x00; // delta time always 0
         tmp[1] = (byte) 0xff; // normal
-        tmp[2] = (byte) 0xfd; // 拡張情報空番 0xfd を勝手に(TODO) Meta とする
+        tmp[2] = (byte) 0xfd; // use Extended Information vacant number 0xfd as Meta arbitrarily TODO
         tmp[3] = (byte) (((length + 1) / 0x100) & 0xff);
         tmp[4] = (byte) (((length + 1) % 0x100) & 0xff);
         tmp[5] = (byte) type;
@@ -60,7 +60,7 @@ public class MetaMessage extends MfiMessage {
     }
 
     /**
-     * Meta 番号
+     * Meta number
      * <p>
      * {@link javax.sound.midi.MetaMessage} compatible.
      * </p>
@@ -70,11 +70,11 @@ public class MetaMessage extends MfiMessage {
     }
 
     /**
-     * data (ヘッダ、先頭の Meta type は無し)
+     * data (header, without top Meta type)
      * <p>
      * {@link javax.sound.midi.MetaMessage} compatible.
      * </p>
-     * @return コピー
+     * @return copied data
      */
     public byte[] getData() {
         byte[] tmp = new byte[this.length - HEADER_LENGTH];
@@ -82,5 +82,3 @@ public class MetaMessage extends MfiMessage {
         return tmp;
     }
 }
-
-/* */

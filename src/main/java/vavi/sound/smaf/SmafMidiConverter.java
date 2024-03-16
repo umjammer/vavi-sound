@@ -136,7 +136,7 @@ if (!uc.contains(smafMessage.getClass())) {
         return midiSequence;
     }
 
-    /** Note が Control/Program より先に入ることがある */
+    /** Note may be entered before Control/Program */
     @SuppressWarnings("unused")
     private void addSmafMessage(javax.sound.midi.Track midiTrack, MidiEvent midiEvent) {
 //Debug.println("★: " + midiEvent.getMessage());
@@ -167,5 +167,3 @@ Debug.println(Level.INFO, "★★★★★ : " + MidiUtil.paramString(midiEvent.
         throw new UnsupportedOperationException("not implemented yet");
     }
 }
-
-/* */

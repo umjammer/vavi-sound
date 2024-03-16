@@ -22,7 +22,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * PitchBendRangeMessage.
  * <pre>
- *  0xff, 0xe# 音源制御情報
+ *  0xff, 0xe# Sound Source Control Information
  *  channel true
  *  delta   true
  * </pre>
@@ -154,5 +154,3 @@ public class PitchBendRangeMessage extends vavi.sound.mfi.ShortMessage
         };
     }
 }
-
-/* */

@@ -27,11 +27,9 @@ public class Ym2608InputStream extends AdpcmInputStream {
     }
 
     /**
-     * {@link vavi.io.BitInputStream} は 4bit big endian 固定
+     * {@link vavi.io.BitInputStream} is 4bit big endian fixed
      */
     public Ym2608InputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 4, ByteOrder.BIG_ENDIAN);
     }
 }
-
-/* */

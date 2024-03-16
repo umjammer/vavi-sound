@@ -20,7 +20,7 @@ public class CcittFileFormatType extends AudioFileFormat.Type {
     /**
      * Specifies an CCITT file.
      */
-    public static final AudioFileFormat.Type G721 = new CcittFileFormatType("G721", "wav");
+    public static final AudioFileFormat.Type G721 = new CcittFileFormatType("G721", "adpcm");
 
     /**
      * Constructs a file type.
@@ -32,5 +32,3 @@ public class CcittFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

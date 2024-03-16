@@ -25,7 +25,7 @@ import vavi.sound.midi.MidiUtil;
 
 
 /**
- * タイトル情報 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for title information.
  * <pre>
  *  &quot;titl&quot; n byte: mld title, &lt; 16 bytes expected, SJIS encoded
  *  MIDI {@link MidiConstants.MetaEvent#META_NAME META_NAME (0x03)}
@@ -93,7 +93,7 @@ public class TitlMessage extends SubMessage
 
         MetaMessage metaMessage = new MetaMessage();
 
-        metaMessage.setMessage(MetaEvent.META_NAME.number(),    // シーケンス名/トラック名
+        metaMessage.setMessage(MetaEvent.META_NAME.number(),    // sequence name/track name
                                getData(),
                                getDataLength());
 
@@ -115,5 +115,3 @@ public class TitlMessage extends SubMessage
         };
     }
 }
-
-/* */

@@ -36,5 +36,3 @@ class Ms2PcmAudioInputStream extends AudioInputStream {
         super(new MsInputStream(in, samplesPerBlock,  nCoefs, iCoefs, format.getChannels(), blockSize, ByteOrder.LITTLE_ENDIAN), format, length);
     }
 }
-
-/* */

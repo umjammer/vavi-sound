@@ -57,12 +57,10 @@ Debug.println(Level.FINE, "messages: " + messages.size());
 
     /**
      * internal use
-     * Atsq の場合
+     * for Atsq
      */
     @Override
     protected SmafMessage getHandyPhoneStandardMessage(int duration, int data, int gateTime) {
         return new WaveMessage(duration, data, gateTime);
     }
 }
-
-/* */

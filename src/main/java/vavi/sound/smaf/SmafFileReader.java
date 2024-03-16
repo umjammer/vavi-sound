@@ -76,5 +76,3 @@ class SmafFileReader {
         return getSequence(is);
     }
 }
-
-/* */

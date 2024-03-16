@@ -30,12 +30,12 @@ import static vavi.sound.SoundUtil.volume;
 
 
 /**
- * RohmAudioFileReaderTest.
+ * RohmRawAudioFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
-public class RohmAudioFileReaderTest {
+public class RohmRawAudioFileReaderTest {
 
     static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
 
@@ -104,5 +104,3 @@ line.close();
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }
-
-/* */

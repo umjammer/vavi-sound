@@ -12,7 +12,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * 日付情報 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for date information.
  *
  * <pre>
  *  &quot;date&quot; 8 bytes: date created
@@ -49,5 +49,3 @@ public class DateMessage extends SubMessage {
         return "date: " + length + ": " + new String(data);
     }
 }
-
-/* */

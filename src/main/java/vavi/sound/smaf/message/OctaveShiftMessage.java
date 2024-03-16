@@ -31,12 +31,12 @@ public class OctaveShiftMessage extends vavi.sound.smaf.ShortMessage
      * 0x02 +2 Octave
      * 0x03 +3 Octave
      * 0x04 +4 Octave
-     * 0x05〜0x80 Reserved
+     * 0x05 ~ 0x80 Reserved
      * 0x81 -1 Octave
      * 0x82 -2 Octave
      * 0x83 -3 Octave
      * 0x84 -4 Octave
-     * 0x85〜0xff Reserved
+     * 0x85 ~ 0xff Reserved
      * </pre>
      */
     private int octaveShift;
@@ -93,5 +93,3 @@ public class OctaveShiftMessage extends vavi.sound.smaf.ShortMessage
         return null;
     }
 }
-
-/* */

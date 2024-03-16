@@ -10,7 +10,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * 3D 情報 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for 3D information.
  * <pre>
  *  &quot;thrd&quot;  bytes:
  * </pre>
@@ -31,5 +31,3 @@ public class ThrdMessage extends SubMessage {
         super(TYPE, data);
     }
 }
-
-/* */

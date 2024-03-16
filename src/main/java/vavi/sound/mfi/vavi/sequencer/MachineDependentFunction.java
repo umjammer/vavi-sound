@@ -67,5 +67,3 @@ Debug.printStackTrace(Level.WARNING, e);
         }
     }
 }
-
-/* */

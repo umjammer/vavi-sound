@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.adpcm.ms;
+package vavi.sound.sampled.adpcm.dvi;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -19,7 +19,6 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import vavi.util.Debug;
 import vavix.util.Checksum;
@@ -29,18 +28,17 @@ import static vavi.sound.SoundUtil.volume;
 
 
 /**
- * MsAudioFileReaderTest.
+ * DviRawAudioFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
-@Disabled
-public class MsAudioFileReaderTest {
+public class DviRawAudioFileReaderTest {
 
     static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
 
-    String inFile = "/vavi/sound/adpcm/ms/ms_8k_4_mono.wav";
-    String correctFile = "/vavi/sound/adpcm/ms/out_sox.pcm";
+    String inFile = "/vavi/sound/adpcm/dvi/out.adpcm";
+    String correctFile = "/vavi/sound/adpcm/dvi/out.pcm";
     File outFile;
 
     @BeforeEach
@@ -67,7 +65,7 @@ Debug.println("outFile: " + outFile);
 System.err.println(outFormat);
 
         AudioFormat inFormat = new AudioFormat(
-            MsEncoding.MS,
+            DviEncoding.DVI,
             sampleRate,
             16,
             1,
@@ -104,5 +102,3 @@ line.close();
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }
-
-/* */

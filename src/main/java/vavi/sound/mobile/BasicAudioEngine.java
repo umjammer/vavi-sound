@@ -201,5 +201,3 @@ Debug.println(Level.FINE, "Illegal EOF R: " + is.available());
         }
     }
 }
-
-/* */

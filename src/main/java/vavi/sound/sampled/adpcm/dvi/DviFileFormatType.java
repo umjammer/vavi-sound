@@ -20,7 +20,7 @@ public class DviFileFormatType extends AudioFileFormat.Type {
     /**
      * Specifies an DVI file.
      */
-    public static final AudioFileFormat.Type DVI = new DviFileFormatType("DVI", "wav");
+    public static final AudioFileFormat.Type DVI = new DviFileFormatType("DVI", "adpcm");
 
     /**
      * Constructs a file type.
@@ -32,5 +32,3 @@ public class DviFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

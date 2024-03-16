@@ -80,5 +80,3 @@ public class MasterVolumeMessage extends ShortMessage
         };
     }
 }
-
-/* */

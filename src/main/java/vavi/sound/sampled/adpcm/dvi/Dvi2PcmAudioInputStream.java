@@ -34,5 +34,3 @@ class Dvi2PcmAudioInputStream extends AudioInputStream {
         super(new DviInputStream(in, ByteOrder.LITTLE_ENDIAN), format, length);
     }
 }
-
-/* */

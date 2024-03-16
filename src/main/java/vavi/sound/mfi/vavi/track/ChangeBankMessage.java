@@ -18,7 +18,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * ChangeBankMessage.
  * <pre>
- *  0xff, 0xe# 音源制御情報
+ *  0xff, 0xe# Sound Source Control Information
  *  channel    true
  *  delta    ?
  * </pre>
@@ -105,5 +105,3 @@ public class ChangeBankMessage extends ShortMessage
         return null;
     }
 }
-
-/* */

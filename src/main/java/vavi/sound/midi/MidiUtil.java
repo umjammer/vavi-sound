@@ -162,12 +162,12 @@ public final class MidiUtil {
     /** */
     private static String decodingEncoding = "JISAutoDetect";
 
-    /** MIDI データで先頭が 0xff の場合対応 (エンコードされている) */
+    /** compatible with MIDI data starting with 0xff (encoded) */
     public static String getDecodedMessage(byte[] data) {
         return getDecodedMessage(data, decodingEncoding);
     }
 
-    /** MIDI データで先頭が 0xff の場合対応 (エンコードされている) */
+    /** compatible with MIDI data starting with 0xff (encoded) */
     public static String getDecodedMessage(byte[] data, String encoding) {
         int start = 0;
         int length = data.length;
@@ -325,7 +325,7 @@ Debug.println(Level.FINE, "default synthesizer: " + provider.getClass().getName(
     }
 
     /**
-     * com.sun.media.sound.RealTimeSequencer を返したい。
+     * want to return "com.sun.media.sound.RealTimeSequencer".
      */
     public static Sequencer getDefaultSequencer(Class<? extends MidiDeviceProvider> self) {
 
@@ -379,5 +379,3 @@ Debug.printStackTrace(Level.FINE, t);
         }
     }
 }
-
-/* */

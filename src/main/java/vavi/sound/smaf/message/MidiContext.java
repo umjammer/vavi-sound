@@ -6,6 +6,7 @@
 
 package vavi.sound.smaf.message;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -33,17 +34,17 @@ public class MidiContext {
     /** Max MIDI channels */
     public static final int MAX_MIDI_CHANNELS = 16;
 
-    /** チャンネルコンフィギュレーション */
+    /** channel configuration */
     public enum ChannelConfiguration {
-        /** リズム */
+        /** rhythm */
         PERCUSSION,
-        /** その他 */
+        /** others */
         SOUND_SET,
-        /** 未使用 */
+        /** unused */
         UNUSED
     }
 
-    /** channel 9 はデフォルトでリズム */
+    /** channel 9 defaults to rhythm */
     public static final int CHANNEL_DRUM = 9;
 
     /** */
@@ -126,7 +127,7 @@ Debug.println(Level.FINE, "channelStatuses: " + (channelStatuses != null ? chann
         }
     }
 
-    /** 現在のトラック No. */
+    /** current track no. */
     private int smafTrackNumber;
 
     /** */
@@ -139,7 +140,7 @@ Debug.println(Level.FINE, "channelStatuses: " + (channelStatuses != null ? chann
         this.smafTrackNumber = smafTrackNumber;
     }
 
-    /** 現在の ticks, index is smafTrackNumber */
+    /** current ticks, index is smafTrackNumber */
     private long[] currentTicks = new long[4];
 
     /**
@@ -166,22 +167,20 @@ Debug.println(Level.FINE, "channelStatuses: " + (channelStatuses != null ? chann
         this.currentTicks[smafTrackNumber] += ticks;
     }
 
-    /** channel がリズムかどうか, index is pseudo MIDI channel */
+    /** whether channel is for rhythm, index is pseudo MIDI channel */
     private ChannelConfiguration[] drums = new ChannelConfiguration[MAX_MIDI_CHANNELS];
 
     /** index is pseudo MIDI channel */
     private int[] velocities = new int[MAX_MIDI_CHANNELS];
 
     /* init */ {
-        for (int i = 0; i < MAX_MIDI_CHANNELS; i++) {
-            drums[i] = ChannelConfiguration.UNUSED;
-        }
+        Arrays.fill(drums, ChannelConfiguration.UNUSED);
     }
 
     /** */
     private static final int CHANNEL_UNUSED = -1;
 
-    /** DRUM_CHANNEL がリズムでない場合の交換先チャンネル */
+    /** replacement channel if DRUM_CHANNEL is not a rhythm */
     private int drumSwapChannel = CHANNEL_UNUSED;
 
     /**
@@ -206,7 +205,7 @@ Debug.println(Level.FINE, "already swapped: " + midiChannel + ", " + value);
 //Debug.println("temporary: " + midiChannel + ", " + value);
         }
 
-        // DRUM_CHANNEL がリズムでなければ空いてる channel と交換
+        // if DRUM_CHANNEL is not a rhythm, replace it with an empty channel.
         if (midiChannel == CHANNEL_DRUM && drums[CHANNEL_DRUM] == ChannelConfiguration.SOUND_SET && drumSwapChannel == CHANNEL_UNUSED) {
             for (int k = MAX_MIDI_CHANNELS - 1; k >= 0; k--) {
                 if (k != CHANNEL_DRUM && drums[k] == ChannelConfiguration.UNUSED) {
@@ -233,7 +232,7 @@ Debug.println(Level.FINE, "drums: " + midiChannel + "ch, " + value + "\n" + sb1 
 }
     }
 
-    /** channel に割り当てられた program no, index is pseudo MIDI channel */
+    /** program no, index is pseudo MIDI channel assigned to channel */
     private int[] programs = new int[MAX_MIDI_CHANNELS];
 
     /**
@@ -253,7 +252,7 @@ if (smafTrackNumber > 0) {
 
     /**
      * @param smafChannel SMAF channel
-     * @return ドラム置き換え後のチャンネル (real MIDI channel)
+     * @return channel after drum replacement (real MIDI channel)
      */
     public int setProgram(int smafChannel, int program) {
         int midiChannel = getMidiChannel(smafChannel);
@@ -284,7 +283,7 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
 
     /**
      * @param smafChannel SMAF channel
-     * @return ドラム置き換え後のチャンネル (real MIDI channel)
+     * @return channel after drum replacement (real MIDI channel)
      * @see #drums
      */
     public int retrieveChannel(int smafChannel) {
@@ -294,12 +293,12 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
 //Debug.println("used swapped channel: " + midiChannel);
 //        }
 
-        // ドラムのチャンネルがサウンドとして使用されている
+        // drum channel is used as sound
         if (midiChannel == CHANNEL_DRUM && drums[CHANNEL_DRUM] == ChannelConfiguration.SOUND_SET) {
             midiChannel = drumSwapChannel;
         }
 
-        // パーカッション指定はすべて MIDI ドラムチャネルに
+        // all percussion specifications go to MIDI drum channels
         if (drums[midiChannel] == ChannelConfiguration.PERCUSSION) {
             midiChannel = CHANNEL_DRUM;
         }
@@ -360,20 +359,20 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
      *  0x02         | +2 Octave
      *  0x03         | +3 Octave
      *  0x04         | +4 Octave
-     *  0x05 〜 0x80 | Reserved
+     *  0x05  ~  0x80 | Reserved
      *  0x81         | -1 Octave
      *  0x82         | -2 Octave
      *  0x83         | -3 Octave
      *  0x84         | -4 Octave
-     *  0x85 〜 0xFF | Reserved
+     *  0x85  ~  0xFF | Reserved
      * </pre>
      * @see OctaveShiftMessage
      */
     private int[] octaveShifts = new int[MAX_MIDI_CHANNELS];
 
     /**
-     * @param smafChannel
-     * @param octaveShift
+     * @param smafChannel channel
+     * @param octaveShift octave shift
      * @see OctaveShiftMessage
      * @see #octaveShifts
      */
@@ -384,8 +383,8 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
     }
 
     /**
-     * @param smafChannel
-     * @param velocity
+     * @param smafChannel channel
+     * @param velocity velocity
      * @see NoteMessage
      * @see #velocities
      */
@@ -393,11 +392,11 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
         int midiChannel = getMidiChannel(smafChannel);
         velocities[midiChannel] = velocity;
 //Debug.println("velocities[" + mididChannel + "]: " + octaveShift);
-        return velocity; // TODO う〜ん
+        return velocity; // TODO mhh...
     }
 
     /**
-     * @param smafChannel
+     * @param smafChannel channel
      * @see NoteMessage
      * @see #velocities
      */
@@ -409,8 +408,8 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
     //----
 
     /**
-     * index is MA1レジスタ値
-     * TODO どうつかうの？
+     * index is MA1 register value
+     * TODO how to use it?
      * @see "SscMA1_Gl110-j.pdf"
      */
     private static final int[] tempoTable = {
@@ -485,7 +484,7 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
 Debug.println(Level.FINE, "tempoTable: " + tempoTable.length);
     }
 
-    /** テンポの指定がない場合、SSDは 4 分音符 = 120 として扱います */
+    /** if no tempo is specified, SSD will treat it as a quarter note = 120 */
     private static final int tempo = 120;
 
     /** */
@@ -550,5 +549,3 @@ Debug.println(Level.FINE, "no tempo message in track 0");
         return 120;
     }
 }
-
-/* */

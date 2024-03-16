@@ -18,9 +18,9 @@ import javax.sound.sampled.AudioFileFormat;
 public class ImaFileFormatType extends AudioFileFormat.Type {
 
     /**
-     * Specifies an DVI file.
+     * Specifies an IMA file.
      */
-    public static final AudioFileFormat.Type IMA = new ImaFileFormatType("IMA", "wav");
+    public static final AudioFileFormat.Type IMA = new ImaFileFormatType("IMA", "adpcm");
 
     /**
      * Constructs a file type.
@@ -32,5 +32,3 @@ public class ImaFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

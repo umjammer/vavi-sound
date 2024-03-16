@@ -66,10 +66,10 @@ public class MfiConvertibleMessage implements MfiConvertible {
 //      MfiMessage mfiMessage = null;
 
         switch (data1) {
-        case 0:         // バンクセレクト MSB
+        case 0:         // bank select MSB
             bankMSB[channel] = data2;
             break;
-        case 32:        // バンクセレクト LSB
+        case 32:        // bank select LSB
             bankLSB[channel] = data2;
             break;
         case 98:        // NRPN LSB
@@ -84,7 +84,7 @@ public class MfiConvertibleMessage implements MfiConvertible {
         case 101:       // RPN MSB
             rpnMSB[channel] = data2;
             break;
-//      case 6:         // データエントリー MSB
+//      case 6:         // data entry MSB
 //          int rpn = rpnLSB[channel] & | (rpnMSB[channel] << 8);
 //          switch (rpn) {
 //          case RPN_PITCH_BEND_SENSITIVITY:
@@ -103,5 +103,3 @@ public class MfiConvertibleMessage implements MfiConvertible {
         return null;
     }
 }
-
-/* */

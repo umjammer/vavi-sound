@@ -25,7 +25,7 @@ import vavi.util.Debug;
 public class MsInputStream extends FilterInputStream {
 
     /**
-     * バイトオーダーは little endian
+     * byte order little endian
      */
     public MsInputStream(InputStream in,
                          int samplesPerBlock,
@@ -61,9 +61,9 @@ public class MsInputStream extends FilterInputStream {
                                          channels,
                                          blockSize,
                                          samplesPerBlock);
-Debug.println(Level.FINE, "numSamples: " + numSamples);
+Debug.println(Level.FINER, "numSamples: " + numSamples);
         this.available = numSamples * channels * bytesPerSample;
-Debug.println(Level.FINE, "available: " + available);
+Debug.println(Level.FINER, "available: " + available);
     }
 
     /** */
@@ -114,5 +114,3 @@ e.printStackTrace(System.err);
         return i;
     }
 }
-
-/* */

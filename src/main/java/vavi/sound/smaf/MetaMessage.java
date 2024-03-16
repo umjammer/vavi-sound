@@ -20,29 +20,29 @@ FF 7F nn mm
       |  +- manufacturers id
       +---- length
 
-[テンポ]
+[tempo]
       FF 51 03 aa bb cc
 
-[テキスト]
+[text]
       FF 01 ll dd … dd
 
-[著作権表示]
+[copyright]
       FF 02 ll dd … dd
 
-[キュー・ポイント]
+[cue point]
       FF 07 05 53 54 41 52 54 (START)
       FF 07 04 53 54 4F 50 (STOP)
 
-[XF キューポイント]
+[XF cue point]
       FF 7F 04 43 7B 02 rr
 
-[チャンネルステータス指定]
+[specify channel status]
       FF 7F 14 43 02 00 04 dd ... dd
 
-[MA-5 AL チャンネル指定]
+[MA-5 AL specify channel ]
       FF 7F 06 43 02 01 01 cc dd
 
-[MA-5 V 発音チャンネル指定]
+[MA-5 V specify voice channel]
       FF 7F 06 43 02 01 02 cc dd
 
  * </pre>
@@ -84,7 +84,7 @@ public class MetaMessage extends SmafMessage {
     }
 
     /**
-     * Meta 番号
+     * Meta number
      * <p>
      * {@link javax.sound.midi.MetaMessage} compatible.
      * </p>
@@ -98,7 +98,7 @@ public class MetaMessage extends SmafMessage {
      * <p>
      * {@link javax.sound.midi.MetaMessage} nearly compatible.
      * </p>
-     * @return コピー
+     * @return copied data
      */
     public Map<String, Object> getData() {
         return data;
@@ -121,5 +121,3 @@ public class MetaMessage extends SmafMessage {
         return 0;   // TODO
     }
 }
-
-/* */

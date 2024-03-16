@@ -113,5 +113,3 @@ public class ChannelStatus {
         return "channel status:[" + channel + "] type=" + type + ", KCS=" + keyControlStatus + ", LED=" + led + ", vibration=" + vibration;
     }
 }
-
-/* */

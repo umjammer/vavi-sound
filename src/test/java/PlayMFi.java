@@ -79,7 +79,7 @@ System.err.println("META: " + meta.getType());
             sequencer.setSequence(sequence);
             sequencer.addMetaEventListener(mel);
             sequencer.start();
-MidiUtil.volume(synthesizer.getReceiver(), volume);
+MidiUtil.volume(synthesizer.getReceiver(), volume); // TODO noise
             countDownLatch.await();
 System.err.println("END: " + arg);
             sequencer.removeMetaEventListener(mel);
@@ -87,5 +87,3 @@ System.err.println("END: " + arg);
         sequencer.close();
     }
 }
-
-/* */

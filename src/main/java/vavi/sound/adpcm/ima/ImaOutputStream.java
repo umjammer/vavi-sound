@@ -23,7 +23,7 @@ import vavi.io.InputEngineOutputStream;
 public class ImaOutputStream extends FilterOutputStream {
 
     /**
-     * バイトオーダーは little endian
+     * byte order is little endian
      */
     public ImaOutputStream(OutputStream out,
                            int samplesPerBlock,
@@ -51,5 +51,3 @@ public class ImaOutputStream extends FilterOutputStream {
         out.write(b, off, len);
     }
 }
-
-/* */

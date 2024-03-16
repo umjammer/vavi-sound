@@ -41,30 +41,30 @@ import vavi.util.Debug;
  */
 public final class MfiSystem {
 
-    /** アクセスできません。 */
+    /** cannot be access */
     private MfiSystem() {
     }
 
-    /** デフォルトプロバイダからすべてのデバイスを取得します。 */
+    /** Gets all device from the default provider */
     public static MfiDevice.Info[] getMfiDeviceInfo() {
-        return provider.getDeviceInfo(); // TODO プロバイダまわすべき
+        return provider.getDeviceInfo(); // TODO should search all providers
     }
 
-    /** デフォルトプロバイダから指定した情報のデバイスを取得します。 */
+    /** Get device by specified info from the default provider. */
     public static MfiDevice getMfiDevice(MfiDevice.Info info)
         throws MfiUnavailableException {
 
-        return provider.getDevice(info); // TODO プロバイダまわすべき
+        return provider.getDevice(info); // TODO should search all providers
     }
 
     /**
-     * デフォルトプロバイダからシーケンサを取得します。
+     * Get a sequencer from the default provider.
      * <p>
-     * {@link #getSequencer()} で再生する場合は
-     * システムプロパティ <code>javax.sound.midi.Sequencer</code> に <code>"#Real Time Sequencer"</code>
-     * を明示するようにしてください。<code>"Java MIDI(MFi/SMAF) ADPCM Sequencer"</code> が
-     * デフォルトシーケンサになった場合、{@link #getMetaEventListener()}で取得できるリスナー
-     * が重複して登録されてしまいます。
+     * when playing by {@link #getSequencer()},
+     * set system property <code>javax.sound.midi.Sequencer</code> <code>"#Real Time Sequencer"</code>
+     * unless if <code>"Java MIDI(MFi/SMAF) ADPCM Sequencer"</code> become
+     * default sequencer, listeners get by {@link #getMetaEventListener()} are
+     * registered duplicate.
      * </p>
      */
     public static Sequencer getSequencer()
@@ -77,11 +77,11 @@ public final class MfiSystem {
                 return (Sequencer) device;
             }
         }
-        // TODO なければ他のプロバイダを探すべき
+        // TODO should search other providers when not found
         throw new MfiUnavailableException("no sequencer available");
     }
 
-    /** MIDI シーケンサに付加するリスナを取得します。 */
+    /** Gets a listener to add MIDI sequencer. */
     public static javax.sound.midi.MetaEventListener getMetaEventListener()
         throws MfiUnavailableException {
 
@@ -93,11 +93,11 @@ public final class MfiSystem {
             }
         }
 
-        // TODO なければ他のプロバイダを探すべき
+        // TODO should search other providers when not found
         throw new MfiUnavailableException("no MetaEventListener available");
     }
 
-    /** デフォルトプロバイダから MIDI - MFi コンバータを取得します。 */
+    /** Gets a MIDI - MFi converter from the default provider. */
     public static MidiConverter getMidiConverter()
         throws MfiUnavailableException {
 
@@ -108,7 +108,7 @@ public final class MfiSystem {
                 return (MidiConverter) device;
             }
         }
-        // TODO なければ他のプロバイダを探すべき
+        // TODO should search other providers when not found
         throw new MfiUnavailableException("no midiConverter available");
     }
 
@@ -122,19 +122,18 @@ public final class MfiSystem {
     }
 
     /**
-     * MIDI シーケンスを MFi シーケンスに変換します。
+     * Convert a MIDI sequence into a MFi sequence.
      * @param type    midi file type
      * @see MfiFileFormat#type
      */
-    public static Sequence toMfiSequence(javax.sound.midi.Sequence sequence,
-                                         int type)
+    public static Sequence toMfiSequence(javax.sound.midi.Sequence sequence, int type)
         throws InvalidMidiDataException, MfiUnavailableException {
 
         MidiConverter converter = MfiSystem.getMidiConverter();
         return converter.toMfiSequence(sequence, type);
     }
 
-    /** MFi シーケンスを MIDI シーケンスに変換します。 */
+    /** Convert a MFi sequence into a MIDI sequence. */
     public static javax.sound.midi.Sequence toMidiSequence(Sequence sequence)
         throws InvalidMfiDataException, MfiUnavailableException {
 
@@ -143,10 +142,9 @@ public final class MfiSystem {
         return converter.toMidiSequence(sequence);
     }
 
-    /** MFi ファイルフォーマットを取得します。 */
+    /** Gets MFi file format. */
     public static MfiFileFormat getMfiFileFormat(InputStream stream)
-        throws InvalidMfiDataException,
-               IOException {
+        throws InvalidMfiDataException, IOException {
 
 //Debug.println("readers: " + readers.length);
         for (MfiFileReader reader : readers) {
@@ -162,26 +160,20 @@ Debug.println(Level.WARNING, e);
         throw new InvalidMfiDataException("unsupported stream: " + stream);
     }
 
-    /** MFi ファイルフォーマットを取得します。 */
-    public static MfiFileFormat getMfiFileFormat(File file)
-        throws InvalidMfiDataException,
-               IOException {
+    /** Gets MFi file format. */
+    public static MfiFileFormat getMfiFileFormat(File file) throws InvalidMfiDataException, IOException {
 
         return getMfiFileFormat(new BufferedInputStream(Files.newInputStream(file.toPath())));
     }
 
-    /** MFi ファイルフォーマットを取得します。 */
-    public static MfiFileFormat getMfiFileFormat(URL url)
-        throws InvalidMfiDataException,
-               IOException {
+    /** Gets MFi file format. */
+    public static MfiFileFormat getMfiFileFormat(URL url) throws InvalidMfiDataException, IOException {
 
         return getMfiFileFormat(new BufferedInputStream(url.openStream()));
     }
 
-    /** MFi シーケンスを取得します。 */
-    public static Sequence getSequence(InputStream stream)
-        throws InvalidMfiDataException,
-               IOException {
+    /** Gets a MFi sequence. */
+    public static Sequence getSequence(InputStream stream) throws InvalidMfiDataException, IOException {
 
 //Debug.println("readers: " + readers.length);
         for (MfiFileReader reader : readers) {
@@ -198,23 +190,19 @@ Debug.println(Level.FINE, e);
         throw new InvalidMfiDataException("unsupported stream: " + stream);
     }
 
-    /** MFi シーケンスを取得します。 */
-    public static Sequence getSequence(File file)
-        throws InvalidMfiDataException,
-               IOException {
+    /** Gets a MFi sequence. */
+    public static Sequence getSequence(File file) throws InvalidMfiDataException, IOException {
 
         return getSequence(new BufferedInputStream(Files.newInputStream(file.toPath())));
     }
 
-    /** MFi シーケンスを取得します。 */
-    public static Sequence getSequence(URL url)
-        throws InvalidMfiDataException,
-               IOException {
+    /** Gets a MFi sequence. */
+    public static Sequence getSequence(URL url) throws InvalidMfiDataException, IOException {
 
         return getSequence(new BufferedInputStream(url.openStream()));
     }
 
-    /** サポートする MFi ファイルタイプを取得します。 */
+    /** Gets supported MFi file types. */
     public static int[] getMfiFileTypes() {
         List<Integer> types = new ArrayList<>();
         for (MfiFileWriter writer : writers) {
@@ -232,7 +220,7 @@ Debug.println(Level.FINE, e);
         return result;
     }
 
-    /** 指定したシーケンスに対応する MFi ファイルタイプを取得します。 */
+    /** Get a MFi file type by specified sequence. */
     public static int[] getMfiFileTypes(Sequence sequence) {
         List<Integer> types = new ArrayList<>();
         for (MfiFileWriter writer : writers) {
@@ -250,19 +238,18 @@ Debug.println(Level.FINE, e);
         return result;
     }
 
-    /** ファイルタイプがサポートされるかどうかを返します。 */
+    /** Returns if a file type is supported or not. */
     public static boolean isFileTypeSupported(int fileType) {
         return StreamSupport.stream(writers.spliterator(), false).anyMatch(w -> w.isFileTypeSupported(fileType));
     }
 
-    /** ファイルタイプが指定したシーケンスでサポートされるかどうかを返します。 */
+    /** Returns if a file type is supported or not by specified sequence. */
     public static boolean isFileTypeSupported(int fileType, Sequence sequence) {
         return StreamSupport.stream(writers.spliterator(), false).anyMatch(w -> w.isFileTypeSupported(fileType, sequence));
     }
 
-    /** MFi or MIDI で書き出します。 */
-    public static int write(Sequence in, int fileType, OutputStream out)
-        throws IOException {
+    /** write MFi or MIDI */
+    public static int write(Sequence in, int fileType, OutputStream out) throws IOException {
 
         for (MfiFileWriter writer : writers) {
             if (writer.isFileTypeSupported(fileType, in)) {
@@ -273,27 +260,26 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
         return 0;
     }
 
-    /** MFi or MIDI で書き出します。 */
-    public static int write(Sequence in, int fileType, File out)
-        throws IOException {
+    /** write MFi or MIDI */
+    public static int write(Sequence in, int fileType, File out) throws IOException {
 
         return write(in, fileType, new BufferedOutputStream(Files.newOutputStream(out.toPath())));
     }
 
-    //-------------------------------------------------------------------------
+    //----
 
-    /** all プロバイダ */
+    /** all providers */
     private static ServiceLoader<MfiDeviceProvider> providers;
-    /** all リーダ */
+    /** all readers */
     private static ServiceLoader<MfiFileReader> readers;
-    /** all ライタ */
+    /** all writers */
     private static ServiceLoader<MfiFileWriter> writers;
 
-    /** default プロバイダ */
+    /** default provider */
     private static MfiDeviceProvider provider;
 
     /*
-     * default は MfiSystem.properties で指定します。
+     * default is specified by MfiSystem.properties.
      * <li>vavi.sound.mfi.spi.MfiDeviceProvider
      */
     static {
@@ -321,5 +307,3 @@ Debug.println(Level.SEVERE, e);
         }
     }
 }
-
-/* */

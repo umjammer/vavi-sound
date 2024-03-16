@@ -22,7 +22,7 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 /**
  * ChangeVoiceMessage.
  * <pre>
- *  0xff, 0xe# 音源制御情報
+ *  0xff, 0xe# Sound Source Control Information
  *  channel true
  *  delta   ?
  * </pre>
@@ -145,5 +145,3 @@ public class ChangeVoiceMessage extends vavi.sound.mfi.ShortMessage
         };
     }
 }
-
-/* */

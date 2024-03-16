@@ -40,7 +40,7 @@ public abstract class Chunk {
     public Chunk() {
     }
 
-    /** TODO bean でもいいかも */
+    /** TODO bean might be fine */
     protected Chunk(byte[] id, int size) {
 
         this.id = id;
@@ -48,11 +48,11 @@ public abstract class Chunk {
     }
 
     /**
-     * @param dis Chunk Header は読み込み済みであること
+     * @param dis chunk Header must be read
      * @throws IOException
      * @throws InvalidSmafDataException
      * TODO Chunk -> constructor ???
-     * TODO parent を渡したいが為。
+     *      because of passing the parent
      */
     protected abstract void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException;
@@ -62,15 +62,15 @@ public abstract class Chunk {
         return new String(id);
     }
 
-    /** Chunk Header の 8 バイトは含まれていないので注意 */
+    /** note that the 8 bytes of Chunk Header are not included. */
     public int getSize() {
         return size;
     }
 
     /**
-     * 最初でない親の読み込み用(マーク無し)
+     * For reading non-first parent (unmarked)
      * @param is
-     * @return 読み込んだ Chunk オブジェクト
+     * @return Chunk object read
      */
     protected Chunk readFrom(InputStream is)
         throws InvalidSmafDataException, IOException {
@@ -80,8 +80,8 @@ public abstract class Chunk {
 
     /**
      * @param is should support marking
-     * @param parent 親のデータが欲しい時があるので
-     * @return 読み込んだ Chunk オブジェクト
+     * @param parent sometimes I want my parents' data.
+     * @return Chunk object read
      */
     public static Chunk readFrom(InputStream is, Chunk parent)
         throws InvalidSmafDataException, IOException {
@@ -108,7 +108,7 @@ Debug.printf(Level.FINE, "size: 0x%1$08x (%1$d)", size);
         chunk.init(mdis, parent);
 
         if (parent != null) {
-            // 親のループ内での読み込みの場合
+            // for reading inside the parent loop
             if (is instanceof MyDataInputStream) {
                 mdis = (MyDataInputStream) is;
                 mdis.readSize -= 8 + chunk.getSize();
@@ -276,10 +276,11 @@ Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.ge
         int crc = 0xffff;
 
         int count;
+
         /**
-         * 16 ビットの CRC を方法 1 で求めます。
-         * @param c データを与えます。
-         * @return CRC 値を返します。
+         * Determine the 16-bit CRC using method 1.
+         * @param c data
+         * @return CRC value
          */
         public int update(byte[] c) {
             for (byte b : c) {
@@ -306,7 +307,6 @@ Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.ge
             return count;
         }
 }
-
     //----
 
     /**
@@ -376,5 +376,3 @@ Debug.printStackTrace(Level.SEVERE, e);
                 }
             };
 }
-
-/* */

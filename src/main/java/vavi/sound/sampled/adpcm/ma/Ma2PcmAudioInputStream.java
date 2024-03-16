@@ -34,5 +34,3 @@ class Ma2PcmAudioInputStream extends AudioInputStream {
         super(new MaInputStream(in, ByteOrder.LITTLE_ENDIAN), format, length);
     }
 }
-
-/* */

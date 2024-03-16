@@ -79,5 +79,3 @@ Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(data, 64));
         return tmp;
     }
 }
-
-/* */

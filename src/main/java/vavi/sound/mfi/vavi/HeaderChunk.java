@@ -36,15 +36,15 @@ class HeaderChunk {
     /** = ({@link #majorType} + {@link #minorType} + {@link #tracksCount}) */
     public static final int HEADER_LENGTH = 3;
 
-    /** 着信メロディデータ */
+    /** ringtone data */
     public static final int MAJOR_TYPE_RING_TONE = 0x01;
-    /** 音楽データ */
+    /** music data */
     public static final int MAJOR_TYPE_MUSIC = 0x02;
-    /** {@link #majorType} が {@link #MAJOR_TYPE_RING_TONE} の場合、全曲データ */
+    /** when {@link #majorType} is {@link #MAJOR_TYPE_RING_TONE}, all music data */
     public static final int MINOR_TYPE_ALL = 0x01;
-    /** {@link #majorType} が {@link #MAJOR_TYPE_RING_TONE} の場合、部分データ  */
+    /** when {@link #majorType} is {@link #MAJOR_TYPE_RING_TONE}, part of music data */
     public static final int MINOR_TYPE_PART = 0x02;
-    /** {@link #majorType} が {@link #MAJOR_TYPE_MUSIC} の場合、固定  */
+    /** when {@link #majorType} is {@link #MAJOR_TYPE_MUSIC}, fixed */
     public static final int MINOR_TYPE_MUSIC = 0x00;
 
     /** MFi data length ({@link #TYPE} + {@link #mfiDataLength} are excluded) */
@@ -58,10 +58,10 @@ class HeaderChunk {
     /** */
     private int minorType = -1;
 
-    /** 最大 4 やって */
+    /** max 4 */
     private int tracksCount;
 
-    /** ヘッダ・サブチャンク */
+    /** header, sub chunks */
     private Map<String, SubMessage> subChunks = new LinkedHashMap<>();
 
     /** */
@@ -70,8 +70,8 @@ class HeaderChunk {
     /** */
     public interface Support {
         /**
-         * {@link #support} から {@link SubMessage} を取り出します。
-         * {@link SubMessage} は {@link Sequence#getTracks()}[0] の先頭にあるのが仕様
+         * Gets {@link SubMessage} from {@link #support}.
+         * Specs says {@link SubMessage} is located at top of {@link Sequence#getTracks()}[0].
          */
         void init(Map<String, SubMessage> subChunks);
         int getAudioDataLength();
@@ -80,13 +80,13 @@ class HeaderChunk {
     }
 
     /**
-     * 読み込み用
+     * for reading
      */
     private HeaderChunk() {
     }
 
     /**
-     * 書き出し用
+     * for writing
      */
     public HeaderChunk(Support support) {
         this.support = support;
@@ -95,14 +95,14 @@ class HeaderChunk {
     }
 
     /**
-     * MFi データの長さ (type, length は除く)
+     * MFi data length (except type, length)
      */
     public int getMfiDataLength() {
         return mfiDataLength;
     }
 
     /**
-     * Chunk データの長さ (type, length は除く)
+     * Chunk data length (except type, length)
      * <li>TODO -> interface Chunk
      */
     public int getDataLength() {
@@ -147,7 +147,7 @@ class HeaderChunk {
     }
 
     /**
-     * ヘッダサブチャンクの長さを取得します。
+     * Gets header chunk length.
      * <li>TODO scope
      */
     public int getSubChunksLength() {
@@ -169,11 +169,11 @@ class HeaderChunk {
     }
 
     /**
-     * @throws InvalidMfiDataException 最低限の {@link SubMessage}
+     * @throws InvalidMfiDataException throws when minimum {@link SubMessage}s
      *         { {@link VaviMfiFileFormat#setSorc(int) "sorc"},
      *         {@link VaviMfiFileFormat#setTitle(String) "titl"},
      *         {@link VaviMfiFileFormat#setVersion(String) "vers"} }
-     *         が設定されていない場合スローされます
+     *         are not set
      */
     public void writeTo(OutputStream os)
         throws InvalidMfiDataException,
@@ -220,7 +220,7 @@ Debug.println(Level.FINE, "numberTracks: "  + tracksCount);
     }
 
     /**
-     * @throws InvalidMfiDataException 最初の 4 bytes が {@link #TYPE} で無い場合
+     * @throws InvalidMfiDataException first 4 bytes are not {@link #TYPE}
      */
     public static HeaderChunk readFrom(InputStream is)
         throws InvalidMfiDataException,
@@ -268,5 +268,3 @@ Debug.println(Level.FINE, "numberTracks: " + headerChunk.tracksCount);
         return headerChunk;
     }
 }
-
-/* */

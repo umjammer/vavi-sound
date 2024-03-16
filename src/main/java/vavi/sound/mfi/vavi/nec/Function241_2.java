@@ -50,5 +50,3 @@ Debug.println(Level.FINE, "Pitch Bend: " + channel + ", " + data[8]);
 Debug.println(Level.FINEST, StringUtil.getDump(data));
     }
 }
-
-/* */

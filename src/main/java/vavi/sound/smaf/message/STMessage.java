@@ -19,7 +19,7 @@ import vavi.util.Debug;
 
 /**
  * ST Message.
- * TODO MetaMessage じゃだめなの？
+ * TODO isn't MetaMessage enough?
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050412 nsano initial version <br>
@@ -89,5 +89,3 @@ Debug.println(e);
         };
     }
 }
-
-/* */

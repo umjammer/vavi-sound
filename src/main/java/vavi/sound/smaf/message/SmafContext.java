@@ -6,6 +6,7 @@
 
 package vavi.sound.smaf.message;
 
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
@@ -31,7 +32,7 @@ import vavi.util.Debug;
  */
 public class SmafContext implements SmafConvertible {
 
-    /** SMAF のトラック数の最大値 */
+    /** max SMAF track number */
     public static final int MAX_SMAF_TRACKS = 4;
 
     //----
@@ -49,7 +50,7 @@ public class SmafContext implements SmafConvertible {
         this.type = type;
     }
 
-    /** TODO 今のところ sequence#resolution */
+    /** TODO currently sequence#resolution */
     private int timeBase;
 
     /** */
@@ -64,7 +65,7 @@ public class SmafContext implements SmafConvertible {
 
     //----
 
-    /** index は SMAF Track No., 使用されていれば true */
+    /** index is SMAF Track No., true if used */
     private boolean[] trackUsed = new boolean[MAX_SMAF_TRACKS];
 
     /**
@@ -84,7 +85,7 @@ public class SmafContext implements SmafConvertible {
     //----
 
     /**
-     * tick の倍率
+     * tick magnification
      */
     private double scale = 1.0d;
 
@@ -101,13 +102,11 @@ Debug.println(Level.FINE, "scale: " + scale);
 
     //----
 
-    /** 直前の tick, index は SMAF Track No. */
+    /** the previous tick, index is SMAF Track No. */
     private long[] beforeTicks = new long[MAX_SMAF_TRACKS];
 
     /* init */ {
-        for (int i = 0; i < MAX_SMAF_TRACKS; i++) {
-            beforeTicks[i] = 0;
-        }
+        Arrays.fill(beforeTicks, 0);
     }
 
     /**
@@ -131,23 +130,23 @@ Debug.println(Level.FINE, "scale: " + scale);
         this.beforeTicks[smafTrackNumber] += getAdjustedDelta(smafTrackNumber, delta * scale);
     }
 
-    /** @return 補正あり Δタイム */
+    /** @return with correction Δ time */
     public int retrieveAdjustedDelta(int smafTrackNumber, long currentTick) {
         return getAdjustedDelta(smafTrackNumber, (currentTick - beforeTicks[smafTrackNumber]) / scale);
     }
 
     /**
-     * @return 補正なし Δタイム
-     * TODO 何でこれでうまくいくの？
+     * @return no correction Δ time
+     * TODO why does this work?
      */
     private int retrieveDelta(int smafTrackNumber, long currentTick) {
         return (int) Math.round((currentTick - beforeTicks[smafTrackNumber]) / scale);
     }
 
-    /** Math#round() で丸められた誤差 */
+    /** error rounded with Math#round() */
     private double[] roundedSum = new double[MAX_SMAF_TRACKS];
 
-    /** Math#round() で丸められた誤差が整数値より大きくなった場合の補正 */
+    /** correction when the sum of rounding errors with Math#round() is larger than 1 */
     private int getAdjustedDelta(int smafTrackNumber, double floatDelta) {
         int delta = (int) Math.round(floatDelta);
         double rounded = floatDelta - delta;
@@ -167,18 +166,17 @@ Debug.println(Level.FINE, "rounded under -1, minus 1: " + roundedSum[smafTrackNu
     //----
 
     /**
-     * 一つ前の NoteOn からの時間 (currentTick - beforeTicks[track]) に
-     * いくつΔが入るか(整数値、あまり切り捨て)を求め、その個数分挿入する
-     * NopMessage の配列を返します。
+     * Finds how many Δs(integer value, truncating too much) can be included in the time since the previous
+     * NoteOn (currentTick - beforeTicks[track]) and returns an array of NopMessages to be inserted for that number.
      * <pre>
      *     event    index    process
      *   |
      * --+- NoteOn    -2    -> brforeTick
-     * ↑|
+     * ↑ |
      * ｜|
-     * Δ|- NoteOff    -1    -> noteOffEventUsed[-1] = true
+     * Δ |- NoteOff    -1    -> noteOffEventUsed[-1] = true
      * ｜|
-     * ↓|
+     * ↓ |
      * --+-
      *   |
      *  -O- NoteOn    midiEventIndex
@@ -187,7 +185,7 @@ Debug.println(Level.FINE, "rounded under -1, minus 1: " + roundedSum[smafTrackNu
      *   |
      * --+-
      * </pre>
-     * 上記図だと 1 つの NopMessage が挿入される。
+     * in the above figure, one NopMessage is inserted.
      */
     public SmafEvent[] getIntervalSmafEvents() {
 
@@ -222,7 +220,7 @@ Debug.println(Level.WARNING, "not supported message: " + midiMessage);
 // Debug.println("interval: " + interval + ", " + (interval - 256));
 //}
 if (interval < 0) {
- // ありえないはず
+ // it shouldn't be possible
  Debug.println(Level.WARNING, "interval: " + interval);
  interval = 0;
 }
@@ -234,7 +232,7 @@ if (interval < 0) {
         for (int i = 0; i < nopLength; i++) {
             NopMessage smafMessage = new NopMessage(255);
             smafEvents[i] = new SmafEvent(smafMessage, 0L);    // TODO 0l
-            // 255 Δ 分後ろにずらしていく
+            // shift backward by 255 Δ minutes
             incrementBeforeTick(track, 255);
         }
 
@@ -243,9 +241,8 @@ if (interval < 0) {
     }
 
     /**
-     * 前のデータ(MIDI NoteOn)が実行されてからのΔ(時間)を取得します。
-     * 必ず事前に #getIntervalSmafEvents() を実行してΔを 255 以下を
-     * 返すようにしておいて下さい。
+     * Gets the Δ (time) since the previous data (MIDI NoteOn) was executed.
+     * Be sure to execute #getIntervalSmafEvents() in advance to return Δ less than 255.
      */
     public int getDuration() {
 
@@ -260,14 +257,14 @@ if (interval < 0) {
             delta = retrieveAdjustedDelta(retrieveSmafTrack(channel), midiEvent.getTick());
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
             // tempo
-            delta = retrieveAdjustedDelta(smafTrackNumber, midiEvent.getTick()); // TODO smafTrackNumber でいいのか？
+            delta = retrieveAdjustedDelta(smafTrackNumber, midiEvent.getTick()); // TODO is smafTrackNumber ok?
 Debug.println(Level.FINE, "delta for tempo[" + smafTrackNumber + "]: " + delta);
         } else {
 Debug.println(Level.FINE, "no delta defined for: " + midiMessage);
         }
 
 if (delta > 255) {
- // getIntervalSmafEvents で処理されているはずなのでありえない
+ // this is impossible because it should be handled by getIntervalSmafEvents
  Debug.println(Level.WARNING, "Δ: " + delta + ", " + (delta % 256));
 }
         return delta % 256;
@@ -275,13 +272,13 @@ if (delta > 255) {
 
     //----
 
-    /** 補正された SMAF Pitch を取得します。 sound -45, percussion -35 */
+    /** Gets the corrected SMAF Pitch. sound -45, percussion -35 */
     public int retrievePitch(int channel, int pitch) {
         return pitch - 45 + (channel == MidiContext.CHANNEL_DRUM ? 10 : 0);
     }
 
     /**
-     * SMAF Voice No. を取得します。
+     * Gets SMAF Voice No.
      * @param channel MIDI channel
      */
     public int retrieveVoice(int channel) {
@@ -289,7 +286,7 @@ if (delta > 255) {
     }
 
     /**
-     * MIDI Channel を取得します。
+     * Gets MIDI Channel.
      * @param voice SMAF channel
      */
     public int retrieveChannel(int voice) {
@@ -297,7 +294,7 @@ if (delta > 255) {
     }
 
     /**
-     * SMAF Track を取得します。
+     * Gets SMAF Track.
      * @param channel MIDI channel
      */
     public int retrieveSmafTrack(int channel) {
@@ -306,46 +303,46 @@ if (delta > 255) {
 
     //----
 
-    /** 現在の SMAF のトラック No. */
+    /** current SMAF track No. */
     private int smafTrackNumber;
 
-    /** 現在の SMAF トラック No. を設定します。 */
+    /** Sets current SMAF track No. */
     public void setSmafTrackNumber(int smafTrackNumber) {
         this.smafTrackNumber = smafTrackNumber;
     }
 
-    /** 現在の SMAF トラック No. を取得します。 */
+    /** Gets current SMAF strack No. */
     public int getSmafTrackNumber() {
         return smafTrackNumber;
     }
 
-    /** 現在の MIDI トラック */
+    /** current MIDI track */
     private Track midiTrack;
 
-    /** 現在の MIDI トラックを設定します。 */
+    /** Sets current MIDI track. */
     public void setMidiTrack(Track midiTrack) {
         this.midiTrack = midiTrack;
         this.noteOffEventUsed = new BitSet(midiTrack.size());
     }
 
-    /** 現在の MIDI イベントのインデックス値 */
+    /** index value of the current MIDI event */
     private int midiEventIndex;
 
-    /** 現在の MIDI イベントのインデックス値を設定します。 */
+    /** Sets the index value of the current MIDI event. */
     public void setMidiEventIndex(int midiEventIndex) {
         this.midiEventIndex = midiEventIndex;
     }
 
-    /** 現在の MIDI イベントのインデックス値を取得します。 */
+    /** Gets the index value of the current MIDI event. */
     int getMidiEventIndex() {
         return midiEventIndex;
     }
 
     /**
-     * 同じ channel で次の ShortMessage である MIDI イベントを取得します。
+     * Gets the next ShortMessage MIDI event on the same channel.
      *
-     * @throws NoSuchElementException 次の MIDI イベントがない
-     * @throws IllegalStateException 現在のイベントは ShortMessage ではない
+     * @throws NoSuchElementException no next MIDI event
+     * @throws IllegalStateException current event is not a ShortMessage
      */
     public MidiEvent getNextMidiEvent() throws NoSuchElementException {
 
@@ -380,12 +377,12 @@ Debug.println(Level.FINE, "next: " + shortMessage.getChannel() + "ch, " + shortM
     }
 
     /**
-     * 現在選択中の NoteOn イベントと対の NoteOff イベントを取得します。
-     * IllegalStateException はバグトラップのためだけに使用してください。
+     * Gets the currently selected NoteOn event and its counterpart NoteOff event.
+     * Use IllegalStateException only for bug traps.
      * @see vavi.sound.smaf.message.NoteMessage
      *
-     * @throws NoSuchElementException 対の NoteOff イベントがない
-     * @throws IllegalStateException 現在のイベントは ShortMessage ではない
+     * @throws NoSuchElementException no paired NoteOff event
+     * @throws IllegalStateException current event is not a ShortMessage
      */
     public MidiEvent getNoteOffMidiEvent() throws NoSuchElementException {
 
@@ -410,7 +407,7 @@ Debug.println(Level.FINE, "next: " + shortMessage.getChannel() + "ch, " + shortM
                 if (shortMessage.getChannel() == channel &&
                     shortMessage.getData1() == data1) {
 
-                    noteOffEventUsed.set(i);    // 消費フラグ on
+                    noteOffEventUsed.set(i);    // consumption flag on
                     return midiEvent;
                 }
             }
@@ -419,20 +416,20 @@ Debug.println(Level.FINE, "next: " + shortMessage.getChannel() + "ch, " + shortM
         throw new NoSuchElementException(channel + "ch, " + data1);
     }
 
-    /** すでに消費されたかどうか */
+    /** whether it has already been consumed */
     private BitSet noteOffEventUsed;
 
-    /** すでに消費されたかどうかを取得します。 */
+    /** Gets whether it has already been consumed. */
     public boolean isNoteOffEventUsed() {
         return noteOffEventUsed.get(midiEventIndex);
     }
 
-    // SmafConvertible ---------------------------------------------------------
+    // SmafConvertible ----
 
     /** BANK LSB */
-    private int[] bankLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+    private final int[] bankLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
     /** BANK MSB */
-    private int[] bankMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+    private final int[] bankMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
 
     /** */
     public static final int RPN_PITCH_BEND_SENSITIVITY = 0x0000;
@@ -448,14 +445,14 @@ Debug.println(Level.FINE, "next: " + shortMessage.getChannel() + "ch, " + shortM
     public static final int RPN_NULL = 0x7f7f;
 
     /** RPN LSB */
-    private int[] rpnLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+    private final int[] rpnLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
     /** RPN MSB */
-    private int[] rpnMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+    private final int[] rpnMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
 
     /** NRPN LSB */
-    private int[] nrpnLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+    private final int[] nrpnLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
     /** NRPN MSB */
-    private int[] nrpnMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+    private final int[] nrpnMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
 
     /** bank, rpn, nrpn */
     @Override
@@ -469,10 +466,10 @@ Debug.println(Level.FINE, "next: " + shortMessage.getChannel() + "ch, " + shortM
         int data2 = shortMessage.getData2();
 
         switch (data1) {
-        case 0:        // バンクセレクト MSB
+        case 0:     // bank select MSB
             bankMSB[channel] = data2;
             break;
-        case 32:    // バンクセレクト LSB
+        case 32:    // bank select LSB
             bankLSB[channel] = data2;
             break;
         case 98:    // NRPN LSB
@@ -495,5 +492,3 @@ Debug.println(Level.FINE, "next: " + shortMessage.getChannel() + "ch, " + shortM
         return null;
     }
 }
-
-/* */

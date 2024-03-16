@@ -36,5 +36,3 @@ Debug.println(Level.FINE, "MasterTrackSequenceData: " + size + " bytes");
 dis.skipBytes((int) (long) size); // TODO
     }
 }
-
-/* */

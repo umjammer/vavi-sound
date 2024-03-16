@@ -92,5 +92,3 @@ MidiUtil.volume(synthesizer.getReceiver(), volume);
         sequencer.close();
     }
 }
-
-/* */

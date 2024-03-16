@@ -124,5 +124,3 @@ Debug.println(Level.FINE, "message: " + smafMessage);
         }
     }
 }
-
-/* */

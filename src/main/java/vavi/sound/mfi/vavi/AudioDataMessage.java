@@ -49,10 +49,10 @@ import vavi.util.StringUtil;
  *   length     2
  *   data       L
  * </pre>
- * <li>{@link #data} には header, sub chunk 部分は含まれていません。内容は純粋な ADPCM っぽい
- * <li>{@link #length} は AudioData Chunk すべての長さ
- * <li>TODO extends {@link MfiMessage} いるの？ AudioDataChunk じゃないの？
- * <li>TODO このクラスそのまま {@link vavi.sound.mfi.Track} に入れたらよくないのでは？ → extends {@link MetaMessage}？
+ * <li>{@link #data} doesn't contain header, sub chunk part. it seems to be pure ADPCM data.
+ * <li>{@link #length} is total length of AudioData Chunk
+ * <li>TODO "extends {@link MfiMessage}" is needed? that should be AudioDataChunk isn't it?
+ * <li>TODO this class should be merge into {@link vavi.sound.mfi.Track}? → extends {@link MetaMessage}？
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050721 nsano initial version <br>
  * @since MFi 4.0
@@ -63,7 +63,7 @@ public class AudioDataMessage extends MfiMessage
     /** {@value} */
     public static final String TYPE = "adat";
 
-    /** "adat" の index */
+    /** index of "adat" */
     private int audioDataNumber;
 
     /**
@@ -80,10 +80,10 @@ public class AudioDataMessage extends MfiMessage
      * <pre>
      * 76543 2 1 0
      * ~~~~~ ~ ~ ~
-     *     | | | +- 音程変化制御識別子 (0: 音程変化に影響されない, 1: 音程変化に影響される)
-     *     | | +--- テンポ変化制御識別子 (0: テンポ変化に影響されない, 1: テンポ変化に影響される)
-     *     | +----- 3D 識別子 (0: 3D 処理していない, 1: 3D 処理している)
-     *     +------- 予約 (0 固定)
+     *     | | | +- pitch change control identifier (0: not affected by pitch changes, 1: affected by pitch changes)
+     *     | | +--- tempo change control identifier (0: not affected by tempo changes, 1: affected by tempo changes)
+     *     | +----- 3D identifier (0: not 3D processed, 1: 3D 3D processed)
+     *     +------- reserved (0 fixed)
      * </pre>
      */
     private int attribute;
@@ -159,9 +159,9 @@ Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
     }
 
     /**
-     * @after {@link #length} が設定されます、AudioData Chunk すべての長さ
-     * @after {@link #data} が設定されます、ヘッダ部、サブチャンクは含まれない
-     * @throws InvalidMfiDataException is の始まりが {@link #TYPE} で始まっていない場合
+     * @after {@link #length} will be set (total length of AudioData Chunk)
+     * @after {@link #data} will be set, not contains header, sub chunks
+     * @throws InvalidMfiDataException beginning of <code>is</code> is not {@link #TYPE}
      */
     public void readFrom(InputStream is)
         throws InvalidMfiDataException,
@@ -197,7 +197,7 @@ Debug.println(Level.FINE, "audio subchunk length sum: " + l + " / " + (headerLen
 
         // data
         int dataLength = audioDataLength - (headerLength + 1 + 1); // + format + attribute
-        data = new byte[dataLength]; // TODO 全部のデータ含めるべき
+        data = new byte[dataLength]; // TODO while data should be included
         dis.readFully(data, 0, dataLength);
 Debug.println(Level.FINE, "adat length[" + audioDataNumber + "]: " + dataLength + " bytes\n" + StringUtil.getDump(data, 16));
 
@@ -206,8 +206,8 @@ Debug.println(Level.FINE, "adat length[" + audioDataNumber + "]: " + dataLength 
     }
 
     /**
-     * ヘッダ、サブチャンク除く。(純粋な ADPCM)
-     * データインターリーブは行わず L R の順にまとめて格納する
+     * excludes header, sub chunks (pure ADPCM)
+     * data is stored in L R order without interleaving.
      * <li>TODO Chunk interface
      */
     public void setData(byte[] data) {
@@ -228,8 +228,8 @@ Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
     }
 
     /**
-     * ヘッダ、サブチャンク除く。 (純粋な ADPCM)
-     * データインターリーブは行わず L R の順にまとめて格納されている
+     * excludes header, sub chunks (pure ADPCM)
+     * data is stored in L R order without interleaving.
      * <li>TODO Chunk interface
      */
     public byte[] getData() {
@@ -255,7 +255,7 @@ Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // シーケンサー固有メタイベント
+        metaMessage.setMessage(0x7f,    // sequencer specific meta event
                                data,
                                data.length);
 
@@ -279,5 +279,3 @@ Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
         engine.setData(id, -1, samplingRate, samplingBits, channels, data, false);
     }
 }
-
-/* */

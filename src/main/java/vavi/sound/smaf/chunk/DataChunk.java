@@ -49,13 +49,13 @@ Debug.println(Level.FINE, "Data: lang: " + languageCode + ", size: " + size);
         throws InvalidSmafDataException, IOException {
 
 Debug.println(Level.FINER, "available: " + dis.available());
-        while (dis.available() > 4) { // TODO 正常ファイルは 0 でいい
+        while (dis.available() > 4) { // TODO normal files should be 0.
             SubData subDatum = new SubData(dis);
 Debug.println(Level.FINE, subDatum);
             subData.put(subDatum.tag, subDatum);
 Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.length + ", " + dis.available());
         }
-        dis.skipBytes(dis.available()); // TODO 正常ファイルなら必要なし
+        dis.skipBytes(dis.available()); // TODO not necessary if the file is normal
     }
 
     @Override
@@ -112,8 +112,8 @@ Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.len
     }
 
     /**
-     * 記述する文字コードがUnicode の場合、それぞれの文字群先頭にBOM (バイトオーダーマーク) を設定
-     * すること。BOM 無しの場合、ビッグエンディアンとして解釈する。
+     * if the character code to be written is Unicode, set a BOM (byte order mark) at the beginning of
+     * each character group. If there is no BOM, it will be interpreted as big endian.
      */
     boolean isUnicode(int languageCode) {
         return languageCode >= 0x20 && languageCode <= 0x25;
@@ -121,9 +121,9 @@ Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.len
 
     /**
      * <pre>
-     * tag  2byte (固定)
-     * size 2byte (固定)
-     * data n byte (可変)
+     * tag  2byte (fixed)
+     * size 2byte (fixed)
+     * data n byte (variable)
      * </pre>
      */
     class SubData {
@@ -159,7 +159,7 @@ Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.len
             return 2 + 2 + data.length;
         }
 
-        /** タグ */
+        /** tag */
         private String tag;
 
         /** Data */
@@ -191,5 +191,3 @@ Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.len
         }
     }
 }
-
-/* */

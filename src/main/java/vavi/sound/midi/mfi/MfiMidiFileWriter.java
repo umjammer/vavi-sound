@@ -23,7 +23,7 @@ import vavi.util.Debug;
 /**
  * MfiMidiFileWriter implemented by vavi.
  *
- * @caution MidiSystem は使っちゃだめ！
+ * @caution don't use MidiSystem in this class!
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030817 nsano initial version <br>
@@ -43,7 +43,7 @@ Debug.println(Level.FINE, "(2): " + Arrays.toString(MfiSystem.getMfiFileTypes())
         return MfiSystem.getMfiFileTypes();
     }
 
-    /** @param fileType 0x88:MFi (vavi) をサポートします */
+    /** @param fileType supports 0x88:MFi (vavi) */
     @Override
     public boolean isFileTypeSupported(int fileType) {
 Debug.println(Level.FINE, "(1): fileType: " + fileType);
@@ -51,8 +51,8 @@ Debug.println(Level.FINE, "(1): fileType: " + fileType);
     }
 
     /**
-     * @param fileType 0x88:MFi (vavi) をサポートします
-     * TODO sequence を無視している
+     * @param fileType supports 0x88:MFi (vavi)
+     * TODO ignoring sequence
      */
     @Override
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
@@ -63,8 +63,8 @@ Debug.println(Level.FINE, "(2): fileType: " + fileType);
 
     /**
      * @param in MIDI Sequence
-     * @param fileType {@link #isFileTypeSupported(int)},
-     *        {@link #isFileTypeSupported(int, Sequence)} が true のもののみ
+     * @param fileType only {@link #isFileTypeSupported(int)},
+     *        {@link #isFileTypeSupported(int, Sequence)} are true
      */
     @Override
     public int write(Sequence in, int fileType, OutputStream out)
@@ -85,5 +85,3 @@ Debug.println(Level.WARNING, "unknown fileType: " + fileType);
         }
     }
 }
-
-/* */

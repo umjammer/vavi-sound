@@ -7,7 +7,7 @@
 package vavi.sound.mfi;
 
 /**
- * 音符を表すメッセージです．
+ * Represent note message.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano MFi2 compliant <br>
@@ -18,16 +18,16 @@ package vavi.sound.mfi;
  */
 public class NoteMessage extends MfiMessage implements ChannelMessage {
 
-    /** 音階 0 ~ 0x3e */
+    /** note 0 ~ 0x3e */
     private int note;
     /** voice No. 0 ~ 3 */
     private int voice;
-    /** 音長 (delta) */
+    /** length (delta) */
     private int gateTime;
-    /** 音強 0 ~ 63 */
+    /** velocity 0 ~ 63 */
     private int velocity;
     /**
-     * オクターブシフト
+     * Octave shift.
      * <pre>
      * 01 up 1 octave
      * 00 no shift
@@ -64,7 +64,7 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
 
     /**
      * Creates a note message for MFi2.
-     * note = 1 の場合
+     * when note = 1.
      *
      * @param delta delta time
      * @param status see below
@@ -103,8 +103,8 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     }
 
     /**
-     * 音階を取得します．
-     * @return 音階
+     * Gets note.
+     * @return note
      */
     public int getNote() {
         switch (shift) {
@@ -122,8 +122,8 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     }
 
     /**
-     * 音階を設定します．
-     * @param note MFi の音階
+     * Sets note.
+     * @param note MFi note
      */
     public void setNote(int note) {
         if (note >= 0x3f) {
@@ -146,8 +146,8 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     }
 
     /**
-     * ボイスナンバを取得します．
-     * @return ボイスナンバ
+     * Gets voice number.
+     * @return voice number
      */
     @Override
     public int getVoice() {
@@ -155,8 +155,8 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     }
 
     /**
-     * ボイスナンバを設定します．
-     * @param voice ボイスナンバ
+     * Sets voice number.
+     * @param voice voice number
      */
     @Override
     public void setVoice(int voice) {
@@ -165,16 +165,16 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     }
 
     /**
-     * 音長を取得します．
-     * @return 音長
+     * Gets note length.
+     * @return note length
      */
     public int getGateTime() {
         return gateTime;
     }
 
     /**
-     * 音長を設定します．
-     * @param gateTime 音長
+     * Sets note length.
+     * @param gateTime note length
      */
     public void setGateTime(int gateTime) {
         this.gateTime = gateTime;
@@ -182,23 +182,23 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     }
 
     /**
-     * 音強を取得します．
-     * @return 音強
+     * Gets note velocity.
+     * @return note velocity
      */
     public int getVelocity() {
         return velocity;
     }
 
     /**
-     * 音強を設定します．
-     * @param velocity 音強
+     * Sets note velocity.
+     * @param velocity note velocity
      */
     public void setVelocity(int velocity) {
         this.velocity = velocity & 0x3f;
         this.data[3] = (byte) ((this.data[3] & 0x03) | (this.velocity << 2));
     }
 
-    /** */
+    @Override
     public String toString() {
         return "Note:" +
             " delta="    + String.format("%02x", data[0])  +
@@ -208,5 +208,3 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
             " velocity=" + String.format("%02x", velocity);
     }
 }
-
-/* */

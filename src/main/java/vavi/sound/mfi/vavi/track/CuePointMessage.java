@@ -19,7 +19,7 @@ import vavi.sound.midi.MidiConstants.MetaEvent;
 /**
  * CuePointMessage.
  * <pre>
- *  0xff, 0xd# 演奏管理情報
+ *  0xff, 0xd# Play Control Information
  *  channel false
  *  delta   ?
  * </pre>
@@ -70,8 +70,8 @@ public class CuePointMessage extends ShortMessage
     //----
 
     /**
-     * TODO {@link javax.sound.midi.MetaMessage} に 0x07 キューポイントってあるよ
-     * @return 何も返しません
+     * TODO {@link javax.sound.midi.MetaMessage} has 0x07 cue point
+     * @return return nothing
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
@@ -99,7 +99,7 @@ public class CuePointMessage extends ShortMessage
 
         String text = start ? "start" : "stop";
 
-        metaMessage.setMessage(MetaEvent.META_QUE_POINT.number(), // キューポイント
+        metaMessage.setMessage(MetaEvent.META_QUE_POINT.number(), // cue point
                                text.getBytes(), text.getBytes().length);
 
         return new MidiEvent[] {
@@ -107,5 +107,3 @@ public class CuePointMessage extends ShortMessage
         };
     }
 }
-
-/* */

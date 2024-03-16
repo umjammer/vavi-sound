@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.adpcm.oki;
+package vavi.sound.sampled.adpcm.vox;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -29,17 +29,17 @@ import static vavi.sound.SoundUtil.volume;
 
 
 /**
- * OkiAudioFileReaderTest.
+ * VoxRawAudioFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
-public class OkiAudioFileReaderTest {
+public class VoxRawAudioFileReaderTest {
 
     static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
 
-    String inFile = "/vavi/sound/adpcm/oki/out.adpcm";
-    String correctFile = "/vavi/sound/adpcm/oki/out.pcm";
+    String inFile = "/vavi/sound/adpcm/vox/out.adpcm";
+    String correctFile = "/vavi/sound/adpcm/vox/out.pcm";
     File outFile;
 
     @BeforeEach
@@ -66,7 +66,7 @@ Debug.println(Level.FINE, "outFile: " + outFile);
 System.err.println(outFormat);
 
         AudioFormat inFormat = new AudioFormat(
-            OkiEncoding.OKI,
+            VoxEncoding.VOX,
             sampleRate,
             16,
             1,
@@ -103,5 +103,3 @@ line.close();
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }
-
-/* */

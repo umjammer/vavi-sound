@@ -1,8 +1,8 @@
 # vavi.sound.sampled.mfi
 
-MFi ADPCM サウンド関連の javax.sound.sampled.spi 実装クラスを提供します．
+Provides MFi ADPCM sound related javax.sound.sampled.spi implementations.
 
 ## TODO
 
- * WaveDivider のステレオ対応
- * Zip で本来のアウトプットに出力する
+ * WaveDivider: support stereo
+ * original output by Zip

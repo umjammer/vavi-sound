@@ -121,5 +121,3 @@ public class RohmFormatConversionProvider extends FormatConversionProvider {
         }
     }
 }
-
-/* */

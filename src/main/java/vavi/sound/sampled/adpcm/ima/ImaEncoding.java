@@ -29,5 +29,3 @@ public class ImaEncoding extends AudioFormat.Encoding {
         super(name);
     }
 }
-
-/* */

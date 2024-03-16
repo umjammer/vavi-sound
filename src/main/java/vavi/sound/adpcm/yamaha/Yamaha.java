@@ -27,7 +27,7 @@ class Yamaha implements Codec {
     private Status stat = new Status();
 
     /**
-     * @param code ADPCM (LSB 4bit 有効)
+     * @param code ADPCM (LSB 4bit available)
      * @param ss ?
      * @return adjusted ss
      */
@@ -64,7 +64,7 @@ class Yamaha implements Codec {
     }
 
     /**
-     * @param code ADPCM (LSB 4bit 有効)
+     * @param code ADPCM (LSB 4bit available)
      * @return 16bit PCM signed
      */
     @Override
@@ -99,7 +99,7 @@ class Yamaha implements Codec {
 
     /**
      * @param samp 16bit PCM signed
-     * @return ADPCM (LSB 4bit 有効)
+     * @return ADPCM (LSB 4bit available)
      */
     @Override
     public int encode(int samp) {
@@ -127,5 +127,3 @@ class Yamaha implements Codec {
         return code;
     }
 }
-
-/* */

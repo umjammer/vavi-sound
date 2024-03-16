@@ -25,7 +25,7 @@ import vavi.util.Debug;
 
 /**
  * WaveDataMessage.
- * TODO SysexMessage とかじゃないの？
+ * TODO isn't it something like SysexMessage?
  * <pre>
  *
  * </pre>
@@ -103,7 +103,7 @@ public class WaveDataMessage extends SmafMessage
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // シーケンサー固有メタイベント
+        metaMessage.setMessage(0x7f,    // sequencer specific meta event
                                data,
                                data.length);
 
@@ -129,5 +129,3 @@ Debug.println(Level.FINE, "WAVE DATA[" + number + "]: " + this);
         engine.setData(number, -1, samplingRate, samplingBits, channels, data, false);
     }
 }
-
-/* */

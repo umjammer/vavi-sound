@@ -21,7 +21,7 @@ import vavi.sound.mfi.spi.MfiFileReader;
 
 /**
  * MfiFileReader implemented by vavi.
- * <li> TODO 特殊命令の実装
+ * <li> TODO implementing special instructions
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.10 020627 nsano midi compliant <br>
  *          0.11 030618 nsano add vibrato related <br>
@@ -86,5 +86,3 @@ public class VaviMfiFileReader extends MfiFileReader {
         return getSequence(is);
     }
 }
-
-/* */

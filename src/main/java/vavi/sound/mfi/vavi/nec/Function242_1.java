@@ -71,5 +71,3 @@ Debug.println(Level.FINE, "ADPCM volume: " + volume);
         return tmp;
     }
 }
-
-/* */

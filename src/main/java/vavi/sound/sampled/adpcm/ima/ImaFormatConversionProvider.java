@@ -18,8 +18,6 @@ import javax.sound.sampled.spi.FormatConversionProvider;
 /**
  * ImaFormatConversionProvider.
  *
- * TODO read from wav
- *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
@@ -57,21 +55,21 @@ public class ImaFormatConversionProvider extends FormatConversionProvider {
             } else {
                 return new AudioFormat[] {
                     new AudioFormat(targetEncoding,
-                                    sourceFormat.getSampleRate(),
-                                    -1,     // sample size in bits
-                                    sourceFormat.getChannels(),
-                                    -1,     // frame size
-                                    -1,     // frame rate
-                                    false)  // little endian
+                            sourceFormat.getSampleRate(),
+                            AudioSystem.NOT_SPECIFIED,    // sample size in bits
+                            sourceFormat.getChannels(),
+                            AudioSystem.NOT_SPECIFIED,    // frame size
+                            AudioSystem.NOT_SPECIFIED,    // frame rate
+                            false)                        // little endian
                 };
             }
         } else if (sourceFormat.getEncoding() instanceof ImaEncoding && targetEncoding.equals(AudioFormat.Encoding.PCM_SIGNED)) {
             return new AudioFormat[] {
                 new AudioFormat(sourceFormat.getSampleRate(),
-                                16,         // sample size in bits
+                                16,             // sample size in bits
                                 sourceFormat.getChannels(),
-                                true,       // signed
-                                false)      // little endian (for PCM wav)
+                                true,                  // signed
+                                false)                        // little endian (for PCM wav)
             };
         } else {
             return new AudioFormat[0];
@@ -138,5 +136,3 @@ public class ImaFormatConversionProvider extends FormatConversionProvider {
         }
     }
 }
-
-/* */

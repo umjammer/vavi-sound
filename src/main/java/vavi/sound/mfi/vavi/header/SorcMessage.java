@@ -10,7 +10,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * 再配布不可識別子 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for non-redistributable identifier.
  *
  * <pre>
  *
@@ -65,5 +65,3 @@ public class SorcMessage extends SubMessage {
         return String.format("sorc: %d: 0x%02x", getDataLength(), getSorc());
     }
 }
-
-/* */

@@ -32,9 +32,9 @@ import vavi.util.Debug;
 /**
  * TrackMessage.
  * <p>
- * {@link #getLength()} は Track Chunk すべての長さ
+ * {@link #getLength()} is total length of Track Chunk.
  * </p>
- * <li>TODO <code>extends {@link MfiMessage}</code> いるの？ TrackChunk じゃないの？
+ * <li>TODO <code>extends {@link MfiMessage}</code> is really needed? is it TrackChunk, isn't it?
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030825 nsano initial version <br>
  *          0.01 030826 nsano refactoring <br>
@@ -50,10 +50,10 @@ public class TrackMessage extends MfiMessage {
     /** */
     private int trackNumber;
 
-    /** 読み込み用 */
+    /** for reading */
     private int noteLength = -1;
 
-    /** 読み込み用 */
+    /** for writing */
     private int exst = -1;
 
     /** */
@@ -77,8 +77,8 @@ Debug.println(Level.FINE, "exst: " + exst);
     }
 
     /**
-     * {@link Track}[0] の不必要なデータは省かれます。
-     * @see VaviMfiFileFormat#isIgnored(MfiMessage) 依存関係がいまいちかも
+     * Unnecessary data in {@link Track}[0] will be removed.
+     * @see VaviMfiFileFormat#isIgnored(MfiMessage) dependencies may be lacking
      */
     public void writeTo(OutputStream os) throws IOException {
 
@@ -98,9 +98,9 @@ Debug.println(Level.FINE, "track: " + trackNumber + ": " + getDataLength());
     }
 
     /**
-     * 書き出し用
-     * {@link Track}[0] の不必要なデータは省かれます。
-     * @see VaviMfiFileFormat#isIgnored(MfiMessage) 依存関係がいまいちかも
+     * for writing
+     * Unnecessary data in {@link Track}[0] will be removed.
+     * @see VaviMfiFileFormat#isIgnored(MfiMessage) dependencies may be lacking
      */
     public int getDataLength() {
         int trackLength = 0;
@@ -123,11 +123,11 @@ try {
     }
 
     /**
-     * @before {@link #noteLength}, {@link #exst} が設定されていること
-     * @after {@link #length} が設定される Track Chunk の長さ
-     * @throws IllegalStateException {@link vavi.sound.mfi.vavi.header.NoteMessage} の長さ
-     *         もしくは {@link #exst} が設定されていない場合
-     * @throws InvalidMfiDataException is の始まりが {@link #TYPE} で始まっていない場合
+     * @before {@link #noteLength}, {@link #exst} are must be set
+     * @after {@link #length} will be set as Track Chunk length
+     * @throws IllegalStateException {@link vavi.sound.mfi.vavi.header.NoteMessage} length or
+     *         {@link #exst} is not set
+     * @throws InvalidMfiDataException at the beginning of <code>is</code> is not {@link #TYPE}
      */
     public void readFrom(InputStream is)
         throws InvalidMfiDataException,
@@ -169,7 +169,7 @@ Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
 
     /**
      * Reads a message from stream
-     * TODO MfiMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか...
+     * TODO it seems like MfiMessage#readFrom, but the dependency with the vavi package is not good enough...
      */
     private MfiMessage getMessage(DataInputStream dis)
         throws IOException {
@@ -183,7 +183,7 @@ Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
         case MfiMessage.STATUS_CLASS_C: // Class C (0xbf)
         case MfiMessage.STATUS_NORMAL:  // Normal (0xff)
             return getClassOrNormalMessage(delta, status, dis);
-        default:                        // ノートメッセージ
+        default:                        // note message
             return NoteMessageFactory.getMessage(delta, status, dis, noteLength);
         }
     }
@@ -193,24 +193,21 @@ Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
      * @see "vavi.properties"
      * @param status 0x3f: Class A, 0x7f: Class B, 0xbf: Class C, 0xff: Normal
      * @param dis data1 ~
-     * TODO MfiMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか...
+     * TODO it seems like MfiMessage#readFrom, but the dependency with the vavi package is not good enough...
      */
-    private MfiMessage getClassOrNormalMessage(int delta,
-                                               int status,
-                                               DataInputStream dis)
-        throws IOException {
+    private MfiMessage getClassOrNormalMessage(int delta, int status, DataInputStream dis) throws IOException {
 
-        int data1 = dis.readUnsignedByte();    // 拡張ステータス
+        int data1 = dis.readUnsignedByte();    // extended status
 
         MfiMessage message;
         if (data1 >= 0x00 && data1 <= 0x7f) {
-            // 拡張ステータス A ... LongMessage
+            // Extended Status A ... LongMessage
             message = LongMessageFactory.getMessage(delta, status, data1, dis, exst);
         } else if (data1 >= 0x80 && data1 <= 0xef) {
-            // 拡張ステータス B ... ShortMessage
+            // Extended Status B ... ShortMessage
             message = ShortMessageFactory.getMessage(delta, status, data1, dis);
         } else {
-            // 拡張情報 0xf# ... SysexMessage
+            // Extended Information 0xf# ... SysexMessage
             message = SysexMessageFactory.getMessage(delta, status, data1, dis);
         }
 
@@ -238,7 +235,7 @@ Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
          * 0xc0 ~ 0xfe
          * </pre>
          * @param dis data1 ~
-         * TODO NoteMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか...
+         * TODO seems should be located at NoteMessage#readFrom, but it makes relationship with vavi package wrong...
          */
         public static MfiMessage getMessage(int delta,
                                             int status,
@@ -266,10 +263,10 @@ Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
             }
         }
 
-        /** ノート {@link NoteMessage} オブジェクトのインスタンスを取得するコンストラクタ 1 */
+        /** A constructor that creates {@link NoteMessage} object instance. 1 */
         private static Constructor<NoteMessage> noteMessageConstructor1;
 
-        /** ノート {@link NoteMessage} オブジェクトのインスタンスを取得するコンストラクタ 2 */
+        /** A constructor that creates {@link NoteMessage} object instance. 2 */
         private static Constructor<NoteMessage> noteMessageConstructor2;
 
         static {
@@ -300,13 +297,13 @@ Debug.printStackTrace(Level.SEVERE, e);
     private static class SysexMessageFactory {
 
         /**
-         * 拡張情報 0xf# ~ 0xf#
+         * Extended Information 0xf# ~ 0xf#
          * <pre>
          *  length = dis.readShort();
          *  data ...
          * </pre>
          * @param dis data2 ~
-         * TODO SysexMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか...
+         * TODO it seems like SysexMessage#readFrom, but the dependency with the vavi package is not good enough...
          */
         public static MfiMessage getMessage(int delta,
                                             int status,
@@ -337,8 +334,8 @@ Debug.printf(Level.WARNING, "sysex unhandled: delta: %02x, status: %02x, extende
             }
         }
 
-        /** 拡張ステータス A {@link SysexMessage} オブジェクトのインスタンスを取得するメソッド集 */
-        private static Map<String, Method> sysexMessageInstantiators = new HashMap<>();
+        /** methods for creates Extended Status A {@link SysexMessage} objects instance */
+        private static final Map<String, Method> sysexMessageInstantiators = new HashMap<>();
 
         static {
             try {
@@ -370,13 +367,13 @@ Debug.printStackTrace(Level.SEVERE, e);
     private static class ShortMessageFactory {
 
         /**
-         * 拡張ステータス B (0x80 ~ 0xef)
+         * Extended Status B (0x80 ~ 0xef)
          * <pre>
          *  length 1 fixed
          *  data 1 byte
          * </pre>
          * @param dis data2 ~
-         * TODO ShortMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか...
+         * TODO it seems like ShortMessage#readFrom, but the dependency with the vavi package is not good enough...
          */
         public static MfiMessage getMessage(int delta,
                                             int status,
@@ -403,8 +400,8 @@ Debug.printf(Level.WARNING, "short unhandled: delta: %02x, status: %02x, extende
             }
         }
 
-        /** 拡張ステータス B {@link ShortMessage} オブジェクトのインスタンスを取得するコンストラクタ集 */
-        private static Map<String, Constructor<ShortMessage>> shortMessageConstructors = new HashMap<>();
+        /** constructors for Extended Status B {@link ShortMessage} object instance */
+        private static final Map<String, Constructor<ShortMessage>> shortMessageConstructors = new HashMap<>();
 
         static {
             try {
@@ -438,14 +435,14 @@ Debug.printStackTrace(Level.SEVERE, e);
     private static class LongMessageFactory {
 
         /**
-         * 拡張ステータス A (0x00 ~ 0x7f)
+         * Extended Status A (0x00 ~ 0x7f)
          * <pre>
          *  length is 'exst'
          *  data ...
          * </pre>
          * @param dis data2 ~
          * @see #exst
-         * TODO LongMessage#readFrom のような気もするのだが vavi パッケージとの依存関係がいまいちか...
+         * TODO it seems like LongMessage#readFrom, but the dependency with the vavi package is not good enough...
          */
         public static MfiMessage getMessage(int delta,
                                             int status,
@@ -474,7 +471,7 @@ Debug.printf(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended
             }
         }
 
-        /** 拡張情報 {@link LongMessage} オブジェクトのインスタンスを取得するコンストラクタ集 */
+        /** constructors for creating Extended Information {@link LongMessage} object instance */
         private static Map<String, Constructor<LongMessage>> longMessageConstructors = new HashMap<>();
 
         static {
@@ -562,5 +559,3 @@ Debug.printStackTrace(Level.SEVERE, e);
         }
     }
 }
-
-/* */

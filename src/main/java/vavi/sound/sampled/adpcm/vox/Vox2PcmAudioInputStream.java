@@ -34,5 +34,3 @@ class Vox2PcmAudioInputStream extends AudioInputStream {
         super(new VoxInputStream(in, ByteOrder.LITTLE_ENDIAN), format, length);
     }
 }
-
-/* */

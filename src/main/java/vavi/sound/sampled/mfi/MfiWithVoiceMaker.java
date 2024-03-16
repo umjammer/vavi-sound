@@ -116,7 +116,7 @@ class MfiWithVoiceMaker {
     public int create() throws IOException, UnsupportedAudioFileException, InvalidMfiDataException {
 long t = System.currentTimeMillis();
         // divide
-System.err.println("1: " + (System.currentTimeMillis() - t));
+Debug.println(Level.FINE, "1: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         byte[] buffer = new byte[sourceAis.available()];
         int l = 0;
@@ -125,7 +125,7 @@ t = System.currentTimeMillis();
             l += r;
         }
         int result = createMFi(buffer, new File(filename));
-System.err.println("2: " + (System.currentTimeMillis() - t));
+Debug.println(Level.FINE, "2: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         return result;
     }
@@ -260,5 +260,3 @@ Debug.println(Level.FINE, "write: " + r);
         }
     }
 }
-
-/* */

@@ -38,5 +38,3 @@ public interface MfiConvertible {
     PrefixedPropertiesFactory<String, MfiConvertible> factory =
         new PrefixedClassPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "midi.");
 }
-
-/* */

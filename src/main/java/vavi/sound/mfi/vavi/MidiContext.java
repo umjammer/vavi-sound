@@ -299,5 +299,3 @@ Debug.println(Level.INFO, "no tempo message in track 0");
         return 48; // MFi default time base
     }
 }
-
-/* */

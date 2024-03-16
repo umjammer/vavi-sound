@@ -35,5 +35,3 @@ public interface MachineDependentSequencer {
     PrefixedPropertiesFactory<Integer, MachineDependentSequencer> factory =
         new PrefixedClassPropertiesFactory<>("/vavi/sound/mfi/vavi/vavi.properties", "sequencer.vendor.");
 }
-
-/* */

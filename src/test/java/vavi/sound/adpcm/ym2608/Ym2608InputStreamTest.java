@@ -91,5 +91,3 @@ System.err.println("available: " + is.available());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }
-
-/* */

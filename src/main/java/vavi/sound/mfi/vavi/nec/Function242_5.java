@@ -51,5 +51,3 @@ Debug.println(Level.FINE, "LED: " + channel);
 Debug.println(Level.FINE, StringUtil.getDump(data));
     }
 }
-
-/* */

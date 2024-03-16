@@ -1,3 +1,6 @@
 #ssrc=/foo/bar.wav
 
-#sf2=/Users/nsano/Library/Audio/Sounds/Banks/Orchestra/baz.sf2
+#sf2=/Users/foo/Library/Audio/Sounds/Banks/Orchestra/baz.sf2
+
+vavi.test.volume=0.02
+vavi.test.volume.midi=0.2

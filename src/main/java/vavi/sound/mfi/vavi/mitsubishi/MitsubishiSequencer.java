@@ -67,5 +67,3 @@ Debug.printf(Level.WARNING, "unsupported function: 0x%02x", function);
     private static MachineDependentFunction.Factory factory =
             new MachineDependentFunction.Factory("/vavi/sound/mfi/vavi/mitsubishi/mitsubishi.properties");
 }
-
-/* */

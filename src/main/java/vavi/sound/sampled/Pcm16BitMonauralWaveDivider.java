@@ -39,8 +39,8 @@ class Pcm16BitMonauralWaveDivider implements WaveDivider {
     }
 
     /**
-     * WAVE ファイル中の PCM データを分割します。
-     * PCM はモノラル 16 bit にしか対応していません。
+     * Divides PCM data in WAVE file.
+     * only monaural 16 bit PCM is supported.
      * @param seconds time for divide
      * @param event event for each chunks
      */
@@ -96,5 +96,3 @@ Debug.println(Level.FINE, "modulo bytes: " + buffer.length + ", " + (((totalTime
         }
     }
 }
-
-/* */

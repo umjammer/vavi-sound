@@ -37,7 +37,7 @@ public class WaveType {
     private int waveChannels;
 
     /**
-     * TODO チャンクで数値が違う enum で解消？
+     * TODO different numbers in chunks, can it be solved with enum?
      * "Awa*"
      * <pre>
      * 0x0 Signed
@@ -51,7 +51,7 @@ public class WaveType {
      * 0x1 Offset Binary PCM
      * 0x2 ADPCM(YAMAHA)
      * </pre>
-     * とりあえず共通で
+     * using common number for now
      * <pre>
      * 0 Signed
      * 1 ADPCM
@@ -188,5 +188,3 @@ Debug.println(Level.FINE, "waveType: " + this);
             " (waveType: " + String.format("%04x", intValue()) + ")";
     }
 }
-
-/* */

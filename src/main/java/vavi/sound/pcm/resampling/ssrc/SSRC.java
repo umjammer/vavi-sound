@@ -1197,7 +1197,7 @@ System.err.println("downsample");
                 iza = I0Bessel.value(alp);
 //System.err.printf("iza %f, alp: %f\n", iza, alp); // OK
 
-                n2y = fs2 / fs1; // 0でないサンプルがfs2で何サンプルおきにあるか？
+                n2y = fs2 / fs1; // how many samples are there in fs2 that is not 0?
                 n2x = n2 / n2y + 1;
 
                 f2order = new int[n2y];
@@ -2595,5 +2595,3 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
         }
     }
 }
-
-/* */

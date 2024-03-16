@@ -20,7 +20,7 @@ public class MsFileFormatType extends AudioFileFormat.Type {
     /**
      * Specifies an DVI file.
      */
-    public static final AudioFileFormat.Type MS = new MsFileFormatType("MS", "wav");
+    public static final AudioFileFormat.Type MS = new MsFileFormatType("MS", "adpcm");
 
     /**
      * Constructs a file type.
@@ -32,5 +32,3 @@ public class MsFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

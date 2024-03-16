@@ -20,7 +20,7 @@ public class OkiFileFormatType extends AudioFileFormat.Type {
     /**
      * Specifies an DVI file.
      */
-    public static final AudioFileFormat.Type OKI = new OkiFileFormatType("OKI", "wav");
+    public static final AudioFileFormat.Type OKI = new OkiFileFormatType("OKI", "adpcm");
 
     /**
      * Constructs a file type.
@@ -32,5 +32,3 @@ public class OkiFileFormatType extends AudioFileFormat.Type {
         super(name, extension);
     }
 }
-
-/* */

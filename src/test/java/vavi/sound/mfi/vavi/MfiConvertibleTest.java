@@ -30,5 +30,3 @@ class MfiConvertibleTest {
         assertNull(converter);
     }
 }
-
-/* */

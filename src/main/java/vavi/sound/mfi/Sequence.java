@@ -54,5 +54,3 @@ public class Sequence {
         return ts;
     }
 }
-
-/* */

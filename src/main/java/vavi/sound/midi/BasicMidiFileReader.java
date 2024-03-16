@@ -91,5 +91,3 @@ Debug.println(Level.FINE, "file: " + file);
         return getSequence(is);
     }
 }
-
-/* */

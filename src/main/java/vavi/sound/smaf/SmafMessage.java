@@ -7,7 +7,7 @@
 package vavi.sound.smaf;
 
 /**
- * SMAF メッセージの基底クラスです．
+ * SMAF message base class.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
@@ -32,12 +32,10 @@ public abstract class SmafMessage {
     }
 
     /**
-     * @return コピー
+     * @return copied data
      */
     public abstract byte[] getMessage();
 
     /** */
     public abstract int getLength();
 }
-
-/* */

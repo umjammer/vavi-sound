@@ -8,7 +8,7 @@ package vavi.sound.mfi;
 
 
 /**
- * MFi のイベントです．
+ * MFi Event.．
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>
@@ -48,5 +48,3 @@ public class MfiEvent {
         return tick;
     }
 }
-
-/* */

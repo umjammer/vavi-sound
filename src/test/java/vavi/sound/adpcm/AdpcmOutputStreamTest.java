@@ -51,5 +51,3 @@ class AdpcmOutputStreamTest {
         assertEquals(buf.length / 4, baos.size());
     }
 }
-
-/* */

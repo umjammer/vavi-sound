@@ -104,33 +104,33 @@ Debug.println(Level.FINE, "parameters: " + parameter);
 
     /** */
     enum ParameterID {
-        /** フォントの種類 */
+        /** font type */
         FontType(0x01),
-        /** フォントのサイズ */
+        /** font size */
         FontSize(0x02),
-        /** 文字並び方向 */
+        /** direction */
         Direction(0x03),
-        /** 文字アトリビュート指定 将来拡張 */
+        /** attribute future expansion */
         Attribute(0x04),
-        /** 文字色 */
+        /** font color */
         FontColor0(0x10),
-        /** 色替え後文字色 */
+        /** color after changed */
         FontColor1(0x11),
-        /** 文字縁取り色 将来拡張 */
+        /** text border color future expansion */
         EdgeColor0(0x12),
-        /** 色替え後文字縁取り色 将来拡張 */
+        /** text border color after color change future expansion */
         EdgeColor1(0x13),
-        /** 文字背景色 */
+        /** text background color */
         BackColor0(0x14),
-        /** 色替え後文字背景色 */
+        /** text background color after color change */
         BackColor1(0x15),
-        /** デフォルトの座標指定方法 */
+        /** default coordinate specification method */
         Coordinates(0x20),
-        /** 背景色 Plane 0 指定色 */
+        /** background color plane 0 specified color */
         BackDropColor(0x30),
-        /** 透明色とする色を指定 */
+        /** specify the color to be transparent */
         TransparentColor(0x31),
-        /** 透明処理の有効フラグ */
+        /** transparency processing enable flag */
         TransparentEnable(0x32);
         /** */
         final int value;
@@ -149,5 +149,3 @@ Debug.println(Level.FINE, "parameters: " + parameter);
         }
     }
 }
-
-/* */

@@ -34,5 +34,3 @@ class Rohm2PcmAudioInputStream extends AudioInputStream {
         super(new RohmInputStream(in, ByteOrder.LITTLE_ENDIAN), format, length);
     }
 }
-
-/* */

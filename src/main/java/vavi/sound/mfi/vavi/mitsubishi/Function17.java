@@ -46,5 +46,3 @@ public class Function17 implements MachineDependentFunction {
 Debug.printf(Level.FINE, "0x11: %02x %02x\n", channel, f2);
     }
 }
-
-/* */

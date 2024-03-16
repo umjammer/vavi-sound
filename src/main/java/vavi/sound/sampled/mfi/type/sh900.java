@@ -60,5 +60,3 @@ public class sh900 implements MachineDependentMfiWithVoiceMaker {
         return events;
     }
 }
-
-/* */

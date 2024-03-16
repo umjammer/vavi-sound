@@ -1,5 +1,6 @@
+# vavi.sound.sampled.adpcm.ccitt
 
-ADPCM の spi 実装のクラスを提供します．
+Provides SPI implementation for G721 ADPCM
 
 ## TODO
 

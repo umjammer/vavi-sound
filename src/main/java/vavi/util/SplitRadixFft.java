@@ -1352,5 +1352,3 @@ public abstract class SplitRadixFft {
         a[m] *= c[cP + 0];
     }
 }
-
-/* */

@@ -30,5 +30,3 @@ public class InvalidMfiDataException extends Exception {
         super(t);
     }
 }
-
-/* */

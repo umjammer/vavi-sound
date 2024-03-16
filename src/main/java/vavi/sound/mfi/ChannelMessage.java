@@ -8,11 +8,11 @@ package vavi.sound.mfi;
 
 
 /**
- * チャンネルナンバに依存する {@link MfiMessage} を表すクラスです。
+ * Represents {@link MfiMessage} depends on channel number.
  * <p>
- * MIDI にあわせるためにこの名前を Voice ... の代わりに用いています。
+ * using this name to match MIDI api instead of Voice ...
  * </p>
- * <li>javax.sound.midi パッケージにはない... いるのか？
+ * <li>is this really needed? no class in the package javax.sound.midi
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 031203 nsano initial version <br>
  */
@@ -24,5 +24,3 @@ public interface ChannelMessage {
     /** */
     void setVoice(int voice);
 }
-
-/* */

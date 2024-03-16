@@ -12,7 +12,7 @@ import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
- * サポート情報 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for support information.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
@@ -48,5 +48,3 @@ public class SuptMessage extends SubMessage {
         }
     }
 }
-
-/* */

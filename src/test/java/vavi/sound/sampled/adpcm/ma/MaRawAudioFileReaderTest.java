@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.sampled.adpcm.dvi;
+package vavi.sound.sampled.adpcm.ma;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -28,17 +28,17 @@ import static vavi.sound.SoundUtil.volume;
 
 
 /**
- * DviAudioFileReaderTest.
+ * MaRawAudioFileReaderTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
-public class DviAudioFileReaderTest {
+public class MaRawAudioFileReaderTest {
 
     static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
 
-    String inFile = "/vavi/sound/adpcm/dvi/out.adpcm";
-    String correctFile = "/vavi/sound/adpcm/dvi/out.pcm";
+    String inFile = "/vavi/sound/adpcm/ma/out.adpcm";
+    String correctFile = "/vavi/sound/adpcm/ma/out.pcm";
     File outFile;
 
     @BeforeEach
@@ -65,7 +65,7 @@ Debug.println("outFile: " + outFile);
 System.err.println(outFormat);
 
         AudioFormat inFormat = new AudioFormat(
-            DviEncoding.DVI,
+            MaEncoding.MA,
             sampleRate,
             16,
             1,
@@ -102,5 +102,3 @@ line.close();
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 }
-
-/* */

@@ -29,7 +29,7 @@ import vavi.util.Debug;
  *  duration    1or2
  *  data0       0x00
  *  data1       cc 11 0111
- *  data2       value       0x00〜0x7f
+ *  data2       value       0x00 ~ 0x7f
  * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -128,7 +128,7 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
             context.getDrum(this.channel) == ChannelConfiguration.PERCUSSION &&
             context.getSmafTrackNumber() * 4 + this.channel != MidiContext.CHANNEL_DRUM) {
 
-            // TODO psm は最後(最大？)？の volume を設定
+            // TODO psm sets the last(maximum?)? volume
 Debug.println(Level.FINE, "volume: " + volume);
             context.setVelocity(this.channel, volume);
 
@@ -140,7 +140,7 @@ Debug.println(Level.FINE, "volume: " + volume);
             ShortMessage shortMessage = new ShortMessage();
             shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                     midiChannel,
-                                    7,    // メインボリューム MSB
+                                    7,    // main volume MSB
                                     volume);
             events[0] = new MidiEvent(shortMessage, context.getCurrentTick());
             return events;
@@ -171,5 +171,3 @@ Debug.println(Level.FINE, "voice: " + voice + ", volume: " + data2);
         };
     }
 }
-
-/* */

@@ -55,5 +55,3 @@ Debug.println(Level.FINE, "a delta: " + aDelta + ", tempo: " + tempoMessage.getT
         return Math.round(time / aDelta);
     }
 }
-
-/* */

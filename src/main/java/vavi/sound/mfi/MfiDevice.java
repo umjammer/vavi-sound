@@ -7,7 +7,6 @@
 package vavi.sound.mfi;
 
 
-
 /**
  * MfiDevice.
  *
@@ -87,5 +86,3 @@ public interface MfiDevice {
     /** */
     void open() throws MfiUnavailableException;
 }
-
-/* */

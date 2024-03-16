@@ -173,5 +173,3 @@ class G723_16 extends G711 {
         return 2;
     }
 }
-
-/* */

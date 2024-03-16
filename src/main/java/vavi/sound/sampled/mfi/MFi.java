@@ -51,5 +51,3 @@ public class MFi extends Type {
         return properties.get(key);
     }
 }
-
-/* */

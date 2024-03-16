@@ -34,5 +34,3 @@ class Oki2PcmAudioInputStream extends AudioInputStream {
         super(new OkiInputStream(in, ByteOrder.LITTLE_ENDIAN), format, length);
     }
 }
-
-/* */

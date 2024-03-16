@@ -36,7 +36,7 @@ public class ExtendedEditMessage extends SysexMessage {
 
     /**
      * for {@link vavi.sound.mfi.vavi.TrackMessage}
-     * @param is 実際のデータ (ヘッダ無し)
+     * @param is actual data (without header)
      */
     public static ExtendedEditMessage readFrom(int delta, int status, int data1, InputStream is)
         throws InvalidMfiDataException,
@@ -59,5 +59,3 @@ Debug.println(Level.FINE, "dummy " + dummy + ", part " + part + ", switch " + zw
         return "ExtendedEdit:";
     }
 }
-
-/* */

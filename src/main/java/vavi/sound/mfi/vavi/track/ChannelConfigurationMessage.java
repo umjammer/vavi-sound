@@ -35,7 +35,7 @@ public class ChannelConfigurationMessage extends ShortMessage
     /**
      * for {@link vavi.sound.mfi.vavi.TrackMessage}
      * @param delta delta time
-     * @param status
+     * @param status unused 0xff fixed
      * @param data1 0xba
      * @param data2 <pre>
      *  .6543 210 LSB
@@ -71,8 +71,8 @@ public class ChannelConfigurationMessage extends ShortMessage
     //----
 
     /**
-     * コンテキストのチャンネルコンフィグレーションを設定します。
-     * @return 何も返しません
+     * Sets the context channel configuration.
+     * @return nothing
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
@@ -83,5 +83,3 @@ Debug.println(Level.FINE, this);
         return null;    // TODO
     }
 }
-
-/* */

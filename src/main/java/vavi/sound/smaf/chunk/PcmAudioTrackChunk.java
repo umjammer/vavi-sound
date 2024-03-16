@@ -143,7 +143,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     /** */
     private List<Chunk> waveDataChunks = new ArrayList<>();
 
-    /** "Awa*" TODO ホンマに複数か？ */
+    /** "Awa*" TODO is there really more than one? */
     public void addWaveDataChunk(Chunk waveDataChunk) {
         waveDataChunks.add(waveDataChunk);
         size += waveDataChunk.getSize() + 8;
@@ -181,5 +181,3 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
         return events;
     }
 }
-
-/* */

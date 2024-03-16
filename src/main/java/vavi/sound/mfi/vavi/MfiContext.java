@@ -7,6 +7,7 @@
 package vavi.sound.mfi.vavi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Comparator;
 import java.util.List;
@@ -41,7 +42,7 @@ import vavi.util.Debug;
  */
 public class MfiContext {
 
-    /** MFi のトラック数の最大値 */
+    /** max MFi track number */
     public static final int MAX_MFI_TRACKS = 4;
 
     //----
@@ -60,7 +61,7 @@ Debug.println(Level.FINE, "type: " + type);
         this.type = type;
     }
 
-    /** TODO 今のところ {@link Sequence#getResolution()} */
+    /** TODO currently {@link Sequence#getResolution()} */
     private int timeBase;
 
     /** */
@@ -70,7 +71,7 @@ Debug.println(Level.FINE, "type: " + type);
 
     //----
 
-    /** index は MFi Track No., 使用されていれば true */
+    /** index is MFi Track No., when that's used this returns true */
     private boolean[] trackUsed = new boolean[MAX_MFI_TRACKS];
 
     /**
@@ -108,7 +109,7 @@ Debug.println(Level.FINE, "type: " + type);
     //----
 
     /**
-     * tick の倍率
+     * magnification of tick
      * @see vavi.sound.mfi.vavi.track.TempoMessage
      */
     private double scale = 1.0d;
@@ -130,13 +131,11 @@ Debug.println(Level.FINE, "type: " + type);
 
     //----
 
-    /** 直前の tick, index は MFi Track No. */
+    /** previous tick, index is MFi Track No. */
     private long[] previousTicks = new long[MAX_MFI_TRACKS];
 
     /* initializing */ {
-        for (int i = 0; i < MAX_MFI_TRACKS; i++) {
-            previousTicks[i] = 0;
-        }
+        Arrays.fill(previousTicks, 0);
     }
 
     /**
@@ -160,15 +159,15 @@ Debug.println(Level.FINE, "type: " + type);
         this.previousTicks[mfiTrackNumber] += tick;
     }
 
-    /** @return 補正あり Δタイム */
+    /** @return with correction Δ time */
     public int retrieveAdjustedDelta(int mfiTrackNumber, long currentTick) {
         return getAdjustedDelta(mfiTrackNumber, (currentTick - previousTicks[mfiTrackNumber]) / scale);
     }
 
-    /** Math#round() で丸められた誤差 */
-    private double[] roundedSum = new double[MAX_MFI_TRACKS];
+    /** errors rounded by Math#round() */
+    private final double[] roundedSum = new double[MAX_MFI_TRACKS];
 
-    /** Math#round() で丸められた誤差が整数値より大きくなった場合の補正 */
+    /** Gets adjustment when sum of errors rounded by Math#round() become larger than 1 */
     private int getAdjustedDelta(int mfiTrackNumber, double doubleDelta) {
         int delta = (int) Math.round(doubleDelta);
         double rounded = doubleDelta - delta;
@@ -188,9 +187,8 @@ Debug.println(Level.FINE, "type: " + type);
     //----
 
     /**
-     * 一つ前の NoteOn からの時間 (currentTick - beforeTicks[track]) に
-     * いくつΔが入るか(整数値、あまり切り捨て)を求め、その個数分挿入する
-     * NopMessage の配列を返します。
+     * Finds how many Δs(integer value, truncating too much) can be included in the time since the previous NoteOn
+     * (currentTick - beforeTicks[track]) and returns an array of NopMessages to be inserted for that number.
      * <pre>
      *     event    index    process
      *   |
@@ -208,7 +206,7 @@ Debug.println(Level.FINE, "type: " + type);
      *   |
      * --+-
      * </pre>
-     * 上記図だと 1 つの NopMessage が挿入される。
+     * case of above, one NopMessage will be inserted
      *
      * @return null current event is MetaMessage or SysexMessage or delta not supported.
      */
@@ -238,7 +236,7 @@ Debug.println(Level.WARNING, "not supported for delta: " + midiEventIndex + ", "
             return null;
         }
 if (interval < 0) {
- // ありえないはず
+ // it shouldn't be possible
  Debug.println(Level.WARNING, "interval: " + interval + ", " + midiEventIndex + ", " + MidiUtil.paramString(midiMessage));
  interval = 0;
 }
@@ -250,7 +248,7 @@ if (interval < 0) {
         for (int i = 0; i < nopLength; i++) {
             NopMessage mfiMessage = new NopMessage(255, 0);
             mfiEvents[i] = new MfiEvent(mfiMessage, 0L); // TODO 0l
-            // 255 Δ 分後ろにずらしていく
+            // shift backward by 255Δ
             incrementPreviousTick(mfiTrackNumber, Math.round(255 * scale));
         }
 
@@ -259,9 +257,8 @@ if (interval < 0) {
     }
 
     /**
-     * 前のデータ(MIDI NoteOn)が実行されてからのΔ(時間)を取得します。
-     * 必ず事前に {@link #getIntervalMfiEvents(int)} を実行してΔを 255 以下を
-     * 返すようにしておいて下さい。
+     * Gets the Δ(time) since the previous data (MIDI NoteOn) was executed.
+     * Be sure to execute {@link #getIntervalMfiEvents(int)} in advance to return Δ less than 255.
      */
     public int getDelta(int mfiTrackNumber) {
 
@@ -274,14 +271,14 @@ if (interval < 0) {
             delta = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
             // tempo
-            delta = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick()); // TODO 0 でいいのか？
+            delta = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick()); // TODO is 0 ok?
 //Debug.println("[" + midiEventIndex + "] delta for tempo, " + mfiTrackNumber + "ch: " + delta);
         } else {
 Debug.println(Level.WARNING, "no delta defined for: " + MidiUtil.paramString(midiMessage));
         }
 
 if (delta > 255) {
- // getIntervalMfiEvents で処理されているはずなのでありえない
+ // this is impossible because it should be handled by getIntervalMfiEvents
  Debug.println(Level.SEVERE, "Δ: " + delta + ", " + (delta % 256));
 }
         return delta % 256;
@@ -290,7 +287,7 @@ if (delta > 255) {
     //----
 
     /**
-     * 補正された MFi Pitch を取得します。
+     * Gets the corrected MFi pitch.
      * <p>
      * sound -45, percussion -35
      * </p>
@@ -300,7 +297,7 @@ if (delta > 255) {
     }
 
     /**
-     * MFi Voice No. を取得します。
+     * Gets the MFi Voice No.
      * @param channel MIDI channel
      */
     public int retrieveVoice(int channel) {
@@ -308,7 +305,7 @@ if (delta > 255) {
     }
 
     /**
-     * MFi Track を取得します。
+     * Gets the MFi Track.
      * @param channel MIDI channel
      */
     public int retrieveMfiTrack(int channel) {
@@ -317,10 +314,10 @@ if (delta > 255) {
 
     //----
 
-    /** MIDI イベントの単一シーケンス */
-    private List<MidiEvent> midiEvents = new ArrayList<>();
+    /** a single sequence of MIDI events */
+    private final List<MidiEvent> midiEvents = new ArrayList<>();
 
-    /** MIDI イベントの単一シーケンスを設定します。 */
+    /** Sets a single sequence of MIDI events. */
     public void setMidiSequence(Sequence midiSequence) {
 
         this.timeBase = midiSequence.getResolution();
@@ -402,19 +399,19 @@ Debug.println(Level.FINE, "(SCALE) final scale: " + scale + ", " + scaleChanged)
         return midiEvents.get(midiEventIndex);
     }
 
-    /** 現在の MIDI イベントのインデックス値 */
+    /** current MIDI event index */
     private int midiEventIndex;
 
-    /** 現在の MIDI イベントのインデックス値を取得します。 */
+    /** Gets current MIDI event index. */
     int getMidiEventIndex() {
         return midiEventIndex;
     }
 
     /**
-     * 同じ channel で次の {@link ShortMessage} である MIDI イベントを取得します。
+     * Get the next {@link ShortMessage} MIDI event on the same channel.
      *
-     * @throws NoSuchElementException 次の MIDI イベントがない
-     * @throws IllegalStateException 現在のイベントは {@link ShortMessage} ではない
+     * @throws NoSuchElementException when no next MIDI event
+     * @throws IllegalStateException current event is not {@link ShortMessage}
      */
     public MidiEvent getNoteOffMidiEvent() throws NoSuchElementException {
 
@@ -450,13 +447,11 @@ Debug.println(Level.FINE, "(SCALE) final scale: " + scale + ", " + scaleChanged)
         throw new NoSuchElementException(channel + "ch, " + data1);
     }
 
-    /** すでに消費されたかどうか */
+    /** whether it has already been consumed */
     private BitSet noteOffEventUsed;
 
-    /** すでに消費されたかどうかを取得します。 */
+    /** Gets whether it has already been consumed. */
     public boolean isNoteOffEventUsed() {
         return noteOffEventUsed.get(midiEventIndex);
     }
 }
-
-/* */

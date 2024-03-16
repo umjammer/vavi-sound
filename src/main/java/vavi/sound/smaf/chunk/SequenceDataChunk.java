@@ -102,7 +102,7 @@ Debug.println(Level.FINE, "messages: " + messages.size());
 
     /**
      * internal use
-     * Mtsq の場合
+     * for Mtsq
      * @param gateTime should not be 0
      */
     protected SmafMessage getHandyPhoneStandardMessage(int duration, int data, int gateTime) {
@@ -257,38 +257,38 @@ Debug.printf(Level.WARNING, "reserved: 0xa_: %02x%02x\n", d1, d2);
                 int control = dis.readUnsignedByte();
                 int value   = dis.readUnsignedByte();
                 switch (control) { // TODO no specification
-                case 0x00: // バンクセレクト MSB
+                case 0x00: // bank select MSB
                     smafMessage = new BankSelectMessage(duration, channel, value, BankSelectMessage.Significant.Least);
                     break;
-                case 0x20: // バンクセレクト LSB
+                case 0x20: // bank select LSB
                     smafMessage = new BankSelectMessage(duration, channel, value, BankSelectMessage.Significant.Most);
                     break;
-                case 0x01: // モジュレーションデプス MSB
+                case 0x01: // modulation depth MSB
                     smafMessage = new ModulationMessage(duration, channel, value);
                     break;
-                case 0x07: // メインボリューム MSB
+                case 0x07: // main volume MSB
                     smafMessage = new VolumeMessage(duration, channel, value);
                     break;
-                case 0x0a: // パンポット MSB
+                case 0x0a: // pan pot MSB
                     smafMessage = new PanMessage(duration, channel, value);
                     break;
-                case 0x0b: // エクスプレッション MSB
+                case 0x0b: // expression MSB
                     smafMessage = new ExpressionMessage(duration, channel, value);
                     break;
-                case 0x06: // データエントリー MSB
-                case 0x26: // データエントリー LSB
-                case 0x40: // ホールド 1 (ダンパー)
-                case 0x47: // フィルタ・レゾナンス MA-5
-                case 0x4a: // ブライトネス MA-5
+                case 0x06: // data entry MSB
+                case 0x26: // data entry LSB
+                case 0x40: // hold 1 (dumper)
+                case 0x47: // filter resonance MA-5
+                case 0x4a: // brightness MA-5
                 case 0x64: // RPN LSB
-                    // value = 00 のみ？ ピッチ・ベンド・センシティビティ
+                    // only when value = 00 ? pitch bend sensitivity
                 case 0x65: // RPN MSB
-                    // value = 00 のみ？ ピッチ・ベンド・センシティビティ
-                case 0x78: // オール・サウンド・オフ
-                case 0x79: // リセットオールコントローラー
-                case 0x7b: // オール・ノート・オフ MA-5
-                case 0x7e: // モノ・モード・オン
-                case 0x7f: // ポリ・モード・オン (MA-3 のみ)
+                    // only when value = 00 ? pitch bend sensitivity
+                case 0x78: // all sound off
+                case 0x79: // reset all controllers
+                case 0x7b: // all notes off MA-5
+                case 0x7e: // mono mode on
+                case 0x7f: // poly mode on (MA-3 only)
                     smafMessage = new MidiConvertibleMessage(duration, control, channel, value);
                     break;
                 default:
@@ -384,5 +384,3 @@ if (!uc.contains(String.format("reserved: %02x", status))) {
         size += smafMessage.getLength(); // TODO
     }
 }
-
-/* */

@@ -23,7 +23,7 @@ import vavi.sound.midi.MidiUtil;
 
 
 /**
- * データ管理及び保護情報 MFi Header Sub Chunk.
+ * MFi Header Sub Chunk for data management and data protection information.
  * <pre>
  *  &quot;prot&quot; n bytes: data managing
  *  MIDI {@link MidiConstants.MetaEvent#META_TEXT_EVENT META_TEXT_EVENT (0x01)}
@@ -104,5 +104,3 @@ public class ProtMessage extends SubMessage
         };
     }
 }
-
-/* */

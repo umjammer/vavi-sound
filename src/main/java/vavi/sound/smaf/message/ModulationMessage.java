@@ -97,7 +97,7 @@ public class ModulationMessage extends vavi.sound.smaf.ShortMessage
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 midiChannel,
-                                1,    // モジュレーション・デプス MSB
+                                1,    // modulation depth MSB
                                 modulation);
         events[0] = new MidiEvent(shortMessage, context.getCurrentTick());
         return events;
@@ -126,5 +126,3 @@ public class ModulationMessage extends vavi.sound.smaf.ShortMessage
         };
     }
 }
-
-/* */

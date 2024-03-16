@@ -29,5 +29,3 @@ public class MsEncoding extends AudioFormat.Encoding {
         super(name);
     }
 }
-
-/* */

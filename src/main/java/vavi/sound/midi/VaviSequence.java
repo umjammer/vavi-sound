@@ -20,5 +20,3 @@ public interface VaviSequence {
     /** */
     MetaEventListener getMetaEventListener();
 }
-
-/* */

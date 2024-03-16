@@ -22,22 +22,19 @@ import vavi.sound.adpcm.Codec;
  */
 public class G721OutputStream extends AdpcmOutputStream {
 
-    /** エンコーダ */
     @Override
     protected Codec getCodec() {
         return new G721();
     }
 
     /**
-     * {@link vavi.io.BitOutputStream} は 4bit little endian 固定
-     * <li> TODO {@link vavi.io.BitOutputStream} の endian
+     * {@link vavi.io.BitOutputStream} is 4bit little endian fixed
+     * <li> TODO endian for {@link vavi.io.BitOutputStream}
      * @param out ADPCM
-     * @param byteOrder {@link #write(int)} のバイトオーダ
+     * @param byteOrder byte order for {@link #write(int)}
      */
     public G721OutputStream(OutputStream out, ByteOrder byteOrder) {
         super(out, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);
         ((G721) encoder).setEncoding(encoding);
     }
 }
-
-/* */

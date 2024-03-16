@@ -19,5 +19,3 @@ public interface MetaEventListener extends EventListener {
 
     void meta(MetaMessage meta);
 }
-
-/* */

@@ -15,6 +15,7 @@ import javax.sound.sampled.AudioFormat;
 
 import vavi.io.BitInputStream;
 import vavi.io.BitOutputStream;
+import vavi.util.Debug;
 
 
 /**
@@ -24,18 +25,18 @@ import vavi.io.BitOutputStream;
  * @version 0.00 030714 nsano initial version <br>
  *          0.01 030714 nsano fine tune <br>
  *          0.02 030714 nsano fix available() <br>
- *          0.03 030715 nsano read() endian 対応 <br>
+ *          0.03 030715 nsano support read() endian <br>
  *          0.10 060427 nsano refactoring <br>
  */
 public abstract class AdpcmInputStream extends FilterInputStream {
 
-    /** #read() が返す PCM のフォーマット */
+    /** PCM format that #read() returns */
     protected AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
 
-    /** #read() が返す PCM のバイトオーダ */
+    /** PCM byte order that #read() returns */
     protected ByteOrder byteOrder;
 
-    /** デコーダ */
+    /** decoder */
     protected Codec decoder;
 
     /** */
@@ -43,9 +44,9 @@ public abstract class AdpcmInputStream extends FilterInputStream {
 
     /**
      * @param in PCM
-     * @param byteOrder {@link #read()} 時のバイトオーダ
-     * @param bits {@link BitOutputStream} のサイズ
-     * @param bitOrder {@link BitOutputStream} のバイトオーダ
+     * @param byteOrder byte order for {@link #read()}
+     * @param bits {@link BitOutputStream} size
+     * @param bitOrder byte order for {@link BitOutputStream}
      */
     public AdpcmInputStream(InputStream in, ByteOrder byteOrder, int bits, ByteOrder bitOrder) {
         super(new BitInputStream(in, bits, bitOrder));
@@ -54,21 +55,21 @@ public abstract class AdpcmInputStream extends FilterInputStream {
 //Debug.println(this.in);
     }
 
-    /** ADPCM (4bit) 換算時の長さ */
+    /** ADPCM (4bit) length */
     @Override
     public int available() throws IOException {
 //Debug.println("0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
-        // TODO * 2 とか bits で計算すべき？
+        // TODO "* 2" calc should be in bits?
         return (in.available() * 2) + (rest ? 1 : 0);
     }
 
-    /** 残っているかどうか */
+    /** remaining or not */
     protected boolean rest = false;
-    /** 現在の値 */
+    /** current stream value */
     protected int current;
 
     /**
-     * @return PCM H or L (8bit LSB 有効)
+     * @return PCM H or L (8bit LSB available)
      */
     @Override
     public int read() throws IOException {
@@ -129,10 +130,8 @@ public abstract class AdpcmInputStream extends FilterInputStream {
                 }
             }
         } catch (IOException e) {
-e.printStackTrace(System.err);
+            Debug.printStackTrace(e);
         }
         return i;
     }
 }
-
-/* */
