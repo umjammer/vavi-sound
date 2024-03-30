@@ -5,28 +5,30 @@
 
 # vavi-sound
 
+<img alt="logo" src="https://github.com/umjammer/vavi-sound/assets/493908/7a731744-643a-4b6c-b82b-68f2fcc436c9" width="160" />
+
 Provides old school Japanese cell phone sounds library as `javax.sound` SPI<br/>
 includes many ADPCM codecs and the [SSRC](https://github.com/shibatch/SSRC) sampling rate converter.
 
 ### Status
 
-| **SPI** | **Codec**                                                | **Description**                      | **IN Status** | **OUT Status** | **SPI Status**  | **Comment**              |
-|:--------|:---------------------------------------------------------|:-------------------------------------|:-------------:|:--------------:|:---------------:|:-------------------------|
-| midi    | [MFi](src/main/java/vavi/sound/midi/mfi)                 | Japanese ring tone format | 🚧 | ✅ |        ✅        | DoCoMo                   |
-| midi    | [SMAF](src/main/java/vavi/sound/midi/smaf)               | YAMAHA ring tone format             | 🚧 | ✅ |        ✅        | au, Softbank             |
-| sampled | [MFi](src/main/java/vavi/sound/sampled/mfi)              | Japanese ring tone format           | ✅ | ✅ |        ✅        | DoCoMo                   |
-| sampled | [SMAF](src/main/java/vavi/sound/sampled/smaf)            | YAMAHA ring tone format             | ✅ | ✅ |        ✅        | au, Softbank             |
-| sampled | [CCITT ADPCM](src/main/java/vavi/sound/adpcm/ccitt)      | G711, G721, G723                     | ✅ | ✅ |        ✅        |                          |
-| sampled | [DVI ADPCM](src/main/java/vavi/sound/adpcm/dvi)          | DVI ADPCM                            | ✅ | ✅ |        ✅        |                          |
-| sampled | [IMA ADPCM](src/main/java/vavi/sound/adpcm/ima)          | IMA ADPCM                            | ✅ | ✅ | ✅<sup>[1]</sup> |                          |
-| sampled | [MA ADPCM](https://gitlab.com/umjammer/vavi-sound-nda)   | YAMAHA ADPCM                         | ✅ | ✅ |        ✅        |                          |
-| sampled | [MS ADPCM](src/main/java/vavi/sound/adpcm/ms)            | Microsoft ADPCM                      | ✅ | ✅ | ✅<sup>[1]</sup> |                          |
-| sampled | [OKI ADPCM](src/main/java/vavi/sound/adpcm/oki)          | OKI ADPCM                            | ✅ | ✅ |        ✅        |                          |
-| sampled | [ROHM ADPCM](https://gitlab.com/umjammer/vavi-sound-nda) | ROHM ADPCM                           | ✅ | ✅ |        ✅        |                          |
-| sampled | [VOX ADPCM](src/main/java/vavi/sound/adpcm/vox)          | VOX ADPCM                            | ✅ | ✅ |        ✅        |                          |
-| sampled | [YAMAHA ADPCM](src/main/java/vavi/sound/adpcm/yamaha)    | YAMAHA ADPCM                         | ✅ | ✅ |        ✅        |                          |
-| sampled | [YM2068 ADPCM](src/main/java/vavi/sound/adpcm/ym2608)    | YAMAHA ADPCM                         | ✅ | ✅ |        -        | same as yamaha     |
-| sampled | [ssrc](src/main/java/vavi/sound/pcm/resampling/ssrc)     | resampling                           | ✅ | -  |        ✅        | need to wait for phase 1 |
+| **SPI** | **Codec**                                                | **Description**           | **IN Status** | **OUT Status** |  **SPI Status**  | **Comment**                    |
+|:--------|:---------------------------------------------------------|:--------------------------|:-------------:|:--------------:|:----------------:|:-------------------------------|
+| midi    | [MFi](src/main/java/vavi/sound/midi/mfi)                 | Japanese ring tone format |      🚧       |       ✅        |        ✅         | DoCoMo                         |
+| midi    | [SMAF](src/main/java/vavi/sound/midi/smaf)               | YAMAHA ring tone format   |      🚧       |       ✅        |        ✅         | au, Softbank                   |
+| sampled | [MFi](src/main/java/vavi/sound/sampled/mfi)              | Japanese ring tone format |       ✅       |       ✅        |        ✅         | DoCoMo                         |
+| sampled | [SMAF](src/main/java/vavi/sound/sampled/smaf)            | YAMAHA ring tone format   |       ✅       |       ✅        |        ✅         | au, Softbank                   |
+| sampled | [CCITT ADPCM](src/main/java/vavi/sound/adpcm/ccitt)      | G711, G721, G723          |       ✅       |       ✅        |        ✅         | G721 cellphone w/ Fuetrek chip |
+| sampled | [DVI ADPCM](src/main/java/vavi/sound/adpcm/dvi)          | DVI ADPCM                 |       ✅       |       ✅        |        ✅         |                                |
+| sampled | [IMA ADPCM](src/main/java/vavi/sound/adpcm/ima)          | IMA ADPCM                 |       ✅       |       ✅        | ✅ <sup>[1]</sup> |                                |
+| sampled | [MA ADPCM](https://gitlab.com/umjammer/vavi-sound-nda)   | YAMAHA ADPCM              |       ✅       |       ✅        |        ✅         | cellphone w/ YAMAHA MA chip    |
+| sampled | [MS ADPCM](src/main/java/vavi/sound/adpcm/ms)            | Microsoft ADPCM           |       ✅       |       ✅        | ✅ <sup>[1]</sup> |                                |
+| sampled | [OKI ADPCM](src/main/java/vavi/sound/adpcm/oki)          | OKI ADPCM                 |       ✅       |       ✅        | ✅ <sup>[1]</sup> |                                |
+| sampled | [ROHM ADPCM](https://gitlab.com/umjammer/vavi-sound-nda) | ROHM ADPCM                |       ✅       |       ✅        |        ✅         | cellphone w/ Rohm chip         |
+| sampled | [VOX ADPCM](src/main/java/vavi/sound/adpcm/vox)          | VOX ADPCM                 |       ✅       |       ✅        | ✅ <sup>[1]</sup> |                                |
+| sampled | [YAMAHA ADPCM](src/main/java/vavi/sound/adpcm/yamaha)    | YAMAHA ADPCM              |       ✅       |       ✅        | ✅ <sup>[1]</sup> |                                |
+| sampled | [YM2068 ADPCM](src/main/java/vavi/sound/adpcm/ym2608)    | YAMAHA ADPCM              |       ✅       |       ✅        |        -         | same as YAMAHA ADPCM           |
+| sampled | [ssrc](src/main/java/vavi/sound/pcm/resampling/ssrc)     | resampling                |       ✅       |       -        |        ✅         | need to wait for phase 1       |
 
 <sub>[1] wav file readable</sub>
 
@@ -57,6 +59,10 @@ A. yes you can, follow those steps
 
 * github actions workflow on ubuntu java8 cannot deal line `PCM_SIGNED 8000.0 Hz, 16 bit, mono, 2 bytes/frame, little-endian`
 
+## References
+
+ * https://github.com/shibatch/SSRC
+
 ## TODO
 
   * use `Receiver` instead of `MetaEventListener`
@@ -64,3 +70,6 @@ A. yes you can, follow those steps
     * on macos m2 ultra 1st pass is in a blink of an eye
   * ~~`ima`, `ms` adpcm: wav reader~~
     * ~~`tritonus:tritonus-remaining:org.tritonus.sampled.file.WaveAudioFileReader`~~
+
+---
+<sub>images by <a href="https://www.silhouette-illust.com/illust/49312">melody</a>, <a href="https://www.silhouette-illust.com/illust/257">cellphone</a></sub>

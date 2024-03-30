@@ -8,7 +8,7 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-sound</artifactId>
-  <version>1.0.17</version>
+  <version>1.0.18</version>
 
   <name>Vavi Sound API</name>
   <url>https://github.com/umjammer/vavi-sound</url>
@@ -202,7 +202,7 @@ TODO
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- vavi / com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.11</version>
+      <version>1.1.12</version>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>

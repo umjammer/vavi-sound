@@ -9,22 +9,27 @@ package vavi.sound.sampled.adpcm.ms;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import vavi.util.Debug;
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static vavi.sound.SoundUtil.volume;
 
 
@@ -91,5 +96,34 @@ line.close();
         os.close();
 
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
+    }
+
+    @Test
+    @DisplayName("another input type 2")
+    void test2() throws Exception {
+        URL url = Paths.get("src/test/resources/" + inFile).toUri().toURL();
+        AudioInputStream ais = AudioSystem.getAudioInputStream(url);
+        assertEquals(MsEncoding.MS, ais.getFormat().getEncoding());
+    }
+
+    @Test
+    @DisplayName("another input type 3")
+    void test3() throws Exception {
+        File file = Paths.get("src/test/resources/" + inFile).toFile();
+        AudioInputStream ais = AudioSystem.getAudioInputStream(file);
+        assertEquals(MsEncoding.MS, ais.getFormat().getEncoding());
+    }
+
+    @Test
+    @DisplayName("when unsupported file coming")
+    void test5() throws Exception {
+        InputStream is = MsWaveAudioFileReaderTest.class.getResourceAsStream("/test.caf");
+        int available = is.available();
+        UnsupportedAudioFileException e = assertThrows(UnsupportedAudioFileException.class, () -> {
+Debug.println(is);
+            AudioSystem.getAudioInputStream(is);
+        });
+Debug.println(e.getMessage());
+        assertEquals(available, is.available()); // spi must not consume input stream even one byte
     }
 }

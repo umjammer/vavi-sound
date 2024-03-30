@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.sound.sampled.AudioFileFormat;
@@ -22,6 +23,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.spi.AudioFileReader;
 
+import vavi.sound.LimitedInputStream;
 import vavi.util.Debug;
 import vavi.util.win32.Chunk;
 import vavi.util.win32.WAVE;
@@ -72,9 +74,6 @@ public abstract class AdpcmWaveAudioFileReader extends AudioFileReader {
     /** @param fmt wave file header */
     protected abstract Map<String, Object> toProperties(WAVE.fmt fmt);
 
-    /** */
-    private static final String WAVE_DATA_NOT_LOAD_KEY = "vavi.util.win32.WAVE.data.notLoadData";
-
     /**
      * Returns the AudioFileFormat from the given InputStream. Implementation.
      *
@@ -95,8 +94,12 @@ Debug.println(Level.FINER, "enter available: " + bitStream.available() + ", " + 
         try {
             int bufferSize = getBufferSize();
             bitStream.mark(bufferSize);
-            System.setProperty(WAVE_DATA_NOT_LOAD_KEY, "true");
-            WAVE wave = Chunk.readFrom(bitStream, WAVE.class);
+            LimitedInputStream is = new LimitedInputStream(bitStream, bufferSize);
+            Map<String, Object> context = new HashMap<>();
+            context.put(WAVE.CHUNK_PARSE_STRICT_KEY, true);
+            context.put(WAVE.MULTIPART_CHUNK_PARSE_STRICT_KEY, true);
+            context.put(WAVE.WAVE_DATA_NOT_LOAD_KEY, true);
+            WAVE wave = Chunk.readFrom(is, WAVE.class, context);
             WAVE.fmt fmt = wave.findChildOf(WAVE.fmt.class);
             int formatCode = fmt.getFormatId();
  Debug.println(Level.FINER, "formatCode: " + formatCode);
@@ -108,16 +111,26 @@ Debug.println(Level.FINER, "enter available: " + bitStream.available() + ", " + 
             channels = fmt.getNumberChannels();
             properties = toProperties(fmt);
  Debug.println(Level.FINER, "properties: " + properties);
-            bitStream.reset();
-        } catch (IOException | IllegalArgumentException e) {
+        } catch (IOException e) {
+            if (e.getMessage().equals(LimitedInputStream.ERROR_MESSAGE_REACHED_TO_LIMIT)) {
 Debug.println(Level.FINER, e);
+Debug.printStackTrace(Level.FINEST, e);
+                throw (UnsupportedAudioFileException) new UnsupportedAudioFileException(e.getMessage()).initCause(e);
+            } else {
+                throw e;
+            }
+        } catch (Exception e) {
+Debug.println(Level.FINER, e);
+Debug.printStackTrace(Level.FINEST, e);
             throw (UnsupportedAudioFileException) new UnsupportedAudioFileException(e.getMessage()).initCause(e);
         } finally {
-            System.setProperty(WAVE_DATA_NOT_LOAD_KEY, "false");
             try {
                 bitStream.reset();
             } catch (IOException e) {
-                Debug.printStackTrace(e);
+                if (Debug.isLoggable(Level.FINEST))
+Debug.printStackTrace(e);
+                else
+Debug.println(Level.FINE, e);
             }
 Debug.println(Level.FINER, "finally available: " + bitStream.available());
         }
@@ -171,14 +184,13 @@ Debug.println(Level.FINER, "finally available: " + bitStream.available());
      * @throws IOException                   if an I/O exception occurs.
      */
     protected AudioInputStream getAudioInputStream(InputStream inputStream, int mediaLength) throws UnsupportedAudioFileException, IOException {
-        try {
-            AudioFileFormat audioFileFormat = getAudioFileFormat(inputStream, mediaLength);
-            // TODO super cutting corner, should get data position in above method and set it in props and skip here
-            System.setProperty(WAVE_DATA_NOT_LOAD_KEY, "true");
-            WAVE wave = Chunk.readFrom(inputStream, WAVE.class);
-            return new AudioInputStream(inputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
-        } finally {
-            System.setProperty(WAVE_DATA_NOT_LOAD_KEY, "false");
-        }
+        AudioFileFormat audioFileFormat = getAudioFileFormat(inputStream, mediaLength);
+        // TODO super cutting corner, should get data position in above method and set it in props and skip here
+        Map<String, Object> context = new HashMap<>();
+        context.put(WAVE.CHUNK_PARSE_STRICT_KEY, true);
+        context.put(WAVE.MULTIPART_CHUNK_PARSE_STRICT_KEY, true);
+        context.put(WAVE.WAVE_DATA_NOT_LOAD_KEY, true);
+        WAVE wave = Chunk.readFrom(inputStream, WAVE.class, context);
+        return new AudioInputStream(inputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
     }
 }
