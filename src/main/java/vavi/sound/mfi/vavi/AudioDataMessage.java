@@ -171,7 +171,7 @@ Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
 
         // type
         byte[] bytes = new byte[4];
-        dis.read(bytes, 0, 4);
+        dis.readFully(bytes, 0, 4);
         String string = new String(bytes);
         if (!TYPE.equals(string)) {
             throw new InvalidMfiDataException("invalid audio data: " + string);
