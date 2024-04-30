@@ -19,11 +19,16 @@ import java.nio.ByteOrder;
  * (means having a contractor without argument)
  * {@link #encode(int, int, byte[])} related should be stateless.
  * </p>
+ * system property
+ * <ul>
+ *  <li>vavi.sound.mobile.AudioEngine.volume ... adpcm volume</li>
+ * </ul>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051116 nsano initial version <br>
  */
 public interface AudioEngine {
 
+    // TODO interlock midi volume
     double volume = Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume",  "0.2"));
 
     /**

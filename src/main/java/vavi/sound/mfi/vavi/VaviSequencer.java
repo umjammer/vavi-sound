@@ -202,26 +202,23 @@ Debug.println("★0 off: " + midiSequencer.hashCode());
     }
 
     /** meta 0x2f listener */
-    private javax.sound.midi.MetaEventListener mel = new javax.sound.midi.MetaEventListener() {
-        @Override
-        public void meta(javax.sound.midi.MetaMessage message) {
+    private javax.sound.midi.MetaEventListener mel = message -> {
 Debug.println("★0 meta: type: " + message.getType());
-            switch (message.getType()) {
-            case 0x2f: // java midi sequencer adds automatically
-                try {
-                    MetaMessage metaMessage = new MetaMessage();
-                    metaMessage.setMessage(0x2f, new byte[0], 0);
-                    fireMeta(metaMessage);
-                    off();
-                } catch (InvalidMfiDataException e) {
+        switch (message.getType()) {
+        case 0x2f: // java midi sequencer adds automatically
+            try {
+                MetaMessage metaMessage = new MetaMessage();
+                metaMessage.setMessage(0x2f, new byte[0], 0);
+                fireMeta(metaMessage);
+                off();
+            } catch (InvalidMfiDataException e) {
 Debug.println(Level.SEVERE, e);
-                }
+            }
 catch (RuntimeException | Error e) {
 Debug.printStackTrace(e);
- throw e;
+throw e;
 }
-                break;
-            }
+            break;
         }
     };
 
