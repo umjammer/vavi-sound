@@ -6,6 +6,7 @@
 
 package vavi.sound.mfi.vavi;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,11 +28,27 @@ import vavi.util.Debug;
  */
 public class VaviMfiDeviceProvider extends MfiDeviceProvider {
 
-    /** */
-    public static final String version = "1.0.10";
+    static {
+        try {
+            try (InputStream is = VaviMfiDeviceProvider.class.getResourceAsStream("/META-INF/maven/vavi/vavi-sound/pom.properties")) {
+                if (is != null) {
+                    Properties props = new Properties();
+                    props.load(is);
+                    version = props.getProperty("version", "undefined in pom.properties");
+                } else {
+                    version = System.getProperty("vavi.test.version", "undefined");
+                }
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     /** */
-    private MfiDevice.Info[] mfiDeviceInfos;
+    public static final String version;
+
+    /** */
+    private final MfiDevice.Info[] mfiDeviceInfos;
 
     /** */
     public VaviMfiDeviceProvider() {
