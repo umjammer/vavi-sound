@@ -32,6 +32,11 @@ import vavi.util.Debug;
  */
 public class VaviMidiConverterTest {
 
+    static {
+        System.setProperty("vavi.sound.mobile.AudioEngine.volume", System.getProperty("vavi.test.volume", "0.02"));
+Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngine.volume"));
+    }
+
     @Test
     public void test() throws Exception {
         CountDownLatch cdl = new CountDownLatch(1);

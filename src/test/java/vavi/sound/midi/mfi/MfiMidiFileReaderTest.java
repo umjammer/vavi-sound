@@ -25,6 +25,11 @@ import vavi.util.Debug;
  */
 public class MfiMidiFileReaderTest {
 
+    static {
+        System.setProperty("vavi.sound.mobile.AudioEngine.volume", System.getProperty("vavi.test.volume", "0.02"));
+Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngine.volume"));
+    }
+
     @Test
     public void test() throws Exception {
         InputStream is = MfiVaviSequenceTest.class.getResourceAsStream("/test.mld");
