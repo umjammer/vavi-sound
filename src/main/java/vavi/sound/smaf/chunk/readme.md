@@ -1,10 +1,10 @@
 # vavi.sound.smaf.chunk
 
-SMAF サウンド関連のファイル構造を表すクラスを提供します．
+Provides a class that represents the file structure related to SMAF sound.
 
 ## Abstract
 
-SMAF ファイルの読み込み時に使用されます。
+Used when reading SMAF files.
 
 ## Structure
 

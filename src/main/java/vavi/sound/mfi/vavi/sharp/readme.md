@@ -1,5 +1,5 @@
 # vavi.sound.mfi.vavi.sharp
 
-Sharp 製固有のメッセージ処理クラスを提供します．
+Provides Sharp-specific message processing classes.
 
 ## TODO

@@ -1,28 +1,28 @@
 # vavi.sound.mfi.vavi.system
 
-SysexMessage の派生クラスを提供します．
+Provides a derived class of SysexMessage.
 
-### Δタイム
+### Δtime
 
-  * テンポ ... 1 分間の 4 分音符の数
-  * タイムベース ... 4 分音符の分解能 = PPQ (Parts ...), TpQN (Tick par Quarter Note)
+  * Tempo ... number of quarter notes in 1 minute
+  * Timebase ... Quarter note resolution = PPQ (Parts ...), TpQN (Tick par Quarter Note)
 ```
-        1Δ = 60[s] / テンポ / タイムベース;
+        1Δ = 60[s] / Tempo / Timebase;
 ```
 
 ## TODO
 
- * Δ > 255 の Note の取り扱い
+ * Handling notes with Δ > 255
 
- たとえば音調 380 (voice = 1)
+For example, tone 380 (voice = 1)
 
-|delta|voice|gateTime|説明|
+|delta|voice|gateTime|explanation|
 |:-:|:-:|:-:|:-:|
 |-|1|2 + 10 + 1 = 13||
 |2|2|-||
 |10|3|-||
-|0|1|max(380 - 13, 255) = 255|voice が 1 ラウンドしたあとに？|
+|0|1|max(380 - 13, 255) = 255|After one round of voice?|
 
- PsmPlayer は飛ばした分を最初のΔから引いている
+PsmPlayer subtracts the skipped amount from the initial Δ
 
- * MFi 5.0 拡張用情報
+ * Information for MFi 5.0 extension

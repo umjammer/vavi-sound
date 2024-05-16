@@ -1,11 +1,11 @@
 # vavi.sound.midi.mfi
 
-MIDI のサービスプロバイダ実装例 (MFi) のクラスを提供します。
+Provides a MIDI Service Provider Implementation Example (MFi) class.
 
-fileType は 0x88
+fileType is 0x88
 
 # TODO
 
- * ~~midi spi のとき MetaEvent 06 がリッスンされていない → MetaListener の提供~~
- * MetaEventApapter を Sequencer にあらかじめ付けておく~~
- * ~~spi に追加した場合 SMF もストリームから読めなくなる~~
+ * ~~MetaEvent 06 is not being listened to when using midi spi → Providing MetaListener~~
+ * Attach MetaEventAdapter to Sequencer in advance~~
+ * ~~If added to spi, SMF will also become unreadable from the stream.~~

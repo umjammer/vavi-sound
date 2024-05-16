@@ -1,7 +1,7 @@
 # vavi.sound.mobile
 
-mobile 用の wave シーケンサのクラスを提供します。
+Provides a wave sequencer class for mobile.
 
 ## TODO
 
- * continued がおかしい
+ * something is wrong with `continued`

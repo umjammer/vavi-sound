@@ -1,18 +1,18 @@
 # vavi.sound.smaf
 
-SMAF サウンド関連のクラスを提供します．
+Provides classes related to SMAF sound.
 
 ## Abstract
 
-{@link javax.sound.midi} パッケージとほぼ同じ構造をしています。
-使用法は {@link javax.sound.midi} を参考にしてください。
+It has almost the same structure as the {@link javax.sound.midi} package.
+Please refer to {@link javax.sound.midi} for usage.
 
 ## TODO
 
- * ~~ datetime="080512" smaf -> midi がおかしい~~
- * ma# emu を使用したシーケンサーとか [mmftool](https://murachue.sytes.net/web/softlist.cgi?mode=desc&title=mmftool)
- * HV と VSQ の相互変換？
- * GraphicsTrackChunk でモバラジ
+ * ~~ 080512 Something is wrong with smaf -> midi~~
+ * sequencer using ma# emu? [mmftool](https://murachue.sytes.net/web/softlist.cgi?mode=desc&title=mmftool)
+ * Conversion between HV and VSQ?
+ * MobaRad with GraphicsTrackChunk
  * gervill
 
 ## Reference
