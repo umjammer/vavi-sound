@@ -9,12 +9,14 @@ package vavi.sound.smaf.chunk;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.message.WaveDataMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -27,12 +29,14 @@ import vavi.util.Debug;
  */
 public class WaveDataChunk extends Chunk {
 
+    private static final Logger logger = getLogger(WaveDataChunk.class.getName());
+
     /** */
     public WaveDataChunk(byte[] id, int size) {
         super(id, size);
 
         waveNumber = id[3] & 0xff;
-Debug.println(Level.FINE, "WaveData[" + waveNumber + "]: " + size + " bytes");
+logger.log(Level.DEBUG, "WaveData[" + waveNumber + "]: " + size + " bytes");
     }
 
     /** */

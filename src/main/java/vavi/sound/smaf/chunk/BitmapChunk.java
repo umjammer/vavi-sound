@@ -8,10 +8,12 @@ package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -24,10 +26,12 @@ import vavi.util.Debug;
  */
 public class BitmapChunk extends Chunk {
 
+    private static final Logger logger = getLogger(BitmapChunk.class.getName());
+
     /** */
     public BitmapChunk(byte[] id, int size) {
         super(id, size);
-Debug.println(Level.FINE, "Bitmap: " + size + " bytes");
+logger.log(Level.DEBUG, "Bitmap: " + size + " bytes");
     }
 
     /** */
@@ -36,7 +40,7 @@ Debug.println(Level.FINE, "Bitmap: " + size + " bytes");
         this.size = 0;
     }
 
-    /**  */
+    /** */
     @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {

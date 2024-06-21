@@ -6,13 +6,16 @@
 
 package vavi.sound.mfi.vavi.track;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -24,6 +27,8 @@ import vavi.util.StringUtil;
  */
 public class UndefinedMessage extends MfiMessage
     implements MidiConvertible {
+
+    private static final Logger logger = getLogger(UndefinedMessage.class.getName());
 
     /**
      *
@@ -61,7 +66,7 @@ public class UndefinedMessage extends MfiMessage
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
-Debug.println(this);
+logger.log(Level.DEBUG, this);
         return null;
     }
 }

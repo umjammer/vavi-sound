@@ -25,9 +25,9 @@ packages
  * `vavi.sound.adpcm.ma`
  * `vavi.sound.adpcm.vox`
 
-着声に使用される ADPCM コーデックを取り扱うパッケージ群です。
-Java の標準 IO ({@link java.io.InputStream}/{@link java.io.OutputStream}) として実装されているため
-取り扱いが容易でストリーミングも楽に行えます。
+A group of packages that handle the ADPCM codec used for voice ringtone.
+Because it is implemented as Java standard IO ({@link java.io.InputStream}/{@link java.io.OutputStream})
+Easy to handle and stream easily.
 
 ### 2. MFi library
 
@@ -37,10 +37,10 @@ packages
  * `vavi.sound.mfi.vavi`
  *   :
 
-着メロライブラリの核となる部分です。MFi のファイル構造を取り扱い、MIDI 構造に変換する事が出来ます。
-また MIDI から MFi への変換も可能です。基本的に {@link javax.sound.midi} パッケージと同じ構造をとっています。
-機種依存データを扱うパッケージとして {@link vavi.sound.mfi.vavi.mitsubishi D社} と
-{@link vavi.sound.mfi.vavi.nec N社} がサンプル実装されています。
+This is the core part of the ringtone library. It can handle MFi file structures and convert them to MIDI structures.
+It is also possible to convert from MIDI to MFi. It basically has the same structure as the {@link javax.sound.midi} package.
+{@link vavi.sound.mfi.vavi.mitsubishi Company D} as a package that handles model-dependent data
+{@link vavi.sound.mfi.vavi.nec Company N} has been implemented as a sample.
 
 ### 3. `javax.sound.midi.spi` implementation
 
@@ -49,10 +49,10 @@ packages
  * `vavi.sound.midi`
  * `vavi.sound.midi.mfi`
 
-`javax.sound.midi.spi` の一実装として機能させるためのパッケージです。
+This is a package to function as an implementation of `javax.sound.midi.spi`.
 [SPI](http://java.sun.com/j2se/1.5.0/ja/docs/ja/guide/sound/programmer_guide/chapter1.html#111901)
-仕様に従い登録すれば midi の一ファイル形式として MFi ファイルを
-再生する事が可能になります。
+If you register according to the specifications, you can use MFi files as a midi file format.
+It will be possible to play it.
 
 ## How to
 

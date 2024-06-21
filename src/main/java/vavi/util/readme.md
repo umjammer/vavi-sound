@@ -1,11 +1,11 @@
 # vavi.util
 
-FFT, Bessel 関連のクラスを提供します．
+Provides classes related to FFT and Bessel.
 
 ## TODO
 
- * ~~FFT がおかしい~~
- * FFT がバージョンアップしてる
+ * ~~FFT is wrong~~
+ * FFT has been updated
 
 ## License
 

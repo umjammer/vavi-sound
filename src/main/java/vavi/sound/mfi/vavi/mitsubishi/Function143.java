@@ -6,14 +6,13 @@
 
 package vavi.sound.mfi.vavi.mitsubishi;
 
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 
@@ -54,11 +53,10 @@ public class Function143 implements MachineDependentFunction {
             byte[] subIdData = new byte[subIdLength];
             System.arraycopy(data, index, subIdData, 0, subIdLength);
             index += subIdLength;
-Debug.printf(Level.FINE, "ADPCM subId: %02x\n%s\n", subId, StringUtil.getDump(subIdData));
+logger.log(Level.DEBUG, String.format("ADPCM subId: %02x\n%s", subId, StringUtil.getDump(subIdData)));
             subIds.add(new SubIdChunk(subId, subIdData));
         }
     }
-
 
     /** */
     private enum SubId {
@@ -129,7 +127,7 @@ Debug.printf(Level.FINE, "ADPCM subId: %02x\n%s\n", subId, StringUtil.getDump(su
     }
 
     /** */
-    private List<SubIdChunk> subIds = new ArrayList<>();
+    private final List<SubIdChunk> subIds = new ArrayList<>();
 
     /** */
     private static class SubIdChunk {
@@ -142,19 +140,19 @@ Debug.printf(Level.FINE, "ADPCM subId: %02x\n%s\n", subId, StringUtil.getDump(su
             this.data = data;
         }
         /** */
-        int id;
+        final int id;
         /** */
-        byte[] data;
+        final byte[] data;
     }
 
     /** */
     private int getSubIdsLength() {
-Debug.println(Level.FINE, "subIds: " + subIds.size());
+logger.log(Level.DEBUG, "subIds: " + subIds.size());
         int length = 0;
         for (SubIdChunk subId : subIds) {
             length += (1 + 1 + subId.data.length);
         }
-Debug.println(Level.FINE, "subIds length: " + length);
+logger.log(Level.DEBUG, "subIds length: " + length);
         return length;
     }
 

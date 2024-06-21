@@ -102,7 +102,7 @@ public class VolumeMessage extends vavi.sound.mfi.ShortMessage
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
 
-//Debug.println("volume: " + channel + ": " + getVolume());
+//logger.log(Level.DEBUG, "volume: " + channel + ": " + getVolume());
         context.setVolume(channel, volume);
 
         MidiEvent[] events = new MidiEvent[1];
@@ -136,7 +136,7 @@ public class VolumeMessage extends vavi.sound.mfi.ShortMessage
         mfiMessage.setDelta(context.getDelta(context.retrieveMfiTrack(channel)));
         mfiMessage.setVoice(voice);
         mfiMessage.setVolume(data2 / 2);
-//Debug.println(mfiMessage.getVoice() + ", " + ((mfiMessage.getMessage()[3] & 0xc0) >> 6));
+//logger.log(Level.DEBUG, mfiMessage.getVoice() + ", " + ((mfiMessage.getMessage()[3] & 0xc0) >> 6));
 
         context.setPreviousTick(track, midiEvent.getTick());
 

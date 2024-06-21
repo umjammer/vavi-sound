@@ -31,7 +31,7 @@ import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 public class BackDropColorDefinitionMessage extends ShortMessage {
 
     /** */
-    private int backDropColor;
+    private final int backDropColor;
 
     /**
      * @param duration

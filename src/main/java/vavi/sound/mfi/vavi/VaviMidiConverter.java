@@ -7,10 +7,10 @@
 package vavi.sound.mfi.vavi;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -29,7 +29,8 @@ import vavi.sound.mfi.vavi.track.EndOfTrackMessage;
 import vavi.sound.mfi.vavi.track.NopMessage;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.mfi.MfiVaviSequence;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -43,6 +44,8 @@ import vavi.util.Debug;
  *          0.21 030903 nsano add midi to mfi <br>
  */
 class VaviMidiConverter implements MidiConverter {
+
+    private static final Logger logger = getLogger(VaviMidiConverter.class.getName());
 
     /** the device information */
     private static final MfiDevice.Info info = new MfiDevice.Info(
@@ -94,22 +97,22 @@ class VaviMidiConverter implements MidiConverter {
         try {
             return convert(midiSequence, fileType);
         } catch (IOException | InvalidMfiDataException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         }
     }
 
 /* debug */
-private static Set<String> uc = new HashSet<>();
+private static final Set<String> uc = new HashSet<>();
 
     /** Converts midi sequence to mfi sequence */
     protected vavi.sound.mfi.Sequence convert(Sequence midiSequence, int fileType)
         throws InvalidMfiDataException, IOException {
 
-Debug.println(Level.FINE, "divisionType: " + midiSequence.getDivisionType());
-Debug.println(Level.FINE, "microsecondLength: " + midiSequence.getMicrosecondLength());
-Debug.println(Level.FINE, "resolution: " + midiSequence.getResolution());
-Debug.println(Level.FINE, "tickLength: " + midiSequence.getTickLength());
+logger.log(Level.DEBUG, "divisionType: " + midiSequence.getDivisionType());
+logger.log(Level.DEBUG, "microsecondLength: " + midiSequence.getMicrosecondLength());
+logger.log(Level.DEBUG, "resolution: " + midiSequence.getResolution());
+logger.log(Level.DEBUG, "tickLength: " + midiSequence.getTickLength());
 
         //
         vavi.sound.mfi.Sequence mfiSequence = new vavi.sound.mfi.Sequence();
@@ -144,7 +147,7 @@ Debug.println(Level.FINE, "tickLength: " + midiSequence.getTickLength());
 
                     for (int j = maxTracks; j <= mfiTrackNumber; j++) {
                         mfiSequence.createTrack();
-Debug.println(Level.FINE, ">>>> create MFi track: " + j);
+logger.log(Level.DEBUG, ">>>> create MFi track: " + j);
                         mfiTracks = mfiSequence.getTracks();
                         maxTracks = mfiTracks.length;
                     }
@@ -170,7 +173,7 @@ Debug.println(Level.FINE, ">>>> create MFi track: " + j);
                 // master volume
                 if (maxTracks == 0) {
                     mfiSequence.createTrack();
-Debug.println(Level.FINE, "create MFi track: 0");
+logger.log(Level.DEBUG, "create MFi track: 0");
                     mfiTracks = mfiSequence.getTracks();
                     maxTracks = mfiTracks.length;
                 }
@@ -189,7 +192,7 @@ Debug.println(Level.FINE, "create MFi track: 0");
 
                 if (maxTracks == 0) {
                     mfiSequence.createTrack();
-Debug.println(Level.FINE, "create MFi track: 0");
+logger.log(Level.DEBUG, "create MFi track: 0");
                     mfiTracks = mfiSequence.getTracks();
                     maxTracks = mfiTracks.length;
                 }
@@ -204,7 +207,7 @@ try {
             MfiConvertible converter = MfiConvertible.factory.get(key);
             if (converter == null) {
 if (!uc.contains(key)) {
- Debug.println(Level.WARNING, "no converter for: [" + key + "]");
+ logger.log(Level.WARNING, "no converter for: [" + key + "]");
  uc.add(key);
 }
             } else if (converter instanceof EndOfTrackMessage) { // TODO ???
@@ -224,10 +227,10 @@ if (!uc.contains(key)) {
                             mfiTracks[t].add(mfiEvents[t]);
                             mfiContext.setEofSet(t, true);
                         } else {
-//Debug.println("EOF already set[" +  t + "]");
+//logger.log(Level.DEBUG, "EOF already set[" +  t + "]");
                         }
                     } else {
-Debug.println(Level.FINE, "message is null[" +  mfiTracks[t].size() + "]: " + midiMessage);
+logger.log(Level.DEBUG, "message is null[" +  mfiTracks[t].size() + "]: " + midiMessage);
                     }
                 }
             } else {
@@ -236,7 +239,7 @@ Debug.println(Level.FINE, "message is null[" +  mfiTracks[t].size() + "]: " + mi
                 if (mfiEvents != null) {
                     for (MfiEvent mfiEvent : mfiEvents) {
                         if (mfiEvent == null) {
-                            Debug.println(Level.WARNING, "NOP is null[" + mfiTracks[mfiTrackNumber].size() + "]: " + MidiUtil.paramString(midiMessage));
+                            logger.log(Level.WARNING, "NOP is null[" + mfiTracks[mfiTrackNumber].size() + "]: " + MidiUtil.paramString(midiMessage));
                         }
                         addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvent);
                     }
@@ -247,36 +250,38 @@ Debug.println(Level.FINE, "message is null[" +  mfiTracks[t].size() + "]: " + mi
                 if (mfiEvents != null) {
                     for (MfiEvent mfiEvent : mfiEvents) {
                         if (mfiEvent == null) {
-                            Debug.println(Level.WARNING, "event is null[" + mfiTracks[mfiTrackNumber].size() + ", " + mfiEvents.length + "]: " + converter.getClass() + ", " + MidiUtil.paramString(midiMessage));
+                            logger.log(Level.WARNING, "event is null[" + mfiTracks[mfiTrackNumber].size() + ", " + mfiEvents.length + "]: " + converter.getClass() + ", " + MidiUtil.paramString(midiMessage));
                         }
                         addEventToTrack(mfiContext, midiEvent.getTick(), mfiTracks[mfiTrackNumber], mfiTrackNumber, mfiEvent);
                     }
                 }
             }
 } catch (IllegalArgumentException e) {
- Debug.println(Level.WARNING, e);
+ logger.log(Level.WARNING, e);
 }
         }
 
         return mfiSequence;
     }
 
-private int[] deltas = new int[4];
+private final int[] deltas = new int[4];
 
-private void addEventToTrack(MfiContext mfiContext, long tick, Track mfiTrack, int mfiTrackNumber, MfiEvent mfiEvent) {
-    MfiMessage mfiMessage = mfiEvent.getMessage();
-    deltas[mfiTrackNumber] += mfiMessage.getDelta();
-    double tickDash = deltas[mfiTrackNumber] * mfiContext.getScale();
-    if ((tickDash / tick) * 100 < 95 && (tickDash / tick) * 100 != 0 && !(mfiMessage instanceof NopMessage))
-Debug.printf(Level.SEVERE, "XXXXX track: %d, tick: %d, tick': %.2f (%.2f), %d, %s\n",
-            mfiTrackNumber,
-            tick,
-            tickDash,
-            tick != 0 ? (tickDash / tick) * 100 : 0,
-            mfiContext.getPreviousTick(mfiTrackNumber),
-            mfiMessage);
-    mfiTrack.add(mfiEvent);
+    private void addEventToTrack(MfiContext mfiContext, long tick, Track mfiTrack, int mfiTrackNumber, MfiEvent mfiEvent) {
+        MfiMessage mfiMessage = mfiEvent.getMessage();
+        deltas[mfiTrackNumber] += mfiMessage.getDelta();
+        double tickDash = deltas[mfiTrackNumber] * mfiContext.getScale();
+if ((tickDash / tick) * 100 < 95 && (tickDash / tick) * 100 != 0 && !(mfiMessage instanceof NopMessage)) {
+ logger.log(Level.ERROR, "XXXXX track: %d, tick: %d, tick': %.2f (%.2f), %d, %s",
+  mfiTrackNumber,
+  tick,
+  tickDash,
+  tick != 0 ? (tickDash / tick) * 100 : 0,
+  mfiContext.getPreviousTick(mfiTrackNumber),
+  mfiMessage);
 }
+        mfiTrack.add(mfiEvent);
+    }
+
     //----
 
     /** Converts mfi sequence to midi sequence  */
@@ -287,7 +292,7 @@ Debug.printf(Level.SEVERE, "XXXXX track: %d, tick: %d, tick': %.2f (%.2f), %d, %
         try {
             return convert(mfiSequence);
         } catch (IOException | InvalidMidiDataException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new InvalidMfiDataException(e);
         }
     }
@@ -303,7 +308,7 @@ Debug.printStackTrace(e);
         MidiContext midiContext = new MidiContext();
 
         int resolution = midiContext.getResolution(mfiTracks);
-Debug.println(Level.FINE, "resolution: " + resolution);
+logger.log(Level.DEBUG, "resolution: " + resolution);
         Sequence midiSequence = new MfiVaviSequence(Sequence.PPQ, resolution, 1);
         javax.sound.midi.Track midiTrack = midiSequence.getTracks()[0];
 
@@ -321,7 +326,7 @@ Debug.println(Level.FINE, "resolution: " + resolution);
                 midiContext.addCurrent(mfiMessage.getDelta());
 
                 if (mfiMessage instanceof MidiConvertible) {
-//Debug.println("midi convertible: " + message);
+//logger.log(Level.DEBUG, "midi convertible: " + message);
                     MidiEvent[] midiEvents = ((MidiConvertible) mfiMessage).getMidiEvents(midiContext);
                     if (midiEvents != null) {
                         for (MidiEvent midiEvent : midiEvents) {
@@ -329,9 +334,9 @@ Debug.println(Level.FINE, "resolution: " + resolution);
                         }
                     }
                 } else if (mfiMessage instanceof SubMessage) {
-Debug.println(Level.WARNING, "ignore sequence: " + mfiMessage);
+logger.log(Level.WARNING, "ignore sequence: " + mfiMessage);
                 } else {
-Debug.println(Level.WARNING, "unknown sequence: " + mfiMessage);
+logger.log(Level.WARNING, "unknown sequence: " + mfiMessage);
                 }
             }
         }

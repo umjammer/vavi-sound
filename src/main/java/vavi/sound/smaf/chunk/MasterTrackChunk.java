@@ -8,12 +8,14 @@ package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.List;
-import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -26,10 +28,12 @@ import vavi.util.Debug;
  */
 public class MasterTrackChunk extends TrackChunk {
 
+    private static final Logger logger = getLogger(MasterTrackChunk.class.getName());
+
     /** */
     public MasterTrackChunk(byte[] id, int size) {
         super(id, size);
-Debug.println(Level.FINE, "MasterTrack: " + size);
+logger.log(Level.DEBUG, "MasterTrack: " + size);
     }
 
     @Override
@@ -38,20 +42,20 @@ Debug.println(Level.FINE, "MasterTrack: " + size);
 
         this.formatType = FormatType.values()[dis.readUnsignedByte()];
         this.sequenceType = SequenceType.values()[dis.readUnsignedByte()];
-Debug.println(Level.FINE, "sequenceType: " + sequenceType);
+logger.log(Level.DEBUG, "sequenceType: " + sequenceType);
         this.durationTimeBase = dis.readUnsignedByte();
-//Debug.println("durationTimeBase: " + StringUtil.toHex2(durationTimeBase));
+//logger.log(Level.DEBUG, "durationTimeBase: " + StringUtil.toHex2(durationTimeBase));
         int optionSize = dis.readUnsignedByte();
         this.optionData = new byte[optionSize];
         dis.readFully(optionData);
 
         while (dis.available() > 0) {
-//Debug.println("available: " + is.available() + ", " + available());
+//logger.log(Level.DEBUG, "available: " + is.available() + ", " + available());
               Chunk chunk = readFrom(dis);
               if (chunk instanceof MasterTrackSequenceDataChunk) { // "Mssq"
                   sequenceDataChunk = chunk;
               } else {
-Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
+logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
               }
         }
     }

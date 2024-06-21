@@ -139,7 +139,7 @@ public abstract class TrackChunk extends Chunk {
      * @param timeBase real timeBase [msec]
      * @return index of timeBase
      */
-    private int findTimeBase(int timeBase) {
+    private static int findTimeBase(int timeBase) {
         for (int i = 0; i < timeBaseTable.length; i++) {
             if (timeBase == timeBaseTable[i]) {
                 return i;

@@ -8,8 +8,8 @@ package vavi.sound.sampled.mfi;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -18,11 +18,11 @@ import org.klab.commons.cli.Argument;
 import org.klab.commons.cli.HelpOption;
 import org.klab.commons.cli.Option;
 import org.klab.commons.cli.Options;
-
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.sampled.FilterChain;
 import vavi.sound.sampled.WaveDivider;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -33,13 +33,15 @@ import vavi.util.Debug;
  */
 class DividedMfiWithVoiceMaker extends MfiWithVoiceMaker {
 
+    private static final Logger logger = getLogger(DividedMfiWithVoiceMaker.class.getName());
+
     /** source PCM */
-    private AudioInputStream sourceAis;
+    private final AudioInputStream sourceAis;
 
     /** output base directory */
-    private String directory;
+    private final String directory;
     /** output file template (use {@link String#format(String, Object...)}) */
-    private String base;
+    private final String base;
 
     /** */
     private static int toReal(int base, int percent) {
@@ -78,7 +80,7 @@ class DividedMfiWithVoiceMaker extends MfiWithVoiceMaker {
                 File file = new File(directory, String.format(base, chunk.sequence + 1));
                 r += createMFi(chunk.buffer, file);
             } catch (InvalidMfiDataException e) {
-                throw (IOException) new IOException(e);
+                throw new IOException(e);
             }
         }
     }
@@ -96,10 +98,10 @@ long t = System.currentTimeMillis();
         // divide
         Event event = new Event();
         WaveDivider waveDivider = WaveDivider.Factory.getWaveDivider(sourceAis);
-Debug.println(Level.FINE, "1: " + (System.currentTimeMillis() - t));
+logger.log(Level.DEBUG, "1: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         waveDivider.divide(time, event);
-Debug.println(Level.FINE, "2: " + (System.currentTimeMillis() - t));
+logger.log(Level.DEBUG, "2: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         return event.r;
     }

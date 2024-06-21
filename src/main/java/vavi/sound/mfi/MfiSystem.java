@@ -12,13 +12,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
-import java.util.logging.Level;
 import java.util.stream.StreamSupport;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -26,7 +27,8 @@ import javax.sound.midi.InvalidMidiDataException;
 import vavi.sound.mfi.spi.MfiDeviceProvider;
 import vavi.sound.mfi.spi.MfiFileReader;
 import vavi.sound.mfi.spi.MfiFileWriter;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -40,6 +42,8 @@ import vavi.util.Debug;
  *          0.04 031212 nsano add toMfiSequence(Sequence, int) <br>
  */
 public final class MfiSystem {
+
+    private static final Logger logger = getLogger(MfiSystem.class.getName());
 
     /** cannot be access */
     private MfiSystem() {
@@ -138,7 +142,7 @@ public final class MfiSystem {
         throws InvalidMfiDataException, MfiUnavailableException {
 
         MidiConverter converter = MfiSystem.getMidiConverter();
-//Debug.println(converter);
+//logger.log(Level.DEBUG, converter);
         return converter.toMidiSequence(sequence);
     }
 
@@ -146,14 +150,14 @@ public final class MfiSystem {
     public static MfiFileFormat getMfiFileFormat(InputStream stream)
         throws InvalidMfiDataException, IOException {
 
-//Debug.println("readers: " + readers.length);
+//logger.log(Level.DEBUG, "readers: " + readers.length);
         for (MfiFileReader reader : readers) {
             try {
                 MfiFileFormat mff = reader.getMfiFileFormat(stream);
-//Debug.println(StringUtil.paramString(mff));
+//logger.log(Level.DEBUG, StringUtil.paramString(mff));
                 return mff;
             } catch (Exception e) {
-Debug.println(Level.WARNING, e);
+logger.log(Level.WARNING, e.getMessage(), e);
             }
         }
 
@@ -175,15 +179,14 @@ Debug.println(Level.WARNING, e);
     /** Gets a MFi sequence. */
     public static Sequence getSequence(InputStream stream) throws InvalidMfiDataException, IOException {
 
-//Debug.println("readers: " + readers.length);
+//logger.log(Level.DEBUG, "readers: " + readers.length);
         for (MfiFileReader reader : readers) {
             try {
                 Sequence sequence = reader.getSequence(stream);
-//Debug.println(StringUtil.paramString(sequence));
+//logger.log(Level.DEBUG, StringUtil.paramString(sequence));
                 return sequence;
             } catch (InvalidMfiDataException e) {
-Debug.println(Level.FINE, e);
-                continue;
+logger.log(Level.DEBUG, e);
             }
         }
 
@@ -256,7 +259,7 @@ Debug.println(Level.FINE, e);
                 return writer.write(in, fileType, out);
             }
         }
-Debug.println(Level.WARNING, "no writer found for: " + fileType);
+logger.log(Level.WARNING, "no writer found for: " + fileType);
         return 0;
     }
 
@@ -269,14 +272,14 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
     //----
 
     /** all providers */
-    private static ServiceLoader<MfiDeviceProvider> providers;
+    private static final ServiceLoader<MfiDeviceProvider> providers;
     /** all readers */
-    private static ServiceLoader<MfiFileReader> readers;
+    private static final ServiceLoader<MfiFileReader> readers;
     /** all writers */
-    private static ServiceLoader<MfiFileWriter> writers;
+    private static final ServiceLoader<MfiFileWriter> writers;
 
     /** default provider */
-    private static MfiDeviceProvider provider;
+    private static final MfiDeviceProvider provider;
 
     /*
      * default is specified by MfiSystem.properties.
@@ -294,7 +297,7 @@ Debug.println(Level.WARNING, "no writer found for: " + fileType);
             providers = ServiceLoader.load(vavi.sound.mfi.spi.MfiDeviceProvider.class);
 providers.forEach(System.err::println);
             provider = StreamSupport.stream(providers.spliterator(), false).filter(p -> p.getClass().getName().equals(defaultProvider)).findFirst().get();
-Debug.println(Level.FINE, "default provider: " + provider.getClass().getName());
+logger.log(Level.DEBUG, "default provider: " + provider.getClass().getName());
 
             readers = ServiceLoader.load(vavi.sound.mfi.spi.MfiFileReader.class);
 providers.forEach(System.err::println);
@@ -302,7 +305,7 @@ providers.forEach(System.err::println);
             writers = ServiceLoader.load(vavi.sound.mfi.spi.MfiFileWriter.class);
 providers.forEach(System.err::println);
         } catch (Exception e) {
-Debug.println(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new IllegalStateException(e);
         }
     }

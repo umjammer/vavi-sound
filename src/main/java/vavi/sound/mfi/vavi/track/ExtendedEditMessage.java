@@ -7,13 +7,15 @@
 package vavi.sound.mfi.vavi.track;
 
 import java.io.DataInputStream;
-import java.io.InputStream;
 import java.io.IOException;
-import java.util.logging.Level;
+import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.SysexMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -28,6 +30,8 @@ import vavi.util.Debug;
  * @version 0.00 020704 nsano initial version <br>
  */
 public class ExtendedEditMessage extends SysexMessage {
+
+    private static final Logger logger = getLogger(ExtendedEditMessage.class.getName());
 
     /** */
     protected ExtendedEditMessage(byte[] message) {
@@ -49,7 +53,7 @@ public class ExtendedEditMessage extends SysexMessage {
         dummy      = dis.read();    // 0x01
         int part   = dis.read();
         int zwitch = dis.read();
-Debug.println(Level.FINE, "dummy " + dummy + ", part " + part + ", switch " + zwitch);
+logger.log(Level.DEBUG, "dummy " + dummy + ", part " + part + ", switch " + zwitch);
 
         throw new InvalidMfiDataException("unsupported: " + 0xf2);
     }

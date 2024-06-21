@@ -8,8 +8,8 @@ package vavi.sound.mfi.vavi;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiChannel;
@@ -28,7 +28,8 @@ import vavi.sound.mfi.Sequence;
 import vavi.sound.mfi.Sequencer;
 import vavi.sound.mfi.Synthesizer;
 import vavi.sound.midi.MidiUtil;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -46,6 +47,8 @@ import vavi.util.Debug;
  *          1.03 030902 nsano out source {@link MetaEventListener} <br>
  */
 class VaviSequencer implements Sequencer, Synthesizer {
+
+    private static final Logger logger = getLogger(VaviSequencer.class.getName());
 
     /** the device information */
     private static final MfiDevice.Info info =
@@ -76,7 +79,7 @@ class VaviSequencer implements Sequencer, Synthesizer {
         midiSequencer.close();
         midiSynthesizer.close();
         off();
-Debug.println("★0 close: " + midiSequencer.hashCode());
+logger.log(Level.DEBUG, "★0 close: " + midiSequencer.hashCode());
     }
 
     @Override
@@ -88,7 +91,7 @@ Debug.println("★0 close: " + midiSequencer.hashCode());
     }
 
     /** ADPCM sequencer, TODO should be {@link javax.sound.midi.Transmitter}  */
-    private javax.sound.midi.MetaEventListener mea = new MetaEventAdapter();
+    private final javax.sound.midi.MetaEventListener mea = new MetaEventAdapter();
 
     @Override
     public void open() throws MfiUnavailableException {
@@ -96,17 +99,17 @@ Debug.println("★0 close: " + midiSequencer.hashCode());
             if (this.midiSequencer == null) {
                 this.midiSequencer = MidiUtil.getDefaultSequencer(vavi.sound.midi.VaviMidiDeviceProvider.class);
                 this.midiSynthesizer = MidiSystem.getSynthesizer();
-Debug.println(Level.FINE, "midiSequencer: " + midiSequencer.getClass().getName());
-Debug.println(Level.FINE, "midiSynthesizer: " + midiSynthesizer.getClass().getName());
-Debug.println("★0 init: " + midiSequencer.hashCode());
+logger.log(Level.DEBUG, "midiSequencer: " + midiSequencer.getClass().getName());
+logger.log(Level.DEBUG, "midiSynthesizer: " + midiSynthesizer.getClass().getName());
+logger.log(Level.DEBUG, "★0 init: " + midiSequencer.hashCode());
             }
 
-Debug.println("★0 open: " + midiSequencer.hashCode());
+logger.log(Level.DEBUG, "★0 open: " + midiSequencer.hashCode());
             midiSequencer.open();
             midiSynthesizer.open();
             midiSequencer.getTransmitter().setReceiver(midiSynthesizer.getReceiver());
         } catch (MidiUnavailableException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new MfiUnavailableException(e);
         }
     }
@@ -120,10 +123,10 @@ Debug.printStackTrace(e);
         try {
             midiSequencer.setSequence(MfiSystem.toMidiSequence(sequence));
         } catch (InvalidMidiDataException e) {
-Debug.println(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new InvalidMfiDataException(e);
         } catch (MfiUnavailableException e) {
-Debug.println(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new IllegalStateException(e);
         }
     }
@@ -171,20 +174,20 @@ Debug.println(Level.SEVERE, e);
     private void on() {
         midiSequencer.addMetaEventListener(mel);
         midiSequencer.addMetaEventListener(mea);
-Debug.println("★0 on: " + midiSequencer.hashCode());
+logger.log(Level.DEBUG, "★0 on: " + midiSequencer.hashCode());
     }
 
     /** */
     private void off() {
         midiSequencer.removeMetaEventListener(mel);
         midiSequencer.removeMetaEventListener(mea);
-Debug.println("★0 off: " + midiSequencer.hashCode());
+logger.log(Level.DEBUG, "★0 off: " + midiSequencer.hashCode());
     }
 
     //-------------------------------------------------------------------------
 
     /** @see vavi.sound.mfi.MetaMessage MetaEvent */
-    private MetaSupport metaSupport = new MetaSupport();
+    private final MetaSupport metaSupport = new MetaSupport();
 
     @Override
     public void addMetaEventListener(MetaEventListener l) {
@@ -202,26 +205,23 @@ Debug.println("★0 off: " + midiSequencer.hashCode());
     }
 
     /** meta 0x2f listener */
-    private javax.sound.midi.MetaEventListener mel = new javax.sound.midi.MetaEventListener() {
-        @Override
-        public void meta(javax.sound.midi.MetaMessage message) {
-Debug.println("★0 meta: type: " + message.getType());
-            switch (message.getType()) {
-            case 0x2f: // java midi sequencer adds automatically
-                try {
-                    MetaMessage metaMessage = new MetaMessage();
-                    metaMessage.setMessage(0x2f, new byte[0], 0);
-                    fireMeta(metaMessage);
-                    off();
-                } catch (InvalidMfiDataException e) {
-Debug.println(Level.SEVERE, e);
-                }
-catch (RuntimeException | Error e) {
-Debug.printStackTrace(e);
- throw e;
-}
-                break;
+    private final javax.sound.midi.MetaEventListener mel = message -> {
+logger.log(Level.DEBUG, "★0 meta: type: " + message.getType());
+        switch (message.getType()) {
+        case 0x2f: // java midi sequencer adds automatically
+            try {
+                MetaMessage metaMessage = new MetaMessage();
+                metaMessage.setMessage(0x2f, new byte[0], 0);
+                fireMeta(metaMessage);
+                off();
+            } catch (InvalidMfiDataException e) {
+logger.log(Level.ERROR, e.getMessage(), e);
             }
+catch (RuntimeException | Error e) {
+logger.log(Level.ERROR, e.getMessage(), e);
+throw e;
+}
+            break;
         }
     };
 

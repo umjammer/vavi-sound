@@ -8,12 +8,14 @@ package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -26,10 +28,12 @@ import vavi.util.Debug;
  */
 public class ImageDataChunk extends Chunk {
 
+    private static final Logger logger = getLogger(ImageDataChunk.class.getName());
+
     /** */
     public ImageDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println(Level.FINE, "ImageData: " + size + " bytes");
+logger.log(Level.DEBUG, "ImageData: " + size + " bytes");
     }
 
     /** */
@@ -38,7 +42,7 @@ Debug.println(Level.FINE, "ImageData: " + size + " bytes");
         this.size = 0;
     }
 
-    /**  */
+    /** */
     @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
@@ -52,14 +56,14 @@ Debug.println(Level.FINE, "ImageData: " + size + " bytes");
             } else if (chunk instanceof LinkChunk) { // ""
                 imageDataChunks.add(chunk);
             } else {
-                Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
+                logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
-Debug.println(Level.FINE, "messages: " + imageDataChunks.size());
+logger.log(Level.DEBUG, "messages: " + imageDataChunks.size());
     }
 
     /** */
-    private List<Chunk> imageDataChunks = new ArrayList<>();
+    private final List<Chunk> imageDataChunks = new ArrayList<>();
 
     /** TODO */
     @Override

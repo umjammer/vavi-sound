@@ -6,9 +6,10 @@
 
 package vavi.sound.mfi.vavi.audio;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
@@ -24,7 +25,8 @@ import vavi.sound.mfi.vavi.track.MasterVolumeMessage;
 import vavi.sound.mfi.vavi.track.Nop2Message;
 import vavi.sound.mfi.vavi.track.TempoMessage;
 import vavi.sound.mobile.AudioEngine;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -34,6 +36,8 @@ import vavi.util.Debug;
  * @version 0.00 071010 nsano initial version <br>
  */
 public class CommonAudioMessage {
+
+    private static final Logger logger = getLogger(CommonAudioMessage.class.getName());
 
     /** */
     protected static final int maxMasterVolume = 0x7f;
@@ -96,7 +100,7 @@ public class CommonAudioMessage {
     /** */
     private static int getDelta(float time) {
         float aDelta = (60f / tempoMessage.getTempo()) / tempoMessage.getTimeBase();
-Debug.println(Level.FINE, "a delta: " + aDelta + ", tempo: " + tempoMessage.getTempo() + ", " + tempoMessage.getTimeBase());
+logger.log(Level.DEBUG, "a delta: " + aDelta + ", tempo: " + tempoMessage.getTempo() + ", " + tempoMessage.getTimeBase());
         return Math.round(time / aDelta);
     }
 
@@ -105,7 +109,7 @@ Debug.println(Level.FINE, "a delta: " + aDelta + ", tempo: " + tempoMessage.getT
         List<MfiEvent> events = new ArrayList<>();
 
         int delta = getDelta(time);
-Debug.println(Level.FINE, "delta: " + delta);
+logger.log(Level.DEBUG, "delta: " + delta);
         for (int i = 0; i < delta / Nop2Message.maxDelta; i++) {
             events.add(new MfiEvent(new Nop2Message(0xff, 0xff), 0L));
         }
@@ -117,17 +121,11 @@ Debug.println(Level.FINE, "delta: " + delta);
 
     /** */
     public static List<MfiEvent> getAudioEvents(int format, byte[] data, int sampleRate, int bits, int channels) {
-        List<MfiEvent> events;
-        switch (format) {
-        case 0x80:
-            events = getAudioEventsType1(data, sampleRate, bits, channels);
-            break;
-        case 0x81:
-            events = getAudioEventsType2(data, sampleRate, bits, channels);
-            break;
-        default:
-            throw new IllegalArgumentException("undefined format: " + format);
-        }
+        List<MfiEvent> events = switch (format) {
+            case 0x80 -> getAudioEventsType1(data, sampleRate, bits, channels);
+            case 0x81 -> getAudioEventsType2(data, sampleRate, bits, channels);
+            default -> throw new IllegalArgumentException("undefined format: " + format);
+        };
         return events;
     }
 

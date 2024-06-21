@@ -8,16 +8,17 @@ package vavi.sound.midi.mfi;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Arrays;
-import java.util.logging.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
 
 import vavi.sound.mfi.MfiSystem;
 import vavi.sound.mfi.MfiUnavailableException;
 import vavi.sound.midi.BasicMidiFileWriter;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -30,23 +31,25 @@ import vavi.util.Debug;
  */
 public class MfiMidiFileWriter extends BasicMidiFileWriter {
 
+    private static final Logger logger = getLogger(MfiMidiFileWriter.class.getName());
+
     @Override
     public int[] getMidiFileTypes() {
-Debug.println(Level.FINE, "(1): " + Arrays.toString(MfiSystem.getMfiFileTypes()));
+logger.log(Level.DEBUG, "(1): " + Arrays.toString(MfiSystem.getMfiFileTypes()));
         return MfiSystem.getMfiFileTypes();
     }
 
     /** @param sequence MIDI sequence */
     @Override
     public int[] getMidiFileTypes(Sequence sequence) {
-Debug.println(Level.FINE, "(2): " + Arrays.toString(MfiSystem.getMfiFileTypes()));
+logger.log(Level.DEBUG, "(2): " + Arrays.toString(MfiSystem.getMfiFileTypes()));
         return MfiSystem.getMfiFileTypes();
     }
 
     /** @param fileType supports 0x88:MFi (vavi) */
     @Override
     public boolean isFileTypeSupported(int fileType) {
-Debug.println(Level.FINE, "(1): fileType: " + fileType);
+logger.log(Level.DEBUG, "(1): fileType: " + fileType);
         return MfiSystem.isFileTypeSupported(fileType);
     }
 
@@ -56,8 +59,8 @@ Debug.println(Level.FINE, "(1): fileType: " + fileType);
      */
     @Override
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
-Debug.println(Level.FINE, "(2): fileType: " + fileType);
-//Debug.println(sequence);
+logger.log(Level.DEBUG, "(2): fileType: " + fileType);
+//logger.log(Level.DEBUG, sequence);
         return MfiSystem.isFileTypeSupported(fileType);
     }
 
@@ -69,15 +72,15 @@ Debug.println(Level.FINE, "(2): fileType: " + fileType);
     @Override
     public int write(Sequence in, int fileType, OutputStream out)
         throws IOException {
-Debug.println(Level.FINE, "in: " + in);
-Debug.println(Level.FINE, "fileType: " + fileType);
-Debug.println(Level.FINE, "out: " + out);
+logger.log(Level.DEBUG, "in: " + in);
+logger.log(Level.DEBUG, "fileType: " + fileType);
+logger.log(Level.DEBUG, "out: " + out);
         try {
             if (isFileTypeSupported(fileType)) {
                 vavi.sound.mfi.Sequence mfiSequence = MfiSystem.toMfiSequence(in, fileType);
                 return MfiSystem.write(mfiSequence, fileType, out);
             } else {
-Debug.println(Level.WARNING, "unknown fileType: " + fileType);
+logger.log(Level.WARNING, "unknown fileType: " + fileType);
                 return 0;
             }
         } catch (InvalidMidiDataException | MfiUnavailableException e) {

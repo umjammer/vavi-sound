@@ -6,9 +6,9 @@
 
 package vavi.sound.smaf.message;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
@@ -16,7 +16,8 @@ import javax.sound.midi.ShortMessage;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.SmafMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -27,6 +28,8 @@ import vavi.util.Debug;
  */
 public class NoteMessage extends SmafMessage
     implements MidiConvertible {
+
+    private static final Logger logger = getLogger(NoteMessage.class.getName());
 
     /** note */
     private int note;
@@ -71,7 +74,7 @@ public class NoteMessage extends SmafMessage
         this.note     =  status & 0x0f;
         this.gateTime =  gateTime;
 //if (gateTime == 0) {
-// Debug.println(Level.WARNING, "★★★★★ gateTime == 0: " + channel + "ch, note: " + note);
+// logger.log(Level.WARNING, "★★★★★ gateTime == 0: " + channel + "ch, note: " + note);
 //}
         this.velocity = -1;
     }
@@ -105,18 +108,17 @@ public class NoteMessage extends SmafMessage
      * @return note
      */
     public int getNote() {
-        switch (octave) {
-        case 0:            // 00
-            return note;
-        case 1:         // 01
-            return note + 12;
-        case 2:            // 10
-            return note + 24;
-        case 3:         // 11
-            return note + 36;
-        default:
-            return note;
-        }
+        return switch (octave) {
+            case 0 ->            // 00
+                    note;
+            case 1 ->         // 01
+                    note + 12;
+            case 2 ->            // 10
+                    note + 24;
+            case 3 ->         // 11
+                    note + 36;
+            default -> note;
+        };
     }
 
     /**
@@ -216,7 +218,7 @@ private static int uc = 0;
 
 if (gateTime == 0) {
  if (uc < 10) {
-  Debug.println(Level.WARNING, "★★★★★ gateTime == 0 ignored: " + this);
+  logger.log(Level.WARNING, "★★★★★ gateTime == 0 ignored: " + this);
  }
  uc++;
  return null;
@@ -232,7 +234,7 @@ if (gateTime == 0) {
                                 midiChannel,
                                 pitch,
                                 velocity);
-//Debug.println("note: " + channel + ": " + pitch);
+//logger.log(Level.DEBUG, "note: " + channel + ": " + pitch);
         events[0] = new MidiEvent(shortMessage, context.getCurrentTick());
 
         shortMessage = new ShortMessage();
@@ -258,14 +260,14 @@ if (gateTime == 0) {
         int command = shortMessage.getCommand();
         int data1 = shortMessage.getData1();
         int data2 = shortMessage.getData2();
-//Debug.println(midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
+//logger.log(Level.DEBUG, midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
 
         if (command == ShortMessage.NOTE_OFF ||
             // note on with velocity 0
             (command == ShortMessage.NOTE_ON && data2 == 0)) {
 
             if (!context.isNoteOffEventUsed()) {
-Debug.println(Level.FINE, "[" + context.getMidiEventIndex() + "] no pair of ON for: " + channel + "ch, " + data1);
+logger.log(Level.DEBUG, "[" + context.getMidiEventIndex() + "] no pair of ON for: " + channel + "ch, " + data1);
             }
 
             return null;
@@ -276,7 +278,7 @@ Debug.println(Level.FINE, "[" + context.getMidiEventIndex() + "] no pair of ON f
             try {
                 noteOffEvent = context.getNoteOffMidiEvent();
             } catch (NoSuchElementException e) {
-Debug.println(Level.WARNING, "[" + context.getMidiEventIndex() + "] no pair of OFF for: " + channel + "ch, " + data1);
+logger.log(Level.WARNING, "[" + context.getMidiEventIndex() + "] no pair of OFF for: " + channel + "ch, " + data1);
                 return null;
             }
 
@@ -301,12 +303,12 @@ Debug.println(Level.WARNING, "[" + context.getMidiEventIndex() + "] no pair of O
                 smafMessage.setNote(context.retrievePitch(channel, data1));
                 smafMessage.setGateTime(i == onLength - 1 ? length % 255 : 255);
 if (length >= 255) {
- Debug.println(Level.FINE, channel + "ch, " + smafMessage.getNote() + ", " + smafMessage.getDuration() + ":[" + i + "]:" + (i == onLength - 1 ? length % 255 : 255) + "/" + length);
+ logger.log(Level.DEBUG, channel + "ch, " + smafMessage.getNote() + ", " + smafMessage.getDuration() + ":[" + i + "]:" + (i == onLength - 1 ? length % 255 : 255) + "/" + length);
 }
-//Debug.println(channel + ", " + smafMessage.getVoice() + ", " + ((smafMessage.getMessage()[1] & 0xc0) >> 6));
+//logger.log(Level.DEBUG, channel + ", " + smafMessage.getVoice() + ", " + ((smafMessage.getMessage()[1] & 0xc0) >> 6));
                 smafEvents[i] = new SmafEvent(smafMessage, 0L); // TODO 0l
 if (smafEvents[i] == null) {
- Debug.println(Level.FINE, "[" + i + "]: " + smafEvents[i]);
+ logger.log(Level.DEBUG, "[" + i + "]: " + smafEvents[i]);
 }
                 if (i == 0) {
                     context.setBeforeTick(track, midiEvent.getTick());

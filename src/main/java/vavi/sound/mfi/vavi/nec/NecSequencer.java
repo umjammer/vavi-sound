@@ -6,7 +6,8 @@
 
 package vavi.sound.mfi.vavi.nec;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
@@ -14,7 +15,8 @@ import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.mobile.YamahaAudioEngine;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -31,6 +33,8 @@ import vavi.util.Debug;
  *          0.03 030829 nsano ignore channel <br>
  */
 public class NecSequencer implements MachineDependentSequencer {
+
+    private static final Logger logger = getLogger(NecSequencer.class.getName());
 
     /**
      *
@@ -60,11 +64,11 @@ public class NecSequencer implements MachineDependentSequencer {
         if (f1 == 0x01) {
             f2 = data[7] & 0xff;        // 0 ~ 32
             int f3 = data[8] & 0x0f;    // 0 ~ 16
-Debug.printf(Level.FINE, "%02x %02x %02x\n", f1, f2, f3);
+logger.log(Level.DEBUG, String.format("%02x %02x %02x", f1, f2, f3));
             key = f1 + "." + f2 + "." + f3;
         } else {
             f2 = data[7] & 0x0f;        // 0 ~ 16
-Debug.printf(Level.FINE, "%02x %02x\n", f1, f2);
+logger.log(Level.DEBUG, String.format("%02x %02x", f1, f2));
             key = f1 + "." + f2;
         }
 
@@ -72,14 +76,14 @@ Debug.printf(Level.FINE, "%02x %02x\n", f1, f2);
         if (mdf != null) {
             mdf.process(message);
         } else {
-Debug.printf(Level.WARNING, "unsupported function: %s", key);
+logger.log(Level.WARNING, String.format("unsupported function: %s", key));
         }
     }
 
     //-------------------------------------------------------------------------
 
     /** */
-    private static AudioEngine player = new YamahaAudioEngine();
+    private static final AudioEngine player = new YamahaAudioEngine();
 
     /** */
     static AudioEngine getAudioEngine() {
@@ -89,6 +93,6 @@ Debug.printf(Level.WARNING, "unsupported function: %s", key);
     //-------------------------------------------------------------------------
 
     /** */
-    private static MachineDependentFunction.Factory factory =
+    private static final MachineDependentFunction.Factory factory =
             new MachineDependentFunction.Factory("/vavi/sound/mfi/vavi/nec/nec.properties");
 }

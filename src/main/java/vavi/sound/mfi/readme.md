@@ -1,30 +1,31 @@
 # vavi.sound.mfi
 
-MFi サウンド関連のクラスを提供します．
+Provides MFi sound related classes.
 
 ## Abstract
 
-{@link javax.sound.midi} パッケージとほぼ同じ構造をしています。
-使用法は {@link javax.sound.midi} を参考にしてください。
+It has almost the same structure as the {@link javax.sound.midi} package.
+Please refer to {@link javax.sound.midi} for usage.
 
-{@link vavi.sound.mfi.MfiSystem.getSequencer()} で再生する場合は
-システムプロパティ javax.sound.midi.Sequencer に "#Real Time Sequencer"
-を明示するようにしてください。{@link vavi.sound.midi.VaviSequencer} が
-デフォルトシーケンサになった場合 {@link vavi.sound.mfi.MfiSystem#getMetaEventListener()}
-が重複して登録されてしまいます。
+When playing with {@link vavi.sound.mfi.MfiSystem.getSequencer()}
+"#Real Time Sequencer" in system property javax.sound.midi.Sequencer
+Please make it clear. {@link vavi.sound.midi.VaviSequencer}
+If it becomes the default sequencer {@link vavi.sound.mfi.MfiSystem#getMetaEventListener()}
+will be registered twice.
 
 ## TODO
 
- * 特殊命令の実装
- * ~~"030825" MfiFileFormat のヘッダ情報の扱いが未実装、メッセージにするか？ファイルフォーマットにするか？~~ →
- * ~~"030825" 出てない音階がある~~
- * MfiSystem converter の取得法が他と違う
- * ~~"090110">MfiSystem#main で鳴らない...~~
+ * Implementing special instructions
+ * ~~030825 Handling of MfiFileFormat header information is not implemented, should it be made into a message? Should it be a file format?~~ →
+   * ~~030825 There are scales that don't appear~~
+ * The method of obtaining MfiSystem converter is different from others
+ * ~~090110 MfiSystem#main does not sound...~~
 
 ## License
-オリジナルのソースは見あたらないため
-一次ライセンスを気にする必要は無いと思われますが、
-念のために記しておきます。
+
+Because the original source is not found
+Although it seems that there is no need to worry about the primary license,
+I'll note this down just in case.
 
  * [open i-Melody Project](http://www.xucker.jpn.org/ood/java/imelody/")
  * [Academic Free License (AFL)](http://opensource.org/licenses/academic.php")

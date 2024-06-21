@@ -96,7 +96,7 @@ public class ProgramChangeMessage extends vavi.sound.smaf.ShortMessage
         int midiChannel = context.setProgram(this.channel, this.program);
         int program = midiChannel == MidiContext.CHANNEL_DRUM ? 0 : context.getProgram(this.channel);
 
-//Debug.println("ProgramChange: [" + duration + "] " + channel + "ch, " + context.getProgram(channel));
+//logger.log(Level.DEBUG, "ProgramChange: [" + duration + "] " + channel + "ch, " + context.getProgram(channel));
         if (context.getFormatType() == FormatType.HandyPhoneStandard &&
             context.getDrum(this.channel) == ChannelConfiguration.PERCUSSION &&
             context.getSmafTrackNumber() * 4 + this.channel != MidiContext.CHANNEL_DRUM) {

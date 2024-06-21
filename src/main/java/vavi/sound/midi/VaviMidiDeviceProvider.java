@@ -6,12 +6,12 @@
 
 package vavi.sound.midi;
 
-import java.util.logging.Level;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -21,6 +21,8 @@ import vavi.util.Debug;
  * @version 0.00 041222 nsano initial version <br>
  */
 public class VaviMidiDeviceProvider extends MidiDeviceProvider {
+
+    private static final Logger logger = getLogger(VaviMidiDeviceProvider.class.getName());
 
     /**
      * TODO used without asking
@@ -46,11 +48,11 @@ public class VaviMidiDeviceProvider extends MidiDeviceProvider {
 
         if (info == VaviSequencer.info) {
 //new Exception("*** DUMMY ***").printStackTrace();
-Debug.println(Level.FINE, "★1 info: " + info);
+logger.log(Level.DEBUG, "★1 info: " + info);
             VaviSequencer wrappedSequencer = new VaviSequencer();
             return wrappedSequencer;
         } else {
-Debug.println(Level.FINE, "★1 not suitable for this provider: " + info);
+logger.log(Level.DEBUG, "★1 not suitable for this provider: " + info);
             throw new IllegalArgumentException("info is not suitable for this provider");
         }
     }

@@ -37,7 +37,7 @@ public class AudioStopMessage extends LongMessage
     /** */
     private int voice;
     /** */
-    private int index;
+    private final int index;
 
     /**
      * for {@link vavi.sound.mfi.vavi.TrackMessage}

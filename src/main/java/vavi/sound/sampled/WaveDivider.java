@@ -7,13 +7,13 @@
 package vavi.sound.sampled;
 
 import java.io.IOException;
-import java.util.logging.Level;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.sound.sampled.AudioFormat.Encoding;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -24,18 +24,20 @@ import vavi.util.Debug;
  */
 public interface WaveDivider {
 
+    Logger logger = getLogger(WaveDivider.class.getName());
+
     /** Represents divided PCM data */
     class Chunk {
         /** Sequence number */
-        public int sequence;
+        public final int sequence;
         /** sampling rate */
-        public int samplingRate;
+        public final int samplingRate;
         /** sampling bits */
-        public int bits;
+        public final int bits;
         /** channel number */
-        public int channels;
+        public final int channels;
         /** PCM dara */
-        public byte[] buffer;
+        public final byte[] buffer;
         /** */
         Chunk(int sequence, byte[] buffer, int samplingRate, int bits, int channels) {
             this.sequence = sequence;
@@ -57,7 +59,7 @@ public interface WaveDivider {
                     return new Pcm16BitMonauralWaveDivider(new MonauralInputFilter().doFilter(audioInputStream));
                 }
             } else {
-Debug.println(Level.INFO, "unsupported type: " + audioInputStream.getFormat());
+logger.log(Level.INFO, "unsupported type: " + audioInputStream.getFormat());
                 throw new IllegalArgumentException("only pcm mono is supported.");
             }
         }

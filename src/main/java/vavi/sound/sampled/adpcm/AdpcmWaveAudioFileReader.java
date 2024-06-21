@@ -10,11 +10,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioFormat;
@@ -28,6 +29,8 @@ import vavi.util.Debug;
 import vavi.util.win32.Chunk;
 import vavi.util.win32.WAVE;
 
+import static java.lang.System.getLogger;
+
 
 /**
  * Provider for some ADPCM audio files reading services. This implementation can parse
@@ -38,6 +41,8 @@ import vavi.util.win32.WAVE;
  * @version 0.00 240316 nsano initial version <br>
  */
 public abstract class AdpcmWaveAudioFileReader extends AudioFileReader {
+
+    private static final Logger logger = getLogger(AdpcmWaveAudioFileReader.class.getName());
 
     @Override
     public AudioFileFormat getAudioFileFormat(File file) throws UnsupportedAudioFileException, IOException {
@@ -86,7 +91,7 @@ public abstract class AdpcmWaveAudioFileReader extends AudioFileReader {
      * @throws IOException                   if an I/O exception occurs.
      */
     protected AudioFileFormat getAudioFileFormat(InputStream bitStream, int mediaLength) throws UnsupportedAudioFileException, IOException {
-Debug.println(Level.FINER, "enter available: " + bitStream.available() + ", " + getClass().getSimpleName());
+logger.log(Level.TRACE, "enter available: " + bitStream.available() + ", " + getClass().getSimpleName());
         float sampleRate;
         int channels;
         AudioFormat.Encoding encoding;
@@ -102,37 +107,37 @@ Debug.println(Level.FINER, "enter available: " + bitStream.available() + ", " + 
             WAVE wave = Chunk.readFrom(is, WAVE.class, context);
             WAVE.fmt fmt = wave.findChildOf(WAVE.fmt.class);
             int formatCode = fmt.getFormatId();
- Debug.println(Level.FINER, "formatCode: " + formatCode);
+ logger.log(Level.TRACE, "formatCode: " + formatCode);
             if (formatCode != getFormatCode()) {
- Debug.println(Level.FINER, "unsupported wave format code: " + formatCode);
+ logger.log(Level.TRACE, "unsupported wave format code: " + formatCode);
                 throw new UnsupportedAudioFileException("unsupported wave format code: " + formatCode);
             }
             sampleRate = fmt.getSamplingRate();
             channels = fmt.getNumberChannels();
             properties = toProperties(fmt);
- Debug.println(Level.FINER, "properties: " + properties);
+ logger.log(Level.TRACE, "properties: " + properties);
         } catch (IOException e) {
             if (e.getMessage().equals(LimitedInputStream.ERROR_MESSAGE_REACHED_TO_LIMIT)) {
-Debug.println(Level.FINER, e);
-Debug.printStackTrace(Level.FINEST, e);
+logger.log(Level.DEBUG, e);
+logger.log(Level.TRACE, e.getMessage(), e);
                 throw (UnsupportedAudioFileException) new UnsupportedAudioFileException(e.getMessage()).initCause(e);
             } else {
                 throw e;
             }
         } catch (Exception e) {
-Debug.println(Level.FINER, e);
-Debug.printStackTrace(Level.FINEST, e);
+logger.log(Level.DEBUG, e);
+logger.log(Level.TRACE, e.getMessage(), e);
             throw (UnsupportedAudioFileException) new UnsupportedAudioFileException(e.getMessage()).initCause(e);
         } finally {
             try {
                 bitStream.reset();
             } catch (IOException e) {
-                if (Debug.isLoggable(Level.FINEST))
-Debug.printStackTrace(e);
+                if (Debug.isLoggable(java.util.logging.Level.FINEST))
+logger.log(Level.ERROR, e.getMessage(), e);
                 else
-Debug.println(Level.FINE, e);
+logger.log(Level.DEBUG, e);
             }
-Debug.println(Level.FINER, "finally available: " + bitStream.available());
+logger.log(Level.TRACE, "finally available: " + bitStream.available());
         }
         AudioFormat format;
         if (properties == null) {

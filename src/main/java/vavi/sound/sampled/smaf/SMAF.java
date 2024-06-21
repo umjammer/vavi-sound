@@ -38,7 +38,7 @@ public class SMAF extends Type {
     }
 
     /** */
-    private Map<String, Object> properties;
+    private final Map<String, Object> properties;
 
     /** */
     public Map<String, Object> properties() {

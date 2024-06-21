@@ -15,7 +15,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
 import org.junit.jupiter.api.Test;
-
 import vavi.util.Debug;
 
 
@@ -27,12 +26,18 @@ import vavi.util.Debug;
  */
 public class MfiSystemTest {
 
+    static {
+        System.setProperty("vavi.sound.mobile.AudioEngine.volume", System.getProperty("vavi.test.volume", "0.02"));
+Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngine.volume"));
+    }
+
     @Test
     public void test() throws Exception {
         CountDownLatch cdl = new CountDownLatch(1);
         Path inPath = Paths.get(MfiSystemTest.class.getResource("/test.mld").toURI());
         Sequencer sequencer = MfiSystem.getSequencer();
         sequencer.open();
+//        volume(((Synthesizer) sequencer).getReceiver(), 0.2f); // TODO interlock mid adpcm volume
         Sequence sequence = MfiSystem.getSequence(new BufferedInputStream(Files.newInputStream(inPath)));
         sequencer.setSequence(sequence);
         sequencer.addMetaEventListener(meta -> {

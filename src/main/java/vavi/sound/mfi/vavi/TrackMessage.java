@@ -11,12 +11,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.LongMessage;
@@ -26,7 +27,8 @@ import vavi.sound.mfi.NoteMessage;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.SysexMessage;
 import vavi.sound.mfi.Track;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -41,14 +43,16 @@ import vavi.util.Debug;
  */
 public class TrackMessage extends MfiMessage {
 
+    private static final Logger logger = getLogger(TrackMessage.class.getName());
+
     /** */
     public static final String TYPE = "trac";
 
     /** */
-    private Track track;
+    private final Track track;
 
     /** */
-    private int trackNumber;
+    private final int trackNumber;
 
     /** for reading */
     private int noteLength = -1;
@@ -67,13 +71,13 @@ public class TrackMessage extends MfiMessage {
     /** */
     public void setNoteLength(int noteLength) {
         this.noteLength = noteLength;
-Debug.println(Level.FINE, "noteLength: " + noteLength);
+logger.log(Level.DEBUG, "noteLength: " + noteLength);
     }
 
     /** */
     public void setExst(int exst) {
         this.exst = exst;
-Debug.println(Level.FINE, "exst: " + exst);
+logger.log(Level.DEBUG, "exst: " + exst);
     }
 
     /**
@@ -86,7 +90,7 @@ Debug.println(Level.FINE, "exst: " + exst);
 
         dos.writeBytes(TYPE);
         dos.writeInt(getDataLength());
-Debug.println(Level.FINE, "track: " + trackNumber + ": " + getDataLength());
+logger.log(Level.DEBUG, "track: " + trackNumber + ": " + getDataLength());
         for (int j = 0; j < track.size(); j++) {
             MfiEvent event = track.get(j);
             MfiMessage message = event.getMessage();
@@ -113,8 +117,8 @@ try {
                 trackLength += message.getLength();
             }
 } catch (RuntimeException e) {
- Debug.printStackTrace(Level.SEVERE, e);
- Debug.println(Level.SEVERE, "j: " + j + ", track.size: " + track.size() + ", " + track.get(j));
+ logger.log(Level.ERROR, e.getMessage(), e);
+ logger.log(Level.ERROR, "j: " + j + ", track.size: " + track.size() + ", " + track.get(j));
  throw e;
 }
         }
@@ -145,13 +149,13 @@ try {
         dis.readFully(bytes, 0, 4);
         String string = new String(bytes);
         if (!TYPE.equals(string)) {
-//Debug.println("dump:\n" + StringUtil.getDump(is, 64));
+//logger.log(Level.DEBUG, "dump:\n" + StringUtil.getDump(is, 64));
             throw new InvalidMfiDataException("invalid track: " + string);
         }
 
         // length
         int trackLength = dis.readInt();
-Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
+logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
 
         // events
         int l = 0;
@@ -160,7 +164,7 @@ Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
             track.add(new MfiEvent(message, 0L));
 
             l += message.getLength();
-//Debug.println("track[" + trackNumber + "] event length sum: " + l + " / " + trackLlength);
+//logger.log(Level.DEBUG, "track[" + trackNumber + "] event length sum: " + l + " / " + trackLlength);
         }
 
         //
@@ -177,15 +181,15 @@ Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
         int delta  = dis.readUnsignedByte();
         int status = dis.readUnsignedByte();
 
-        switch (status) {
-        case MfiMessage.STATUS_CLASS_A: // Class A (0x3f)
-        case MfiMessage.STATUS_CLASS_B: // Class B (0x7f)
-        case MfiMessage.STATUS_CLASS_C: // Class C (0xbf)
-        case MfiMessage.STATUS_NORMAL:  // Normal (0xff)
-            return getClassOrNormalMessage(delta, status, dis);
-        default:                        // note message
-            return NoteMessageFactory.getMessage(delta, status, dis, noteLength);
-        }
+        return switch (status) { // Class A (0x3f)
+            // Class B (0x7f)
+            // Class C (0xbf)
+            case MfiMessage.STATUS_CLASS_A, MfiMessage.STATUS_CLASS_B, MfiMessage.STATUS_CLASS_C,
+                 MfiMessage.STATUS_NORMAL ->  // Normal (0xff)
+                    getClassOrNormalMessage(delta, status, dis);
+            default ->                        // note message
+                    NoteMessageFactory.getMessage(delta, status, dis, noteLength);
+        };
     }
 
     /**
@@ -282,12 +286,12 @@ Debug.println(Level.FINE, "trackLength[" + trackNumber + "]: " + trackLength);
                 if (props.containsKey(key)) {
                     @SuppressWarnings("unchecked")
                     Class<NoteMessage> clazz = (Class<NoteMessage>) Class.forName(props.getProperty(key));
-//Debug.println("note class: " + StringUtil.getClassName(clazz));
+//logger.log(Level.DEBUG, "note class: " + StringUtil.getClassName(clazz));
                     noteMessageConstructor1 = clazz.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE);
                     noteMessageConstructor2 = clazz.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE);
                 }
             } catch (Exception e) {
-Debug.printStackTrace(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
         }
@@ -309,7 +313,7 @@ Debug.printStackTrace(Level.SEVERE, e);
                                             int status,
                                             int data1,
                                             DataInputStream dis) throws IOException {
-//Debug.println("delta: " + StringUtil.toHex2(delta));
+//logger.log(Level.DEBUG, "delta: " + StringUtil.toHex2(delta));
 
             String key = String.format("mfi.track.%d.%c.%d", status, 'e', data1);
 
@@ -329,7 +333,7 @@ Debug.printStackTrace(Level.SEVERE, e);
                 data2[1] = (byte) ((length % 0x100) & 0xff);
                 dis.readFully(data2, 2, length);
 
-Debug.printf(Level.WARNING, "sysex unhandled: delta: %02x, status: %02x, extended status: %02x\n", delta, status, data1);
+logger.log(Level.WARNING, String.format("sysex unhandled: delta: %02x, status: %02x, extended status: %02x", delta, status, data1));
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
         }
@@ -350,14 +354,14 @@ Debug.printf(Level.WARNING, "sysex unhandled: delta: %02x, status: %02x, extende
                     String key = (String) o;
                     if (key.matches("mfi\\.track\\.\\d+\\.e\\.\\d+")) {
                         Class<?> clazz = Class.forName(props.getProperty(key));
-//Debug.println("sysex class: " + StringUtil.getClassName(clazz));
+//logger.log(Level.DEBUG, "sysex class: " + StringUtil.getClassName(clazz));
                         Method method = clazz.getMethod("readFrom", Integer.TYPE, Integer.TYPE, Integer.TYPE, InputStream.class);
 
                         sysexMessageInstantiators.put(key, method);
                     }
                 }
             } catch (Exception e) {
-Debug.printStackTrace(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
         }
@@ -389,7 +393,7 @@ Debug.printStackTrace(Level.SEVERE, e);
             if (shortMessageConstructors.containsKey(key)) {
                 constructor = shortMessageConstructors.get(key);
             } else {
-Debug.printf(Level.WARNING, "short unhandled: delta: %02x, status: %02x, extended status: %02x\n", delta, status, data1);
+logger.log(Level.WARNING, String.format("short unhandled: delta: %02x, status: %02x, extended status: %02x", delta, status, data1));
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
 
@@ -417,7 +421,7 @@ Debug.printf(Level.WARNING, "short unhandled: delta: %02x, status: %02x, extende
                     if (key.matches("mfi\\.track\\.\\d+\\.b\\.\\d+")) {
                         @SuppressWarnings("unchecked")
                         Class<ShortMessage> shortMessageClass = (Class<ShortMessage>) Class.forName(props.getProperty(key));
-//Debug.println("short class: " + StringUtil.getClassName(shortMessageClass));
+//logger.log(Level.DEBUG, "short class: " + StringUtil.getClassName(shortMessageClass));
                         Constructor<ShortMessage> constructor = shortMessageClass.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE);
 
                         shortMessageConstructors.put(key, constructor);
@@ -425,7 +429,7 @@ Debug.printf(Level.WARNING, "short unhandled: delta: %02x, status: %02x, extende
                 }
 
             } catch (Exception e) {
-Debug.printStackTrace(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
         }
@@ -460,7 +464,7 @@ Debug.printStackTrace(Level.SEVERE, e);
             if (longMessageConstructors.containsKey(key)) {
                 constructor = longMessageConstructors.get(key);
             } else {
-Debug.printf(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended status: %02x\n", delta, status, data1);
+logger.log(Level.WARNING, String.format("long unhandled: delta: %02x, status: %02x, extended status: %02x", delta, status, data1));
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
 
@@ -472,7 +476,7 @@ Debug.printf(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended
         }
 
         /** constructors for creating Extended Information {@link LongMessage} object instance */
-        private static Map<String, Constructor<LongMessage>> longMessageConstructors = new HashMap<>();
+        private static final Map<String, Constructor<LongMessage>> longMessageConstructors = new HashMap<>();
 
         static {
             try {
@@ -488,14 +492,14 @@ Debug.printf(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended
                     if (key.matches("mfi\\.track\\.\\d+\\.a\\.\\d+")) {
                         @SuppressWarnings("unchecked")
                         Class<LongMessage> longMessageClass = (Class<LongMessage>) Class.forName(props.getProperty(key));
-//Debug.println("long class: " + StringUtil.getClassName(longMessageClass));
+//logger.log(Level.DEBUG, "long class: " + StringUtil.getClassName(longMessageClass));
                         Constructor<LongMessage> constructor = longMessageClass.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE, byte[].class);
 
                         longMessageConstructors.put(key, constructor);
                     }
                 }
             } catch (Exception e) {
-Debug.printStackTrace(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
         }
@@ -547,13 +551,13 @@ Debug.printStackTrace(Level.SEVERE, e);
                 if (props.containsKey(key)) {
                     @SuppressWarnings("unchecked")
                     Class<MfiMessage> clazz = (Class<MfiMessage>) Class.forName(props.getProperty(key));
-//Debug.println("unknown class: " + StringUtil.getClassName(clazz));
+//logger.log(Level.DEBUG, "unknown class: " + StringUtil.getClassName(clazz));
                     unknownMessageConstructor1 = clazz.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE);
                     unknownMessageConstructor2 = clazz.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE, byte[].class);
                 }
 
             } catch (Exception e) {
-Debug.printStackTrace(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
         }

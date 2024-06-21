@@ -81,20 +81,15 @@ public abstract class SysexMessage extends SmafMessage {
          * @param data 0: maker id ...
          */
         public static SysexMessage getSysexMessage(int duration, byte[] data) throws InvalidSmafDataException {
-            SysexMessage sysexMessage;
-            switch (data[0]) {
-            case 0x43: // YAMAHA
-                sysexMessage = new vavi.sound.smaf.message.yamaha.YamahaMessage();
-                break;
-            case 0x7e: // non realtime
-                sysexMessage = new vavi.sound.smaf.message.NonRealtimeUniversalSysexMessage();
-                break;
-            case 0x7f: // realtime
-                sysexMessage = new vavi.sound.smaf.message.RealtimeUniversalSysexMessage();
-                break;
-            default:
-                throw new IllegalArgumentException("unknown vendor: " + data[0]);
-            }
+            SysexMessage sysexMessage = switch (data[0]) {
+                case 0x43 -> // YAMAHA
+                        new vavi.sound.smaf.message.yamaha.YamahaMessage();
+                case 0x7e -> // non realtime
+                        new vavi.sound.smaf.message.NonRealtimeUniversalSysexMessage();
+                case 0x7f -> // realtime
+                        new vavi.sound.smaf.message.RealtimeUniversalSysexMessage();
+                default -> throw new IllegalArgumentException("unknown vendor: " + data[0]);
+            };
             sysexMessage.setDuration(duration);
             sysexMessage.setMessage(0xf0, data, data.length);
             return sysexMessage;

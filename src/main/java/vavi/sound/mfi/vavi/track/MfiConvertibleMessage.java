@@ -25,9 +25,9 @@ import vavi.sound.mfi.vavi.MidiContext;
 public class MfiConvertibleMessage implements MfiConvertible {
 
     /** BANK LSB */
-    private int[] bankLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+    private final int[] bankLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
     /** BANK MSB  */
-    private int[] bankMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+    private final int[] bankMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
 
     /** */
     public static final int RPN_PITCH_BEND_SENSITIVITY = 0x0000;
@@ -43,14 +43,14 @@ public class MfiConvertibleMessage implements MfiConvertible {
     public static final int RPN_NULL = 0x7f7f;
 
     /** RPN LSB */
-    private int[] rpnLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+    private final int[] rpnLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
     /** RPN MSB */
-    private int[] rpnMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+    private final int[] rpnMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
 
     /** NRPN LSB */
-    private int[] nrpnLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+    private final int[] nrpnLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
     /** NRPN MSB */
-    private int[] nrpnMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+    private final int[] nrpnMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
 
     /** bank, rpn, nrpn */
     @Override
@@ -90,13 +90,13 @@ public class MfiConvertibleMessage implements MfiConvertible {
 //          case RPN_PITCH_BEND_SENSITIVITY:
 //              MfiConvertible converter = new vavi.sound.mfi.vavi.channel.PitchBendRangeMessage();
 //              return converter.getMfiEvents(midiEvent, context);
-//Debug.println("rpn: MSB:" + rpnMSB[channel] + ", LSB:" + rpnLSB[channel]);
+//logger.log(Level.DEBUG, "rpn: MSB:" + rpnMSB[channel] + ", LSB:" + rpnLSB[channel]);
 //          default:
-//Debug.println("data entry: no handler for rpn: " + rpn[channel]);
+//logger.log(Level.DEBUG, "data entry: no handler for rpn: " + rpn[channel]);
 //              break;
 //          }
         default:
-//Debug.println("not implemented: " + data1);
+//logger.log(Level.DEBUG, "not implemented: " + data1);
             break;
         }
 

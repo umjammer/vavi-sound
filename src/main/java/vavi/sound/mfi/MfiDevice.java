@@ -19,13 +19,13 @@ public interface MfiDevice {
     class Info {
 
         /** */
-        String name;
+        final String name;
         /** */
-        String vendor;
+        final String vendor;
         /** */
-        String description;
+        final String description;
         /** */
-        String version;
+        final String version;
 
         /** */
         protected Info(String name,

@@ -10,8 +10,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.logging.Level;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -23,7 +23,8 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -41,6 +42,8 @@ import vavi.util.Debug;
  */
 public class MachineDependentMessage extends SysexMessage
     implements MidiConvertible, Serializable {
+
+    private static final Logger logger = getLogger(MachineDependentMessage.class.getName());
 
     /** */
     protected MachineDependentMessage(byte[] message) {
@@ -61,7 +64,7 @@ public class MachineDependentMessage extends SysexMessage
         throws InvalidMfiDataException {
 
         byte[] tmp = new byte[5 + message.length];
-//Debug.println("data: " + message.length);
+//logger.log(Level.DEBUG, "data: " + message.length);
         tmp[0] = (byte) (delta & 0xff);
         tmp[1] = (byte) 0xff;
         tmp[2] = (byte) 0xff;
@@ -70,7 +73,7 @@ public class MachineDependentMessage extends SysexMessage
 //Debug.dump(new ByteArrayInputStream(tmp, 0, 5));
         System.arraycopy(message, 0, tmp, 5, message.length);
 
-//Debug.println("message: " + tmp.length);
+//logger.log(Level.DEBUG, "message: " + tmp.length);
         super.setMessage(tmp, tmp.length);
 //Debug.dump(new ByteArrayInputStream(this.data, 0, 10));
     }
@@ -87,7 +90,7 @@ public class MachineDependentMessage extends SysexMessage
         DataInputStream dis = new DataInputStream(is);
 
         int length = dis.readUnsignedShort();
-//Debug.println("length: " + length);
+//logger.log(Level.DEBUG, "length: " + length);
 
         byte[] data = new byte[length + 5];
 
@@ -103,7 +106,7 @@ public class MachineDependentMessage extends SysexMessage
         // 5 vendor | carrier
         // 6
         // 7
-Debug.printf(Level.FINE, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x\n", data[0], data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0));
+logger.log(Level.DEBUG, String.format("MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x", data[0], data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0)));
         MachineDependentMessage message = new MachineDependentMessage(data);
         return message;
     }

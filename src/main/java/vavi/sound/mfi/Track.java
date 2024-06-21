@@ -21,7 +21,7 @@ import java.util.List;
 public class Track {
 
     /** */
-    protected List<MfiEvent> events;
+    protected final List<MfiEvent> events;
 
     /** Creates new Track */
     Track() {

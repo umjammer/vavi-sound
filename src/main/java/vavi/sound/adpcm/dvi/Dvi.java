@@ -81,7 +81,7 @@ class Dvi implements Codec {
     }
 
     /** */
-    private State state = new State();
+    private final State state = new State();
 
     /** */
     public State getState() {
@@ -180,7 +180,7 @@ class Dvi implements Codec {
 
         //
         int valPrev = state.valPrev;
-//System.err.printf("%d\n", valPrev);
+//logger.log(Level.DEBUG, "{}", valPrev);
         // Current step change index
         int index = state.index;
 

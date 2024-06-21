@@ -9,13 +9,15 @@ package vavi.sound.smaf.chunk;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -28,10 +30,12 @@ import vavi.util.Debug;
  */
 public class DisplayParameterDefinitionChunk extends Chunk {
 
+    private static final Logger logger = getLogger(DisplayParameterDefinitionChunk.class.getName());
+
     /** */
     public DisplayParameterDefinitionChunk(byte[] id, int size) {
         super(id, size);
-//Debug.println("DisplayParameterDefinition: " + size);
+//logger.log(Level.DEBUG, "DisplayParameterDefinition: " + size);
     }
 
     /** */
@@ -50,7 +54,7 @@ public class DisplayParameterDefinitionChunk extends Chunk {
             int eventType = dis.readUnsignedByte();
             Event event = new Event();
             event.eventType = eventType;
-Debug.println(Level.FINE, "event: " + eventType);
+logger.log(Level.DEBUG, "event: " + eventType);
             for (int j = 0; j < ((eventSize - 1) / 2); j++) {
                 int parameterId = dis.readUnsignedByte();
                 int parameterValue = dis.readUnsignedByte();
@@ -58,7 +62,7 @@ Debug.println(Level.FINE, "event: " + eventType);
                 parameter.parameterID = ParameterID.valueOf(parameterId);
                 parameter.value = parameterValue;
                 event.parameters.add(parameter);
-Debug.println(Level.FINE, "parameters: " + parameter);
+logger.log(Level.DEBUG, "parameters: " + parameter);
             }
             i += (eventSize > 127 ? 2 : 1) + eventSize;
         }
@@ -77,7 +81,7 @@ Debug.println(Level.FINE, "parameters: " + parameter);
     }
 
     /** */
-    private List<Event> events = new ArrayList<>();
+    private final List<Event> events = new ArrayList<>();
 
     /** */
     static class Event {
@@ -87,7 +91,7 @@ Debug.println(Level.FINE, "parameters: " + parameter);
          */
         int eventType;
         /** */
-        List<Parameter> parameters = new ArrayList<>();
+        final List<Parameter> parameters = new ArrayList<>();
         /** */
         static class Parameter {
             ParameterID parameterID;

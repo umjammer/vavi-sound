@@ -18,9 +18,10 @@
 
 package vavi.sound.adpcm.ima;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -31,6 +32,8 @@ import vavi.util.Debug;
  * @version 0.00 030715 nsano port to java <br>
  */
 class Ima {
+
+    private static final Logger logger = getLogger(Ima.class.getName());
 
     /** */
     public static final int ISSTMAX = 88;
@@ -60,7 +63,7 @@ class Ima {
     }
 
     /** */
-    private static int[][] stateAdjustTable = new int[ISSTMAX + 1][8];
+    private static final int[][] stateAdjustTable = new int[ISSTMAX + 1][8];
 
     /* */
     static {
@@ -87,13 +90,13 @@ class Ima {
      * @param length samples to decode PER channel, REQUIRE n % 8 == 1
      * @param outIncrement index difference between successive output samples
      */
-    private void decode(int channel,
-                        int channels,
-                        byte[] inBuffer,
-                        int[] outBuffer,
-                        int op,
-                        int length,
-                        int outIncrement) {
+    private static void decode(int channel,
+                               int channels,
+                               byte[] inBuffer,
+                               int[] outBuffer,
+                               int op,
+                               int length,
+                               int outIncrement) {
 
         // input pointer to 4-byte block state-initializer
         int ip = 4 * channel;
@@ -106,7 +109,7 @@ class Ima {
         }
         int state = inBuffer[ip + 2] & 0xff;
         if (state > ISSTMAX) {
-Debug.println(Level.FINE, "IMA_ADPCM block ch" + channel + " initial-state (" + state + ") out of range");
+logger.log(Level.DEBUG, "IMA_ADPCM block ch" + channel + " initial-state (" + state + ") out of range");
             state = 0;
         }
         // specs say to ignore ip[3] , but write it as 0
@@ -150,13 +153,13 @@ Debug.println(Level.FINE, "IMA_ADPCM block ch" + channel + " initial-state (" + 
             if (c != cm) {
                 val -= dp;
                 if (val < -0x8000) {
-//Debug.println(StringUtil.toHex4(val) + " -> " + (-0x8000));
+//logger.log(Level.DEBUG, String.format("%04x -> %d", val, -0x8000));
                     val = -0x8000;
                 }
             } else {
                 val += dp;
                 if (val > 0x7fff) {
-//Debug.println(StringUtil.toHex4(val) + " -> " + (0x7fff));
+//logger.log(Level.DEBUG, String.format("%04x -> %d", val, 0x7fff));
                     val = 0x7fff;
                 }
             }
@@ -173,7 +176,7 @@ Debug.println(Level.FINE, "IMA_ADPCM block ch" + channel + " initial-state (" + 
      * @param outBuffer output samples, n*chans
      * @param length samples to decode PER channel, REQUIRE n % 8 == 1
      */
-    public void decodeBlock(int channels, byte[] inBuffer, int[] outBuffer, int length) {
+    public static void decodeBlock(int channels, byte[] inBuffer, int[] outBuffer, int length) {
         for (int ch = 0; ch < channels; ch++) {
             decode(ch, channels, inBuffer, outBuffer, ch, length, channels);
         }
@@ -187,7 +190,7 @@ Debug.println(Level.FINE, "IMA_ADPCM block ch" + channel + " initial-state (" + 
      * @param outBuffers chan output sample buffers, each takes n samples
      * @param length samples to decode PER channel, REQUIRE n % 8 == 1
      */
-    public void decodeBlocks(int channels, byte[] inBuffer, int[][] outBuffers, int length) {
+    public static void decodeBlocks(int channels, byte[] inBuffer, int[][] outBuffers, int length) {
         for (int ch = 0; ch < channels; ch++) {
             decode(ch, channels, inBuffer, outBuffers[ch], 0, length, 1);
         }
@@ -202,7 +205,7 @@ Debug.println(Level.FINE, "IMA_ADPCM block ch" + channel + " initial-state (" + 
      * @param st input/output state, REQUIRE 0 <= *st <= ISSTMAX
      * @param obuff output buffer[blockAlign], or null for no output
      */
-    private int encode(int ch, int chans, int v0, int[] ibuff, int n, int[] st, int stp, byte[] obuff) {
+    private static int encode(int ch, int chans, int v0, int[] ibuff, int n, int[] st, int stp, byte[] obuff) {
 
         // set 0 only to shut up gcc's 'might be uninitialized'
         int o_inc = 0;
@@ -261,7 +264,7 @@ Debug.println(Level.FINE, "IMA_ADPCM block ch" + channel + " initial-state (" + 
                         op += o_inc; // skip op for next group
                     }
                 } else {
-//System.err.println("op: " + op);
+//logger.log(Level.DEBUG, "op: " + op);
                     obuff[op] = (byte) cm;
                 }
                 i = (i + 1) & 0x07;
@@ -409,10 +412,10 @@ Debug.println(Level.FINE, "IMA_ADPCM block ch" + channel + " initial-state (" + 
      */
     public static int getSamplesIn(int dataLength, int channels, int blockAlign, int samplesPerBlock) {
         int m, n;
-// Debug.println("dataLength: " + dataLength);
-// Debug.println("channels: " + channels);
-// Debug.println("blockAlign: " + blockAlign);
-// Debug.println("samplesPerBlock: " + samplesPerBlock);
+//logger.log(Level.DEBUG, "dataLength: " + dataLength);
+//logger.log(Level.DEBUG, "channels: " + channels);
+//logger.log(Level.DEBUG, "blockAlign: " + blockAlign);
+//logger.log(Level.DEBUG, "samplesPerBlock: " + samplesPerBlock);
 
         if (samplesPerBlock != 0) {
             n = (dataLength / blockAlign) * samplesPerBlock;
@@ -421,8 +424,8 @@ Debug.println(Level.FINE, "IMA_ADPCM block ch" + channel + " initial-state (" + 
             n = 0;
             m = blockAlign;
         }
-//Debug.println("n: " + n);
-//Debug.println("m: " + m);
+//logger.log(Level.DEBUG, "n: " + n);
+//logger.log(Level.DEBUG, "m: " + m);
         if (m >= 4 * channels) {
             m -= 4 * channels; // number of bytes beyond block-header
             m /= 4 * channels; // number of 4-byte blocks/channel beyond header

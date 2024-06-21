@@ -6,12 +6,11 @@
 
 package vavi.sound.mfi.vavi.nec;
 
-import java.util.logging.Level;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
 
 
 /**
@@ -51,7 +50,7 @@ public class Function1_243_3 implements MachineDependentFunction {
 
         this.maxGain = data[9];
 
-Debug.println(Level.FINE, "MaxGain: " + maxGain);
+logger.log(Level.DEBUG, "MaxGain: " + maxGain);
     }
 
     /** 0 ~ 96 (-96db) */

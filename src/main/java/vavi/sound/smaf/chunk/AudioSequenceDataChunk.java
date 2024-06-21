@@ -7,13 +7,15 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 import vavi.sound.smaf.message.WaveMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -26,10 +28,12 @@ import vavi.util.Debug;
  */
 public class AudioSequenceDataChunk extends SequenceDataChunk {
 
+    private static final Logger logger = getLogger(AudioSequenceDataChunk.class.getName());
+
     /** */
     public AudioSequenceDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println(Level.FINE, "AudioSequenceData: " + size + " bytes");
+logger.log(Level.DEBUG, "AudioSequenceData: " + size + " bytes");
     }
 
     /** */
@@ -42,7 +46,7 @@ Debug.println(Level.FINE, "AudioSequenceData: " + size + " bytes");
     @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
-//Debug.println("available: " + is.available() + ", " + available());
+//logger.log(Level.DEBUG, "available: " + is.available() + ", " + available());
 //skip(is, size); // TODO
         FormatType formatType = ((TrackChunk) parent).getFormatType();
         switch (formatType) {
@@ -52,7 +56,7 @@ Debug.println(Level.FINE, "AudioSequenceData: " + size + " bytes");
         default:
             throw new InvalidSmafDataException("FormatType: " + formatType);
         }
-Debug.println(Level.FINE, "messages: " + messages.size());
+logger.log(Level.DEBUG, "messages: " + messages.size());
     }
 
     /**

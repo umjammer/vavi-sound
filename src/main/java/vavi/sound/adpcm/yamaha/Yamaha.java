@@ -24,14 +24,14 @@ class Yamaha implements Codec {
     }
 
     /** You need initialize before reuse methods! */
-    private Status stat = new Status();
+    private final Status stat = new Status();
 
     /**
      * @param code ADPCM (LSB 4bit available)
      * @param ss ?
      * @return adjusted ss
      */
-    private int adjust(int code, int ss) {
+    private static int adjust(int code, int ss) {
         switch (code & 0x07) {
         case 0x00:
         case 0x01:
@@ -123,7 +123,7 @@ class Yamaha implements Codec {
         }
 
         stat.last = decode(code);
-//System.err.printf("%04X -> %02X\n", samp, code);
+//logger.log(Level.DEBUG, String.format("%04X -> %02X", samp, code));
         return code;
     }
 }

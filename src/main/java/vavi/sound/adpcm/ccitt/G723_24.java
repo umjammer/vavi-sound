@@ -45,12 +45,12 @@ class G723_24 extends G711 {
      * Maps G.723_24 code word to reconstructed scale factor normalized log
      * magnitude values.
      */
-    private static int[] _dqlntab = {
+    private static final int[] _dqlntab = {
         -2048, 135, 273, 373, 373, 273, 135, -2048
     };
 
     /** Maps G.723_24 code word to log of scale factor multiplier. */
-    private static int[] _witab = {
+    private static final int[] _witab = {
         -128, 960, 4384, 18624, 18624, 4384, 960, -128
     };
 
@@ -59,12 +59,12 @@ class G723_24 extends G711 {
      * term averages are computed and then compared to give an indication
      * how stationary (steady state) the signal is.
      */
-    private static int[] _fitab = {
+    private static final int[] _fitab = {
         0, 0x200, 0x400, 0xE00, 0xE00, 0x400, 0x200, 0
     };
 
     /** */
-    private static int[] qtab_723_24 = { 8, 218, 331 };
+    private static final int[] qtab_723_24 = { 8, 218, 331 };
 
     /**
      * Encodes a linear PCM, A-law or u-law input sample and returns its 3-bit

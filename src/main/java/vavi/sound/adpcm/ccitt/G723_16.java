@@ -72,7 +72,7 @@ class G723_16 extends G711 {
     /**
      * Comes from quantizer decision level tables (Table 7/G.726)
      */
-    private static int[] qtab_723_16 = { 261 };
+    private static final int[] qtab_723_16 = { 261 };
 
     /**
      * Encodes a linear PCM, A-law or u-law input sample and returns its 2-bit

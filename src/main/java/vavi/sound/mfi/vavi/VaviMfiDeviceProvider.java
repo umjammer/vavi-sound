@@ -6,6 +6,9 @@
 
 package vavi.sound.mfi.vavi;
 
+import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +17,8 @@ import java.util.Properties;
 
 import vavi.sound.mfi.MfiDevice;
 import vavi.sound.mfi.spi.MfiDeviceProvider;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -27,11 +31,29 @@ import vavi.util.Debug;
  */
 public class VaviMfiDeviceProvider extends MfiDeviceProvider {
 
-    /** */
-    public static final String version = "1.0.10";
+    private static final Logger logger = getLogger(VaviMfiDeviceProvider.class.getName());
+
+    static {
+        try {
+            try (InputStream is = VaviMfiDeviceProvider.class.getResourceAsStream("/META-INF/maven/vavi/vavi-sound/pom.properties")) {
+                if (is != null) {
+                    Properties props = new Properties();
+                    props.load(is);
+                    version = props.getProperty("version", "undefined in pom.properties");
+                } else {
+                    version = System.getProperty("vavi.test.version", "undefined");
+                }
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     /** */
-    private MfiDevice.Info[] mfiDeviceInfos;
+    public static final String version;
+
+    /** */
+    private final MfiDevice.Info[] mfiDeviceInfos;
 
     /** */
     public VaviMfiDeviceProvider() {
@@ -77,7 +99,7 @@ public class VaviMfiDeviceProvider extends MfiDeviceProvider {
                 try {
                     return deviceMap.get(mfiDeviceInfo).getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 }
             }
 
@@ -85,7 +107,7 @@ Debug.printStackTrace(e);
         }
 
         /** */
-        private static Map<MfiDevice.Info, Class<MfiDevice>> deviceMap = new HashMap<>();
+        private static final Map<MfiDevice.Info, Class<MfiDevice>> deviceMap = new HashMap<>();
 
         /* */
         static {
@@ -101,14 +123,14 @@ Debug.printStackTrace(e);
                     if (key.startsWith("mfi.device.")) {
                         @SuppressWarnings("unchecked")
                         Class<MfiDevice> deviceClass = (Class<MfiDevice>) Class.forName(props.getProperty(key));
-//Debug.println("mfi device class: " + StringUtil.getClassName(deviceClass));
+//logger.log(Level.DEBUG, "mfi device class: " + StringUtil.getClassName(deviceClass));
                         MfiDevice.Info mfiDeviceInfo = deviceClass.getDeclaredConstructor().newInstance().getDeviceInfo();
 
                         deviceMap.put(mfiDeviceInfo, deviceClass);
                     }
                 }
             } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
         }

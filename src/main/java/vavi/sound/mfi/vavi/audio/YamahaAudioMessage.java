@@ -6,14 +6,16 @@
 
 package vavi.sound.mfi.vavi.audio;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mfi.vavi.track.MasterVolumeMessage;
 import vavi.sound.mfi.vavi.track.TempoMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -23,6 +25,8 @@ import vavi.util.Debug;
  * @version 0.00 070427 nsano initial version <br>
  */
 public class YamahaAudioMessage extends MachineDependentMessage {
+
+    private static final Logger logger = getLogger(YamahaAudioMessage.class.getName());
 
     /** */
     protected static final int maxMasterVolume = 0x7f;
@@ -51,7 +55,7 @@ public class YamahaAudioMessage extends MachineDependentMessage {
     /** */
     public static int getDelta(float time) {
         float aDelta = (60f / tempoMessage.getTempo()) / tempoMessage.getTimeBase();
-Debug.println(Level.FINE, "a delta: " + aDelta + ", tempo: " + tempoMessage.getTempo() + ", " + tempoMessage.getTimeBase());
+logger.log(Level.DEBUG, "a delta: " + aDelta + ", tempo: " + tempoMessage.getTempo() + ", " + tempoMessage.getTimeBase());
         return Math.round(time / aDelta);
     }
 }

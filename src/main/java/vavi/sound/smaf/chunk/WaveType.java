@@ -7,9 +7,10 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -33,8 +34,10 @@ import vavi.util.Debug;
  */
 public class WaveType {
 
+    private static final Logger logger = getLogger(WaveType.class.getName());
+
     /** 1, 2 */
-    private int waveChannels;
+    private final int waveChannels;
 
     /**
      * TODO different numbers in chunks, can it be solved with enum?
@@ -61,16 +64,16 @@ public class WaveType {
      * 5 Offset Binary PCM (unsigned PCM?)
      * </pre>
      */
-    private int waveFormat;
+    private final int waveFormat;
 
     /** */
     private static final int[] samplingFreqs = { 4000, 8000, 11000, 22050, 44100 };
 
     /** 4000, 8000, 11000, 22050, 44100 */
-    private int waveSamplingFreq;
+    private final int waveSamplingFreq;
 
     /** 4, 8, 12, 16 */
-    private int waveBaseBit;
+    private final int waveBaseBit;
 
     /** */
     private static final int[] tableForMwq = { 4, 5, 1 };
@@ -88,12 +91,12 @@ public class WaveType {
      * </pre>
      */
     WaveType(int waveType) throws IOException {
-//Debug.println("waveType: " + StringUtil.toHex4(waveType));
+//logger.log(Level.DEBUG, "waveType: " + StringUtil.toHex4(waveType));
         this.waveChannels = (waveType & 0x8000) != 0 ? 2 : 1;
         this.waveFormat = (waveType & 0x7000) >> 12;
         this.waveSamplingFreq = samplingFreqs[(waveType & 0x0f00) >> 8];
         this.waveBaseBit = 4 * (((waveType & 0x00f0) >> 4) + 1);
-Debug.println(Level.FINE, "waveType: " + this);
+logger.log(Level.DEBUG, "waveType: " + this);
     }
 
     /**
@@ -108,12 +111,12 @@ Debug.println(Level.FINE, "waveType: " + this);
      * </pre>
      */
     WaveType(byte[] waveType) throws IOException {
-Debug.printf(Level.FINE, "waveType: %02x %02x %02x\n", waveType[0], waveType[1], waveType[2]);
+logger.log(Level.DEBUG, String.format("waveType: %02x %02x %02x", waveType[0], waveType[1], waveType[2]));
         this.waveChannels = (waveType[0] & 0x80) != 0 ? 2 : 1;
         this.waveFormat = tableForMwq[(waveType[0] & 0x70) >> 4];
         this.waveBaseBit = 4 * ((waveType[0] & 0x0f) + 1);
         this.waveSamplingFreq = ((waveType[1] & 0xff) << 8) | waveType[2] & 0xff;
-Debug.println(Level.FINE, "waveType: " + this);
+logger.log(Level.DEBUG, "waveType: " + this);
     }
 
     /**
@@ -135,25 +138,13 @@ Debug.println(Level.FINE, "waveType: " + this);
         int waveType = 0;
         waveType |= waveChannels == 2 ? 0x8000: 0;
         waveType |= waveFormat << 12; // TODO 5, 6
-        int v;
-        switch (waveSamplingFreq) {
-        case 4000:
-            v = 0;
-            break;
-        case 8000:
-        default:
-            v = 1;
-        break;
-        case 11000:
-            v = 2;
-            break;
-        case 22050:
-            v = 3;
-            break;
-        case 44100:
-            v = 4;
-            break;
-        }
+        int v = switch (waveSamplingFreq) {
+            case 4000 -> 0;
+            default -> 1;
+            case 11000 -> 2;
+            case 22050 -> 3;
+            case 44100 -> 4;
+        };
         waveType |= v << 8;
         waveType |= (waveBaseBit / 4 - 1) << 4;
         return waveType;

@@ -9,11 +9,14 @@ package vavi.sound.mobile;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.ByteOrder;
 
 import vavi.sound.adpcm.ma.MaInputStream;
 import vavi.sound.adpcm.ma.MaOutputStream;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -23,6 +26,8 @@ import vavi.util.Debug;
  * @version 0.00 020829 nsano initial version <br>
  */
 public class YamahaAudioEngine extends BasicAudioEngine {
+
+    private static final Logger logger = getLogger(YamahaAudioEngine.class.getName());
 
     /**
      * <pre>
@@ -43,7 +48,7 @@ public class YamahaAudioEngine extends BasicAudioEngine {
                 channels = 2;
             } else {
                 if (streamNumber % 2 == 1 && data[streamNumber].channels != 2 && (data[streamNumber - 1] != null && data[streamNumber - 1].channels != 2)) {
-Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
+logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
                     return -1;
                 }
 
@@ -55,7 +60,7 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber]
             // from 240_2, channels always 1
 
             if (streamNumber % 2 == 1 && data[streamNumber].channel % 2 == 1 && (data[streamNumber - 1] != null && data[streamNumber - 1].channel % 2 == 0)) {
-Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
+logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
                 return -1;
             }
 

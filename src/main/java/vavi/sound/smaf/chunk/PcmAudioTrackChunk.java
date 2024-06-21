@@ -9,18 +9,20 @@ package vavi.sound.smaf.chunk;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.MetaMessage;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.SmafMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -35,10 +37,12 @@ import vavi.util.Debug;
  */
 public class PcmAudioTrackChunk extends TrackChunk {
 
+    private static final Logger logger = getLogger(PcmAudioTrackChunk.class.getName());
+
     /** */
     public PcmAudioTrackChunk(byte[] id, int size) {
         super(id, size);
-Debug.println(Level.FINE, "PcmAudioTrack[" + trackNumber + "]: " + size + " bytes");
+logger.log(Level.DEBUG, "PcmAudioTrack[" + trackNumber + "]: " + size + " bytes");
     }
 
     /** */
@@ -53,17 +57,17 @@ Debug.println(Level.FINE, "PcmAudioTrack[" + trackNumber + "]: " + size + " byte
 //skip(is, size);
 
         this.formatType = FormatType.values()[dis.readUnsignedByte()];
-Debug.println(Level.FINE, "formatType: " + formatType);
+logger.log(Level.DEBUG, "formatType: " + formatType);
         this.sequenceType = SequenceType.values()[dis.readUnsignedByte()];
-Debug.println(Level.FINE, "sequenceType: " + sequenceType);
+logger.log(Level.DEBUG, "sequenceType: " + sequenceType);
 
         this.waveType = new WaveType(dis.readUnsignedShort());
-Debug.println(Level.FINE, "waveType: " + waveType);
+logger.log(Level.DEBUG, "waveType: " + waveType);
 
         this.durationTimeBase = dis.readUnsignedByte();
-Debug.println(Level.FINE, "durationTimeBase: " + durationTimeBase + ", " + getDurationTimeBase() + " ms");
+logger.log(Level.DEBUG, "durationTimeBase: " + durationTimeBase + ", " + getDurationTimeBase() + " ms");
         this.gateTimeTimeBase = dis.readUnsignedByte();
-Debug.println(Level.FINE, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBase() + " ms");
+logger.log(Level.DEBUG, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGateTimeTimeBase() + " ms");
 
         while (dis.available() > 0) {
             Chunk chunk = readFrom(dis);
@@ -76,7 +80,7 @@ Debug.println(Level.FINE, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGa
             } else if (chunk instanceof WaveDataChunk) {
                 waveDataChunks.add(chunk);
             } else {
-Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
+logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
     }
@@ -141,7 +145,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     }
 
     /** */
-    private List<Chunk> waveDataChunks = new ArrayList<>();
+    private final List<Chunk> waveDataChunks = new ArrayList<>();
 
     /** "Awa*" TODO is there really more than one? */
     public void addWaveDataChunk(Chunk waveDataChunk) {

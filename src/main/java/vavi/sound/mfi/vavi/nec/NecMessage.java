@@ -6,9 +6,10 @@
 
 package vavi.sound.mfi.vavi.nec;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
@@ -16,7 +17,8 @@ import vavi.sound.mfi.vavi.audio.YamahaAudioMessage;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mfi.vavi.track.Nop2Message;
 import vavi.sound.mobile.AudioEngine;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -28,17 +30,19 @@ import vavi.util.Debug;
  */
 public class NecMessage extends YamahaAudioMessage {
 
+    private static final Logger logger = getLogger(NecMessage.class.getName());
+
     /** wave length, use (0x01, 0xf0, 0x07), 4bit in ADPCM, mono */
-    private static int MAX_BLOCK = 0xffff - Function1_240_7.HEADER_LENGTH;
+    private static final int MAX_BLOCK = 0xffff - Function1_240_7.HEADER_LENGTH;
 
     /** */
-    private static ThreadLocal<Integer> sequence = new ThreadLocal<>();
+    private static final ThreadLocal<Integer> sequence = new ThreadLocal<>();
 
     /** thread local sequence */
     private static void initSequence() {
         if (sequence.get() == null) {
             sequence.set(0);
-Debug.println(Level.FINER, "thread local sequence: init");
+logger.log(Level.TRACE, "thread local sequence: init");
         }
     }
 
@@ -50,7 +54,7 @@ Debug.println(Level.FINER, "thread local sequence: init");
     }
 
     /** */
-    private static int PCM_MAX_BLOCK = MAX_BLOCK * 4;
+    private static final int PCM_MAX_BLOCK = MAX_BLOCK * 4;
 
     /** */
     private static final int maxVelocity = 0x7f;
@@ -71,7 +75,7 @@ Debug.println(Level.FINER, "thread local sequence: init");
      */
     public static List<MfiEvent> getAdpcmEvents(byte[] pcm, float time, int sampleRate, int bits, int channels, int adpcmVolume) throws InvalidMfiDataException {
         int delta = getDelta(time);
-Debug.println(Level.FINE, "delta: " + delta + ", time: " + time);
+logger.log(Level.DEBUG, "delta: " + delta + ", time: " + time);
         int velocity = (int) (adpcmVolume * maxVelocity / 100f);
 
         AudioEngine audioEngine = NecSequencer.getAudioEngine();
@@ -88,7 +92,7 @@ Debug.println(Level.FINE, "delta: " + delta + ", time: " + time);
             System.arraycopy(pcm, (PCM_MAX_BLOCK * channels) * i, temp, 0, PCM_MAX_BLOCK * channels);
             byte[] chunk = audioEngine.encode(4, channels, temp);
             if (channels == 1) {
-Debug.println(Level.FINE, "wave chunk(" + i + "): " + chunk.length);
+logger.log(Level.DEBUG, "wave chunk(" + i + "): " + chunk.length);
 
                 // adpcm data
                 events.add(getVoiceEvent(streamNumber++, channels, sampleRate, chunk));
@@ -97,13 +101,13 @@ Debug.println(Level.FINE, "wave chunk(" + i + "): " + chunk.length);
                 byte[] chunkM = new byte[chunk.length / 2];
 
                 System.arraycopy(chunk, 0, chunkM, 0, chunkM.length);
-Debug.println(Level.FINE, "wave l chunk(" + i + "): " + chunkM.length);
+logger.log(Level.DEBUG, "wave l chunk(" + i + "): " + chunkM.length);
 
                 // adpcm data L
                 events.add(getVoiceEvent(streamNumber++, 1, sampleRate, chunkM)); // TODO channel is 1
 
                 System.arraycopy(chunk, chunkM.length, chunkM, 0, chunkM.length);
-Debug.println(Level.FINE, "wave r chunk(" + i + "): " + chunkM.length);
+logger.log(Level.DEBUG, "wave r chunk(" + i + "): " + chunkM.length);
 
                 // adpcm data R
                 events.add(getVoiceEvent(streamNumber++, 1, sampleRate, chunkM)); // TODO channel is 1
@@ -114,7 +118,7 @@ Debug.println(Level.FINE, "wave r chunk(" + i + "): " + chunkM.length);
             System.arraycopy(pcm, (PCM_MAX_BLOCK * channels) * numberOfChunks, temp, 0, moduloOfChunks);
             byte[] chunk = audioEngine.encode(4, channels, temp);
             if (channels == 1) {
-Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length);
+logger.log(Level.DEBUG, "wave chunk(" + numberOfChunks + "): " + chunk.length);
 
                 // adpcm data
                 events.add(getVoiceEvent(streamNumber++, channels, sampleRate, chunk));
@@ -123,13 +127,13 @@ Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length)
                 byte[] chunkM = new byte[chunk.length / 2];
 
                 System.arraycopy(chunk, 0, chunkM, 0, chunkM.length);
-Debug.println(Level.FINE, "wave l chunk(" + numberOfChunks + "): " + chunkM.length);
+logger.log(Level.DEBUG, "wave l chunk(" + numberOfChunks + "): " + chunkM.length);
 
                 // adpcm data L
                 events.add(getVoiceEvent(streamNumber++, 1, sampleRate, chunkM)); // TODO channel is 1
 
                 System.arraycopy(chunk, chunkM.length, chunkM, 0, chunkM.length);
-Debug.println(Level.FINE, "wave r chunk(" + numberOfChunks + "): " + chunkM.length);
+logger.log(Level.DEBUG, "wave r chunk(" + numberOfChunks + "): " + chunkM.length);
 
                 // adpcm data R
                 events.add(getVoiceEvent(streamNumber++, 1, sampleRate, chunkM)); // TODO channel is 1
@@ -319,14 +323,14 @@ Debug.println(Level.FINE, "wave r chunk(" + numberOfChunks + "): " + chunkM.leng
      */
     public static List<MfiEvent> getAdpcmEventsEx(byte[] pcm, float time, int sampleRate, int bits, int channels, int adpcmVolume) throws InvalidMfiDataException {
         int delta = getDelta(time);
-Debug.println(Level.FINE, "delta: " + delta + ", time: " + time);
+logger.log(Level.DEBUG, "delta: " + delta + ", time: " + time);
         int velocity = (int) (adpcmVolume * maxVelocity / 100f);
 
         AudioEngine audioEngine = NecSequencer.getAudioEngine();
 
         byte[] adpcm = audioEngine.encode(4, channels, pcm);
-Debug.println(Level.FINE, "adpcm length: " + adpcm.length);
-//System.err.println("pcm:\n" + StringUtil.getDump(pcm, 64) + "adpcm L:\n" + StringUtil.getDump(adpcm, 64) +"adpcm R:\n" + StringUtil.getDump(adpcm, adpcm.length / 2, 64));
+logger.log(Level.DEBUG, "adpcm length: " + adpcm.length);
+//logger.log(Level.DEBUG, "pcm:\n" + StringUtil.getDump(pcm, 64) + "adpcm L:\n" + StringUtil.getDump(adpcm, 64) +"adpcm R:\n" + StringUtil.getDump(adpcm, adpcm.length / 2, 64));
 
         int numberOfChunks = adpcm.length / MAX_BLOCK;
         int moduloOfChunks = adpcm.length % MAX_BLOCK;
@@ -343,7 +347,7 @@ Debug.println(Level.FINE, "adpcm length: " + adpcm.length);
                 System.arraycopy(adpcm, (MAX_BLOCK / 2) * i, chunk, 0, MAX_BLOCK / 2);
                 System.arraycopy(adpcm, (adpcm.length / 2) + (MAX_BLOCK / 2) * i, chunk, MAX_BLOCK / 2, MAX_BLOCK / 2);
             }
-Debug.println(Level.FINE, "wave chunk(" + i + "): " + chunk.length);
+logger.log(Level.DEBUG, "wave chunk(" + i + "): " + chunk.length);
 
             // adpcm data
             events.add(getVoiceEvent(streamNumber++, channels, sampleRate, chunk));
@@ -356,7 +360,7 @@ Debug.println(Level.FINE, "wave chunk(" + i + "): " + chunk.length);
                 System.arraycopy(adpcm, (MAX_BLOCK / 2) * numberOfChunks, chunk, 0, moduloOfChunks / 2);
                 System.arraycopy(adpcm, (adpcm.length / 2) + (MAX_BLOCK / 2) * numberOfChunks, chunk, moduloOfChunks / 2, moduloOfChunks / 2);
             }
-Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length);
+logger.log(Level.DEBUG, "wave chunk(" + numberOfChunks + "): " + chunk.length);
 
             // adpcm data
             events.add(getVoiceEvent(streamNumber++, channels, sampleRate, chunk));
@@ -368,7 +372,7 @@ Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length)
         streamNumber = 0;
         for (int i = 0; i < numberOfChunks; i++) {
             // adpcm on
-Debug.println(Level.FINER, "thread local sequence: " + sequence.get());
+logger.log(Level.TRACE, "thread local sequence: " + sequence.get());
             events.add(getStreamOn(streamNumber++, velocity));
             // nop2
             for (int j = 0; j < blockDelta / Nop2Message.maxDelta; j++) {
@@ -381,7 +385,7 @@ Debug.println(Level.FINER, "thread local sequence: " + sequence.get());
         }
         if (moduloOfChunks != 0) {
             // adpcm on
-Debug.println(Level.FINER, "thread local sequence: " + sequence.get());
+logger.log(Level.TRACE, "thread local sequence: " + sequence.get());
             events.add(getStreamOn(streamNumber++, velocity));
             // nop2
             int moduloOfBlockDelta = delta % blockDelta;

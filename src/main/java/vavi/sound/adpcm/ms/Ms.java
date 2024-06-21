@@ -18,9 +18,10 @@
 
 package vavi.sound.adpcm.ms;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -45,11 +46,13 @@ import vavi.util.Debug;
  */
 class Ms {
 
+    private static final Logger logger = getLogger(Ms.class.getName());
+
     /** */
     private static class State {
         /** step size */
         int step;
-        int[] iCoef = new int[2];
+        final int[] iCoef = new int[2];
     }
 
     /**
@@ -82,22 +85,22 @@ class Ms {
     /**
      * @param sp state pointer
      */
-    private int decode(int code,
-                       State[] state,
-                       int sp,
-                       int sample1,
-                       int sample2) {
+    private static int decode(int code,
+                              State[] state,
+                              int sp,
+                              int sample1,
+                              int sample2) {
 
         // Compute next step value
         int step = state[sp].step;
 
         int nstep = (stepAdjustTable[code] * step) >> 8;
-        state[sp].step = (nstep < 16) ? 16 : nstep;
+        state[sp].step = Math.max(nstep, 16);
 
         // make linear prediction for next sample
         int vlin = ((sample1 * state[sp].iCoef[0]) +
                     (sample2 * state[sp].iCoef[1])) >> 8;
-//System.err.println(vlin);
+//logger.log(Level.DEBUG, vlin);
         // then add the code * step adjustment
         code -= (code & 0x08) << 1;
         int sample = (code * step) + vlin;
@@ -135,7 +138,7 @@ class Ms {
         for (int channel = 0; channel < channels; channel++) {
             int bpred = inBuffer[ip++] & 0xff;
             if (bpred >= nCoef) {
-Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
+logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
                 bpred = 0;
             }
             state[channel] = new State();
@@ -148,7 +151,7 @@ Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             if ((value & 0x8000) != 0) {
                 value -= 0x10000;
             }
-//System.err.println("1: " + value);
+//logger.log(Level.DEBUG, "1: " + value);
             state[channel].step = value;
             ip += 2;
         }
@@ -159,7 +162,7 @@ Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             if ((value & 0x8000) != 0) {
                 value -= 0x10000;
             }
-//System.err.println("2: " + value);
+//logger.log(Level.DEBUG, "2: " + value);
             outBuffer[channels + channel] = value;
             ip += 2;
         }
@@ -170,7 +173,7 @@ Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             if ((value & 0x8000) != 0) {
                 value -= 0x10000;
             }
-//System.err.println("3: " + value);
+//logger.log(Level.DEBUG, "3: " + value);
             outBuffer[channel] = value;
             ip += 2;
         }
@@ -208,15 +211,15 @@ Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
      * @param outBuffer output buffer[blockAlign], or NULL for no output
      * @return ???
      */
-    private int encode(int channel,
-                       int channels,
-                       int[] v,
-                       int[] iCoef,
-                       int[] inBuffer,
-                       int length,
-                       int[] steps,
-                       int sp,
-                       byte[] outBuffer) {
+    private static int encode(int channel,
+                              int channels,
+                              int[] v,
+                              int[] iCoef,
+                              int[] inBuffer,
+                              int length,
+                              int[] steps,
+                              int sp,
+                              byte[] outBuffer) {
 
         int ox = 0;                         //
 
@@ -259,7 +262,7 @@ Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             // difference between linear prediction and current sample
             d = inBuffer[ip] - vlin;
             int dp = d + (step << 3) + (step >> 1);
-//System.err.println("vlin: " + vlin + ", d: " + d + ", dp: " + dp + ", in: " + inBuffer[ip] + ", coef: " + iCoef[0] + ", " + iCoef[1]);
+//logger.log(Level.DEBUG, "vlin: " + vlin + ", d: " + d + ", dp: " + dp + ", in: " + inBuffer[ip] + ", coef: " + iCoef[0] + ", " + iCoef[1]);
             int c = 0;
             if (dp > 0) {
                 c = dp / step;
@@ -286,7 +289,7 @@ Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
                 // FIXME does c << 0 work properly ?
                 outBuffer[op + (ox >> 3)] |= (byte) ((ox & 4) != 0 ? c : (c << 4));
                 ox += 4 * channels;
-//System.err.printf("%1x\n", c);
+//logger.log(Level.DEBUG, String.format("%1x", c));
             }
 
             // Update the step for the next sample
@@ -296,9 +299,9 @@ Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             }
         }
 //if (outBuffer != null)
-// System.err.print("\n");
+// logger.log(Level.DEBUG, "");
         d2 /= length; // be sure it's non-negative
-//System.err.printf("ch%d: st %d->%d, d %.1f\n", channel, steps[sp], step, Math.sqrt(d2));
+//logger.log(Level.DEBUG, String.format("ch%d: st %d->%d, d %.1f", channel, steps[sp], step, Math.sqrt(d2)));
         steps[sp] = step;
 
         return (int) Math.sqrt(d2);
@@ -315,13 +318,13 @@ Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
      * @param sp steps pointer
      * @param outBuffer output buffer[blockAlign]
      */
-    private void encodeChannel(int channel,
-                              int channels,
-                              int[] inBuffer,
-                              int length,
-                              int[] steps,
-                              int sp,
-                              byte[] outBuffer) {
+    private static void encodeChannel(int channel,
+                                      int channels,
+                                      int[] inBuffer,
+                                      int length,
+                                      int[] steps,
+                                      int sp,
+                                      byte[] outBuffer) {
 
         int[] v = new int[2];
         int[] ss = new int[1];
@@ -351,7 +354,7 @@ Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
 
             s1[0] = s0;
             encode(channel, channels, v, _iCoef[k], inBuffer, n0, s1, 0, null);
-//System.err.printf(" s32 %d\n", s1[0]);
+//logger.log(Level.DEBUG, String.format(" s32 %d", s1[0]));
 
             ss[0] = (3 * s0 + s1[0]) / 4;
             s1[0] = ss[0];
@@ -369,7 +372,7 @@ Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             }
         }
         steps[sp] = smin;
-//System.err.printf("kmin %d, smin %5d, \n", kmin, smin);
+//logger.log(Level.DEBUG, String.format("kmin %d, smin %5d, ", kmin, smin));
         encode(channel, channels, v, _iCoef[kmin], inBuffer, length, steps, sp, outBuffer);
         outBuffer[channel] = (byte) kmin;
     }
@@ -419,8 +422,8 @@ Debug.println(Level.FINE, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             n = 0;
             m = blockAlign;
         }
-//Debug.println("n: " + n);
-//Debug.println("m: " + m);
+//logger.log(Level.DEBUG, "n: " + n);
+//logger.log(Level.DEBUG, "m: " + m);
         if (m >= 7 * channels) {
             m -= 7 * channels;              // bytes beyond block-header
             m = (2 * m) / channels + 2;     // nibbles / channels + 2 in header

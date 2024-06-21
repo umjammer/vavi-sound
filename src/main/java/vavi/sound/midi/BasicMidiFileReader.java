@@ -12,17 +12,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.logging.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.spi.MidiFileReader;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -32,6 +32,8 @@ import vavi.util.Debug;
  * @version 0.00 041222 nsano initial version <br>
  */
 public abstract class BasicMidiFileReader extends MidiFileReader {
+
+    private static final Logger logger = getLogger(BasicMidiFileReader.class.getName());
 
     /**
      * Gets MIDI Sequence converted by a method {@link #getSequence(InputStream)}
@@ -44,12 +46,12 @@ public abstract class BasicMidiFileReader extends MidiFileReader {
         throws InvalidMidiDataException,
                IOException {
 
-//Debug.println("here ★");
+//logger.log(Level.DEBUG, "here ★");
         Sequence midiSequence = getSequence(stream);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         MidiSystem.write(midiSequence, 0, os);
         ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
-//Debug.println("temporary midi:\n" + StringUtil.getDump(os.toByteArray(), 128));
+//logger.log(Level.DEBUG, "temporary midi:\n" + StringUtil.getDump(os.toByteArray(), 128));
         MidiFileFormat midiFF = MidiSystem.getMidiFileFormat(is);
         return midiFF;
     }
@@ -59,7 +61,7 @@ public abstract class BasicMidiFileReader extends MidiFileReader {
         throws InvalidMidiDataException,
                IOException {
 
-Debug.println(Level.FINE, "file: " + file);
+logger.log(Level.DEBUG, "file: " + file);
         InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
         return getMidiFileFormat(is);
     }

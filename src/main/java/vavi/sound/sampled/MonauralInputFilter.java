@@ -7,14 +7,14 @@
 package vavi.sound.sampled;
 
 import java.io.IOException;
-import java.util.logging.Level;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -26,6 +26,8 @@ import vavi.util.Debug;
  * @version 0.00 060124 nsano initial version <br>
  */
 public class MonauralInputFilter implements InputFilter {
+
+    private static final Logger logger = getLogger(MonauralInputFilter.class.getName());
 
     @Override
     public AudioInputStream doFilter(AudioInputStream sourceAis) throws IOException, UnsupportedAudioFileException {
@@ -42,8 +44,8 @@ public class MonauralInputFilter implements InputFilter {
             inAudioFormat.getFrameSize(),
             inAudioFormat.getFrameRate(),
             inAudioFormat.isBigEndian());
-Debug.println(Level.FINE, "OUT: " + outAudioFormat);
-Debug.println(Level.FINE, "OK: " + AudioSystem.isConversionSupported(outAudioFormat, inAudioFormat));
+logger.log(Level.DEBUG, "OUT: " + outAudioFormat);
+logger.log(Level.DEBUG, "OK: " + AudioSystem.isConversionSupported(outAudioFormat, inAudioFormat));
 
         return AudioSystem.getAudioInputStream(outAudioFormat, sourceAis);
     }

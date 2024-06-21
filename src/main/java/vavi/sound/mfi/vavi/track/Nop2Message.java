@@ -6,13 +6,15 @@
 
 package vavi.sound.mfi.vavi.track;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -29,6 +31,8 @@ import vavi.util.Debug;
 public class Nop2Message extends ShortMessage
     implements MidiConvertible {
 
+    private static final Logger logger = getLogger(Nop2Message.class.getName());
+
     public static final int maxDelta = 0xff * 0x100 + 0xff;
 
     /**
@@ -43,7 +47,7 @@ public class Nop2Message extends ShortMessage
      */
     public Nop2Message(int delta, int data2) {
         super(delta, 0xff, 0xdc, data2);
-Debug.println(Level.FINE, "NOP2: delta: " + delta);
+logger.log(Level.DEBUG, "NOP2: delta: " + delta);
     }
 
     /**
@@ -55,7 +59,7 @@ Debug.println(Level.FINE, "NOP2: delta: " + delta);
      */
     public Nop2Message(int delta, int status, int data1, int data2) {
         super(delta, 0xff, 0xdc, data2);
-Debug.println(Level.FINE, "NOP2: delta: " + delta);
+logger.log(Level.DEBUG, "NOP2: delta: " + delta);
     }
 
     /** */
@@ -67,7 +71,7 @@ Debug.println(Level.FINE, "NOP2: delta: " + delta);
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
-//Debug.println("ignore: " + this);
+//logger.log(Level.DEBUG, "ignore: " + this);
         return null;
     }
 }

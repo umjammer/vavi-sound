@@ -10,15 +10,15 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
-import vavi.util.Debug;
-
+import static java.lang.System.getLogger;
 import static vavi.sound.SoundUtil.volume;
 
 
@@ -44,6 +44,8 @@ import static vavi.sound.SoundUtil.volume;
  */
 public class PcmAudioEngine extends BasicAudioEngine {
 
+    private static final Logger logger = getLogger(PcmAudioEngine.class.getName());
+
     /**
      * <pre>
      *  L0 + L2 + ...
@@ -63,7 +65,7 @@ public class PcmAudioEngine extends BasicAudioEngine {
                 channels = 2;
             } else {
                 if (streamNumber % 2 == 1 && data[streamNumber].channels != 2 && (data[streamNumber - 1] != null && data[streamNumber - 1].channels != 2)) {
-Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
+logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
                     return -1;
                 }
 
@@ -75,7 +77,7 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber]
             // from 240_2, channels always 1
 
             if (streamNumber % 2 == 1 && data[streamNumber].channel % 2 == 1 && (data[streamNumber - 1] != null && data[streamNumber - 1].channel % 2 == 0)) {
-Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
+logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
                 return -1;
             }
 
@@ -117,7 +119,7 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + data[streamNumber]
 
         int channels = getChannels(streamNumber);
         if (channels == -1) {
-Debug.println("always used: no: " + streamNumber + ", ch: " + this.data[streamNumber].channel);
+logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + this.data[streamNumber].channel);
             return;
         }
 
@@ -129,14 +131,14 @@ Debug.println("always used: no: " + streamNumber + ", ch: " + this.data[streamNu
             1 * channels,
             this.data[streamNumber].sampleRate,
             false);
-Debug.println(audioFormat);
+logger.log(Level.DEBUG, audioFormat);
 
         try {
 
-//Debug.println(data.length);
+//logger.log(Level.DEBUG, data.length);
             InputStream[] iss = getInputStreams(streamNumber, channels);
 
-//Debug.println("is: " + is.available());
+//logger.log(Level.DEBUG, "is: " + is.available());
 // OutputStream os = debug2();
 
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
@@ -154,7 +156,7 @@ Debug.println(audioFormat);
                 } else {
                     int lL = iss[0].read(buf, 0, 512);
                     /*int lR = */iss[1].read(buf, 512, 512);
-//System.err.println("l : " + lL + ", r: " + lR);
+//logger.log(Level.DEBUG, "l : " + lL + ", r: " + lR);
                     for (int i = 0; i < lL / 2; i++) {
                         byte[] temp = new byte[4];
                         temp[0] = buf[i * 2];

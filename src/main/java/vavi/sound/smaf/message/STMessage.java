@@ -7,14 +7,16 @@
 package vavi.sound.smaf.message;
 
 import java.io.UnsupportedEncodingException;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.SmafMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -26,6 +28,8 @@ import vavi.util.Debug;
  */
 public class STMessage extends SmafMessage
     implements MidiConvertible {
+
+    private static final Logger logger = getLogger(STMessage.class.getName());
 
     /** */
     private String songTitle;
@@ -77,7 +81,7 @@ public class STMessage extends SmafMessage
         try {
             data = songTitle.getBytes("Windows-31J");
         } catch (UnsupportedEncodingException e) {
-Debug.println(e);
+logger.log(Level.DEBUG, e);
             data = songTitle.getBytes();
         }
         MetaMessage metaMessage = new MetaMessage();

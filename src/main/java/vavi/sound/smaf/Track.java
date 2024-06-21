@@ -19,7 +19,7 @@ import java.util.List;
 public class Track {
 
     /** */
-    protected List<SmafEvent> events;
+    protected final List<SmafEvent> events;
 
     /**
      *

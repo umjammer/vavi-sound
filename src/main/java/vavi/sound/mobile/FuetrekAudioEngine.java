@@ -9,13 +9,15 @@ package vavi.sound.mobile;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.ByteOrder;
-import java.util.logging.Level;
 
 import vavi.sound.adpcm.ccitt.G721InputStream;
 import vavi.sound.adpcm.ccitt.G721OutputStream;
 import vavi.sound.adpcm.ccitt.G723_16InputStream;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -25,6 +27,8 @@ import vavi.util.Debug;
  * @version 0.00 020903 nsano initial version <br>
  */
 public class FuetrekAudioEngine extends BasicAudioEngine {
+
+    private static final Logger logger = getLogger(FuetrekAudioEngine.class.getName());
 
     /** */
     private static final int MAX_ID = 16;
@@ -49,7 +53,7 @@ public class FuetrekAudioEngine extends BasicAudioEngine {
         if (data[streamNumber].channel != -1) {
             // from MachineDependent
             if (streamNumber % 2 == 1 && data[streamNumber].channel % 2 == 1 && (data[streamNumber - 1] != null && data[streamNumber - 1].channel % 2 == 0)) {
-Debug.println(Level.FINE, "always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
+logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
                 return -1;
             }
 

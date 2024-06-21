@@ -6,7 +6,8 @@
 
 package vavi.sound.mfi.vavi;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javax.sound.midi.MetaEventListener;
 
@@ -20,7 +21,8 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -30,6 +32,8 @@ import vavi.util.Debug;
  * @version 0.00 030902 nsano initial version <br>
  */
 class MetaEventAdapter implements MetaEventListener, MfiDevice {
+
+    private static final Logger logger = getLogger(MetaEventAdapter.class.getName());
 
     /** the device information */
     private static final MfiDevice.Info info =
@@ -66,32 +70,32 @@ class MetaEventAdapter implements MetaEventListener, MfiDevice {
      */
     @Override
     public void meta(javax.sound.midi.MetaMessage message) {
-//Debug.println("type: " + message.getType());
+//logger.log(Level.DEBUG, "type: " + message.getType());
         switch (MetaEvent.valueOf(message.getType())) {
         case META_MACHINE_DEPEND: // sequencer specific meta event
             try {
                 processSpecial(message);
             } catch (InvalidMfiDataException e) {
-                Debug.printStackTrace(e.getCause());
+                logger.log(Level.ERROR, e.getCause().getMessage(), e.getCause());
             }
 catch (RuntimeException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
 } catch (Error e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
 throw e;
 }
             break;
         case META_TEXT_EVENT:     // text event
         case META_COPYRIGHT:      // copyright
         case META_NAME:           // sequence name or track name
-Debug.println(Level.FINE, "meta " + message.getType() + ": " + MidiUtil.getDecodedMessage(message.getData()));
+logger.log(Level.DEBUG, "meta " + message.getType() + ": " + MidiUtil.getDecodedMessage(message.getData()));
             break;
         case META_END_OF_TRACK:   // end of track
         case META_TEMPO:          // tempo was set
-Debug.println(Level.FINE, "this handler ignore meta: " + message.getType());
+logger.log(Level.DEBUG, "this handler ignore meta: " + message.getType());
             break;
         default:
-Debug.println(Level.FINE, "no meta sub handler: " + message.getType());
+logger.log(Level.DEBUG, "no meta sub handler: " + message.getType());
             break;
         }
     }
@@ -108,13 +112,13 @@ Debug.println(Level.FINE, "no meta sub handler: " + message.getType());
         int manufacturerId = data[0];
         switch (manufacturerId) {
         case 0:     // 3 byte manufacturer id
-Debug.printf(Level.WARNING, "unhandled manufacturer: %02x %02x %02x\n", data[0], data[1], data[2]);
+logger.log(Level.WARNING, String.format("unhandled manufacturer: %02x %02x %02x", data[0], data[1], data[2]));
             break;
         case VaviMidiDeviceProvider.MANUFACTURER_ID:
             processSpecial_Vavi(message);
             break;
         default:
-Debug.printf(Level.WARNING, "unhandled manufacturer: %02x\n", manufacturerId);
+logger.log(Level.WARNING, String.format("unhandled manufacturer: %02x", manufacturerId));
             break;
         }
     }
@@ -124,7 +128,7 @@ Debug.printf(Level.WARNING, "unhandled manufacturer: %02x\n", manufacturerId);
      * 0x5f
      * </pre>
      */
-    private void processSpecial_Vavi(javax.sound.midi.MetaMessage message)
+    private static void processSpecial_Vavi(javax.sound.midi.MetaMessage message)
         throws InvalidMfiDataException {
 
         byte[] data = message.getData();
@@ -137,7 +141,7 @@ Debug.printf(Level.WARNING, "unhandled manufacturer: %02x\n", manufacturerId);
             processSpecial_Vavi_Mfi4(message);
             break;
         default:
-Debug.printf(Level.WARNING, "unhandled function: %02x\n", functionId);
+logger.log(Level.WARNING, String.format("unhandled function: %02x", functionId));
             break;
         }
     }
@@ -147,12 +151,12 @@ Debug.printf(Level.WARNING, "unhandled function: %02x\n", functionId);
      * 0x5f 0x01
      * </pre>
      */
-    private void processSpecial_Vavi_MachineDependent(javax.sound.midi.MetaMessage message)
+    private static void processSpecial_Vavi_MachineDependent(javax.sound.midi.MetaMessage message)
         throws InvalidMfiDataException {
 
         byte[] data = message.getData();
         int id = (data[2] & 0xff) * 0xff + (data[3] & 0xff);
-//Debug.println("message id: " + id);
+//logger.log(Level.DEBUG, "message id: " + id);
         MachineDependentMessage mdm = (MachineDependentMessage) MfiMessageStore.get(id);
 
         int vendor = mdm.getVendor() | mdm.getCarrier();
@@ -160,8 +164,8 @@ Debug.printf(Level.WARNING, "unhandled function: %02x\n", functionId);
         try {
             sequencer = MachineDependentSequencer.factory.get(vendor);
         } catch (IllegalArgumentException | Error e) {
-Debug.printStackTrace(e);
-Debug.printf(Level.SEVERE, "error vendor: 0x%02x\n", vendor);
+logger.log(Level.ERROR, e.getMessage(), e);
+logger.log(Level.ERROR, String.format("error vendor: 0x%02x", vendor));
             sequencer = new UnknownVenderSequencer();
         }
         sequencer.sequence(mdm);
@@ -173,12 +177,12 @@ Debug.printf(Level.SEVERE, "error vendor: 0x%02x\n", vendor);
      * </pre>
      * @since MFi 4.0
      */
-    private void processSpecial_Vavi_Mfi4(javax.sound.midi.MetaMessage message)
+    private static void processSpecial_Vavi_Mfi4(javax.sound.midi.MetaMessage message)
         throws InvalidMfiDataException {
 
         byte[] data = message.getData();
         int id = (data[2] & 0xff) * 0xff + (data[3] & 0xff);
-//Debug.println("message id: " + id);
+//logger.log(Level.DEBUG, "message id: " + id);
         AudioDataSequencer sequencer = (AudioDataSequencer) MfiMessageStore.get(id);
 
         sequencer.sequence();

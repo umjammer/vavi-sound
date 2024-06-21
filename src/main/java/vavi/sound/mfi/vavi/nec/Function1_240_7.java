@@ -6,12 +6,11 @@
 
 package vavi.sound.mfi.vavi.nec;
 
-import java.util.logging.Level;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 
@@ -65,8 +64,8 @@ public class Function1_240_7 implements MachineDependentFunction {
         this.sampleRate =  ((data[11] & 0xff) << 8) + (data[12] & 0xff);  // 4000 ~ 16000 (make it half when stereo)
 
         int adpcmLength = data.length - HEADER_LENGTH;
-Debug.println(Level.FINE, "ADPCM: No." + streamNumber + ", " + sampleRate + "Hz, " + adpcmLength + " bytes, " + (mono ? "mono" : "stereo") + ", " + format);
-Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(data, 32));
+logger.log(Level.DEBUG, "ADPCM: No." + streamNumber + ", " + sampleRate + "Hz, " + adpcmLength + " bytes, " + (mono ? "mono" : "stereo") + ", " + format);
+logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(data, 32));
 
         this.adpcm = new byte[adpcmLength];
         System.arraycopy(data, HEADER_LENGTH, adpcm, 0, adpcmLength);

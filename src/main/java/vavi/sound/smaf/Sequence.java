@@ -22,7 +22,7 @@ import java.util.List;
 public class Sequence {
 
     /** */
-    protected List<Track> tracks;
+    protected final List<Track> tracks;
 
     /** Creates a sequence. */
     public Sequence() {

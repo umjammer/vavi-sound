@@ -15,7 +15,6 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 
-import vavi.sound.SoundUtil;
 import vavi.sound.midi.MidiUtil;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;

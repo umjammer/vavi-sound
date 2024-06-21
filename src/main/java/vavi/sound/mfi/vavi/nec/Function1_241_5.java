@@ -6,12 +6,11 @@
 
 package vavi.sound.mfi.vavi.nec;
 
-import java.util.logging.Level;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
 
 
 /**
@@ -51,7 +50,7 @@ public class Function1_241_5 implements MachineDependentFunction {
         this.channel =      (data[8] & 0xc0) >> 6;      //
         this.streamNumber =  data[9] & 0x1f;            // stream number 0 ~ 31
 
-Debug.println(Level.FINE, "StreamOff: " + channel + "ch, No." + streamNumber);
+logger.log(Level.DEBUG, "StreamOff: " + channel + "ch, No." + streamNumber);
 
         NecSequencer.getAudioEngine().stop(streamNumber);    // TODO channel ???
     }

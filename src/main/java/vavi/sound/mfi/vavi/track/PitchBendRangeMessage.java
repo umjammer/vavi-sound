@@ -103,7 +103,7 @@ public class PitchBendRangeMessage extends vavi.sound.mfi.ShortMessage
         throws InvalidMidiDataException {
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
-//Debug.println(this);
+//logger.log(Level.DEBUG, this);
 //      context.setPitchBendRange(channel, getPitchBendRange());
 
         MidiEvent[] events = new MidiEvent[3];
@@ -143,7 +143,7 @@ public class PitchBendRangeMessage extends vavi.sound.mfi.ShortMessage
         mfiMessage.setDelta(context.getDelta(context.retrieveMfiTrack(channel)));
         mfiMessage.setVoice(voice);
 //  if (data2 / 2 > 24) {
-//   Debug.println("range: " + data2 / 2);
+//   logger.log(Level.DEBUG, "range: " + data2 / 2);
 //  }
         mfiMessage.setPitchBendRange(Math.min(data2 / 2, 24));
 

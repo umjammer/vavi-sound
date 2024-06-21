@@ -6,7 +6,8 @@
 
 package vavi.sound.smaf.message;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
@@ -14,7 +15,8 @@ import javax.sound.midi.ShortMessage;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -25,6 +27,8 @@ import vavi.util.Debug;
  */
 public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
     implements MidiConvertible, SmafConvertible {
+
+    private static final Logger logger = getLogger(BankSelectMessage.class.getName());
 
     /** smaf channel */
     private int channel;
@@ -125,7 +129,7 @@ public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
         throws InvalidMidiDataException {
 
         if (significant == null) {              // HandyPhoneStandard
-Debug.printf(Level.FINE, "BankSelect: [%d] %dch, 0x%02x", duration, channel, bank);
+logger.log(Level.DEBUG, String.format("BankSelect: [%d] %dch, 0x%02x", duration, channel, bank));
             int data2;
             if ((bank & 0x80) != 0) {
                 context.setDrum(channel, MidiContext.ChannelConfiguration.PERCUSSION);
@@ -161,7 +165,7 @@ Debug.printf(Level.FINE, "BankSelect: [%d] %dch, 0x%02x", duration, channel, ban
         } else {                                // MobileStandard
             int midiChannel = context.retrieveChannel(this.channel);
 
-Debug.println(Level.FINE, "BankSelect(" + significant + "): [" + duration + "] " + midiChannel + "ch, " + bank);
+logger.log(Level.DEBUG, "BankSelect(" + significant + "): [" + duration + "] " + midiChannel + "ch, " + bank);
             ShortMessage shortMessage = new ShortMessage();
             shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                     midiChannel,
@@ -190,7 +194,7 @@ Debug.println(Level.FINE, "BankSelect(" + significant + "): [" + duration + "] "
         changeBankMessage.setBank(data1);
 
         context.setBeforeTick(track, midiEvent.getTick());
-//Debug.println(channel + ": " + StringUtil.toHex2(data1) + ", " + StringUtil.toHex2(changeVoiceMessage.getProgram()) + ", " + changeBankMessage.getBank());
+//logger.log(Level.DEBUG, channel + ": " + StringUtil.toHex2(data1) + ", " + StringUtil.toHex2(changeVoiceMessage.getProgram()) + ", " + changeBankMessage.getBank());
 
         return new SmafEvent[] {
             new SmafEvent(changeBankMessage, midiEvent.getTick()),

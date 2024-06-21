@@ -33,7 +33,7 @@ public interface WaveSequencer {
     class Factory extends PrefixedClassPropertiesFactory<Integer, AudioEngine> {
 
         /** */
-        private static ThreadLocal<AudioEngine> audioEngineStore = new ThreadLocal<>();
+        private static final ThreadLocal<AudioEngine> audioEngineStore = new ThreadLocal<>();
 
         /**
          * Second time or later.
@@ -54,7 +54,7 @@ public interface WaveSequencer {
         }
 
         /** */
-        private static Factory instance = new Factory();
+        private static final Factory instance = new Factory();
 
         /** */
         private Factory() {

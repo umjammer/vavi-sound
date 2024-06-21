@@ -6,12 +6,11 @@
 
 package vavi.sound.mfi.vavi.nec;
 
-import java.util.logging.Level;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 
@@ -47,7 +46,7 @@ public class Function242_4 implements MachineDependentFunction {
 
         // 8    ?
         // 9    ?    00
-Debug.println(Level.FINE, "Vibrator: " + channel);
-Debug.println(Level.FINEST, StringUtil.getDump(data));
+logger.log(Level.DEBUG, "Vibrator: " + channel);
+logger.log(Level.TRACE, StringUtil.getDump(data));
     }
 }

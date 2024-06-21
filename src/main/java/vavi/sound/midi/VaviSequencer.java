@@ -8,10 +8,10 @@ package vavi.sound.midi;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-
 import javax.sound.midi.ControllerEventListener;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
@@ -23,7 +23,7 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -33,6 +33,8 @@ import vavi.util.Debug;
  * @version 0.00 090110 nsano initial version <br>
  */
 class VaviSequencer implements Sequencer {
+
+    private static final Logger logger = getLogger(VaviSequencer.class.getName());
 
     static {
         try {
@@ -60,7 +62,7 @@ class VaviSequencer implements Sequencer {
                             "Version " + version) {};
 
     /** */
-    private Sequencer sequencer = MidiUtil.getDefaultSequencer(VaviMidiDeviceProvider.class);
+    private final Sequencer sequencer = MidiUtil.getDefaultSequencer(VaviMidiDeviceProvider.class);
 
     /** */
     private VaviSequence vaviSequence;
@@ -69,31 +71,31 @@ class VaviSequencer implements Sequencer {
     public void start() {
         if (vaviSequence != null) {
             sequencer.addMetaEventListener(vaviSequence.getMetaEventListener()); // TODO more smart way
-Debug.println(Level.FINE, "★1 mel: " + vaviSequence);
+logger.log(Level.DEBUG, "★1 mel: " + vaviSequence);
         }
         sequencer.start();
-Debug.println(Level.FINE, "★1 start: " + sequencer.hashCode());
+logger.log(Level.DEBUG, "★1 start: " + sequencer.hashCode());
     }
 
     @Override
     public void stop() {
-Debug.println(Level.FINE, "★1 stop: " + sequencer.hashCode());
+logger.log(Level.DEBUG, "★1 stop: " + sequencer.hashCode());
         sequencer.stop();
         if (vaviSequence != null) {
-Debug.println(Level.FINE, "★1 mel: " + vaviSequence);
+logger.log(Level.DEBUG, "★1 mel: " + vaviSequence);
             sequencer.removeMetaEventListener(vaviSequence.getMetaEventListener()); // TODO more smart way
         }
     }
 
     @Override
     public void close() {
-Debug.println(Level.FINE, "★1 close: " + sequencer.hashCode());
+logger.log(Level.DEBUG, "★1 close: " + sequencer.hashCode());
         sequencer.close();
     }
 
     @Override
     public void open() throws MidiUnavailableException {
-Debug.println(Level.FINE, "★1 open: " + sequencer.hashCode());
+logger.log(Level.DEBUG, "★1 open: " + sequencer.hashCode());
         sequencer.open();
     }
 
@@ -262,7 +264,7 @@ Debug.println(Level.FINE, "★1 open: " + sequencer.hashCode());
     private void setVaviSequence() {
         if (getSequence() instanceof VaviSequence) {
             vaviSequence = (VaviSequence) getSequence();
-Debug.println(Level.FINE, "vaviSequence: " + vaviSequence);
+logger.log(Level.DEBUG, "vaviSequence: " + vaviSequence);
         } else {
             vaviSequence = null;
         }

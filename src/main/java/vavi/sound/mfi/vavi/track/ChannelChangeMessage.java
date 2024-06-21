@@ -6,13 +6,16 @@
 
 package vavi.sound.mfi.vavi.track;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.MidiEvent;
+
 import vavi.sound.mfi.ChannelMessage;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -32,10 +35,12 @@ import vavi.util.Debug;
 public class ChannelChangeMessage extends ShortMessage
     implements ChannelMessage, MidiConvertible {
 
+    private static final Logger logger = getLogger(ChannelChangeMessage.class.getName());
+
     /** */
     private int voice;
     /** 0 - 15 ch */
-    private int channel;
+    private final int channel;
 
     /**
      * for {@link vavi.sound.mfi.vavi.TrackMessage}
@@ -84,7 +89,7 @@ public class ChannelChangeMessage extends ShortMessage
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
-Debug.println(Level.INFO, "ignore: " + this);
+logger.log(Level.INFO, "ignore: " + this);
         return null;
     }
 }

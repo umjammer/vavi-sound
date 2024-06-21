@@ -107,18 +107,17 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
      * @return note
      */
     public int getNote() {
-        switch (shift) {
-        case 1: // 01
-            return note + 12;
-        case 0: // 00
-            return note;
-        case 3: // 11
-            return note - 12;
-        case 2: // 10
-            return note - 24;
-        default:
-            throw new IllegalArgumentException("shift: " + shift);
-        }
+        return switch (shift) {
+            case 1 -> // 01
+                    note + 12;
+            case 0 -> // 00
+                    note;
+            case 3 -> // 11
+                    note - 12;
+            case 2 -> // 10
+                    note - 24;
+            default -> throw new IllegalArgumentException("shift: " + shift);
+        };
     }
 
     /**

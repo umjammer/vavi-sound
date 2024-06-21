@@ -9,11 +9,13 @@ package vavi.sound.adpcm.ms;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.ByteOrder;
-import java.util.logging.Level;
 
 import vavi.io.OutputEngineInputStream;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -23,6 +25,8 @@ import vavi.util.Debug;
  * @version 0.00 030816 nsano initial version <br>
  */
 public class MsInputStream extends FilterInputStream {
+
+    private static final Logger logger = getLogger(MsInputStream.class.getName());
 
     /**
      * byte order little endian
@@ -61,9 +65,9 @@ public class MsInputStream extends FilterInputStream {
                                          channels,
                                          blockSize,
                                          samplesPerBlock);
-Debug.println(Level.FINER, "numSamples: " + numSamples);
+logger.log(Level.TRACE, "numSamples: " + numSamples);
         this.available = numSamples * channels * bytesPerSample;
-Debug.println(Level.FINER, "available: " + available);
+logger.log(Level.TRACE, "available: " + available);
     }
 
     /** */
@@ -109,7 +113,7 @@ Debug.println(Level.FINER, "available: " + available);
                 }
             }
         } catch (IOException e) {
-e.printStackTrace(System.err);
+logger.log(Level.ERROR, e.getMessage(), e);
         }
         return i;
     }

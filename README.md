@@ -70,6 +70,8 @@ A. yes you can, follow those steps
     * on macos m2 ultra 1st pass is in a blink of an eye
   * ~~`ima`, `ms` adpcm: wav reader~~
     * ~~`tritonus:tritonus-remaining:org.tritonus.sampled.file.WaveAudioFileReader`~~
+  * use service provider for mfi, smaf sequencer
+  * service loader instead of vavi.properties
 
 ---
 <sub>images by <a href="https://www.silhouette-illust.com/illust/49312">melody</a>, <a href="https://www.silhouette-illust.com/illust/257">cellphone</a></sub>

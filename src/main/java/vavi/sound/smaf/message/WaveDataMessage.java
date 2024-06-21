@@ -7,9 +7,9 @@
 package vavi.sound.smaf.message;
 
 import java.io.Serializable;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.ByteBuffer;
-import java.util.logging.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -20,7 +20,8 @@ import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.sequencer.SmafMessageStore;
 import vavi.sound.smaf.sequencer.WaveSequencer;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -35,18 +36,20 @@ import vavi.util.Debug;
 public class WaveDataMessage extends SmafMessage
     implements WaveSequencer, MidiConvertible, Serializable {
 
+    private static final Logger logger = getLogger(WaveDataMessage.class.getName());
+
     /** */
-    private int number;
+    private final int number;
     /** */
-    private int format;
+    private final int format;
     /** */
-    private byte[] data;
+    private final byte[] data;
     /** */
-    private int samplingRate;
+    private final int samplingRate;
     /** */
-    private int samplingBits;
+    private final int samplingBits;
     /** */
-    private int channels;
+    private final int channels;
 
     /**
      */
@@ -115,15 +118,15 @@ public class WaveDataMessage extends SmafMessage
     /* */
     @Override
     public void sequence() throws InvalidSmafDataException {
-Debug.println(Level.FINE, "WAVE DATA[" + number + "]: " + this);
+logger.log(Level.DEBUG, "WAVE DATA[" + number + "]: " + this);
 //try {
 // java.io.OutputStream os = new java.io.FileOutputStream("out.pcm");
 // os.write(data);
 // os.flush();
 // os.close();
-// Debug.println("WAVE DATA saved to out.pcm");
+// logger.log(Level.DEBUG, "WAVE DATA saved to out.pcm");
 //} catch (java.io.IOException e) {
-// Debug.printStackTrace(e);
+// logger.log(Level.ERROR, e.getMessage(), e);
 //}
         AudioEngine engine = Factory.getAudioEngine(format);
         engine.setData(number, -1, samplingRate, samplingBits, channels, data, false);

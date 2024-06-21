@@ -11,16 +11,18 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.Sequence;
 import vavi.sound.mfi.vavi.header.SorcMessage;
 import vavi.sound.mfi.vavi.header.TitlMessage;
 import vavi.sound.mfi.vavi.header.VersMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -30,6 +32,9 @@ import vavi.util.Debug;
  * @version 0.00 070118 nsano initial version <br>
  */
 class HeaderChunk {
+
+    private static final Logger logger = getLogger(HeaderChunk.class.getName());
+
     /** {@value} */
     public static final String TYPE = "melo";
 
@@ -62,7 +67,7 @@ class HeaderChunk {
     private int tracksCount;
 
     /** header, sub chunks */
-    private Map<String, SubMessage> subChunks = new LinkedHashMap<>();
+    private final Map<String, SubMessage> subChunks = new LinkedHashMap<>();
 
     /** */
     private Support support;
@@ -154,7 +159,7 @@ class HeaderChunk {
         int length = 0;
         for (SubMessage subChunk : subChunks.values()) {
             length += 4 + 2 + subChunk.getDataLength(); // type + length + ...
-//Debug.println(subChunk + ": " + subChunks.getSubLength());
+//logger.log(Level.DEBUG, subChunk + ": " + subChunks.getSubLength());
         }
         return length;
     }
@@ -181,11 +186,11 @@ class HeaderChunk {
 
         // 1. check
         if (!isValid()) {
-Debug.println(Level.FINE, "majorType: " + majorType);
-Debug.println(Level.FINE, "minorType: " + minorType);
-Debug.println(Level.FINE, "[sorc]: "    + subChunks.get(SorcMessage.TYPE));
-Debug.println(Level.FINE, "[titl]: "    + subChunks.get(TitlMessage.TYPE));
-Debug.println(Level.FINE, "[vers]: "    + subChunks.get(VersMessage.TYPE));
+logger.log(Level.DEBUG, "majorType: " + majorType);
+logger.log(Level.DEBUG, "minorType: " + minorType);
+logger.log(Level.DEBUG, "[sorc]: "    + subChunks.get(SorcMessage.TYPE));
+logger.log(Level.DEBUG, "[titl]: "    + subChunks.get(TitlMessage.TYPE));
+logger.log(Level.DEBUG, "[vers]: "    + subChunks.get(VersMessage.TYPE));
             throw new InvalidMfiDataException("fields are not filled");
         }
 
@@ -208,11 +213,11 @@ Debug.println(Level.FINE, "[vers]: "    + subChunks.get(VersMessage.TYPE));
         dos.writeByte(majorType);
         dos.writeByte(minorType);
         dos.writeByte(tracksCount);
-Debug.println(Level.FINE, "mfiDataLength: " + mfiDataLength);
-Debug.println(Level.FINE, "dataLength: "    + dataLength);
-Debug.println(Level.FINE, "majorType: "     + majorType);
-Debug.println(Level.FINE, "minorType: "     + minorType);
-Debug.println(Level.FINE, "numberTracks: "  + tracksCount);
+logger.log(Level.DEBUG, "mfiDataLength: " + mfiDataLength);
+logger.log(Level.DEBUG, "dataLength: "    + dataLength);
+logger.log(Level.DEBUG, "majorType: "     + majorType);
+logger.log(Level.DEBUG, "minorType: "     + minorType);
+logger.log(Level.DEBUG, "numberTracks: "  + tracksCount);
 
         for (SubMessage subChunk : subChunks.values()) {
             subChunk.writeTo(os);
@@ -240,21 +245,21 @@ Debug.println(Level.FINE, "numberTracks: "  + tracksCount);
 
         // 1.2 length
         headerChunk.mfiDataLength = dis.readInt();
-Debug.println(Level.FINE, "mfiDataLength: " + headerChunk.mfiDataLength);
+logger.log(Level.DEBUG, "mfiDataLength: " + headerChunk.mfiDataLength);
 
         // 1.3.1 offset to "trac" or "adat"
         headerChunk.dataLength = dis.readUnsignedShort();
-Debug.println(Level.FINE, "dataLength: " + headerChunk.dataLength);
+logger.log(Level.DEBUG, "dataLength: " + headerChunk.dataLength);
 
         // 1.3.2.1 major type
         headerChunk.majorType = dis.readUnsignedByte();
-Debug.println(Level.FINE, "majorType: " + headerChunk.majorType);
+logger.log(Level.DEBUG, "majorType: " + headerChunk.majorType);
         // 1.3.2.2 minor type
         headerChunk.setMinorType(dis.readUnsignedByte());
-Debug.println(Level.FINE, "minorType: " + headerChunk.minorType);
+logger.log(Level.DEBUG, "minorType: " + headerChunk.minorType);
         // 1.3.3 number of tracks
         headerChunk.tracksCount = dis.readUnsignedByte();
-Debug.println(Level.FINE, "numberTracks: " + headerChunk.tracksCount);
+logger.log(Level.DEBUG, "numberTracks: " + headerChunk.tracksCount);
 
         // 1.4 header sub chunks
         long l = 0;
@@ -262,7 +267,7 @@ Debug.println(Level.FINE, "numberTracks: " + headerChunk.tracksCount);
             SubMessage subChunk = SubMessage.readFrom(is);
             headerChunk.subChunks.put(subChunk.getSubType(), subChunk);
             l +=  4 + 2 + subChunk.getDataLength(); // type + length +
-//Debug.println("header subchunk length sum: " + l + " / " + (headerLength - 3));
+//logger.log(Level.DEBUG, "header subchunk length sum: " + l + " / " + (headerLength - 3));
         }
 
         return headerChunk;

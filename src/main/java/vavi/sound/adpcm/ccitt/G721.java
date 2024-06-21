@@ -95,11 +95,11 @@ class G721 extends G711 {
         } else if (AudioFormat.Encoding.ULAW.equals(encoding)) {
             sl = ulaw2linear(sl) >> 2;
         } else if (AudioFormat.Encoding.PCM_SIGNED.equals(encoding)) {
-//System.err.println("---- " + ccc + " ----");
+//logger.log(Level.DEBUG, "---- " + ccc + " ----");
 //ccc++;
-//System.err.println("sl:B:\t" + sl);
+//logger.log(Level.DEBUG, "sl:B:\t" + sl);
             sl >>= 2;                                       // 14-bit dynamic range
-//System.err.println("sl:A:\t" + sl);
+//logger.log(Level.DEBUG, "sl:A:\t" + sl);
         } else {
             throw new IllegalArgumentException(encoding.toString());
         }
@@ -109,8 +109,8 @@ class G721 extends G711 {
         int sez = sezi >> 1;
         int se = (sezi + state.getPolePredictor()) >> 1;    // estimated signal
 
-//System.err.println("sl:\t" + sl);
-//System.err.println("se:\t" + se);
+//logger.log(Level.DEBUG, "sl:\t" + sl);
+//logger.log(Level.DEBUG, "se:\t" + se);
         // SUBTA
         int d = sl - se;                                    // estimation difference
 
@@ -153,12 +153,12 @@ class G721 extends G711 {
         int sei = sezi + state.getPolePredictor();
         int se = sei >> 1;                                  // se = estimated signal
 
-//System.err.println("---- (" + (ccc++) + ")");
-//System.err.println("i:\t" + StringUtil.toHex2(i));
-//System.err.println("sezi:\t" + sezi);
-//System.err.println("sez:\t" + sez);
-//System.err.println("sei:\t" + sei);
-//System.err.println("se:\t" + se);
+//logger.log(Level.DEBUG, "---- (" + (ccc++) + ")");
+//logger.log(Level.DEBUG, "i:\t" + StringUtil.toHex2(i));
+//logger.log(Level.DEBUG, "sezi:\t" + sezi);
+//logger.log(Level.DEBUG, "sez:\t" + sez);
+//logger.log(Level.DEBUG, "sei:\t" + sei);
+//logger.log(Level.DEBUG, "se:\t" + se);
 
         // MIX
         int y = state.getStepSize();                        // dynamic quantizer step size

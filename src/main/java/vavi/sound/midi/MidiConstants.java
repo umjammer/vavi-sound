@@ -7,12 +7,13 @@
 package vavi.sound.midi;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.logging.Level;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -23,13 +24,15 @@ import vavi.util.Debug;
  */
 public final class MidiConstants {
 
+    private static final Logger logger = getLogger(MidiConstants.class.getName());
+
     private MidiConstants() {
     }
 
     /** instrument names */
-    private static Properties props = new Properties();
+    private static final Properties props = new Properties();
 
-    /**  */
+    /** */
     public static String getInstrumentName(int index) {
         return props.getProperty("midi.inst.gm." + index);
     }
@@ -237,7 +240,7 @@ public final class MidiConstants {
                 return Arrays.stream(values()).filter(e -> e.number == number).findFirst().get();
             } catch (NoSuchElementException e) {
                 META_UNDEFINED.number = number; // TODO evil and not thread safe.
-                Debug.println(Level.WARNING, "undefined meta: " + number);
+                logger.log(Level.WARNING, "undefined meta: " + number);
                 return META_UNDEFINED;
             }
         }
@@ -305,7 +308,7 @@ public final class MidiConstants {
             final Class<?> clazz = MidiConstants.class;
             props.load(clazz.getResourceAsStream("midi.properties"));
         } catch (IOException e) {
-            Debug.println(e);
+            logger.log(Level.DEBUG, e);
             throw new IllegalStateException(e);
         }
     }

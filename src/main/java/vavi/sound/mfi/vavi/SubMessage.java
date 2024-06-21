@@ -12,16 +12,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MetaMessage;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -51,6 +53,8 @@ import vavi.util.StringUtil;
  *          0.11 030920 nsano extends {@link MetaMessage} <br>
  */
 public abstract class SubMessage extends MetaMessage {
+
+    private static final Logger logger = getLogger(SubMessage.class.getName());
 
     /** TODO use {@link vavi.sound.mfi.vavi.header.CodeMessage} */
     protected static String readingEncoding = "JISAutoDetect";
@@ -174,7 +178,7 @@ public abstract class SubMessage extends MetaMessage {
         dos.writeBytes(getSubType());
         dos.writeShort(getDataLength());
         dos.write(getData(), 0, getDataLength());
-Debug.println(Level.FINE, this);
+logger.log(Level.DEBUG, this);
     }
 
     /**
@@ -212,11 +216,11 @@ Debug.println(Level.FINE, this);
             try {
                 subChunk = constructor.newInstance(subType, subData);
             } catch (Exception e) {
-Debug.printStackTrace(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
         } else {
-Debug.println(Level.WARNING, "unknown sub chunk: " + subType);
+logger.log(Level.WARNING, "unknown sub chunk: " + subType);
             subChunk = new SubMessage() {
                 {
                     try {
@@ -229,14 +233,14 @@ Debug.println(Level.WARNING, "unknown sub chunk: " + subType);
             };
         }
 
-Debug.println(Level.FINE, subChunk);
+logger.log(Level.DEBUG, subChunk);
         return subChunk;
     }
 
     //----
 
     /** {@link SubMessage} constructors */
-    private static Map<String, Constructor<SubMessage>> subChunkConstructors = new HashMap<>();
+    private static final Map<String, Constructor<SubMessage>> subChunkConstructors = new HashMap<>();
 
     static {
         try {
@@ -251,7 +255,7 @@ Debug.println(Level.FINE, subChunk);
                 if (key.matches("mfi\\.(header|audio)\\.\\w+")) {
                     @SuppressWarnings("unchecked")
                     Class<SubMessage> clazz = (Class<SubMessage>) Class.forName(props.getProperty(key));
-//Debug.println("sub class: " + StringUtil.getClassName(clazz));
+//logger.log(Level.DEBUG, "sub class: " + StringUtil.getClassName(clazz));
                     Constructor<SubMessage> constructor = clazz.getConstructor(String.class, byte[].class);
 
                     subChunkConstructors.put(key, constructor);
@@ -262,15 +266,15 @@ Debug.println(Level.FINE, subChunk);
             String value = props.getProperty("encoding.write");
             if (value != null) {
                 writingEncoding = value;
-Debug.println(Level.FINE, "write encoding: " + writingEncoding);
+logger.log(Level.DEBUG, "write encoding: " + writingEncoding);
             }
             value = props.getProperty("encoding.read");
             if (value != null) {
                 readingEncoding = value;
-Debug.println(Level.FINE, "read encoding: " + readingEncoding);
+logger.log(Level.DEBUG, "read encoding: " + readingEncoding);
             }
         } catch (Exception e) {
-Debug.printStackTrace(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new IllegalStateException(e);
         }
     }

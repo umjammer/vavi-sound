@@ -6,14 +6,16 @@
 
 package vavi.sound.mfi.vavi.mitsubishi;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -24,6 +26,8 @@ import vavi.util.StringUtil;
  * @version 0.00 030822 nsano initial version <br>
  */
 public class Function131 implements MachineDependentFunction {
+
+    private static final Logger logger = getLogger(Function131.class.getName());
 
     /** not use data immediately, store temporarily */
     public static final int MODE_STORE = 0;
@@ -77,12 +81,12 @@ public class Function131 implements MachineDependentFunction {
         this.continued = (data[9] & 0x01) == 1; //
 
         int adpcmLength = data.length - HEADER_LENGTH;
-Debug.printf(Level.FINE, "ADPCM voice: %dch, No.%d, mode=%d, continued=%d, %d\n", channel, packetId, mode, continued, adpcmLength);
-Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(data, 32));
+logger.log(Level.DEBUG, String.format("ADPCM voice: %dch, No.%d, mode=%d, continued=%s, %d", channel, packetId, mode, continued, adpcmLength));
+logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(data, 32));
 
         this.sampleRate = getSamplingRateInternal(format1);
         this.bits = getSamplingBitsInternal(format2);
-Debug.printf(Level.FINE, "sampling: %02x: rate=%d, bits=%d\n", data[8] & 0x3f, sampleRate, bits);
+logger.log(Level.DEBUG, String.format("sampling: %02x: rate=%d, bits=%d", data[8] & 0x3f, sampleRate, bits));
 
         this.adpcm = new byte[adpcmLength];
         System.arraycopy(data, HEADER_LENGTH, adpcm, 0, adpcmLength);
@@ -140,7 +144,7 @@ Debug.printf(Level.FINE, "sampling: %02x: rate=%d, bits=%d\n", data[8] & 0x3f, s
             sampleRate = 32000;
             break;
         default:
-Debug.println(Level.WARNING, "unknown sampling rate: " + format1);
+logger.log(Level.WARNING, "unknown sampling rate: " + format1);
             break;
         }
         return sampleRate;
@@ -157,7 +161,7 @@ Debug.println(Level.WARNING, "unknown sampling rate: " + format1);
             bits = 4;
             break;
         default:
-Debug.println(Level.WARNING, "unknown bits: " + format2);
+logger.log(Level.WARNING, "unknown bits: " + format2);
             break;
         }
         return bits;
@@ -202,35 +206,23 @@ Debug.println(Level.WARNING, "unknown bits: " + format2);
 
     /** */
     protected int getSamplingRateInternal()  {
-        int format1 = 0x04;
-        switch (this.sampleRate) {
-        case 32000:
-            format1 = 0x14;
-            break;
-        case 16000:
-            format1 = 0x0c;
-            break;
-        case 8000:
-            format1 = 0x04;
-            break;
-        case 4000:
-            format1 = 0x00;
-            break;
-        }
+        int format1 = switch (this.sampleRate) {
+            case 32000 -> 0x14;
+            case 16000 -> 0x0c;
+            case 8000 -> 0x04;
+            case 4000 -> 0x00;
+            default -> 0x04;
+        };
         return format1;
     }
 
     /** */
     protected int getSamplingBitsInternal()  {
-        int format2 = 0x1;
-        switch (this.bits) {
-        case 4:
-            format2 = 0x1;
-            break;
-        case 2:
-            format2 = 0x0;
-            break;
-        }
+        int format2 = switch (this.bits) {
+            case 4 -> 0x1;
+            case 2 -> 0x0;
+            default -> 0x1;
+        };
         return format2;
     }
 

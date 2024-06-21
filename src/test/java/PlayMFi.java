@@ -5,14 +5,11 @@
  */
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Soundbank;
 
-import org.junit.jupiter.api.BeforeEach;
 import vavi.sound.mfi.MetaEventListener;
 import vavi.sound.mfi.MfiSystem;
 import vavi.sound.mfi.Sequence;

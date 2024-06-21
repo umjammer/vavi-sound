@@ -11,11 +11,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -34,9 +35,9 @@ import vavi.sound.smaf.message.PitchBendMessage;
 import vavi.sound.smaf.message.ProgramChangeMessage;
 import vavi.sound.smaf.message.UndefinedMessage;
 import vavi.sound.smaf.message.VolumeMessage;
-import vavi.util.Debug;
-
 import vavix.io.huffman.Huffman;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -49,10 +50,12 @@ import vavix.io.huffman.Huffman;
  */
 public class SequenceDataChunk extends Chunk {
 
+    private static final Logger logger = getLogger(SequenceDataChunk.class.getName());
+
     /** */
     public SequenceDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println(Level.FINE, "SequenceData: " + size + " bytes");
+logger.log(Level.DEBUG, "SequenceData: " + size + " bytes");
     }
 
     /** */
@@ -65,7 +68,7 @@ Debug.println(Level.FINE, "SequenceData: " + size + " bytes");
     @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
-//Debug.println("available: " + is.available() + ", " + available());
+//logger.log(Level.DEBUG, "available: " + is.available() + ", " + available());
 //skip(is, size);
         ScoreTrackChunk.FormatType formatType = ((TrackChunk) parent).getFormatType();
         switch (formatType) {
@@ -81,14 +84,14 @@ Debug.println(Level.FINE, "SequenceData: " + size + " bytes");
 //os1.write(baos.toByteArray());
 //os1.flush();
 //os1.close();
-//Debug.println("data.enc created");
+//logger.log(Level.DEBUG, "data.enc created");
             byte[] decoded = new Huffman().decode(baos.toByteArray());
 //OutputStream os2 = new FileOutputStream("/tmp/data.dec");
 //os2.write(decoded);
 //os2.flush();
 //os2.close();
-//Debug.println("data.dec created");
-Debug.println(Level.FINE, "decode: " + size + " -> " + decoded.length);
+//logger.log(Level.DEBUG, "data.dec created");
+logger.log(Level.DEBUG, "decode: " + size + " -> " + decoded.length);
             size = decoded.length;
             readMobileStandard(new MyDataInputStream(new ByteArrayInputStream(decoded), id, decoded.length));
             break;
@@ -97,7 +100,7 @@ Debug.println(Level.FINE, "decode: " + size + " -> " + decoded.length);
             readMobileStandard(dis);
             break;
         }
-Debug.println(Level.FINE, "messages: " + messages.size());
+logger.log(Level.DEBUG, "messages: " + messages.size());
     }
 
     /**
@@ -118,7 +121,7 @@ Debug.println(Level.FINE, "messages: " + messages.size());
         while (dis.available() > 0) {
             // -------- duration --------
             int duration = MidiUtil.readVariableLength(dis);
-//Debug.println("duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
+//logger.log(Level.DEBUG, "duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
             // -------- event --------
             int e1 = dis.readUnsignedByte();
             if (e1 == 0xff) { // exclusive, nop
@@ -136,12 +139,12 @@ Debug.println(Level.FINE, "messages: " + messages.size());
                     break;
                 default:
                     smafMessage = new UndefinedMessage(duration);
-Debug.printf(Level.WARNING, "unknown 0xff, 0x02x\n", e2);
+logger.log(Level.WARNING, String.format("unknown 0xff, 0x%02x", e2));
                     break;
                 }
             } else if (e1 != 0x00) { // note
                 int gateTime = MidiUtil.readVariableLength(dis);
-//Debug.println("gateTime: " + gateTime + ", 0x" + StringUtil.toHex4(gateTime));
+//logger.log(Level.DEBUG, String.format("gateTime: %d, 0x%04x", gateTime, gateTime));
                 smafMessage = getHandyPhoneStandardMessage(duration, e1, gateTime);
             } else { // e1 == 0x00 other event
                 int e2 = dis.readUnsignedByte();
@@ -151,7 +154,7 @@ Debug.printf(Level.WARNING, "unknown 0xff, 0x02x\n", e2);
                         smafMessage = new EndOfSequenceMessage(duration);
                     } else {
                         smafMessage = new UndefinedMessage(duration);
-Debug.printf(Level.WARNING, "unknown 0x00, 0x00, 0x02x\n", e3);
+logger.log(Level.WARNING, String.format("unknown 0x00, 0x00, 0x%02x", e3));
                     }
                 } else {
                     int channel = (e2 & 0xc0) >> 6;
@@ -187,7 +190,7 @@ Debug.printf(Level.WARNING, "unknown 0x00, 0x00, 0x02x\n", e3);
                             break;
                         default:
                             smafMessage = new UndefinedMessage(duration);
-Debug.printf(Level.WARNING, "unknown 0x00, 0x02x, 3, %02x\n", e2, data);
+logger.log(Level.WARNING, String.format("unknown 0x00, 0x%02x, 3, %02x", e2, data));
                             break;
                         }
                         break;
@@ -203,9 +206,9 @@ Debug.printf(Level.WARNING, "unknown 0x00, 0x02x, 3, %02x\n", e2, data);
                     }
                 }
             }
-//Debug.println(available() + ", " + smafMessage);
+//logger.log(Level.DEBUG, available() + ", " + smafMessage);
             if (smafMessage != null) {
-//Debug.println("message: " + smafMessage);
+//logger.log(Level.DEBUG, "message: " + smafMessage);
                 messages.add(smafMessage);
             } else {
                 assert false : "smafMessage is null";
@@ -220,7 +223,7 @@ Debug.printf(Level.WARNING, "unknown 0x00, 0x02x, 3, %02x\n", e2, data);
     };
 
 /** debug */
-private Set<String> uc = new HashSet<>();
+private final Set<String> uc = new HashSet<>();
 /** debug */
 private int cc = 0;
 
@@ -233,7 +236,7 @@ private int cc = 0;
         while (dis.available() > 0) {
             // duration
             int duration = MidiUtil.readVariableLength(dis);
-//Debug.println("duration: " + duration);
+//logger.log(Level.DEBUG, "duration: " + duration);
             // event
             int status = dis.readUnsignedByte();
             if (status >= 0x80 && status <= 0x8f) { // note w/o velocity
@@ -251,7 +254,7 @@ private int cc = 0;
                 int d1 = dis.readUnsignedByte();
                 int d2 = dis.readUnsignedByte();
                 smafMessage = null;
-Debug.printf(Level.WARNING, "reserved: 0xa_: %02x%02x\n", d1, d2);
+logger.log(Level.WARNING, String.format("reserved: 0xa_: %02x%02x", d1, d2));
             } else if (status >= 0xb0 && status <= 0xbf) { // control change
                 int channel = status & 0x0f;
                 int control = dis.readUnsignedByte();
@@ -293,7 +296,7 @@ Debug.printf(Level.WARNING, "reserved: 0xa_: %02x%02x\n", d1, d2);
                     break;
                 default:
                     smafMessage = new UndefinedMessage(duration);
-Debug.printf(Level.WARNING, "undefined control: %02x, %02x\n", control, value);
+logger.log(Level.WARNING, String.format("undefined control: %02x, %02x", control, value));
                     break;
                 }
             } else if (status >= 0xc0 && status <= 0xcf) { // program change
@@ -303,7 +306,7 @@ Debug.printf(Level.WARNING, "undefined control: %02x, %02x\n", control, value);
             } else if (status >= 0xd0 && status <= 0xdf) { // reserved
                 int d1 = dis.readUnsignedByte();
                 smafMessage = new UndefinedMessage(duration);
-Debug.printf(Level.WARNING, "reserved: 0xd_: %02x\n", d1);
+logger.log(Level.WARNING, String.format("reserved: 0xd_: %02x", d1));
             } else if (status >= 0xe0 && status <= 0xef) { // pitch vend message
                 int channel = status & 0x0f;
                 int lsb = dis.readUnsignedByte();
@@ -318,13 +321,13 @@ Debug.printf(Level.WARNING, "reserved: 0xd_: %02x\n", d1);
                 case 0x2f:
                     int d2 = dis.readUnsignedByte(); // must be 0
                     if (d2 != 0) {
-Debug.printf(Level.WARNING, "illegal state: %02x\n", d2);
+logger.log(Level.WARNING, String.format("illegal state: %02x", d2));
                     }
                     smafMessage = new EndOfSequenceMessage(duration);
                     break;
                 default:
                     smafMessage = new UndefinedMessage(duration);
-Debug.printf(Level.WARNING, "unknown: 0xff: %02x\n", d1);
+logger.log(Level.WARNING, String.format("unknown: 0xff: %02x", d1));
                     break;
                 }
             } else if (status == 0xf0) { // exclusive
@@ -336,18 +339,18 @@ Debug.printf(Level.WARNING, "unknown: 0xff: %02x\n", d1);
             } else if (status < 0x80) { // data
                 smafMessage = null;
 if (cc < 10) {
- Debug.printf(Level.WARNING, "data found, ignore: %02x\n", status);
+ logger.log(Level.WARNING, String.format("data found, ignore: %02x", status));
 }
 cc++;
             } else /* 0xf1 ~ 0xfe */ {  // reserved
                 smafMessage = new UndefinedMessage(duration);
 if (!uc.contains(String.format("reserved: %02x", status))) {
- Debug.printf(Level.WARNING, "reserved: %02x\n", status);
+ logger.log(Level.WARNING, String.format("reserved: %02x", status));
  uc.add(String.format("reserved: %02x", status));
 }
             }
 
-//Debug.println(available() + ", " + smafMessage);
+//logger.log(Level.DEBUG, available() + ", " + smafMessage);
             if (smafMessage != null) {
                 messages.add(smafMessage);
             } else {
@@ -369,7 +372,7 @@ if (!uc.contains(String.format("reserved: %02x", status))) {
     }
 
     /** */
-    protected List<SmafMessage> messages = new ArrayList<>();
+    protected final List<SmafMessage> messages = new ArrayList<>();
 
     /**
      * @return Returns the messages.

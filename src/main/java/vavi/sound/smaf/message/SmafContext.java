@@ -6,11 +6,11 @@
 
 package vavi.sound.smaf.message;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
-
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiFileFormat;
@@ -21,7 +21,8 @@ import javax.sound.midi.Track;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -31,6 +32,8 @@ import vavi.util.Debug;
  * @version 0.00 041227 nsano port from MFi <br>
  */
 public class SmafContext implements SmafConvertible {
+
+    private static final Logger logger = getLogger(SmafContext.class.getName());
 
     /** max SMAF track number */
     public static final int MAX_SMAF_TRACKS = 4;
@@ -66,7 +69,7 @@ public class SmafContext implements SmafConvertible {
     //----
 
     /** index is SMAF Track No., true if used */
-    private boolean[] trackUsed = new boolean[MAX_SMAF_TRACKS];
+    private final boolean[] trackUsed = new boolean[MAX_SMAF_TRACKS];
 
     /**
      * @param smafTrackNumber smaf track number
@@ -96,14 +99,14 @@ public class SmafContext implements SmafConvertible {
 
     /** */
     public void setScale(float scale) {
-Debug.println(Level.FINE, "scale: " + scale);
+logger.log(Level.DEBUG, "scale: " + scale);
         this.scale = scale;
     }
 
     //----
 
     /** the previous tick, index is SMAF Track No. */
-    private long[] beforeTicks = new long[MAX_SMAF_TRACKS];
+    private final long[] beforeTicks = new long[MAX_SMAF_TRACKS];
 
     /* init */ {
         Arrays.fill(beforeTicks, 0);
@@ -144,7 +147,7 @@ Debug.println(Level.FINE, "scale: " + scale);
     }
 
     /** error rounded with Math#round() */
-    private double[] roundedSum = new double[MAX_SMAF_TRACKS];
+    private final double[] roundedSum = new double[MAX_SMAF_TRACKS];
 
     /** correction when the sum of rounding errors with Math#round() is larger than 1 */
     private int getAdjustedDelta(int smafTrackNumber, double floatDelta) {
@@ -152,11 +155,11 @@ Debug.println(Level.FINE, "scale: " + scale);
         double rounded = floatDelta - delta;
         roundedSum[smafTrackNumber] += rounded;
         if (roundedSum[smafTrackNumber] >= 1f) {
-Debug.println(Level.FINE, "rounded over 1, plus 1: " + roundedSum[smafTrackNumber] + "[" + smafTrackNumber + "]");
+logger.log(Level.DEBUG, "rounded over 1, plus 1: " + roundedSum[smafTrackNumber] + "[" + smafTrackNumber + "]");
             delta += 1;
             roundedSum[smafTrackNumber] -= 1;
         } else if (roundedSum[smafTrackNumber] <= -1f) {
-Debug.println(Level.FINE, "rounded under -1, minus 1: " + roundedSum[smafTrackNumber] + "[" + smafTrackNumber + "]");
+logger.log(Level.DEBUG, "rounded under -1, minus 1: " + roundedSum[smafTrackNumber] + "[" + smafTrackNumber + "]");
             delta -= 1;
             roundedSum[smafTrackNumber] += 1;
         }
@@ -204,24 +207,24 @@ Debug.println(Level.FINE, "rounded under -1, minus 1: " + roundedSum[smafTrackNu
             // tempo
             track = smafTrackNumber;
             interval = retrieveDelta(track, midiEvent.getTick());
-Debug.println(Level.FINE, "interval for tempo[" + smafTrackNumber + "]: " + interval);
+logger.log(Level.DEBUG, "interval for tempo[" + smafTrackNumber + "]: " + interval);
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 47) {
             // eot
             track = smafTrackNumber;
             interval = retrieveDelta(track, midiEvent.getTick());
-Debug.println(Level.FINE, "interval for EOT[" + smafTrackNumber + "]: " + interval);
+logger.log(Level.DEBUG, "interval for EOT[" + smafTrackNumber + "]: " + interval);
         } else if (midiMessage instanceof SysexMessage) {
             return null;
         } else {
-Debug.println(Level.WARNING, "not supported message: " + midiMessage);
+logger.log(Level.WARNING, "not supported message: " + midiMessage);
             return null;
         }
 //if (interval > 255) {
-// Debug.println("interval: " + interval + ", " + (interval - 256));
+// logger.log(Level.DEBUG, "interval: " + interval + ", " + (interval - 256));
 //}
 if (interval < 0) {
  // it shouldn't be possible
- Debug.println(Level.WARNING, "interval: " + interval);
+ logger.log(Level.WARNING, "interval: " + interval);
  interval = 0;
 }
         int nopLength = interval / 255;
@@ -236,7 +239,7 @@ if (interval < 0) {
             incrementBeforeTick(track, 255);
         }
 
-//Debug.println(nopLength + " nops inserted");
+//logger.log(Level.DEBUG, nopLength + " nops inserted");
         return smafEvents;
     }
 
@@ -258,14 +261,14 @@ if (interval < 0) {
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
             // tempo
             delta = retrieveAdjustedDelta(smafTrackNumber, midiEvent.getTick()); // TODO is smafTrackNumber ok?
-Debug.println(Level.FINE, "delta for tempo[" + smafTrackNumber + "]: " + delta);
+logger.log(Level.DEBUG, "delta for tempo[" + smafTrackNumber + "]: " + delta);
         } else {
-Debug.println(Level.FINE, "no delta defined for: " + midiMessage);
+logger.log(Level.DEBUG, "no delta defined for: " + midiMessage);
         }
 
 if (delta > 255) {
  // this is impossible because it should be handled by getIntervalSmafEvents
- Debug.println(Level.WARNING, "Δ: " + delta + ", " + (delta % 256));
+ logger.log(Level.WARNING, "Δ: " + delta + ", " + (delta % 256));
 }
         return delta % 256;
     }
@@ -367,7 +370,7 @@ if (delta > 255) {
                 if (shortMessage.getChannel() == channel &&
                     shortMessage.getCommand() == ShortMessage.NOTE_ON &&
                     shortMessage.getData1() != data1) {
-Debug.println(Level.FINE, "next: " + shortMessage.getChannel() + "ch, " + shortMessage.getData1());
+logger.log(Level.DEBUG, "next: " + shortMessage.getChannel() + "ch, " + shortMessage.getData1());
                     return midiEvent;
                 }
             }
@@ -485,7 +488,7 @@ Debug.println(Level.FINE, "next: " + shortMessage.getChannel() + "ch, " + shortM
             rpnMSB[channel] = data2;
             break;
         default:
-//Debug.println("not implemented: " + data1);
+//logger.log(Level.DEBUG, "not implemented: " + data1);
             break;
         }
 

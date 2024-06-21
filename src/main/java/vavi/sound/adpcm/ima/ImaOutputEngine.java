@@ -24,18 +24,18 @@ import vavi.io.OutputEngine;
 class ImaOutputEngine implements OutputEngine {
 
     /** */
-    private InputStream in;
+    private final InputStream in;
 
     /** */
-    private Ima decoder = new Ima();
+    private final Ima decoder = new Ima();
 
     /** */
     private DataOutputStream out;
 
-    private int samplesPerBlock;
-    private int channels;
-    private int blockSize;
-    private ByteOrder byteOrder;
+    private final int samplesPerBlock;
+    private final int channels;
+    private final int blockSize;
+    private final ByteOrder byteOrder;
 
     private byte[] packet;
     private int[] samples;

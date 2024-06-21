@@ -6,14 +6,14 @@
 
 package vavi.sound.mfi.vavi;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
-
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiFileFormat;
@@ -28,7 +28,8 @@ import vavi.sound.mfi.vavi.track.NopMessage;
 import vavi.sound.mfi.vavi.track.TempoMessage;
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -41,6 +42,8 @@ import vavi.util.Debug;
  *          0.03 031212 nsano format 1 compliant <br>
  */
 public class MfiContext {
+
+    private static final Logger logger = getLogger(MfiContext.class.getName());
 
     /** max MFi track number */
     public static final int MAX_MFI_TRACKS = 4;
@@ -57,7 +60,7 @@ public class MfiContext {
 
     /** MIDI format type */
     public void setType(int type) {
-Debug.println(Level.FINE, "type: " + type);
+logger.log(Level.DEBUG, "type: " + type);
         this.type = type;
     }
 
@@ -72,7 +75,7 @@ Debug.println(Level.FINE, "type: " + type);
     //----
 
     /** index is MFi Track No., when that's used this returns true */
-    private boolean[] trackUsed = new boolean[MAX_MFI_TRACKS];
+    private final boolean[] trackUsed = new boolean[MAX_MFI_TRACKS];
 
     /**
      * @param mfiTrackNumber mfi track number
@@ -89,7 +92,7 @@ Debug.println(Level.FINE, "type: " + type);
     }
 
     /** is EOF set to the track ? */
-    private boolean[] eofSet = new boolean[MAX_MFI_TRACKS];
+    private final boolean[] eofSet = new boolean[MAX_MFI_TRACKS];
 
     /**
      * @param mfiTrackNumber
@@ -132,7 +135,7 @@ Debug.println(Level.FINE, "type: " + type);
     //----
 
     /** previous tick, index is MFi Track No. */
-    private long[] previousTicks = new long[MAX_MFI_TRACKS];
+    private final long[] previousTicks = new long[MAX_MFI_TRACKS];
 
     /* initializing */ {
         Arrays.fill(previousTicks, 0);
@@ -173,11 +176,11 @@ Debug.println(Level.FINE, "type: " + type);
         double rounded = doubleDelta - delta;
         roundedSum[mfiTrackNumber] += rounded;
         if (roundedSum[mfiTrackNumber] >= 1d) {
-//Debug.println("rounded over 1, plus 1: " + roundedSum[mfiTrackNumber] + "[" + mfiTrackNumber + "]");
+//logger.log(Level.DEBUG, "rounded over 1, plus 1: " + roundedSum[mfiTrackNumber] + "[" + mfiTrackNumber + "]");
             delta += 1;
             roundedSum[mfiTrackNumber] -= 1;
         } else if (roundedSum[mfiTrackNumber] <= -1d) {
-//Debug.println("rounded under -1, minus 1: " + roundedSum[mfiTrackNumber] + "[" + mfiTrackNumber + "]");
+//logger.log(Level.DEBUG, "rounded under -1, minus 1: " + roundedSum[mfiTrackNumber] + "[" + mfiTrackNumber + "]");
             delta -= 1;
             roundedSum[mfiTrackNumber] += 1;
         }
@@ -222,22 +225,22 @@ Debug.println(Level.FINE, "type: " + type);
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
             // tempo
             interval = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
-Debug.println(Level.FINE, "interval for tempo[" + mfiTrackNumber + "]: " + interval);
+logger.log(Level.DEBUG, "interval for tempo[" + mfiTrackNumber + "]: " + interval);
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 47) {
             // eot
             interval = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
-//Debug.println("interval for EOT[" + mfiTrackNumber + "]: " + interval);
+//logger.log(Level.DEBUG, "interval for EOT[" + mfiTrackNumber + "]: " + interval);
         } else if (midiMessage instanceof MetaMessage) {
             return null;
         } else if (midiMessage instanceof SysexMessage) {
             return null;
         } else {
-Debug.println(Level.WARNING, "not supported for delta: " + midiEventIndex + ", " + MidiUtil.paramString(midiMessage));
+logger.log(Level.WARNING, "not supported for delta: " + midiEventIndex + ", " + MidiUtil.paramString(midiMessage));
             return null;
         }
 if (interval < 0) {
  // it shouldn't be possible
- Debug.println(Level.WARNING, "interval: " + interval + ", " + midiEventIndex + ", " + MidiUtil.paramString(midiMessage));
+ logger.log(Level.WARNING, "interval: " + interval + ", " + midiEventIndex + ", " + MidiUtil.paramString(midiMessage));
  interval = 0;
 }
         int nopLength = interval / 255;
@@ -252,7 +255,7 @@ if (interval < 0) {
             incrementPreviousTick(mfiTrackNumber, Math.round(255 * scale));
         }
 
-//Debug.println(nopLength + " nops inserted");
+//logger.log(Level.DEBUG, nopLength + " nops inserted");
         return mfiEvents;
     }
 
@@ -272,14 +275,14 @@ if (interval < 0) {
         } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
             // tempo
             delta = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick()); // TODO is 0 ok?
-//Debug.println("[" + midiEventIndex + "] delta for tempo, " + mfiTrackNumber + "ch: " + delta);
+//logger.log(Level.DEBUG, "[" + midiEventIndex + "] delta for tempo, " + mfiTrackNumber + "ch: " + delta);
         } else {
-Debug.println(Level.WARNING, "no delta defined for: " + MidiUtil.paramString(midiMessage));
+logger.log(Level.WARNING, "no delta defined for: " + MidiUtil.paramString(midiMessage));
         }
 
 if (delta > 255) {
  // this is impossible because it should be handled by getIntervalMfiEvents
- Debug.println(Level.SEVERE, "Δ: " + delta + ", " + (delta % 256));
+ logger.log(Level.ERROR, "Δ: " + delta + ", " + (delta % 256));
 }
         return delta % 256;
     }
@@ -348,7 +351,7 @@ if (delta > 255) {
             }
         }
         this.scale = Math.ceil(this.scale);
-Debug.println(Level.FINE, "(SCALE) final scale: " + scale + ", " + scaleChanged);
+logger.log(Level.DEBUG, "(SCALE) final scale: " + scale + ", " + scaleChanged);
 
         for (Track midiTrack : midiTracks) {
             for (int i = 0; i < midiTrack.size(); i++) {
@@ -437,7 +440,7 @@ Debug.println(Level.FINE, "(SCALE) final scale: " + scale + ", " + scaleChanged)
                     shortMessage.getData1() != data1 &&
                     shortMessage.getData2() == 0 &&
                     !noteOffEventUsed.get(i)) {
-//Debug.println("next: " + shortMessage.getChannel() + "ch, " + shortMessage.getData1());
+//logger.log(Level.DEBUG, "next: " + shortMessage.getChannel() + "ch, " + shortMessage.getData1());
                     noteOffEventUsed.set(i);
                     return midiEvent;
                 }

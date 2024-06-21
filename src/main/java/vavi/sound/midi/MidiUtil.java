@@ -10,10 +10,10 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Properties;
 import java.util.ServiceLoader;
-import java.util.logging.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiDevice;
@@ -27,6 +27,8 @@ import javax.sound.midi.spi.MidiDeviceProvider;
 
 import vavi.util.Debug;
 
+import static java.lang.System.getLogger;
+
 
 /**
  * MidiUtil.
@@ -35,6 +37,8 @@ import vavi.util.Debug;
  * @version 0.00 041230 nsano initial version <br>
  */
 public final class MidiUtil {
+
+    private static final Logger logger = getLogger(MidiUtil.class.getName());
 
     /** */
     private MidiUtil() {
@@ -53,8 +57,7 @@ public final class MidiUtil {
     /** */
     public static String paramString(MidiMessage midiMessage) {
         String result = null;
-        if (midiMessage instanceof ShortMessage) {
-            ShortMessage msg = (ShortMessage) midiMessage;
+        if (midiMessage instanceof ShortMessage msg) {
             int channel = msg.getChannel();
             int command = msg.getCommand();
             int data1 = msg.getData1();
@@ -63,8 +66,7 @@ public final class MidiUtil {
                 ",event=" + getChannelMessage(command, data1) +
                 ",data1=" + (command == ShortMessage.PROGRAM_CHANGE ? data1 + " " + MidiConstants.getInstrumentName(data1) : String.valueOf(data1)) +
                 ",data2=" + data2;
-        } else if (midiMessage instanceof SysexMessage) {
-            SysexMessage msg = (SysexMessage) midiMessage;
+        } else if (midiMessage instanceof SysexMessage msg) {
             byte[] data = msg.getData();
             StringBuilder sb = new StringBuilder();
             for (byte datum : data) {
@@ -75,8 +77,7 @@ public final class MidiUtil {
                 ",event=SYSX" +
                 ",data1=" + sb +
                 ",data2=";
-        } else if (midiMessage instanceof MetaMessage) {
-            MetaMessage msg = (MetaMessage) midiMessage;
+        } else if (midiMessage instanceof MetaMessage msg) {
             int type = msg.getType();
             byte[] data = msg.getData();
             StringBuilder sb = new StringBuilder();
@@ -176,12 +177,12 @@ public final class MidiUtil {
             // 01 0x03 ?
             // 02      length
             try {
-//Debug.println("META: " + data[1] + ", " + data[2] + ", " + StringUtil.getDump(data, start, length));
+//logger.log(Level.DEBUG, "META: " + data[1] + ", " + data[2] + ", " + StringUtil.getDump(data, start, length));
                 start = 3;
                 length -= 3;
                 return new String(data, start, length, encoding);
             } catch (UnsupportedEncodingException e) {
-Debug.println(Level.WARNING, "unknown cp: " + e.getMessage());
+logger.log(Level.WARNING, "unknown cp: " + e.getMessage());
             }
         }
         try {
@@ -205,7 +206,7 @@ Debug.println(Level.WARNING, "unknown cp: " + e.getMessage());
         try {
             textData = text.getBytes(encoding);
         } catch (UnsupportedEncodingException e) {
-Debug.println(Level.WARNING, "unknown cp: " + e.getMessage());
+logger.log(Level.WARNING, "unknown cp: " + e.getMessage());
             textData = text.getBytes();
         }
         byte[] data = new byte[textData.length + 3];
@@ -240,20 +241,20 @@ Debug.println(Level.WARNING, "unknown cp: " + e.getMessage());
             String value = props.getProperty("decodingEncoding");
             if (value != null) {
                 decodingEncoding = value;
-Debug.println(Level.FINE, "decodingEncoding: " + decodingEncoding);
+logger.log(Level.DEBUG, "decodingEncoding: " + decodingEncoding);
             }
 
             value = props.getProperty("encodingEncoding");
             if (value != null) {
                 encodingEncoding = value;
-Debug.println(Level.FINE, "encodingEncoding: " + encodingEncoding);
+logger.log(Level.DEBUG, "encodingEncoding: " + encodingEncoding);
             }
 
             // defaultSequencer
             value = props.getProperty("defaultSequencer");
             if (value != null) {
                 String defaultSequencer = value;
-Debug.println(Level.FINE, "defaultSequencer: " + defaultSequencer);
+logger.log(Level.DEBUG, "defaultSequencer: " + defaultSequencer);
                 if (defaultSequencer.contains("#")) {
                     String[] pair = defaultSequencer.split("#");
                     sequencerClassName = pair[0];
@@ -262,14 +263,14 @@ Debug.println(Level.FINE, "defaultSequencer: " + defaultSequencer);
                     sequencerClassName = defaultSequencer;
                 }
             }
-Debug.println(Level.FINE, "sequencerClassName: " + sequencerClassName);
-Debug.println(Level.FINE, "sequencerDeviceName: " + sequencerDeviceName);
+logger.log(Level.DEBUG, "sequencerClassName: " + sequencerClassName);
+logger.log(Level.DEBUG, "sequencerDeviceName: " + sequencerDeviceName);
 
             // defaultSynthesizer
             value = props.getProperty("defaultSynthesizer");
             if (value != null) {
                 String defaultSynthesizer = value;
-Debug.println(Level.FINE, "defaultSynthesizer: " + defaultSynthesizer);
+logger.log(Level.DEBUG, "defaultSynthesizer: " + defaultSynthesizer);
                 if (defaultSynthesizer.contains("#")) {
                     String[] pair = defaultSynthesizer.split("#");
                     synthesizerClassName = pair[0];
@@ -278,10 +279,10 @@ Debug.println(Level.FINE, "defaultSynthesizer: " + defaultSynthesizer);
                     synthesizerClassName = defaultSynthesizer;
                 }
             }
-Debug.println(Level.FINE, "sequencerClassName: " + sequencerClassName);
-Debug.println(Level.FINE, "sequencerDeviceName: " + sequencerDeviceName);
+logger.log(Level.DEBUG, "sequencerClassName: " + sequencerClassName);
+logger.log(Level.DEBUG, "sequencerDeviceName: " + sequencerDeviceName);
         } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new IllegalStateException(e);
         }
     }
@@ -301,19 +302,19 @@ Debug.printStackTrace(e);
                     byte[] bytes = info.getName().getBytes("ISO8859-1");
                     name = new String(bytes /* , "Windows-31J" */);
                 } catch (IOException e) {
-Debug.println(e);
+logger.log(Level.DEBUG, e);
                 }
                 if (synthesizerDeviceName != null) {
                     if (synthesizerDeviceName.equals(name)) {
                         MidiDevice device = provider.getDevice(info);
-Debug.println(Level.FINE, "default synthesizer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
+logger.log(Level.DEBUG, "default synthesizer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
                         return (Synthesizer) device;
                     }
                 } else {
                     MidiDevice device = provider.getDevice(info);
                     if (device instanceof Synthesizer) {
                         if (device.getClass().getName().equals(synthesizerClassName)) {
-Debug.println(Level.FINE, "default synthesizer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
+logger.log(Level.DEBUG, "default synthesizer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
                             return (Synthesizer) device;
                         }
                     }
@@ -339,19 +340,19 @@ Debug.println(Level.FINE, "default synthesizer: " + provider.getClass().getName(
                     byte[] bytes = info.getName().getBytes("ISO8859-1");
                     name = new String(bytes /* , "Windows-31J" */);
                 } catch (IOException e) {
-Debug.println(e);
+logger.log(Level.DEBUG, e);
                 }
                 if (sequencerDeviceName != null) {
                     if (sequencerDeviceName.equals(name)) {
                         MidiDevice device = provider.getDevice(info);
-Debug.println(Level.FINE, "default sequencer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
+logger.log(Level.DEBUG, "default sequencer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
                         return (Sequencer) device;
                     }
                 } else {
                     MidiDevice device = provider.getDevice(info);
                     if (device instanceof Sequencer) {
                         if (device.getClass().getName().equals(sequencerClassName)) {
-Debug.println(Level.FINE, "default sequencer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
+logger.log(Level.DEBUG, "default sequencer: " + provider.getClass().getName() + ", " + device.getClass().getName() + ", " + name + ", " + device.hashCode());
                             return (Sequencer) device;
                         }
                     }
@@ -371,11 +372,11 @@ Debug.println(Level.FINE, "default sequencer: " + provider.getClass().getName() 
     static {
         try {
             providers = ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class);
-if (Debug.isLoggable(Level.FINE)) {
+if (Debug.isLoggable(java.util.logging.Level.FINE)) {
  providers.forEach(provider -> System.err.println(provider.getClass()));
 }
         } catch (Throwable t) {
-Debug.printStackTrace(Level.FINE, t);
+logger.log(Level.DEBUG, t.getMessage(), t);
         }
     }
 }
