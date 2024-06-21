@@ -75,7 +75,7 @@ TODO
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>properties-maven-plugin</artifactId>
-            <version>1.1.0</version>
+            <version>1.2.1</version>
             <executions>
               <execution>
                 <id>read-properties</id>
@@ -164,9 +164,9 @@ TODO
         <configuration>
           <argLine>
             -Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties
-            -Dvavi.test.dev.null=${dev.null}
-            -Dvavi.test.volume=${vavi.test.volume}
-            -Dvavi.test.volume.midi=${vavi.test.volume.midi}
+            -Dvavi.test.dev.null=@{dev.null}
+            -Dvavi.test.volume=@{vavi.test.volume}
+            -Dvavi.test.volume.midi=@{vavi.test.volume.midi}
             -Dvavi.test.version=${project.version}
           </argLine>
           <trimStackTrace>false</trimStackTrace>
@@ -202,7 +202,7 @@ TODO
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- vavi / com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.12</version>
+      <version>1.1.13</version>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
@@ -223,7 +223,7 @@ TODO
     <dependency>
       <groupId>vavi</groupId>
       <artifactId>vavi-sound-nda</artifactId>
-      <version>1.0.13</version>
+      <version>1.0.14</version>
       <exclusions>
         <exclusion>
           <groupId>com.github.umjammer</groupId>
