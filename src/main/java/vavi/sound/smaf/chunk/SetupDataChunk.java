@@ -9,16 +9,18 @@ package vavi.sound.smaf.chunk;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.SysexMessage;
 import vavi.sound.smaf.message.UndefinedMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -31,10 +33,12 @@ import vavi.util.Debug;
  */
 public class SetupDataChunk extends Chunk {
 
+    private static final Logger logger = getLogger(SetupDataChunk.class.getName());
+
     /** */
     public SetupDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println(Level.FINE, "SetupData: " + size + " bytes");
+logger.log(Level.DEBUG, "SetupData: " + size + " bytes");
     }
 
     /** */
@@ -59,7 +63,7 @@ Debug.println(Level.FINE, "SetupData: " + size + " bytes");
             readMobileStandard(dis);
             break;
         }
-Debug.println(Level.FINE, "messages: " + messages.size());
+logger.log(Level.DEBUG, "messages: " + messages.size());
     }
 
     /**
@@ -92,12 +96,12 @@ Debug.println(Level.FINE, "messages: " + messages.size());
                     break;
                 default:
                     smafMessage = new UndefinedMessage(0);
-Debug.printf(Level.WARNING, "unknown 0xff, 0x%02x\n", e2);
+logger.log(Level.WARNING, String.format("unknown 0xff, 0x%02x", e2));
                     break;
                 }
             } else {
                 smafMessage = new UndefinedMessage(0);
-Debug.printf(Level.WARNING, "unhandled: %02x\n", e1);
+logger.log(Level.WARNING, String.format("unhandled: %02x", e1));
             }
 
             if (smafMessage != null) {
@@ -124,7 +128,7 @@ Debug.printf(Level.WARNING, "unhandled: %02x\n", e1);
                 smafMessage = SysexMessage.Factory.getSysexMessage(0, data);
             } else {
                 smafMessage = new UndefinedMessage(0);
-Debug.printf(Level.WARNING, "unhandled: %02x\n", status);
+logger.log(Level.WARNING, String.format("unhandled: %02x", status));
             }
 
             if (smafMessage != null) {
@@ -149,7 +153,7 @@ Debug.printf(Level.WARNING, "unhandled: %02x\n", status);
     }
 
     /** SysEx messages */
-    private List<SmafMessage> messages = new ArrayList<>();
+    private final List<SmafMessage> messages = new ArrayList<>();
 
     /**
      * @return Returns the messages.

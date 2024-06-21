@@ -9,17 +9,19 @@ package vavi.sound.smaf.chunk;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.MetaMessage;
 import vavi.sound.smaf.SmafEvent;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -41,10 +43,12 @@ import vavi.util.Debug;
  */
 public class GraphicsTrackChunk extends TrackChunk {
 
+    private static final Logger logger = getLogger(GraphicsTrackChunk.class.getName());
+
     /** */
     public GraphicsTrackChunk(byte[] id, int size) {
         super(id, size);
-Debug.println(Level.FINE, "Graphics[" + trackNumber + "]: " + size);
+logger.log(Level.DEBUG, "Graphics[" + trackNumber + "]: " + size);
     }
 
     /** */
@@ -80,7 +84,7 @@ Debug.println(Level.FINE, "Graphics[" + trackNumber + "]: " + size);
             } else if (chunk instanceof ImageDataChunk) {
                 imageDataChunk = chunk;
             } else {
-Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
+logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
     }
@@ -138,7 +142,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     }
 
     /** > 1 */
-    private List<Chunk> sequenceDataChunks = new ArrayList<>();
+    private final List<Chunk> sequenceDataChunks = new ArrayList<>();
 
     /** (option) */
     private Chunk fontDataChunk;

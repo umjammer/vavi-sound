@@ -6,12 +6,11 @@
 
 package vavi.sound.mfi.vavi.mitsubishi;
 
-import java.util.logging.Level;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
 
 
 /**
@@ -43,6 +42,6 @@ public class Function3 implements MachineDependentFunction {
 
         int voice = (data[7] & 0xc0) >> 6;  // 0 ~ 3
         int modulation = data[7] & 0x3f;    // 0 ~ 63
-Debug.printf(Level.FINE, "Vibrato: %d %02x\n", voice, modulation);
+logger.log(Level.DEBUG, String.format("Vibrato: %d %02x", voice, modulation));
     }
 }

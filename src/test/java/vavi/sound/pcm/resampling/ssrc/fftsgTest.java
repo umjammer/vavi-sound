@@ -127,7 +127,7 @@ public class fftsgTest {
     }
 
     /** */
-    private void putData(int nini, int nend, double[] a) {
+    private static void putData(int nini, int nend, double[] a) {
         int[] seed = new int[] { 0 };
 
         for (int j = nini; j <= nend; j++) {

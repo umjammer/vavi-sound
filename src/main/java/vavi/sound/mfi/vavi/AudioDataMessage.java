@@ -11,10 +11,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -26,8 +26,9 @@ import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -60,6 +61,8 @@ import vavi.util.StringUtil;
 public class AudioDataMessage extends MfiMessage
     implements MidiConvertible, AudioDataSequencer {
 
+    private static final Logger logger = getLogger(AudioDataMessage.class.getName());
+
     /** {@value} */
     public static final String TYPE = "adat";
 
@@ -89,7 +92,7 @@ public class AudioDataMessage extends MfiMessage
     private int attribute;
 
     /** */
-    private Map<String, SubMessage> subChunks = new LinkedHashMap<>();
+    private final Map<String, SubMessage> subChunks = new LinkedHashMap<>();
 
     /**
      * @see #FORMAT_ADPCM_TYPE2
@@ -132,15 +135,15 @@ public class AudioDataMessage extends MfiMessage
 
         // 1. recalc
         int dataLength = data.length;
-Debug.println(Level.FINE, "dataLength: " + dataLength);
+logger.log(Level.DEBUG, "dataLength: " + dataLength);
         int subChunksLength = 0;
         for (SubMessage subChunk : subChunks.values()) {
             subChunksLength += 4 + 2 + subChunk.getDataLength(); // type + length + ...
         }
-Debug.println(Level.FINE, "subChunksLength: " + subChunksLength);
+logger.log(Level.DEBUG, "subChunksLength: " + subChunksLength);
         int headerLength = 1 + 1 + subChunksLength; // format + attribute + ...
         int audioDataLength = 2 + headerLength + dataLength; // headerLength + ...
-Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
+logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
 
         // 2. write
         DataOutputStream dos = new DataOutputStream(os);
@@ -184,7 +187,7 @@ Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
         int headerLength = dis.readUnsignedShort();
         this.format = dis.readUnsignedByte();
         this.attribute = dis.readUnsignedByte();
-Debug.printf(Level.FINE, "adat header: %d: f: %02x, a: %02x", headerLength, format, attribute);
+logger.log(Level.DEBUG, String.format("adat header: %d: f: %02x, a: %02x", headerLength, format, attribute));
 
         // sub chunks
         int l = 0;
@@ -192,14 +195,14 @@ Debug.printf(Level.FINE, "adat header: %d: f: %02x, a: %02x", headerLength, form
             SubMessage subChunk = SubMessage.readFrom(is);
             subChunks.put(subChunk.getSubType(), subChunk);
             l += subChunk.getDataLength() + 4 + 2; // + type + length
-Debug.println(Level.FINE, "audio subchunk length sum: " + l + " / " + (headerLength - 2));
+logger.log(Level.DEBUG, "audio subchunk length sum: " + l + " / " + (headerLength - 2));
         }
 
         // data
         int dataLength = audioDataLength - (headerLength + 1 + 1); // + format + attribute
         data = new byte[dataLength]; // TODO while data should be included
         dis.readFully(data, 0, dataLength);
-Debug.println(Level.FINE, "adat length[" + audioDataNumber + "]: " + dataLength + " bytes\n" + StringUtil.getDump(data, 16));
+logger.log(Level.DEBUG, "adat length[" + audioDataNumber + "]: " + dataLength + " bytes\n" + StringUtil.getDump(data, 16));
 
         //
         this.length = audioDataLength + 4 + 4; // + type + length
@@ -215,15 +218,15 @@ Debug.println(Level.FINE, "adat length[" + audioDataNumber + "]: " + dataLength 
 
         // calc
         int dataLength = data.length;
-Debug.println(Level.FINE, "dataLength: " + dataLength);
+logger.log(Level.DEBUG, "dataLength: " + dataLength);
         int subChunksLength = 0;
         for (SubMessage subChunk : subChunks.values()) {
             subChunksLength += 4 + 2 + subChunk.getDataLength(); // type + length + ...
         }
-Debug.println(Level.FINE, "subChunksLength: " + subChunksLength);
+logger.log(Level.DEBUG, "subChunksLength: " + subChunksLength);
         int headerLength = 1 + 1 + subChunksLength; // format + attribute + ...
         int audioDataLength = 2 + headerLength + dataLength; // headerLength + ...
-Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
+logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
         this.length = audioDataLength + 4 + 4; // + type + length
     }
 

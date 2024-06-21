@@ -65,8 +65,8 @@ Debug.println(meta.getType());
 
     /** */
     public static class WrappedLineOutputStream extends OutputStream {
-        SourceDataLine line;
-        OutputStream out;
+        final SourceDataLine line;
+        final OutputStream out;
         public WrappedLineOutputStream(SourceDataLine line, OutputStream out) {
             this.out = out;
             this.line = line;

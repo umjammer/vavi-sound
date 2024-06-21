@@ -18,7 +18,7 @@ package vavi.sound.mfi;
 public class MfiEvent {
 
     /** */
-    private MfiMessage message;
+    private final MfiMessage message;
 
     /** */
     private long tick;

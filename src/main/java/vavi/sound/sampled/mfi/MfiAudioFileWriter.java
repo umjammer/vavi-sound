@@ -9,15 +9,17 @@ package vavi.sound.sampled.mfi;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.Files;
-
 import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.spi.AudioFileWriter;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -27,6 +29,8 @@ import vavi.util.Debug;
  * @version 0.00 051222 nsano initial version <br>
  */
 public class MfiAudioFileWriter extends AudioFileWriter {
+
+    private static final Logger logger = getLogger(MfiAudioFileWriter.class.getName());
 
     /** */
     private static final Type[] outputTypes = new Type[] {
@@ -90,9 +94,9 @@ public class MfiAudioFileWriter extends AudioFileWriter {
                 return r;
             }
         } catch (UnsupportedAudioFileException | InvalidMfiDataException e) {
-            throw (IOException) new IOException(e);
+            throw new IOException(e);
         } catch (IllegalArgumentException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw e;
         }
     }

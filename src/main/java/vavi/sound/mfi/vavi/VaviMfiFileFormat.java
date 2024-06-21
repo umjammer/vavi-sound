@@ -9,11 +9,12 @@ package vavi.sound.mfi.vavi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
@@ -28,7 +29,8 @@ import vavi.sound.mfi.vavi.header.ProtMessage;
 import vavi.sound.mfi.vavi.header.SorcMessage;
 import vavi.sound.mfi.vavi.header.TitlMessage;
 import vavi.sound.mfi.vavi.header.VersMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -81,6 +83,8 @@ import vavi.util.Debug;
  */
 public class VaviMfiFileFormat extends MfiFileFormat {
 
+    private static final Logger logger = getLogger(VaviMfiFileFormat.class.getName());
+
     /**
      * MIDI file type
      * @see "vavi/sound/midi/package.html"
@@ -88,7 +92,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
     public static final int FILE_TYPE = 0x88;
 
     /** MFi data store of this class */
-    private Sequence sequence;
+    private final Sequence sequence;
 
     /** */
     private HeaderChunk headerChunk;
@@ -119,7 +123,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
                     MfiEvent event = track.get(j);
                     MfiMessage message = event.getMessage();
                     if (message instanceof SubMessage subChunk) {
-                        //Debug.println(infoMessage);
+                        //logger.log(Level.DEBUG, infoMessage);
                         subChunks.put(subChunk.getSubType(), subChunk);
                     }
                 }
@@ -174,7 +178,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
                 audioDataLength += message.getLength();
             }
         }
-Debug.println(Level.FINE, "audioDataLength: " + audioDataLength);
+logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
         return audioDataLength;
     }
 
@@ -264,7 +268,7 @@ int l = 0;
 
         // 2. audio data
         for (int audioDataNumber = 0; audioDataNumber < audioDataCount; audioDataNumber++) {
-Debug.println(Level.FINE, "audio data number: " + audioDataNumber);
+logger.log(Level.DEBUG, "audio data number: " + audioDataNumber);
 
             AudioDataMessage audioDataChunk = new AudioDataMessage(audioDataNumber);
             audioDataChunk.readFrom(is);
@@ -272,12 +276,12 @@ Debug.println(Level.FINE, "audio data number: " + audioDataNumber);
             audioDataChunks.add(audioDataChunk);
 
 l += audioDataChunk.getLength();
-Debug.println(Level.FINE, "adat length sum: " + l + " / " + dataLength);
+logger.log(Level.DEBUG, "adat length sum: " + l + " / " + dataLength);
         }
 
         // 3. track
         for (int trackNumber = 0; trackNumber < tracksCount; trackNumber++) {
-Debug.println(Level.FINE, "track number: " + trackNumber);
+logger.log(Level.DEBUG, "track number: " + trackNumber);
 
             Track track = mff.sequence.createTrack();
 
@@ -292,10 +296,10 @@ Debug.println(Level.FINE, "track number: " + trackNumber);
             trackChunk.readFrom(is);
 
 l += trackChunk.getLength();
-Debug.println(Level.FINE, "trac length sum: " + l + " / " + dataLength);
+logger.log(Level.DEBUG, "trac length sum: " + l + " / " + dataLength);
         }
 
-Debug.println(Level.FINE, "is rest: " + is.available());
+logger.log(Level.DEBUG, "is rest: " + is.available());
         return mff;
     }
 
@@ -359,7 +363,7 @@ Debug.println(Level.FINE, "is rest: " + is.available());
         if (subChunk != null) {
             return subChunk.getNoteLength();
         } else {
-Debug.println(Level.INFO, "no note info, use 0");
+logger.log(Level.INFO, "no note info, use 0");
             return 0;
         }
     }

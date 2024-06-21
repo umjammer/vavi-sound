@@ -9,9 +9,9 @@ package vavi.sound.midi.smaf;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Arrays;
-import java.util.logging.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
 
@@ -19,7 +19,8 @@ import vavi.sound.midi.BasicMidiFileReader;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafSystem;
 import vavi.sound.smaf.SmafUnavailableException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -29,6 +30,8 @@ import vavi.util.Debug;
  * @version 0.00 041222 nsano initial version <br>
  */
 public class SmafMidiFileReader extends BasicMidiFileReader {
+
+    private static final Logger logger = getLogger(SmafMidiFileReader.class.getName());
 
     @Override
     public Sequence getSequence(InputStream is)
@@ -56,14 +59,14 @@ public class SmafMidiFileReader extends BasicMidiFileReader {
             }
 
             vavi.sound.smaf.Sequence sequence = SmafSystem.getSequence(is);
-//Debug.println(sequence);
+//logger.log(Level.DEBUG, sequence);
             return SmafSystem.toMidiSequence(sequence);
         } catch (InvalidSmafDataException e) {
-Debug.println(Level.INFO, e);
-//Debug.printStackTrace(e);
+logger.log(Level.INFO, e);
+//logger.log(Level.ERROR, e.getMessage(), e);
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         } catch (SmafUnavailableException e) {
-Debug.println(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new IOException(e);
         } finally {
             try {
@@ -71,7 +74,7 @@ Debug.println(Level.SEVERE, e);
                     is.reset();
                 }
             } catch (IOException e) {
-Debug.println(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     }

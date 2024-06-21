@@ -37,7 +37,7 @@ public class VoxInputStream extends AdpcmInputStream {
 
     @Override
     public int available() throws IOException {
-//Debug.println("0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
+//logger.log(Level.DEBUG, "0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
         return (in.available() * 2) + (rest ? 1 : 0);
     }
 
@@ -46,7 +46,7 @@ public class VoxInputStream extends AdpcmInputStream {
      */
     @Override
     public int read() throws IOException {
-//Debug.println(in);
+//logger.log(Level.DEBUG, in);
         if (!rest) {
             int adpcm = in.read();
             if (adpcm == -1) {
@@ -56,7 +56,7 @@ public class VoxInputStream extends AdpcmInputStream {
             current = decoder.decode(adpcm) * 16; // TODO check!!!
 
             rest = true;
-//Debug.println("1: " + StringUtil.toHex2(current & 0xff));
+//logger.log(Level.DEBUG, "1: " + StringUtil.toHex2(current & 0xff));
             if (ByteOrder.BIG_ENDIAN.equals(byteOrder)) {
                 return (current & 0xff00) >> 8;
             } else {
@@ -64,7 +64,7 @@ public class VoxInputStream extends AdpcmInputStream {
             }
         } else {
             rest = false;
-//Debug.println("2: " + StringUtil.toHex2((current & 0xff00) >> 8));
+//logger.log(Level.DEBUG, "2: " + StringUtil.toHex2((current & 0xff00) >> 8));
             if (ByteOrder.BIG_ENDIAN.equals(byteOrder)) {
                 return current & 0xff;
             } else {

@@ -89,7 +89,7 @@ class SubData {
     }
 
     /** */
-    private String tag;
+    private final String tag;
 
     /** tag */
     public String getTag() {
@@ -97,7 +97,7 @@ class SubData {
     }
 
     /** */
-    private byte[] data;
+    private final byte[] data;
 
     /** Data */
     public byte[] getData() {

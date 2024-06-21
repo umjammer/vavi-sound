@@ -37,7 +37,7 @@ public class AudioPlayMessage extends LongMessage
     /** */
     private int voice;
     /** */
-    private int index;
+    private final int index;
     /** */
     private int velocity = 63;
 

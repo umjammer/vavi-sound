@@ -10,10 +10,11 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.Files;
-import java.util.logging.Level;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -24,8 +25,10 @@ import vavi.util.Debug;
  */
 class SmafFileWriter {
 
+    private static final Logger logger = getLogger(SmafFileWriter.class.getName());
+
     /** smaf file types */
-    private static int[] types = { SmafFileFormat.FILE_TYPE };
+    private static final int[] types = { SmafFileFormat.FILE_TYPE };
 
     /** */
     public int[] getSmafFileTypes() {
@@ -64,7 +67,7 @@ class SmafFileWriter {
         throws IOException {
 
         if (!isFileTypeSupported(fileType)) {
-Debug.println(Level.WARNING, "unsupported fileType: " + fileType);
+logger.log(Level.WARNING, "unsupported fileType: " + fileType);
             return 0;
         }
 
@@ -81,7 +84,7 @@ Debug.println(Level.WARNING, "unsupported fileType: " + fileType);
         try {
             ff.writeTo(out);
         } catch (InvalidSmafDataException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             return 0;
         }
 

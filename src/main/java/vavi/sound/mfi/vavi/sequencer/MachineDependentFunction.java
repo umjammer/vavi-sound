@@ -6,12 +6,14 @@
 
 package vavi.sound.mfi.vavi.sequencer;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
 import vavi.util.properties.PrefixedClassPropertiesFactory;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -29,6 +31,8 @@ import vavi.util.properties.PrefixedClassPropertiesFactory;
  * @version 0.00 030822 nsano initial version <br>
  */
 public interface MachineDependentFunction {
+
+    Logger logger = getLogger(MachineDependentFunction.class.getName());
 
     int VENDOR_NEC        = 0x10; // N
     int VENDOR_FUJITSU    = 0x20; // F
@@ -60,8 +64,8 @@ public interface MachineDependentFunction {
             try {
                 return get(key);
             } catch (IllegalArgumentException e) {
-Debug.println(Level.WARNING, key);
-Debug.printStackTrace(Level.WARNING, e);
+logger.log(Level.WARNING, key);
+logger.log(Level.WARNING, e.getMessage(), e);
                 return new UndefinedFunction(); // TODO should throw exception or not?
             }
         }

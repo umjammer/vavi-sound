@@ -109,7 +109,7 @@ public class ExpressionMessage extends vavi.sound.mfi.ShortMessage
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
 
-//Debug.println("volume rel: " + channel + ": " + getVolume());
+//logger.log(Level.DEBUG, "volume rel: " + channel + ": " + getVolume());
 //      context.addVolume(channel, getVolume());
 
 //      MidiEvent[] events = new MidiEvent[2];

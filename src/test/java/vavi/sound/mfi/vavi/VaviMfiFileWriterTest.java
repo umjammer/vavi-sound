@@ -12,12 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.NoSuchElementException;
 import java.util.logging.Level;
-
-import javax.sound.midi.MidiEvent;
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.ShortMessage;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,7 +27,6 @@ import vavi.sound.mfi.vavi.mitsubishi.MitsubishiMessage;
 import vavi.sound.mfi.vavi.track.CuePointMessage;
 import vavi.sound.mfi.vavi.track.EndOfTrackMessage;
 import vavi.sound.mfi.vavi.track.TempoMessage;
-import vavi.sound.midi.MidiUtil;
 import vavi.util.Debug;
 import vavi.util.win32.WAVE;
 
@@ -117,7 +111,7 @@ Debug.println(Level.FINE, "write: " + r);
     /**
      * @param pcm wave, any sampling rate, 16bit, mono
      */
-    private void d505i(Track track, byte[] pcm, int sampleRate, int delta)
+    private static void d505i(Track track, byte[] pcm, int sampleRate, int delta)
         throws InvalidMfiDataException {
 
         // adpcm vol

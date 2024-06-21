@@ -16,10 +16,10 @@ package vavi.sound.smaf;
 public class SmafEvent {
 
     /** */
-    private long tick;
+    private final long tick;
 
     /** */
-    private SmafMessage smafMessage;
+    private final SmafMessage smafMessage;
 
     /**
      * @param smafMessage

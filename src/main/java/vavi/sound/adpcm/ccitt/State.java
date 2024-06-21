@@ -81,26 +81,26 @@ class State {
     private int ap;
 
     /** Coefficients of pole portion of prediction filter. */
-    private int[] a = new int[2];
+    private final int[] a = new int[2];
     /** Coefficients of zero portion of prediction filter. */
-    private int[] b = new int[6];
+    private final int[] b = new int[6];
     /**
      * Signs of previous two samples of a partially
      * reconstructed signal.
      */
-    private int[] pk = new int[2];
+    private final int[] pk = new int[2];
     /**
      * Previous 6 samples of the quantized difference
      * signal represented in an internal floating point
      * format.
      */
-    private int[] dq = new int[6];
+    private final int[] dq = new int[6];
     /**
      * Previous 2 samples of the quantized difference
      * signal represented in an internal floating point
      * format.
      */
-    private int[] sr = new int[2];
+    private final int[] sr = new int[2];
     /** delayed tone detect, new in 1988 version */
     private int td;
 
@@ -147,7 +147,7 @@ class State {
         int retval = (wanexp >= 0) ? ((wanmant << wanexp) & 0x7fff) :
                                       (wanmant >> -wanexp);
 
-// System.err.println(an + ", " + srn + ": " + ((an ^ srn) < 0 ? -retval : retval));
+//logger.log(Level.DEBUG, an + ", " + srn + ": " + ((an ^ srn) < 0 ? -retval : retval));
         return (an ^ srn) < 0 ? -retval : retval;
     }
 
@@ -208,10 +208,10 @@ class State {
      */
     public void update(int code_size, int y, int wi, int fi, int _dq, int _sr, int dqsez) {
 
-//System.err.println("y:\t" + y);
-//System.err.println("dq:\t" + _dq);
-//System.err.println("sr:\t" + _sr);
-//System.err.println("dqsez:\t" + dqsez);
+//logger.log(Level.DEBUG, "y:\t" + y);
+//logger.log(Level.DEBUG, "dq:\t" + _dq);
+//logger.log(Level.DEBUG, "sr:\t" + _sr);
+//logger.log(Level.DEBUG, "dqsez:\t" + dqsez);
 
         // needed in updating predictor poles
         int pk0 = (dqsez < 0) ? 1 : 0;
@@ -346,33 +346,33 @@ class State {
         // FLOAT A : convert dq[0] to 4-bit exp, 6-bit mantissa f.p.
         if (mag == 0) {
             dq[0] = (_dq >= 0) ? 0x20 : -992;
-//System.err.println("dq[0]:1: " + dq[0]);
+//logger.log(Level.DEBUG, "dq[0]:1: " + dq[0]);
         } else {
             exp = quan(mag);
             dq[0] = (_dq >= 0) ?
                 (exp << 6) + ((mag << 6) >> exp) :
                 (exp << 6) + ((mag << 6) >> exp) - 0x400;
-//System.err.println("dq[0]:2: " + dq[0] + ", " + _dq + ", " + exp + ", " + mag);
-//System.err.println("dq[0]:-: " + (exp << 6) + ", " + ((mag << 6) >> exp));
+//logger.log(Level.DEBUG, "dq[0]:2: " + dq[0] + ", " + _dq + ", " + exp + ", " + mag);
+//logger.log(Level.DEBUG, "dq[0]:-: " + (exp << 6) + ", " + ((mag << 6) >> exp));
         }
 
         sr[1] = sr[0];
         // FLOAT B : convert sr to 4-bit exp., 6-bit mantissa f.p.
         if (_sr == 0) {
             sr[0] = 0x20;
-//System.err.println("sr[0]:1: " + sr[0]);
+//logger.log(Level.DEBUG, "sr[0]:1: " + sr[0]);
         } else if (_sr > 0) {
             exp = quan(_sr);
             sr[0] = (exp << 6) + ((_sr << 6) >> exp);
-//System.err.println("sr[0]:2: " + sr[0]);
+//logger.log(Level.DEBUG, "sr[0]:2: " + sr[0]);
         } else if (_sr > -32768) {
             mag = -_sr;
             exp = quan(mag);
             sr[0] = (exp << 6) + ((mag << 6) >> exp) - 0x400;
-//System.err.println("sr[0]:3: " + sr[0]);
+//logger.log(Level.DEBUG, "sr[0]:3: " + sr[0]);
         } else {
             sr[0] = -992;
-//System.err.println("sr[0]:4: " + sr[0]);
+//logger.log(Level.DEBUG, "sr[0]:4: " + sr[0]);
         }
 
         // DELAY A

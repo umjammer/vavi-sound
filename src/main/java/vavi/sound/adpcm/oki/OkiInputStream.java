@@ -7,12 +7,14 @@
 package vavi.sound.adpcm.oki;
 
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.ByteOrder;
-import java.util.logging.Level;
 
 import vavi.sound.adpcm.AdpcmInputStream;
 import vavi.sound.adpcm.Codec;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -22,6 +24,8 @@ import vavi.util.Debug;
  * @version 0.00 030817 nsano initial version <br>
  */
 public class OkiInputStream extends AdpcmInputStream {
+
+    private static final Logger logger = getLogger(OkiInputStream.class.getName());
 
     @Override
     protected Codec getCodec() {
@@ -34,6 +38,6 @@ public class OkiInputStream extends AdpcmInputStream {
      */
     public OkiInputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN); // oki adpcm is little endian fixed
-Debug.println(Level.FINE, this.in);
+logger.log(Level.DEBUG, this.in);
     }
 }

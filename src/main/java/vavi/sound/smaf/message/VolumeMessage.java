@@ -9,8 +9,8 @@ package vavi.sound.smaf.message;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
@@ -20,7 +20,8 @@ import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 import vavi.sound.smaf.message.MidiContext.ChannelConfiguration;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -37,6 +38,8 @@ import vavi.util.Debug;
  */
 public class VolumeMessage extends vavi.sound.smaf.ShortMessage
     implements MidiConvertible, SmafConvertible {
+
+    private static final Logger logger = getLogger(VolumeMessage.class.getName());
 
     /** smaf channel */
     private int channel;
@@ -129,7 +132,7 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
             context.getSmafTrackNumber() * 4 + this.channel != MidiContext.CHANNEL_DRUM) {
 
             // TODO psm sets the last(maximum?)? volume
-Debug.println(Level.FINE, "volume: " + volume);
+logger.log(Level.DEBUG, "volume: " + volume);
             context.setVelocity(this.channel, volume);
 
             return null;
@@ -162,7 +165,7 @@ Debug.println(Level.FINE, "volume: " + volume);
         smafMessage.setDuration(context.getDuration());
         smafMessage.setChannel(voice);
         smafMessage.setVolume(data2);
-Debug.println(Level.FINE, "voice: " + voice + ", volume: " + data2);
+logger.log(Level.DEBUG, "voice: " + voice + ", volume: " + data2);
 
         context.setBeforeTick(track, midiEvent.getTick());
 

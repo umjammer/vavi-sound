@@ -9,13 +9,15 @@ package vavi.sound.smaf.chunk;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -29,10 +31,12 @@ import vavi.util.Debug;
  */
 public class StreamPcmDataChunk extends Chunk {
 
+    private static final Logger logger = getLogger(StreamPcmDataChunk.class.getName());
+
     /** */
     public StreamPcmDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println(Level.FINE, "StreamPcmData: " + size);
+logger.log(Level.DEBUG, "StreamPcmData: " + size);
     }
 
     /** */
@@ -48,7 +52,7 @@ Debug.println(Level.FINE, "StreamPcmData: " + size);
             if (chunk instanceof StreamWaveDataChunk) {
                 streamWaveDataChunks.add(chunk);
             } else {
-Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
+logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
     }
@@ -66,7 +70,7 @@ Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
     }
 
     /** */
-    private List<Chunk> streamWaveDataChunks = new ArrayList<>();
+    private final List<Chunk> streamWaveDataChunks = new ArrayList<>();
 
     /** "Mwa*" */
     public void addWaveDataChunk(Chunk streamWaveDataChunk) {

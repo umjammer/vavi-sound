@@ -20,7 +20,6 @@ import javax.sound.sampled.SourceDataLine;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import vavi.io.LittleEndianDataInputStream;
@@ -156,7 +155,7 @@ Debug.printf("3: %f\n", d);
     }
 
     /** */
-    private void writeDouble(byte[] buffer, int offset, double value) {
+    private static void writeDouble(byte[] buffer, int offset, double value) {
         long l = Double.doubleToLongBits(value);
         buffer[offset * 8 + 0] = (byte)  (l & 0x00000000000000ffL);
         buffer[offset * 8 + 1] = (byte) ((l & 0x000000000000ff00L) >>  8);

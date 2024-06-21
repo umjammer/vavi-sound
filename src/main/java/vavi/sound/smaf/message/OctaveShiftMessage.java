@@ -39,7 +39,7 @@ public class OctaveShiftMessage extends vavi.sound.smaf.ShortMessage
      * 0x85 ~ 0xff Reserved
      * </pre>
      */
-    private int octaveShift;
+    private final int octaveShift;
 
     /**
      * Creates OctaveShiftMessage.

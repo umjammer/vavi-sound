@@ -6,8 +6,9 @@
 
 package vavi.sound.smaf.message;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Arrays;
-import java.util.logging.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -20,7 +21,8 @@ import vavi.sound.smaf.Track;
 import vavi.sound.smaf.chunk.ChannelStatus;
 import vavi.sound.smaf.chunk.ScoreTrackChunk;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -30,6 +32,8 @@ import vavi.util.Debug;
  * @version 0.00 041227 nsano port from MFi <br>
  */
 public class MidiContext {
+
+    private static final Logger logger = getLogger(MidiContext.class.getName());
 
     /** Max MIDI channels */
     public static final int MAX_MIDI_CHANNELS = 16;
@@ -73,7 +77,7 @@ public class MidiContext {
                 if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
                     //
                     this.formatType = (FormatType) metaMessage.getData().get("formatType"); // [ms]
-Debug.println(Level.FINE, "formatType: " + formatType);
+logger.log(Level.DEBUG, "formatType: " + formatType);
                     for (int i = 0; i < MAX_MIDI_CHANNELS; i++) {
                         if (formatType == FormatType.HandyPhoneStandard) {
                             velocities[i] = 0x7f;
@@ -83,7 +87,7 @@ Debug.println(Level.FINE, "formatType: " + formatType);
                     }
                     //
                     ChannelStatus[] channelStatuses = (ChannelStatus[]) metaMessage.getData().get("channelStatuses");
-Debug.println(Level.FINE, "channelStatuses: " + (channelStatuses != null ? channelStatuses.length : null));
+logger.log(Level.DEBUG, "channelStatuses: " + (channelStatuses != null ? channelStatuses.length : null));
                     if (channelStatuses != null) {
                         for (int i = 0; i < channelStatuses.length; i++) {
                             setDrum(i, toChannelConfiguration(getMidiChannel(i), channelStatuses[i].getType()));
@@ -113,18 +117,14 @@ Debug.println(Level.FINE, "channelStatuses: " + (channelStatuses != null ? chann
     }
 
     /** convert types */
-    private ChannelConfiguration toChannelConfiguration(int midiChannel, ChannelStatus.Type type) {
-        switch (type) {
-        case Melody:
-            return ChannelConfiguration.SOUND_SET;
-        case NoCare:
-            return midiChannel == CHANNEL_DRUM ? ChannelConfiguration.PERCUSSION : ChannelConfiguration.SOUND_SET;
-        case NoMelody:
-        default:
-            return ChannelConfiguration.UNUSED;
-        case Rhythm:
-            return ChannelConfiguration.PERCUSSION;
-        }
+    private static ChannelConfiguration toChannelConfiguration(int midiChannel, ChannelStatus.Type type) {
+        return switch (type) {
+            case Melody -> ChannelConfiguration.SOUND_SET;
+            case NoCare ->
+                    midiChannel == CHANNEL_DRUM ? ChannelConfiguration.PERCUSSION : ChannelConfiguration.SOUND_SET;
+            default -> ChannelConfiguration.UNUSED;
+            case Rhythm -> ChannelConfiguration.PERCUSSION;
+        };
     }
 
     /** current track no. */
@@ -141,7 +141,7 @@ Debug.println(Level.FINE, "channelStatuses: " + (channelStatuses != null ? chann
     }
 
     /** current ticks, index is smafTrackNumber */
-    private long[] currentTicks = new long[4];
+    private final long[] currentTicks = new long[4];
 
     /**
      * smafTrackNumber must be set
@@ -168,10 +168,10 @@ Debug.println(Level.FINE, "channelStatuses: " + (channelStatuses != null ? chann
     }
 
     /** whether channel is for rhythm, index is pseudo MIDI channel */
-    private ChannelConfiguration[] drums = new ChannelConfiguration[MAX_MIDI_CHANNELS];
+    private final ChannelConfiguration[] drums = new ChannelConfiguration[MAX_MIDI_CHANNELS];
 
     /** index is pseudo MIDI channel */
-    private int[] velocities = new int[MAX_MIDI_CHANNELS];
+    private final int[] velocities = new int[MAX_MIDI_CHANNELS];
 
     /* init */ {
         Arrays.fill(drums, ChannelConfiguration.UNUSED);
@@ -199,10 +199,10 @@ Debug.println(Level.FINE, "channelStatuses: " + (channelStatuses != null ? chann
         int midiChannel = getMidiChannel(smafChannel);
 
         if (drumSwapChannel != CHANNEL_UNUSED && midiChannel == drumSwapChannel) {
-Debug.println(Level.FINE, "already swapped: " + midiChannel + ", " + value);
+logger.log(Level.DEBUG, "already swapped: " + midiChannel + ", " + value);
         } else {
             drums[midiChannel] = value;
-//Debug.println("temporary: " + midiChannel + ", " + value);
+//logger.log(Level.DEBUG, "temporary: " + midiChannel + ", " + value);
         }
 
         // if DRUM_CHANNEL is not a rhythm, replace it with an empty channel.
@@ -210,14 +210,14 @@ Debug.println(Level.FINE, "already swapped: " + midiChannel + ", " + value);
             for (int k = MAX_MIDI_CHANNELS - 1; k >= 0; k--) {
                 if (k != CHANNEL_DRUM && drums[k] == ChannelConfiguration.UNUSED) {
                     drumSwapChannel = k;
-Debug.println(Level.FINE, "channel 9 -> " + k);
+logger.log(Level.DEBUG, "channel 9 -> " + k);
                     break;
                 }
             }
 if (drumSwapChannel == CHANNEL_UNUSED) {
- Debug.println(Level.FINE, "cannot swap: " + midiChannel + ", " + value);
+ logger.log(Level.DEBUG, "cannot swap: " + midiChannel + ", " + value);
 }
-Debug.println(Level.FINE, "channel configuration: " + midiChannel + "ch, " + drums[midiChannel]);
+logger.log(Level.DEBUG, "channel configuration: " + midiChannel + "ch, " + drums[midiChannel]);
         }
 if (value != ChannelConfiguration.UNUSED) {
 StringBuilder sb1 = new StringBuilder(16);
@@ -228,12 +228,12 @@ for (int i = 0; i < drums.length; i++) {
  sb2.append(midiChannel == i ? "*" : " ");
  sb3.append(drums[i].name().charAt(0));
 }
-Debug.println(Level.FINE, "drums: " + midiChannel + "ch, " + value + "\n" + sb1 + "\n" + sb2 + "\n" + sb3);
+logger.log(Level.DEBUG, "drums: " + midiChannel + "ch, " + value + "\n" + sb1 + "\n" + sb2 + "\n" + sb3);
 }
     }
 
     /** program no, index is pseudo MIDI channel assigned to channel */
-    private int[] programs = new int[MAX_MIDI_CHANNELS];
+    private final int[] programs = new int[MAX_MIDI_CHANNELS];
 
     /**
      * @param smafChannel SMAF channel
@@ -244,7 +244,7 @@ Debug.println(Level.FINE, "drums: " + midiChannel + "ch, " + value + "\n" + sb1 
             return smafTrackNumber * 4 + smafChannel;
         } else {
 if (smafTrackNumber > 0) {
- Debug.println(Level.FINE, "track > 0: " + smafTrackNumber);
+ logger.log(Level.DEBUG, "track > 0: " + smafTrackNumber);
 }
             return smafTrackNumber * 16 + smafChannel;
         }
@@ -259,7 +259,7 @@ if (smafTrackNumber > 0) {
 
         if (formatType != FormatType.HandyPhoneStandard) {
             if (midiChannel != drumSwapChannel && drums[midiChannel] == ChannelConfiguration.PERCUSSION) {
-Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
+logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
                 program = 0;
             }
         }
@@ -290,7 +290,7 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
         int midiChannel = getMidiChannel(smafChannel);
 
 //        if (midiChannel == drumSwapChannel) {
-//Debug.println("used swapped channel: " + midiChannel);
+//logger.log(Level.DEBUG, "used swapped channel: " + midiChannel);
 //        }
 
         // drum channel is used as sound
@@ -317,31 +317,21 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
         if (formatType == ScoreTrackChunk.FormatType.HandyPhoneStandard) {
             int midiChannel = getMidiChannel(smafChannel);
             if (drums[midiChannel] == ChannelConfiguration.PERCUSSION) {
-//Debug.println("drum pitch: " + (programs[midiChannel] & 0x7f) + ", " + pitch);
+//logger.log(Level.DEBUG, "drum pitch: " + (programs[midiChannel] & 0x7f) + ", " + pitch);
                 return programs[midiChannel] & 0x7f;
             } else {
                 pitch += 36;
-                switch (octaveShifts[midiChannel]) {
-                default:
-                case 0:
-                    return pitch;
-                case 1:
-                    return pitch + 12;
-                case 2:
-                    return pitch + 24;
-                case 3:
-                    return pitch + 36;
-                case 4:
-                    return pitch + 48;
-                case 0x81:
-                    return pitch - 12;
-                case 0x82:
-                    return pitch - 24;
-                case 0x83:
-                    return pitch - 36;
-                case 0x84:
-                    return pitch - 48;
-                }
+                return switch (octaveShifts[midiChannel]) {
+                    default -> pitch;
+                    case 1 -> pitch + 12;
+                    case 2 -> pitch + 24;
+                    case 3 -> pitch + 36;
+                    case 4 -> pitch + 48;
+                    case 0x81 -> pitch - 12;
+                    case 0x82 -> pitch - 24;
+                    case 0x83 -> pitch - 36;
+                    case 0x84 -> pitch - 48;
+                };
             }
         } else {
             return pitch;
@@ -368,7 +358,7 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
      * </pre>
      * @see OctaveShiftMessage
      */
-    private int[] octaveShifts = new int[MAX_MIDI_CHANNELS];
+    private final int[] octaveShifts = new int[MAX_MIDI_CHANNELS];
 
     /**
      * @param smafChannel channel
@@ -379,7 +369,7 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
     public void setOctaveShift(int smafChannel, int octaveShift) {
         int midiChannel = getMidiChannel(smafChannel);
         octaveShifts[midiChannel] = octaveShift;
-//Debug.println("octaveShifts[" + midiChannel + "]: " + octaveShift);
+//logger.log(Level.DEBUG, "octaveShifts[" + midiChannel + "]: " + octaveShift);
     }
 
     /**
@@ -391,7 +381,7 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
     public int setVelocity(int smafChannel, int velocity) {
         int midiChannel = getMidiChannel(smafChannel);
         velocities[midiChannel] = velocity;
-//Debug.println("velocities[" + mididChannel + "]: " + octaveShift);
+//logger.log(Level.DEBUG, "velocities[" + mididChannel + "]: " + octaveShift);
         return velocity; // TODO mhh...
     }
 
@@ -481,7 +471,7 @@ Debug.println(Level.FINE, "drum always zero:[" + midiChannel + "]: " + program);
 
     /* */
     static {
-Debug.println(Level.FINE, "tempoTable: " + tempoTable.length);
+logger.log(Level.DEBUG, "tempoTable: " + tempoTable.length);
     }
 
     /** if no tempo is specified, SSD will treat it as a quarter note = 120 */
@@ -537,7 +527,7 @@ int t = 0;
                 if (message instanceof vavi.sound.smaf.MetaMessage metaMessage) {
                     if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
                         this.timeBase = (Integer) metaMessage.getData().get("durationTimeBase"); // [ms]
-Debug.println(Level.FINE, "timebase: " + timeBase + ", (" + t + ":" + i + ")");
+logger.log(Level.DEBUG, "timebase: " + timeBase + ", (" + t + ":" + i + ")");
                         return tempo * timeBase;
                     }
                 }
@@ -545,7 +535,7 @@ Debug.println(Level.FINE, "timebase: " + timeBase + ", (" + t + ":" + i + ")");
 t++;
         }
 
-Debug.println(Level.FINE, "no tempo message in track 0");
+logger.log(Level.DEBUG, "no tempo message in track 0");
         return 120;
     }
 }

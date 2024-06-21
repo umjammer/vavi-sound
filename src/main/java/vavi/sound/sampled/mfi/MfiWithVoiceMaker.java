@@ -8,9 +8,9 @@ package vavi.sound.sampled.mfi;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Properties;
-import java.util.logging.Level;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -19,7 +19,6 @@ import org.klab.commons.cli.Argument;
 import org.klab.commons.cli.HelpOption;
 import org.klab.commons.cli.Option;
 import org.klab.commons.cli.Options;
-
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
@@ -33,7 +32,8 @@ import vavi.sound.mfi.vavi.header.TitlMessage;
 import vavi.sound.mfi.vavi.header.VersMessage;
 import vavi.sound.mfi.vavi.track.EndOfTrackMessage;
 import vavi.sound.sampled.FilterChain;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -43,6 +43,8 @@ import vavi.util.Debug;
  * @version 0.00 050403 nsano initial version <br>
  */
 class MfiWithVoiceMaker {
+
+    private static final Logger logger = getLogger(MfiWithVoiceMaker.class.getName());
 
     /** source PCM */
     private AudioInputStream sourceAis;
@@ -116,7 +118,7 @@ class MfiWithVoiceMaker {
     public int create() throws IOException, UnsupportedAudioFileException, InvalidMfiDataException {
 long t = System.currentTimeMillis();
         // divide
-Debug.println(Level.FINE, "1: " + (System.currentTimeMillis() - t));
+logger.log(Level.DEBUG, "1: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         byte[] buffer = new byte[sourceAis.available()];
         int l = 0;
@@ -125,7 +127,7 @@ t = System.currentTimeMillis();
             l += r;
         }
         int result = createMFi(buffer, new File(filename));
-Debug.println(Level.FINE, "2: " + (System.currentTimeMillis() - t));
+logger.log(Level.DEBUG, "2: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         return result;
     }
@@ -174,7 +176,7 @@ t = System.currentTimeMillis();
         }
 
         int r = MfiSystem.write(sequence, VaviMfiFileFormat.FILE_TYPE, file);
-Debug.println(Level.FINE, "write: " + r);
+logger.log(Level.DEBUG, "write: " + r);
         return r;
     }
 
@@ -201,7 +203,7 @@ Debug.println(Level.FINE, "write: " + r);
             sorc = Integer.parseInt(props.getProperty("sorc"));
             defaultModel = props.getProperty("defaultModel");
         } catch (Exception e) {
-            Debug.printStackTrace(e);
+            logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 

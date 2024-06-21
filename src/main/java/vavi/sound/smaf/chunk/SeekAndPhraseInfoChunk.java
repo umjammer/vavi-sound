@@ -9,14 +9,16 @@ package vavi.sound.smaf.chunk;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -29,10 +31,12 @@ import vavi.util.Debug;
  */
 public class SeekAndPhraseInfoChunk extends Chunk {
 
+    private static final Logger logger = getLogger(SeekAndPhraseInfoChunk.class.getName());
+
     /** */
     public SeekAndPhraseInfoChunk(byte[] id, int size) {
         super(id, size);
-//Debug.println("SeekAndPhraseInfo: " + size);
+//logger.log(Level.DEBUG, "SeekAndPhraseInfo: " + size);
     }
 
     /** */
@@ -46,17 +50,17 @@ public class SeekAndPhraseInfoChunk extends Chunk {
         throws InvalidSmafDataException, IOException {
 
         byte[] data = new byte[size];
-Debug.println(Level.FINE, "SeekAndPhraseInfo: " + size + " bytes (subData)");
+logger.log(Level.DEBUG, "SeekAndPhraseInfo: " + size + " bytes (subData)");
         dis.readFully(data);
 
         int i = 0;
         while (i < size) {
-//Debug.println(i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
+//logger.log(Level.DEBUG, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
             SubData subDatum = new SubData(data, i);
             subData.put(subDatum.getTag(), subDatum);
-Debug.println(Level.FINE, "SeekAndPhraseInfo: subData: " + subDatum);
+logger.log(Level.DEBUG, "SeekAndPhraseInfo: subData: " + subDatum);
             i += 2 + 1 + subDatum.getData().length + 1; // tag ':' data ','
-//Debug.println(i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
+//logger.log(Level.DEBUG, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
         }
     }
 
@@ -73,7 +77,7 @@ Debug.println(Level.FINE, "SeekAndPhraseInfo: subData: " + subDatum);
     }
 
     /** */
-    private Map<String, SubData> subData = new TreeMap<>();
+    private final Map<String, SubData> subData = new TreeMap<>();
 
     /** */
     private static final String TAG_StartPoint = "st";

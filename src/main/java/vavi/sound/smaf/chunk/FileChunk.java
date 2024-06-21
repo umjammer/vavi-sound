@@ -10,12 +10,14 @@ import java.io.DataOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -27,6 +29,8 @@ import vavi.util.Debug;
  * @version 0.00 041222 nsano initial version <br>
  */
 public class FileChunk extends Chunk {
+
+    private static final Logger logger = getLogger(FileChunk.class.getName());
 
     /** */
     public FileChunk(byte[] id, int size) {
@@ -50,7 +54,7 @@ public class FileChunk extends Chunk {
             } else if (chunk instanceof OptionalDataChunk) {
                 optionalDataChunk = chunk;
             } else if (chunk instanceof ScoreTrackChunk) {
-Debug.println(Level.FINE, "TRACK: " + scoreTrackChunks.size());
+logger.log(Level.DEBUG, "TRACK: " + scoreTrackChunks.size());
                 scoreTrackChunks.add((TrackChunk) chunk);
             } else if (chunk instanceof PcmAudioTrackChunk) {
                 pcmAudioTrackChunks.add((TrackChunk) chunk);
@@ -59,16 +63,16 @@ Debug.println(Level.FINE, "TRACK: " + scoreTrackChunks.size());
             } else if (chunk instanceof MasterTrackChunk) {
                 masterTrackChunk = (TrackChunk) chunk;
             } else {
-Debug.println(Level.WARNING, "unsupported chunk: " + chunk.getClass());
+logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
             }
         }
-//Debug.println("available: " + is.available());
+//logger.log(Level.DEBUG, "available: " + is.available());
         this.crc = dis.readUnsignedShort();
-Debug.printf(Level.FINE, "crc (orig): %04x\n", crc);
+logger.log(Level.DEBUG, String.format("crc (orig): %04x", crc));
         if (dis.available() > 4) {
             int kddiCrc = dis.readUnsignedShort();
             int kddiMark = dis.readUnsignedShort();
-Debug.printf(Level.FINE, "has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
+logger.log(Level.DEBUG, String.format("has kddi crc: %04x, %04x", kddiCrc, kddiMark));
         }
     }
 
@@ -104,7 +108,7 @@ Debug.printf(Level.FINE, "has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
     /** */
     private static class Crc16OutputStream extends FilterOutputStream {
         /** */
-        private CRC16 crc16 = new CRC16();
+        private final CRC16 crc16 = new CRC16();
         /** */
         public Crc16OutputStream(OutputStream out) {
             super(out);
@@ -155,7 +159,7 @@ Debug.printf(Level.FINE, "has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
     }
 
     /** "MTR*" */
-    private List<TrackChunk> scoreTrackChunks = new ArrayList<>();
+    private final List<TrackChunk> scoreTrackChunks = new ArrayList<>();
 
     /** */
     public List<TrackChunk> getScoreTrackChunks() {
@@ -169,7 +173,7 @@ Debug.printf(Level.FINE, "has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
     }
 
     /** "ATR*" */
-    private List<TrackChunk> pcmAudioTrackChunks = new ArrayList<>();
+    private final List<TrackChunk> pcmAudioTrackChunks = new ArrayList<>();
 
     /** */
     public List<TrackChunk> getPcmAudioTrackChunks() {
@@ -183,7 +187,7 @@ Debug.printf(Level.FINE, "has kddi crc: %04x, %04x\n", kddiCrc, kddiMark);
     }
 
     /** "GTR*" */
-    private List<TrackChunk> graphicsTrackChunks = new ArrayList<>();
+    private final List<TrackChunk> graphicsTrackChunks = new ArrayList<>();
 
     /** */
     public List<TrackChunk> getGraphicsTrackChunks() {

@@ -46,7 +46,7 @@ public class AinfMessage extends SubMessage {
     public static final String TYPE = "ainf";
 
     /** */
-    private List<AudioInfo> audioInfos = new ArrayList<>();
+    private final List<AudioInfo> audioInfos = new ArrayList<>();
 
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
@@ -112,11 +112,11 @@ public class AinfMessage extends SubMessage {
         /** for {@link #toString()} */
         private int index;
         /** */
-        private int format;
+        private final int format;
         /** */
-        private int length;
+        private final int length;
         /** */
-        private byte[] data;
+        private final byte[] data;
         /** for creation */
         public AudioInfo(int format, byte[] data) {
             this.format = format;

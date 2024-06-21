@@ -10,14 +10,15 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.ByteOrder;
-import java.util.logging.Level;
 
 import vavi.io.InputEngine;
 import vavi.io.LittleEndianDataInputStream;
-import vavi.util.Debug;
-
 import vavix.io.IOStreamInputEngine;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -28,15 +29,17 @@ import vavix.io.IOStreamInputEngine;
  */
 class MsInputEngine implements InputEngine {
 
-    private OutputStream out;
+    private static final Logger logger = getLogger(MsInputEngine.class.getName());
 
-    private Ms encoder = new Ms();
+    private final OutputStream out;
+
+    private final Ms encoder = new Ms();
 
     private InputStream in;
 
-    private int samplesPerBlock;
-    private int channels;
-    private ByteOrder byteOrder;
+    private final int samplesPerBlock;
+    private final int channels;
+    private final ByteOrder byteOrder;
 
     /** */
     public MsInputEngine(OutputStream out,
@@ -47,7 +50,7 @@ class MsInputEngine implements InputEngine {
         this.samplesPerBlock = samplesPerBlock;
         this.channels = channels;
         this.byteOrder = byteOrder;
-Debug.println(Level.FINE, "byteOrder: " + this.byteOrder);
+logger.log(Level.DEBUG, "byteOrder: " + this.byteOrder);
     }
 
     @Override
@@ -60,7 +63,7 @@ Debug.println(Level.FINE, "byteOrder: " + this.byteOrder);
     }
 
     /** */
-    private int[] steps = new int[16];
+    private final int[] steps = new int[16];
 
     /**
      * because {@link #in} reads only {@link #samplesPerBlock} * 2 bytes, bufferSize for
@@ -73,7 +76,7 @@ Debug.println(Level.FINE, "byteOrder: " + this.byteOrder);
             throw new IOException("Not yet initialized");
         } else {
             int bytesPerBlock = Ms.getBytesPerBlock(channels, samplesPerBlock);
-//System.err.println("bytesPerBlock: " + bytesPerBlock + ", samplesPerBlock: " + samplesPerBlock);
+//logger.log(Level.DEBUG, "bytesPerBlock: " + bytesPerBlock + ", samplesPerBlock: " + samplesPerBlock);
             byte[] buffer = new byte[samplesPerBlock * 2];
             int l = 0;
             while (l < buffer.length) {
@@ -83,18 +86,18 @@ Debug.println(Level.FINE, "byteOrder: " + this.byteOrder);
                 }
                 l += r;
             }
-//System.err.println(StringUtil.getDump(buffer, 128));
+//logger.log(Level.DEBUG, StringUtil.getDump(buffer, 128));
             if (l > 0) {
                 byte[] adpcm = new byte[bytesPerBlock];
                 int[] pcm = new int[l / 2];
-//Debug.println("adpcm: " + bytesPerBlock  + ", pcm: " + pcm.length + ", " + l);
+//logger.log(Level.DEBUG, "adpcm: " + bytesPerBlock  + ", pcm: " + pcm.length + ", " + l);
                 LittleEndianDataInputStream ledis = new LittleEndianDataInputStream(new ByteArrayInputStream(buffer));
                 for (int i = 0; i < pcm.length; i++) {
                     pcm[i] = ledis.readShort();
                 }
                 ledis.close();
                 encoder.encodeBlock(1, pcm, pcm.length, steps, adpcm, bytesPerBlock);
-//System.err.println(StringUtil.getDump(adpcm, 128));
+//logger.log(Level.DEBUG, StringUtil.getDump(adpcm, 128));
 
                 out.write(adpcm);
             }

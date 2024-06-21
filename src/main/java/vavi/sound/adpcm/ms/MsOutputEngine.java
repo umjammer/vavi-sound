@@ -24,20 +24,20 @@ import vavi.io.OutputEngine;
 class MsOutputEngine implements OutputEngine {
 
     /** */
-    private InputStream in;
+    private final InputStream in;
 
     /** */
-    private Ms decoder = new Ms();
+    private final Ms decoder = new Ms();
 
     /** */
     private DataOutputStream out;
 
-    private int samplesPerBlock;
-    private int nCoefs;
-    private int[][] iCoefs;
-    private int channels;
-    private int blockSize;
-    private ByteOrder byteOrder;
+    private final int samplesPerBlock;
+    private final int nCoefs;
+    private final int[][] iCoefs;
+    private final int channels;
+    private final int blockSize;
+    private final ByteOrder byteOrder;
 
     private byte[] packet;
     private int[] samples;

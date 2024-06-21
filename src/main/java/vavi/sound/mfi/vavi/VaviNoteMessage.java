@@ -6,9 +6,9 @@
 
 package vavi.sound.mfi.vavi;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
@@ -17,7 +17,8 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.NoteMessage;
 import vavi.sound.midi.MidiUtil;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -29,6 +30,8 @@ import vavi.util.Debug;
  */
 public class VaviNoteMessage extends NoteMessage
     implements MidiConvertible, MfiConvertible {
+
+    private static final Logger logger = getLogger(VaviNoteMessage.class.getName());
 
     /** MFi */
     public VaviNoteMessage(int delta, int status, int data) {
@@ -64,7 +67,7 @@ public class VaviNoteMessage extends NoteMessage
                                 channel,
                                 pitch,
                                 velocity);
-//Debug.println("note: " + channel + ": " + pitch);
+//logger.log(Level.DEBUG, "note: " + channel + ": " + pitch);
         events[0] = new MidiEvent(shortMessage, context.getCurrent());
 
         shortMessage = new ShortMessage();
@@ -91,14 +94,14 @@ public class VaviNoteMessage extends NoteMessage
         int command = shortMessage.getCommand();
         int data1 = shortMessage.getData1();
         int data2 = shortMessage.getData2();
-//Debug.println(midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
+//logger.log(Level.DEBUG, midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
 
         if (command == ShortMessage.NOTE_OFF ||
             // note on with velocity 0
             (command == ShortMessage.NOTE_ON && data2 == 0)) {
 
             if (!context.isNoteOffEventUsed()) {
-Debug.println(Level.INFO, "[" + context.getMidiEventIndex() + "] no pair of ON for: " + channel + "ch, " + data1);
+logger.log(Level.INFO, "[" + context.getMidiEventIndex() + "] no pair of ON for: " + channel + "ch, " + data1);
             }
 
             return null;
@@ -109,7 +112,7 @@ Debug.println(Level.INFO, "[" + context.getMidiEventIndex() + "] no pair of ON f
             try {
                 noteOffEvent = context.getNoteOffMidiEvent();
             } catch (NoSuchElementException e) {
-Debug.println(Level.WARNING, "[" + context.getMidiEventIndex() + "] no pair of OFF for: " + channel + "ch, " + data1);
+logger.log(Level.WARNING, "[" + context.getMidiEventIndex() + "] no pair of OFF for: " + channel + "ch, " + data1);
                 return null;
             }
 
@@ -127,24 +130,24 @@ Debug.println(Level.WARNING, "[" + context.getMidiEventIndex() + "] no pair of O
 //  long nextTick = nextMidiEvent.getTick();
 //  int nextDelta = Math.round((nextTick - currentTick) /scale);
 //  if (length <= nextDelta) {
-//   Debug.println(channel + "ch, " + data1 + " len(all): " + length + ", next: " + nextDelta);
+//   logger.log(Level.DEBUG, channel + "ch, " + data1 + " len(all): " + length + ", next: " + nextDelta);
 //  } else {
-//   Debug.println(channel + "ch, " + data1 + " len(cut): " + length + ", next: " + nextDelta);
+//   logger.log(Level.DEBUG, channel + "ch, " + data1 + " len(cut): " + length + ", next: " + nextDelta);
 //   length = nextDelta;
 //  }
 // } catch (NoSuchElementException e) {
-//  Debug.println(channel + "ch, " + data1 + " len(last): " + length);
+//  logger.log(Level.DEBUG, channel + "ch, " + data1 + " len(last): " + length);
 // }
 //}
 if (length == 0) {
 // if ((noteOffTick - currentTick) / scale > 0f) {
-  Debug.println(Level.WARNING, "length is 0 ~ 1, " + MidiUtil.paramString(shortMessage) + ", " + ((noteOffTick - currentTick) / scale));
+  logger.log(Level.WARNING, "length is 0 ~ 1, " + MidiUtil.paramString(shortMessage) + ", " + ((noteOffTick - currentTick) / scale));
 //  length = 1;
 // } else {
-//  Debug.println(Level.WARNING, "length is 0, " + MidiUtil.paramString(shortMessage) + ", " + ((noteOffTick - currentTick) / scale));
+//  logger.log(Level.WARNING, "length is 0, " + MidiUtil.paramString(shortMessage) + ", " + ((noteOffTick - currentTick) / scale));
 // }
 } else if (length < 0) {
- Debug.println(Level.WARNING, "length < 0, " + MidiUtil.paramString(shortMessage) + ", " + ((noteOffTick - currentTick) / scale));
+ logger.log(Level.WARNING, "length < 0, " + MidiUtil.paramString(shortMessage) + ", " + ((noteOffTick - currentTick) / scale));
 }
             int delta = context.getDelta(context.retrieveMfiTrack(channel));
 
@@ -159,12 +162,12 @@ if (length == 0) {
                 mfiMessage.setGateTime(i == onLength - 1 ? length % 255 : 255);
                 mfiMessage.setVelocity(data2 / 2);
 if (length >= 255) {
- Debug.println(Level.INFO, channel + "ch, " + mfiMessage.getNote() + ", " + mfiMessage.getDelta() + ":[" + i + "]:" + (i == onLength - 1 ? length % 255 : 255) + "/" + length);
+ logger.log(Level.INFO, channel + "ch, " + mfiMessage.getNote() + ", " + mfiMessage.getDelta() + ":[" + i + "]:" + (i == onLength - 1 ? length % 255 : 255) + "/" + length);
 }
-//Debug.println(channel + ", " + mfiMessage.getVoice() + ", " + ((mfiMessage.getMessage()[1] & 0xc0) >> 6));
+//logger.log(Level.DEBUG, channel + ", " + mfiMessage.getVoice() + ", " + ((mfiMessage.getMessage()[1] & 0xc0) >> 6));
                 mfiEvents[i] = new MfiEvent(mfiMessage, 0L); // TODO 0l
 //if (mfiEvents[i] == null) {
-// Debug.println("[" + i + "]: " + mfiEvents[i]);
+// logger.log(Level.DEBUG, "[" + i + "]: " + mfiEvents[i]);
 //}
 
                 if (i == 0) {

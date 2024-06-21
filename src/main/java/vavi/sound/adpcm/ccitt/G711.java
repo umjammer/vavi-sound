@@ -47,7 +47,7 @@ import vavi.sound.adpcm.Codec;
 abstract class G711 implements Codec {
 
     /** */
-    protected State state = new State();
+    protected final State state = new State();
 
     /** */
     protected AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
@@ -346,7 +346,7 @@ abstract class G711 implements Codec {
         int dql = dqln + (y >> 2);      // ADDA
 
         if (dql < 0) {
-// System.err.println("1: " + (sign ? -0x8000 : 0));
+// logger.log(Level.DEBUG, "1: " + (sign ? -0x8000 : 0));
             return sign ? -0x8000 : 0;
         } else {                        // ANTILOG
             // Integer part of log
@@ -354,8 +354,8 @@ abstract class G711 implements Codec {
             int dqt = 128 + (dql & 127);
             // Reconstructed difference signal sample
             int dq = (dqt << 7) >> (14 - dex);
-// System.err.println("2: " + sign + ", " + dqln + ", " + y);
-// System.err.println("-: " + (sign ? dq - 0x8000 : dq) + ", " + (dq - 0x8000) + ", " + dq);
+// logger.log(Level.DEBUG, "2: " + sign + ", " + dqln + ", " + y);
+// logger.log(Level.DEBUG, "-: " + (sign ? dq - 0x8000 : dq) + ", " + (dq - 0x8000) + ", " + dq);
             return sign ? dq - 0x8000 : dq;
         }
     }
@@ -380,11 +380,11 @@ abstract class G711 implements Codec {
         //
         // Magnitude of 'd'
         int dqm = Math.abs(d);
-// System.err.println("d:\t" + d);
-// System.err.println("dqm:\t" + dqm);
+// logger.log(Level.DEBUG, "d:\t" + d);
+// logger.log(Level.DEBUG, "dqm:\t" + dqm);
         // Integer part of base 2 log of 'd'
         int exp = State.quan(dqm >> 1);
-// System.err.println("exp:\t" + exp);
+// logger.log(Level.DEBUG, "exp:\t" + exp);
         // Fractional part of base 2 log
         int mant = ((dqm << 7) >> exp) & 0x7f; // Fractional portion.
         // Log of magnitude of 'd'
@@ -509,7 +509,7 @@ abstract class G711 implements Codec {
         }
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** */
     public abstract int getEncodingBits();

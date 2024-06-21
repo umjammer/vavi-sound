@@ -32,7 +32,7 @@ public class CuePointMessage extends ShortMessage
     implements MidiConvertible {
 
     /** 00: start, 01: end */
-    private boolean start;
+    private final boolean start;
 
     /**
      * 0xd0
@@ -92,7 +92,7 @@ public class CuePointMessage extends ShortMessage
 //               new MidiEvent(sysexMessage, context.getCurrent())
 //          };
 //      } else {
-//Debug.println("ignore: " + this);
+//logger.log(Level.DEBUG, "ignore: " + this);
 //        return null;
 //      }
         MetaMessage metaMessage = new MetaMessage();

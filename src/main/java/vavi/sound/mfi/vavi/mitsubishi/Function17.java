@@ -6,12 +6,11 @@
 
 package vavi.sound.mfi.vavi.mitsubishi;
 
-import java.util.logging.Level;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
 
 
 /**
@@ -43,6 +42,6 @@ public class Function17 implements MachineDependentFunction {
 
         int channel = (data[7] & 0xc0) >> 6;    // 0 ~ 3
         int f2 = data[7] & 0x3f;                // 0 ~ 31
-Debug.printf(Level.FINE, "0x11: %02x %02x\n", channel, f2);
+logger.log(Level.DEBUG, String.format("0x11: %02x %02x", channel, f2));
     }
 }

@@ -6,12 +6,14 @@
 
 package vavi.sound.mfi.vavi.mitsubishi;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -21,6 +23,8 @@ import vavi.util.Debug;
  * @version 0.00 030822 nsano initial version <br>
  */
 public class Function1 implements MachineDependentFunction {
+
+    private static final Logger logger = getLogger(Function1.class.getName());
 
     /**
      * 0x01 Pitch Bend MFi2 only
@@ -45,6 +49,6 @@ public class Function1 implements MachineDependentFunction {
         int pitchBend =  data[7] & 0x3f;        // -32 ~ 31
         pitchBend *= (data[7] & 0x20) != 0 ? -1 : 0;
         // pitchBend * Pitch Bend Range * 100 / 32 [cent]
-Debug.printf(Level.FINE, "Pitch Bend: %02x %d\n", voice, pitchBend);
+logger.log(Level.DEBUG, String.format("Pitch Bend: %02x %d", voice, pitchBend));
     }
 }

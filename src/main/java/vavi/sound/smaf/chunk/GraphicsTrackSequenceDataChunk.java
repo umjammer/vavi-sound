@@ -8,7 +8,8 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -21,7 +22,8 @@ import vavi.sound.smaf.message.graphics.NopMessage;
 import vavi.sound.smaf.message.graphics.OffsetOriginMessage;
 import vavi.sound.smaf.message.graphics.ResetOrigneMessage;
 import vavi.sound.smaf.message.graphics.UserMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -34,6 +36,8 @@ import vavi.util.Debug;
  */
 public class GraphicsTrackSequenceDataChunk extends SequenceDataChunk {
 
+    private static final Logger logger = getLogger(GraphicsTrackSequenceDataChunk.class.getName());
+
     /** */
     private int sequenceNumber;
 
@@ -42,7 +46,7 @@ public class GraphicsTrackSequenceDataChunk extends SequenceDataChunk {
         super(id, size);
 
         this.sequenceNumber = id[3];
-Debug.println(Level.FINE, "GraphicsTrackSequenceData[" + sequenceNumber + "]: " + size + " bytes");
+logger.log(Level.DEBUG, "GraphicsTrackSequenceData[" + sequenceNumber + "]: " + size + " bytes");
     }
 
     /** */
@@ -63,7 +67,7 @@ Debug.println(Level.FINE, "GraphicsTrackSequenceData[" + sequenceNumber + "]: " 
         default:
             throw new InvalidSmafDataException("FormatType: " + formatType);
         }
-Debug.println(Level.FINE, "messages: " + messages.size());
+logger.log(Level.DEBUG, "messages: " + messages.size());
     }
 
     /** formatType 0 */
@@ -75,7 +79,7 @@ Debug.println(Level.FINE, "messages: " + messages.size());
         while (dis.available() > 0) {
             // -------- duration --------
             int duration = MidiUtil.readVariableLength(dis);
-//Debug.println("duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
+//logger.log(Level.DEBUG, "duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
             // -------- event --------
             int e1 = dis.readUnsignedByte();
             switch (e1) {
@@ -114,12 +118,12 @@ Debug.println(Level.FINE, "messages: " + messages.size());
                 byte[] data = new byte[size];
                 dis.readFully(data);
                 smafMessage = new UndefinedMessage(duration);
-Debug.printf(Level.FINE, "reserved: %02x\n", e1);
+logger.log(Level.DEBUG, String.format("reserved: %02x", e1));
               } break;
             }
 
-//Debug.println(available() + ", " + smafMessage);
-Debug.println(Level.FINE, "message: " + smafMessage);
+//logger.log(Level.DEBUG, available() + ", " + smafMessage);
+logger.log(Level.DEBUG, "message: " + smafMessage);
             messages.add(smafMessage);
         }
     }

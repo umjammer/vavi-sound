@@ -6,9 +6,10 @@
 
 package vavi.sound.mfi.vavi.sharp;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
@@ -16,7 +17,8 @@ import vavi.sound.mfi.vavi.audio.FuetrekAudioMessage;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mfi.vavi.track.Nop2Message;
 import vavi.sound.mobile.AudioEngine;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -26,6 +28,8 @@ import vavi.util.Debug;
  * @version 0.00 051111 nsano initial version <br>
  */
 public class SharpMessage extends FuetrekAudioMessage {
+
+    private static final Logger logger = getLogger(SharpMessage.class.getName());
 
     /** wave length, use 0x84, 4bit in ADPCM, mono */
     private static final int MAX_BLOCK = 0xffff - Function132.HEADER_LENGTH;
@@ -45,18 +49,18 @@ public class SharpMessage extends FuetrekAudioMessage {
      */
     public static List<MfiEvent> getAdpcmEvents(byte[] pcm, float time, int sampleRate, int bits, int channels, boolean fillNop) throws InvalidMfiDataException {
         int delta = getDelta(time, sampleRate);
-Debug.println(Level.FINE, "delta: " + delta);
+logger.log(Level.DEBUG, "delta: " + delta);
         AudioEngine audioEngine = SharpSequencer.getAudioEngine();
         byte[] adpcm = audioEngine.encode(bits, channels, pcm);
         List<MfiEvent> events = new ArrayList<>();
         if (channels == 1) {
-Debug.println(Level.FINE, "adpcm mono length: " + adpcm.length);
+logger.log(Level.DEBUG, "adpcm mono length: " + adpcm.length);
             events.addAll(getAdpcmEventsSub(L, 0, sampleRate, bits, adpcm));
             // 0x84 adpcm recycle
             events.add(getWaveEvent(L, 0, sampleRate, bits, adpcm.length));
         } else {
             byte[] temp = new byte[adpcm.length / 2];
-Debug.println(Level.FINE, "adpcm L, R length: " + temp.length);
+logger.log(Level.DEBUG, "adpcm L, R length: " + temp.length);
             System.arraycopy(adpcm, 0, temp, 0, adpcm.length / 2);
             events.addAll(getAdpcmEventsSub(L, 0, sampleRate, bits, temp));
             System.arraycopy(adpcm, adpcm.length / 2, temp, 0, adpcm.length / 2);
@@ -89,7 +93,7 @@ Debug.println(Level.FINE, "adpcm L, R length: " + temp.length);
         for (int i = 0; i < numberOfChunks; i++) {
             byte[] chunk = new byte[MAX_BLOCK];
             System.arraycopy(adpcm, MAX_BLOCK * i, chunk, 0, MAX_BLOCK);
-Debug.println(Level.FINE, "wave chunk(" + i + "): " + chunk.length);
+logger.log(Level.DEBUG, "wave chunk(" + i + "): " + chunk.length);
 
             // 0x84 adpcm data
             events.add(getWaveEvent(channel, packetId, sampleRate, bits, !(i == (numberOfChunks - 1) && moduloOfChunks == 0), i == 0 ? adpcm.length : 0, chunk));
@@ -97,7 +101,7 @@ Debug.println(Level.FINE, "wave chunk(" + i + "): " + chunk.length);
         if (moduloOfChunks != 0) {
             byte[] chunk = new byte[moduloOfChunks];
             System.arraycopy(adpcm, MAX_BLOCK * numberOfChunks, chunk, 0, moduloOfChunks);
-Debug.println(Level.FINE, "wave chunk(" + numberOfChunks + "): " + chunk.length);
+logger.log(Level.DEBUG, "wave chunk(" + numberOfChunks + "): " + chunk.length);
 
             // 0x84 adpcm data
             events.add(getWaveEvent(channel, packetId, sampleRate, bits, false, numberOfChunks == 0 ? adpcm.length : 0, chunk));

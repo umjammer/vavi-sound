@@ -21,7 +21,7 @@ import java.util.List;
 class MetaSupport implements Serializable {
 
     /** The metaEvent listeners */
-    private List<MetaEventListener> listenerList = new ArrayList<>();
+    private final List<MetaEventListener> listenerList = new ArrayList<>();
 
     /** Adds {@link MetaEventListener}. */
     public void addMetaEventListener(MetaEventListener l) {

@@ -12,6 +12,7 @@ import vavi.util.Debug;
 import vavi.util.properties.PrefixedClassPropertiesFactory;
 import vavi.util.properties.PrefixedPropertiesFactory;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -30,21 +31,21 @@ public class MachineDependentSequencerTest {
 
         MachineDependentSequencer mds = machineDependentSequencerFactory.get(97);
 Debug.println(mds);
-        assertTrue(mds instanceof vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer);
+        assertInstanceOf(vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer.class, mds);
 
         mds = machineDependentSequencerFactory.get(17);
-        assertTrue(mds instanceof vavi.sound.mfi.vavi.nec.NecSequencer);
+        assertInstanceOf(vavi.sound.mfi.vavi.nec.NecSequencer.class, mds);
 
         mds = machineDependentSequencerFactory.get(33);
-        assertTrue(mds instanceof vavi.sound.mfi.vavi.fujitsu.FujitsuSequencer);
+        assertInstanceOf(vavi.sound.mfi.vavi.fujitsu.FujitsuSequencer.class, mds);
 
         mds = machineDependentSequencerFactory.get(49);
-        assertTrue(mds instanceof vavi.sound.mfi.vavi.sony.SonySequencer);
+        assertInstanceOf(vavi.sound.mfi.vavi.sony.SonySequencer.class, mds);
 
         mds = machineDependentSequencerFactory.get(65);
-        assertTrue(mds instanceof vavi.sound.mfi.vavi.panasonic.PanasonicSequencer);
+        assertInstanceOf(vavi.sound.mfi.vavi.panasonic.PanasonicSequencer.class, mds);
 
         mds = machineDependentSequencerFactory.get(113);
-        assertTrue(mds instanceof vavi.sound.mfi.vavi.sharp.SharpSequencer);
+        assertInstanceOf(vavi.sound.mfi.vavi.sharp.SharpSequencer.class, mds);
     }
 }

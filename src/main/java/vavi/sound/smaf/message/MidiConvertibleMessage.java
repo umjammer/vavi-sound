@@ -24,13 +24,13 @@ public class MidiConvertibleMessage extends vavi.sound.smaf.ShortMessage
     implements MidiConvertible {
 
     /** smaf channel */
-    private int channel;
+    private final int channel;
 
     /** */
-    private int command;
+    private final int command;
 
     /** */
-    private int value;
+    private final int value;
 
     /**
      * @param duration duration
@@ -93,7 +93,7 @@ public class MidiConvertibleMessage extends vavi.sound.smaf.ShortMessage
 
         MidiEvent[] events = new MidiEvent[1];
         ShortMessage shortMessage = new ShortMessage();
-//Debug.println("(" + StringUtil.toHex2(command) + "): " + channel + "ch, " + StringUtil.toHex2(value));
+//logger.log(Level.DEBUG, "(" + StringUtil.toHex2(command) + "): " + channel + "ch, " + StringUtil.toHex2(value));
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 midiChannel,
                                 command,

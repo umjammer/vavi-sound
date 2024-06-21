@@ -9,12 +9,16 @@ package vavi.sound.pcm.resampling.ssrc;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.channels.Channels;
 import java.nio.channels.Pipe;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.sound.sampled.AudioFormat;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -32,6 +36,8 @@ import javax.sound.sampled.AudioFormat;
  */
 public class SSRCInputStream extends FilterInputStream {
 
+    private static final Logger logger = getLogger(SSRCInputStream.class.getName());
+
     /** use in properties */
     public SSRCInputStream(AudioFormat in, AudioFormat out, InputStream is) throws IOException {
 
@@ -44,7 +50,7 @@ public class SSRCInputStream extends FilterInputStream {
                    in.properties()));
     }
 
-    private static ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private static final ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
     /**
      * @param in source stream
@@ -65,7 +71,7 @@ public class SSRCInputStream extends FilterInputStream {
                 ssrc.io(Channels.newChannel(in), pipe.sink(), in.available(), ch, iFrq, iBps, oFrq, oBps, props);
                 pipe.sink().close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.ERROR, e.getMessage(), e);
             }
         });
         return Channels.newInputStream(pipe.source());

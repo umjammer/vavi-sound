@@ -39,7 +39,7 @@ public class PitchBendMessage extends vavi.sound.smaf.ShortMessage
         this.duration = duration;
         this.channel = channel;
         this.pitchBend = value;
-//Debug.println("pitchBend: " + value);
+//logger.log(Level.DEBUG, "pitchBend: " + value);
     }
 
     /** for SmafConvertible */

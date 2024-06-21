@@ -102,7 +102,7 @@ public class PitchBendMessage extends vavi.sound.mfi.ShortMessage
         throws InvalidMidiDataException {
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
-//Debug.println(this);
+//logger.log(Level.DEBUG, this);
 //      context.setPitchBend(channel, getPitchBend());
 
 //      int pitch = context.retrieveRealPitch(channel);

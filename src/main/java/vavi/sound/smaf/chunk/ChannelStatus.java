@@ -28,18 +28,18 @@ public class ChannelStatus {
     }
 
     /** smaf channel */
-    private int channel;
+    private final int channel;
     /** */
     private ChannelStatus.Status keyControlStatus;
     /** */
     private ChannelStatus.Status led;
     /** */
-    private ChannelStatus.Status vibration;
+    private final ChannelStatus.Status vibration;
     /** */
     private ChannelStatus.Type type;
 
     /** internal use */
-    private FormatType formatType;
+    private final FormatType formatType;
 
     /**
      * For HandyPhoneStandard.

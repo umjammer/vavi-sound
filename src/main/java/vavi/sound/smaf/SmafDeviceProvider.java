@@ -6,13 +6,15 @@
 
 package vavi.sound.smaf;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -23,11 +25,13 @@ import vavi.util.Debug;
  */
 public class SmafDeviceProvider {
 
+    private static final Logger logger = getLogger(SmafDeviceProvider.class.getName());
+
     /** */
     public static final String version = "1.0.10";
 
     /** */
-    private SmafDevice.Info[] smafDeviceInfos;
+    private final SmafDevice.Info[] smafDeviceInfos;
 
     /** */
     public SmafDeviceProvider() {
@@ -73,7 +77,7 @@ public class SmafDeviceProvider {
                 try {
                     return deviceMap.get(smafDeviceInfo).getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 }
             }
 
@@ -81,7 +85,7 @@ Debug.printStackTrace(e);
         }
 
         /** */
-        private static Map<SmafDevice.Info, Class<SmafDevice>> deviceMap = new HashMap<>();
+        private static final Map<SmafDevice.Info, Class<SmafDevice>> deviceMap = new HashMap<>();
 
         /* */
         static {
@@ -97,14 +101,14 @@ Debug.printStackTrace(e);
                     if (key.startsWith("smaf.device.")) {
                         @SuppressWarnings("unchecked")
                         Class<SmafDevice> deviceClass = (Class<SmafDevice>) Class.forName(props.getProperty(key));
-//Debug.println("smaf device class: " + StringUtil.getClassName(clazz));
+//logger.log(Level.DEBUG, "smaf device class: " + StringUtil.getClassName(clazz));
                         SmafDevice.Info smafDeviceInfo = deviceClass.getDeclaredConstructor().newInstance().getDeviceInfo();
 
                         deviceMap.put(smafDeviceInfo, deviceClass);
                     }
                 }
             } catch (Exception e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
         }

@@ -11,14 +11,16 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.ByteUtil;
-import vavi.util.Debug;
 import vavi.util.properties.PrefixedPropertiesFactory;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -29,6 +31,8 @@ import vavi.util.properties.PrefixedPropertiesFactory;
  * @version 0.00 041222 nsano initial version <br>
  */
 public abstract class Chunk {
+
+    private static final Logger logger = getLogger(Chunk.class.getName());
 
     /** Chunk ID */
     protected byte[] id = new byte[4];
@@ -87,8 +91,7 @@ public abstract class Chunk {
         throws InvalidSmafDataException, IOException {
 
         DataInputStream dis;
-        if (is instanceof MyDataInputStream) {
-            MyDataInputStream mdis = (MyDataInputStream) is;
+        if (is instanceof MyDataInputStream mdis) {
             dis = new DataInputStream(mdis.is);
         } else {
             dis = new DataInputStream(is);
@@ -98,13 +101,13 @@ public abstract class Chunk {
         dis.readFully(id); // not want to count down
 
         int size = dis.readInt();
-Debug.printf(Level.FINE, "size: 0x%1$08x (%1$d)", size);
+logger.log(Level.DEBUG, String.format("size: 0x%1$08x (%1$d)", size));
 
         Chunk chunk = newInstance(id, size);
-//Debug.println(chunk.getClass().getName() + "\n" + StringUtil.getDump(is, 0, 128));
-//Debug.printf(Level.FINE, "is: " + is + " / " + chunk.getClass().getName());
+//logger.log(Level.DEBUG, chunk.getClass().getName() + "\n" + StringUtil.getDump(is, 0, 128));
+//logger.log(Level.DEBUG, String.format("is: " + is + " / " + chunk.getClass().getName()));
         MyDataInputStream mdis = new MyDataInputStream(is, id, size);
-//Debug.printf(Level.FINE, "mdis: " + mdis + " / " + chunk.getClass().getName());
+//logger.log(Level.DEBUG, String.format("mdis: " + mdis + " / " + chunk.getClass().getName()));
         chunk.init(mdis, parent);
 
         if (parent != null) {
@@ -116,10 +119,10 @@ Debug.printf(Level.FINE, "size: 0x%1$08x (%1$d)", size);
                 assert false : "is: " + is.getClass().getName();
             }
         } else {
-//Debug.printf(Level.FINE, "crc (calc): %04x, avail: %d, %s, %s", mdis.crc(), mdis.available(), mdis, chunk.getClass().getName());
+//logger.log(Level.DEBUG, String.format("crc (calc): %04x, avail: %d, %s, %s", mdis.crc(), mdis.available(), mdis, chunk.getClass().getName()));
             if (chunk instanceof FileChunk fc) {
                 if (fc.getCrc() != mdis.crc()) {
-Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.getCrc(), mdis.crc());
+logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %04x", fc.getCrc(), mdis.crc()));
                 }
             }
         }
@@ -134,10 +137,10 @@ Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.ge
 
     /** input stream with count down, crc */
     protected static class MyDataInputStream extends InputStream implements DataInput {
-        InputStream is;
-        DataInputStream dis;
+        final InputStream is;
+        final DataInputStream dis;
         int readSize;
-        static ThreadLocal<CRC16> crc = new ThreadLocal<>();
+        static final ThreadLocal<CRC16> crc = new ThreadLocal<>();
 
         protected MyDataInputStream(InputStream is, byte[] id, int size) {
             if (is instanceof MyDataInputStream mdis) {
@@ -145,7 +148,7 @@ Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.ge
             } else {
                 this.is = is;
             }
-//Debug.printf(Level.FINE, "is: " + this.is);
+//logger.log(Level.DEBUG, String.format("is: " + this.is));
             this.dis = new DataInputStream(this.is);
             this.readSize = size;
 
@@ -156,7 +159,7 @@ Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.ge
             crc.get().update(ByteUtil.getBeBytes(size));
         }
         public int crc() {
-//Debug.println("crc len: " + crc.get().getCount());
+//logger.log(Level.DEBUG, "crc len: " + crc.get().getCount());
             return crc.get().getValue();
         }
         @Override
@@ -255,7 +258,7 @@ Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.ge
         static final int BYTE_BIT = 8;
         /** maximum unsigned char value */
         static final int UCHAR_MAX = 0xff;
-        static int[] crcTable = new int[UCHAR_MAX + 1];
+        static final int[] crcTable = new int[UCHAR_MAX + 1];
         static final int CRCPOLY1 = 0x1021;
 
         static {
@@ -321,14 +324,14 @@ Debug.printf(Level.WARNING, "crc not match expected: %04x, actural: %04x", fc.ge
         try {
             return chunkFactory.get(id).newInstance(id, size);
         } catch (IllegalArgumentException e) {
-Debug.println(Level.FINE, e);
+logger.log(Level.DEBUG, e);
             return new UndefinedChunk(id, size); // TODO out source
 //          throw new InvalidSmafDataException("unsupported chunk id: " + StringUtil.getDump(id));
         } catch (Exception e) {
 if (e instanceof InvocationTargetException) {
-Debug.printStackTrace(Level.SEVERE, e.getCause());
+logger.log(Level.ERROR, e.getCause().getMessage(), e.getCause());
 } else {
-Debug.printStackTrace(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
 }
             throw new IllegalStateException(e);
         }
@@ -344,7 +347,7 @@ Debug.printStackTrace(Level.SEVERE, e);
                 @Override
                 public Constructor<? extends Chunk> get(byte[] id) {
                     String type = new String(id);
-                    Debug.printf(Level.FINE, "Chunk ID(read): %s+0x%02x", (Character.isLetterOrDigit(type.charAt(3)) ? type : new String(id, 0, 3)), (int) type.charAt(3));
+logger.log(Level.DEBUG, String.format("Chunk ID(read): %s+0x%02x", (Character.isLetterOrDigit(type.charAt(3)) ? type : new String(id, 0, 3)), (int) type.charAt(3)));
 
                     for (String key : instances.keySet()) {
                         if (key.charAt(3) == '*' && key.substring(0, 3).equals(type.substring(0, 3))) {
@@ -362,10 +365,10 @@ Debug.printStackTrace(Level.SEVERE, e);
                     try {
                         @SuppressWarnings("unchecked")
                         Class<? extends Chunk> clazz = (Class<? extends Chunk>) Class.forName(value);
-//Debug.println("chunk class: " + StringUtil.getClassName(clazz));
+//logger.log(Level.DEBUG, "chunk class: " + StringUtil.getClassName(clazz));
                         return clazz.getConstructor(byte[].class, Integer.TYPE);
                     } catch (Exception e) {
-                        Debug.printStackTrace(e);
+                        logger.log(Level.ERROR, e.getMessage(), e);
                         throw new IllegalStateException(e);
                     }
                 }

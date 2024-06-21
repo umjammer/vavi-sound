@@ -7,11 +7,11 @@
 package vavi.sound.smaf;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Sequence;
@@ -21,7 +21,8 @@ import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.smaf.SmafVaviSequence;
 import vavi.sound.smaf.message.MidiContext;
 import vavi.sound.smaf.message.MidiConvertible;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -31,6 +32,8 @@ import vavi.util.Debug;
  * @version 0.00 071012 nsano initial version <br>
  */
 class SmafMidiConverter implements SmafDevice {
+
+    private static final Logger logger = getLogger(SmafMidiConverter.class.getName());
 
     /** the device information */
     private static final SmafDevice.Info info =
@@ -62,7 +65,7 @@ class SmafMidiConverter implements SmafDevice {
     }
 
 /** debug */
-private Set<Class<? extends SmafMessage>> uc = new HashSet<>();
+private final Set<Class<? extends SmafMessage>> uc = new HashSet<>();
 
     /** Converts smaf sequence to midi sequence */
     Sequence convert(vavi.sound.smaf.Sequence smafSequence)
@@ -75,7 +78,7 @@ private Set<Class<? extends SmafMessage>> uc = new HashSet<>();
         MidiContext midiContext = new MidiContext();
 
         int resolution = midiContext.getResolution(smafTracks);
-Debug.println(Level.FINE, "resolution: " + resolution);
+logger.log(Level.DEBUG, "resolution: " + resolution);
         Sequence midiSequence = new SmafVaviSequence(Sequence.PPQ, resolution, 1);
         javax.sound.midi.Track midiTrack = midiSequence.getTracks()[0];
 
@@ -96,7 +99,7 @@ Debug.println(Level.FINE, "resolution: " + resolution);
                 SmafMessage smafMessage = smafEvent.getMessage();
 
                 midiContext.addCurrentTick(midiContext.getTicksOf(smafMessage.getDuration()));
-//Debug.println("■■■■■(" + i + ":" + j + ") ticks: " + midiContext.getCurrentTick() + "(" + midiContext.getTicksOf(smafMessage.getDuration()) + "," + smafMessage.getDuration() + "), " + smafMessage.getClass().getSimpleName());
+//logger.log(Level.DEBUG, "■■■■■(" + i + ":" + j + ") ticks: " + midiContext.getCurrentTick() + "(" + midiContext.getTicksOf(smafMessage.getDuration()) + "," + smafMessage.getDuration() + "), " + smafMessage.getClass().getSimpleName());
 
                 if (smafMessage instanceof MidiConvertible) {
 if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
@@ -104,12 +107,12 @@ if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.PitchBendMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.PanMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.ExpressionMessage)) {
- Debug.println(Level.FINE, "midi convertible(" + i + ":" + j + "): " + smafMessage);
+ logger.log(Level.DEBUG, "midi convertible(" + i + ":" + j + "): " + smafMessage);
 }
 //if (smafMessage instanceof vavi.sound.smaf.message.NoteMessage) {
 // int gateTime = ((vavi.sound.smaf.message.NoteMessage) smafMessage).getGateTime();
 // if (gateTime == 0) {
-//  Debug.println(Level.WARNING, "★★★★★(" + i + ":" + j + ") gateTime == 0: " + smafMessage);
+//  logger.log(Level.WARNING, "★★★★★(" + i + ":" + j + ") gateTime == 0: " + smafMessage);
 // }
 //}
                     MidiEvent[] midiEvents = ((MidiConvertible) smafMessage).getMidiEvents(midiContext);
@@ -120,13 +123,13 @@ if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
                         }
                     }
                 } else if (smafMessage instanceof MetaMessage) {
-Debug.println(Level.FINE, "meta: " + ((MetaMessage) smafMessage).getType());
+logger.log(Level.DEBUG, "meta: " + ((MetaMessage) smafMessage).getType());
                     for (Map.Entry<String, Object> entry : ((MetaMessage) smafMessage).data.entrySet()) {
-Debug.println(Level.FINE, entry.getKey() + "=" + entry.getValue());
+logger.log(Level.DEBUG, entry.getKey() + "=" + entry.getValue());
                     }
                 } else {
 if (!uc.contains(smafMessage.getClass())) {
- Debug.println(Level.WARNING, "unhandled message: " + smafMessage);
+ logger.log(Level.WARNING, "unhandled message: " + smafMessage);
  uc.add(smafMessage.getClass());
 }
                 }
@@ -138,9 +141,9 @@ if (!uc.contains(smafMessage.getClass())) {
 
     /** Note may be entered before Control/Program */
     @SuppressWarnings("unused")
-    private void addSmafMessage(javax.sound.midi.Track midiTrack, MidiEvent midiEvent) {
-//Debug.println("★: " + midiEvent.getMessage());
-//Debug.println("★: " + (midiTrack.size() > 1 ? midiTrack.get(midiTrack.size() - 2).getMessage() : null));
+    private static void addSmafMessage(javax.sound.midi.Track midiTrack, MidiEvent midiEvent) {
+//logger.log(Level.DEBUG, "★: " + midiEvent.getMessage());
+//logger.log(Level.DEBUG, "★: " + (midiTrack.size() > 1 ? midiTrack.get(midiTrack.size() - 2).getMessage() : null));
         if (midiEvent.getTick() == 0 &&
             midiEvent.getMessage() instanceof ShortMessage &&
             ((ShortMessage) midiEvent.getMessage()).getCommand() == ShortMessage.PROGRAM_CHANGE &&
@@ -152,7 +155,7 @@ if (!uc.contains(smafMessage.getClass())) {
             midiTrack.remove(removedMidiEvent);
             midiTrack.add(midiEvent);
             midiTrack.add(removedMidiEvent);
-Debug.println(Level.INFO, "★★★★★ : " + MidiUtil.paramString(midiEvent.getMessage()) + ", " + MidiUtil.paramString(removedMidiEvent.getMessage()));
+logger.log(Level.INFO, "★★★★★ : " + MidiUtil.paramString(midiEvent.getMessage()) + ", " + MidiUtil.paramString(removedMidiEvent.getMessage()));
         } else {
             midiTrack.add(midiEvent);
         }

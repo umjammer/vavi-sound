@@ -12,6 +12,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -19,10 +21,10 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.Map;
 import java.util.Random;
-import java.util.logging.Logger;
 
 import vavi.util.I0Bessel;
 
+import static java.lang.System.getLogger;
 import static vavi.util.SplitRadixFft.rdft;
 
 
@@ -38,7 +40,7 @@ import static vavi.util.SplitRadixFft.rdft;
 public class SSRC {
 
     /** */
-    private static final Logger logger = Logger.getLogger(SSRC.class.getName());
+    private static final Logger logger = getLogger(SSRC.class.getName());
 
     /** */
     private static final ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
@@ -170,7 +172,7 @@ public class SSRC {
                 }
             }
             if ((dType == 3 || dType == 4) && i == 6) {
-                logger.warning(String.format("ATH based noise shaping for destination frequency %dHz is not available, using triangular dither\n", freq));
+                logger.log(Level.WARNING, String.format("ATH based noise shaping for destination frequency %dHz is not available, using triangular dither", freq));
             }
             if (dType == 2 || i == 6) {
                 i = 0;
@@ -336,7 +338,7 @@ public class SSRC {
     }
 
     /** */
-    private Shaper shaper = new Shaper();
+    private final Shaper shaper = new Shaper();
 
     /** */
     private static double alpha(double a) {
@@ -548,7 +550,7 @@ System.err.println("upsample");
 
                 alp = alpha(aa);
                 iza = I0Bessel.value(alp);
-//System.err.printf("iza = %g\n",iza);
+//logger.log(Level.DEBUG, String.format("iza = %g",iza));
 
                 n1y = fs1 / sfrq;
                 n1x = n1 / n1y + 1;
@@ -828,7 +830,7 @@ System.err.println("upsample");
                             buf2[ch][p] = 0;
                         }
 
-//for (i = 0; i < n2b2; i++) { System.err.printf("%d:%g",i,buf2[ch][i]); }
+//for (i = 0; i < n2b2; i++) { logger.log(Level.DEBUG, String.format("%d:%g",i,buf2[ch][i])); }
 
                         rdft(n2b, 1, buf2[ch], fft_ip, fft_w);
 
@@ -841,7 +843,7 @@ System.err.println("upsample");
                             re = stage2[i * 2] * buf2[ch][i * 2] - stage2[i * 2 + 1] * buf2[ch][i * 2 + 1];
                             im = stage2[i * 2 + 1] * buf2[ch][i * 2] + stage2[i * 2] * buf2[ch][i * 2 + 1];
 
-//System.err.printf("%d : %g %g %g %g %g %g\n", i, stage2[i * 2],stage2[i * 2 + 1],buf2[ch][i * 2],buf2[ch][i * 2 + 1], re, im);
+//logger.log(Level.DEBUG, String.format("%d : %g %g %g %g %g %g", i, stage2[i * 2],stage2[i * 2 + 1],buf2[ch][i * 2],buf2[ch][i * 2 + 1], re, im));
 
                             buf2[ch][i * 2] = re;
                             buf2[ch][i * 2 + 1] = im;
@@ -1127,7 +1129,7 @@ System.err.println("downsample");
                 alp = alpha(aa);
 
                 iza = I0Bessel.value(alp);
-//System.err.printf("iza %f, alp: %f\n", iza, alp); // OK
+//logger.log(Level.DEBUG, String.format("iza %f, alp: %f", iza, alp)); // OK
 
                 for (n1b = 1; n1b < n1; n1b *= 2) {
                 }
@@ -1137,7 +1139,7 @@ System.err.println("downsample");
 
                 for (i = -(n1 / 2); i <= n1 / 2; i++) {
                     stage1[i + n1 / 2] = win(i, n1, alp, iza) * hn_lpf(i, lpf, fs1) * fs1 / sfrq / n1b * 2;
-//System.err.printf("1: %06d: %e\n", i + n1 / 2, stage1[i + n1 / 2]); // OK
+//logger.log(Level.DEBUG, String.format("1: %06d: %e", i + n1 / 2, stage1[i + n1 / 2])); // OK
                 }
 
                 ipsize = (int) (2 + Math.sqrt(n1b));
@@ -1148,13 +1150,13 @@ System.err.println("downsample");
 
                 rdft(n1b, 1, stage1, fft_ip, fft_w);
 //for (i = -(n1 / 2); i <= n1 / 2; i++) {
-// System.err.printf("1': %06d: %e\n", i + n1 / 2, stage1[i + n1 / 2]);
+// logger.log(Level.DEBUG, String.format("1': %06d: %e", i + n1 / 2, stage1[i + n1 / 2]));
 //}
 //for (i = 0; i < ipsize; i++) {
-// System.err.printf("ip: %06d: %d\n", i, fft_ip[i]); // OK
+// logger.log(Level.DEBUG, String.format("ip: %06d: %d", i, fft_ip[i])); // OK
 //}
 //for (i = 0; i < wsize; i++) {
-// System.err.printf("w: %06d: %e\n", i, fft_w[i]); // OK
+// logger.log(Level.DEBUG, String.format("w: %06d: %e", i, fft_w[i])); // OK
 //}
             }
 
@@ -1195,7 +1197,7 @@ System.err.println("downsample");
 
                 alp = alpha(aa);
                 iza = I0Bessel.value(alp);
-//System.err.printf("iza %f, alp: %f\n", iza, alp); // OK
+//logger.log(Level.DEBUG, String.format("iza %f, alp: %f", iza, alp)); // OK
 
                 n2y = fs2 / fs1; // how many samples are there in fs2 that is not 0?
                 n2x = n2 / n2y + 1;
@@ -1218,10 +1220,10 @@ System.err.println("downsample");
 
                 stage2 = new double[n2y][n2x];
 
-//System.err.printf("n2y: %d, n2: %d\n", n2y, n2);
+//logger.log(Level.DEBUG, String.format("n2y: %d, n2: %d", n2y, n2));
                 for (i = -(n2 / 2); i <= n2 / 2; i++) {
                     stage2[(i + n2 / 2) % n2y][(i + n2 / 2) / n2y] = win(i, n2, alp, iza) * hn_lpf(i, lpf, fs2) * fs2 / fs1;
-//System.err.printf(" stage2[%02d][%02d]: %f\n", (i + n2 / 2) % n2y, (i + n2 / 2) / n2y, win(i, n2, alp, iza) * hn_lpf(i, lpf, fs2) * fs2 / fs1); // OK
+//logger.log(Level.DEBUG, String.format(" stage2[%02d][%02d]: %f", (i + n2 / 2) % n2y, (i + n2 / 2) / n2y, win(i, n2, alp, iza) * hn_lpf(i, lpf, fs2) * fs2 / fs1)); // OK
                 }
             }
 
@@ -1266,7 +1268,7 @@ System.err.println("downsample");
                 buf2 = new double[nch][n2x + 1 + n1b2];
 
                 rawinbuf = ByteBuffer.allocate((nch * (n1b2 / osf + osf + 1)) * bps);
-//System.err.println((double) n1b2 * sfrq / dfrq + 1);
+//logger.log(Level.DEBUG, (double) n1b2 * sfrq / dfrq + 1);
                 rawoutbuf = ByteBuffer.allocate((int) (((double) n1b2 * sfrq / dfrq + 1) * (dbps * nch)));
                 inbuf = new double[nch * (n1b2 / osf + osf + 1)];
                 outbuf = new double[(int) (nch * ((double) n1b2 * sfrq / dfrq + 1))];
@@ -1312,7 +1314,7 @@ System.err.println("downsample");
                         for (i = 0; i < nsmplread * nch; i++) {
                             int v = rawinbuf.order(byteOrder).asShortBuffer().get(i);
                             inbuf[nch * inbuflen + i] = (1 / (double) 0x7fff) * v;
-//System.err.printf("I: %f\n", inbuf[nch * inbuflen + i]);
+//logger.log(Level.DEBUG, String.format("I: %f", inbuf[nch * inbuflen + i]));
                         }
                         break;
 
@@ -1418,13 +1420,13 @@ System.err.println("downsample");
 
                             assert ((bp2 - (buf2[0].length * ch)) * (fs2 / fs1) - (rp2 + p * (fs2 / dfrq)) == s2o); // &(buf2[ch][0])
                             for (i = 0; i < n2x; i++) {
-//System.err.printf("%d (%d, %d)\n", i, bp2 / buf2[0].length, bp2 % buf2[0].length);
+//logger.log(Level.DEBUG, String.format("%d (%d, %d)", i, bp2 / buf2[0].length, bp2 % buf2[0].length));
                                 tmp += stage2[s2o][i] * buf2[bp2 / buf2[0].length][bp2 % buf2[0].length]; // *bp2++
                                 bp2++;
                             }
 
                             outbuf[op + p * nch + ch] = tmp;
-//System.err.printf("O: %06d: %f\n", op + p * nch + ch, tmp);
+//logger.log(Level.DEBUG, String.format("O: %06d: %f", op + p * nch + ch, tmp));
                         }
 
                         nsmplwrt2 = p;
@@ -1437,12 +1439,12 @@ System.err.println("downsample");
                         for (i = 0; i < nsmplwrt2 * nch; i++) {
                             double f = outbuf[i] > 0 ? outbuf[i] : -outbuf[i];
                             peak[0] = Math.max(peak[0], f);
-//System.err.println("p: " + rawoutbuf.position() + ", l: " + rawoutbuf.limit());
+//logger.log(Level.DEBUG, "p: " + rawoutbuf.position() + ", l: " + rawoutbuf.limit());
                             rawoutbuf.asDoubleBuffer().put(i, outbuf[i]);
 //if (i < 100) {
-// System.err.printf("1: %06d: %f\n", i, outbuf[i]);
+// logger.log(Level.DEBUG, String.format("1: %06d: %f", i, outbuf[i]));
 //}
-//System.err.print(StringUtil.getDump(rawoutbuf, i, 8));
+//logger.log(Level.DEBUG, "\n" + StringUtil.getDump(rawoutbuf, i, 8));
                         }
                     } else {
                         switch (dbps) {
@@ -1806,93 +1808,86 @@ System.err.printf("%d, %d, %d, %d\n",
                 break;
             }
 
-            if (argv[i].equals("--rate")) {
-                dfrq = Integer.parseInt(argv[++i]);
-//System.err.printf("dfrq: %d\n", dfrq);
-                continue;
-            }
-
-            if (argv[i].equals("--att")) {
-                att = Float.parseFloat(argv[++i]);
-                continue;
-            }
-
-            if (argv[i].equals("--bits")) {
-                dbps = Integer.parseInt(argv[++i]);
-                if (dbps != 8 && dbps != 16 && dbps != 24) {
-                    throw new IllegalArgumentException("Error: Only 8bit, 16bit and 24bit PCM are supported.");
+            switch (argv[i]) {
+                case "--rate" -> {
+                    dfrq = Integer.parseInt(argv[++i]);
+//logger.log(Level.DEBUG, String.format("dfrq: %d", dfrq));
+                    continue;
                 }
-                dbps /= 8;
-                continue;
-            }
-
-            if (argv[i].equals("--twopass")) {
-                twopass = true;
-                continue;
-            }
-
-            if (argv[i].equals("--normalize")) {
-                twopass = true;
-                normalize = true;
-                continue;
-            }
-
-            if (argv[i].equals("--dither")) {
-                try {
-                    dither = Integer.parseInt(argv[i + 1]);
-                    if (dither < 0 || dither > 4) {
-                        throw new IllegalArgumentException("unrecognized dither type : " + argv[i + 1]);
+                case "--att" -> {
+                    att = Float.parseFloat(argv[++i]);
+                    continue;
+                }
+                case "--bits" -> {
+                    dbps = Integer.parseInt(argv[++i]);
+                    if (dbps != 8 && dbps != 16 && dbps != 24) {
+                        throw new IllegalArgumentException("Error: Only 8bit, 16bit and 24bit PCM are supported.");
                     }
-                    i++;
-                } catch (NumberFormatException e) {
-                    dither = -1;
+                    dbps /= 8;
+                    continue;
                 }
-                continue;
-            }
-
-            if (argv[i].equals("--pdf")) {
-                try {
-                    pdf = Integer.parseInt(argv[i + 1]);
-                    if (pdf < 0 || pdf > 2) {
+                case "--twopass" -> {
+                    twopass = true;
+                    continue;
+                }
+                case "--normalize" -> {
+                    twopass = true;
+                    normalize = true;
+                    continue;
+                }
+                case "--dither" -> {
+                    try {
+                        dither = Integer.parseInt(argv[i + 1]);
+                        if (dither < 0 || dither > 4) {
+                            throw new IllegalArgumentException("unrecognized dither type : " + argv[i + 1]);
+                        }
+                        i++;
+                    } catch (NumberFormatException e) {
+                        dither = -1;
+                    }
+                    continue;
+                }
+                case "--pdf" -> {
+                    try {
+                        pdf = Integer.parseInt(argv[i + 1]);
+                        if (pdf < 0 || pdf > 2) {
+                            throw new IllegalArgumentException("unrecognized p.d.f. type : " + argv[i + 1]);
+                        }
+                        i++;
+                    } catch (NumberFormatException e) {
                         throw new IllegalArgumentException("unrecognized p.d.f. type : " + argv[i + 1]);
                     }
+
+                    try {
+                        noiseamp = Double.parseDouble(argv[i + 1]);
+                        i++;
+                    } catch (NumberFormatException e) {
+                        noiseamp = presets[pdf];
+                    }
+
+                    continue;
+                }
+                case "--quiet" -> {
+                    quiet = true;
+                    continue;
+                }
+                case "--tmpfile" -> {
+                    tmpfn = argv[++i];
+                    continue;
+                }
+                case "--profile" -> {
+                    if (argv[i + 1].equals("fast")) {
+                        AA = 96;
+                        DF = 8000;
+                        FFTFIRLEN = 1024;
+                    } else if (argv[i + 1].equals("standard")) {
+                        /* nothing to do */
+                    } else {
+                        throw new IllegalArgumentException("unrecognized profile : " + argv[i + 1]);
+                    }
                     i++;
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("unrecognized p.d.f. type : " + argv[i + 1]);
+                    continue;
                 }
-
-                try {
-                    noiseamp = Double.parseDouble(argv[i + 1]);
-                    i++;
-                } catch (NumberFormatException e) {
-                    noiseamp = presets[pdf];
-                }
-
-                continue;
-            }
-
-            if (argv[i].equals("--quiet")) {
-                quiet = true;
-                continue;
-            }
-
-            if (argv[i].equals("--tmpfile")) {
-                tmpfn = argv[++i];
-                continue;
-            }
-
-            if (argv[i].equals("--profile")) {
-                if (argv[i + 1].equals("fast")) {
-                    AA = 96;
-                    DF = 8000;
-                    FFTFIRLEN = 1024;
-                } else if (argv[i + 1].equals("standard")) {
-                    /* nothing to do */
-                } else {
-                    throw new IllegalArgumentException("unrecognized profile : " + argv[i + 1]);
-                }
-                i++;
-                continue;
             }
 
             throw new IllegalArgumentException("unrecognized option : " + argv[i]);
@@ -1926,7 +1921,7 @@ System.err.printf("%d, %d, %d, %d\n",
             bb.limit(36);
             fpi.read(bb);
             bb.flip();
-System.err.println("p: " + bb.position() + ", l: " + bb.limit());
+logger.log(Level.DEBUG, "p: " + bb.position() + ", l: " + bb.limit());
             if (bb.get() != 'R') error(1);
             if (bb.get() != 'I') error(1);
             if (bb.get() != 'F') error(1);
@@ -2118,7 +2113,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                 try (FileOutputStream tfos= new FileOutputStream(ft)) {
                     fpto = tfos.getChannel();
 
-//System.err.printf("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d, ???: %d, twopass: %b, dither: %d\n", nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither);
+//logger.log(Level.DEBUG, String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d, ???: %d, twopass: %b, dither: %d", nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither));
                     Resampler resampler;
                     if (sfrq < dfrq) {
                         resampler = new Upsampler();
@@ -2157,36 +2152,29 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                 }
 
                 if (dither != 0) {
-                    switch (dbps) {
-                    case 1:
-                        gain = (normalize || peak[0] >= (0x7f - samp) / (double) 0x7f) ? 1 / peak[0] * (0x7f - samp) : 1 / peak[0] * 0x7f;
-                        break;
-                    case 2:
-                        gain = (normalize || peak[0] >= (0x7fff - samp) / (double) 0x7fff) ? 1 / peak[0] * (0x7fff - samp) : 1 / peak[0] * 0x7fff;
-                        break;
-                    case 3:
-                        gain = (normalize || peak[0] >= (0x7fffff - samp) / (double) 0x7fffff) ? 1 / peak[0] * (0x7fffff - samp) : 1 / peak[0] * 0x7fffff;
-                        break;
-                    }
+                    gain = switch (dbps) {
+                        case 1 ->
+                                (normalize || peak[0] >= (0x7f - samp) / (double) 0x7f) ? 1 / peak[0] * (0x7f - samp) : 1 / peak[0] * 0x7f;
+                        case 2 ->
+                                (normalize || peak[0] >= (0x7fff - samp) / (double) 0x7fff) ? 1 / peak[0] * (0x7fff - samp) : 1 / peak[0] * 0x7fff;
+                        case 3 ->
+                                (normalize || peak[0] >= (0x7fffff - samp) / (double) 0x7fffff) ? 1 / peak[0] * (0x7fffff - samp) : 1 / peak[0] * 0x7fffff;
+                        default -> gain;
+                    };
                 } else {
-                    switch (dbps) {
-                    case 1:
-                        gain = 1 / peak[0] * 0x7f;
-                        break;
-                    case 2:
-                        gain = 1 / peak[0] * 0x7fff;
-                        break;
-                    case 3:
-                        gain = 1 / peak[0] * 0x7fffff;
-                        break;
-                    }
+                    gain = switch (dbps) {
+                        case 1 -> 1 / peak[0] * 0x7f;
+                        case 2 -> 1 / peak[0] * 0x7fff;
+                        case 3 -> 1 / peak[0] * 0x7fffff;
+                        default -> gain;
+                    };
                 }
                 shaper.randPtr = 0;
 
                 setStartTime();
 
                 fptlen = (int) (ft.length() / 8);
-//System.err.println("tmp: " + fpt.getFilePointer());
+//logger.log(Level.DEBUG, "tmp: " + fpt.getFilePointer());
 
                 try (FileInputStream fisf = new FileInputStream(ft)) {
                     FileChannel fpti = fisf.getChannel();
@@ -2200,7 +2188,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                         bb.flip();
                         f = bb.getDouble();
 //if (sumread < 100) {
-// System.err.printf("2: %06d: %f\n", sumread, f);
+// logger.log(Level.DEBUG, String.format("2: %06d: %f", sumread, f));
 //}
                         f *= gain;
                         sumread++;
@@ -2257,7 +2245,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                     }
                     fpti.close();
                 }
-                //System.err.println("ft: " + ft);
+                //logger.log(Level.DEBUG, "ft: " + ft);
                 if (!ft.delete()) {
                     System.err.printf("Failed to remove %s\n", ft);
                 }
@@ -2358,7 +2346,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
             break;
         }
 
-logger.fine(String.format("nch: %d, sfrq: %d, bps: %d, sfrq: %d, bps: %d\n", nch, sfrq, bps, dfrq, dbps));
+logger.log(Level.DEBUG, String.format("nch: %d, sfrq: %d, bps: %d, sfrq: %d, bps: %d", nch, sfrq, bps, dfrq, dbps));
 
         if (bps != 1 && bps != 2 && bps != 3 && bps != 4) {
             throw new IllegalArgumentException("Only 8bit, 16bit, 24bit and 32bit PCM are supported.");
@@ -2432,7 +2420,7 @@ logger.fine(String.format("nch: %d, sfrq: %d, bps: %d, sfrq: %d, bps: %d\n", nch
                     System.err.print("Pass 1\n");
                 }
 
-logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d, ???: %d, twopass: %b, dither: %d\n", nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither));
+logger.log(Level.DEBUG, String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d, ???: %d, twopass: %b, dither: %d", nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither));
                 Resampler resampler;
                 if (sfrq < dfrq) {
                     resampler = new Upsampler();
@@ -2470,29 +2458,22 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
                 }
 
                 if (dither != 0) {
-                    switch (dbps) {
-                    case 1:
-                        gain = (normalize || peak[0] >= (0x7f - samp) / (double) 0x7f) ? 1 / peak[0] * (0x7f - samp) : 1 / peak[0] * 0x7f;
-                        break;
-                    case 2:
-                        gain = (normalize || peak[0] >= (0x7fff - samp) / (double) 0x7fff) ? 1 / peak[0] * (0x7fff - samp) : 1 / peak[0] * 0x7fff;
-                        break;
-                    case 3:
-                        gain = (normalize || peak[0] >= (0x7fffff - samp) / (double) 0x7fffff) ? 1 / peak[0] * (0x7fffff - samp) : 1 / peak[0] * 0x7fffff;
-                        break;
-                    }
+                    gain = switch (dbps) {
+                        case 1 ->
+                                (normalize || peak[0] >= (0x7f - samp) / (double) 0x7f) ? 1 / peak[0] * (0x7f - samp) : 1 / peak[0] * 0x7f;
+                        case 2 ->
+                                (normalize || peak[0] >= (0x7fff - samp) / (double) 0x7fff) ? 1 / peak[0] * (0x7fff - samp) : 1 / peak[0] * 0x7fff;
+                        case 3 ->
+                                (normalize || peak[0] >= (0x7fffff - samp) / (double) 0x7fffff) ? 1 / peak[0] * (0x7fffff - samp) : 1 / peak[0] * 0x7fffff;
+                        default -> gain;
+                    };
                 } else {
-                    switch (dbps) {
-                    case 1:
-                        gain = 1 / peak[0] * 0x7f;
-                        break;
-                    case 2:
-                        gain = 1 / peak[0] * 0x7fff;
-                        break;
-                    case 3:
-                        gain = 1 / peak[0] * 0x7fffff;
-                        break;
-                    }
+                    gain = switch (dbps) {
+                        case 1 -> 1 / peak[0] * 0x7f;
+                        case 2 -> 1 / peak[0] * 0x7fff;
+                        case 3 -> 1 / peak[0] * 0x7fffff;
+                        default -> gain;
+                    };
                 }
                 shaper.randPtr = 0;
 
@@ -2510,7 +2491,7 @@ logger.fine(String.format("nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: 
                     bb.flip();
                     f = bb.getDouble();
 //if (sumread < 100) {
-// System.err.printf("2: %06d: %f\n", sumread, f);
+// logger.log(Level.DEBUG, String.format("2: %06d: %f", sumread, f));
 //}
                     f *= gain;
                     sumread++;

@@ -10,8 +10,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.logging.Level;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -24,7 +24,8 @@ import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 import vavi.sound.smaf.sequencer.SmafMessageStore;
 import vavi.sound.smaf.sequencer.WaveSequencer;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -47,14 +48,16 @@ import vavi.util.Debug;
 public class WaveMessage extends SmafMessage
     implements WaveSequencer, MidiConvertible, Serializable {
 
+    private static final Logger logger = getLogger(WaveMessage.class.getName());
+
     /** smaf channel 0 ~ 3 */
-    private int channel;
+    private final int channel;
 
     /** */
-    private int number;
+    private final int number;
 
     /** */
-    private int gateTime;
+    private final int gateTime;
 
     /**
      * for reading
@@ -210,7 +213,7 @@ public class WaveMessage extends SmafMessage
     /* */
     @Override
     public void sequence() throws InvalidSmafDataException {
-Debug.println(Level.FINE, "WAVE PLAY: " + number);
+logger.log(Level.DEBUG, "WAVE PLAY: " + number);
         AudioEngine engine = Factory.getAudioEngine();
         engine.start(number);
     }

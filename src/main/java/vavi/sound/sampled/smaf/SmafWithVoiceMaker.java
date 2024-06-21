@@ -8,12 +8,12 @@ package vavi.sound.sampled.smaf;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
-import java.util.logging.Level;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -22,7 +22,6 @@ import org.klab.commons.cli.Argument;
 import org.klab.commons.cli.HelpOption;
 import org.klab.commons.cli.Option;
 import org.klab.commons.cli.Options;
-
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.sampled.FilterChain;
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -32,16 +31,17 @@ import vavi.sound.smaf.chunk.ContentsInfoChunk;
 import vavi.sound.smaf.chunk.FileChunk;
 import vavi.sound.smaf.chunk.PcmAudioTrackChunk;
 import vavi.sound.smaf.chunk.SeekAndPhraseInfoChunk;
-import vavi.sound.smaf.chunk.WaveDataChunk;
-import vavi.sound.smaf.chunk.WaveType;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 import vavi.sound.smaf.chunk.TrackChunk.SequenceType;
+import vavi.sound.smaf.chunk.WaveDataChunk;
+import vavi.sound.smaf.chunk.WaveType;
 import vavi.sound.smaf.message.EndOfSequenceMessage;
 import vavi.sound.smaf.message.NopMessage;
 import vavi.sound.smaf.message.VolumeMessage;
 import vavi.sound.smaf.message.WaveMessage;
 import vavi.sound.smaf.sequencer.WaveSequencer;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -51,6 +51,8 @@ import vavi.util.Debug;
  * @version 0.00 080415 nsano initial version <br>
  */
 class SmafWithVoiceMaker {
+
+    private static final Logger logger = getLogger(SmafWithVoiceMaker.class.getName());
 
     /** source PCM */
     private AudioInputStream sourceAis;
@@ -115,7 +117,7 @@ class SmafWithVoiceMaker {
     public int create() throws IOException, UnsupportedAudioFileException, InvalidSmafDataException {
 long t = System.currentTimeMillis();
         // divide
-Debug.println(Level.FINE, "1: " + (System.currentTimeMillis() - t));
+logger.log(Level.DEBUG, "1: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         byte[] buffer = new byte[sourceAis.available()];
         int l = 0;
@@ -124,7 +126,7 @@ t = System.currentTimeMillis();
             l += r;
         }
         int result = createSMAF(buffer, new File(filename));
-Debug.println(Level.FINE, "2: " + (System.currentTimeMillis() - t));
+logger.log(Level.DEBUG, "2: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         return result;
     }
@@ -160,11 +162,11 @@ t = System.currentTimeMillis();
 
         int timeBase = 4; // [ms]
 
-Debug.println(Level.FINE, "time: " + time + ", " + data.length);
+logger.log(Level.DEBUG, "time: " + time + ", " + data.length);
         int numberOfChunks = (int) ((time * 1000) / (NopMessage.maxSteps * timeBase));
-Debug.println(Level.FINE, "numberOfChunks: " + numberOfChunks);
+logger.log(Level.DEBUG, "numberOfChunks: " + numberOfChunks);
         int moduloOfChunks = (int) ((time * 1000) % (NopMessage.maxSteps * timeBase) / timeBase);
-Debug.println(Level.FINE, "moduloOfChunks: " + moduloOfChunks);
+logger.log(Level.DEBUG, "moduloOfChunks: " + moduloOfChunks);
 
         int messageBytes = 0;
         int streamNumber = 1;
@@ -173,41 +175,41 @@ Debug.println(Level.FINE, "moduloOfChunks: " + moduloOfChunks);
         SmafMessage message = new VolumeMessage(0, 0, 127);
         audioSequenceDataChunk.addSmafMessage(message);
         messageBytes += message.getLength();
-//Debug.println("messageBytes: volume: " + messageBytes);
+//logger.log(Level.DEBUG, "messageBytes: volume: " + messageBytes);
         for (int i = 0; i < numberOfChunks; i++) {
             message = new WaveMessage(0, 0, streamNumber++, NopMessage.maxSteps);
             audioSequenceDataChunk.addSmafMessage(message);
             messageBytes += message.getLength();
-//Debug.println("messageBytes: wave: " + messageBytes);
+//logger.log(Level.DEBUG, "messageBytes: wave: " + messageBytes);
 
             message = new NopMessage(NopMessage.maxSteps);
             audioSequenceDataChunk.addSmafMessage(message);
             messageBytes += message.getLength();
-//Debug.println("messageBytes: nop: " + messageBytes);
+//logger.log(Level.DEBUG, "messageBytes: nop: " + messageBytes);
         }
         if (moduloOfChunks != 0) {
             message = new WaveMessage(0, 0, streamNumber++, moduloOfChunks);
             audioSequenceDataChunk.addSmafMessage(message);
             messageBytes += message.getLength();
-//Debug.println("messageBytes: wave: " + messageBytes);
+//logger.log(Level.DEBUG, "messageBytes: wave: " + messageBytes);
 
             message = new NopMessage(moduloOfChunks);
             audioSequenceDataChunk.addSmafMessage(message);
             messageBytes += message.getLength();
-//Debug.println("messageBytes: nop: " + messageBytes);
+//logger.log(Level.DEBUG, "messageBytes: nop: " + messageBytes);
         }
         audioSequenceDataChunk.addSmafMessage(new EndOfSequenceMessage(0));
 
         SeekAndPhraseInfoChunk seekAndPhraseInfoChunk = new SeekAndPhraseInfoChunk();
         seekAndPhraseInfoChunk.setStartPoint(0);
         seekAndPhraseInfoChunk.setStopPoint(messageBytes);
-Debug.println(Level.FINE, "sp: " + messageBytes);
+logger.log(Level.DEBUG, "sp: " + messageBytes);
 
         AudioEngine audioEngine = WaveSequencer.Factory.getAudioEngine(ADPCM);
         int chunkSize = numberOfChunks == 0 ? 0 : data.length / numberOfChunks;
-Debug.println(Level.FINE, "chunkSize: " + chunkSize);
+logger.log(Level.DEBUG, "chunkSize: " + chunkSize);
         int moduloChunkSize = numberOfChunks == 0 ? data.length : data.length % chunkSize;
-Debug.println(Level.FINE, "moduloChunkSize: " + moduloChunkSize);
+logger.log(Level.DEBUG, "moduloChunkSize: " + moduloChunkSize);
         streamNumber = 1;
 
         PcmAudioTrackChunk pcmAudioTrackChunk = new PcmAudioTrackChunk();
@@ -246,18 +248,18 @@ Debug.println(Level.FINE, "moduloChunkSize: " + moduloChunkSize);
         }
         fileChunk.writeTo(Files.newOutputStream(file.toPath()));
         int r = fileChunk.getSize();
-Debug.println(Level.FINE, "write: " + r);
+logger.log(Level.DEBUG, "write: " + r);
         return r;
     }
 
     /** vendor */
-    protected static String vn;
+    protected static final String vn;
 
     /** copyright */
-    protected static String cr;
+    protected static final String cr;
 
     /** */
-    protected static String defaultModel;
+    protected static final String defaultModel;
 
     /* */
     static {
@@ -281,18 +283,24 @@ Debug.println(Level.FINE, "write: " + r);
         @Argument(index = 0)
         File file;
         @Option(argName = "filename", option = "f", args = 1, required = false, description = "output mmf filename")
+        final
         String outFilename = "out.mmf";
         @Option(argName = "model", option = "m", required = false, args = 1, description = "terminal model")
         String model = defaultModel;
         @Option(argName = "rate", option = "r", required = false, args = 1, description = "adpcm sampling rate [Hz]")
+        final
         int samplingRate = 16000;
         @Option(argName = "bits", option = "b", required = false, args = 1, description = "adpcm sampling bits")
+        final
         int bits = 4;
         @Option(argName = "channels", option = "c", required = false, args = 1, description = "adpcm channels")
+        final
         int channels = 1;
         @Option(argName = "masterVolume", option = "v", required = false, args = 1, description = "master volume in [%]")
+        final
         int masterVolume = 100;
         @Option(argName = "adpcmVolume", option = "a", required = false, args = 1, description = "adpcm volume in [%]")
+        final
         int adpcmVolume = 100;
     }
 

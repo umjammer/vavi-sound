@@ -8,8 +8,8 @@ package vavi.sound.sampled.smaf;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -18,11 +18,11 @@ import org.klab.commons.cli.Argument;
 import org.klab.commons.cli.HelpOption;
 import org.klab.commons.cli.Option;
 import org.klab.commons.cli.Options;
-
 import vavi.sound.sampled.FilterChain;
 import vavi.sound.sampled.WaveDivider;
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -33,13 +33,15 @@ import vavi.util.Debug;
  */
 class DividedSmafWithVoiceMaker extends SmafWithVoiceMaker {
 
+    private static final Logger logger = getLogger(DividedSmafWithVoiceMaker.class.getName());
+
     /** source PCM */
-    private AudioInputStream sourceAis;
+    private final AudioInputStream sourceAis;
 
     /** output base directory */
-    private String directory;
+    private final String directory;
     /** output file template (use {@link String#format(String, Object...)}) */
-    private String base;
+    private final String base;
 
     /**
      *
@@ -70,10 +72,10 @@ class DividedSmafWithVoiceMaker extends SmafWithVoiceMaker {
         public void exec(WaveDivider.Chunk chunk) throws IOException {
             try {
                 File file = new File(directory, String.format(base, chunk.sequence + 1));
-Debug.println(Level.FINE, "file: " + file + ", " + directory + ", " + base + ", " + (chunk.sequence + 1));
+logger.log(Level.DEBUG, "file: " + file + ", " + directory + ", " + base + ", " + (chunk.sequence + 1));
                 r += createSMAF(chunk.buffer, file);
             } catch (InvalidSmafDataException e) {
-                throw (IOException) new IOException(e);
+                throw new IOException(e);
             }
         }
     }
@@ -91,10 +93,10 @@ long t = System.currentTimeMillis();
         // divide
         Event event = new Event();
         WaveDivider waveDivider = WaveDivider.Factory.getWaveDivider(sourceAis);
-Debug.println(Level.FINE, "1: " + (System.currentTimeMillis() - t));
+logger.log(Level.DEBUG, "1: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         waveDivider.divide(time, event);
-Debug.println(Level.FINE, "2: " + (System.currentTimeMillis() - t));
+logger.log(Level.DEBUG, "2: " + (System.currentTimeMillis() - t));
 t = System.currentTimeMillis();
         return event.r;
     }

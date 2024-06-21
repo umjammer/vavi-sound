@@ -26,13 +26,13 @@ import vavi.io.BitOutputStream;
 public abstract class AdpcmOutputStream extends FilterOutputStream {
 
     /** PCM format for #write(int) */
-    protected AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
+    protected final AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
 
     /** PCM byte order for #write(int) */
-    protected ByteOrder byteOrder;
+    protected final ByteOrder byteOrder;
 
     /** encoder */
-    protected Codec encoder;
+    protected final Codec encoder;
 
     /** */
     protected abstract Codec getCodec();
@@ -48,7 +48,7 @@ public abstract class AdpcmOutputStream extends FilterOutputStream {
         super(new BitOutputStream(out, bits, bitOrder));
         this.byteOrder = byteOrder;
         this.encoder = getCodec();
-//Debug.println(this.out);
+//logger.log(Level.DEBUG, this.out);
     }
 
     /** remaining or not (having PCM L or H at least one side) */
@@ -74,7 +74,7 @@ public abstract class AdpcmOutputStream extends FilterOutputStream {
                     current -= 0x10000;
                 }
             }
-//System.err.println("current: " + StringUtil.toHex4(current));
+//logger.log(Level.DEBUG, "current: " + StringUtil.toHex4(current));
             out.write(encoder.encode(current)); // BitOutputStream write 4bit
 
             flushed = true;

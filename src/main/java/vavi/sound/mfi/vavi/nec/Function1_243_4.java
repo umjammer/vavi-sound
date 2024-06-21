@@ -6,12 +6,11 @@
 
 package vavi.sound.mfi.vavi.nec;
 
-import java.util.logging.Level;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
 
 
 /**
@@ -52,7 +51,7 @@ public class Function1_243_4 implements MachineDependentFunction {
 
         this.maxStreamNumber = data[9] & 0x03;
 
-Debug.println(Level.FINE, "maxStreamNumber: " + maxStreamNumber);
+logger.log(Level.DEBUG, "maxStreamNumber: " + maxStreamNumber);
     }
 
     /** 0 ~ 2, default 0 */

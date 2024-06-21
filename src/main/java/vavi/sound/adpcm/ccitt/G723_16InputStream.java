@@ -35,13 +35,13 @@ public class G723_16InputStream extends AdpcmInputStream {
     public G723_16InputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 2, ByteOrder.LITTLE_ENDIAN);
         ((G723_16) decoder).setEncoding(encoding);
-//Debug.println(this.in);
+//logger.log(Level.DEBUG, this.in);
     }
 
     /** ADPCM (4bit) length */
     @Override
     public int available() throws IOException {
-//Debug.println("0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
+//logger.log(Level.DEBUG, "0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
         return (in.available() * 4) + (rest ? 1 : 0); // TODO check * 4 ???
     }
 }

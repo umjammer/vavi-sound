@@ -19,7 +19,7 @@ public class MfiFileFormat {
     protected int byteLength;
 
     /** */
-    protected int type;
+    protected final int type;
 
     /** */
     public MfiFileFormat(int type, int bytes) {

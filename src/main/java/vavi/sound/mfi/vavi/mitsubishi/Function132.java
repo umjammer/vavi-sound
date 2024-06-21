@@ -6,12 +6,14 @@
 
 package vavi.sound.mfi.vavi.mitsubishi;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -23,6 +25,8 @@ import vavi.util.StringUtil;
  *          0.01 030929 nsano be sub class of Function131
  */
 public class Function132 extends Function131 {
+
+    private static final Logger logger = getLogger(Function132.class.getName());
 
     /** header length of this data */
     @SuppressWarnings("hiding")
@@ -63,12 +67,12 @@ public class Function132 extends Function131 {
                           data[13];
 
         int adpcmLength = data.length - HEADER_LENGTH;
-Debug.printf(Level.FINE, "ADPCM voice: " + channel + "ch, No.%d, mode=%d, continued=%d, playSize=%d, %d\n", packetId, mode, continued, length, adpcmLength);
-Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(data, 32));
+logger.log(Level.DEBUG, String.format("ADPCM voice: " + channel + "ch, No.%d, mode=%d, continued=%d, playSize=%d, %d", packetId, mode, continued, length, adpcmLength));
+logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(data, 32));
 
         this.sampleRate = getSamplingRateInternal(format1);
         this.bits = getSamplingBitsInternal(format2);
-Debug.printf(Level.FINE, "sampling: %02x: rate=%d, bits=%d\n", data[8] & 0x3f, sampleRate, bits);
+logger.log(Level.DEBUG, String.format("sampling: %02x: rate=%d, bits=%d", data[8] & 0x3f, sampleRate, bits));
 
         this.adpcm = new byte[adpcmLength];
         System.arraycopy(data, HEADER_LENGTH, adpcm, 0, adpcmLength);

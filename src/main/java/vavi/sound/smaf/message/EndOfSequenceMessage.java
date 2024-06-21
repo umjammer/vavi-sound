@@ -9,14 +9,15 @@ package vavi.sound.smaf.message;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.chunk.TrackChunk.FormatType;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -33,6 +34,8 @@ import vavi.util.Debug;
  */
 public class EndOfSequenceMessage extends vavi.sound.smaf.ShortMessage
     implements MidiConvertible, SmafConvertible {
+
+    private static final Logger logger = getLogger(EndOfSequenceMessage.class.getName());
 
     /** for SmafConvertible */
     public EndOfSequenceMessage() {
@@ -87,7 +90,7 @@ public class EndOfSequenceMessage extends vavi.sound.smaf.ShortMessage
         javax.sound.midi.Track midiTrack = context.getMidiTrack();
         MidiEvent midiEvent = midiTrack.get(midiTrack.size() - 1); // should be EoT
         midiEvent.setTick(context.getCurrentTick());
-Debug.println(Level.FINE, "EOT: " + midiEvent.getMessage().getClass().getName());
+logger.log(Level.DEBUG, "EOT: " + midiEvent.getMessage().getClass().getName());
 
         return null;
     }

@@ -11,13 +11,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.Files;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.Sequence;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -28,16 +29,18 @@ import vavi.util.Debug;
  */
 public final class SmafSystem {
 
+    private static final Logger logger = getLogger(SmafSystem.class.getName());
+
     /** TODO SmafDeviceProvider */
-    private static Sequencer sequencer;
+    private static final Sequencer sequencer;
     /** TODO SmafDeviceProvider */
-    private static SmafMidiConverter converter;
+    private static final SmafMidiConverter converter;
     /** TODO SmafDeviceProvider */
-    private static MetaEventListener waveSequencer;
+    private static final MetaEventListener waveSequencer;
     /** */
-    private static SmafFileReader reader;
+    private static final SmafFileReader reader;
     /** */
-    private static SmafFileWriter writer;
+    private static final SmafFileWriter writer;
 
     /* */
     static {
@@ -107,7 +110,7 @@ public final class SmafSystem {
         try {
             return converter.convert(sequence);
         } catch (IOException | InvalidMidiDataException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new InvalidSmafDataException(e);
         }
     }
@@ -123,7 +126,7 @@ Debug.printStackTrace(e);
         try {
             return converter.convert(in, fileType);
         } catch (IOException | InvalidSmafDataException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         }
     }

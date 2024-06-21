@@ -6,15 +6,17 @@
 
 package vavi.sound.mfi.vavi;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+import java.util.Arrays;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.Track;
 import vavi.sound.mfi.vavi.track.TempoMessage;
-import vavi.util.Debug;
-//import vavi.util.StringUtil;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -26,6 +28,8 @@ import vavi.util.Debug;
  *          0.02 031214 nsano add resolution related <br>
  */
 public class MidiContext {
+
+    private static final Logger logger = getLogger(MidiContext.class.getName());
 
     /** */
     public static final int MAX_MIDI_CHANNELS = 16;
@@ -65,7 +69,7 @@ public class MidiContext {
     }
 
     /** current Δ time */
-    private long[] currents = new long[4];
+    private final long[] currents = new long[4];
 
     /** mfiTrackNumber must be set */
     public long getCurrent() {
@@ -83,12 +87,10 @@ public class MidiContext {
     }
 
     /** whether channel is a rhythm, index is pseudo MIDI channel */
-    private ChannelConfiguration[] drums = new ChannelConfiguration[MAX_MIDI_CHANNELS];
+    private final ChannelConfiguration[] drums = new ChannelConfiguration[MAX_MIDI_CHANNELS];
 
     /* initializing */ {
-        for (int i = 0; i < MAX_MIDI_CHANNELS; i++) {
-            drums[i] = ChannelConfiguration.UNUSED;
-        }
+        Arrays.fill(drums, ChannelConfiguration.UNUSED);
     }
 
     /** */
@@ -102,7 +104,7 @@ public class MidiContext {
      */
     public void setDrum(int channel, ChannelConfiguration value) {
         if (drumSwapChannel != CHANNEL_UNUSED && channel == drumSwapChannel) {
-Debug.println(Level.FINE, "already swapped: " + channel + ", " + value);
+logger.log(Level.DEBUG, "already swapped: " + channel + ", " + value);
         } else {
             drums[channel] = value;
         }
@@ -112,18 +114,18 @@ Debug.println(Level.FINE, "already swapped: " + channel + ", " + value);
             for (int k = MAX_MIDI_CHANNELS - 1; k >= 0; k--) {
                 if (k != CHANNEL_DRUM && drums[k] == ChannelConfiguration.UNUSED) {
                     drumSwapChannel = k; // TODO support multiple？
-Debug.println(Level.FINE, "channel 9 -> " + k);
+logger.log(Level.DEBUG, "channel 9 -> " + k);
                     break;
                 }
             }
 if (drumSwapChannel == CHANNEL_UNUSED) {
-Debug.println(Level.FINE, "cannot swap: " + channel + ", " + value);
+logger.log(Level.DEBUG, "cannot swap: " + channel + ", " + value);
 }
         }
     }
 
     /** volumes assigned to channel, index is pseudo MIDI channel */
-    private int[] volumes = new int[MAX_MIDI_CHANNELS];
+    private final int[] volumes = new int[MAX_MIDI_CHANNELS];
 
     /**
      * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
@@ -147,7 +149,7 @@ Debug.println(Level.FINE, "cannot swap: " + channel + ", " + value);
     }
 
     /** program numbers assigned to channel, index is real MIDI channel */
-    private int[] programs = new int[MAX_MIDI_CHANNELS];
+    private final int[] programs = new int[MAX_MIDI_CHANNELS];
 
     /**
      * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
@@ -155,7 +157,7 @@ Debug.println(Level.FINE, "cannot swap: " + channel + ", " + value);
      */
     public int setProgram(int channel, int program) {
         if (channel != drumSwapChannel && drums[channel] == ChannelConfiguration.PERCUSSION) {
-Debug.println(Level.FINE, "drum always zero:[" + channel + "]: " + program);
+logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + program);
             program = 0;
         }
 
@@ -172,7 +174,7 @@ Debug.println(Level.FINE, "drum always zero:[" + channel + "]: " + program);
      */
     public int setBank(int channel, int bank) {
         if (channel != drumSwapChannel && drums[channel] == ChannelConfiguration.PERCUSSION) {
-Debug.println(Level.FINE, "drum always zero:[" + channel + "]: " + bank);
+logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + bank);
             bank = 0;
         }
 
@@ -189,7 +191,7 @@ Debug.println(Level.FINE, "drum always zero:[" + channel + "]: " + bank);
      * @param channel real MIDI channel
      */
     public int getProgram(int channel) {
-//Debug.println("program[" + channel + "]: " + programs[channel] + " (0x" + StringUtil.toHex2(programs[channel]) + ")");
+//logger.log(Level.DEBUG, "program[" + channel + "]: " + programs[channel] + " (0x" + StringUtil.toHex2(programs[channel]) + ")");
         return programs[channel];
     }
 
@@ -229,11 +231,11 @@ Debug.println(Level.FINE, "drum always zero:[" + channel + "]: " + bank);
     //----
 
     /** -32 ~ 31, index is pseudo MIDI channel */
-    private int[] pitchBends = new int[MAX_MIDI_CHANNELS];
+    private final int[] pitchBends = new int[MAX_MIDI_CHANNELS];
     /** -32 ~ 31, index is pseudo MIDI channel */
-    private int[] finePitchBends = new int[MAX_MIDI_CHANNELS];
+    private final int[] finePitchBends = new int[MAX_MIDI_CHANNELS];
     /** 0 ~ 24, index is pseudo MIDI channel */
-    private int[] pitchBendRanges = new int[MAX_MIDI_CHANNELS];
+    private final int[] pitchBendRanges = new int[MAX_MIDI_CHANNELS];
 
     /* initializing */ {
         for (int i = 0; i < MAX_MIDI_CHANNELS; i++) {
@@ -267,7 +269,7 @@ Debug.println(Level.FINE, "drum always zero:[" + channel + "]: " + bank);
         int pitch =
 //          (int) ((pb * rgb * 100f / 32f) + ((fpb * rgb * 100f) / (32f * 32f)));
             (pb * rg * 100 / 32) + ((fpb * rg * 100) / (32 * 32)) / 20;
-Debug.println(Level.FINE, "pitch[" + channel + "]: " + pitch);
+logger.log(Level.DEBUG, "pitch[" + channel + "]: " + pitch);
         return pitch;
     }
 
@@ -295,7 +297,7 @@ Debug.println(Level.FINE, "pitch[" + channel + "]: " + pitch);
             }
         }
 
-Debug.println(Level.INFO, "no tempo message in track 0");
+logger.log(Level.INFO, "no tempo message in track 0");
         return 48; // MFi default time base
     }
 }

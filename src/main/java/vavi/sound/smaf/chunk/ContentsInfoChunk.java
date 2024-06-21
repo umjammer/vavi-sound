@@ -10,13 +10,15 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -37,6 +39,8 @@ import vavi.util.StringUtil;
  */
 public class ContentsInfoChunk extends Chunk {
 
+    private static final Logger logger = getLogger(ContentsInfoChunk.class.getName());
+
     /** */
     public ContentsInfoChunk(byte[] id, int size) {
         super(id, size);
@@ -53,26 +57,26 @@ public class ContentsInfoChunk extends Chunk {
         throws InvalidSmafDataException, IOException {
 
         this.contentsClass = dis.readUnsignedByte();
-Debug.println(Level.FINE, "contentsClass: " + (contentsClass == 0 ? "YAMAHA" : "Vender ID(" + contentsClass + ")"));
+logger.log(Level.DEBUG, "contentsClass: " + (contentsClass == 0 ? "YAMAHA" : "Vender ID(" + contentsClass + ")"));
         this.contentsType = dis.readUnsignedByte();
-Debug.printf(Level.FINE, "contentsType: 0x%02x\n", contentsType);
+logger.log(Level.DEBUG, String.format("contentsType: 0x%02x", contentsType));
         this.contentsCodeType = dis.readUnsignedByte();
-Debug.printf(Level.FINE, "contentsCodeType: 0x%02x\n", contentsCodeType);
+logger.log(Level.DEBUG, String.format("contentsCodeType: 0x%02x", contentsCodeType));
         this.copyStatus = dis.readUnsignedByte();
-Debug.println(Level.FINE, "copyStatus: " + StringUtil.toBits(copyStatus, 8));
+logger.log(Level.DEBUG, "copyStatus: " + StringUtil.toBits(copyStatus, 8));
         this.copyCounts = dis.readUnsignedByte();
-Debug.println(Level.FINE, "copyCounts: " + copyCounts);
+logger.log(Level.DEBUG, "copyCounts: " + copyCounts);
         byte[] option = new byte[size - 5];
         dis.readFully(option);
-Debug.println(Level.FINE, "option: " + option.length + " bytes (subData)");
+logger.log(Level.DEBUG, "option: " + option.length + " bytes (subData)");
         int i = 0;
         while (i < option.length) {
-Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
+logger.log(Level.TRACE, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
             SubData subDatum = new SubData(option, i, contentsCodeType);
             subData.put(subDatum.getTag(), subDatum);
-Debug.println(Level.FINE, "ContentsInfo: subDatum: " + subDatum);
+logger.log(Level.DEBUG, "ContentsInfo: subDatum: " + subDatum);
             i += 2 + 1 + subDatum.getData().length + 1; // tag ':' data ','
-Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
+logger.log(Level.TRACE, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
         }
     }
 
@@ -193,7 +197,7 @@ Debug.println(Level.FINER, i + " / " + option.length + "\n" + StringUtil.getDump
     }
 
     /** */
-    private Map<String, SubData> subData = new TreeMap<>();
+    private final Map<String, SubData> subData = new TreeMap<>();
 
     /**
      * @return null when specified sub chunk is not found

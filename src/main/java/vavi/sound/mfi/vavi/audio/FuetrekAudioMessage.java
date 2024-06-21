@@ -6,7 +6,8 @@
 
 package vavi.sound.mfi.vavi.audio;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
@@ -14,7 +15,8 @@ import vavi.sound.mfi.vavi.track.CuePointMessage;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mfi.vavi.track.MasterVolumeMessage;
 import vavi.sound.mfi.vavi.track.TempoMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -24,6 +26,8 @@ import vavi.util.Debug;
  * @version 0.00 070427 nsano initial version <br>
  */
 public class FuetrekAudioMessage extends MachineDependentMessage {
+
+    private static final Logger logger = getLogger(FuetrekAudioMessage.class.getName());
 
     /** */
     protected static final int maxMasterVolume = 0x7f;
@@ -63,7 +67,7 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
         float aDelta;
         TempoMessage message;
         while (true) {
-Debug.printf(Level.FINE, "tempo: %d, timeBase: 0x02x\n", baseTempo, baseTimeBase);
+logger.log(Level.DEBUG, String.format("tempo: %d, timeBase: 0x%02x", baseTempo, baseTimeBase));
             message = new TempoMessage(0x00, 0xff, baseTimeBase, baseTempo);
             aDelta = (60f / message.getTempo()) / message.getTimeBase();
             if (Math.round(time / aDelta) > 255) {
@@ -76,7 +80,7 @@ Debug.printf(Level.FINE, "tempo: %d, timeBase: 0x02x\n", baseTempo, baseTimeBase
                         if ((baseTempo / 2) > 0) {
                             baseTempo /= 2;
                         } else {
-Debug.println(Level.INFO, "over limit");
+logger.log(Level.INFO, "over limit");
                             break;
                         }
                     }
@@ -92,7 +96,7 @@ Debug.println(Level.INFO, "over limit");
     public static int getDelta(float time, int sampleRate) {
         TempoMessage message = getTempoMessage(time, sampleRate);
         float aDelta = (60f / message.getTempo()) / message.getTimeBase();
-Debug.println(Level.FINE, "a delta: " + aDelta + ", tempo: " + message.getTempo() + ", " + message.getTimeBase());
+logger.log(Level.DEBUG, "a delta: " + aDelta + ", tempo: " + message.getTempo() + ", " + message.getTimeBase());
         return Math.round(time / aDelta);
     }
 
@@ -109,7 +113,7 @@ Debug.println(Level.FINE, "a delta: " + aDelta + ", tempo: " + message.getTempo(
     /** older version */
     public static int getDelta(float time) {
         float aDelta = (60f / tempoMessageOld.getTempo()) / tempoMessageOld.getTimeBase();
-Debug.println(Level.FINE, "a delta: " + aDelta + ", tempo: " + tempoMessageOld.getTempo() + ", " + tempoMessageOld.getTimeBase());
+logger.log(Level.DEBUG, "a delta: " + aDelta + ", tempo: " + tempoMessageOld.getTempo() + ", " + tempoMessageOld.getTimeBase());
         return Math.round(time / aDelta);
     }
 }

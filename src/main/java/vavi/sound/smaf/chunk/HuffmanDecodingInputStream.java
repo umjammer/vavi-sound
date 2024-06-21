@@ -9,9 +9,10 @@ package vavi.sound.smaf.chunk;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -25,6 +26,8 @@ import vavi.util.Debug;
  */
 public class HuffmanDecodingInputStream extends FilterInputStream {
 
+    private static final Logger logger = getLogger(HuffmanDecodingInputStream.class.getName());
+
     /** */
     private int currentByte;
 
@@ -32,7 +35,7 @@ public class HuffmanDecodingInputStream extends FilterInputStream {
     private int bitOffset = 8;
 
     /** */
-    private int root;
+    private final int root;
 
     /** */
     public HuffmanDecodingInputStream(InputStream is) throws IOException {
@@ -42,7 +45,7 @@ public class HuffmanDecodingInputStream extends FilterInputStream {
         if ((root = readTree(true)) == -1) {
             throw new IllegalStateException("can not initialize reading tree");
         }
-Debug.println(Level.FINE, "root: " + root);
+logger.log(Level.DEBUG, "root: " + root);
     }
 
     /**
@@ -56,11 +59,11 @@ Debug.println(Level.FINE, "root: " + root);
             }
             bitOffset = 0;
             currentByte = in.read();
-Debug.println(Level.FINE, "currentByte: " + currentByte);
+logger.log(Level.DEBUG, "currentByte: " + currentByte);
         }
 
         int bit = (currentByte >> (7 - bitOffset)) & 0x01;
-Debug.println(Level.FINE, "bit: " + bit + " (" + bitOffset + ")");
+logger.log(Level.DEBUG, "bit: " + bit + " (" + bitOffset + ")");
         bitOffset++;
 
         return bit;
@@ -88,9 +91,9 @@ Debug.println(Level.FINE, "bit: " + bit + " (" + bitOffset + ")");
     private static final int N = 256;
 
     /** */
-    private int[] left = new int[2 * N - 1];
+    private final int[] left = new int[2 * N - 1];
     /** */
-    private int[] right = new int[2 * N - 1];
+    private final int[] right = new int[2 * N - 1];
 
     /** */
     private int available; // TODO thread safe?
@@ -106,7 +109,7 @@ Debug.println(Level.FINE, "bit: " + bit + " (" + bitOffset + ")");
         }
 
         int bit = readBit();
-Debug.println(Level.FINE, "bit: " + bit);
+logger.log(Level.DEBUG, "bit: " + bit);
         if (bit == -1) {
             return -1;
         }
@@ -135,7 +138,7 @@ Debug.println(Level.FINE, "bit: " + bit);
         if (r < 0) {
             return -1;
         } else {
-            return buf[0];
+            return buf[0] & 0xff;
         }
     }
 
@@ -144,7 +147,7 @@ Debug.println(Level.FINE, "bit: " + bit);
         int position = 0;
         while (position < length) {
             int node = root;
-Debug.println(Level.FINE, "node: " + node);
+logger.log(Level.DEBUG, "node: " + node);
             while (node >= N) {
                 int bit = readBit();
                 if (bit == -1) {

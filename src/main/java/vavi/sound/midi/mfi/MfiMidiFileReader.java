@@ -9,9 +9,9 @@ package vavi.sound.midi.mfi;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Arrays;
-import java.util.logging.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
 
@@ -19,7 +19,8 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiSystem;
 import vavi.sound.mfi.MfiUnavailableException;
 import vavi.sound.midi.BasicMidiFileReader;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -29,6 +30,8 @@ import vavi.util.Debug;
  * @version 0.00 030817 nsano initial version <br>
  */
 public class MfiMidiFileReader extends BasicMidiFileReader {
+
+    private static final Logger logger = getLogger(MfiMidiFileReader.class.getName());
 
     /** Gets a MIDI Sequence converted from MFi */
     @Override
@@ -57,14 +60,13 @@ public class MfiMidiFileReader extends BasicMidiFileReader {
             }
 
             vavi.sound.mfi.Sequence mfiSequence = MfiSystem.getSequence(is);
-//Debug.println(mfiSequence);
+//logger.log(Level.DEBUG, mfiSequence);
             return MfiSystem.toMidiSequence(mfiSequence);
         } catch (InvalidMfiDataException e) {
-Debug.println(Level.FINE, e);
-//Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         } catch (MfiUnavailableException e) {
-Debug.println(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new IOException(e);
         } finally {
             try {
@@ -72,7 +74,7 @@ Debug.println(Level.SEVERE, e);
                     is.reset();
                 }
             } catch (IOException e) {
-Debug.println(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     }

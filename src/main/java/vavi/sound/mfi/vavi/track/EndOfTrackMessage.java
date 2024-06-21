@@ -75,7 +75,7 @@ public class EndOfTrackMessage extends ShortMessage
 //            new MidiEvent(metaMessage, context.getCurrent())
 //        };
 
-//Debug.println("ignore: " + this);
+//logger.log(Level.DEBUG, "ignore: " + this);
         return null;
     }
 

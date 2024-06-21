@@ -9,12 +9,14 @@ package vavi.sound.smaf.chunk;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -27,10 +29,12 @@ import vavi.util.Debug;
  */
 public class OptionalDataChunk extends Chunk {
 
+    private static final Logger logger = getLogger(OptionalDataChunk.class.getName());
+
     /** */
     public OptionalDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println(Level.FINE, "OptionalData: " + size + " bytes");
+logger.log(Level.DEBUG, "OptionalData: " + size + " bytes");
     }
 
     /** */
@@ -63,7 +67,7 @@ Debug.println(Level.FINE, "OptionalData: " + size + " bytes");
     }
 
     /** DataChunk "Dch*", ... */
-    private List<Chunk> dataChunks = new ArrayList<>();
+    private final List<Chunk> dataChunks = new ArrayList<>();
 
     /**
      * @return Returns the subChunks.

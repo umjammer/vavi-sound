@@ -33,7 +33,7 @@ class Vox implements Codec {
     };
 
     /** */
-    private State state = new State();
+    private final State state = new State();
 
     @Override
     public int encode(int samp) {
@@ -58,7 +58,7 @@ class Vox implements Codec {
         }
 
         state.last = decode(code);
-//System.err.printf("%04X -> %02X\n", samp, code);
+//logger.log(Level.DEBUG, String.format("%04X -> %02X", samp, code));
         return code;
     }
 
@@ -103,7 +103,7 @@ class Vox implements Codec {
     }
 
     /** */
-    private int adjust(int code) {
+    private static int adjust(int code) {
         int c = code & 0x07;
         if (c < 4) {
             return -1;

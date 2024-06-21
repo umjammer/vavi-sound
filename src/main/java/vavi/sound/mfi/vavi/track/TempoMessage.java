@@ -6,10 +6,10 @@
 
 package vavi.sound.mfi.vavi.track;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -21,7 +21,8 @@ import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -37,6 +38,8 @@ import vavi.util.Debug;
  */
 public class TempoMessage extends ShortMessage
     implements MidiConvertible, MfiConvertible {
+
+    private static final Logger logger = getLogger(TempoMessage.class.getName());
 
     /** quarter note resolution @see #timeBaseTable */
     private int timeBase;
@@ -61,7 +64,7 @@ public class TempoMessage extends ShortMessage
         super(delta, 0xff, data1, data2);
 
         this.timeBase = timeBaseTable[data1 & 0x0f];
-        this.tempo    = data2 < 20 ? 20 : data2;
+        this.tempo    = Math.max(data2, 20);
     }
 
     /** for {@link MfiConvertible} */
@@ -84,7 +87,7 @@ public class TempoMessage extends ShortMessage
         for (int i = 0; i < timeBaseTable.length; i++) {
             if (timeBase == timeBaseTable[i]) {
 if (timeBase < 0) {
- Debug.println(Level.WARNING, "timeBase < 0: " + timeBase);
+ logger.log(Level.WARNING, "timeBase < 0: " + timeBase);
 }
                 this.data[2] = (byte) (0xc0 | i);
                 return;
@@ -121,8 +124,8 @@ if (timeBase < 0) {
         int timeBase = getTimeBase();
         // quarter note length in μsec TODO is round OK?, TODO 48??? (actually 60 * 10^6 / tempo)
         int l = (int) Math.round(60d * 1000000d / ((48d / timeBase) * tempo));
-//Debug.println(this);
-//Debug.println(l + " = " +
+//logger.log(Level.DEBUG, this);
+//logger.log(Level.DEBUG, l + " = " +
 //              StringUtil.toHex2( ((l / 0x10000) & 0xff)) + ", " +
 //              StringUtil.toHex2((((l % 0x10000) / 0x100) & 0xff)) + ", " +
 //              StringUtil.toHex2( ((l % 0x100)   & 0xff)));
@@ -145,23 +148,23 @@ if (timeBase < 0) {
         MetaMessage metaMessage = (MetaMessage) midiEvent.getMessage();
 //      int type = metaMessage.getType();
         byte[] data = metaMessage.getData();
-//Debug.println("data.length: " + data.length);
+//logger.log(Level.DEBUG, "data.length: " + data.length);
 
         int timeBase = getNearestTimeBase(context.getTimeBase());
         int l = ((data[0] & 0xff) << 16) |
                 ((data[1] & 0xff) <<  8) |
                  (data[2] & 0xff);
-//Debug.println("(CALC) timeBase: " + timeBase + ", tempo: " + tempo + ", l; " + l);
+//logger.log(Level.DEBUG, "(CALC) timeBase: " + timeBase + ", tempo: " + tempo + ", l; " + l);
 
         // TODO no more change if scale is changed once?
         if (context.isScaleChanged()) {
             timeBase = getNearestTimeBase((int) (context.getTimeBase() / context.getScale()));
             tempo = (int) Math.round(60d * 1000000d / ((48d / timeBase) * l));
-//Debug.println("(SET) tempo > " + MAX_SCALELESS + ": timeBase: " + timeBase + ", tempo: " + tempo);
+//logger.log(Level.DEBUG, "(SET) tempo > " + MAX_SCALELESS + ": timeBase: " + timeBase + ", tempo: " + tempo);
         } else {
             timeBase = getNearestTimeBase(context.getTimeBase());
             tempo = (int) Math.round(60d * 1000000d / ((48d / timeBase) * l));
-//Debug.println("(SET) timeBase: " + timeBase + ", tempo: " + tempo);
+//logger.log(Level.DEBUG, "(SET) timeBase: " + timeBase + ", tempo: " + tempo);
         }
 
         TempoMessage mfiMessage = new TempoMessage();
@@ -178,8 +181,8 @@ if (timeBase < 0) {
 
     /** for sorting */
     private static class Pair {
-        int index;
-        int value;
+        final int index;
+        final int value;
         Pair(int index, int value) {
             this.index = index;
             this.value = value;
@@ -204,9 +207,9 @@ if (timeBase < 0) {
             return v1 - v2;
         });
 //for (int i = 0; i < table.size(); i++) {
-// Debug.println("(" + i + ") timeBaseTable[" + table.get(i).index + "], " + table.get(i).value);
+// logger.log(Level.DEBUG, "(" + i + ") timeBaseTable[" + table.get(i).index + "], " + table.get(i).value);
 //}
-//Debug.println("(CHANGE) " + timeBase + " -> " + timeBaseTable[table.get(0).index]);
+//logger.log(Level.DEBUG, "(CHANGE) " + timeBase + " -> " + timeBaseTable[table.get(0).index]);
         return timeBaseTable[table.get(0).index];
     }
 }

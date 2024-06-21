@@ -9,10 +9,12 @@ package vavi.sound.smaf.chunk;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -25,10 +27,12 @@ import vavi.util.Debug;
  */
 public class GraphicsSetupDataChunk extends Chunk {
 
+    private static final Logger logger = getLogger(GraphicsSetupDataChunk.class.getName());
+
     /** */
     public GraphicsSetupDataChunk(byte[] id, int size) {
         super(id, size);
-Debug.println(Level.FINE, "GraphicsSetupData: " + size + " bytes");
+logger.log(Level.DEBUG, "GraphicsSetupData: " + size + " bytes");
     }
 
     /** */
@@ -46,7 +50,7 @@ Debug.println(Level.FINE, "GraphicsSetupData: " + size + " bytes");
             } else if (chunk instanceof ColorPaletteDefinitionChunk) {
                 colorPaletteDefinitionChunk = chunk;
             } else {
-Debug.println(Level.WARNING, "unknown chunk: " + chunk.getClass());
+logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
 

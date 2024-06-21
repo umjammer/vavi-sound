@@ -6,15 +6,17 @@
 
 package vavi.sound.smaf;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.List;
-import java.util.logging.Level;
 
 import vavi.sound.smaf.chunk.Chunk;
 import vavi.sound.smaf.chunk.FileChunk;
 import vavi.sound.smaf.chunk.TrackChunk;
 import vavi.sound.smaf.message.STMessage;
 import vavi.sound.smaf.message.VNMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -24,6 +26,8 @@ import vavi.util.Debug;
  * @version 0.00 071012 nsano initial version <br>
  */
 class SmafSequence extends Sequence {
+
+    private static final Logger logger = getLogger(SmafSequence.class.getName());
 
     /** TODO content should be moved to SmafFileFormat/FileChunk */
     SmafSequence(FileChunk fileChunk) {
@@ -52,7 +56,7 @@ class SmafSequence extends Sequence {
             String prot = "vavi";
             if (fileChunk.getOptionalDataChunk() != null) {
                 for (Chunk dataChunk : fileChunk.getOptionalDataChunk().getDataChunks()) {
-Debug.println(Level.FINE, dataChunk);
+logger.log(Level.DEBUG, dataChunk);
                     // TODO
                 }
             } else if (fileChunk.getContentsInfoChunk() != null) { // TODO no need for if as it is required
@@ -80,11 +84,11 @@ Debug.println(Level.FINE, dataChunk);
     /**
      * hack of Track
      */
-    private void insert(Track track, SmafEvent event, int index) {
+    private static void insert(Track track, SmafEvent event, int index) {
         try {
             Class<? extends Track> clazz = track.getClass();
 //for (Field field : clazz.getDeclaredFields()) {
-// System.err.println("field: " + field);
+// logger.log(Level.DEBUG, "field: " + field);
 //}
             @SuppressWarnings("unchecked")
             List<SmafEvent> events = (List<SmafEvent>) clazz.getDeclaredField("events").get(track);

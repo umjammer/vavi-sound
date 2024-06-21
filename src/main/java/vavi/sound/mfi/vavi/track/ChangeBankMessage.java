@@ -97,9 +97,9 @@ public class ChangeBankMessage extends ShortMessage
         throws InvalidMidiDataException {
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
-//Debug.println("track: "+context.getTrackNumber()+", voice: "+getVoice());
+//logger.log(Level.DEBUG, "track: "+context.getTrackNumber()+", voice: "+getVoice());
 
-//Debug.println("bank[" + channel + "]: " + getBank());
+//logger.log(Level.DEBUG, "bank[" + channel + "]: " + getBank());
         channel = context.setBank(channel, getBank());
 
         return null;

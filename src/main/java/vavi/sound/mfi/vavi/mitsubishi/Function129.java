@@ -6,12 +6,14 @@
 
 package vavi.sound.mfi.vavi.mitsubishi;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -21,6 +23,8 @@ import vavi.util.Debug;
  * @version 0.00 030822 nsano initial version <br>
  */
 public class Function129 implements MachineDependentFunction {
+
+    private static final Logger logger = getLogger(Function129.class.getName());
 
     /**
      * 0x81 ADPCM volume MFi2, MFi3
@@ -43,7 +47,7 @@ public class Function129 implements MachineDependentFunction {
 
         this.channel = (data[7] & 0xc0) >> 6;   // 0 ~ 3
         this.volume  =  data[7] & 0x3f;         //
-Debug.printf(Level.FINE, "ADPCM volume: %dch %02x\n", channel, volume);
+logger.log(Level.DEBUG, String.format("ADPCM volume: %dch %02x\n", channel, volume));
     }
 
     /** */

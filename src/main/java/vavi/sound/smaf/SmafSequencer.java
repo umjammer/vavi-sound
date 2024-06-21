@@ -8,7 +8,8 @@ package vavi.sound.smaf;
 
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiChannel;
@@ -18,7 +19,8 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.Soundbank;
 
 import vavi.sound.midi.MidiUtil;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -32,6 +34,8 @@ import vavi.util.Debug;
  * @version 0.00 071010 nsano initial version <br>
  */
 class SmafSequencer implements Sequencer, Synthesizer {
+
+    private static final Logger logger = getLogger(SmafSequencer.class.getName());
 
     /** the device information */
     private static final SmafDevice.Info info =
@@ -73,7 +77,7 @@ class SmafSequencer implements Sequencer, Synthesizer {
     }
 
     /** ADPCM sequencer, TODO should be {@link javax.sound.midi.Transmitter} */
-    private javax.sound.midi.MetaEventListener mea = new MetaEventAdapter();
+    private final javax.sound.midi.MetaEventListener mea = new MetaEventAdapter();
 
     @Override
     public void open() throws SmafUnavailableException {
@@ -86,7 +90,7 @@ class SmafSequencer implements Sequencer, Synthesizer {
             midiSequencer.open();
             midiSynthesizer.open();
         } catch (MidiUnavailableException e) {
-Debug.printStackTrace(e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new SmafUnavailableException(e);
         }
     }
@@ -100,10 +104,10 @@ Debug.printStackTrace(e);
         try {
             midiSequencer.setSequence(SmafSystem.toMidiSequence(sequence));
         } catch (InvalidMidiDataException e) {
-Debug.println(e);
+logger.log(Level.DEBUG, e);
             throw new InvalidSmafDataException(e);
         } catch (SmafUnavailableException e) {
-Debug.println(e);
+logger.log(Level.DEBUG, e);
             throw new IllegalStateException(e);
         }
     }
@@ -160,7 +164,7 @@ Debug.println(e);
     //-------------------------------------------------------------------------
 
     /** {@link MetaMessage MetaEvent} utility */
-    private MetaSupport metaSupport = new MetaSupport();
+    private final MetaSupport metaSupport = new MetaSupport();
 
     /* Adds a {@link MetaEventListener}. */
     @Override
@@ -180,26 +184,23 @@ Debug.println(e);
     }
 
     /** meta 0x2f listener */
-    private javax.sound.midi.MetaEventListener mel = new javax.sound.midi.MetaEventListener() {
-        @Override
-        public void meta(javax.sound.midi.MetaMessage message) {
-//Debug.println("type: " + message.getType());
-            switch (message.getType()) {
-            case 0x2f:  // added automatically at the end of the sequence
-                try {
-                    MetaMessage metaMessage = new MetaMessage();
-                    metaMessage.setMessage(0x2f, null);
-                    fireMeta(metaMessage);
-                    off();
-                } catch (InvalidSmafDataException e) {
-Debug.println(e);
-                }
-catch (RuntimeException | Error e) {
-Debug.printStackTrace(e);
- throw e;
-}
-                break;
+    private final javax.sound.midi.MetaEventListener mel = message -> {
+//logger.log(Level.DEBUG, "type: " + message.getType());
+        switch (message.getType()) {
+        case 0x2f:  // added automatically at the end of the sequence
+            try {
+                MetaMessage metaMessage = new MetaMessage();
+                metaMessage.setMessage(0x2f, null);
+                fireMeta(metaMessage);
+                off();
+            } catch (InvalidSmafDataException e) {
+logger.log(Level.DEBUG, e);
             }
+catch (RuntimeException | Error e) {
+logger.log(Level.ERROR, e.getMessage(), e);
+throw e;
+}
+            break;
         }
     };
 

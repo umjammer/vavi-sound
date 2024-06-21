@@ -6,7 +6,8 @@
 
 package vavi.sound.smaf.message.yamaha;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -20,8 +21,9 @@ import vavi.sound.smaf.message.MidiConvertible;
 import vavi.sound.smaf.sequencer.MachineDependentSequencer;
 import vavi.sound.smaf.sequencer.SmafMessageStore;
 import vavi.sound.smaf.sequencer.WaveSequencer;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -32,6 +34,8 @@ import vavi.util.StringUtil;
  */
 public class YamahaMessage extends MachineDependentMessage
     implements MachineDependentSequencer, MidiConvertible {
+
+    private static final Logger logger = getLogger(YamahaMessage.class.getName());
 
     /**
      *
@@ -133,7 +137,7 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
 
 //        MidiEvent[] events = new MidiEvent[1];
 //        javax.sound.midi.SysexMessage sysexMessage = new javax.sound.midi.SysexMessage();
-//Debug.println("(" + StringUtil.toHex2(command) + "): " + channel + "ch, " + StringUtil.toHex2(value));
+//logger.log(Level.DEBUG, "(" + StringUtil.toHex2(command) + "): " + channel + "ch, " + StringUtil.toHex2(value));
 //        byte[] temp = new byte[data.length + 1];
 //        temp[0] = (byte) 0xf0;
 //        System.arraycopy(data, 0, temp, 1, data.length);
@@ -162,20 +166,20 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
     /* TODO super appropriate right now */
     @Override
     public void sequence() throws InvalidSmafDataException {
-Debug.println(Level.INFO, "yamaha: " + data.length + "\n" + StringUtil.getDump(data, 64));
+logger.log(Level.INFO, "yamaha: " + data.length + "\n" + StringUtil.getDump(data, 64));
         switch (data[1]) {
         case 0x79:
             switch (data[3]) {
             case 0x7f:
                 switch (data[4]) {
                 case 0x20: { //
-Debug.println(Level.FINE, "YAMAHA UNKNOWN: ");
+logger.log(Level.DEBUG, "YAMAHA UNKNOWN: ");
                     AudioEngine engine = WaveSequencer.Factory.getAudioEngine();
                     engine.start(2);
                     break;
                 }
                 case 0x00: { // volume
-Debug.println(Level.FINE, "YAMAHA VOLUME: ");
+logger.log(Level.DEBUG, "YAMAHA VOLUME: ");
                     AudioEngine engine = WaveSequencer.Factory.getAudioEngine();
                     engine.start(1);
                     break;

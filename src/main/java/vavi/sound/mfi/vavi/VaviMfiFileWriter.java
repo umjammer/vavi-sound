@@ -10,15 +10,17 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.Files;
 import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.Sequence;
 import vavi.sound.mfi.spi.MfiFileWriter;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -31,8 +33,10 @@ import vavi.util.Debug;
  */
 public class VaviMfiFileWriter extends MfiFileWriter {
 
+    private static final Logger logger = getLogger(VaviMfiFileWriter.class.getName());
+
     /** mfi file types */
-    private static int[] types = { VaviMfiFileFormat.FILE_TYPE };
+    private static final int[] types = { VaviMfiFileFormat.FILE_TYPE };
 
     /** MFi major version */
     private static int defaultMajorType = HeaderChunk.MAJOR_TYPE_RING_TONE;
@@ -86,7 +90,7 @@ public class VaviMfiFileWriter extends MfiFileWriter {
     public int write(Sequence in, int fileType, OutputStream out) throws IOException {
 
         if (!isFileTypeSupported(fileType)) {
-Debug.println(Level.WARNING, "unsupported fileType: " + fileType);
+logger.log(Level.WARNING, "unsupported fileType: " + fileType);
             return 0;
         }
 
@@ -126,7 +130,7 @@ Debug.println(Level.WARNING, "unsupported fileType: " + fileType);
         try {
             ff.writeTo(out);
         } catch (InvalidMfiDataException e) {
-Debug.printStackTrace(Level.WARNING, e);
+logger.log(Level.WARNING, e.getMessage(), e);
             return 0;
         }
 
@@ -152,34 +156,34 @@ Debug.printStackTrace(Level.WARNING, e);
             String value = props.getProperty("format.type.major");
             if (value != null) {
                 defaultMajorType = Integer.parseInt(value);
-Debug.println(Level.FINE, "major: " + defaultMajorType);
+logger.log(Level.DEBUG, "major: " + defaultMajorType);
             }
 
             value = props.getProperty("format.type.minor");
             if (value != null) {
                 defaultMinorType = Integer.parseInt(value);
-Debug.println(Level.FINE, "minor: " + defaultMinorType);
+logger.log(Level.DEBUG, "minor: " + defaultMinorType);
             }
 
             value = props.getProperty("format.header.titl");
             if (value != null) {
                 defaultTitle = value;
-Debug.println(Level.FINE, "titl: " + defaultTitle);
+logger.log(Level.DEBUG, "titl: " + defaultTitle);
             }
 
             value = props.getProperty("format.header.prot");
             if (value != null) {
                 defaultCreator = value;
-Debug.println(Level.FINE, "prot: " + defaultCreator);
+logger.log(Level.DEBUG, "prot: " + defaultCreator);
             }
 
             value = props.getProperty("format.header.vers");
             if (value != null) {
                 defaultVersion = value;
-Debug.println(Level.FINE, "vers: " + defaultVersion);
+logger.log(Level.DEBUG, "vers: " + defaultVersion);
             }
         } catch (Exception e) {
-Debug.printStackTrace(Level.SEVERE, e);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new IllegalStateException(e);
         }
     }

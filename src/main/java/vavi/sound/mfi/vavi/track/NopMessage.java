@@ -36,7 +36,7 @@ public class NopMessage extends ShortMessage
      */
     public NopMessage(int delta, int data2) {
         super(delta, 0xff, 0xde, data2);
-//Debug.println("NOP: delta: " + delta);
+//logger.log(Level.DEBUG, "NOP: delta: " + delta);
     }
 
     /**
@@ -48,7 +48,7 @@ public class NopMessage extends ShortMessage
      */
     public NopMessage(int delta, int status, int data1, int data2) {
         super(delta, 0xff, 0xde, data2);
-//Debug.println("NOP: delta: " + delta);
+//logger.log(Level.DEBUG, "NOP: delta: " + delta);
     }
 
     /** */
@@ -60,7 +60,7 @@ public class NopMessage extends ShortMessage
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
-//Debug.println("ignore: " + this);
+//logger.log(Level.DEBUG, "ignore: " + this);
         return null;
     }
 }

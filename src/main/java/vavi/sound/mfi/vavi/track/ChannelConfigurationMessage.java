@@ -6,12 +6,15 @@
 
 package vavi.sound.mfi.vavi.track;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.MidiEvent;
+
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -27,10 +30,12 @@ import vavi.util.Debug;
 public class ChannelConfigurationMessage extends ShortMessage
     implements MidiConvertible {
 
+    private static final Logger logger = getLogger(ChannelConfigurationMessage.class.getName());
+
     /** */
-    private int channel;
+    private final int channel;
     /** */
-    private boolean drum;
+    private final boolean drum;
 
     /**
      * for {@link vavi.sound.mfi.vavi.TrackMessage}
@@ -76,7 +81,7 @@ public class ChannelConfigurationMessage extends ShortMessage
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
-Debug.println(Level.FINE, this);
+logger.log(Level.DEBUG, this);
         context.setDrum(getChannel(), isDrum() ? MidiContext.ChannelConfiguration.PERCUSSION :
                                                  MidiContext.ChannelConfiguration.SOUND_SET);
 

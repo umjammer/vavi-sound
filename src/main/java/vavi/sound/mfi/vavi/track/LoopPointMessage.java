@@ -6,12 +6,15 @@
 
 package vavi.sound.mfi.vavi.track;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.MidiEvent;
+
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -29,12 +32,14 @@ import vavi.util.Debug;
 public class LoopPointMessage extends ShortMessage
     implements MidiConvertible {
 
+    private static final Logger logger = getLogger(LoopPointMessage.class.getName());
+
     /** 0 ~ 3 */
-    private int nest;
+    private final int nest;
     /** loop times, 01111b means forever */
     private int times;
     /** 00b: start, 01b: end */
-    private int start;
+    private final int start;
 
     /**
      * for {@link vavi.sound.mfi.vavi.TrackMessage}
@@ -88,7 +93,7 @@ public class LoopPointMessage extends ShortMessage
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
-Debug.println(Level.INFO, "ignore: " + this);
+logger.log(Level.INFO, "ignore: " + this);
         return null;
     }
 }

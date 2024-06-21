@@ -31,7 +31,7 @@ import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 public class UserMessage extends ShortMessage {
 
     /** */
-    private int userEventId;
+    private final int userEventId;
 
     /**
      * @param duration

@@ -10,12 +10,13 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.logging.Level;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.imageio.ImageIO;
 
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -28,6 +29,8 @@ import vavi.util.Debug;
  */
 public class ImageChunk extends Chunk {
 
+    private static final Logger logger = getLogger(ImageChunk.class.getName());
+
     /** */
     private int imageNumer;
 
@@ -36,7 +39,7 @@ public class ImageChunk extends Chunk {
         super(id, size);
 
         this.imageNumer = id[3];
-Debug.println(Level.FINE, "Image[" + imageNumer + "]: " + size + " bytes");
+logger.log(Level.DEBUG, "Image[" + imageNumer + "]: " + size + " bytes");
     }
 
     /** */
@@ -52,7 +55,7 @@ Debug.println(Level.FINE, "Image[" + imageNumer + "]: " + size + " bytes");
         this.imageData = new byte[size];
         dis.readFully(imageData);
 
-Debug.println(Level.FINE, "image: " + getImage());
+logger.log(Level.DEBUG, "image: " + getImage());
     }
 
     /** */

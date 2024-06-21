@@ -11,18 +11,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.ByteOrder;
-import java.util.logging.Level;
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
-import vavi.util.Debug;
 import vavi.util.StringUtil;
 
+import static java.lang.System.getLogger;
 import static vavi.sound.SoundUtil.volume;
 
 
@@ -33,6 +33,8 @@ import static vavi.sound.SoundUtil.volume;
  * @version 0.00 020903 nsano initial version <br>
  */
 public abstract class BasicAudioEngine implements AudioEngine {
+
+    private static final Logger logger = getLogger(BasicAudioEngine.class.getName());
 
     /** */
     protected Data[] data;
@@ -64,7 +66,7 @@ public abstract class BasicAudioEngine implements AudioEngine {
         }
         datum.continued = continued;
         this.data[streamNumber] = datum;
-// debug1();
+//debug1();
     }
 
     @Override
@@ -82,7 +84,7 @@ public abstract class BasicAudioEngine implements AudioEngine {
 
         int channels = getChannels(streamNumber);
         if (channels == -1) {
-Debug.println(Level.INFO, "always used: no: " + streamNumber + ", ch: " + this.data[streamNumber].channel);
+logger.log(Level.INFO, "always used: no: " + streamNumber + ", ch: " + this.data[streamNumber].channel);
             return;
         }
 
@@ -94,15 +96,15 @@ Debug.println(Level.INFO, "always used: no: " + streamNumber + ", ch: " + this.d
             2 * channels,
             this.data[streamNumber].sampleRate,
             false);
-Debug.println(Level.FINE, audioFormat);
+logger.log(Level.DEBUG, audioFormat);
 
         try {
 
-//Debug.println(data.length);
+//logger.log(Level.DEBUG, data.length);
             InputStream[] iss = getInputStreams(streamNumber, channels);
 
-//Debug.println("is: " + is.available());
-// OutputStream os = debug2();
+//logger.log(Level.DEBUG, "is: " + is.available());
+//OutputStream os = debug2();
 
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
             SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
@@ -113,13 +115,13 @@ Debug.println(Level.FINE, audioFormat);
             while (iss[0].available() > 0) {
                 if (channels == 1) {
                     int l = iss[0].read(buf, 0, 1024);
-Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(buf, 64));
+logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(buf, 64));
                     line.write(buf, 0, l);
-// debug3(os);
+//debug3(os);
                 } else {
                     int lL = iss[0].read(buf, 0, 512);
                     int lR = iss[1].read(buf, 512, 512);
-//System.err.println("l : " + lL + ", r: " + lR);
+//logger.log(Level.DEBUG, "l : " + lL + ", r: " + lR);
                     for (int i = 0; i < lL / 2; i++) {
                         byte[] temp = new byte[4];
                         temp[0] = buf[i * 2];
@@ -133,7 +135,7 @@ Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(buf, 64));
             line.drain();
             line.stop();
             line.close();
-// debug4(os);
+//debug4(os);
         } catch (IOException | LineUnavailableException e) {
             throw new IllegalStateException(e);
         }
@@ -152,11 +154,11 @@ Debug.println(Level.FINEST, "data:\n" + StringUtil.getDump(buf, 64));
                 InputStream is = new ByteArrayInputStream(pcm);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 OutputStream os = getOutputStream(baos);
-Debug.println(Level.FINE, "pcm length: " + is.available());
+logger.log(Level.DEBUG, "pcm length: " + is.available());
                 while (is.available() > 0) {
                     int c = is.read();
                     if (c == -1) {
-Debug.println(Level.FINE, "read returns -1");
+logger.log(Level.DEBUG, "read returns -1");
                         break;
                     }
                     os.write(c);
@@ -170,11 +172,11 @@ Debug.println(Level.FINE, "read returns -1");
                 InputStream is = new ByteArrayInputStream(monos[0]);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 OutputStream os = getOutputStream(baos);
-Debug.println(Level.FINE, "pcm L length: " + is.available());
+logger.log(Level.DEBUG, "pcm L length: " + is.available());
                 while (is.available() > 0) {
                     int c = is.read();
                     if (c == -1) {
-Debug.println(Level.FINE, "Illegal EOF L: " + is.available());
+logger.log(Level.DEBUG, "Illegal EOF L: " + is.available());
                         break;
                     }
                     os.write(c);
@@ -184,11 +186,11 @@ Debug.println(Level.FINE, "Illegal EOF L: " + is.available());
                 is = new ByteArrayInputStream(monos[1]);
                 baos = new ByteArrayOutputStream();
                 os = getOutputStream(baos);
-Debug.println(Level.FINE, "pcm R length: " + is.available());
+logger.log(Level.DEBUG, "pcm R length: " + is.available());
                 while (is.available() > 0) {
                     int c = is.read();
                     if (c == -1) {
-Debug.println(Level.FINE, "Illegal EOF R: " + is.available());
+logger.log(Level.DEBUG, "Illegal EOF R: " + is.available());
                         break;
                     }
                     os.write(c);

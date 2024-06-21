@@ -6,12 +6,11 @@
 
 package vavi.sound.mfi.vavi.nec;
 
-import java.util.logging.Level;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 
@@ -46,7 +45,7 @@ public class Function241_1 implements MachineDependentFunction {
         int channel = (data[7] & 0xc0) >> 6;    // 0 ~ 3
 
         // 8 vibrato
-Debug.println(Level.FINE, "Vibrato: " + channel + ", " + data[8]);
-Debug.println(Level.FINEST, "\n" + StringUtil.getDump(data, 32));
+logger.log(Level.DEBUG, "Vibrato: " + channel + ", " + data[8]);
+logger.log(Level.TRACE, "\n" + StringUtil.getDump(data, 32));
     }
 }

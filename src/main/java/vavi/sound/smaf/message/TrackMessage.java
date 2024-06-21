@@ -9,13 +9,15 @@ package vavi.sound.smaf.message;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.SmafFileFormat;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.Track;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -26,11 +28,13 @@ import vavi.util.Debug;
  */
 public class TrackMessage {
 
-    /** */
-    private int trackNumber;
+    private static final Logger logger = getLogger(TrackMessage.class.getName());
 
     /** */
-    private Track track;
+    private final int trackNumber;
+
+    /** */
+    private final Track track;
 
     /** */
     public TrackMessage(int trackNumber, Track track) {
@@ -45,7 +49,7 @@ public class TrackMessage {
 
         dos.writeBytes(getType());
         dos.writeInt(getDataLength());
-Debug.println(Level.FINE, "track: " + trackNumber + ": " + getDataLength());
+logger.log(Level.DEBUG, "track: " + trackNumber + ": " + getDataLength());
         for (int j = 0; j < track.size(); j++) {
             SmafEvent event = track.get(j);
             SmafMessage message = event.getMessage();

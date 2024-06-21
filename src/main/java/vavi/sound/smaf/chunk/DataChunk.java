@@ -11,13 +11,15 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
 
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -30,12 +32,14 @@ import vavi.util.StringUtil;
  */
 public class DataChunk extends Chunk {
 
+    private static final Logger logger = getLogger(DataChunk.class.getName());
+
     /** */
     public DataChunk(byte[] id, int size) {
         super(id, size);
 
         this.languageCode = id[3] & 0xff;
-Debug.println(Level.FINE, "Data: lang: " + languageCode + ", size: " + size);
+logger.log(Level.DEBUG, "Data: lang: " + languageCode + ", size: " + size);
     }
 
     /** */
@@ -48,12 +52,12 @@ Debug.println(Level.FINE, "Data: lang: " + languageCode + ", size: " + size);
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
-Debug.println(Level.FINER, "available: " + dis.available());
+logger.log(Level.TRACE, "available: " + dis.available());
         while (dis.available() > 4) { // TODO normal files should be 0.
             SubData subDatum = new SubData(dis);
-Debug.println(Level.FINE, subDatum);
+logger.log(Level.DEBUG, subDatum);
             subData.put(subDatum.tag, subDatum);
-Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.length + ", " + dis.available());
+logger.log(Level.TRACE, "SubData: " + subDatum.tag + ", " + subDatum.data.length + ", " + dis.available());
         }
         dis.skipBytes(dis.available()); // TODO not necessary if the file is normal
     }
@@ -74,7 +78,7 @@ Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.len
     private static final String defaultEncoding = "Windows-31J";
 
     /** */
-    private Map<String, SubData> subData = new TreeMap<>();
+    private final Map<String, SubData> subData = new TreeMap<>();
 
     /** */
     String getSubDataByTag(String tag) {
@@ -160,10 +164,10 @@ Debug.println(Level.FINER, "SubData: " + subDatum.tag + ", " + subDatum.data.len
         }
 
         /** tag */
-        private String tag;
+        private final String tag;
 
         /** Data */
-        private byte[] data;
+        private final byte[] data;
 
         /** */
         public String toString() {
