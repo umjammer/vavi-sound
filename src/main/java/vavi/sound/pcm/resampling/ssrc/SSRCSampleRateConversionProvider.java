@@ -15,6 +15,8 @@ import javax.sound.sampled.spi.FormatConversionProvider;
 /**
  * SSRCSampleRateConversionProvider.
  *
+ * TODO not integrated as spi, see /META-INF/services/javax.sound.sampled.spi.FormatConversionProvider
+ *
  * @author Maksim Khadkevich
  */
 public class SSRCSampleRateConversionProvider extends FormatConversionProvider {
@@ -75,8 +77,8 @@ public class SSRCSampleRateConversionProvider extends FormatConversionProvider {
             return getAudioInputStream(targetFormat, sourceStream);
 
         } else {
-            throw new IllegalArgumentException("Unsupported conversion: " + sourceStream.getFormat().toString() + " to "
-                                               + targetEncoding.toString());
+            throw new IllegalArgumentException("Unsupported conversion: " + sourceStream.getFormat() + " to "
+                                               + targetEncoding);
         }
     }
 
@@ -91,7 +93,7 @@ public class SSRCSampleRateConversionProvider extends FormatConversionProvider {
                 SSRCInputStream resampler = new SSRCInputStream(inputFormat, outputFormat, sourceStream);
                 return new AudioInputStream(resampler, outputFormat, AudioSystem.NOT_SPECIFIED);
             } else {
-                throw new IllegalArgumentException("Unsupported conversion: " + sourceStream.getFormat().toString() + " to "
+                throw new IllegalArgumentException("Unsupported conversion: " + sourceStream.getFormat() + " to "
                         + targetFormat);
             }
         } catch (IOException e) {
@@ -117,14 +119,10 @@ public class SSRCSampleRateConversionProvider extends FormatConversionProvider {
             return false;
         }
 
-        if (((inputSampleSize == 8) && (outputSampleSize == 8)) || ((inputSampleSize == 16) && (outputSampleSize == 16))) {
+        if (inputSampleSize == 8 && outputSampleSize == 8 || inputSampleSize == 16 && outputSampleSize == 16) {
 
             if ((inputEncoding == AudioFormat.Encoding.PCM_SIGNED)) {
-                if ((outputEncoding == AudioFormat.Encoding.PCM_SIGNED)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return outputEncoding == AudioFormat.Encoding.PCM_SIGNED;
             } else {
                 return false;
             }

@@ -25,7 +25,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.spi.AudioFileReader;
 
 import vavi.sound.LimitedInputStream;
-import vavi.util.Debug;
 import vavi.util.win32.Chunk;
 import vavi.util.win32.WAVE;
 
@@ -132,7 +131,7 @@ logger.log(Level.TRACE, e.getMessage(), e);
             try {
                 bitStream.reset();
             } catch (IOException e) {
-                if (Debug.isLoggable(java.util.logging.Level.FINEST))
+                if (logger.isLoggable(Level.TRACE))
 logger.log(Level.ERROR, e.getMessage(), e);
                 else
 logger.log(Level.DEBUG, e);
