@@ -30,6 +30,7 @@ import javax.sound.sampled.spi.AudioFileReader;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050722 nsano initial version <br>
  */
+@Deprecated
 public class G721RawAudioFileReader extends AudioFileReader {
 
     @Override
