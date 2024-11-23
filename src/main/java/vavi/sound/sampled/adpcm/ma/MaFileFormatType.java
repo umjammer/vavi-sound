@@ -29,7 +29,7 @@ public class MaFileFormatType extends AudioFileFormat.Type {
      * @param name the name of the MA File Format.
      * @param extension the file extension for this MA File Format.
      */
-    public MaFileFormatType(String name, String extension) {
+    private MaFileFormatType(String name, String extension) {
         super(name, extension);
     }
 }

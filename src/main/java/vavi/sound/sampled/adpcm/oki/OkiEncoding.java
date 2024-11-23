@@ -25,7 +25,7 @@ public class OkiEncoding extends AudioFormat.Encoding {
      *
      * @param name Name of the Oki encoding.
      */
-    public OkiEncoding(String name) {
+    private OkiEncoding(String name) {
         super(name);
     }
 }

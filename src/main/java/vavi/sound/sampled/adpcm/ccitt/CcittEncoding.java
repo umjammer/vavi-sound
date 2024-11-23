@@ -33,7 +33,7 @@ public class CcittEncoding extends AudioFormat.Encoding {
      *
      * @param name Name of the CCITT encoding.
      */
-    public CcittEncoding(String name) {
+    private CcittEncoding(String name) {
         super(name);
     }
 }

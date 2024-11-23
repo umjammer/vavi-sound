@@ -25,7 +25,7 @@ public class MsEncoding extends AudioFormat.Encoding {
      *
      * @param name Name of the MS encoding.
      */
-    public MsEncoding(String name) {
+    private MsEncoding(String name) {
         super(name);
     }
 }

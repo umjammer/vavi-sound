@@ -29,7 +29,7 @@ public class OkiFileFormatType extends AudioFileFormat.Type {
      * @param name the name of the Oki File Format.
      * @param extension the file extension for this Oki File Format.
      */
-    public OkiFileFormatType(String name, String extension) {
+    private OkiFileFormatType(String name, String extension) {
         super(name, extension);
     }
 }

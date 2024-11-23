@@ -29,7 +29,7 @@ public class MsFileFormatType extends AudioFileFormat.Type {
      * @param name the name of the MS File Format.
      * @param extension the file extension for this MS File Format.
      */
-    public MsFileFormatType(String name, String extension) {
+    private MsFileFormatType(String name, String extension) {
         super(name, extension);
     }
 }

@@ -29,7 +29,7 @@ public class YamahaFileFormatType extends AudioFileFormat.Type {
      * @param name the name of the Yamaha File Format.
      * @param extension the file extension for this Yamaha File Format.
      */
-    public YamahaFileFormatType(String name, String extension) {
+    private YamahaFileFormatType(String name, String extension) {
         super(name, extension);
     }
 }

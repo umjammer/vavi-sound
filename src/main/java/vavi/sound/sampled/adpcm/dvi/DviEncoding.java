@@ -25,7 +25,7 @@ public class DviEncoding extends AudioFormat.Encoding {
      *
      * @param name Name of the DVI encoding.
      */
-    public DviEncoding(String name) {
+    private DviEncoding(String name) {
         super(name);
     }
 }

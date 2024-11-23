@@ -29,7 +29,7 @@ public class RohmFileFormatType extends AudioFileFormat.Type {
      * @param name the name of the Rohm File Format.
      * @param extension the file extension for this Rohm File Format.
      */
-    public RohmFileFormatType(String name, String extension) {
+    private RohmFileFormatType(String name, String extension) {
         super(name, extension);
     }
 }

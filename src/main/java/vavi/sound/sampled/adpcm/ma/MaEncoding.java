@@ -25,7 +25,7 @@ public class MaEncoding extends AudioFormat.Encoding {
      *
      * @param name Name of the MA encoding.
      */
-    public MaEncoding(String name) {
+    private MaEncoding(String name) {
         super(name);
     }
 }

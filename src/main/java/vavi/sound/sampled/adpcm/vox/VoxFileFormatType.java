@@ -29,7 +29,7 @@ public class VoxFileFormatType extends AudioFileFormat.Type {
      * @param name the name of the VOX File Format.
      * @param extension the file extension for this VOX File Format.
      */
-    public VoxFileFormatType(String name, String extension) {
+    private VoxFileFormatType(String name, String extension) {
         super(name, extension);
     }
 }
