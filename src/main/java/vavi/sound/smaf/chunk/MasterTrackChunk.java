@@ -44,13 +44,13 @@ logger.log(Level.DEBUG, "MasterTrack: " + size);
         this.sequenceType = SequenceType.values()[dis.readUnsignedByte()];
 logger.log(Level.DEBUG, "sequenceType: " + sequenceType);
         this.durationTimeBase = dis.readUnsignedByte();
-//logger.log(Level.DEBUG, "durationTimeBase: " + StringUtil.toHex2(durationTimeBase));
+//logger.log(Level.TRACE, "durationTimeBase: " + StringUtil.toHex2(durationTimeBase));
         int optionSize = dis.readUnsignedByte();
         this.optionData = new byte[optionSize];
         dis.readFully(optionData);
 
         while (dis.available() > 0) {
-//logger.log(Level.DEBUG, "available: " + is.available() + ", " + available());
+//logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
               Chunk chunk = readFrom(dis);
               if (chunk instanceof MasterTrackSequenceDataChunk) { // "Mssq"
                   sequenceDataChunk = chunk;

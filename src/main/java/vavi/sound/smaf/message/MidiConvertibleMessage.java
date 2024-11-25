@@ -75,7 +75,7 @@ public class MidiConvertibleMessage extends vavi.sound.smaf.ShortMessage
             " value=" + value;
     }
 
-    //----
+    // ----
 
     @Override
     public byte[] getMessage() {
@@ -93,7 +93,7 @@ public class MidiConvertibleMessage extends vavi.sound.smaf.ShortMessage
 
         MidiEvent[] events = new MidiEvent[1];
         ShortMessage shortMessage = new ShortMessage();
-//logger.log(Level.DEBUG, "(" + StringUtil.toHex2(command) + "): " + channel + "ch, " + StringUtil.toHex2(value));
+//logger.log(Level.TRACE, "(" + StringUtil.toHex2(command) + "): " + channel + "ch, " + StringUtil.toHex2(value));
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 midiChannel,
                                 command,

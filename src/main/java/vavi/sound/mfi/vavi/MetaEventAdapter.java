@@ -70,7 +70,7 @@ class MetaEventAdapter implements MetaEventListener, MfiDevice {
      */
     @Override
     public void meta(javax.sound.midi.MetaMessage message) {
-//logger.log(Level.DEBUG, "type: " + message.getType());
+//logger.log(Level.TRACE, "type: " + message.getType());
         switch (MetaEvent.valueOf(message.getType())) {
         case META_MACHINE_DEPEND: // sequencer specific meta event
             try {
@@ -156,7 +156,7 @@ logger.log(Level.WARNING, String.format("unhandled function: %02x", functionId))
 
         byte[] data = message.getData();
         int id = (data[2] & 0xff) * 0xff + (data[3] & 0xff);
-//logger.log(Level.DEBUG, "message id: " + id);
+//logger.log(Level.TRACE, "message id: " + id);
         MachineDependentMessage mdm = (MachineDependentMessage) MfiMessageStore.get(id);
 
         int vendor = mdm.getVendor() | mdm.getCarrier();
@@ -182,7 +182,7 @@ logger.log(Level.ERROR, String.format("error vendor: 0x%02x", vendor));
 
         byte[] data = message.getData();
         int id = (data[2] & 0xff) * 0xff + (data[3] & 0xff);
-//logger.log(Level.DEBUG, "message id: " + id);
+//logger.log(Level.TRACE, "message id: " + id);
         AudioDataSequencer sequencer = (AudioDataSequencer) MfiMessageStore.get(id);
 
         sequencer.sequence();

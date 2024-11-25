@@ -52,7 +52,7 @@ Debug.println(meta.getType());
         sequencer.close();
     }
 
-    //----
+    // ----
 
     /**
      * Play MFi file.

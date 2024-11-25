@@ -58,7 +58,7 @@ public class VNMessage extends SmafMessage
             " venderName=" + venderName;
     }
 
-    //----
+    // ----
 
     /* */
     @Override

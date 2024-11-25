@@ -202,7 +202,7 @@ logger.log(Level.DEBUG, "channelStatuses: " + (channelStatuses != null ? channel
 logger.log(Level.DEBUG, "already swapped: " + midiChannel + ", " + value);
         } else {
             drums[midiChannel] = value;
-//logger.log(Level.DEBUG, "temporary: " + midiChannel + ", " + value);
+//logger.log(Level.TRACE, "temporary: " + midiChannel + ", " + value);
         }
 
         // if DRUM_CHANNEL is not a rhythm, replace it with an empty channel.
@@ -279,7 +279,7 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
         return programs[midiChannel];
     }
 
-    //---- note
+    // ---- note
 
     /**
      * @param smafChannel SMAF channel
@@ -290,7 +290,7 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
         int midiChannel = getMidiChannel(smafChannel);
 
 //        if (midiChannel == drumSwapChannel) {
-//logger.log(Level.DEBUG, "used swapped channel: " + midiChannel);
+//logger.log(Level.TRACE, "used swapped channel: " + midiChannel);
 //        }
 
         // drum channel is used as sound
@@ -317,7 +317,7 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
         if (formatType == ScoreTrackChunk.FormatType.HandyPhoneStandard) {
             int midiChannel = getMidiChannel(smafChannel);
             if (drums[midiChannel] == ChannelConfiguration.PERCUSSION) {
-//logger.log(Level.DEBUG, "drum pitch: " + (programs[midiChannel] & 0x7f) + ", " + pitch);
+//logger.log(Level.TRACE, "drum pitch: " + (programs[midiChannel] & 0x7f) + ", " + pitch);
                 return programs[midiChannel] & 0x7f;
             } else {
                 pitch += 36;
@@ -369,7 +369,7 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
     public void setOctaveShift(int smafChannel, int octaveShift) {
         int midiChannel = getMidiChannel(smafChannel);
         octaveShifts[midiChannel] = octaveShift;
-//logger.log(Level.DEBUG, "octaveShifts[" + midiChannel + "]: " + octaveShift);
+//logger.log(Level.TRACE, "octaveShifts[" + midiChannel + "]: " + octaveShift);
     }
 
     /**
@@ -381,7 +381,7 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
     public int setVelocity(int smafChannel, int velocity) {
         int midiChannel = getMidiChannel(smafChannel);
         velocities[midiChannel] = velocity;
-//logger.log(Level.DEBUG, "velocities[" + mididChannel + "]: " + octaveShift);
+//logger.log(Level.TRACE, "velocities[" + mididChannel + "]: " + octaveShift);
         return velocity; // TODO mhh...
     }
 
@@ -395,7 +395,7 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
         return velocities[midiChannel];
     }
 
-    //----
+    // ----
 
     /**
      * index is MA1 register value

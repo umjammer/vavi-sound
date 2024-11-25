@@ -58,7 +58,7 @@ public class STMessage extends SmafMessage
             " songTitle=" + songTitle;
     }
 
-    //----
+    // ----
 
     /* */
     @Override

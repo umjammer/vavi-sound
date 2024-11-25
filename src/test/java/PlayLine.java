@@ -14,6 +14,8 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.SourceDataLine;
 
+import vavi.util.Debug;
+
 import static vavi.sound.SoundUtil.volume;
 
 
@@ -47,7 +49,7 @@ public class PlayLine {
     void play(String filename) throws Exception {
         AudioInputStream ais = AudioSystem.getAudioInputStream(new File(filename));
         AudioFormat format = ais.getFormat();
-System.err.println(format);
+Debug.println(format);
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(format);

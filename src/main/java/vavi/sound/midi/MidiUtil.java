@@ -25,8 +25,6 @@ import javax.sound.midi.Synthesizer;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
-import vavi.util.Debug;
-
 import static java.lang.System.getLogger;
 
 
@@ -145,19 +143,19 @@ public final class MidiUtil {
         //
         // It's easier to just enumerate them than to make a loop.
         //
-        if ((value & 0xF0000000) != 0) {
-            output.write(0x80 | ((value >> 28) & 0x7F));
+        if ((value & 0xf000_0000) != 0) {
+            output.write(0x80 | ((value >> 28) & 0x7f));
         }
-        if ((value & 0xFFE00000) != 0) {
-            output.write(0x80 | ((value >> 21) & 0x7F));
+        if ((value & 0xffe0_0000) != 0) {
+            output.write(0x80 | ((value >> 21) & 0x7f));
         }
-        if ((value & 0xFFFFC000) != 0) {
-            output.write(0x80 | ((value >> 14) & 0x7F));
+        if ((value & 0xffff_c000) != 0) {
+            output.write(0x80 | ((value >> 14) & 0x7f));
         }
-        if ((value & 0xFFFFFF80) != 0) {
-            output.write(0x80 | ((value >> 7) & 0x7F));
+        if ((value & 0xffff_ff80) != 0) {
+            output.write(0x80 | ((value >> 7) & 0x7f));
         }
-        output.write(value & 0x7F);
+        output.write(value & 0x7f);
     }
 
     /** */
@@ -177,7 +175,7 @@ public final class MidiUtil {
             // 01 0x03 ?
             // 02      length
             try {
-//logger.log(Level.DEBUG, "META: " + data[1] + ", " + data[2] + ", " + StringUtil.getDump(data, start, length));
+//logger.log(Level.TRACE, "META: " + data[1] + ", " + data[2] + ", " + StringUtil.getDump(data, start, length));
                 start = 3;
                 length -= 3;
                 return new String(data, start, length, encoding);
@@ -372,7 +370,7 @@ logger.log(Level.DEBUG, "default sequencer: " + provider.getClass().getName() + 
     static {
         try {
             providers = ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class);
-if (Debug.isLoggable(java.util.logging.Level.FINE)) {
+if (logger.isLoggable(Level.TRACE)) {
  providers.forEach(provider -> System.err.println(provider.getClass()));
 }
         } catch (Throwable t) {

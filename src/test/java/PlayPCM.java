@@ -54,9 +54,7 @@ System.err.println("byteOrder: " + byteOrder);
         player.play(file, sampleRate, byteOrder);
     }
 
-    /**
-     *
-     */
+    /** */
     void play(File file, int sampleRate, ByteOrder byteOrder) throws Exception {
         AudioFormat format = new AudioFormat(
             AudioFormat.Encoding.PCM_SIGNED,

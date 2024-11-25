@@ -95,7 +95,7 @@ public class ChangeVoiceMessage extends vavi.sound.mfi.ShortMessage
             " program=" + program;
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
@@ -103,7 +103,7 @@ public class ChangeVoiceMessage extends vavi.sound.mfi.ShortMessage
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
 
-//logger.log(Level.DEBUG, "program[" + channel + "]: " + StringUtil.toHex2(getProgram()));
+//logger.log(Level.TRACE, "program[" + channel + "]: " + StringUtil.toHex2(getProgram()));
         channel = context.setProgram(channel, getProgram());
 
         ShortMessage shortMessage = new ShortMessage();
@@ -137,7 +137,7 @@ public class ChangeVoiceMessage extends vavi.sound.mfi.ShortMessage
         changeBankMessage.setBank(((data1 & 0xc0) >> 6) + 2); // TODO 2 ???
 
         context.setPreviousTick(track, midiEvent.getTick());
-//logger.log(Level.DEBUG, channel + ": " + StringUtil.toHex2(data1) + ", " + StringUtil.toHex2(changeVoiceMessage.getProgram()) + ", " + changeBankMessage.getBank());
+//logger.log(Level.TRACE, channel + ": " + StringUtil.toHex2(data1) + ", " + StringUtil.toHex2(changeVoiceMessage.getProgram()) + ", " + changeBankMessage.getBank());
 
         return new MfiEvent[] {
             new MfiEvent(changeBankMessage, midiEvent.getTick()),

@@ -162,7 +162,7 @@ logger.log(Level.WARNING, "unknown bits: " + format2);
         return bits;
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** ADPCM channel */
     public void setChannel(int channel) {

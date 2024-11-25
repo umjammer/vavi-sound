@@ -15,6 +15,8 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.SourceDataLine;
 
+import vavi.util.Debug;
+
 import static vavi.sound.SoundUtil.volume;
 
 
@@ -50,9 +52,7 @@ public class PlayPCM2 {
         player.play(file, sampleRate, byteOrder);
     }
 
-    /**
-     *
-     */
+    /** */
     void play(File file, int sampleRate, ByteOrder byteOrder) throws Exception {
         AudioFormat format = new AudioFormat(
             AudioFormat.Encoding.PCM_UNSIGNED,
@@ -62,7 +62,7 @@ public class PlayPCM2 {
             1,
             sampleRate,
             ByteOrder.BIG_ENDIAN.equals(byteOrder));
-System.err.println(format);
+Debug.println(format);
 
         InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
 

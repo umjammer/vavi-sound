@@ -60,7 +60,7 @@ public class MfiMidiFileReader extends BasicMidiFileReader {
             }
 
             vavi.sound.mfi.Sequence mfiSequence = MfiSystem.getSequence(is);
-//logger.log(Level.DEBUG, mfiSequence);
+//logger.log(Level.TRACE, mfiSequence);
             return MfiSystem.toMidiSequence(mfiSequence);
         } catch (InvalidMfiDataException e) {
 logger.log(Level.ERROR, e.getMessage(), e);

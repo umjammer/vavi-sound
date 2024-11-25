@@ -184,7 +184,7 @@ logger.log(Level.DEBUG, "★0 on: " + midiSequencer.hashCode());
 logger.log(Level.DEBUG, "★0 off: " + midiSequencer.hashCode());
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** @see vavi.sound.mfi.MetaMessage MetaEvent */
     private final MetaSupport metaSupport = new MetaSupport();

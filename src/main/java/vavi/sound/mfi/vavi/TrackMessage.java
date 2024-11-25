@@ -136,7 +136,7 @@ try {
     public void readFrom(InputStream is)
         throws InvalidMfiDataException,
                IOException {
-//Debug.dump(is, 512);
+//logger.log(Level.TRACE, "\n" + StringUtil.getDump(is, 512));
 
         if (noteLength == -1 || exst == -1) {
             throw new IllegalStateException("noteLength and exst must be set.");
@@ -149,7 +149,7 @@ try {
         dis.readFully(bytes, 0, 4);
         String string = new String(bytes);
         if (!TYPE.equals(string)) {
-//logger.log(Level.DEBUG, "dump:\n" + StringUtil.getDump(is, 64));
+//logger.log(Level.TRACE, "dump:\n" + StringUtil.getDump(is, 64));
             throw new InvalidMfiDataException("invalid track: " + string);
         }
 
@@ -164,7 +164,7 @@ logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
             track.add(new MfiEvent(message, 0L));
 
             l += message.getLength();
-//logger.log(Level.DEBUG, "track[" + trackNumber + "] event length sum: " + l + " / " + trackLlength);
+//logger.log(Level.TRACE, "track[" + trackNumber + "] event length sum: " + l + " / " + trackLlength);
         }
 
         //
@@ -224,7 +224,7 @@ logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
         throw new UnsupportedOperationException("no mean");
     }
 
-    //----
+    // ----
 
     /** note */
     private static class NoteMessageFactory {
@@ -286,7 +286,7 @@ logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
                 if (props.containsKey(key)) {
                     @SuppressWarnings("unchecked")
                     Class<NoteMessage> clazz = (Class<NoteMessage>) Class.forName(props.getProperty(key));
-//logger.log(Level.DEBUG, "note class: " + StringUtil.getClassName(clazz));
+//logger.log(Level.TRACE, "note class: " + StringUtil.getClassName(clazz));
                     noteMessageConstructor1 = clazz.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE);
                     noteMessageConstructor2 = clazz.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE);
                 }
@@ -313,7 +313,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                                             int status,
                                             int data1,
                                             DataInputStream dis) throws IOException {
-//logger.log(Level.DEBUG, "delta: " + StringUtil.toHex2(delta));
+//logger.log(Level.TRACE, "delta: " + StringUtil.toHex2(delta));
 
             String key = String.format("mfi.track.%d.%c.%d", status, 'e', data1);
 
@@ -354,7 +354,7 @@ logger.log(Level.WARNING, String.format("sysex unhandled: delta: %02x, status: %
                     String key = (String) o;
                     if (key.matches("mfi\\.track\\.\\d+\\.e\\.\\d+")) {
                         Class<?> clazz = Class.forName(props.getProperty(key));
-//logger.log(Level.DEBUG, "sysex class: " + StringUtil.getClassName(clazz));
+//logger.log(Level.TRACE, "sysex class: " + StringUtil.getClassName(clazz));
                         Method method = clazz.getMethod("readFrom", Integer.TYPE, Integer.TYPE, Integer.TYPE, InputStream.class);
 
                         sysexMessageInstantiators.put(key, method);
@@ -421,7 +421,7 @@ logger.log(Level.WARNING, String.format("short unhandled: delta: %02x, status: %
                     if (key.matches("mfi\\.track\\.\\d+\\.b\\.\\d+")) {
                         @SuppressWarnings("unchecked")
                         Class<ShortMessage> shortMessageClass = (Class<ShortMessage>) Class.forName(props.getProperty(key));
-//logger.log(Level.DEBUG, "short class: " + StringUtil.getClassName(shortMessageClass));
+//logger.log(Level.TRACE, "short class: " + StringUtil.getClassName(shortMessageClass));
                         Constructor<ShortMessage> constructor = shortMessageClass.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE);
 
                         shortMessageConstructors.put(key, constructor);
@@ -492,7 +492,7 @@ logger.log(Level.WARNING, String.format("long unhandled: delta: %02x, status: %0
                     if (key.matches("mfi\\.track\\.\\d+\\.a\\.\\d+")) {
                         @SuppressWarnings("unchecked")
                         Class<LongMessage> longMessageClass = (Class<LongMessage>) Class.forName(props.getProperty(key));
-//logger.log(Level.DEBUG, "long class: " + StringUtil.getClassName(longMessageClass));
+//logger.log(Level.TRACE, "long class: " + StringUtil.getClassName(longMessageClass));
                         Constructor<LongMessage> constructor = longMessageClass.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE, byte[].class);
 
                         longMessageConstructors.put(key, constructor);
@@ -551,7 +551,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                 if (props.containsKey(key)) {
                     @SuppressWarnings("unchecked")
                     Class<MfiMessage> clazz = (Class<MfiMessage>) Class.forName(props.getProperty(key));
-//logger.log(Level.DEBUG, "unknown class: " + StringUtil.getClassName(clazz));
+//logger.log(Level.TRACE, "unknown class: " + StringUtil.getClassName(clazz));
                     unknownMessageConstructor1 = clazz.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE);
                     unknownMessageConstructor2 = clazz.getConstructor(Integer.TYPE, Integer.TYPE, Integer.TYPE, byte[].class);
                 }

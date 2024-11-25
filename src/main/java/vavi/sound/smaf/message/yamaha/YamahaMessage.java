@@ -137,7 +137,7 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
 
 //        MidiEvent[] events = new MidiEvent[1];
 //        javax.sound.midi.SysexMessage sysexMessage = new javax.sound.midi.SysexMessage();
-//logger.log(Level.DEBUG, "(" + StringUtil.toHex2(command) + "): " + channel + "ch, " + StringUtil.toHex2(value));
+//logger.log(Level.TRACE, "(" + StringUtil.toHex2(command) + "): " + channel + "ch, " + StringUtil.toHex2(value));
 //        byte[] temp = new byte[data.length + 1];
 //        temp[0] = (byte) 0xf0;
 //        System.arraycopy(data, 0, temp, 1, data.length);

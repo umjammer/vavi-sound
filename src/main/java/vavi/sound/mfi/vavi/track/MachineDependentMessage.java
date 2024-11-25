@@ -64,18 +64,18 @@ public class MachineDependentMessage extends SysexMessage
         throws InvalidMfiDataException {
 
         byte[] tmp = new byte[5 + message.length];
-//logger.log(Level.DEBUG, "data: " + message.length);
+//logger.log(Level.TRACE, "data: " + message.length);
         tmp[0] = (byte) (delta & 0xff);
         tmp[1] = (byte) 0xff;
         tmp[2] = (byte) 0xff;
         tmp[3] = (byte) ((message.length / 0x100) & 0xff);
         tmp[4] = (byte) ((message.length % 0x100) & 0xff);
-//Debug.dump(new ByteArrayInputStream(tmp, 0, 5));
+//logger.log(Level.TRACE, "\n" + StringUtil.getDump(new ByteArrayInputStream(tmp, 0, 5));
         System.arraycopy(message, 0, tmp, 5, message.length);
 
-//logger.log(Level.DEBUG, "message: " + tmp.length);
+//logger.log(Level.TRACE, "message: " + tmp.length);
         super.setMessage(tmp, tmp.length);
-//Debug.dump(new ByteArrayInputStream(this.data, 0, 10));
+//logger.log(Level.TRACE, "\n" + StringUtil.getDump(new ByteArrayInputStream(this.data, 0, 10));
     }
 
     /**
@@ -86,11 +86,11 @@ public class MachineDependentMessage extends SysexMessage
         throws InvalidMfiDataException,
                IOException {
 
-//Debug.dump(is);
+//logger.log(Level.TRACE, "\n" + StringUtil.getDump(is);
         DataInputStream dis = new DataInputStream(is);
 
         int length = dis.readUnsignedShort();
-//logger.log(Level.DEBUG, "length: " + length);
+//logger.log(Level.TRACE, "length: " + length);
 
         byte[] data = new byte[length + 5];
 
@@ -126,7 +126,7 @@ logger.log(Level.DEBUG, String.format("MachineDepend: %02x, %02x, %02x %02x %02x
         return String.format("MachineDepend: vendor: %02x", data[5]);
     }
 
-    //----
+    // ----
 
     /**
      * <p>

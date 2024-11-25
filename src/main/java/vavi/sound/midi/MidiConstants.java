@@ -37,7 +37,7 @@ public final class MidiConstants {
         return props.getProperty("midi.inst.gm." + index);
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     // Meta Event
     //
@@ -255,7 +255,7 @@ public final class MidiConstants {
         }
     }
 
-    //----
+    // ----
 
     /**
      * 01H ~ 1FH
@@ -300,7 +300,7 @@ public final class MidiConstants {
     // it is used when exchanging data across manufacturers and models, and in 7FH it is used for data transfer
     // related to real time.
 
-    //----
+    // ----
 
     /* */
     static {

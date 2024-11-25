@@ -68,7 +68,7 @@ logger.log(Level.DEBUG, "SequenceData: " + size + " bytes");
     @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
-//logger.log(Level.DEBUG, "available: " + is.available() + ", " + available());
+//logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
 //skip(is, size);
         ScoreTrackChunk.FormatType formatType = ((TrackChunk) parent).getFormatType();
         switch (formatType) {
@@ -84,13 +84,13 @@ logger.log(Level.DEBUG, "SequenceData: " + size + " bytes");
 //os1.write(baos.toByteArray());
 //os1.flush();
 //os1.close();
-//logger.log(Level.DEBUG, "data.enc created");
+//logger.log(Level.TRACE, "data.enc created");
             byte[] decoded = new Huffman().decode(baos.toByteArray());
 //OutputStream os2 = new FileOutputStream("/tmp/data.dec");
 //os2.write(decoded);
 //os2.flush();
 //os2.close();
-//logger.log(Level.DEBUG, "data.dec created");
+//logger.log(Level.TRACE, "data.dec created");
 logger.log(Level.DEBUG, "decode: " + size + " -> " + decoded.length);
             size = decoded.length;
             readMobileStandard(new MyDataInputStream(new ByteArrayInputStream(decoded), id, decoded.length));
@@ -121,7 +121,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
         while (dis.available() > 0) {
             // -------- duration --------
             int duration = MidiUtil.readVariableLength(dis);
-//logger.log(Level.DEBUG, "duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
+//logger.log(Level.TRACE, "duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
             // -------- event --------
             int e1 = dis.readUnsignedByte();
             if (e1 == 0xff) { // exclusive, nop
@@ -144,7 +144,7 @@ logger.log(Level.WARNING, String.format("unknown 0xff, 0x%02x", e2));
                 }
             } else if (e1 != 0x00) { // note
                 int gateTime = MidiUtil.readVariableLength(dis);
-//logger.log(Level.DEBUG, String.format("gateTime: %d, 0x%04x", gateTime, gateTime));
+//logger.log(Level.TRACE, String.format("gateTime: %d, 0x%04x", gateTime, gateTime));
                 smafMessage = getHandyPhoneStandardMessage(duration, e1, gateTime);
             } else { // e1 == 0x00 other event
                 int e2 = dis.readUnsignedByte();
@@ -206,9 +206,9 @@ logger.log(Level.WARNING, String.format("unknown 0x00, 0x%02x, 3, %02x", e2, dat
                     }
                 }
             }
-//logger.log(Level.DEBUG, available() + ", " + smafMessage);
+//logger.log(Level.TRACE, available() + ", " + smafMessage);
             if (smafMessage != null) {
-//logger.log(Level.DEBUG, "message: " + smafMessage);
+//logger.log(Level.TRACE, "message: " + smafMessage);
                 messages.add(smafMessage);
             } else {
                 assert false : "smafMessage is null";
@@ -236,7 +236,7 @@ private int cc = 0;
         while (dis.available() > 0) {
             // duration
             int duration = MidiUtil.readVariableLength(dis);
-//logger.log(Level.DEBUG, "duration: " + duration);
+//logger.log(Level.TRACE, "duration: " + duration);
             // event
             int status = dis.readUnsignedByte();
             if (status >= 0x80 && status <= 0x8f) { // note w/o velocity
@@ -350,7 +350,7 @@ if (!uc.contains(String.format("reserved: %02x", status))) {
 }
             }
 
-//logger.log(Level.DEBUG, available() + ", " + smafMessage);
+//logger.log(Level.TRACE, available() + ", " + smafMessage);
             if (smafMessage != null) {
                 messages.add(smafMessage);
             } else {

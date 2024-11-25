@@ -84,7 +84,7 @@ public class TitlMessage extends SubMessage
                ": \"" + getTitle() + "\"";
     }
 
-    //----
+    // ----
 
     /** Meta 0x03 */
     @Override

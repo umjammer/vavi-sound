@@ -123,7 +123,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
                     MfiEvent event = track.get(j);
                     MfiMessage message = event.getMessage();
                     if (message instanceof SubMessage subChunk) {
-                        //logger.log(Level.DEBUG, infoMessage);
+                        //logger.log(Level.TRACE, infoMessage);
                         subChunks.put(subChunk.getSubType(), subChunk);
                     }
                 }
@@ -384,7 +384,7 @@ logger.log(Level.INFO, "no note info, use 0");
 
     /**
      * @return 0: not protected, 1: protected
-     * @throws NoSuchElementException
+     * @throws NoSuchElementException when the sorc chunk is not found
      * @see SorcMessage
      */
     public int getSorc() {
@@ -413,7 +413,7 @@ logger.log(Level.INFO, "no note info, use 0");
     }
 
     /**
-     * @throws NoSuchElementException
+     * @throws NoSuchElementException when a title chunk is not found
      * @see TitlMessage
      */
     public String getTitle() {
@@ -440,7 +440,7 @@ logger.log(Level.INFO, "no note info, use 0");
     }
 
     /**
-     * @throws NoSuchElementException
+     * @throws NoSuchElementException when a version chunk is not found
      * @see VersMessage
      */
     public String getVersion() {

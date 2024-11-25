@@ -49,7 +49,6 @@ public class YamahaOutputStreamTest {
 Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
-    /** */
     @Test
     public void test1() throws Exception {
         OutputStream os = Files.newOutputStream(outFile.toPath());
@@ -70,7 +69,7 @@ Debug.println(Level.FINE, "outFile: " + outFile);
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 
-    // -------------------------------------------------------------------------
+    // ----
 
     /**
      * Input Linear PCM WAV must be 8000Hz, 16bit, mono.

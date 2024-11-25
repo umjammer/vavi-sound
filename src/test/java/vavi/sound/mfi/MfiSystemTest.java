@@ -51,7 +51,7 @@ Debug.println(Level.FINE, meta.getType());
         sequencer.close();
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /**
      * Tests this class.

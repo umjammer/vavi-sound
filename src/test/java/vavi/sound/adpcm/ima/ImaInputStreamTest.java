@@ -80,7 +80,7 @@ Debug.println("Level.FINE, ext size: " + ledis.available());
         in = new ByteArrayInputStream(data.getWave());
 Debug.println(Level.FINE, "wave: " + in.available());
 
-        //----
+        // ----
 
         int sampleRate = format.getSamplingRate();
         ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;

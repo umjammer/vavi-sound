@@ -36,7 +36,7 @@ public class SeekAndPhraseInfoChunk extends Chunk {
     /** */
     public SeekAndPhraseInfoChunk(byte[] id, int size) {
         super(id, size);
-//logger.log(Level.DEBUG, "SeekAndPhraseInfo: " + size);
+//logger.log(Level.TRACE, "SeekAndPhraseInfo: " + size);
     }
 
     /** */
@@ -55,12 +55,12 @@ logger.log(Level.DEBUG, "SeekAndPhraseInfo: " + size + " bytes (subData)");
 
         int i = 0;
         while (i < size) {
-//logger.log(Level.DEBUG, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
+//logger.log(Level.TRACE, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
             SubData subDatum = new SubData(data, i);
             subData.put(subDatum.getTag(), subDatum);
 logger.log(Level.DEBUG, "SeekAndPhraseInfo: subData: " + subDatum);
             i += 2 + 1 + subDatum.getData().length + 1; // tag ':' data ','
-//logger.log(Level.DEBUG, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
+//logger.log(Level.TRACE, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
         }
     }
 

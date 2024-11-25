@@ -123,7 +123,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                     if (key.startsWith("mfi.device.")) {
                         @SuppressWarnings("unchecked")
                         Class<MfiDevice> deviceClass = (Class<MfiDevice>) Class.forName(props.getProperty(key));
-//logger.log(Level.DEBUG, "mfi device class: " + StringUtil.getClassName(deviceClass));
+//logger.log(Level.TRACE, "mfi device class: " + StringUtil.getClassName(deviceClass));
                         MfiDevice.Info mfiDeviceInfo = deviceClass.getDeclaredConstructor().newInstance().getDeviceInfo();
 
                         deviceMap.put(mfiDeviceInfo, deviceClass);

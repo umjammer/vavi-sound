@@ -80,7 +80,7 @@ logger.log(Level.WARNING, String.format("unsupported function: %s", key));
         }
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** */
     private static final AudioEngine player = new YamahaAudioEngine();
@@ -90,7 +90,7 @@ logger.log(Level.WARNING, String.format("unsupported function: %s", key));
         return player;
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** */
     private static final MachineDependentFunction.Factory factory =

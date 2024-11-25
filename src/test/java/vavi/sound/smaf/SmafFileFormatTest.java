@@ -24,12 +24,12 @@ import org.junit.jupiter.api.Test;
 public class SmafFileFormatTest {
 
     @Test
-    public void test() throws Exception, IOException {
+    public void test() throws Exception {
         Path path = Paths.get(SmafFileFormatTest.class.getResource("/test.mmf").toURI());
         SmafSystem.getSmafFileFormat(new BufferedInputStream(Files.newInputStream(path)));
     }
 
-    //----
+    // ----
 
     /**
      * load only

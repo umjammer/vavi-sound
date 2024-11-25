@@ -54,7 +54,6 @@ public class MsOutputStreamTest {
 Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
-    /** */
     @Test
     public void test1() throws Exception {
         OutputStream os = Files.newOutputStream(outFile.toPath());
@@ -77,7 +76,6 @@ Debug.println(Level.FINE, "outFile: " + outFile.length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 
-    /** */
     @Test
     public void test2() throws Exception {
         InputStream is = new BufferedInputStream(getClass().getResourceAsStream(inFile));
@@ -86,7 +84,7 @@ Debug.println(Level.FINE, "outFile: " + outFile.length());
         byte[] buffer = new byte[500 * 2];
         while (true) {
             int amount = is.read(buffer);
-//System.err.println("amount: " + amount);
+//Debug.println("amount: " + amount);
             if (amount < 0) {
                 break;
             }
@@ -100,8 +98,6 @@ Debug.println(Level.FINE, "outFile: " + outFile.length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 
-    /**
-     */
     @Test
     public void test3() throws Exception {
 //        final String inFile = "out.pcm";

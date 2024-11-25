@@ -90,7 +90,7 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[str
         return iss;
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     @Override
     protected OutputStream getOutputStream(OutputStream os) {

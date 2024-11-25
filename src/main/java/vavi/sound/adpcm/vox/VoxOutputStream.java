@@ -55,7 +55,7 @@ public class VoxOutputStream extends AdpcmOutputStream {
                 }
             }
 
-//logger.log(Level.DEBUG, "current: " + StringUtil.toHex4(current));
+//logger.log(Level.TRACE, "current: " + StringUtil.toHex4(current));
             out.write(encoder.encode(current / 16)); // BitOutputStream write 4bit
 
             flushed = true;

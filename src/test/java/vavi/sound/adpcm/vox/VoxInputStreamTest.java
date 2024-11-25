@@ -51,7 +51,6 @@ public class VoxInputStreamTest {
 Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
-    /** */
     @Test
     public void test1() throws Exception {
 
@@ -95,7 +94,7 @@ System.err.println("available: " + is.available());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** */
     public static void main(String[] args) throws Exception {
@@ -113,12 +112,10 @@ System.err.println("available: " + is.available());
             byteOrder.equals(ByteOrder.BIG_ENDIAN));
 System.err.println(audioFormat);
 
-        InputStream is = new VoxInputStream(Files.newInputStream(Paths.get(args[0])),
-                                            byteOrder);
+        InputStream is = new VoxInputStream(Files.newInputStream(Paths.get(args[0])), byteOrder);
 System.err.println("available: " + is.available());
 
-//  OutputStream os =
-//   new BufferedOutputStream(new FileOutputStream(args[1]));
+//OutputStream os = new BufferedOutputStream(new FileOutputStream(args[1]));
 
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
@@ -136,12 +133,12 @@ Debug.println(ev.getType());
         while (is.available() > 0) {
             l = is.read(buf, 0, 1024);
             line.write(buf, 0, l);
-//  os.write(buf, 0, l);
+//os.write(buf, 0, l);
         }
         line.drain();
         line.stop();
         line.close();
-//  os.close();
+//os.close();
         is.close();
     }
 }

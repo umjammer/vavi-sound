@@ -73,7 +73,7 @@ public class ChannelConfigurationMessage extends ShortMessage
                " drum="    + drum;
     }
 
-    //----
+    // ----
 
     /**
      * Sets the context channel configuration.

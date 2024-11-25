@@ -161,7 +161,7 @@ logger.log(Level.DEBUG, e);
         midiSequencer.removeMetaEventListener(mea);
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** {@link MetaMessage MetaEvent} utility */
     private final MetaSupport metaSupport = new MetaSupport();
@@ -185,7 +185,7 @@ logger.log(Level.DEBUG, e);
 
     /** meta 0x2f listener */
     private final javax.sound.midi.MetaEventListener mel = message -> {
-//logger.log(Level.DEBUG, "type: " + message.getType());
+//logger.log(Level.TRACE, "type: " + message.getType());
         switch (message.getType()) {
         case 0x2f:  // added automatically at the end of the sequence
             try {

@@ -159,7 +159,7 @@ class HeaderChunk {
         int length = 0;
         for (SubMessage subChunk : subChunks.values()) {
             length += 4 + 2 + subChunk.getDataLength(); // type + length + ...
-//logger.log(Level.DEBUG, subChunk + ": " + subChunks.getSubLength());
+//logger.log(Level.TRACE, subChunk + ": " + subChunks.getSubLength());
         }
         return length;
     }
@@ -267,7 +267,7 @@ logger.log(Level.DEBUG, "numberTracks: " + headerChunk.tracksCount);
             SubMessage subChunk = SubMessage.readFrom(is);
             headerChunk.subChunks.put(subChunk.getSubType(), subChunk);
             l +=  4 + 2 + subChunk.getDataLength(); // type + length +
-//logger.log(Level.DEBUG, "header subchunk length sum: " + l + " / " + (headerLength - 3));
+//logger.log(Level.TRACE, "header subchunk length sum: " + l + " / " + (headerLength - 3));
         }
 
         return headerChunk;

@@ -16,6 +16,7 @@ import vavi.sound.smaf.Sequence;
 import vavi.sound.smaf.Sequencer;
 import vavi.sound.smaf.SmafSystem;
 import vavi.sound.smaf.Synthesizer;
+import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
@@ -53,23 +54,23 @@ Synthesizer synthesizer = (Synthesizer) sequencer;
 // sf
 Soundbank soundbank = synthesizer.getDefaultSoundbank();
 //Instrument[] instruments = synthesizer.getAvailableInstruments();
-System.err.println("---- " + soundbank.getDescription() + " ----");
+Debug.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
 synthesizer.unloadAllInstruments(soundbank);
 File file = new File(sf2);
 soundbank = MidiSystem.getSoundbank(file);
 synthesizer.loadAllInstruments(soundbank);
 //instruments = synthesizer.getAvailableInstruments();
-System.err.println("---- " + soundbank.getDescription() + " ----");
+Debug.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
 // volume (not work ???)
 MidiChannel[] channels = synthesizer.getChannels();
 
         for (String arg : args) {
-System.err.println("START: " + arg);
+Debug.println("START: " + arg);
             CountDownLatch countDownLatch = new CountDownLatch(1);
             MetaEventListener mel = meta -> {
-System.err.println("META: " + meta.getType());
+Debug.println("META: " + meta.getType());
                 if (meta.getType() == 47) {
                     countDownLatch.countDown();
                 }
@@ -80,7 +81,7 @@ System.err.println("META: " + meta.getType());
             sequencer.start();
 MidiUtil.volume(synthesizer.getReceiver(), volume); // TODO noise
             countDownLatch.await();
-System.err.println("END: " + arg);
+Debug.println("END: " + arg);
             sequencer.removeMetaEventListener(mel);
         }
         sequencer.close();

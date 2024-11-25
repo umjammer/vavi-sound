@@ -56,7 +56,7 @@ public class MfiVaviSequenceTest {
         assertNotNull(format);
     }
 
-    //----
+    // ----
 
     /** load MFi */
     public static void main(String[] args) throws Exception {

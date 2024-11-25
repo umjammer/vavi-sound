@@ -48,7 +48,7 @@ public abstract class AdpcmOutputStream extends FilterOutputStream {
         super(new BitOutputStream(out, bits, bitOrder));
         this.byteOrder = byteOrder;
         this.encoder = getCodec();
-//logger.log(Level.DEBUG, this.out);
+//logger.log(Level.TRACE, this.out);
     }
 
     /** remaining or not (having PCM L or H at least one side) */
@@ -74,7 +74,7 @@ public abstract class AdpcmOutputStream extends FilterOutputStream {
                     current -= 0x10000;
                 }
             }
-//logger.log(Level.DEBUG, "current: " + StringUtil.toHex4(current));
+//logger.log(Level.TRACE, "current: " + StringUtil.toHex4(current));
             out.write(encoder.encode(current)); // BitOutputStream write 4bit
 
             flushed = true;

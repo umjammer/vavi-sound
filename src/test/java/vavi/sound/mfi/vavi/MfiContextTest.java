@@ -54,7 +54,7 @@ Debug.println(Level.FINE, "type: " + type);
 Debug.println(Level.FINE, "write: " + r);
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /**
      * Converts the midi file to a mfi file.

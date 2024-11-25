@@ -96,14 +96,14 @@ public class PitchBendRangeMessage extends vavi.sound.mfi.ShortMessage
             " pitchBendRange=" + pitchBendRange;
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
-//logger.log(Level.DEBUG, this);
+//logger.log(Level.TRACE, this);
 //      context.setPitchBendRange(channel, getPitchBendRange());
 
         MidiEvent[] events = new MidiEvent[3];

@@ -44,7 +44,7 @@ public class OffsetOriginMessage extends ShortMessage {
             " duration=" + duration;
     }
 
-    //----
+    // ----
 
     /* */
     @Override

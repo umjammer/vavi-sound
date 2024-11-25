@@ -87,7 +87,7 @@ public class AudioPlayMessage extends LongMessage
         " velocity=" + velocity;
     }
 
-    //----
+    // ----
 
     /**
      * @throws InvalidMidiDataException

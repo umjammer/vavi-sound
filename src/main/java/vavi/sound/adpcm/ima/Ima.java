@@ -153,13 +153,13 @@ logger.log(Level.DEBUG, "IMA_ADPCM block ch" + channel + " initial-state (" + st
             if (c != cm) {
                 val -= dp;
                 if (val < -0x8000) {
-//logger.log(Level.DEBUG, String.format("%04x -> %d", val, -0x8000));
+//logger.log(Level.TRACE, String.format("%04x -> %d", val, -0x8000));
                     val = -0x8000;
                 }
             } else {
                 val += dp;
                 if (val > 0x7fff) {
-//logger.log(Level.DEBUG, String.format("%04x -> %d", val, 0x7fff));
+//logger.log(Level.TRACE, String.format("%04x -> %d", val, 0x7fff));
                     val = 0x7fff;
                 }
             }
@@ -264,7 +264,7 @@ logger.log(Level.DEBUG, "IMA_ADPCM block ch" + channel + " initial-state (" + st
                         op += o_inc; // skip op for next group
                     }
                 } else {
-//logger.log(Level.DEBUG, "op: " + op);
+//logger.log(Level.TRACE, "op: " + op);
                     obuff[op] = (byte) cm;
                 }
                 i = (i + 1) & 0x07;
@@ -412,10 +412,10 @@ logger.log(Level.DEBUG, "IMA_ADPCM block ch" + channel + " initial-state (" + st
      */
     public static int getSamplesIn(int dataLength, int channels, int blockAlign, int samplesPerBlock) {
         int m, n;
-//logger.log(Level.DEBUG, "dataLength: " + dataLength);
-//logger.log(Level.DEBUG, "channels: " + channels);
-//logger.log(Level.DEBUG, "blockAlign: " + blockAlign);
-//logger.log(Level.DEBUG, "samplesPerBlock: " + samplesPerBlock);
+//logger.log(Level.TRACE, "dataLength: " + dataLength);
+//logger.log(Level.TRACE, "channels: " + channels);
+//logger.log(Level.TRACE, "blockAlign: " + blockAlign);
+//logger.log(Level.TRACE, "samplesPerBlock: " + samplesPerBlock);
 
         if (samplesPerBlock != 0) {
             n = (dataLength / blockAlign) * samplesPerBlock;
@@ -424,8 +424,8 @@ logger.log(Level.DEBUG, "IMA_ADPCM block ch" + channel + " initial-state (" + st
             n = 0;
             m = blockAlign;
         }
-//logger.log(Level.DEBUG, "n: " + n);
-//logger.log(Level.DEBUG, "m: " + m);
+//logger.log(Level.TRACE, "n: " + n);
+//logger.log(Level.TRACE, "m: " + m);
         if (m >= 4 * channels) {
             m -= 4 * channels; // number of bytes beyond block-header
             m /= 4 * channels; // number of 4-byte blocks/channel beyond header

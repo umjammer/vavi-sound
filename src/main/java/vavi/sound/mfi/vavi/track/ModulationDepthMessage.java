@@ -96,7 +96,7 @@ public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
             " modulationDepth=" + modulationDepth;
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)

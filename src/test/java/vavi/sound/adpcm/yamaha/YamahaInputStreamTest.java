@@ -54,7 +54,6 @@ public class YamahaInputStreamTest {
 Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
-    /** */
     @Test
     public void test1() throws Exception {
 
@@ -112,7 +111,7 @@ System.err.println("available: " + is.available());
         in = new ByteArrayInputStream(data.getWave());
 Debug.println(Level.FINE, "wave: " + in.available());
 
-        //----
+        // ----
 
         int sampleRate = format.getSamplingRate();
         ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;

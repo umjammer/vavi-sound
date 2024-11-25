@@ -76,7 +76,7 @@ logger.log(Level.DEBUG, "byteOrder: " + this.byteOrder);
             throw new IOException("Not yet initialized");
         } else {
             int bytesPerBlock = Ima.getBytesPerBlock(channels, samplesPerBlock);
-//logger.log(Level.DEBUG, "bytesPerBlock: " + bytesPerBlock + ", samplesPerBlock: " + samplesPerBlock);
+//logger.log(Level.TRACE, "bytesPerBlock: " + bytesPerBlock + ", samplesPerBlock: " + samplesPerBlock);
             byte[] buffer = new byte[samplesPerBlock * 2];
             int l = 0;
             while (l < buffer.length) {
@@ -89,7 +89,7 @@ logger.log(Level.DEBUG, "byteOrder: " + this.byteOrder);
             if (l > 0) {
                 byte[] adpcm = new byte[bytesPerBlock];
                 int[] pcm = new int[l / 2];
-//logger.log(Level.DEBUG, "adpcm: " + bytesPerBlock  + ", pcm: " + pcm.length + ", " + l);
+//logger.log(Level.TRACE, "adpcm: " + bytesPerBlock  + ", pcm: " + pcm.length + ", " + l);
                 LittleEndianDataInputStream ledis = new LittleEndianDataInputStream(new ByteArrayInputStream(buffer));
                 for (int i = 0; i < pcm.length; i++) {
                     pcm[i] = ledis.readShort();
@@ -97,7 +97,7 @@ logger.log(Level.DEBUG, "byteOrder: " + this.byteOrder);
                 ledis.close();
                 encoder.encodeBlock(1, pcm, pcm.length, steps, adpcm, 9);
 
-//logger.log(Level.DEBUG, "adpcm: " + adpcm.length);
+//logger.log(Level.TRACE, "adpcm: " + adpcm.length);
                 out.write(adpcm);
             }
         }

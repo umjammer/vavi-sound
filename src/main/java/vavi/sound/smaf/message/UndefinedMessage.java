@@ -23,7 +23,7 @@ public class UndefinedMessage extends SmafMessage {
      */
     public UndefinedMessage(int duration) {
         this.duration = duration;
-//logger.log(Level.DEBUG, "UndefinedMessage: ★★★★★★★★★★★★★★★★");
+//logger.log(Level.TRACE, "UndefinedMessage: ★★★★★★★★★★★★★★★★");
     }
 
     /** */
@@ -32,7 +32,7 @@ public class UndefinedMessage extends SmafMessage {
             " duration=" + duration;
     }
 
-    //----
+    // ----
 
     /* */
     @Override

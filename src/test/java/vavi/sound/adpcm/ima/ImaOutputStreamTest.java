@@ -58,7 +58,6 @@ public class ImaOutputStreamTest {
 Debug.println(Level.FINE, "outFile: " + outFile.getCanonicalPath());
     }
 
-    /** */
     @Test
     public void test1() throws Exception {
         OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
@@ -181,7 +180,6 @@ Debug.println(Level.FINE, "outFile: " + outFile.length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(inFile)), Checksum.getChecksum(outFile));
     }
 
-    /** */
     @Test
     public void test3() throws Exception {
         final String inFile = "out.pcm";

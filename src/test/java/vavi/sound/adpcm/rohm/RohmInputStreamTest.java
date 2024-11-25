@@ -51,13 +51,12 @@ public class RohmInputStreamTest {
 Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
-    /** */
     @Test
     public void test1() throws Exception {
 
         InputStream in = new BufferedInputStream(getClass().getResourceAsStream(inFile));
 
-        //----
+        // ----
 
         int sampleRate = 8000;
         ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;

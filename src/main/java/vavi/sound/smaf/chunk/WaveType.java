@@ -91,7 +91,7 @@ public class WaveType {
      * </pre>
      */
     WaveType(int waveType) throws IOException {
-//logger.log(Level.DEBUG, "waveType: " + StringUtil.toHex4(waveType));
+//logger.log(Level.TRACE, "waveType: " + StringUtil.toHex4(waveType));
         this.waveChannels = (waveType & 0x8000) != 0 ? 2 : 1;
         this.waveFormat = (waveType & 0x7000) >> 12;
         this.waveSamplingFreq = samplingFreqs[(waveType & 0x0f00) >> 8];

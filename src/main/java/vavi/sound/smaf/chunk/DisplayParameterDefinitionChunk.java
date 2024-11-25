@@ -35,7 +35,7 @@ public class DisplayParameterDefinitionChunk extends Chunk {
     /** */
     public DisplayParameterDefinitionChunk(byte[] id, int size) {
         super(id, size);
-//logger.log(Level.DEBUG, "DisplayParameterDefinition: " + size);
+//logger.log(Level.TRACE, "DisplayParameterDefinition: " + size);
     }
 
     /** */

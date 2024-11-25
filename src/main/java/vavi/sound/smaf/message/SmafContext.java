@@ -38,7 +38,7 @@ public class SmafContext implements SmafConvertible {
     /** max SMAF track number */
     public static final int MAX_SMAF_TRACKS = 4;
 
-    //----
+    // ----
 
     /** @see MidiFileFormat#getType() 0: SMF Format 0, 1: SMF Format 1 */
     private int type;
@@ -66,7 +66,7 @@ public class SmafContext implements SmafConvertible {
         this.timeBase = timeBase;
     }
 
-    //----
+    // ----
 
     /** index is SMAF Track No., true if used */
     private final boolean[] trackUsed = new boolean[MAX_SMAF_TRACKS];
@@ -85,7 +85,7 @@ public class SmafContext implements SmafConvertible {
         return trackUsed[smafTrackNumber];
     }
 
-    //----
+    // ----
 
     /**
      * tick magnification
@@ -103,7 +103,7 @@ logger.log(Level.DEBUG, "scale: " + scale);
         this.scale = scale;
     }
 
-    //----
+    // ----
 
     /** the previous tick, index is SMAF Track No. */
     private final long[] beforeTicks = new long[MAX_SMAF_TRACKS];
@@ -166,7 +166,7 @@ logger.log(Level.DEBUG, "rounded under -1, minus 1: " + roundedSum[smafTrackNumb
         return delta;
     }
 
-    //----
+    // ----
 
     /**
      * Finds how many Δs(integer value, truncating too much) can be included in the time since the previous
@@ -239,7 +239,7 @@ if (interval < 0) {
             incrementBeforeTick(track, 255);
         }
 
-//logger.log(Level.DEBUG, nopLength + " nops inserted");
+//logger.log(Level.TRACE, nopLength + " nops inserted");
         return smafEvents;
     }
 
@@ -273,7 +273,7 @@ if (delta > 255) {
         return delta % 256;
     }
 
-    //----
+    // ----
 
     /** Gets the corrected SMAF Pitch. sound -45, percussion -35 */
     public int retrievePitch(int channel, int pitch) {
@@ -304,7 +304,7 @@ if (delta > 255) {
         return channel / 4;
     }
 
-    //----
+    // ----
 
     /** current SMAF track No. */
     private int smafTrackNumber;
@@ -488,7 +488,7 @@ logger.log(Level.DEBUG, "next: " + shortMessage.getChannel() + "ch, " + shortMes
             rpnMSB[channel] = data2;
             break;
         default:
-//logger.log(Level.DEBUG, "not implemented: " + data1);
+//logger.log(Level.TRACE, "not implemented: " + data1);
             break;
         }
 

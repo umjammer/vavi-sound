@@ -114,7 +114,7 @@ if (timeBase < 0) {
             " tempo="    + tempo;
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
@@ -124,8 +124,8 @@ if (timeBase < 0) {
         int timeBase = getTimeBase();
         // quarter note length in μsec TODO is round OK?, TODO 48??? (actually 60 * 10^6 / tempo)
         int l = (int) Math.round(60d * 1000000d / ((48d / timeBase) * tempo));
-//logger.log(Level.DEBUG, this);
-//logger.log(Level.DEBUG, l + " = " +
+//logger.log(Level.TRACE, this);
+//logger.log(Level.TRACE, l + " = " +
 //              StringUtil.toHex2( ((l / 0x10000) & 0xff)) + ", " +
 //              StringUtil.toHex2((((l % 0x10000) / 0x100) & 0xff)) + ", " +
 //              StringUtil.toHex2( ((l % 0x100)   & 0xff)));
@@ -148,23 +148,23 @@ if (timeBase < 0) {
         MetaMessage metaMessage = (MetaMessage) midiEvent.getMessage();
 //      int type = metaMessage.getType();
         byte[] data = metaMessage.getData();
-//logger.log(Level.DEBUG, "data.length: " + data.length);
+//logger.log(Level.TRACE, "data.length: " + data.length);
 
         int timeBase = getNearestTimeBase(context.getTimeBase());
         int l = ((data[0] & 0xff) << 16) |
                 ((data[1] & 0xff) <<  8) |
                  (data[2] & 0xff);
-//logger.log(Level.DEBUG, "(CALC) timeBase: " + timeBase + ", tempo: " + tempo + ", l; " + l);
+//logger.log(Level.TRACE, "(CALC) timeBase: " + timeBase + ", tempo: " + tempo + ", l; " + l);
 
         // TODO no more change if scale is changed once?
         if (context.isScaleChanged()) {
             timeBase = getNearestTimeBase((int) (context.getTimeBase() / context.getScale()));
             tempo = (int) Math.round(60d * 1000000d / ((48d / timeBase) * l));
-//logger.log(Level.DEBUG, "(SET) tempo > " + MAX_SCALELESS + ": timeBase: " + timeBase + ", tempo: " + tempo);
+//logger.log(Level.TRACE, "(SET) tempo > " + MAX_SCALELESS + ": timeBase: " + timeBase + ", tempo: " + tempo);
         } else {
             timeBase = getNearestTimeBase(context.getTimeBase());
             tempo = (int) Math.round(60d * 1000000d / ((48d / timeBase) * l));
-//logger.log(Level.DEBUG, "(SET) timeBase: " + timeBase + ", tempo: " + tempo);
+//logger.log(Level.TRACE, "(SET) timeBase: " + timeBase + ", tempo: " + tempo);
         }
 
         TempoMessage mfiMessage = new TempoMessage();
@@ -209,7 +209,7 @@ if (timeBase < 0) {
 //for (int i = 0; i < table.size(); i++) {
 // logger.log(Level.DEBUG, "(" + i + ") timeBaseTable[" + table.get(i).index + "], " + table.get(i).value);
 //}
-//logger.log(Level.DEBUG, "(CHANGE) " + timeBase + " -> " + timeBaseTable[table.get(0).index]);
+//logger.log(Level.TRACE, "(CHANGE) " + timeBase + " -> " + timeBaseTable[table.get(0).index]);
         return timeBaseTable[table.get(0).index];
     }
 }

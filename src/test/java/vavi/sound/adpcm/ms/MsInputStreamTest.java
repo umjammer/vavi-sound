@@ -91,7 +91,7 @@ Debug.printf(Level.FINE, "iCoef[%d][%d]: %04x: %d\n", i, j, iCoefs[i][j] & 0xfff
         in = new ByteArrayInputStream(data.getWave());
 Debug.println(Level.FINE, "wave: " + in.available());
 
-        //----
+        // ----
 
         int sampleRate = format.getSamplingRate();
         ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;

@@ -59,7 +59,7 @@ public class SmafMidiFileReader extends BasicMidiFileReader {
             }
 
             vavi.sound.smaf.Sequence sequence = SmafSystem.getSequence(is);
-//logger.log(Level.DEBUG, sequence);
+//logger.log(Level.TRACE, sequence);
             return SmafSystem.toMidiSequence(sequence);
         } catch (InvalidSmafDataException e) {
 logger.log(Level.INFO, e);

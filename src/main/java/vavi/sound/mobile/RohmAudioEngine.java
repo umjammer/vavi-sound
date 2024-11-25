@@ -80,7 +80,7 @@ public class RohmAudioEngine extends BasicAudioEngine {
         return iss;
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     @Override
     protected OutputStream getOutputStream(OutputStream os) {

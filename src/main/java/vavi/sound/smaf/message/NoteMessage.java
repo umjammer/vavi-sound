@@ -234,7 +234,7 @@ if (gateTime == 0) {
                                 midiChannel,
                                 pitch,
                                 velocity);
-//logger.log(Level.DEBUG, "note: " + channel + ": " + pitch);
+//logger.log(Level.TRACE, "note: " + channel + ": " + pitch);
         events[0] = new MidiEvent(shortMessage, context.getCurrentTick());
 
         shortMessage = new ShortMessage();
@@ -260,7 +260,7 @@ if (gateTime == 0) {
         int command = shortMessage.getCommand();
         int data1 = shortMessage.getData1();
         int data2 = shortMessage.getData2();
-//logger.log(Level.DEBUG, midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
+//logger.log(Level.TRACE, midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
 
         if (command == ShortMessage.NOTE_OFF ||
             // note on with velocity 0
@@ -305,7 +305,7 @@ logger.log(Level.WARNING, "[" + context.getMidiEventIndex() + "] no pair of OFF 
 if (length >= 255) {
  logger.log(Level.DEBUG, channel + "ch, " + smafMessage.getNote() + ", " + smafMessage.getDuration() + ":[" + i + "]:" + (i == onLength - 1 ? length % 255 : 255) + "/" + length);
 }
-//logger.log(Level.DEBUG, channel + ", " + smafMessage.getVoice() + ", " + ((smafMessage.getMessage()[1] & 0xc0) >> 6));
+//logger.log(Level.TRACE, channel + ", " + smafMessage.getVoice() + ", " + ((smafMessage.getMessage()[1] & 0xc0) >> 6));
                 smafEvents[i] = new SmafEvent(smafMessage, 0L); // TODO 0l
 if (smafEvents[i] == null) {
  logger.log(Level.DEBUG, "[" + i + "]: " + smafEvents[i]);

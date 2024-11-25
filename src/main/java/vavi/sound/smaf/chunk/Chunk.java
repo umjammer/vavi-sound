@@ -53,8 +53,8 @@ public abstract class Chunk {
 
     /**
      * @param dis chunk Header must be read
-     * @throws IOException
-     * @throws InvalidSmafDataException
+     * @throws IOException when an io error occurs
+     * @throws InvalidSmafDataException when input smaf is wrong
      * TODO Chunk -> constructor ???
      *      because of passing the parent
      */
@@ -73,7 +73,7 @@ public abstract class Chunk {
 
     /**
      * For reading non-first parent (unmarked)
-     * @param is
+     * @param is source samf stream
      * @return Chunk object read
      */
     protected Chunk readFrom(InputStream is)
@@ -104,10 +104,10 @@ public abstract class Chunk {
 logger.log(Level.DEBUG, String.format("size: 0x%1$08x (%1$d)", size));
 
         Chunk chunk = newInstance(id, size);
-//logger.log(Level.DEBUG, chunk.getClass().getName() + "\n" + StringUtil.getDump(is, 0, 128));
-//logger.log(Level.DEBUG, String.format("is: " + is + " / " + chunk.getClass().getName()));
+//logger.log(Level.TRACE, chunk.getClass().getName() + "\n" + StringUtil.getDump(is, 0, 128));
+//logger.log(Level.TRACE, String.format("is: " + is + " / " + chunk.getClass().getName()));
         MyDataInputStream mdis = new MyDataInputStream(is, id, size);
-//logger.log(Level.DEBUG, String.format("mdis: " + mdis + " / " + chunk.getClass().getName()));
+//logger.log(Level.TRACE, String.format("mdis: " + mdis + " / " + chunk.getClass().getName()));
         chunk.init(mdis, parent);
 
         if (parent != null) {
@@ -119,7 +119,7 @@ logger.log(Level.DEBUG, String.format("size: 0x%1$08x (%1$d)", size));
                 assert false : "is: " + is.getClass().getName();
             }
         } else {
-//logger.log(Level.DEBUG, String.format("crc (calc): %04x, avail: %d, %s, %s", mdis.crc(), mdis.available(), mdis, chunk.getClass().getName()));
+//logger.log(Level.TRACE, String.format("crc (calc): %04x, avail: %d, %s, %s", mdis.crc(), mdis.available(), mdis, chunk.getClass().getName()));
             if (chunk instanceof FileChunk fc) {
                 if (fc.getCrc() != mdis.crc()) {
 logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %04x", fc.getCrc(), mdis.crc()));
@@ -133,7 +133,7 @@ logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %
     /** */
     public abstract void writeTo(OutputStream os) throws IOException;
 
-    //----
+    // ----
 
     /** input stream with count down, crc */
     protected static class MyDataInputStream extends InputStream implements DataInput {
@@ -148,7 +148,7 @@ logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %
             } else {
                 this.is = is;
             }
-//logger.log(Level.DEBUG, String.format("is: " + this.is));
+//logger.log(Level.TRACE, String.format("is: " + this.is));
             this.dis = new DataInputStream(this.is);
             this.readSize = size;
 
@@ -159,7 +159,7 @@ logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %
             crc.get().update(ByteUtil.getBeBytes(size));
         }
         public int crc() {
-//logger.log(Level.DEBUG, "crc len: " + crc.get().getCount());
+//logger.log(Level.TRACE, "crc len: " + crc.get().getCount());
             return crc.get().getValue();
         }
         @Override
@@ -310,7 +310,7 @@ logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %
             return count;
         }
 }
-    //----
+    // ----
 
     /**
      * factory
@@ -365,7 +365,7 @@ logger.log(Level.DEBUG, String.format("Chunk ID(read): %s+0x%02x", (Character.is
                     try {
                         @SuppressWarnings("unchecked")
                         Class<? extends Chunk> clazz = (Class<? extends Chunk>) Class.forName(value);
-//logger.log(Level.DEBUG, "chunk class: " + StringUtil.getClassName(clazz));
+//logger.log(Level.TRACE, "chunk class: " + StringUtil.getClassName(clazz));
                         return clazz.getConstructor(byte[].class, Integer.TYPE);
                     } catch (Exception e) {
                         logger.log(Level.ERROR, e.getMessage(), e);

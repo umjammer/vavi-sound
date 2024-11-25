@@ -66,12 +66,12 @@ Debug.println(Level.FINE, "synthesizer: " + synthesizer);
         soundbank = MidiSystem.getSoundbank(sf2);
         synthesizer.loadAllInstruments(soundbank);
 //        instruments = synthesizer.getAvailableInstruments();
-System.err.println("---- " + soundbank.getDescription() + " ----");
+Debug.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
 
         CountDownLatch countDownLatch = new CountDownLatch(1);
         MetaEventListener mel = meta -> {
-System.err.println("META: " + meta.getType());
+Debug.println("META: " + meta.getType());
             if (meta.getType() == 47) {
                 countDownLatch.countDown();
             }

@@ -56,7 +56,7 @@ public class MasterVolumeMessage extends ShortMessage
             " volume="  + volume;
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
