@@ -24,6 +24,8 @@ import javax.sound.sampled.SourceDataLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import vavi.util.Debug;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,9 +38,15 @@ import static vavi.sound.SoundUtil.volume;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>
  */
+@PropsEntity(url = "file:local.properties")
 public class VoxInputStreamTest {
 
-    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
 
     String inFile = "out.adpcm";
     String correctFile = "out.pcm";
@@ -46,6 +54,10 @@ public class VoxInputStreamTest {
 
     @BeforeEach
     public void setup() throws IOException {
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(this);
+        }
+
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
 Debug.println(Level.FINE, "outFile: " + outFile);

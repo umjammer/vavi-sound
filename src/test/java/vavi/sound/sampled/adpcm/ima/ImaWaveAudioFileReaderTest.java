@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -23,6 +24,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import vavi.util.Debug;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,9 +38,15 @@ import static vavi.sound.SoundUtil.volume;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
+@PropsEntity(url = "file:local.properties")
 public class ImaWaveAudioFileReaderTest {
 
-    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
 
     String inFile = "/vavi/sound/adpcm/ima/ima_8k_4_mono.wav";
     String correctFile = "/vavi/sound/adpcm/ima/linear_8k_16_mono.pcm";
@@ -45,6 +54,10 @@ public class ImaWaveAudioFileReaderTest {
 
     @BeforeEach
     public void setup() throws IOException {
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(this);
+        }
+
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
 Debug.println("outFile: " + outFile);

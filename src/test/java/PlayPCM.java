@@ -9,11 +9,15 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.SourceDataLine;
+
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 
 import static vavi.sound.SoundUtil.volume;
 
@@ -24,9 +28,15 @@ import static vavi.sound.SoundUtil.volume;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030714 nsano initial version <br>
  */
+@PropsEntity(url = "file:local.properties")
 public class PlayPCM {
 
-    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
 
     /**
      * usage: java PlayPCM pcm_file [sampleRate] [byteOrder(le,be)]
@@ -51,6 +61,9 @@ System.err.println("byteOrder: " + byteOrder);
         }
 
         PlayPCM player = new PlayPCM();
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(player);
+        }
         player.play(file, sampleRate, byteOrder);
     }
 

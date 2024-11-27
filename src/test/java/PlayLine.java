@@ -5,6 +5,8 @@
  */
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -15,6 +17,8 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.SourceDataLine;
 
 import vavi.util.Debug;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 
 import static vavi.sound.SoundUtil.volume;
 
@@ -25,21 +29,29 @@ import static vavi.sound.SoundUtil.volume;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030711 nsano initial version <br>
  */
+@PropsEntity(url = "file:local.properties")
 public class PlayLine {
 
-    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
 
     /**
      * usage: java PlayLine file ...
      */
     public static void main(String[] args) throws Exception {
-
         for (AudioFileFormat.Type type : AudioSystem.getAudioFileTypes()) {
             System.err.println(type);
         }
 
         // play
         PlayLine player = new PlayLine();
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(player);
+        }
         for (String arg : args) {
             player.play(arg);
         }

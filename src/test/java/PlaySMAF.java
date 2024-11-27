@@ -5,6 +5,8 @@
  */
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
@@ -30,17 +32,24 @@ import vavi.util.properties.annotation.PropsEntity;
 @PropsEntity(url = "file:local.properties")
 public class PlaySMAF {
 
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
     /**
      *
      * @param args smaf files ...
      */
     public static void main(String[] args) throws Exception {
         PlaySMAF app = new PlaySMAF();
-        PropsEntity.Util.bind(app);
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(app);
+        }
         app.exec(args);
     }
 
-    static final float volume = Float.parseFloat(System.getProperty("vavi.test.volume",  "0.2"));
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
 
     @Property(name = "sf2")
     String sf2 = System.getProperty("user.home") + "/Library/Audio/Sounds/Banks/Orchestra/default.sf2";
