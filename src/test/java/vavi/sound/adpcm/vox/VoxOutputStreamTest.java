@@ -43,7 +43,6 @@ public class VoxOutputStreamTest {
 Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
-    /** */
     @Test
     public void test1() throws Exception {
         OutputStream os = Files.newOutputStream(outFile.toPath());

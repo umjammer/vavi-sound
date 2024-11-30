@@ -25,7 +25,7 @@ public class RohmEncoding extends AudioFormat.Encoding {
      *
      * @param name Name of the Rohm encoding.
      */
-    public RohmEncoding(String name) {
+    private RohmEncoding(String name) {
         super(name);
     }
 }

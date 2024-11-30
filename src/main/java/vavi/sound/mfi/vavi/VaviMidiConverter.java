@@ -76,7 +76,7 @@ class VaviMidiConverter implements MidiConverter {
     public void open() {
     }
 
-    //----
+    // ----
 
     /**
      * Converts midi sequence to mfi sequence.
@@ -227,7 +227,7 @@ if (!uc.contains(key)) {
                             mfiTracks[t].add(mfiEvents[t]);
                             mfiContext.setEofSet(t, true);
                         } else {
-//logger.log(Level.DEBUG, "EOF already set[" +  t + "]");
+//logger.log(Level.TRACE, "EOF already set[" +  t + "]");
                         }
                     } else {
 logger.log(Level.DEBUG, "message is null[" +  mfiTracks[t].size() + "]: " + midiMessage);
@@ -282,7 +282,7 @@ if ((tickDash / tick) * 100 < 95 && (tickDash / tick) * 100 != 0 && !(mfiMessage
         mfiTrack.add(mfiEvent);
     }
 
-    //----
+    // ----
 
     /** Converts mfi sequence to midi sequence  */
     @Override
@@ -326,7 +326,7 @@ logger.log(Level.DEBUG, "resolution: " + resolution);
                 midiContext.addCurrent(mfiMessage.getDelta());
 
                 if (mfiMessage instanceof MidiConvertible) {
-//logger.log(Level.DEBUG, "midi convertible: " + message);
+//logger.log(Level.TRACE, "midi convertible: " + message);
                     MidiEvent[] midiEvents = ((MidiConvertible) mfiMessage).getMidiEvents(midiContext);
                     if (midiEvents != null) {
                         for (MidiEvent midiEvent : midiEvents) {

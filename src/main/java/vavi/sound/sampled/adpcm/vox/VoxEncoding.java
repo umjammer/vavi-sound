@@ -25,7 +25,7 @@ public class VoxEncoding extends AudioFormat.Encoding {
      *
      * @param name Name of the VOX encoding.
      */
-    public VoxEncoding(String name) {
+    private VoxEncoding(String name) {
         super(name);
     }
 }

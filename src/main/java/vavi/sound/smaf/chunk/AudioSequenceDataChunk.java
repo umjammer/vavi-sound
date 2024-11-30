@@ -46,7 +46,7 @@ logger.log(Level.DEBUG, "AudioSequenceData: " + size + " bytes");
     @Override
     protected void init(MyDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
-//logger.log(Level.DEBUG, "available: " + is.available() + ", " + available());
+//logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
 //skip(is, size); // TODO
         FormatType formatType = ((TrackChunk) parent).getFormatType();
         switch (formatType) {

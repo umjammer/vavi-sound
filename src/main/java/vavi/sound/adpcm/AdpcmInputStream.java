@@ -56,13 +56,13 @@ public abstract class AdpcmInputStream extends FilterInputStream {
         super(new BitInputStream(in, bits, bitOrder));
         this.byteOrder = byteOrder;
         this.decoder = getCodec();
-//logger.log(Level.DEBUG, this.in);
+//logger.log(Level.TRACE, this.in);
     }
 
     /** ADPCM (4bit) length */
     @Override
     public int available() throws IOException {
-//logger.log(Level.DEBUG, "0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
+//logger.log(Level.TRACE, "0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
         // TODO "* 2" calc should be in bits?
         return (in.available() * 2) + (rest ? 1 : 0);
     }
@@ -77,10 +77,10 @@ public abstract class AdpcmInputStream extends FilterInputStream {
      */
     @Override
     public int read() throws IOException {
-//logger.log(Level.DEBUG, in);
+//logger.log(Level.TRACE, in);
         if (!rest) {
             int adpcm = in.read();
-//logger.log(Level.DEBUG, "0: " + StringUtil.toHex2(adpcm));
+//logger.log(Level.TRACE, "0: " + StringUtil.toHex2(adpcm));
             if (adpcm == -1) {
                 return -1;
             }
@@ -88,7 +88,7 @@ public abstract class AdpcmInputStream extends FilterInputStream {
             current = decoder.decode(adpcm);
 
             rest = true;
-//logger.log(Level.DEBUG, "1: " + StringUtil.toHex2(current & 0xff));
+//logger.log(Level.TRACE, "1: " + StringUtil.toHex2(current & 0xff));
             if (ByteOrder.BIG_ENDIAN.equals(byteOrder)) {
                 return (current & 0xff00) >> 8;
             } else {
@@ -96,7 +96,7 @@ public abstract class AdpcmInputStream extends FilterInputStream {
             }
         } else {
             rest = false;
-//logger.log(Level.DEBUG, "2: " + StringUtil.toHex2((current & 0xff00) >> 8));
+//logger.log(Level.TRACE, "2: " + StringUtil.toHex2((current & 0xff00) >> 8));
             if (ByteOrder.BIG_ENDIAN.equals(byteOrder)) {
                 return current & 0xff;
             } else {

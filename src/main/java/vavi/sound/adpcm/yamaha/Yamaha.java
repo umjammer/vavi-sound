@@ -123,7 +123,7 @@ class Yamaha implements Codec {
         }
 
         stat.last = decode(code);
-//logger.log(Level.DEBUG, String.format("%04X -> %02X", samp, code));
+//logger.log(Level.TRACE, String.format("%04X -> %02X", samp, code));
         return code;
     }
 }

@@ -41,7 +41,7 @@ public class ResetOrigneMessage extends ShortMessage {
             " duration=" + duration;
     }
 
-    //----
+    // ----
 
     /* */
     @Override

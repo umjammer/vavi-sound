@@ -51,12 +51,14 @@ public class SSRCTest {
     @Property
     String ssrc = "src/test/resources/vavi/sound/pcm/resampling/ssrc/44100.wav";
 
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
+
     static final Path outPath = Paths.get("tmp/out.vavi.wav");
     static final String inFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/44100.wav";
     static final String correctDownFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/down.wav";
     static final String correctUpFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/up.wav";
 
-    static double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
     static boolean onIde = System.getProperty("vavi.test", "").equals("ide");
 
     @BeforeAll

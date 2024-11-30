@@ -169,7 +169,7 @@ public abstract class SubMessage extends MetaMessage {
         return getSubType() + ": " + getDataLength() + ":\n" + StringUtil.getDump(getData());
     }
 
-    //----
+    // ----
 
     /** */
     public void writeTo(OutputStream os) throws IOException {
@@ -237,7 +237,7 @@ logger.log(Level.DEBUG, subChunk);
         return subChunk;
     }
 
-    //----
+    // ----
 
     /** {@link SubMessage} constructors */
     private static final Map<String, Constructor<SubMessage>> subChunkConstructors = new HashMap<>();
@@ -255,7 +255,7 @@ logger.log(Level.DEBUG, subChunk);
                 if (key.matches("mfi\\.(header|audio)\\.\\w+")) {
                     @SuppressWarnings("unchecked")
                     Class<SubMessage> clazz = (Class<SubMessage>) Class.forName(props.getProperty(key));
-//logger.log(Level.DEBUG, "sub class: " + StringUtil.getClassName(clazz));
+//logger.log(Level.TRACE, "sub class: " + StringUtil.getClassName(clazz));
                     Constructor<SubMessage> constructor = clazz.getConstructor(String.class, byte[].class);
 
                     subChunkConstructors.put(key, constructor);

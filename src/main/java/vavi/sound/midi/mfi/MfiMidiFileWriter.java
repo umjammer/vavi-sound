@@ -60,7 +60,7 @@ logger.log(Level.DEBUG, "(1): fileType: " + fileType);
     @Override
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
 logger.log(Level.DEBUG, "(2): fileType: " + fileType);
-//logger.log(Level.DEBUG, sequence);
+//logger.log(Level.TRACE, sequence);
         return MfiSystem.isFileTypeSupported(fileType);
     }
 

@@ -112,7 +112,7 @@ public class WaveMessage extends SmafMessage
             " gateTime=" + String.format("%04x", gateTime);
     }
 
-    //----
+    // ----
 
     /* */
     @Override

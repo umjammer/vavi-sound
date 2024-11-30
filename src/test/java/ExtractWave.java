@@ -24,6 +24,7 @@ import vavi.util.win32.WAVE;
  *          0.02 030715 nsano fix <br>
  */
 public class ExtractWave {
+
     /**
      * usage: java ExtractWave in_file out_file
      */
@@ -34,7 +35,7 @@ public class ExtractWave {
         is.close();
 
         OutputStream os = new BufferedOutputStream(Files.newOutputStream(Paths.get(args[1])));
-//System.err.println("wave.data: " + data.getWave().length);
+//Debug.println("wave.data: " + data.getWave().length);
         is = new BufferedInputStream(new ByteArrayInputStream(data.getWave()));
 
         byte[] buf = new byte[1024];

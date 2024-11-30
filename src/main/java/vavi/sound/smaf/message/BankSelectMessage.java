@@ -110,7 +110,7 @@ public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
             " bank=" + bank;
     }
 
-    //----
+    // ----
 
     /* */
     @Override
@@ -194,7 +194,7 @@ logger.log(Level.DEBUG, "BankSelect(" + significant + "): [" + duration + "] " +
         changeBankMessage.setBank(data1);
 
         context.setBeforeTick(track, midiEvent.getTick());
-//logger.log(Level.DEBUG, channel + ": " + StringUtil.toHex2(data1) + ", " + StringUtil.toHex2(changeVoiceMessage.getProgram()) + ", " + changeBankMessage.getBank());
+//logger.log(Level.TRACE, channel + ": " + StringUtil.toHex2(data1) + ", " + StringUtil.toHex2(changeVoiceMessage.getProgram()) + ", " + changeBankMessage.getBank());
 
         return new SmafEvent[] {
             new SmafEvent(changeBankMessage, midiEvent.getTick()),

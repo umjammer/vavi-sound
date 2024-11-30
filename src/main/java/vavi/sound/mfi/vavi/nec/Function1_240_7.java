@@ -84,7 +84,7 @@ logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(data, 32));
     /** little endian */
     private byte[] adpcm;
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** ADPCM */
     public void setAdpcm(byte[] adpcm) {

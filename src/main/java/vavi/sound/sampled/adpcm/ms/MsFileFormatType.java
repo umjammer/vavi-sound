@@ -15,6 +15,7 @@ import javax.sound.sampled.AudioFileFormat;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
+@Deprecated
 public class MsFileFormatType extends AudioFileFormat.Type {
 
     /**
@@ -28,7 +29,7 @@ public class MsFileFormatType extends AudioFileFormat.Type {
      * @param name the name of the MS File Format.
      * @param extension the file extension for this MS File Format.
      */
-    public MsFileFormatType(String name, String extension) {
+    private MsFileFormatType(String name, String extension) {
         super(name, extension);
     }
 }

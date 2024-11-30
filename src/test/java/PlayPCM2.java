@@ -9,11 +9,16 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.SourceDataLine;
+
+import vavi.util.Debug;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 
 import static vavi.sound.SoundUtil.volume;
 
@@ -28,9 +33,15 @@ import static vavi.sound.SoundUtil.volume;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030714 nsano initial version <br>
  */
+@PropsEntity(url = "file:local.properties")
 public class PlayPCM2 {
 
-    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
 
     /**
      * usage: java PlayPCM2 pcm_file
@@ -45,14 +56,14 @@ public class PlayPCM2 {
         ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
 
         // 2
-
         PlayPCM2 player = new PlayPCM2();
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(player);
+        }
         player.play(file, sampleRate, byteOrder);
     }
 
-    /**
-     *
-     */
+    /** */
     void play(File file, int sampleRate, ByteOrder byteOrder) throws Exception {
         AudioFormat format = new AudioFormat(
             AudioFormat.Encoding.PCM_UNSIGNED,
@@ -62,7 +73,7 @@ public class PlayPCM2 {
             1,
             sampleRate,
             ByteOrder.BIG_ENDIAN.equals(byteOrder));
-System.err.println(format);
+Debug.println(format);
 
         InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
 

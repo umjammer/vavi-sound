@@ -81,7 +81,7 @@ Debug.println(Level.FINE, "fmt.bytesPerSecond: " + format.getBytesPerSecond());
         double time = (double) data.getWave().length / bytesPerSecond * 1000;
 Debug.println(Level.FINE, "time: " + time + " ms");
 
-        //----
+        // ----
 
         Sequence sequence = new Sequence();
         Track track = sequence.createTrack();

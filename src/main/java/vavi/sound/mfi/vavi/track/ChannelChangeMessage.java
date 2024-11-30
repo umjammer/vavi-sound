@@ -85,7 +85,7 @@ public class ChannelChangeMessage extends ShortMessage
             " channel=" + channel;
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {

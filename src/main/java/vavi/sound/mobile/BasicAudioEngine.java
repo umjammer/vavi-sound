@@ -100,10 +100,10 @@ logger.log(Level.DEBUG, audioFormat);
 
         try {
 
-//logger.log(Level.DEBUG, data.length);
+//logger.log(Level.TRACE, data.length);
             InputStream[] iss = getInputStreams(streamNumber, channels);
 
-//logger.log(Level.DEBUG, "is: " + is.available());
+//logger.log(Level.TRACE, "is: " + is.available());
 //OutputStream os = debug2();
 
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
@@ -121,7 +121,7 @@ logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(buf, 64));
                 } else {
                     int lL = iss[0].read(buf, 0, 512);
                     int lR = iss[1].read(buf, 512, 512);
-//logger.log(Level.DEBUG, "l : " + lL + ", r: " + lR);
+//logger.log(Level.TRACE, "l : " + lL + ", r: " + lR);
                     for (int i = 0; i < lL / 2; i++) {
                         byte[] temp = new byte[4];
                         temp[0] = buf[i * 2];
@@ -141,7 +141,7 @@ logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(buf, 64));
         }
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** */
     protected abstract OutputStream getOutputStream(OutputStream os);

@@ -100,7 +100,7 @@ class Ms {
         // make linear prediction for next sample
         int vlin = ((sample1 * state[sp].iCoef[0]) +
                     (sample2 * state[sp].iCoef[1])) >> 8;
-//logger.log(Level.DEBUG, vlin);
+//logger.log(Level.TRACE, vlin);
         // then add the code * step adjustment
         code -= (code & 0x08) << 1;
         int sample = (code * step) + vlin;
@@ -151,7 +151,7 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             if ((value & 0x8000) != 0) {
                 value -= 0x10000;
             }
-//logger.log(Level.DEBUG, "1: " + value);
+//logger.log(Level.TRACE, "1: " + value);
             state[channel].step = value;
             ip += 2;
         }
@@ -162,7 +162,7 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             if ((value & 0x8000) != 0) {
                 value -= 0x10000;
             }
-//logger.log(Level.DEBUG, "2: " + value);
+//logger.log(Level.TRACE, "2: " + value);
             outBuffer[channels + channel] = value;
             ip += 2;
         }
@@ -173,7 +173,7 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             if ((value & 0x8000) != 0) {
                 value -= 0x10000;
             }
-//logger.log(Level.DEBUG, "3: " + value);
+//logger.log(Level.TRACE, "3: " + value);
             outBuffer[channel] = value;
             ip += 2;
         }
@@ -262,7 +262,7 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             // difference between linear prediction and current sample
             d = inBuffer[ip] - vlin;
             int dp = d + (step << 3) + (step >> 1);
-//logger.log(Level.DEBUG, "vlin: " + vlin + ", d: " + d + ", dp: " + dp + ", in: " + inBuffer[ip] + ", coef: " + iCoef[0] + ", " + iCoef[1]);
+//logger.log(Level.TRACE, "vlin: " + vlin + ", d: " + d + ", dp: " + dp + ", in: " + inBuffer[ip] + ", coef: " + iCoef[0] + ", " + iCoef[1]);
             int c = 0;
             if (dp > 0) {
                 c = dp / step;
@@ -289,7 +289,7 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
                 // FIXME does c << 0 work properly ?
                 outBuffer[op + (ox >> 3)] |= (byte) ((ox & 4) != 0 ? c : (c << 4));
                 ox += 4 * channels;
-//logger.log(Level.DEBUG, String.format("%1x", c));
+//logger.log(Level.TRACE, String.format("%1x", c));
             }
 
             // Update the step for the next sample
@@ -301,7 +301,7 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
 //if (outBuffer != null)
 // logger.log(Level.DEBUG, "");
         d2 /= length; // be sure it's non-negative
-//logger.log(Level.DEBUG, String.format("ch%d: st %d->%d, d %.1f", channel, steps[sp], step, Math.sqrt(d2)));
+//logger.log(Level.TRACE, String.format("ch%d: st %d->%d, d %.1f", channel, steps[sp], step, Math.sqrt(d2)));
         steps[sp] = step;
 
         return (int) Math.sqrt(d2);
@@ -354,7 +354,7 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
 
             s1[0] = s0;
             encode(channel, channels, v, _iCoef[k], inBuffer, n0, s1, 0, null);
-//logger.log(Level.DEBUG, String.format(" s32 %d", s1[0]));
+//logger.log(Level.TRACE, String.format(" s32 %d", s1[0]));
 
             ss[0] = (3 * s0 + s1[0]) / 4;
             s1[0] = ss[0];
@@ -372,7 +372,7 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             }
         }
         steps[sp] = smin;
-//logger.log(Level.DEBUG, String.format("kmin %d, smin %5d, ", kmin, smin));
+//logger.log(Level.TRACE, String.format("kmin %d, smin %5d, ", kmin, smin));
         encode(channel, channels, v, _iCoef[kmin], inBuffer, length, steps, sp, outBuffer);
         outBuffer[channel] = (byte) kmin;
     }
@@ -422,8 +422,8 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             n = 0;
             m = blockAlign;
         }
-//logger.log(Level.DEBUG, "n: " + n);
-//logger.log(Level.DEBUG, "m: " + m);
+//logger.log(Level.TRACE, "n: " + n);
+//logger.log(Level.TRACE, "m: " + m);
         if (m >= 7 * channels) {
             m -= 7 * channels;              // bytes beyond block-header
             m = (2 * m) / channels + 2;     // nibbles / channels + 2 in header

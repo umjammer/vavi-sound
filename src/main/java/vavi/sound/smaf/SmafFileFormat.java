@@ -49,7 +49,7 @@ public class SmafFileFormat {
         return byteLength;
     }
 
-    //----
+    // ----
 
     /** SMAF Sequence */
     private Sequence sequence;

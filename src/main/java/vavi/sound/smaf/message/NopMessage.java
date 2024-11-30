@@ -48,7 +48,7 @@ public class NopMessage extends ShortMessage
             " (" + String.format("%04x", duration) + ")";
     }
 
-    //----
+    // ----
 
     /* */
     @Override

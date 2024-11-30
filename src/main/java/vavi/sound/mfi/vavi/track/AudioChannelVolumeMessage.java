@@ -85,7 +85,7 @@ public class AudioChannelVolumeMessage extends vavi.sound.mfi.ShortMessage
                " volume=" + volume;
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)

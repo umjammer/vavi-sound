@@ -25,7 +25,7 @@ public class YamahaEncoding extends AudioFormat.Encoding {
      *
      * @param name Name of the Yamaha encoding.
      */
-    public YamahaEncoding(String name) {
+    private YamahaEncoding(String name) {
         super(name);
     }
 }

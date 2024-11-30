@@ -101,7 +101,7 @@ t = System.currentTimeMillis();
         return event.r;
     }
 
-    //----
+    // ----
 
     @Options
     @HelpOption(argName = "help", option = "?", description = "print this help")

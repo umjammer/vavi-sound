@@ -51,7 +51,7 @@ public class EndOfSequenceMessage extends vavi.sound.smaf.ShortMessage
         return "EOS: duration=" + duration;
     }
 
-    //----
+    // ----
 
     /* */
     @Override

@@ -245,7 +245,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
         throw new UnsupportedOperationException("no mean");
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {

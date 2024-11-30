@@ -61,7 +61,7 @@ Debug.println(meta.getType());
         midiSequencer.close();
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /**
      * Tests this class.

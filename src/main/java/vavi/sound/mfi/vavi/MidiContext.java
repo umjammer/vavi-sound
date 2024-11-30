@@ -191,11 +191,11 @@ logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + bank);
      * @param channel real MIDI channel
      */
     public int getProgram(int channel) {
-//logger.log(Level.DEBUG, "program[" + channel + "]: " + programs[channel] + " (0x" + StringUtil.toHex2(programs[channel]) + ")");
+//logger.log(Level.TRACE, "program[" + channel + "]: " + programs[channel] + " (0x" + StringUtil.toHex2(programs[channel]) + ")");
         return programs[channel];
     }
 
-    //---- note
+    // ---- note
 
     /**
      * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
@@ -228,7 +228,7 @@ logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + bank);
         return pitch + 45;
     }
 
-    //----
+    // ----
 
     /** -32 ~ 31, index is pseudo MIDI channel */
     private final int[] pitchBends = new int[MAX_MIDI_CHANNELS];
@@ -273,7 +273,7 @@ logger.log(Level.DEBUG, "pitch[" + channel + "]: " + pitch);
         return pitch;
     }
 
-    //----
+    // ----
 
     /**
      * use with PPQ

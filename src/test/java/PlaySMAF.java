@@ -5,6 +5,8 @@
  */
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
@@ -16,6 +18,7 @@ import vavi.sound.smaf.Sequence;
 import vavi.sound.smaf.Sequencer;
 import vavi.sound.smaf.SmafSystem;
 import vavi.sound.smaf.Synthesizer;
+import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
@@ -29,17 +32,24 @@ import vavi.util.properties.annotation.PropsEntity;
 @PropsEntity(url = "file:local.properties")
 public class PlaySMAF {
 
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
     /**
      *
      * @param args smaf files ...
      */
     public static void main(String[] args) throws Exception {
         PlaySMAF app = new PlaySMAF();
-        PropsEntity.Util.bind(app);
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(app);
+        }
         app.exec(args);
     }
 
-    static final float volume = Float.parseFloat(System.getProperty("vavi.test.volume",  "0.2"));
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
 
     @Property(name = "sf2")
     String sf2 = System.getProperty("user.home") + "/Library/Audio/Sounds/Banks/Orchestra/default.sf2";
@@ -53,23 +63,23 @@ Synthesizer synthesizer = (Synthesizer) sequencer;
 // sf
 Soundbank soundbank = synthesizer.getDefaultSoundbank();
 //Instrument[] instruments = synthesizer.getAvailableInstruments();
-System.err.println("---- " + soundbank.getDescription() + " ----");
+Debug.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
 synthesizer.unloadAllInstruments(soundbank);
 File file = new File(sf2);
 soundbank = MidiSystem.getSoundbank(file);
 synthesizer.loadAllInstruments(soundbank);
 //instruments = synthesizer.getAvailableInstruments();
-System.err.println("---- " + soundbank.getDescription() + " ----");
+Debug.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
 // volume (not work ???)
 MidiChannel[] channels = synthesizer.getChannels();
 
         for (String arg : args) {
-System.err.println("START: " + arg);
+Debug.println("START: " + arg);
             CountDownLatch countDownLatch = new CountDownLatch(1);
             MetaEventListener mel = meta -> {
-System.err.println("META: " + meta.getType());
+Debug.println("META: " + meta.getType());
                 if (meta.getType() == 47) {
                     countDownLatch.countDown();
                 }
@@ -80,7 +90,7 @@ System.err.println("META: " + meta.getType());
             sequencer.start();
 MidiUtil.volume(synthesizer.getReceiver(), volume); // TODO noise
             countDownLatch.await();
-System.err.println("END: " + arg);
+Debug.println("END: " + arg);
             sequencer.removeMetaEventListener(mel);
         }
         sequencer.close();

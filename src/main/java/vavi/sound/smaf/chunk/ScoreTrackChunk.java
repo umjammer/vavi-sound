@@ -75,11 +75,11 @@ logger.log(Level.DEBUG, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGate
         case HandyPhoneStandard: {
             byte[] buffer = new byte[2];
             dis.readFully(buffer);
-//logger.log(Level.DEBUG, StringUtil.getDump(channelStatus));
+//logger.log(Level.TRACE, StringUtil.getDump(channelStatus));
             this.channelStatuses = new ChannelStatus[4];
             for (int i = 0; i < 4; i++) {
                 channelStatuses[i] = new ChannelStatus(i, (byte) ((buffer[i / 2] & (0xf0 >> (4 * (i % 2)))) >> (4 * ((i + 1) % 2))));
-//logger.log(Level.DEBUG, channelStatuses[i]);
+//logger.log(Level.TRACE, channelStatuses[i]);
             }
           } break;
         case MobileStandard_Compress:
@@ -89,7 +89,7 @@ logger.log(Level.DEBUG, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGate
             this.channelStatuses = new ChannelStatus[16];
             for (int i = 0; i < 16; i++) {
                 channelStatuses[i] = new ChannelStatus(i, (int) buffer[i]);
-//logger.log(Level.DEBUG, channelStatuses[i]);
+//logger.log(Level.TRACE, channelStatuses[i]);
             }
           } break;
         case Unknown3: {
@@ -101,7 +101,7 @@ logger.log(Level.DEBUG, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGate
 logger.log(Level.DEBUG, "formatType: " + formatType);
 
         while (dis.available() > 0) {
-//logger.log(Level.DEBUG, "available: " + is.available() + ", " + available());
+//logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
             Chunk chunk = readFrom(dis);
             if (chunk instanceof SeekAndPhraseInfoChunk) {
                 seekAndPhraseInfoChunk = chunk;
@@ -206,7 +206,7 @@ logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
             List<SmafMessage> messages = ((SetupDataChunk) setupDataChunk).getSmafMessages();
             for (SmafMessage message : messages) {
                 events.add(new SmafEvent(message, 0L));
-//logger.log(Level.DEBUG, "SetupDataChunk: " + message);
+//logger.log(Level.TRACE, "SetupDataChunk: " + message);
             }
         }
 
@@ -215,7 +215,7 @@ logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
             List<SmafMessage> messages = ((StreamPcmDataChunk) streamPcmDataChunk).getSmafMessages();
             for (SmafMessage message : messages) {
                 events.add(new SmafEvent(message, 0L)); // TODO 0l
-//logger.log(Level.DEBUG, "StreamPcmDataChunk: " + message);
+//logger.log(Level.TRACE, "StreamPcmDataChunk: " + message);
             }
         }
 
@@ -223,7 +223,7 @@ logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         List<SmafMessage> messages = ((SequenceDataChunk) sequenceDataChunk).getSmafMessages();
         for (SmafMessage message : messages) {
             events.add(new SmafEvent(message, 0L)); // TODO 0l
-//logger.log(Level.DEBUG, "SequenceDataChunk: " + message);
+//logger.log(Level.TRACE, "SequenceDataChunk: " + message);
         }
 
         return events;

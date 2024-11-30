@@ -99,7 +99,7 @@ logger.log(Level.DEBUG, "resolution: " + resolution);
                 SmafMessage smafMessage = smafEvent.getMessage();
 
                 midiContext.addCurrentTick(midiContext.getTicksOf(smafMessage.getDuration()));
-//logger.log(Level.DEBUG, "■■■■■(" + i + ":" + j + ") ticks: " + midiContext.getCurrentTick() + "(" + midiContext.getTicksOf(smafMessage.getDuration()) + "," + smafMessage.getDuration() + "), " + smafMessage.getClass().getSimpleName());
+//logger.log(Level.TRACE, "■■■■■(" + i + ":" + j + ") ticks: " + midiContext.getCurrentTick() + "(" + midiContext.getTicksOf(smafMessage.getDuration()) + "," + smafMessage.getDuration() + "), " + smafMessage.getClass().getSimpleName());
 
                 if (smafMessage instanceof MidiConvertible) {
 if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
@@ -142,8 +142,8 @@ if (!uc.contains(smafMessage.getClass())) {
     /** Note may be entered before Control/Program */
     @SuppressWarnings("unused")
     private static void addSmafMessage(javax.sound.midi.Track midiTrack, MidiEvent midiEvent) {
-//logger.log(Level.DEBUG, "★: " + midiEvent.getMessage());
-//logger.log(Level.DEBUG, "★: " + (midiTrack.size() > 1 ? midiTrack.get(midiTrack.size() - 2).getMessage() : null));
+//logger.log(Level.TRACE, "★: " + midiEvent.getMessage());
+//logger.log(Level.TRACE, "★: " + (midiTrack.size() > 1 ? midiTrack.get(midiTrack.size() - 2).getMessage() : null));
         if (midiEvent.getTick() == 0 &&
             midiEvent.getMessage() instanceof ShortMessage &&
             ((ShortMessage) midiEvent.getMessage()).getCommand() == ShortMessage.PROGRAM_CHANGE &&

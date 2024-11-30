@@ -313,7 +313,7 @@ abstract class G711 implements Codec {
                                     0x55 ^ (_u2a[0x7f ^ uval] - 1);
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /**
      * Quantizes the input val against the table of size short integers.

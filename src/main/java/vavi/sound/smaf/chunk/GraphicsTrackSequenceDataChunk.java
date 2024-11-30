@@ -79,7 +79,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
         while (dis.available() > 0) {
             // -------- duration --------
             int duration = MidiUtil.readVariableLength(dis);
-//logger.log(Level.DEBUG, "duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
+//logger.log(Level.TRACE, "duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
             // -------- event --------
             int e1 = dis.readUnsignedByte();
             switch (e1) {
@@ -122,7 +122,7 @@ logger.log(Level.DEBUG, String.format("reserved: %02x", e1));
               } break;
             }
 
-//logger.log(Level.DEBUG, available() + ", " + smafMessage);
+//logger.log(Level.TRACE, available() + ", " + smafMessage);
 logger.log(Level.DEBUG, "message: " + smafMessage);
             messages.add(smafMessage);
         }

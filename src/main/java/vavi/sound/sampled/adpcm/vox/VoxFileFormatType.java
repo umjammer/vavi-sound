@@ -15,6 +15,7 @@ import javax.sound.sampled.AudioFileFormat;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
+@Deprecated
 public class VoxFileFormatType extends AudioFileFormat.Type {
 
     /**
@@ -28,7 +29,7 @@ public class VoxFileFormatType extends AudioFileFormat.Type {
      * @param name the name of the VOX File Format.
      * @param extension the file extension for this VOX File Format.
      */
-    public VoxFileFormatType(String name, String extension) {
+    private VoxFileFormatType(String name, String extension) {
         super(name, extension);
     }
 }

@@ -62,7 +62,7 @@ public class EndOfTrackMessage extends ShortMessage
         return "EndOfTrack:";
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
@@ -75,7 +75,7 @@ public class EndOfTrackMessage extends ShortMessage
 //            new MidiEvent(metaMessage, context.getCurrent())
 //        };
 
-//logger.log(Level.DEBUG, "ignore: " + this);
+//logger.log(Level.TRACE, "ignore: " + this);
         return null;
     }
 

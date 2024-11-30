@@ -54,7 +54,7 @@ Debug.println(meta.getType());
         sequencer.close();
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** */
     private static String fileName;

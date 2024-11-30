@@ -44,7 +44,7 @@ public class NoteMessage extends SubMessage {
     /** Length of {@link vavi.sound.mfi.NoteMessage} 1: 4byte */
     public int getNoteLength() {
         byte[] data = getData();
-//logger.log(Level.DEBUG, data[0] * 0xff + data[1]);
+//logger.log(Level.TRACE, data[0] * 0xff + data[1]);
         return data[0] * 0xff + data[1];
     }
 

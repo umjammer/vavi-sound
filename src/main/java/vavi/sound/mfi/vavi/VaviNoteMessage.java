@@ -67,7 +67,7 @@ public class VaviNoteMessage extends NoteMessage
                                 channel,
                                 pitch,
                                 velocity);
-//logger.log(Level.DEBUG, "note: " + channel + ": " + pitch);
+//logger.log(Level.TRACE, "note: " + channel + ": " + pitch);
         events[0] = new MidiEvent(shortMessage, context.getCurrent());
 
         shortMessage = new ShortMessage();
@@ -94,7 +94,7 @@ public class VaviNoteMessage extends NoteMessage
         int command = shortMessage.getCommand();
         int data1 = shortMessage.getData1();
         int data2 = shortMessage.getData2();
-//logger.log(Level.DEBUG, midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
+//logger.log(Level.TRACE, midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
 
         if (command == ShortMessage.NOTE_OFF ||
             // note on with velocity 0
@@ -164,7 +164,7 @@ if (length == 0) {
 if (length >= 255) {
  logger.log(Level.INFO, channel + "ch, " + mfiMessage.getNote() + ", " + mfiMessage.getDelta() + ":[" + i + "]:" + (i == onLength - 1 ? length % 255 : 255) + "/" + length);
 }
-//logger.log(Level.DEBUG, channel + ", " + mfiMessage.getVoice() + ", " + ((mfiMessage.getMessage()[1] & 0xc0) >> 6));
+//logger.log(Level.TRACE, channel + ", " + mfiMessage.getVoice() + ", " + ((mfiMessage.getMessage()[1] & 0xc0) >> 6));
                 mfiEvents[i] = new MfiEvent(mfiMessage, 0L); // TODO 0l
 //if (mfiEvents[i] == null) {
 // logger.log(Level.DEBUG, "[" + i + "]: " + mfiEvents[i]);

@@ -89,7 +89,7 @@ public class LoopPointMessage extends ShortMessage
                " start=" + start;
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {

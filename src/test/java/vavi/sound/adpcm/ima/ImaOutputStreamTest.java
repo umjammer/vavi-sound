@@ -28,6 +28,8 @@ import vavi.io.InputEngineOutputStream;
 import vavi.io.LittleEndianDataInputStream;
 import vavi.io.OutputEngineInputStream;
 import vavi.util.Debug;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 import vavix.io.IOStreamInputEngine;
 import vavix.io.IOStreamOutputEngine;
 import vavix.util.Checksum;
@@ -42,9 +44,15 @@ import static vavi.sound.SoundUtil.volume;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>
  */
+@PropsEntity(url = "file:local.properties")
 public class ImaOutputStreamTest {
 
-    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
 
     String inFile = "out.pcm";
     String correctFile = "out_sox.adpcm";
@@ -52,13 +60,16 @@ public class ImaOutputStreamTest {
 
     @BeforeEach
     public void setup() throws IOException {
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(this);
+        }
+
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
 //        outFile = new File("src/test/resources/vavi/sound/adpcm/ima/out_vavi.adpcm");
 Debug.println(Level.FINE, "outFile: " + outFile.getCanonicalPath());
     }
 
-    /** */
     @Test
     public void test1() throws Exception {
         OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
@@ -181,7 +192,6 @@ Debug.println(Level.FINE, "outFile: " + outFile.length());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(inFile)), Checksum.getChecksum(outFile));
     }
 
-    /** */
     @Test
     public void test3() throws Exception {
         final String inFile = "out.pcm";

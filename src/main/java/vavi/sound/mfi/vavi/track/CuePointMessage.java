@@ -67,7 +67,7 @@ public class CuePointMessage extends ShortMessage
         return "CuePoint:" + " start=" + start;
     }
 
-    //----
+    // ----
 
     /**
      * TODO {@link javax.sound.midi.MetaMessage} has 0x07 cue point
@@ -92,7 +92,7 @@ public class CuePointMessage extends ShortMessage
 //               new MidiEvent(sysexMessage, context.getCurrent())
 //          };
 //      } else {
-//logger.log(Level.DEBUG, "ignore: " + this);
+//logger.log(Level.TRACE, "ignore: " + this);
 //        return null;
 //      }
         MetaMessage metaMessage = new MetaMessage();

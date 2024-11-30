@@ -80,7 +80,7 @@ public class SmafAudioFileWriterTest {
         ais.close();
     }
 
-    //----
+    // ----
 
     /**
      * @param args 0: input PCM, 1: output base dir, 2: length in seconds, 3: base file name, 4: type, 5: null device

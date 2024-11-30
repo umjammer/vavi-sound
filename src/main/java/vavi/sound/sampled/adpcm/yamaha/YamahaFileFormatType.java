@@ -15,6 +15,7 @@ import javax.sound.sampled.AudioFileFormat;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
+@Deprecated
 public class YamahaFileFormatType extends AudioFileFormat.Type {
 
     /**
@@ -28,7 +29,7 @@ public class YamahaFileFormatType extends AudioFileFormat.Type {
      * @param name the name of the Yamaha File Format.
      * @param extension the file extension for this Yamaha File Format.
      */
-    public YamahaFileFormatType(String name, String extension) {
+    private YamahaFileFormatType(String name, String extension) {
         super(name, extension);
     }
 }

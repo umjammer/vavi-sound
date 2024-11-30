@@ -42,7 +42,7 @@ public class NopMessage extends ShortMessage {
             " duration=" + duration;
     }
 
-    //----
+    // ----
 
     /* */
     @Override

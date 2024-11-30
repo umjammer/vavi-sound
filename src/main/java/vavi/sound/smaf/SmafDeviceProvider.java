@@ -101,7 +101,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                     if (key.startsWith("smaf.device.")) {
                         @SuppressWarnings("unchecked")
                         Class<SmafDevice> deviceClass = (Class<SmafDevice>) Class.forName(props.getProperty(key));
-//logger.log(Level.DEBUG, "smaf device class: " + StringUtil.getClassName(clazz));
+//logger.log(Level.TRACE, "smaf device class: " + StringUtil.getClassName(clazz));
                         SmafDevice.Info smafDeviceInfo = deviceClass.getDeclaredConstructor().newInstance().getDeviceInfo();
 
                         deviceMap.put(smafDeviceInfo, deviceClass);

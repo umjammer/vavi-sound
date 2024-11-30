@@ -66,7 +66,7 @@ logger.log(Level.DEBUG, "TRACK: " + scoreTrackChunks.size());
 logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
             }
         }
-//logger.log(Level.DEBUG, "available: " + is.available());
+//logger.log(Level.TRACE, "available: " + is.available());
         this.crc = dis.readUnsignedShort();
 logger.log(Level.DEBUG, String.format("crc (orig): %04x", crc));
         if (dis.available() > 4) {
@@ -124,7 +124,7 @@ logger.log(Level.DEBUG, String.format("has kddi crc: %04x, %04x", kddiCrc, kddiM
         }
     }
 
-    //----
+    // ----
 
     /** */
     private Chunk contentsInfoChunk;

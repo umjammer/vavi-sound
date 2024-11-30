@@ -107,7 +107,7 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[str
         return iss;
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     @Override
     protected OutputStream getOutputStream(OutputStream os) {
@@ -135,11 +135,10 @@ logger.log(Level.DEBUG, audioFormat);
 
         try {
 
-//logger.log(Level.DEBUG, data.length);
+//logger.log(Level.TRACE, data.length);
             InputStream[] iss = getInputStreams(streamNumber, channels);
 
-//logger.log(Level.DEBUG, "is: " + is.available());
-// OutputStream os = debug2();
+//logger.log(Level.TRACE, "is: " + is.available());
 
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
             SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
@@ -150,13 +149,12 @@ logger.log(Level.DEBUG, audioFormat);
             while (iss[0].available() > 0) {
                 if (channels == 1) {
                     int l = iss[0].read(buf, 0, 1024);
-//Debug.dump(buf, 64);
+//logger.log(Level.TRACE, "\n" + StringUtil.getDump(buf, 64));
                     line.write(buf, 0, l);
-// debug3(os);
                 } else {
                     int lL = iss[0].read(buf, 0, 512);
                     /*int lR = */iss[1].read(buf, 512, 512);
-//logger.log(Level.DEBUG, "l : " + lL + ", r: " + lR);
+//logger.log(Level.TRACE, "l : " + lL + ", r: " + lR);
                     for (int i = 0; i < lL / 2; i++) {
                         byte[] temp = new byte[4];
                         temp[0] = buf[i * 2];
@@ -170,10 +168,9 @@ logger.log(Level.DEBUG, audioFormat);
             line.drain();
             line.stop();
             line.close();
-// debug4(os);
+
         } catch (IOException | LineUnavailableException e) {
             throw new IllegalStateException(e);
         }
     }
-
 }

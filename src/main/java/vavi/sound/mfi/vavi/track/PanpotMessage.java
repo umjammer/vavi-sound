@@ -97,7 +97,7 @@ public class PanpotMessage extends vavi.sound.mfi.ShortMessage
             " panpot=" + panpot;
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)

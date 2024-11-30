@@ -180,7 +180,7 @@ class Dvi implements Codec {
 
         //
         int valPrev = state.valPrev;
-//logger.log(Level.DEBUG, "{}", valPrev);
+//logger.log(Level.TRACE, "{}", valPrev);
         // Current step change index
         int index = state.index;
 

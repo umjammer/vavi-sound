@@ -72,7 +72,7 @@ public class WaveDataMessage extends SmafMessage
             " channels="    + channels;
     }
 
-    //----
+    // ----
 
     /* */
     @Override

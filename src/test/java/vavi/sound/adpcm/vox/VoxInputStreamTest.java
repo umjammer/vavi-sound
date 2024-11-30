@@ -24,6 +24,8 @@ import javax.sound.sampled.SourceDataLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import vavi.util.Debug;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 import vavix.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,9 +38,15 @@ import static vavi.sound.SoundUtil.volume;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>
  */
+@PropsEntity(url = "file:local.properties")
 public class VoxInputStreamTest {
 
-    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
 
     String inFile = "out.adpcm";
     String correctFile = "out.pcm";
@@ -46,12 +54,15 @@ public class VoxInputStreamTest {
 
     @BeforeEach
     public void setup() throws IOException {
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(this);
+        }
+
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
 Debug.println(Level.FINE, "outFile: " + outFile);
     }
 
-    /** */
     @Test
     public void test1() throws Exception {
 
@@ -95,7 +106,7 @@ System.err.println("available: " + is.available());
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** */
     public static void main(String[] args) throws Exception {
@@ -113,12 +124,10 @@ System.err.println("available: " + is.available());
             byteOrder.equals(ByteOrder.BIG_ENDIAN));
 System.err.println(audioFormat);
 
-        InputStream is = new VoxInputStream(Files.newInputStream(Paths.get(args[0])),
-                                            byteOrder);
+        InputStream is = new VoxInputStream(Files.newInputStream(Paths.get(args[0])), byteOrder);
 System.err.println("available: " + is.available());
 
-//  OutputStream os =
-//   new BufferedOutputStream(new FileOutputStream(args[1]));
+//OutputStream os = new BufferedOutputStream(new FileOutputStream(args[1]));
 
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
@@ -136,12 +145,12 @@ Debug.println(ev.getType());
         while (is.available() > 0) {
             l = is.read(buf, 0, 1024);
             line.write(buf, 0, l);
-//  os.write(buf, 0, l);
+//os.write(buf, 0, l);
         }
         line.drain();
         line.stop();
         line.close();
-//  os.close();
+//os.close();
         is.close();
     }
 }

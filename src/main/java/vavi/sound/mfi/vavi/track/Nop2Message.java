@@ -67,11 +67,11 @@ logger.log(Level.DEBUG, "NOP2: delta: " + delta);
         return "Nop2:" + (data[3] & 0xff);
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {
-//logger.log(Level.DEBUG, "ignore: " + this);
+//logger.log(Level.TRACE, "ignore: " + this);
         return null;
     }
 }

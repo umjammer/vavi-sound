@@ -37,32 +37,32 @@ public class MidiUtilTest {
      * ---------------+----------------------------
      *  00000000      | 00
      *  00000040      | 40
-     *  0000007F      | 7F
+     *  0000007f      | 7f
      *  00000080      | 81 00
-     *  00002000      | C0 00
-     *  00003FFF      | FF 7F
+     *  00002000      | c0 00
+     *  00003fff      | ff 7f
      *  00004000      | 81 80 00
-     *  00100000      | C0 80 00
-     *  001FFFFF      | FF FF 7F
+     *  00100000      | c0 80 00
+     *  001fffff      | ff ff 7f
      *  00200000      | 81 80 80 00
-     *  08000000      | C0 80 80 00
-     *  0FFFFFFF      | FF FF FF 7F
+     *  08000000      | c0 80 80 00
+     *  0fffffff      | ff ff ff 7f
      * </pre>
      */
     @Test
     public void testReadOneToFour() throws Exception {
-        assertEquals(0x00000000, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { 0x00 }))));
-        assertEquals(0x00000040, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { 0x40 }))));
-        assertEquals(0x0000007F, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { 0x7F }))));
-        assertEquals(0x00000080, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0x81, 0x00 }))));
-        assertEquals(0x00002000, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0xC0, 0x00 }))));
-        assertEquals(0x00003FFF, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0xFF, 0x7F }))));
-        assertEquals(0x00004000, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0x81, (byte) 0x80, 0x00 }))));
-        assertEquals(0x00100000, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0xC0, (byte) 0x80, 0x00 }))));
-        assertEquals(0x001FFFFF, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0xFF, (byte) 0xFF, 0x7F }))));
-        assertEquals(0x00200000, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0x81, (byte) 0x80, (byte) 0x80, 0x00 }))));
-        assertEquals(0x08000000, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0xC0, (byte) 0x80, (byte) 0x80, 0x00 }))));
-        assertEquals(0x0FFFFFFF, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, 0x7F }))));
+        assertEquals(0x0000_0000, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { 0x00 }))));
+        assertEquals(0x0000_0040, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { 0x40 }))));
+        assertEquals(0x0000_007f, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { 0x7f }))));
+        assertEquals(0x0000_0080, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0x81, 0x00 }))));
+        assertEquals(0x0000_2000, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0xc0, 0x00 }))));
+        assertEquals(0x0000_3fff, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0xff, 0x7f }))));
+        assertEquals(0x0000_4000, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0x81, (byte) 0x80, 0x00 }))));
+        assertEquals(0x0010_0000, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0xc0, (byte) 0x80, 0x00 }))));
+        assertEquals(0x001f_ffff, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0xff, (byte) 0xff, 0x7f }))));
+        assertEquals(0x0020_0000, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0x81, (byte) 0x80, (byte) 0x80, 0x00 }))));
+        assertEquals(0x0800_0000, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0xc0, (byte) 0x80, (byte) 0x80, 0x00 }))));
+        assertEquals(0x0fff_ffff, MidiUtil.readVariableLength(new DataInputStream(new ByteArrayInputStream(new byte[] { (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x7f }))));
     }
 
     /**

@@ -48,12 +48,12 @@ class Ym2608 implements Codec {
 
         // encoding process 2
         long dn = pcm - state.xn;
-//logger.log(Level.DEBUG, String.format("%05d: %d, %d, %d", ccc, dn, pcm, state.xn)); // OK
+//logger.log(Level.TRACE, String.format("%05d: %d, %d, %d", ccc, dn, pcm, state.xn)); // OK
         // encoding process 3, 4
         // calc An from "I = | dn | / Sn"
         // calc using integer part of production.
         long i = (int) (((Math.abs(dn)) << 16) / ((state.stepSize) << 14));
-//logger.log(Level.DEBUG, String.format("%05d: %d", ccc, i)); // OK
+//logger.log(Level.TRACE, String.format("%05d: %d", ccc, i)); // OK
         if (i > 7) {
             i = 7;
         }
@@ -62,7 +62,7 @@ class Ym2608 implements Codec {
         // encoding process 5
         // L3 + L2 / 2 + L1 / 4 + 1 / 8 * stepSize multiply 8 times and calc as integer
         i = (adpcm * 2L + 1) * state.stepSize / 8;
-//logger.log(Level.DEBUG, String.format("%05d: %d, %d, %d", ccc, i, adpcm, state.stepSize)); // OK
+//logger.log(Level.TRACE, String.format("%05d: %d, %d, %d", ccc, i, adpcm, state.stepSize)); // OK
 
         // if "1 - 2 * L4 -> L4" is 1 equals multiply -1
         if (dn < 0) {
@@ -74,12 +74,12 @@ class Ym2608 implements Codec {
         } else {
             state.xn += i;
         }
-//logger.log(Level.DEBUG, String.format("%05d: %d, %d", ccc, state.xn, i));
+//logger.log(Level.TRACE, String.format("%05d: %d, %d", ccc, state.xn, i));
 
         // encode process 6
         // update step size
         state.stepSize = (stepsizeTable[adpcm] * state.stepSize) / 64;
-//logger.log(Level.DEBUG, String.format("%05d: %d, %d, %d", ccc, i, adpcm, state.stepSize)); // OK
+//logger.log(Level.TRACE, String.format("%05d: %d, %d, %d", ccc, i, adpcm, state.stepSize)); // OK
 
         // encode process 7
         if (state.stepSize < 127) {
@@ -108,7 +108,7 @@ class Ym2608 implements Codec {
         } else {
             state.xn += i;
         }
-//logger.log(Level.DEBUG, String.format("%05d: %d, %d, %d", state.count, state.xn, state.stepSize, adpcm)); // OK
+//logger.log(Level.TRACE, String.format("%05d: %d, %d, %d", state.count, state.xn, state.stepSize, adpcm)); // OK
 
         // decode process 4
         if (state.xn > 32767) {
@@ -125,7 +125,7 @@ class Ym2608 implements Codec {
         } else if (state.stepSize > 24576) {
             state.stepSize = 24576;
         }
-//logger.log(Level.DEBUG, String.format("%05d: %d, %d, %d", state.count, state.xn, state.stepSize, adpcm)); // OK
+//logger.log(Level.TRACE, String.format("%05d: %d, %d, %d", state.count, state.xn, state.stepSize, adpcm)); // OK
 
         // store PCM
         int pcm = (int) state.xn;

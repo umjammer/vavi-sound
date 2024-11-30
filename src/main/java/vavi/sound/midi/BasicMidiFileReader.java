@@ -46,12 +46,12 @@ public abstract class BasicMidiFileReader extends MidiFileReader {
         throws InvalidMidiDataException,
                IOException {
 
-//logger.log(Level.DEBUG, "here ★");
+//logger.log(Level.TRACE, "here ★");
         Sequence midiSequence = getSequence(stream);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         MidiSystem.write(midiSequence, 0, os);
         ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
-//logger.log(Level.DEBUG, "temporary midi:\n" + StringUtil.getDump(os.toByteArray(), 128));
+//logger.log(Level.TRACE, "temporary midi:\n" + StringUtil.getDump(os.toByteArray(), 128));
         MidiFileFormat midiFF = MidiSystem.getMidiFileFormat(is);
         return midiFF;
     }

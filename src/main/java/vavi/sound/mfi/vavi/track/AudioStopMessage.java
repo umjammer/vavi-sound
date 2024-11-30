@@ -78,7 +78,7 @@ public class AudioStopMessage extends LongMessage
         " index=" + index;
     }
 
-    //----
+    // ----
 
     /**
      * @throws InvalidMidiDataException

@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 
 import javax.sound.sampled.AudioFormat;
@@ -27,6 +28,8 @@ import org.junit.jupiter.api.Test;
 
 import vavi.io.LittleEndianDataInputStream;
 import vavi.util.Debug;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 import vavi.util.win32.WAVE;
 
 import vavix.util.Checksum;
@@ -41,9 +44,15 @@ import static vavi.sound.SoundUtil.volume;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060120 nsano initial version <br>
  */
+@PropsEntity(url = "file:local.properties")
 public class MsInputStreamTest {
 
-    static final double volume = Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
 
     String inFile = "ms_8k_4_mono.wav";
     String correctFile = "out_sox.pcm";
@@ -51,6 +60,10 @@ public class MsInputStreamTest {
 
     @BeforeEach
     public void setup() throws IOException {
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(this);
+        }
+
         outFile = File.createTempFile("vavi", ".pcm");
         outFile.deleteOnExit();
 Debug.println(Level.FINE, "outFile: " + outFile);
@@ -91,7 +104,7 @@ Debug.printf(Level.FINE, "iCoef[%d][%d]: %04x: %d\n", i, j, iCoefs[i][j] & 0xfff
         in = new ByteArrayInputStream(data.getWave());
 Debug.println(Level.FINE, "wave: " + in.available());
 
-        //----
+        // ----
 
         int sampleRate = format.getSamplingRate();
         ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;

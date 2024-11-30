@@ -73,7 +73,7 @@ public class PanMessage extends vavi.sound.smaf.ShortMessage
             " panpot=" + panpot;
     }
 
-    //----
+    // ----
 
     /* */
     @Override

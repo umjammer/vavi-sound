@@ -55,7 +55,7 @@ logger.log(Level.WARNING, String.format("unsupported function: 0x%02x", function
         }
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** */
     private static final AudioEngine player = new FuetrekAudioEngine();
@@ -65,7 +65,7 @@ logger.log(Level.WARNING, String.format("unsupported function: 0x%02x", function
         return player;
     }
 
-    //-------------------------------------------------------------------------
+    // ----
 
     /** */
     private static final MachineDependentFunction.Factory factory =

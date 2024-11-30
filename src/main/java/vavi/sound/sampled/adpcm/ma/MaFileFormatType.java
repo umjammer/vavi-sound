@@ -15,6 +15,7 @@ import javax.sound.sampled.AudioFileFormat;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 201020 nsano initial version <br>
  */
+@Deprecated
 public class MaFileFormatType extends AudioFileFormat.Type {
 
     /**
@@ -28,7 +29,7 @@ public class MaFileFormatType extends AudioFileFormat.Type {
      * @param name the name of the MA File Format.
      * @param extension the file extension for this MA File Format.
      */
-    public MaFileFormatType(String name, String extension) {
+    private MaFileFormatType(String name, String extension) {
         super(name, extension);
     }
 }

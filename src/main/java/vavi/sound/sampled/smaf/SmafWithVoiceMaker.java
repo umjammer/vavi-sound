@@ -175,28 +175,28 @@ logger.log(Level.DEBUG, "moduloOfChunks: " + moduloOfChunks);
         SmafMessage message = new VolumeMessage(0, 0, 127);
         audioSequenceDataChunk.addSmafMessage(message);
         messageBytes += message.getLength();
-//logger.log(Level.DEBUG, "messageBytes: volume: " + messageBytes);
+//logger.log(Level.TRACE, "messageBytes: volume: " + messageBytes);
         for (int i = 0; i < numberOfChunks; i++) {
             message = new WaveMessage(0, 0, streamNumber++, NopMessage.maxSteps);
             audioSequenceDataChunk.addSmafMessage(message);
             messageBytes += message.getLength();
-//logger.log(Level.DEBUG, "messageBytes: wave: " + messageBytes);
+//logger.log(Level.TRACE, "messageBytes: wave: " + messageBytes);
 
             message = new NopMessage(NopMessage.maxSteps);
             audioSequenceDataChunk.addSmafMessage(message);
             messageBytes += message.getLength();
-//logger.log(Level.DEBUG, "messageBytes: nop: " + messageBytes);
+//logger.log(Level.TRACE, "messageBytes: nop: " + messageBytes);
         }
         if (moduloOfChunks != 0) {
             message = new WaveMessage(0, 0, streamNumber++, moduloOfChunks);
             audioSequenceDataChunk.addSmafMessage(message);
             messageBytes += message.getLength();
-//logger.log(Level.DEBUG, "messageBytes: wave: " + messageBytes);
+//logger.log(Level.TRACE, "messageBytes: wave: " + messageBytes);
 
             message = new NopMessage(moduloOfChunks);
             audioSequenceDataChunk.addSmafMessage(message);
             messageBytes += message.getLength();
-//logger.log(Level.DEBUG, "messageBytes: nop: " + messageBytes);
+//logger.log(Level.TRACE, "messageBytes: nop: " + messageBytes);
         }
         audioSequenceDataChunk.addSmafMessage(new EndOfSequenceMessage(0));
 
@@ -275,7 +275,7 @@ logger.log(Level.DEBUG, "write: " + r);
         }
     }
 
-    //----
+    // ----
 
     @Options
     @HelpOption(argName = "help", option = "?", description = "print this help")

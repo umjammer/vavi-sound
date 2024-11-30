@@ -90,13 +90,13 @@ public class MfiConvertibleMessage implements MfiConvertible {
 //          case RPN_PITCH_BEND_SENSITIVITY:
 //              MfiConvertible converter = new vavi.sound.mfi.vavi.channel.PitchBendRangeMessage();
 //              return converter.getMfiEvents(midiEvent, context);
-//logger.log(Level.DEBUG, "rpn: MSB:" + rpnMSB[channel] + ", LSB:" + rpnLSB[channel]);
+//logger.log(Level.TRACE, "rpn: MSB:" + rpnMSB[channel] + ", LSB:" + rpnLSB[channel]);
 //          default:
-//logger.log(Level.DEBUG, "data entry: no handler for rpn: " + rpn[channel]);
+//logger.log(Level.TRACE, "data entry: no handler for rpn: " + rpn[channel]);
 //              break;
 //          }
         default:
-//logger.log(Level.DEBUG, "not implemented: " + data1);
+//logger.log(Level.TRACE, "not implemented: " + data1);
             break;
         }
 

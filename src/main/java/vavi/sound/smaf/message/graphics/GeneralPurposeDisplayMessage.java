@@ -64,7 +64,7 @@ public class GeneralPurposeDisplayMessage extends ShortMessage {
         BitmapTile
     }
 
-    //----
+    // ----
 
     /* */
     @Override

@@ -26,7 +26,7 @@ public class ColorPaletteDefinitionChunk extends Chunk {
     /** */
     public ColorPaletteDefinitionChunk(byte[] id, int size) {
         super(id, size);
-//logger.log(Level.DEBUG, "ColorPaletteDefinition: " + size);
+//logger.log(Level.TRACE, "ColorPaletteDefinition: " + size);
     }
 
     /** */

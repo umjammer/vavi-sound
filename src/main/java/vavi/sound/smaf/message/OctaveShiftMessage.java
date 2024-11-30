@@ -71,7 +71,7 @@ public class OctaveShiftMessage extends vavi.sound.smaf.ShortMessage
             " octaveShift=" + octaveShift;
     }
 
-    //----
+    // ----
 
     /* */
     @Override

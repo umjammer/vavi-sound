@@ -6,6 +6,8 @@
 
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import javax.sound.midi.MetaEventListener;
@@ -31,6 +33,10 @@ import vavi.util.properties.annotation.PropsEntity;
 @PropsEntity(url = "file:local.properties")
 public class SoundFontTest {
 
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
     /**
      * @param args 0: midi
      */
@@ -38,11 +44,14 @@ public class SoundFontTest {
         File file = new File(args[0]);
 
         SoundFontTest app = new SoundFontTest();
-        PropsEntity.Util.bind(app);
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(app);
+        }
         app.exec(file);
     }
 
-    static final float volume = Float.parseFloat(System.getProperty("vavi.test.volume",  "0.2"));
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
 
     @Property(name = "sf2")
     String sf2name = System.getProperty("user.home") + "/Library/Audio/Sounds/Banks/Orchestra/default.sf2";
@@ -66,12 +75,12 @@ Debug.println(Level.FINE, "synthesizer: " + synthesizer);
         soundbank = MidiSystem.getSoundbank(sf2);
         synthesizer.loadAllInstruments(soundbank);
 //        instruments = synthesizer.getAvailableInstruments();
-System.err.println("---- " + soundbank.getDescription() + " ----");
+Debug.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
 
         CountDownLatch countDownLatch = new CountDownLatch(1);
         MetaEventListener mel = meta -> {
-System.err.println("META: " + meta.getType());
+Debug.println("META: " + meta.getType());
             if (meta.getType() == 47) {
                 countDownLatch.countDown();
             }

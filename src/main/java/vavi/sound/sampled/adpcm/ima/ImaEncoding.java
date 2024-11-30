@@ -25,7 +25,7 @@ public class ImaEncoding extends AudioFormat.Encoding {
      *
      * @param name Name of the IMA encoding.
      */
-    public ImaEncoding(String name) {
+    private ImaEncoding(String name) {
         super(name);
     }
 }

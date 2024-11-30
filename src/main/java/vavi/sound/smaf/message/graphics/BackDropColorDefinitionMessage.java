@@ -48,7 +48,7 @@ public class BackDropColorDefinitionMessage extends ShortMessage {
             " backDropColor = " + backDropColor;
     }
 
-    //----
+    // ----
 
     /* */
     @Override

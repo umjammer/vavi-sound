@@ -310,7 +310,7 @@ logger.log(Level.DEBUG, "wave r chunk(" + numberOfChunks + "): " + chunkM.length
         return new MfiEvent(message, 0L);
     }
 
-    //----
+    // ----
 
     /**
      * Creates adpcm data message. (original pure stereo, TODO cannot play...)
@@ -330,7 +330,7 @@ logger.log(Level.DEBUG, "delta: " + delta + ", time: " + time);
 
         byte[] adpcm = audioEngine.encode(4, channels, pcm);
 logger.log(Level.DEBUG, "adpcm length: " + adpcm.length);
-//logger.log(Level.DEBUG, "pcm:\n" + StringUtil.getDump(pcm, 64) + "adpcm L:\n" + StringUtil.getDump(adpcm, 64) +"adpcm R:\n" + StringUtil.getDump(adpcm, adpcm.length / 2, 64));
+//logger.log(Level.TRACE, "pcm:\n" + StringUtil.getDump(pcm, 64) + "adpcm L:\n" + StringUtil.getDump(adpcm, 64) +"adpcm R:\n" + StringUtil.getDump(adpcm, adpcm.length / 2, 64));
 
         int numberOfChunks = adpcm.length / MAX_BLOCK;
         int moduloOfChunks = adpcm.length % MAX_BLOCK;

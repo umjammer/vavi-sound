@@ -90,16 +90,16 @@ public class ChangeBankMessage extends ShortMessage
                " bank="  + bank;
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
-//logger.log(Level.DEBUG, "track: "+context.getTrackNumber()+", voice: "+getVoice());
+//logger.log(Level.TRACE, "track: "+context.getTrackNumber()+", voice: "+getVoice());
 
-//logger.log(Level.DEBUG, "bank[" + channel + "]: " + getBank());
+//logger.log(Level.TRACE, "bank[" + channel + "]: " + getBank());
         channel = context.setBank(channel, getBank());
 
         return null;

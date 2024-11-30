@@ -90,7 +90,7 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
             " volume=" + volume;
     }
 
-    //----
+    // ----
 
     /* */
     @Override

@@ -62,7 +62,7 @@ public class UndefinedMessage extends MfiMessage
         return String.format("Undefined: %02x, %02x, %02x\n%s", data[0], data[1], data[2], StringUtil.getDump(data, 3, length - 3));
     }
 
-    //----
+    // ----
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) {

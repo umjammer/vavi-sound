@@ -49,7 +49,7 @@ public class UserMessage extends ShortMessage {
         " userEventId=" + userEventId;
     }
 
-    //----
+    // ----
 
     /* */
     @Override
