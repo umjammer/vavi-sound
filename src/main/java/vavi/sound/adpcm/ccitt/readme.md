@@ -7,6 +7,9 @@ Provides CCITT recommendation audio compression related classes.
  * encoder.exe is little endian
  * it's necessary to provide '16Bit Signed' value when `PCM_SIGNED`
 
+
+ * G.711 ... VoIP
+
 ## TODO
 
  * 3, 5bit

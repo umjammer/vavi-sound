@@ -15,3 +15,4 @@ vavi.sound.sampled.adpcm.oki.OkiFormatConversionProvider
 vavi.sound.sampled.adpcm.rohm.RohmFormatConversionProvider
 vavi.sound.sampled.adpcm.vox.VoxFormatConversionProvider
 vavi.sound.sampled.adpcm.yamaha.YamahaFormatConversionProvider
+#vavi.sound.pcm.resampling.ssrc.SSRCSampleRateConversionProvider
