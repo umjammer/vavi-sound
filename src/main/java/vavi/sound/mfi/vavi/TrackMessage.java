@@ -315,7 +315,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                                             DataInputStream dis) throws IOException {
 //logger.log(Level.TRACE, "delta: " + StringUtil.toHex2(delta));
 
-            String key = String.format("mfi.track.%d.%c.%d", status, 'e', data1);
+            String key = "mfi.track.%d.%c.%d".formatted(status, 'e', data1);
 
             if (sysexMessageInstantiators.containsKey(key)) {
                 Method method = sysexMessageInstantiators.get(key);
@@ -333,7 +333,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                 data2[1] = (byte) ((length % 0x100) & 0xff);
                 dis.readFully(data2, 2, length);
 
-logger.log(Level.WARNING, String.format("sysex unhandled: delta: %02x, status: %02x, extended status: %02x", delta, status, data1));
+logger.log(Level.WARNING, "sysex unhandled: delta: %02x, status: %02x, extended status: %02x".formatted(delta, status, data1));
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
         }
@@ -387,13 +387,13 @@ logger.log(Level.ERROR, e.getMessage(), e);
             int data2 = dis.readUnsignedByte();
 
             //
-            String key = String.format("mfi.track.%d.%c.%d", status, 'b', data1);
+            String key = "mfi.track.%d.%c.%d".formatted(status, 'b', data1);
 
             Constructor<? extends MfiMessage> constructor;
             if (shortMessageConstructors.containsKey(key)) {
                 constructor = shortMessageConstructors.get(key);
             } else {
-logger.log(Level.WARNING, String.format("short unhandled: delta: %02x, status: %02x, extended status: %02x", delta, status, data1));
+logger.log(Level.WARNING, "short unhandled: delta: %02x, status: %02x, extended status: %02x".formatted(delta, status, data1));
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
 
@@ -458,13 +458,13 @@ logger.log(Level.ERROR, e.getMessage(), e);
             dis.readFully(data2, 0, 1 + exst);
 
             //
-            String key = String.format("mfi.track.%d.%c.%d", status, 'a', data1);
+            String key = "mfi.track.%d.%c.%d".formatted(status, 'a', data1);
 
             Constructor<? extends MfiMessage> constructor;
             if (longMessageConstructors.containsKey(key)) {
                 constructor = longMessageConstructors.get(key);
             } else {
-logger.log(Level.WARNING, String.format("long unhandled: delta: %02x, status: %02x, extended status: %02x", delta, status, data1));
+logger.log(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended status: %02x".formatted(delta, status, data1));
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
 

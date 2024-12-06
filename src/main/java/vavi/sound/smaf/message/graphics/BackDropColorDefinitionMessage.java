@@ -41,7 +41,7 @@ public class BackDropColorDefinitionMessage extends ShortMessage {
         backDropColor = data[0] & 0xff;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "BackDropColorDefinition:" +
             " duration =" + duration +
@@ -50,7 +50,6 @@ public class BackDropColorDefinitionMessage extends ShortMessage {
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -74,7 +73,6 @@ public class BackDropColorDefinitionMessage extends ShortMessage {
         return baos.toByteArray();
     }
 
-    /* */
     @Override
     public int getLength() {
         return getMessage().length;

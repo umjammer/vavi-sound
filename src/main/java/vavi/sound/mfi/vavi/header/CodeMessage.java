@@ -67,7 +67,7 @@ public class CodeMessage extends SubMessage {
         });
     }
 
-    /** */
+    @Override
     public String toString() {
         return TYPE + ": " + getDataLength() + ": " + getCode();
     }

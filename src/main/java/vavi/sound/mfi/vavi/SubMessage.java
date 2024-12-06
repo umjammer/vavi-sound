@@ -164,7 +164,7 @@ public abstract class SubMessage extends MetaMessage {
         }
     }
 
-    /** */
+    @Override
     public String toString() {
         return getSubType() + ": " + getDataLength() + ":\n" + StringUtil.getDump(getData());
     }

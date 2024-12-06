@@ -63,7 +63,7 @@ public class OctaveShiftMessage extends vavi.sound.smaf.ShortMessage
         this.channel = channel & 0x03;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "OctaveShift:" +
             " duration=" + duration +
@@ -73,13 +73,11 @@ public class OctaveShiftMessage extends vavi.sound.smaf.ShortMessage
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         return null; // TODO
     }
 
-    /* */
     @Override
     public int getLength() {
         return 0;   // TODO

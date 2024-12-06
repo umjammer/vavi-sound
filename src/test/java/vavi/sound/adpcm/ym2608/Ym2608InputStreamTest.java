@@ -77,10 +77,10 @@ Debug.println(Level.FINE, "outFile: " + outFile);
             2,
             sampleRate,
             byteOrder.equals(ByteOrder.BIG_ENDIAN));
-System.err.println(format);
+Debug.print(format);
 
         InputStream is = new Ym2608InputStream(getClass().getResourceAsStream(inFile), ByteOrder.LITTLE_ENDIAN);
-System.err.println("available: " + is.available());
+Debug.print("available: " + is.available());
         OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
 
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);

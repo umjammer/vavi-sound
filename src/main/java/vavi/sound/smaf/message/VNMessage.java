@@ -52,7 +52,7 @@ public class VNMessage extends SmafMessage
         this.venderName = venderName;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "VN:" +
             " venderName=" + venderName;
@@ -60,13 +60,11 @@ public class VNMessage extends SmafMessage
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         return null; // TODO
     }
 
-    /* */
     @Override
     public int getLength() {
         return 0;   // TODO

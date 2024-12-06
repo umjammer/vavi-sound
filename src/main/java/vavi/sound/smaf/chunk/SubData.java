@@ -104,7 +104,7 @@ class SubData {
         return data;
     }
 
-    /** */
+    @Override
     public String toString() {
         try {
             return tag + "(" + data.length + "): lang: " + contentsCodeType + ": " + new String(data, "Windows-31J")

@@ -200,10 +200,10 @@ public class NoteMessage extends MfiMessage implements ChannelMessage {
     @Override
     public String toString() {
         return "Note:" +
-            " delta="    + String.format("%02x", data[0])  +
-            " voice="    + String.format("%02x", voice)    +
-            " note="     + String.format("%02x", note)     +
-            " gateTime=" + String.format("%02x", gateTime) +
-            " velocity=" + String.format("%02x", velocity);
+                " delta=%02x".formatted(data[0]) +
+                " voice=%02x".formatted(voice) +
+                " note=%02x".formatted(note) +
+                " gateTime=%02x".formatted(gateTime) +
+                " velocity=%02x".formatted(velocity);
     }
 }

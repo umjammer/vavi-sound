@@ -52,7 +52,7 @@ public class STMessage extends SmafMessage
         this.songTitle = songTitle;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "ST:" +
             " songTitle=" + songTitle;
@@ -60,13 +60,11 @@ public class STMessage extends SmafMessage
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         return null; // TODO
     }
 
-    /* */
     @Override
     public int getLength() {
         return 0;   // TODO

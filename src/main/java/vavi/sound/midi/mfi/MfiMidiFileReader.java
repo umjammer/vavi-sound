@@ -35,15 +35,12 @@ public class MfiMidiFileReader extends BasicMidiFileReader {
 
     /** Gets a MIDI Sequence converted from MFi */
     @Override
-    public Sequence getSequence(InputStream is)
-        throws InvalidMidiDataException,
-               IOException {
+    public Sequence getSequence(InputStream is) throws InvalidMidiDataException, IOException {
 
         boolean reset = false;
 
         try {
             if (!is.markSupported()) {
-                // TODO should be wrap by BufferedInputStream?
                 throw new IOException("mark not supported: " + is);
             }
 
@@ -63,7 +60,8 @@ public class MfiMidiFileReader extends BasicMidiFileReader {
 //logger.log(Level.TRACE, mfiSequence);
             return MfiSystem.toMidiSequence(mfiSequence);
         } catch (InvalidMfiDataException e) {
-logger.log(Level.ERROR, e.getMessage(), e);
+logger.log(Level.DEBUG, e);
+logger.log(Level.TRACE, e.getMessage(), e);
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         } catch (MfiUnavailableException e) {
 logger.log(Level.ERROR, e.getMessage(), e);
@@ -74,7 +72,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                     is.reset();
                 }
             } catch (IOException e) {
-logger.log(Level.ERROR, e.getMessage(), e);
+logger.log(Level.DEBUG, e);
             }
         }
     }

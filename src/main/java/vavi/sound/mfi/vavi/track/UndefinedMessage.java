@@ -57,9 +57,9 @@ public class UndefinedMessage extends MfiMessage
         System.arraycopy(data2, 0, data, 3, data2.length);
     }
 
-    /** */
+    @Override
     public String toString() {
-        return String.format("Undefined: %02x, %02x, %02x\n%s", data[0], data[1], data[2], StringUtil.getDump(data, 3, length - 3));
+        return "Undefined: %02x, %02x, %02x\n%s".formatted(data[0], data[1], data[2], StringUtil.getDump(data, 3, length - 3));
     }
 
     // ----

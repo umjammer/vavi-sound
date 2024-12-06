@@ -102,7 +102,7 @@ public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
         this.channel = voice & 0x03;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "BankSelect:" +
             " duration=" + duration +
@@ -112,13 +112,11 @@ public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         return null; // TODO
     }
 
-    /* */
     @Override
     public int getLength() {
         return 0;   // TODO
@@ -129,7 +127,7 @@ public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
         throws InvalidMidiDataException {
 
         if (significant == null) {              // HandyPhoneStandard
-logger.log(Level.DEBUG, String.format("BankSelect: [%d] %dch, 0x%02x", duration, channel, bank));
+logger.log(Level.DEBUG, "BankSelect: [%d] %dch, 0x%02x".formatted(duration, channel, bank));
             int data2;
             if ((bank & 0x80) != 0) {
                 context.setDrum(channel, MidiContext.ChannelConfiguration.PERCUSSION);

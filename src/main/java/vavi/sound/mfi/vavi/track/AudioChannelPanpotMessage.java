@@ -80,7 +80,7 @@ public class AudioChannelPanpotMessage extends vavi.sound.mfi.ShortMessage
         this.data[3] = (byte) ((this.data[3] & 0x3f) | (this.voice << 6));
     }
 
-    /** */
+    @Override
     public String toString() {
         return "AudioChannelPanpot:" +
             " voice="  + voice +

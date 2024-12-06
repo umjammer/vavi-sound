@@ -104,18 +104,16 @@ public class MetaMessage extends SmafMessage {
         return data;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "Meta: type=" + getType();
     }
 
-    /* */
     @Override
     public byte[] getMessage() {
         return null; // TODO
     }
 
-    /* */
     @Override
     public int getLength() {
         return 0;   // TODO

@@ -38,12 +38,12 @@ public interface MfiDevice {
             this.version = version;
         }
 
-        /** */
+        @Override
         public final boolean equals(Object obj) {
             return super.equals(obj);
         }
 
-        /** */
+        @Override
         public final int hashCode() {
             return super.hashCode();
         }
@@ -68,7 +68,7 @@ public interface MfiDevice {
             return version;
         }
 
-        /** */
+        @Override
         public final String toString() {
             return name;
         }

@@ -60,8 +60,8 @@ public class SorcMessage extends SubMessage {
         getData()[0] = (byte) sorc;
     }
 
-    /** */
+    @Override
     public String toString() {
-        return String.format("sorc: %d: 0x%02x", getDataLength(), getSorc());
+        return "sorc: %d: 0x%02x".formatted(getDataLength(), getSorc());
     }
 }

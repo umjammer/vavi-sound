@@ -75,7 +75,7 @@ Debug.println("outFile: " + outFile);
             2,
             sampleRate,
             byteOrder.equals(ByteOrder.BIG_ENDIAN));
-System.err.println(outFormat);
+Debug.print(outFormat);
 
         AudioFormat inFormat = new AudioFormat(
             DviEncoding.DVI,
@@ -85,12 +85,12 @@ System.err.println(outFormat);
             AudioSystem.NOT_SPECIFIED,
             sampleRate,
             false);
-System.err.println(inFormat);
+Debug.print(inFormat);
 
         AudioInputStream iais = new AudioInputStream(getClass().getResourceAsStream(inFile), inFormat, AudioSystem.NOT_SPECIFIED);
-System.err.println("in available: " + iais.available() + ", " + iais.getFormat());
+Debug.print("in available: " + iais.available() + ", " + iais.getFormat());
         AudioInputStream oais = AudioSystem.getAudioInputStream(outFormat, iais);
-System.err.println("out available: " + oais.available() + ", " + oais.getFormat());
+Debug.print("out available: " + oais.available() + ", " + oais.getFormat());
 
         OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
 

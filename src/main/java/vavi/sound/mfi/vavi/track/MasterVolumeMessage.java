@@ -50,7 +50,7 @@ public class MasterVolumeMessage extends ShortMessage
         return volume;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "MasterVolume:" +
             " volume="  + volume;

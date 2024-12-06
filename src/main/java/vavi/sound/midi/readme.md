@@ -7,7 +7,7 @@ Provides base classes for the MIDI service provider.
 ~~When playing MFi, SMAF with this package, set the system property `javax.sound.midi.Sequencer` to
 Please set `"#Java MIDI(MFi/SMAF) ADPCM Sequencer"`. ADPCM handling will no longer be possible.~~
 
-## MIDI file type for MFi/SMAF (⚠ this is not MIDI specs, proprietary)
+## MIDI file type for MFi/SMAF (⚠ this is not MIDI specs but proprietary)
 
 ```
  8765 4321 LSB

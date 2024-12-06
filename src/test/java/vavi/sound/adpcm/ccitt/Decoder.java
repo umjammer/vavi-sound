@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import javax.sound.sampled.AudioFormat;
 
 import vavi.io.BitInputStream;
+import vavi.util.Debug;
 
 
 /**
@@ -86,10 +87,10 @@ System.err.println("\t-x\tlittle endian");
             default:
                 if (in == System.in) {
                     in = Files.newInputStream(Paths.get(args[argc]));
-System.err.println("input: " + args[argc]);
+Debug.print("input: " + args[argc]);
                 } else {
                     out = Files.newOutputStream(Paths.get(args[argc]));
-System.err.println("output: " + args[argc]);
+Debug.print("output: " + args[argc]);
                 }
                 break;
             }

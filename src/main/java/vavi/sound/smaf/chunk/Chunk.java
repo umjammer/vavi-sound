@@ -58,7 +58,7 @@ public abstract class Chunk {
      * TODO Chunk -> constructor ???
      *      because of passing the parent
      */
-    protected abstract void init(MyDataInputStream dis, Chunk parent)
+    protected abstract void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException;
 
     /** Chunk ID */
@@ -91,7 +91,7 @@ public abstract class Chunk {
         throws InvalidSmafDataException, IOException {
 
         DataInputStream dis;
-        if (is instanceof MyDataInputStream mdis) {
+        if (is instanceof CrcDataInputStream mdis) {
             dis = new DataInputStream(mdis.is);
         } else {
             dis = new DataInputStream(is);
@@ -101,28 +101,28 @@ public abstract class Chunk {
         dis.readFully(id); // not want to count down
 
         int size = dis.readInt();
-logger.log(Level.DEBUG, String.format("size: 0x%1$08x (%1$d)", size));
+logger.log(Level.DEBUG, "size: 0x%1$08x (%1$d)".formatted(size));
 
         Chunk chunk = newInstance(id, size);
 //logger.log(Level.TRACE, chunk.getClass().getName() + "\n" + StringUtil.getDump(is, 0, 128));
-//logger.log(Level.TRACE, String.format("is: " + is + " / " + chunk.getClass().getName()));
-        MyDataInputStream mdis = new MyDataInputStream(is, id, size);
-//logger.log(Level.TRACE, String.format("mdis: " + mdis + " / " + chunk.getClass().getName()));
+//logger.log(Level.TRACE, "is: " + is + " / " + chunk.getClass().getName());
+        CrcDataInputStream mdis = new CrcDataInputStream(is, id, size);
+//logger.log(Level.TRACE, "mdis: " + mdis + " / " + chunk.getClass().getName());
         chunk.init(mdis, parent);
 
         if (parent != null) {
             // for reading inside the parent loop
-            if (is instanceof MyDataInputStream) {
-                mdis = (MyDataInputStream) is;
+            if (is instanceof CrcDataInputStream) {
+                mdis = (CrcDataInputStream) is;
                 mdis.readSize -= 8 + chunk.getSize();
             } else {
                 assert false : "is: " + is.getClass().getName();
             }
         } else {
-//logger.log(Level.TRACE, String.format("crc (calc): %04x, avail: %d, %s, %s", mdis.crc(), mdis.available(), mdis, chunk.getClass().getName()));
+//logger.log(Level.TRACE, "crc (calc): %04x, avail: %d, %s, %s".formatted(mdis.crc(), mdis.available(), mdis, chunk.getClass().getName()));
             if (chunk instanceof FileChunk fc) {
                 if (fc.getCrc() != mdis.crc()) {
-logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %04x", fc.getCrc(), mdis.crc()));
+logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted(fc.getCrc(), mdis.crc()));
                 }
             }
         }
@@ -136,19 +136,19 @@ logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %
     // ----
 
     /** input stream with count down, crc */
-    protected static class MyDataInputStream extends InputStream implements DataInput {
+    protected static class CrcDataInputStream extends InputStream implements DataInput {
         final InputStream is;
         final DataInputStream dis;
         int readSize;
         static final ThreadLocal<CRC16> crc = new ThreadLocal<>();
 
-        protected MyDataInputStream(InputStream is, byte[] id, int size) {
-            if (is instanceof MyDataInputStream mdis) {
+        protected CrcDataInputStream(InputStream is, byte[] id, int size) {
+            if (is instanceof CrcDataInputStream mdis) {
                 this.is = mdis.is;
             } else {
                 this.is = is;
             }
-//logger.log(Level.TRACE, String.format("is: " + this.is));
+//logger.log(Level.TRACE, "is: " + this.is);
             this.dis = new DataInputStream(this.is);
             this.readSize = size;
 
@@ -162,8 +162,7 @@ logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %
 //logger.log(Level.TRACE, "crc len: " + crc.get().getCount());
             return crc.get().getValue();
         }
-        @Override
-        public long skip(long n) throws IOException {
+        @Override public long skip(long n) throws IOException {
             throw new UnsupportedOperationException();
         }
         @Override
@@ -187,8 +186,7 @@ logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %
         public int read() throws IOException {
             return is.read();
         }
-        @Override
-        public void readFully(byte[] b, int off, int len) throws IOException {
+        @Override public void readFully(byte[] b, int off, int len) throws IOException {
             throw new UnsupportedOperationException();
         }
         @Override
@@ -199,16 +197,13 @@ logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %
             readSize -= n;
             return n;
         }
-        @Override
-        public boolean readBoolean() throws IOException {
+        @Override public boolean readBoolean() throws IOException {
             throw new UnsupportedOperationException();
         }
-        @Override
-        public byte readByte() throws IOException {
+        @Override public byte readByte() throws IOException {
             throw new UnsupportedOperationException();
         }
-        @Override
-        public short readShort() throws IOException {
+        @Override public short readShort() throws IOException {
             throw new UnsupportedOperationException();
         }
         @Override
@@ -222,32 +217,25 @@ logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %
             readSize -= 2;
             return r;
         }
-        @Override
-        public char readChar() throws IOException {
+        @Override public char readChar() throws IOException {
             throw new UnsupportedOperationException();
         }
-        @Override
-        public int readInt() throws IOException {
+        @Override public int readInt() throws IOException {
             throw new UnsupportedOperationException();
         }
-        @Override
-        public long readLong() throws IOException {
+        @Override public long readLong() throws IOException {
             throw new UnsupportedOperationException();
         }
-        @Override
-        public float readFloat() throws IOException {
+        @Override public float readFloat() throws IOException {
             throw new UnsupportedOperationException();
         }
-        @Override
-        public double readDouble() throws IOException {
+        @Override public double readDouble() throws IOException {
             throw new UnsupportedOperationException();
         }
-        @Override
-        public String readLine() throws IOException {
+        @Override public String readLine() throws IOException {
             throw new UnsupportedOperationException();
         }
-        @Override
-        public String readUTF() throws IOException {
+        @Override public String readUTF() throws IOException {
             throw new UnsupportedOperationException();
         }
     }
@@ -309,17 +297,17 @@ logger.log(Level.WARNING, String.format("crc not match expected: %04x, actual: %
         public int getCount() {
             return count;
         }
-}
+    }
+
     // ----
 
     /**
      * factory
      * @param id a chunk id read
-     * @param size
+     * @param size chunk size
      * @return chunk
      */
-    private static Chunk newInstance(byte[] id, int size)
-        throws InvalidSmafDataException {
+    private static Chunk newInstance(byte[] id, int size) throws InvalidSmafDataException {
 
         try {
             return chunkFactory.get(id).newInstance(id, size);
@@ -347,7 +335,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                 @Override
                 public Constructor<? extends Chunk> get(byte[] id) {
                     String type = new String(id);
-logger.log(Level.DEBUG, String.format("Chunk ID(read): %s+0x%02x", (Character.isLetterOrDigit(type.charAt(3)) ? type : new String(id, 0, 3)), (int) type.charAt(3)));
+logger.log(Level.DEBUG, "Chunk ID(read): " + (Character.isLetterOrDigit(type.charAt(3)) ? type : "%s+0x%02x".formatted(new String(id, 0, 3), (int) type.charAt(3) & 0xff)));
 
                     for (String key : instances.keySet()) {
                         if (key.charAt(3) == '*' && key.substring(0, 3).equals(type.substring(0, 3))) {

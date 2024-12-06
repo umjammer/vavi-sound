@@ -49,6 +49,6 @@ public class Function1 implements MachineDependentFunction {
         int pitchBend =  data[7] & 0x3f;        // -32 ~ 31
         pitchBend *= (data[7] & 0x20) != 0 ? -1 : 0;
         // pitchBend * Pitch Bend Range * 100 / 32 [cent]
-logger.log(Level.DEBUG, String.format("Pitch Bend: %02x %d", voice, pitchBend));
+logger.log(Level.DEBUG, "Pitch Bend: %02x %d".formatted(voice, pitchBend));
     }
 }

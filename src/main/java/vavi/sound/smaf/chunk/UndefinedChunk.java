@@ -34,7 +34,7 @@ public class UndefinedChunk extends Chunk {
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         if (size > dis.available()) {

@@ -191,13 +191,13 @@ public class NoteMessage extends SmafMessage
         return velocity;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "Note:" +
             " duration=" + duration +
-            " note=" + String.format("%02x", getNote())  +
-            " gateTime=" + String.format("%04x", gateTime) +
-            " velocity=" + String.format("%04x", velocity);
+            " note=%02x".formatted(getNote())  +
+            " gateTime=%04x".formatted(gateTime) +
+            " velocity=%04x".formatted(velocity);
     }
 
     @Override

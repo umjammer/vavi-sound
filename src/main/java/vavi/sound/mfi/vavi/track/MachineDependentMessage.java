@@ -106,7 +106,7 @@ public class MachineDependentMessage extends SysexMessage
         // 5 vendor | carrier
         // 6
         // 7
-logger.log(Level.DEBUG, String.format("MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x", data[0], data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0)));
+logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".formatted(data[0], data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0)));
         MachineDependentMessage message = new MachineDependentMessage(data);
         return message;
     }
@@ -121,9 +121,9 @@ logger.log(Level.DEBUG, String.format("MachineDepend: %02x, %02x, %02x %02x %02x
         return data[5] & 0x0f;
     }
 
-    /** */
+    @Override
     public String toString() {
-        return String.format("MachineDepend: vendor: %02x", data[5]);
+        return "MachineDepend: vendor: %02x".formatted(data[5]);
     }
 
     // ----

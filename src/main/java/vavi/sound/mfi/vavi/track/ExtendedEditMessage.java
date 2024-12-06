@@ -58,7 +58,7 @@ logger.log(Level.DEBUG, "dummy " + dummy + ", part " + part + ", switch " + zwit
         throw new InvalidMfiDataException("unsupported: " + 0xf2);
     }
 
-    /** */
+    @Override
     public String toString() {
         return "ExtendedEdit:";
     }

@@ -83,6 +83,7 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
         this.channel = channel & 0x03;
     }
 
+    @Override
     public String toString() {
         return "Volume:" +
             " duration=" + duration +
@@ -92,7 +93,6 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -117,7 +117,6 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
         return baos.toByteArray();
     }
 
-    /* */
     @Override
     public int getLength() {
         return getMessage().length;

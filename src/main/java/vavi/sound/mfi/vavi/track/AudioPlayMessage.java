@@ -56,7 +56,6 @@ public class AudioPlayMessage extends LongMessage
         this.velocity =  data2[1] & 0x3f;
     }
 
-    /* */
     @Override
     public int getVoice() {
         return voice;
@@ -72,14 +71,13 @@ public class AudioPlayMessage extends LongMessage
         return velocity;
     }
 
-    /* */
     @Override
     public void setVoice(int voice) {
         this.voice = voice & 0x03;
         this.data[3] = (byte) ((this.data[3] & 0x3f) | (this.voice << 6));
     }
 
-    /** */
+    @Override
     public String toString() {
         return "AudioPlay:" +
         " voice=" + voice +

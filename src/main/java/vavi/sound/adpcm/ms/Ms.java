@@ -289,7 +289,7 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
                 // FIXME does c << 0 work properly ?
                 outBuffer[op + (ox >> 3)] |= (byte) ((ox & 4) != 0 ? c : (c << 4));
                 ox += 4 * channels;
-//logger.log(Level.TRACE, String.format("%1x", c));
+//logger.log(Level.TRACE, "%1x".formatted(c));
             }
 
             // Update the step for the next sample
@@ -301,7 +301,7 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
 //if (outBuffer != null)
 // logger.log(Level.DEBUG, "");
         d2 /= length; // be sure it's non-negative
-//logger.log(Level.TRACE, String.format("ch%d: st %d->%d, d %.1f", channel, steps[sp], step, Math.sqrt(d2)));
+//logger.log(Level.TRACE, "ch%d: st %d->%d, d %.1f".formatted(channel, steps[sp], step, Math.sqrt(d2)));
         steps[sp] = step;
 
         return (int) Math.sqrt(d2);
@@ -354,7 +354,7 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
 
             s1[0] = s0;
             encode(channel, channels, v, _iCoef[k], inBuffer, n0, s1, 0, null);
-//logger.log(Level.TRACE, String.format(" s32 %d", s1[0]));
+//logger.log(Level.TRACE, " s32 %d".formatted(s1[0]));
 
             ss[0] = (3 * s0 + s1[0]) / 4;
             s1[0] = ss[0];
@@ -372,7 +372,7 @@ logger.log(Level.DEBUG, "MSADPCM bpred >= nCoef, arbitrarily using 0");
             }
         }
         steps[sp] = smin;
-//logger.log(Level.TRACE, String.format("kmin %d, smin %5d, ", kmin, smin));
+//logger.log(Level.TRACE, "kmin %d, smin %5d, ".formatted(kmin, smin));
         encode(channel, channels, v, _iCoef[kmin], inBuffer, length, steps, sp, outBuffer);
         outBuffer[channel] = (byte) kmin;
     }

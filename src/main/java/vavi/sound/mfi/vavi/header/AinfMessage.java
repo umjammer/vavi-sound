@@ -131,17 +131,17 @@ public class AinfMessage extends SubMessage {
             this.data = new byte[length];
             System.arraycopy(in, 2 + offset + 3, data, 0, length);
         }
-        /** */
+        @Override
         public String toString() {
             String sb = "ainf inf[" + index + "]: " +
-                    String.format("%02x, %d", format, length) +
+                    "%02x, %d".formatted(format, length) +
                     '\n' +
                     StringUtil.getDump(data);
             return sb;
         }
     }
 
-    /** */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("ainf: ");

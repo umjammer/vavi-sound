@@ -4,10 +4,9 @@
  * Programmed by Naohide Sano
  */
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -16,6 +15,8 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.SourceDataLine;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
@@ -37,38 +38,37 @@ public class PlayLine {
     }
 
     @Property(name = "vavi.test.volume")
-    float volume = 0.2f;
+    double volume = 0.2;
 
-    /**
-     * usage: java PlayLine file ...
-     */
-    public static void main(String[] args) throws Exception {
-        for (AudioFileFormat.Type type : AudioSystem.getAudioFileTypes()) {
-            System.err.println(type);
-        }
+    @Property
+    String file;
 
-        // play
-        PlayLine player = new PlayLine();
+    @BeforeEach
+    void setup() throws Exception {
         if (localPropertiesExists()) {
-            PropsEntity.Util.bind(player);
+            PropsEntity.Util.bind(this);
         }
-        for (String arg : args) {
-            player.play(arg);
-        }
+Debug.println("volume: " + volume);
+    }
+
+    @Test
+    void test1() throws Exception {
+        play();
     }
 
     /** */
-    void play(String filename) throws Exception {
-        AudioInputStream ais = AudioSystem.getAudioInputStream(new File(filename));
+    void play() throws Exception {
+        Path path = Path.of(file);
+Debug.println("path: " + path);
+        AudioInputStream ais = AudioSystem.getAudioInputStream(Path.of(file).toFile());
         AudioFormat format = ais.getFormat();
 Debug.println(format);
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(format);
         line.addLineListener(ev -> {
-            if (LineEvent.Type.STOP == ev.getType()) {
-                System.exit(0);
-            }
+Debug.println(ev.getType());
+            if (LineEvent.Type.STOP == ev.getType()) {}
         });
         volume(line, volume);
         line.start();
@@ -81,5 +81,22 @@ Debug.println(format);
         line.drain();
         line.stop();
         line.close();
+    }
+
+    /**
+     * usage: java PlayLine file ...
+     */
+    public static void main(String[] args) throws Exception {
+for (AudioFileFormat.Type type : AudioSystem.getAudioFileTypes()) {
+ System.err.println(type);
+}
+
+        // play
+        PlayLine app = new PlayLine();
+        app.setup();
+        for (String arg : args) {
+            app.file = arg;
+            app.play();
+        }
     }
 }

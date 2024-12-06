@@ -46,14 +46,13 @@ public class EndOfSequenceMessage extends vavi.sound.smaf.ShortMessage
         this.duration = duration;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "EOS: duration=" + duration;
     }
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -78,7 +77,6 @@ public class EndOfSequenceMessage extends vavi.sound.smaf.ShortMessage
         return baos.toByteArray();
     }
 
-    /* */
     @Override
     public int getLength() {
         return getMessage().length;

@@ -47,7 +47,7 @@ public class Function130 implements MachineDependentFunction {
 
         this.channel = (data[7] & 0xc0) >> 6;   // 0 ~ 3
         this.panpot  =  data[7] & 0x3f;         // 0x20 center
-logger.log(Level.DEBUG, String.format("ADPCM pan: %dch %02x", channel, panpot));
+logger.log(Level.DEBUG, "ADPCM pan: %dch %02x".formatted(channel, panpot));
     }
 
     /** */

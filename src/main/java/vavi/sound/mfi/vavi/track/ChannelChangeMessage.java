@@ -78,7 +78,7 @@ public class ChannelChangeMessage extends ShortMessage
         this.data[3] = (byte) ((this.data[3] & 0x3f) | (this.voice << 6));
     }
 
-    /** */
+    @Override
     public String toString() {
         return "ChannelChange:" +
             " voice="   + voice +

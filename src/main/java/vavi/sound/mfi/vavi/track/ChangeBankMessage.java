@@ -83,7 +83,7 @@ public class ChangeBankMessage extends ShortMessage
         this.data[3] = (byte) ((this.data[3] & 0x3f) | (this.voice << 6));
     }
 
-    /** */
+    @Override
     public String toString() {
         return "ChangeBank:" +
                " voice=" + voice +

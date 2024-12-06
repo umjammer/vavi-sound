@@ -81,7 +81,7 @@ public class LoopPointMessage extends ShortMessage
         return start == 0;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "LoopPoint:" +
                " nest="  + nest  +

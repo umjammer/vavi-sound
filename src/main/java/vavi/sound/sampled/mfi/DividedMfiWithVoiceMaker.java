@@ -77,7 +77,7 @@ class DividedMfiWithVoiceMaker extends MfiWithVoiceMaker {
         @Override
         public void exec(WaveDivider.Chunk chunk) throws IOException {
             try {
-                File file = new File(directory, String.format(base, chunk.sequence + 1));
+                File file = new File(directory, base.formatted(chunk.sequence + 1));
                 r += createMFi(chunk.buffer, file);
             } catch (InvalidMfiDataException e) {
                 throw new IOException(e);

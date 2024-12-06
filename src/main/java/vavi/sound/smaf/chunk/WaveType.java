@@ -111,7 +111,7 @@ logger.log(Level.DEBUG, "waveType: " + this);
      * </pre>
      */
     WaveType(byte[] waveType) throws IOException {
-logger.log(Level.DEBUG, String.format("waveType: %02x %02x %02x", waveType[0], waveType[1], waveType[2]));
+logger.log(Level.DEBUG, "waveType: %02x %02x %02x".formatted(waveType[0], waveType[1], waveType[2]));
         this.waveChannels = (waveType[0] & 0x80) != 0 ? 2 : 1;
         this.waveFormat = tableForMwq[(waveType[0] & 0x70) >> 4];
         this.waveBaseBit = 4 * ((waveType[0] & 0x0f) + 1);
@@ -170,12 +170,12 @@ logger.log(Level.DEBUG, "waveType: " + this);
         return waveBaseBit;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "waveChannels: " + waveChannels +
             ", waveFormat: " + waveFormat +
             ", waveSamplingFreq: " + waveSamplingFreq +
             ", waveBaseBit: " + waveBaseBit +
-            " (waveType: " + String.format("%04x", intValue()) + ")";
+            " (waveType: %04x".formatted(intValue()) + ")";
     }
 }

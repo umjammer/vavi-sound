@@ -66,7 +66,7 @@ public class ChannelConfigurationMessage extends ShortMessage
         return drum;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "ChannelConfiguration:" +
                " channel=" + channel +

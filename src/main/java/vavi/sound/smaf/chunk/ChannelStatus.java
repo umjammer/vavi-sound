@@ -108,7 +108,7 @@ public class ChannelStatus {
         }
     }
 
-    /** */
+    @Override
     public String toString() {
         return "channel status:[" + channel + "] type=" + type + ", KCS=" + keyControlStatus + ", LED=" + led + ", vibration=" + vibration;
     }

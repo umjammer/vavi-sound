@@ -60,7 +60,7 @@ logger.log(Level.DEBUG, "ScoreTrack[" + trackNumber + "]: " + size + " bytes");
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         this.formatType = FormatType.values()[dis.readUnsignedByte()];
@@ -183,7 +183,6 @@ logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         this.streamPcmDataChunk = streamPcmDataChunk;
     }
 
-    /* */
     @Override
     public List<SmafEvent> getSmafEvents() throws InvalidSmafDataException {
         List<SmafEvent> events = new ArrayList<>();

@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import javax.sound.sampled.AudioFormat;
 
 import vavi.io.BitOutputStream;
+import vavi.util.Debug;
 
 
 /**
@@ -88,10 +89,10 @@ System.err.println("\t-x\tProcess 16-bit PCM little endian");
             default:
                 if (in == System.in) {
                     in = Files.newInputStream(Paths.get(args[argc]));
-System.err.println("input: " + args[argc]);
+Debug.print("input: " + args[argc]);
                 } else {
                     out = Files.newOutputStream(Paths.get(args[argc]));
-System.err.println("output: " + args[argc]);
+Debug.print("output: " + args[argc]);
                 }
                 break;
             }
@@ -120,7 +121,7 @@ System.err.println("output: " + args[argc]);
                     pcm -= 0x10000;
                 }
             }
-//System.err.println("current: " + StringUtil.toHex4(pcm) + ": " + pcm);
+//Debug.print("current: " + StringUtil.toHex4(pcm) + ": " + pcm);
             int adpcm = encoder.encode(pcm);
             os.write(adpcm);
         }

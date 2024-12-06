@@ -80,12 +80,12 @@ Debug.println("outFile: " + outFile);
             2,
             sampleRate,
             byteOrder.equals(ByteOrder.BIG_ENDIAN));
-System.err.println(outFormat);
+Debug.print(outFormat);
 
         AudioInputStream iais = AudioSystem.getAudioInputStream(getClass().getResource(inFile));
-System.err.println("in available: " + iais.available() + ", " + iais.getFormat());
+Debug.print("in available: " + iais.available() + ", " + iais.getFormat());
         AudioInputStream oais = AudioSystem.getAudioInputStream(outFormat, iais);
-System.err.println("out available: " + oais.available() + ", " + oais.getFormat());
+Debug.print("out available: " + oais.available() + ", " + oais.getFormat());
 
         OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
 

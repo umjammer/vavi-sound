@@ -4,15 +4,16 @@
  * Programmed by Naohide Sano
  */
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
-import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Soundbank;
 
-import vavi.sound.midi.MidiUtil;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import vavi.sound.smaf.MetaEventListener;
 import vavi.sound.smaf.Sequence;
 import vavi.sound.smaf.Sequencer;
@@ -22,6 +23,8 @@ import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
+import static vavi.sound.midi.MidiUtil.volume;
+
 
 /**
  * test smaf.
@@ -30,10 +33,80 @@ import vavi.util.properties.annotation.PropsEntity;
  * @version 0.00 090913 nsano initial version <br>
  */
 @PropsEntity(url = "file:local.properties")
-public class PlaySMAF {
+class PlaySMAF {
 
     static boolean localPropertiesExists() {
         return Files.exists(Paths.get("local.properties"));
+    }
+
+    static {
+        System.setProperty("javax.sound.midi.Sequencer", "#Real Time Sequencer");
+    }
+
+    @Property(name = "vavi.test.volume.midi")
+    float volume = 0.2f;
+
+    @Property(name = "sf2")
+    String sf2 = System.getProperty("user.home") + "/Library/Audio/Sounds/Banks/Orchestra/default.sf2";
+
+    @Property
+    String mmf = "src/test/resources/test.mmf";
+
+    private Sequencer sequencer;
+
+    @BeforeEach
+    void setup() throws Exception {
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(this);
+        }
+
+        sequencer = SmafSystem.getSequencer();
+        Debug.println(sequencer.getClass().getName());
+        sequencer.open();
+
+Synthesizer synthesizer = (Synthesizer) sequencer;
+// sf
+Path sf2Path = Path.of(sf2);
+if (Files.exists(sf2Path)) {
+ Soundbank soundbank = synthesizer.getDefaultSoundbank();
+//Instrument[] instruments = synthesizer.getAvailableInstruments();
+ Debug.println("---- " + soundbank.getDescription() + " ----");
+//Arrays.asList(instruments).forEach(System.err::println);
+ synthesizer.unloadAllInstruments(soundbank);
+ soundbank = MidiSystem.getSoundbank(sf2Path.toFile());
+ synthesizer.loadAllInstruments(soundbank);
+//instruments = synthesizer.getAvailableInstruments();
+ Debug.println("---- " + soundbank.getDescription() + " ----");
+//Arrays.asList(instruments).forEach(System.err::println);
+}
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        sequencer.close();
+    }
+
+    @Test
+    void test1() throws Exception {
+        exec();
+    }
+
+    /** */
+    void exec() throws Exception {
+Debug.println("START: " + mmf);
+        CountDownLatch cdl = new CountDownLatch(1);
+        MetaEventListener mel = meta -> {
+Debug.println("META: " + meta.getType());
+            if (meta.getType() == 47) cdl.countDown();
+        };
+        Sequence sequence = SmafSystem.getSequence(Path.of(mmf).toFile());
+        volume(((Synthesizer) sequencer).getReceiver(), volume);
+        sequencer.setSequence(sequence);
+        sequencer.addMetaEventListener(mel);
+        sequencer.start();
+        cdl.await();
+Debug.println("END: " + mmf);
+        sequencer.removeMetaEventListener(mel);
     }
 
     /**
@@ -42,57 +115,11 @@ public class PlaySMAF {
      */
     public static void main(String[] args) throws Exception {
         PlaySMAF app = new PlaySMAF();
-        if (localPropertiesExists()) {
-            PropsEntity.Util.bind(app);
-        }
-        app.exec(args);
-    }
-
-    @Property(name = "vavi.test.volume")
-    float volume = 0.2f;
-
-    @Property(name = "sf2")
-    String sf2 = System.getProperty("user.home") + "/Library/Audio/Sounds/Banks/Orchestra/default.sf2";
-
-    /** */
-    void exec(String[] args) throws Exception {
-        Sequencer sequencer = SmafSystem.getSequencer();
-        sequencer.open();
-
-Synthesizer synthesizer = (Synthesizer) sequencer;
-// sf
-Soundbank soundbank = synthesizer.getDefaultSoundbank();
-//Instrument[] instruments = synthesizer.getAvailableInstruments();
-Debug.println("---- " + soundbank.getDescription() + " ----");
-//Arrays.asList(instruments).forEach(System.err::println);
-synthesizer.unloadAllInstruments(soundbank);
-File file = new File(sf2);
-soundbank = MidiSystem.getSoundbank(file);
-synthesizer.loadAllInstruments(soundbank);
-//instruments = synthesizer.getAvailableInstruments();
-Debug.println("---- " + soundbank.getDescription() + " ----");
-//Arrays.asList(instruments).forEach(System.err::println);
-// volume (not work ???)
-MidiChannel[] channels = synthesizer.getChannels();
-
+        app.setup();
         for (String arg : args) {
-Debug.println("START: " + arg);
-            CountDownLatch countDownLatch = new CountDownLatch(1);
-            MetaEventListener mel = meta -> {
-Debug.println("META: " + meta.getType());
-                if (meta.getType() == 47) {
-                    countDownLatch.countDown();
-                }
-            };
-            Sequence sequence = SmafSystem.getSequence(new File(arg));
-            sequencer.setSequence(sequence);
-            sequencer.addMetaEventListener(mel);
-            sequencer.start();
-MidiUtil.volume(synthesizer.getReceiver(), volume); // TODO noise
-            countDownLatch.await();
-Debug.println("END: " + arg);
-            sequencer.removeMetaEventListener(mel);
+            app.mmf = arg;
+            app.exec();
         }
-        sequencer.close();
+        app.tearDown();
     }
 }

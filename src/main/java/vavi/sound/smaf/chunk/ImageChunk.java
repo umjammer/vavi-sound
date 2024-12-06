@@ -49,7 +49,7 @@ logger.log(Level.DEBUG, "Image[" + imageNumer + "]: " + size + " bytes");
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         this.imageData = new byte[size];

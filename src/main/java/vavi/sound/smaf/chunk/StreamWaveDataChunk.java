@@ -42,7 +42,7 @@ logger.log(Level.DEBUG, "StreamWaveData: " + size);
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
+    protected void init(CrcDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
         byte[] weveTypeBytes = new byte[3];
         dis.readFully(weveTypeBytes);
         this.waveType = new WaveType(weveTypeBytes);

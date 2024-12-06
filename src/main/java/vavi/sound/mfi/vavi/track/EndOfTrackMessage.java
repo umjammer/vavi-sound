@@ -57,7 +57,7 @@ public class EndOfTrackMessage extends ShortMessage
         super(0, 0xff, 0xdf, 0);
     }
 
-    /** */
+    @Override
     public String toString() {
         return "EndOfTrack:";
     }

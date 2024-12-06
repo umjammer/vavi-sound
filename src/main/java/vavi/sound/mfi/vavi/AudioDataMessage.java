@@ -187,7 +187,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
         int headerLength = dis.readUnsignedShort();
         this.format = dis.readUnsignedByte();
         this.attribute = dis.readUnsignedByte();
-logger.log(Level.DEBUG, String.format("adat header: %d: f: %02x, a: %02x", headerLength, format, attribute));
+logger.log(Level.DEBUG, "adat header: %d: f: %02x, a: %02x".formatted(headerLength, format, attribute));
 
         // sub chunks
         int l = 0;

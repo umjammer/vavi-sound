@@ -45,13 +45,13 @@ public class MitsubishiSequencer implements MachineDependentSequencer {
 
         byte[] data = message.getMessage();
         int function = data[6] & 0xff;
-logger.log(Level.TRACE, String.format("function: 0x%02x", function));
+logger.log(Level.TRACE, "function: 0x%02x".formatted(function));
 
         MachineDependentFunction mdf = factory.getFunction(String.valueOf(function));
         if (mdf != null) {
             mdf.process(message);
         } else {
-logger.log(Level.WARNING, String.format("unsupported function: 0x%02x", function));
+logger.log(Level.WARNING, "unsupported function: 0x%02x".formatted(function));
         }
     }
 

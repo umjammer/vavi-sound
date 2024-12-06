@@ -76,12 +76,12 @@ public class Function131 implements MachineDependentFunction {
         this.continued = (data[9] & 0x01) == 1; //
 
         int adpcmLength = data.length - HEADER_LENGTH;
-logger.log(Level.DEBUG, String.format("ADPCM voice: %dch, No.%d, mode=%d, continued=%s, %d", channel, packetId, mode, continued, adpcmLength));
+logger.log(Level.DEBUG, "ADPCM voice: %dch, No.%d, mode=%d, continued=%s, %d".formatted(channel, packetId, mode, continued, adpcmLength));
 logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(data));
 
         this.sampleRate = getSamplingRateInternal(format1);
         this.bits = getSamplingBitsInternal(format2);
-logger.log(Level.DEBUG, String.format("sampling: %02x: rate=%d, bits=%d", data[8] & 0x3f, sampleRate, bits));
+logger.log(Level.DEBUG, "sampling: %02x: rate=%d, bits=%d".formatted(data[8] & 0x3f, sampleRate, bits));
 
         this.adpcm = new byte[adpcmLength];
         System.arraycopy(data, HEADER_LENGTH, adpcm, 0, adpcmLength);

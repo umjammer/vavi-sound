@@ -224,7 +224,7 @@ StringBuilder sb1 = new StringBuilder(16);
 StringBuilder sb2 = new StringBuilder(16);
 StringBuilder sb3 = new StringBuilder(16);
 for (int i = 0; i < drums.length; i++) {
- sb1.append(drumSwapChannel != CHANNEL_UNUSED && drumSwapChannel == i ? "@" : String.format("%1x", i));
+ sb1.append(drumSwapChannel != CHANNEL_UNUSED && drumSwapChannel == i ? "@" : "%1x".formatted(i));
  sb2.append(midiChannel == i ? "*" : " ");
  sb3.append(drums[i].name().charAt(0));
 }

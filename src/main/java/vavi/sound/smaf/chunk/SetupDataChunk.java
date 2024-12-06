@@ -48,7 +48,7 @@ logger.log(Level.DEBUG, "SetupData: " + size + " bytes");
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
+    protected void init(CrcDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
 
         ScoreTrackChunk.FormatType formatType = ((ScoreTrackChunk) parent).getFormatType();
         switch (formatType) {
@@ -77,7 +77,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
      *
      * </pre>
      */
-    private void readHandyPhoneStandard(MyDataInputStream dis) throws InvalidSmafDataException, IOException {
+    private void readHandyPhoneStandard(CrcDataInputStream dis) throws InvalidSmafDataException, IOException {
 
         SmafMessage smafMessage;
 
@@ -96,24 +96,21 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                     break;
                 default:
                     smafMessage = new UndefinedMessage(0);
-logger.log(Level.WARNING, String.format("unknown 0xff, 0x%02x", e2));
+logger.log(Level.WARNING, "unknown 0xff, 0x%02x".formatted(e2));
                     break;
                 }
             } else {
                 smafMessage = new UndefinedMessage(0);
-logger.log(Level.WARNING, String.format("unhandled: %02x", e1));
+logger.log(Level.WARNING, "unhandled: %02x".formatted(e1));
             }
 
-            if (smafMessage != null) {
-                messages.add(smafMessage);
-            } else {
-                assert false : "smafMessage is null";
-            }
+//            assert smafMessage == null : "smafMessage is null";
+            messages.add(smafMessage);
         }
     }
 
     /** formatType 1, 2 */
-    private void readMobileStandard(MyDataInputStream dis) throws InvalidSmafDataException, IOException {
+    private void readMobileStandard(CrcDataInputStream dis) throws InvalidSmafDataException, IOException {
 
         SmafMessage smafMessage;
 
@@ -128,14 +125,11 @@ logger.log(Level.WARNING, String.format("unhandled: %02x", e1));
                 smafMessage = SysexMessage.Factory.getSysexMessage(0, data);
             } else {
                 smafMessage = new UndefinedMessage(0);
-logger.log(Level.WARNING, String.format("unhandled: %02x", status));
+logger.log(Level.WARNING, "unhandled: %02x".formatted(status));
             }
 
-            if (smafMessage != null) {
-                messages.add(smafMessage);
-            } else {
-                assert false : "smafMessage is null";
-            }
+//            assert smafMessage == null : "smafMessage is null";
+            messages.add(smafMessage);
         }
     }
 

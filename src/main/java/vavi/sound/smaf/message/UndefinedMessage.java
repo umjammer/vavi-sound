@@ -26,7 +26,7 @@ public class UndefinedMessage extends SmafMessage {
 //logger.log(Level.TRACE, "UndefinedMessage: ★★★★★★★★★★★★★★★★");
     }
 
-    /** */
+    @Override
     public String toString() {
         return "Undefined:" +
             " duration=" + duration;
@@ -34,13 +34,11 @@ public class UndefinedMessage extends SmafMessage {
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         return null; // TODO
     }
 
-    /* */
     @Override
     public int getLength() {
         return 0;   // TODO

@@ -35,7 +35,7 @@ public class SuptMessage extends SubMessage {
         super(TYPE, data);
     }
 
-    /** */
+    @Override
     public String toString() {
         try {
             int length = getDataLength();

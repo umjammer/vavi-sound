@@ -87,10 +87,10 @@ Debug.println(Level.FINE, "outFile: " + outFile);
                 2,
                 sampleRate,
                 byteOrder.equals(ByteOrder.BIG_ENDIAN));
-        System.err.println(audioFormat);
+        Debug.print(audioFormat);
 
         InputStream is = new YamahaInputStream(Files.newInputStream(Paths.get(args[0])), byteOrder);
-        System.err.println("available: " + is.available());
+        Debug.print("available: " + is.available());
 
 // OutputStream os = new BufferedOutputStream(new FileOutputStream(args[1]));
 

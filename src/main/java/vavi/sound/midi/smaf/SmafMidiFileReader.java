@@ -34,15 +34,12 @@ public class SmafMidiFileReader extends BasicMidiFileReader {
     private static final Logger logger = getLogger(SmafMidiFileReader.class.getName());
 
     @Override
-    public Sequence getSequence(InputStream is)
-        throws InvalidMidiDataException,
-               IOException {
+    public Sequence getSequence(InputStream is) throws InvalidMidiDataException, IOException {
 
         boolean reset = false;
 
         try {
             if (!is.markSupported()) {
-                // TODO should be wrap by BufferedInputStream?
                 throw new IOException("mark not supported: " + is);
             }
 
@@ -62,8 +59,8 @@ public class SmafMidiFileReader extends BasicMidiFileReader {
 //logger.log(Level.TRACE, sequence);
             return SmafSystem.toMidiSequence(sequence);
         } catch (InvalidSmafDataException e) {
-logger.log(Level.INFO, e);
-//logger.log(Level.ERROR, e.getMessage(), e);
+logger.log(Level.DEBUG, e);
+logger.log(Level.TRACE, e.getMessage(), e);
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         } catch (SmafUnavailableException e) {
 logger.log(Level.ERROR, e.getMessage(), e);
@@ -74,7 +71,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                     is.reset();
                 }
             } catch (IOException e) {
-logger.log(Level.ERROR, e.getMessage(), e);
+logger.log(Level.TRACE, e);
             }
         }
     }

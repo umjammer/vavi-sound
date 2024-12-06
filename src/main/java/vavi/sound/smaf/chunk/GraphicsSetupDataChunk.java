@@ -42,7 +42,7 @@ logger.log(Level.DEBUG, "GraphicsSetupData: " + size + " bytes");
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
+    protected void init(CrcDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
         while (dis.available() > 0) {
             Chunk chunk = readFrom(dis);
             if (chunk instanceof DisplayParameterDefinitionChunk) {

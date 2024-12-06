@@ -79,7 +79,7 @@ public class SmafFileFormat {
             } else {
                 throw new InvalidSmafDataException("stream is not smaf: first chunk: " + chunk.getId());
             }
-        } catch (IOException e) {
+        } catch (IOException | InvalidSmafDataException e) {
             throw e;
         } catch (Exception e) {
             throw new InvalidSmafDataException(e);

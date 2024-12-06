@@ -57,7 +57,7 @@ public class CopyMessage extends SubMessage implements MidiConvertible, MfiConve
         super();
     }
 
-    /** */
+    @Override
     public String toString() {
         try {
             int length = getDataLength();

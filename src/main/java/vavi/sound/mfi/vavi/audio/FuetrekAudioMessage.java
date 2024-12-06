@@ -67,7 +67,7 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
         float aDelta;
         TempoMessage message;
         while (true) {
-logger.log(Level.DEBUG, String.format("tempo: %d, timeBase: 0x%02x", baseTempo, baseTimeBase));
+logger.log(Level.DEBUG, "tempo: %d, timeBase: 0x%02x".formatted(baseTempo, baseTimeBase));
             message = new TempoMessage(0x00, 0xff, baseTimeBase, baseTempo);
             aDelta = (60f / message.getTempo()) / message.getTimeBase();
             if (Math.round(time / aDelta) > 255) {

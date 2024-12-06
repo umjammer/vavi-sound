@@ -44,7 +44,7 @@ public class FileChunk extends Chunk {
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         while (dis.available() > 2) {
@@ -63,16 +63,16 @@ logger.log(Level.DEBUG, "TRACK: " + scoreTrackChunks.size());
             } else if (chunk instanceof MasterTrackChunk) {
                 masterTrackChunk = (TrackChunk) chunk;
             } else {
-logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
+logger.log(Level.WARNING, "unsupported chunk: " + chunk.getId());
             }
         }
 //logger.log(Level.TRACE, "available: " + is.available());
         this.crc = dis.readUnsignedShort();
-logger.log(Level.DEBUG, String.format("crc (orig): %04x", crc));
+logger.log(Level.DEBUG, "crc (orig): %04x".formatted(crc));
         if (dis.available() > 4) {
             int kddiCrc = dis.readUnsignedShort();
             int kddiMark = dis.readUnsignedShort();
-logger.log(Level.DEBUG, String.format("has kddi crc: %04x, %04x", kddiCrc, kddiMark));
+logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark));
         }
     }
 

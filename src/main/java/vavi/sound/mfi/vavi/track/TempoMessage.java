@@ -31,10 +31,10 @@ import static java.lang.System.getLogger;
  *  0xff, 0xc#
  * </pre>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
- * @version 0.10 020627 nsano refine <br>
- *          0.11 030821 nsano implements {@link MidiConvertible} <br>
- *          0.12 030920 nsano repackage <br>
- *          0.13 031128 nsano refine <br>
+ * @version 0.10 020627 nsano refine <br/>
+ *          0.11 030821 nsano implements {@link MidiConvertible} <br/>
+ *          0.12 030920 nsano repackage <br/>
+ *          0.13 031128 nsano refine <br/>
  */
 public class TempoMessage extends ShortMessage
     implements MidiConvertible, MfiConvertible {
@@ -56,7 +56,7 @@ public class TempoMessage extends ShortMessage
      * Creates a tempo message.
      * for {@link vavi.sound.mfi.vavi.TrackMessage}
      * @param delta delta time
-     * @param status
+     * @param status 0xff fixed
      * @param data1 0xc0 ~ 0xcf index of time base
      * @param data2 20 ~ 255 tempo
      */
@@ -107,7 +107,7 @@ if (timeBase < 0) {
         this.data[3] = (byte) this.tempo;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "Tempo:" +
             " timeBase=" + timeBase +
@@ -125,16 +125,15 @@ if (timeBase < 0) {
         // quarter note length in μsec TODO is round OK?, TODO 48??? (actually 60 * 10^6 / tempo)
         int l = (int) Math.round(60d * 1000000d / ((48d / timeBase) * tempo));
 //logger.log(Level.TRACE, this);
-//logger.log(Level.TRACE, l + " = " +
-//              StringUtil.toHex2( ((l / 0x10000) & 0xff)) + ", " +
-//              StringUtil.toHex2((((l % 0x10000) / 0x100) & 0xff)) + ", " +
-//              StringUtil.toHex2( ((l % 0x100)   & 0xff)));
+//logger.log(Level.TRACE, "%d = %02x, %02x, %02x".formatted(l, (l / 0x10000) & 0xff, ((l % 0x10000) / 0x100) & 0xff, l % 0x100) & 0xff));
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(
             0x51,
-            new byte[] { (byte)  ((l / 0x10000) & 0xff),
-                         (byte) (((l % 0x10000) / 0x100) & 0xff),
-                         (byte)  ((l % 0x100)   & 0xff)},
+            new byte[] {
+                    (byte)  ((l / 0x10000) & 0xff),
+                    (byte) (((l % 0x10000) / 0x100) & 0xff),
+                    (byte)  ((l % 0x100)   & 0xff)
+            },
             3);
         return new MidiEvent[] {
             new MidiEvent(metaMessage, context.getCurrent())
@@ -146,7 +145,7 @@ if (timeBase < 0) {
         throws InvalidMfiDataException {
 
         MetaMessage metaMessage = (MetaMessage) midiEvent.getMessage();
-//      int type = metaMessage.getType();
+//        int type = metaMessage.getType();
         byte[] data = metaMessage.getData();
 //logger.log(Level.TRACE, "data.length: " + data.length);
 
@@ -180,14 +179,7 @@ if (timeBase < 0) {
     }
 
     /** for sorting */
-    private static class Pair {
-        final int index;
-        final int value;
-        Pair(int index, int value) {
-            this.index = index;
-            this.value = value;
-        }
-    }
+    private record Pair(int index, int value) {}
 
     /** */
     public static int getNearestTimeBase(int timeBase) {

@@ -68,7 +68,7 @@ public class VersMessage extends SubMessage {
         }
     }
 
-    /** */
+    @Override
     public String toString() {
         return "vers: " + getDataLength() +
                ": " + getVersion();

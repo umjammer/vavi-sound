@@ -35,7 +35,7 @@ public class ResetOrigneMessage extends ShortMessage {
         this.duration = duration;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "ResetOrigne:" +
             " duration=" + duration;
@@ -43,7 +43,6 @@ public class ResetOrigneMessage extends ShortMessage {
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -65,7 +64,6 @@ public class ResetOrigneMessage extends ShortMessage {
         return baos.toByteArray();
     }
 
-    /* */
     @Override
     public int getLength() {
         return getMessage().length;
