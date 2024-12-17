@@ -49,19 +49,22 @@ public class FileChunk extends Chunk {
 
         while (dis.available() > 2) {
             Chunk chunk = readFrom(dis);
-            if (chunk instanceof ContentsInfoChunk) {
-                contentsInfoChunk = chunk;
-            } else if (chunk instanceof OptionalDataChunk) {
-                optionalDataChunk = chunk;
-            } else if (chunk instanceof ScoreTrackChunk) {
+            if (chunk instanceof ContentsInfoChunk cic) {
+                this.contentsInfoChunk = cic;
+            } else if (chunk instanceof OptionalDataChunk qdc) {
+                optionalDataChunk = qdc;
+            } else if (chunk instanceof ScoreTrackChunk stc) {
 logger.log(Level.DEBUG, "TRACK: " + scoreTrackChunks.size());
-                scoreTrackChunks.add((TrackChunk) chunk);
-            } else if (chunk instanceof PcmAudioTrackChunk) {
-                pcmAudioTrackChunks.add((TrackChunk) chunk);
-            } else if (chunk instanceof GraphicsTrackChunk) {
-                graphicsTrackChunks.add((TrackChunk) chunk);
-            } else if (chunk instanceof MasterTrackChunk) {
-                masterTrackChunk = (TrackChunk) chunk;
+                scoreTrackChunks.add(stc);
+            } else if (chunk instanceof PcmAudioTrackChunk patc) {
+                pcmAudioTrackChunks.add(patc);
+            } else if (chunk instanceof GraphicsTrackChunk gtc) {
+                graphicsTrackChunks.add(gtc);
+            } else if (chunk instanceof MasterTrackChunk mtc) {
+                masterTrackChunk = mtc;
+            } else if (chunk instanceof MMMGChunk mmmgc) {
+logger.log(Level.INFO, "MMMG");
+                mmmgChunk = mmmgc;
             } else {
 logger.log(Level.WARNING, "unsupported chunk: " + chunk.getId());
             }
@@ -127,11 +130,11 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
     // ----
 
     /** */
-    private Chunk contentsInfoChunk;
+    private ContentsInfoChunk contentsInfoChunk;
 
     /** */
     public ContentsInfoChunk getContentsInfoChunk() {
-        return (ContentsInfoChunk) contentsInfoChunk;
+        return contentsInfoChunk;
     }
 
     /** "CNTI" (required) */
@@ -143,11 +146,11 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
     }
 
     /** */
-    private Chunk optionalDataChunk;
+    private OptionalDataChunk optionalDataChunk;
 
     /** */
     public OptionalDataChunk getOptionalDataChunk() {
-        return (OptionalDataChunk) optionalDataChunk;
+        return optionalDataChunk;
     }
 
     /** "OPDA" (option) */
@@ -159,10 +162,10 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
     }
 
     /** "MTR*" */
-    private final List<TrackChunk> scoreTrackChunks = new ArrayList<>();
+    private final List<ScoreTrackChunk> scoreTrackChunks = new ArrayList<>();
 
     /** */
-    public List<TrackChunk> getScoreTrackChunks() {
+    public List<ScoreTrackChunk> getScoreTrackChunks() {
         return scoreTrackChunks;
     }
 
@@ -173,10 +176,10 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
     }
 
     /** "ATR*" */
-    private final List<TrackChunk> pcmAudioTrackChunks = new ArrayList<>();
+    private final List<PcmAudioTrackChunk> pcmAudioTrackChunks = new ArrayList<>();
 
     /** */
-    public List<TrackChunk> getPcmAudioTrackChunks() {
+    public List<PcmAudioTrackChunk> getPcmAudioTrackChunks() {
         return pcmAudioTrackChunks;
     }
 
@@ -187,10 +190,10 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
     }
 
     /** "GTR*" */
-    private final List<TrackChunk> graphicsTrackChunks = new ArrayList<>();
+    private final List<GraphicsTrackChunk> graphicsTrackChunks = new ArrayList<>();
 
     /** */
-    public List<TrackChunk> getGraphicsTrackChunks() {
+    public List<GraphicsTrackChunk> getGraphicsTrackChunks() {
         return graphicsTrackChunks;
     }
 
@@ -201,11 +204,11 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
     }
 
     /** "MSTR" (option) */
-    private TrackChunk masterTrackChunk;
+    private MasterTrackChunk masterTrackChunk;
 
     /** */
     public MasterTrackChunk getMasterTrackChunk() {
-        return (MasterTrackChunk) masterTrackChunk;
+        return masterTrackChunk;
     }
 
     /** */
@@ -216,6 +219,14 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
         this.masterTrackChunk = masterTrackChunk;
     }
 
+    /** "MMMG" (option) TODO single? */
+    private MMMGChunk mmmgChunk;
+
+    /** */
+    public MMMGChunk getMMMGChunk() {
+        return mmmgChunk;
+    }
+
     /**
      * the remainder when the Byte columns of Chunk Header and Body are divided by the divisor shown below. (16 bit)
      */
@@ -224,5 +235,19 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
     /** CCITT X.25 */
     public int getCrc() {
         return crc;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getId()).append("\n");
+        if (masterTrackChunk != null) sb.append(masterTrackChunk);
+        graphicsTrackChunks.forEach(sb::append);
+        pcmAudioTrackChunks.forEach(sb::append);
+        scoreTrackChunks.forEach(sb::append);
+        if (optionalDataChunk != null) sb.append(optionalDataChunk);
+        if (contentsInfoChunk != null) sb.append(contentsInfoChunk);
+        if (mmmgChunk != null) sb.append(mmmgChunk);
+        return sb.toString();
     }
 }

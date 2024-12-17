@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.SmafMessage;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -73,7 +75,7 @@ logger.log(Level.DEBUG, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGate
 
         switch (formatType) {
         case HandyPhoneStandard: {
-            byte[] buffer = new byte[2];
+            byte[] buffer = new byte[formatType.size];
             dis.readFully(buffer);
 //logger.log(Level.TRACE, StringUtil.getDump(channelStatus));
             this.channelStatuses = new ChannelStatus[4];
@@ -83,19 +85,15 @@ logger.log(Level.DEBUG, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGate
             }
           } break;
         case MobileStandard_Compress:
-        case MobileStandard_NoCompress: {
-            byte[] buffer = new byte[16];
+        case MobileStandard_NoCompress:
+        case SEQU: {
+            byte[] buffer = new byte[formatType.size];
             dis.readFully(buffer);
-            this.channelStatuses = new ChannelStatus[16];
-            for (int i = 0; i < 16; i++) {
+            this.channelStatuses = new ChannelStatus[formatType.size];
+            for (int i = 0; i < formatType.size; i++) {
                 channelStatuses[i] = new ChannelStatus(i, (int) buffer[i]);
 //logger.log(Level.TRACE, channelStatuses[i]);
             }
-          } break;
-        case Unknown3: {
-            byte[] buffer = new byte[32];
-            dis.readFully(buffer);
-            // TODO implement
           } break;
         }
 logger.log(Level.DEBUG, "formatType: " + formatType);
@@ -105,9 +103,9 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
             Chunk chunk = readFrom(dis);
             if (chunk instanceof SeekAndPhraseInfoChunk) {
                 seekAndPhraseInfoChunk = chunk;
-            } else if (chunk instanceof SequenceDataChunk) {
+            } else if (chunk instanceof SequenceDataChunk) { // Mtsq
                 sequenceDataChunk = chunk;
-            } else if (chunk instanceof SetupDataChunk) {
+            } else if (chunk instanceof SetupDataChunk) { // Mtsu
                 setupDataChunk = chunk;
             } else if (chunk instanceof StreamPcmDataChunk) {
                 streamPcmDataChunk = chunk;
@@ -144,9 +142,6 @@ logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
             streamPcmDataChunk.writeTo(os);
         }
     }
-
-    /** */
-    private ChannelStatus[] channelStatuses;
 
     /** */
     private Chunk seekAndPhraseInfoChunk;
@@ -226,5 +221,21 @@ logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         }
 
         return events;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(super.toString());
+        try (var dc = getDC().open()) {
+            Arrays.stream(channelStatuses).map(cs -> dc.format(cs.toString())).forEach(sb::append);
+            if (seekAndPhraseInfoChunk != null) sb.append(seekAndPhraseInfoChunk);
+            if (sequenceDataChunk != null) sb.append(sequenceDataChunk);
+            if (setupDataChunk != null) sb.append(setupDataChunk);
+            if (streamPcmDataChunk != null) sb.append(streamPcmDataChunk);
+        }
+
+        return sb.toString();
     }
 }

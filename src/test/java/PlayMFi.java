@@ -40,7 +40,8 @@ public class PlayMFi {
     }
 
     static {
-        System.setProperty("javax.sound.midi.Sequencer", "#Real Time Sequencer");
+        // should be set for playing adpcm (implemented as a meta event listener)
+        System.setProperty("javax.sound.midi.Sequencer", "vavi.sound.midi.VaviSequencer");
     }
 
     @Property(name = "vavi.test.volume.midi")
@@ -62,7 +63,7 @@ public class PlayMFi {
 Debug.println("volume: " + volume);
 
         sequencer = MfiSystem.getSequencer();
-        Debug.println(sequencer.getClass().getName());
+Debug.println(sequencer.getClass().getName());
         sequencer.open();
 
 Synthesizer synthesizer = (Synthesizer) sequencer;
@@ -95,19 +96,19 @@ if (Files.exists(sf2Path)) {
     /** */
     void exec() throws Exception {
 Debug.println("START: " + mfi);
-            CountDownLatch cdl = new CountDownLatch(1);
-            MetaEventListener mel = meta -> {
+        CountDownLatch cdl = new CountDownLatch(1);
+        MetaEventListener mel = meta -> {
 Debug.println("META: " + meta.getType());
-                if (meta.getType() == 47) cdl.countDown();
-            };
-            Sequence sequence = MfiSystem.getSequence(Path.of(mfi).toFile());
-            volume(((Synthesizer) sequencer).getReceiver(), volume);
-            sequencer.setSequence(sequence);
-            sequencer.addMetaEventListener(mel);
-            sequencer.start();
-            cdl.await();
+            if (meta.getType() == 47) cdl.countDown();
+        };
+        Sequence sequence = MfiSystem.getSequence(Path.of(mfi).toFile());
+        volume(((Synthesizer) sequencer).getReceiver(), volume);
+        sequencer.setSequence(sequence);
+        sequencer.addMetaEventListener(mel);
+        sequencer.start();
+        cdl.await();
 Debug.println("END: " + mfi);
-            sequencer.removeMetaEventListener(mel);
+        sequencer.removeMetaEventListener(mel);
     }
 
     /**

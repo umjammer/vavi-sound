@@ -54,6 +54,9 @@ public abstract class TrackChunk extends Chunk {
     }
 
     /** */
+    protected ChannelStatus[] channelStatuses;
+
+    /** */
     public enum FormatType {
         /** */
         HandyPhoneStandard(2, false),
@@ -61,12 +64,14 @@ public abstract class TrackChunk extends Chunk {
         MobileStandard_Compress(16, true),
         /** */
         MobileStandard_NoCompress(16, false),
-        /** TODO what? */
-        Unknown3(32, false);
+//        /** TODO what? */
+//        Unknown3(32, false);
+        /** TODO = UNKNOWN3 ??? */
+        SEQU(32, false);
         /** */
         final boolean compressed;
         /** size in file */
-        final int size;
+        public final int size;
         /** */
         FormatType(int size, boolean compressed) {
             this.size = size;
@@ -149,7 +154,7 @@ public abstract class TrackChunk extends Chunk {
     }
 
     /** */
-    protected int durationTimeBase;
+    protected int durationTimeBase = 1;
 
     /**
      * @return Returns the durationTimeBase [msec].
@@ -168,7 +173,7 @@ public abstract class TrackChunk extends Chunk {
     }
 
     /** */
-    protected int gateTimeTimeBase;
+    protected int gateTimeTimeBase = 1;
 
     /**
      * @return Returns the gateTimeTimeBase [msec].

@@ -25,7 +25,7 @@ import static vavi.sound.midi.MidiUtil.volume;
 
 
 /**
- * SmafSystemTest.
+ * SmafSystemTest (javax.midi.spi for SMAF).
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
@@ -47,7 +47,7 @@ public class SmafSystemTest {
     String mmf = "src/test/resources/test.mmf";
 
     @Property
-    String out = "tmp/smafSystemTest.mid";
+    String out = "tmp/out.mid";
 
     Sequencer sequencer;
 
@@ -73,6 +73,7 @@ Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngi
     @Test
     public void test() throws Exception {
         play();
+        convert();
     }
 
     /** */

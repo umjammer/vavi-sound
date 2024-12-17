@@ -30,6 +30,7 @@ public class UndefinedChunk extends Chunk {
     /** */
     public UndefinedChunk(byte[] id, int size) {
         super(id, size);
+logger.log(Level.WARNING, "unknown: " + getId());
 //new Exception("*** DUMMY ***").printStackTrace(System.err);
     }
 

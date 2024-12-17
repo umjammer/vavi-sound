@@ -117,7 +117,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                 int size = MidiUtil.readVariableLength(dis);
                 byte[] data = new byte[size];
                 dis.readFully(data);
-                smafMessage = new UndefinedMessage(duration);
+                smafMessage = new UndefinedMessage(e1, -1, duration);
 logger.log(Level.DEBUG, "reserved: %02x".formatted(e1));
               } break;
             }

@@ -37,6 +37,6 @@ logger.log(Level.DEBUG, "MasterTrackSequenceData: " + size + " bytes");
     @Override
     protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
-dis.skipBytes((int) (long) size); // TODO
+dis.skipBytes(size); // TODO
     }
 }

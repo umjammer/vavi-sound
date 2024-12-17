@@ -6,9 +6,14 @@
 
 package vavi.sound.smaf.sequencer;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.properties.PrefixedClassPropertiesFactory;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -32,6 +37,8 @@ public interface WaveSequencer {
     /** factory */
     class Factory extends PrefixedClassPropertiesFactory<Integer, AudioEngine> {
 
+        private static final Logger logger = getLogger(Factory.class.getName());
+
         /** */
         private static final ThreadLocal<AudioEngine> audioEngineStore = new ThreadLocal<>();
 
@@ -39,6 +46,7 @@ public interface WaveSequencer {
          * Second time or later.
          */
         public static AudioEngine getAudioEngine() {
+logger.log(Level.INFO, "audioEngineStore: " + audioEngineStore.get());
             return audioEngineStore.get();
         }
 
@@ -49,6 +57,7 @@ public interface WaveSequencer {
          */
         public static AudioEngine getAudioEngine(int format) {
             AudioEngine engine = instance.get(format);
+logger.log(Level.INFO, "engine: " + engine);
             audioEngineStore.set(engine);
             return engine;
         }

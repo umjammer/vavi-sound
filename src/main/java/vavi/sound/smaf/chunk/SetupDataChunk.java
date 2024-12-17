@@ -59,7 +59,7 @@ logger.log(Level.DEBUG, "SetupData: " + size + " bytes");
             readMobileStandard(dis); // TODO Huffman
             break;
         case MobileStandard_NoCompress:
-        case Unknown3:
+            case SEQU:
             readMobileStandard(dis);
             break;
         }
@@ -95,12 +95,12 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                     smafMessage = SysexMessage.Factory.getSysexMessage(0, data);
                     break;
                 default:
-                    smafMessage = new UndefinedMessage(0);
+                    smafMessage = new UndefinedMessage(e1, e2, 0);
 logger.log(Level.WARNING, "unknown 0xff, 0x%02x".formatted(e2));
                     break;
                 }
             } else {
-                smafMessage = new UndefinedMessage(0);
+                smafMessage = new UndefinedMessage(e1, -1, 0);
 logger.log(Level.WARNING, "unhandled: %02x".formatted(e1));
             }
 
@@ -124,7 +124,7 @@ logger.log(Level.WARNING, "unhandled: %02x".formatted(e1));
                 // TODO end check 0xf7
                 smafMessage = SysexMessage.Factory.getSysexMessage(0, data);
             } else {
-                smafMessage = new UndefinedMessage(0);
+                smafMessage = new UndefinedMessage(status, -1, 0);
 logger.log(Level.WARNING, "unhandled: %02x".formatted(status));
             }
 

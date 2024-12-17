@@ -17,19 +17,26 @@ import vavi.sound.smaf.SmafMessage;
  */
 public class UndefinedMessage extends SmafMessage {
 
+    int e1;
+    int e2;
+
     /**
      *
      * @param duration
      */
-    public UndefinedMessage(int duration) {
+    public UndefinedMessage(int e1, int e2, int duration) {
+        this.e1 = e1;
+        this.e2 = e2;
         this.duration = duration;
 //logger.log(Level.TRACE, "UndefinedMessage: ★★★★★★★★★★★★★★★★");
     }
 
     @Override
     public String toString() {
-        return "Undefined:" +
-            " duration=" + duration;
+        return "🟡 Undefined:" +
+            " e1=%02x".formatted(e1) +
+            (e2 == -1 ? "" : " e2=%02x".formatted(e2)) +
+            ", duration=" + duration;
     }
 
     // ----

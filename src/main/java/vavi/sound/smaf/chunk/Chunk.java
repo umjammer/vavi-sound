@@ -8,6 +8,7 @@ package vavi.sound.smaf.chunk;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,6 +22,7 @@ import vavi.util.ByteUtil;
 import vavi.util.properties.PrefixedPropertiesFactory;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -173,14 +175,14 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
         public int readUnsignedByte() throws IOException {
             int r = dis.readUnsignedByte();
             crc.get().update((byte) r);
-            readSize--;
+            consume(1);
             return r;
         }
         @Override
         public void readFully(byte[] b) throws IOException {
             dis.readFully(b, 0, b.length);
             crc.get().update(b);
-            readSize -= b.length;
+            consume(b.length);
         }
         @Override
         public int read() throws IOException {
@@ -194,7 +196,7 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
             byte[] b = new byte[n];
             dis.readFully(b);
             crc.get().update(b);
-            readSize -= n;
+            consume(n);
             return n;
         }
         @Override public boolean readBoolean() throws IOException {
@@ -214,7 +216,7 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
                 // and this condition assumed to get crc uses this method.
                 crc.get().update(ByteUtil.getBeBytes((short) r));
             }
-            readSize -= 2;
+            consume(2);
             return r;
         }
         @Override public char readChar() throws IOException {
@@ -237,6 +239,11 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
         }
         @Override public String readUTF() throws IOException {
             throw new UnsupportedOperationException();
+        }
+        private void consume(int decrement) throws EOFException {
+            readSize -= decrement;
+            if (readSize < 0)
+                throw new EOFException();
         }
     }
 
@@ -366,4 +373,33 @@ logger.log(Level.DEBUG, "Chunk ID(read): " + (Character.isLetterOrDigit(type.cha
                     return key.substring(keyBase.length());
                 }
             };
+
+    // ----
+
+    /** indentation management */
+    protected static class DumpContext implements AutoCloseable /* i know this is abuse. */ {
+        /** indentation management store */
+        private static ThreadLocal<DumpContext> dc = new ThreadLocal<>();
+
+        static final String indent = " ".repeat(4);
+        int depth = 0;
+        String indent() { return indent.repeat(depth); }
+        DumpContext open() { depth++; return this; }
+        @Override public void close() { depth--; }
+
+        /** Gets indentation manager */
+        static DumpContext getDC() {
+            if (dc.get() == null)
+                dc.set(new DumpContext());
+            return dc.get();
+        }
+
+        /** Gets indented string. */
+        String format(String x) { return getDC().indent() + " +--- " + x + "\n"; }
+    }
+
+    @Override
+    public String toString() {
+        return getDC().format(getId());
+    }
 }

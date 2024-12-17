@@ -27,7 +27,7 @@ import static vavi.sound.midi.MidiUtil.volume;
 
 
 /**
- * test smaf.
+ * test smaf (raw SMAF API).
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 090913 nsano initial version <br>
@@ -40,6 +40,8 @@ class PlaySMAF {
     }
 
     static {
+        // should use this, but volume not works?
+//        System.setProperty("javax.sound.midi.Sequencer", "vavi.sound.midi.VaviSequencer");
         System.setProperty("javax.sound.midi.Sequencer", "#Real Time Sequencer");
     }
 
@@ -61,7 +63,7 @@ class PlaySMAF {
         }
 
         sequencer = SmafSystem.getSequencer();
-        Debug.println(sequencer.getClass().getName());
+Debug.println(sequencer.getClass().getName());
         sequencer.open();
 
 Synthesizer synthesizer = (Synthesizer) sequencer;

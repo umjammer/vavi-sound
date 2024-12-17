@@ -120,10 +120,9 @@ logger.log(Level.DEBUG, "channelStatuses: " + (channelStatuses != null ? channel
     private static ChannelConfiguration toChannelConfiguration(int midiChannel, ChannelStatus.Type type) {
         return switch (type) {
             case Melody -> ChannelConfiguration.SOUND_SET;
-            case NoCare ->
-                    midiChannel == CHANNEL_DRUM ? ChannelConfiguration.PERCUSSION : ChannelConfiguration.SOUND_SET;
-            default -> ChannelConfiguration.UNUSED;
+            case NoCare -> midiChannel == CHANNEL_DRUM ? ChannelConfiguration.PERCUSSION : ChannelConfiguration.SOUND_SET;
             case Rhythm -> ChannelConfiguration.PERCUSSION;
+            default -> ChannelConfiguration.UNUSED;
         };
     }
 
@@ -243,10 +242,10 @@ logger.log(Level.DEBUG, "drums: " + midiChannel + "ch, " + value + "\n" + sb1 + 
         if (formatType == ScoreTrackChunk.FormatType.HandyPhoneStandard) {
             return smafTrackNumber * 4 + smafChannel;
         } else {
-if (smafTrackNumber > 0) {
- logger.log(Level.DEBUG, "track > 0: " + smafTrackNumber);
+if (smafTrackNumber > 0 || smafChannel > 16) {
+ logger.log(Level.DEBUG, "track > 0: " + smafTrackNumber + ", or smafChannel > 16: " + smafChannel);
 }
-            return smafTrackNumber * 16 + smafChannel;
+            return smafTrackNumber * 16 + smafChannel % 16; // TODO smafChannel > 16
         }
     }
 
@@ -471,7 +470,7 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
 
     /* */
     static {
-logger.log(Level.DEBUG, "tempoTable: " + tempoTable.length);
+logger.log(Level.TRACE, "tempoTable: " + tempoTable.length);
     }
 
     /** if no tempo is specified, SSD will treat it as a quarter note = 120 */
@@ -495,6 +494,7 @@ logger.log(Level.DEBUG, "tempoTable: " + tempoTable.length);
     public MidiEvent getTempoEvent() throws InvalidMidiDataException {
         int l = tempo * timeBase * 1000;
 //      int l = (int) Math.round(60d * 1000000d / tempo);
+logger.log(Level.INFO, "tempo: " + l);
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(
             0x51,

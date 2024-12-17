@@ -43,6 +43,13 @@ class SmafSequence extends Sequence {
         if (fileChunk.getMasterTrackChunk() != null) {
             createTrack(fileChunk.getMasterTrackChunk().getSmafEvents());
         }
+        if (fileChunk.getMMMGChunk() != null) {
+            for (int i = 0; i < fileChunk.getMMMGChunk().getTracks(); i++) {
+                fileChunk.getMMMGChunk().setCurrentTrack(i);
+logger.log(Level.DEBUG, "events: " + fileChunk.getMMMGChunk().getSmafEvents().size());
+                createTrack(fileChunk.getMMMGChunk().getSmafEvents());
+            }
+        }
         // SMF XF Information | SMAF Contents Info Chunk
         // -------------------+-------------------------
         // song title         | ST: song title
@@ -51,6 +58,7 @@ class SmafSequence extends Sequence {
         // arrangement writer | AW: arrangement writer
         // artist name        | AN: artist name
         if (tracks.isEmpty()) throw new InvalidSmafDataException("no tracks");
+logger.log(Level.DEBUG, "tracks: " + tracks.size() + ", " + tracks.get(0).size());
         Track track0 = tracks.get(0);
         String title = "title";
         String prot = "vavi";

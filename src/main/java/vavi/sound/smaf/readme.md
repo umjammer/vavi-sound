@@ -10,6 +10,8 @@ Please refer to `javax.sound.midi` for usage.
 ## Reference
 
 * [MMFplay](http://mmfplay.sourceforge.net/)
+* smaf
+  * https://github.com/logue/smfplayer.js
 
 ## TODO
 
