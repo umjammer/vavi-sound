@@ -39,12 +39,13 @@ public final class MidiConstants {
 
     // ----
 
-    // Meta Event
-    //
-    // Here, some meta-events are defined.
-    // Not all programs have to support all meta events.
-    // The first meta-events defined are
-
+    /**
+     * Meta Event
+     *
+     * Here, some meta-events are defined.
+     * Not all programs have to support all meta events.
+     * The first meta-events defined are
+     */
     public enum MetaEvent {
         /**
          * <pre>

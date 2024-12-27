@@ -8,6 +8,7 @@ package vavi.sound.midi.mfi;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,6 +20,7 @@ import javax.sound.midi.Synthesizer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import vavi.sound.midi.MidiConstants;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
@@ -27,7 +29,7 @@ import static vavi.sound.midi.MidiUtil.volume;
 
 
 /**
- * MfiMidiFileReaderTest.
+ * MfiMidiFileReaderTest (javax.midi.spi for Mfi).
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
@@ -72,8 +74,8 @@ Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngi
 
     void play() throws Exception {
 Debug.println("mld: " + mfi);
-        CountDownLatch cdl = new CountDownLatch(1);
 
+        CountDownLatch cdl = new CountDownLatch(1);
         Sequencer sequencer = MidiSystem.getSequencer(false); // "false" is important for volume!
 Debug.println("@@@ sequencer: " + sequencer.getClass().getName());
         sequencer.open();
@@ -81,12 +83,16 @@ Debug.println("@@@ sequencer: " + sequencer.getClass().getName());
 Debug.println("@@@ synthesizer: " + synthesizer);
         synthesizer.open();
         sequencer.getTransmitter().setReceiver(synthesizer.getReceiver());
-        Sequence sequence = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(Path.of(mfi))));
+        Sequence sequence;
+        if (mfi.startsWith("http"))
+            sequence = MidiSystem.getSequence(URI.create(mfi).toURL());
+        else
+            sequence = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(Path.of(mfi))));
 Debug.println("@@@ sequence: " + sequence);
         volume(synthesizer.getReceiver(), midiVolume);
         sequencer.setSequence(sequence);
         sequencer.addMetaEventListener(meta -> {
-Debug.println(meta.getType());
+Debug.println("meta: " + MidiConstants.MetaEvent.valueOf(meta.getType()));
             if (meta.getType() == 47) cdl.countDown();
         });
         sequencer.start();

@@ -27,7 +27,7 @@ import static vavi.sound.midi.MidiUtil.volume;
 
 
 /**
- * test mfi.
+ * test mfi (raw Mfi API).
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 090913 nsano initial version <br>

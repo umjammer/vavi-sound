@@ -38,6 +38,7 @@ public interface AudioDataSequencer {
 
         /**
          * Second time or later.
+         * @return nullable
          */
         public static AudioEngine getAudioEngine() {
             return audioEngineStore.get();
@@ -49,13 +50,16 @@ public interface AudioDataSequencer {
          * @throws IllegalArgumentException when audio engine not found
          */
         public static AudioEngine getAudioEngine(int format) {
-            AudioEngine engine = instance.get(format);
+            AudioEngine engine = factory.get(format);
+            if (engine == null) {
+                throw new IllegalArgumentException("format: " + format);
+            }
             audioEngineStore.set(engine);
             return engine;
         }
 
         /** */
-        private static final Factory instance = new Factory();
+        private static final Factory factory = new Factory();
 
         /** */
         private Factory() {

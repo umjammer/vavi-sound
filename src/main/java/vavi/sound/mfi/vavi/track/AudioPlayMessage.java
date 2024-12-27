@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.track;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -20,6 +22,8 @@ import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
 
+import static java.lang.System.getLogger;
+
 
 /**
  * AudioPlayMessage.
@@ -33,6 +37,8 @@ import vavi.sound.mobile.AudioEngine;
  */
 public class AudioPlayMessage extends LongMessage
     implements ChannelMessage, MidiConvertible, AudioDataSequencer {
+
+    private static final Logger logger = getLogger(AudioPlayMessage.class.getName());
 
     /** */
     private int voice;
@@ -117,6 +123,9 @@ public class AudioPlayMessage extends LongMessage
         int id = getIndex();
 
         AudioEngine engine = Factory.getAudioEngine();
-        engine.start(id);
+        if (engine != null)
+            engine.start(id);
+        else
+            logger.log(Level.ERROR, "audio engine is not set");
     }
 }

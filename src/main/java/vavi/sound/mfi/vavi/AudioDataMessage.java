@@ -29,6 +29,7 @@ import vavi.sound.mobile.AudioEngine;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mfi.vavi.VaviMfiFileFormat.DumpContext.getDC;
 
 
 /**
@@ -278,7 +279,22 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
         int samplingBits = adpm.getSamplingBits();
         int channels = adpm.getChannels();
 
-        AudioEngine engine = Factory.getAudioEngine(format);
-        engine.setData(id, -1, samplingRate, samplingBits, channels, data, false);
+        try {
+            AudioEngine engine = Factory.getAudioEngine(format);
+            engine.setData(id, -1, samplingRate, samplingBits, channels, data, false);
+        } catch (IllegalArgumentException e) {
+logger.log(Level.ERROR, "cannot retrieve audio engine for: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(TYPE).append("\n");
+        try (var dc = getDC().open()) {
+            subChunks.values().forEach(sc -> sb.append(dc.format(sc.toString())));
+        }
+        sb.setLength(sb.length() - 1);
+        return sb.toString();
     }
 }

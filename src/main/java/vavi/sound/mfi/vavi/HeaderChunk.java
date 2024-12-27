@@ -23,10 +23,13 @@ import vavi.sound.mfi.vavi.header.TitlMessage;
 import vavi.sound.mfi.vavi.header.VersMessage;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mfi.vavi.VaviMfiFileFormat.DumpContext.getDC;
 
 
 /**
  * HeaderChunk.
+ *
+ * TODO this is file chunk? includes audio/track chunks
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070118 nsano initial version <br>
@@ -52,7 +55,7 @@ class HeaderChunk {
     /** when {@link #majorType} is {@link #MAJOR_TYPE_MUSIC}, fixed */
     public static final int MINOR_TYPE_MUSIC = 0x00;
 
-    /** MFi data length ({@link #TYPE} + {@link #mfiDataLength} are excluded) */
+    /** MFi data length ({@link #TYPE} + {@code mfiDataLength} are excluded) */
     private int mfiDataLength;
 
     /** {@link #HEADER_LENGTH} + {@link #getSubChunksLength()}  */
@@ -271,5 +274,14 @@ logger.log(Level.DEBUG, "numberTracks: " + headerChunk.tracksCount);
         }
 
         return headerChunk;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(HeaderChunk.TYPE).append("\n");
+        // TODO subChunks should be one liner?
+        subChunks.values().forEach(sc -> sb.append(getDC().format(sc.toString().replaceAll("\n", " ↵ "))));
+        return sb.toString();
     }
 }
