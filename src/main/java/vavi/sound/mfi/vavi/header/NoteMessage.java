@@ -54,7 +54,7 @@ public class NoteMessage extends SubMessage {
         this.data[5] = (byte)  (noteLength & 0x00ff);
     }
 
-    /** */
+    @Override
     public String toString() {
         return "note: " + getDataLength() + ": " + getNoteLength();
     }

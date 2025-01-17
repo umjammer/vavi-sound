@@ -62,7 +62,7 @@ public class WaveDataMessage extends SmafMessage
         this.channels = channels;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "WaveData:" +
             " id=" + number  +
@@ -74,7 +74,6 @@ public class WaveDataMessage extends SmafMessage
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         ByteBuffer bb = ByteBuffer.allocate(4 + 4 + data.length);
@@ -87,7 +86,6 @@ public class WaveDataMessage extends SmafMessage
         return bb.array();
     }
 
-    /* */
     @Override
     public int getLength() {
         return data.length;
@@ -115,7 +113,6 @@ public class WaveDataMessage extends SmafMessage
         };
     }
 
-    /* */
     @Override
     public void sequence() throws InvalidSmafDataException {
 logger.log(Level.DEBUG, "WAVE DATA[" + number + "]: " + this);

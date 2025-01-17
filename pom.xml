@@ -8,17 +8,17 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-sound</artifactId>
-  <version>1.0.20</version>
+  <version>1.0.21</version>
 
-  <name>Vavi Sound API</name>
+  <name>Vavi Sound SPIs</name>
   <url>https://github.com/umjammer/vavi-sound</url>
   <scm>
     <url>https://github.com/umjammer/vavi-sound</url>
   </scm>
   <description>
-TODO
-
-    adpcm spi</description>
+    Provides old school Japanese cell phone sounds library as javax.sound SPI
+    includes many ADPCM codecs and the SSRC sampling rate converter.
+  </description>
   <issueManagement>
     <url>https://github.com/umjammer/vavi-sound/issues</url>
   </issueManagement>

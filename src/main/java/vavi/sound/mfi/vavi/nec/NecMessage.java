@@ -222,7 +222,7 @@ logger.log(Level.DEBUG, "wave r chunk(" + numberOfChunks + "): " + chunkM.length
      * <pre>
      * 0x01 0xf3 0x_3
      * </pre>
-     * @param maxGain (wav2mld use 0x00)
+     * @param maxGain (wav2mld uses 0x00)
      */
     public static MfiEvent getMaxGainEvent(int maxGain) throws InvalidMfiDataException {
         MachineDependentMessage message = new NecMessage();
@@ -237,7 +237,7 @@ logger.log(Level.DEBUG, "wave r chunk(" + numberOfChunks + "): " + chunkM.length
      * <pre>
      * 0x01 0xf3 0x_4
      * </pre>
-     * @param maxStreamNumber (wav2mld use 0x02)
+     * @param maxStreamNumber (wav2mld uses 0x02)
      */
     public static MfiEvent getSettingEvent(int maxStreamNumber) throws InvalidMfiDataException {
         MachineDependentMessage message = new NecMessage();

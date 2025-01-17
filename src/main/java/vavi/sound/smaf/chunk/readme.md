@@ -2,11 +2,11 @@
 
 Provides a class that represents the file structure related to SMAF sound.
 
-## Abstract
+### Abstract
 
 Used when reading SMAF files.
 
-## Structure
+### Structure
 
 ```
                                                                         wav2mld
@@ -35,4 +35,16 @@ Used when reading SMAF files.
 
 ```
 
+## References
+
+ * https://github.com/but80/smaf825/
+ * https://github.com/but80/fmfm.core
+ * https://github.com/but80/go-smaf
+ * https://lpcwiki.miraheze.org/wiki/Yamaha_SMAF
+ * https://archive.org/details/yamaha_ymu762_datasheet
+ * https://gist.github.com/bryc/e85315f758ff3eced19d2d4fdeef01c5/
+ * https://github.com/denjhang/MA-3-MegaMod
+
 ## TODO
+
+ * https://github.com/umjammer/vavi-sound/discussions/21

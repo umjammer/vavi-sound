@@ -103,18 +103,17 @@ public class WaveMessage extends SmafMessage
         return gateTime;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "Wave:" +
             " duration=" + duration +
             " channel=" + channel  +
             " number=" + number  +
-            " gateTime=" + String.format("%04x", gateTime);
+            " gateTime=" + "%04x".formatted(gateTime);
     }
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -145,7 +144,6 @@ public class WaveMessage extends SmafMessage
         return baos.toByteArray();
     }
 
-    /* */
     @Override
     public int getLength() {
         return getMessage().length;
@@ -210,7 +208,6 @@ public class WaveMessage extends SmafMessage
         };
     }
 
-    /* */
     @Override
     public void sequence() throws InvalidSmafDataException {
 logger.log(Level.DEBUG, "WAVE PLAY: " + number);

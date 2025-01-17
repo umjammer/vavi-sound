@@ -46,7 +46,7 @@ public class SeekAndPhraseInfoChunk extends Chunk {
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         byte[] data = new byte[size];

@@ -51,7 +51,7 @@ public class NopMessage extends ShortMessage
 //logger.log(Level.TRACE, "NOP: delta: " + delta);
     }
 
-    /** */
+    @Override
     public String toString() {
         return "Nop: delta=" + (data[3] & 0xff);
     }

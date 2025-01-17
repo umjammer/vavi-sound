@@ -44,7 +44,7 @@ logger.log(Level.DEBUG, "OptionalData: " + size + " bytes");
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         while (dis.available() > 0) {

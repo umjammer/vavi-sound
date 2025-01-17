@@ -41,7 +41,7 @@ public class DateMessage extends SubMessage {
         super(TYPE, date.toString());
     }
 
-    /** */
+    @Override
     public String toString() {
         int length = getDataLength();
         byte[] data = getData();

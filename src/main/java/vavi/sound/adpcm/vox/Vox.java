@@ -58,7 +58,7 @@ class Vox implements Codec {
         }
 
         state.last = decode(code);
-//logger.log(Level.TRACE, String.format("%04X -> %02X", samp, code));
+//logger.log(Level.TRACE, "%04X -> %02X".formatted(samp, code));
         return code;
     }
 

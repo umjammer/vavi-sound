@@ -33,7 +33,6 @@ public class VaviMidiDeviceProvider extends MidiDeviceProvider {
     /** */
     private static final MidiDevice.Info[] infos = new MidiDevice.Info[] { VaviSequencer.info };
 
-    /* */
     @Override
     public MidiDevice.Info[] getDeviceInfo() {
         return infos;

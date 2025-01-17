@@ -41,16 +41,15 @@ public class NopMessage extends ShortMessage
         this.duration = duration;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "Nop:" +
             " duration=" + duration +
-            " (" + String.format("%04x", duration) + ")";
+            " (%04x".formatted(duration) + ")";
     }
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -74,7 +73,6 @@ public class NopMessage extends ShortMessage
         return baos.toByteArray();
     }
 
-    /* */
     @Override
     public int getLength() {
         return getMessage().length;

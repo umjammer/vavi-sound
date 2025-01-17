@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.track;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -20,6 +22,8 @@ import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
 
+import static java.lang.System.getLogger;
+
 
 /**
  * AudioPlayMessage.
@@ -33,6 +37,8 @@ import vavi.sound.mobile.AudioEngine;
  */
 public class AudioPlayMessage extends LongMessage
     implements ChannelMessage, MidiConvertible, AudioDataSequencer {
+
+    private static final Logger logger = getLogger(AudioPlayMessage.class.getName());
 
     /** */
     private int voice;
@@ -56,7 +62,6 @@ public class AudioPlayMessage extends LongMessage
         this.velocity =  data2[1] & 0x3f;
     }
 
-    /* */
     @Override
     public int getVoice() {
         return voice;
@@ -72,14 +77,13 @@ public class AudioPlayMessage extends LongMessage
         return velocity;
     }
 
-    /* */
     @Override
     public void setVoice(int voice) {
         this.voice = voice & 0x03;
         this.data[3] = (byte) ((this.data[3] & 0x3f) | (this.voice << 6));
     }
 
-    /** */
+    @Override
     public String toString() {
         return "AudioPlay:" +
         " voice=" + voice +
@@ -119,6 +123,9 @@ public class AudioPlayMessage extends LongMessage
         int id = getIndex();
 
         AudioEngine engine = Factory.getAudioEngine();
-        engine.start(id);
+        if (engine != null)
+            engine.start(id);
+        else
+            logger.log(Level.ERROR, "audio engine is not set");
     }
 }

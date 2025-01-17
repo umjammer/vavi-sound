@@ -58,7 +58,7 @@ logger.log(Level.DEBUG, "Graphics[" + trackNumber + "]: " + size);
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 //skip(is, size);
 
@@ -149,7 +149,6 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
     /** (option) */
     private Chunk imageDataChunk;
 
-    /* */
     @Override
     public List<SmafEvent> getSmafEvents() throws InvalidSmafDataException {
         List<SmafEvent> events = new ArrayList<>();
@@ -175,7 +174,7 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
         // "Ge**” ：Font Chunk
         // "Gu**” ：Unicode Font Chunk
         @Override
-        protected void init(MyDataInputStream dis, Chunk parent)
+        protected void init(CrcDataInputStream dis, Chunk parent)
             throws InvalidSmafDataException, IOException {
 dis.skipBytes((int) (long) size); // TODO
         }

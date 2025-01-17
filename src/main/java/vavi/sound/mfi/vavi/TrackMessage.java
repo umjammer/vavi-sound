@@ -29,6 +29,7 @@ import vavi.sound.mfi.SysexMessage;
 import vavi.sound.mfi.Track;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mfi.vavi.VaviMfiFileFormat.DumpContext.getDC;
 
 
 /**
@@ -133,9 +134,7 @@ try {
      *         {@link #exst} is not set
      * @throws InvalidMfiDataException at the beginning of <code>is</code> is not {@link #TYPE}
      */
-    public void readFrom(InputStream is)
-        throws InvalidMfiDataException,
-               IOException {
+    public void readFrom(InputStream is) throws InvalidMfiDataException, IOException {
 //logger.log(Level.TRACE, "\n" + StringUtil.getDump(is, 512));
 
         if (noteLength == -1 || exst == -1) {
@@ -164,7 +163,7 @@ logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
             track.add(new MfiEvent(message, 0L));
 
             l += message.getLength();
-//logger.log(Level.TRACE, "track[" + trackNumber + "] event length sum: " + l + " / " + trackLlength);
+//logger.log(Level.TRACE, "track[" + trackNumber + "] event length sum: " + l + " / " + trackLength);
         }
 
         //
@@ -181,10 +180,10 @@ logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
         int delta  = dis.readUnsignedByte();
         int status = dis.readUnsignedByte();
 
-        return switch (status) { // Class A (0x3f)
-            // Class B (0x7f)
-            // Class C (0xbf)
-            case MfiMessage.STATUS_CLASS_A, MfiMessage.STATUS_CLASS_B, MfiMessage.STATUS_CLASS_C,
+        return switch (status) {
+            case MfiMessage.STATUS_CLASS_A,   // Class A (0x3f)
+                 MfiMessage.STATUS_CLASS_B,   // Class B (0x7f)
+                 MfiMessage.STATUS_CLASS_C,   // Class C (0xbf)
                  MfiMessage.STATUS_NORMAL ->  // Normal (0xff)
                     getClassOrNormalMessage(delta, status, dis);
             default ->                        // note message
@@ -218,7 +217,7 @@ logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
         return message;
     }
 
-    /** @throws UnsupportedOperationException */
+    /** @throws UnsupportedOperationException no mean */
     @Override
     public byte[] getMessage() {
         throw new UnsupportedOperationException("no mean");
@@ -315,7 +314,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                                             DataInputStream dis) throws IOException {
 //logger.log(Level.TRACE, "delta: " + StringUtil.toHex2(delta));
 
-            String key = String.format("mfi.track.%d.%c.%d", status, 'e', data1);
+            String key = "mfi.track.%d.%c.%d".formatted(status, 'e', data1);
 
             if (sysexMessageInstantiators.containsKey(key)) {
                 Method method = sysexMessageInstantiators.get(key);
@@ -333,7 +332,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                 data2[1] = (byte) ((length % 0x100) & 0xff);
                 dis.readFully(data2, 2, length);
 
-logger.log(Level.WARNING, String.format("sysex unhandled: delta: %02x, status: %02x, extended status: %02x", delta, status, data1));
+logger.log(Level.WARNING, "sysex unhandled: delta: %02x, status: %02x, extended status: %02x".formatted(delta, status, data1));
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
         }
@@ -387,13 +386,13 @@ logger.log(Level.ERROR, e.getMessage(), e);
             int data2 = dis.readUnsignedByte();
 
             //
-            String key = String.format("mfi.track.%d.%c.%d", status, 'b', data1);
+            String key = "mfi.track.%d.%c.%d".formatted(status, 'b', data1);
 
             Constructor<? extends MfiMessage> constructor;
             if (shortMessageConstructors.containsKey(key)) {
                 constructor = shortMessageConstructors.get(key);
             } else {
-logger.log(Level.WARNING, String.format("short unhandled: delta: %02x, status: %02x, extended status: %02x", delta, status, data1));
+logger.log(Level.WARNING, "short unhandled: delta: %02x, status: %02x, extended status: %02x".formatted(delta, status, data1));
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
 
@@ -458,13 +457,13 @@ logger.log(Level.ERROR, e.getMessage(), e);
             dis.readFully(data2, 0, 1 + exst);
 
             //
-            String key = String.format("mfi.track.%d.%c.%d", status, 'a', data1);
+            String key = "mfi.track.%d.%c.%d".formatted(status, 'a', data1);
 
             Constructor<? extends MfiMessage> constructor;
             if (longMessageConstructors.containsKey(key)) {
                 constructor = longMessageConstructors.get(key);
             } else {
-logger.log(Level.WARNING, String.format("long unhandled: delta: %02x, status: %02x, extended status: %02x", delta, status, data1));
+logger.log(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended status: %02x".formatted(delta, status, data1));
                 return UnknownMessageFactory.getMessage(delta, status, data1, data2);
             }
 
@@ -561,5 +560,19 @@ logger.log(Level.ERROR, e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(TYPE).append("\n");
+        try (var dc = getDC().open()) {
+            track.stream()
+                    .filter(e -> !(e.getMessage() instanceof SubMessage))
+                    .filter(e -> !(e.getMessage() instanceof AudioDataMessage))
+                    .forEach(e -> sb.append(dc.format(e.getMessage().toString())));
+        }
+        sb.setLength(sb.length() - 1);
+        return sb.toString();
     }
 }

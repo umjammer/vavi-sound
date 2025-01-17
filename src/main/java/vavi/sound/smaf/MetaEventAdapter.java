@@ -39,24 +39,20 @@ class MetaEventAdapter implements MetaEventListener, SmafDevice {
                            "Software sequencer using wave",
                            "Version " + SmafDeviceProvider.version) {};
 
-    /* */
     @Override
     public SmafDevice.Info getDeviceInfo() {
         return info;
     }
 
-    /* */
     @Override
     public void close() {
     }
 
-    /* */
     @Override
     public boolean isOpen() {
         return true;
     }
 
-    /* */
     @Override
     public void open() {
     }
@@ -103,20 +99,20 @@ logger.log(Level.DEBUG, "no meta sub handler: " + message.getType());
      * 0x7f manufacturerId
      * </pre>
      */
-    private void processSpecial(javax.sound.midi.MetaMessage message)
+    private static void processSpecial(javax.sound.midi.MetaMessage message)
         throws InvalidSmafDataException {
 
         byte[] data = message.getData();
         int manufacturerId = data[0];
         switch (manufacturerId) {
         case 0:     // 3 byte manufacturer id
-logger.log(Level.WARNING, String.format("unhandled manufacturer: %02x %02x %02x", data[0], data[1], data[2]));
+logger.log(Level.WARNING, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
             break;
         case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x5f vavi
             processSpecial_Vavi(message);
             break;
         default:
-logger.log(Level.WARNING, String.format("unhandled manufacturer: %02x", manufacturerId));
+logger.log(Level.WARNING, "unhandled manufacturer: %02x".formatted(manufacturerId));
             break;
         }
     }
@@ -140,7 +136,7 @@ logger.log(Level.WARNING, String.format("unhandled manufacturer: %02x", manufact
             processSpecial_Vavi_Wave(message);
             break;
         default:
-logger.log(Level.WARNING, String.format("unhandled function: %02x", functionId));
+logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId));
             break;
         }
     }

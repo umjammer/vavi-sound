@@ -52,7 +52,7 @@ logger.log(Level.DEBUG, "PcmAudioTrack[" + trackNumber + "]: " + size + " bytes"
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 //skip(is, size);
 
@@ -153,7 +153,6 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
         size += waveDataChunk.getSize() + 8;
     }
 
-    /* */
     @Override
     public List<SmafEvent> getSmafEvents() throws InvalidSmafDataException {
         List<SmafEvent> events = new ArrayList<>();

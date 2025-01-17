@@ -54,7 +54,7 @@ public class Function143 implements MachineDependentFunction {
             byte[] subIdData = new byte[subIdLength];
             System.arraycopy(data, index, subIdData, 0, subIdLength);
             index += subIdLength;
-logger.log(Level.TRACE, String.format("ADPCM subId: %d\n%s", subId, StringUtil.getDump(subIdData)));
+logger.log(Level.TRACE, "ADPCM subId: %d\n%s".formatted(subId, StringUtil.getDump(subIdData)));
             subIds.add(new SubIdChunk(subId, subIdData));
         }
     }

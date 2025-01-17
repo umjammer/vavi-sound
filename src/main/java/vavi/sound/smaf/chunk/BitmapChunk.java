@@ -40,9 +40,8 @@ logger.log(Level.DEBUG, "Bitmap: " + size + " bytes");
         this.size = 0;
     }
 
-    /** */
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 dis.skipBytes((int) (long) size); // TODO
     }

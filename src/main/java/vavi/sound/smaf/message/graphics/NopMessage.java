@@ -36,7 +36,7 @@ public class NopMessage extends ShortMessage {
         this.duration = duration;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "Nop:" +
             " duration=" + duration;
@@ -44,7 +44,6 @@ public class NopMessage extends ShortMessage {
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -66,7 +65,6 @@ public class NopMessage extends ShortMessage {
         return baos.toByteArray();
     }
 
-    /* */
     @Override
     public int getLength() {
         return getMessage().length;

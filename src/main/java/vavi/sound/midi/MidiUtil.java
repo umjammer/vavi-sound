@@ -38,11 +38,12 @@ public final class MidiUtil {
 
     private static final Logger logger = getLogger(MidiUtil.class.getName());
 
-    /** */
+    /** this is utility class */
     private MidiUtil() {
     }
 
     /**
+     * should be called before {@link javax.sound.midi.Sequencer#setSequence}
      * @param volume 0 ~ 1.0
      */
     public static void volume(Receiver receiver, float volume) throws InvalidMidiDataException {
@@ -52,7 +53,9 @@ public final class MidiUtil {
         receiver.send(sysex, -1);
     }
 
-    /** */
+    /**
+     * for {@link MidiMessage#toString}
+     */
     public static String paramString(MidiMessage midiMessage) {
         String result = null;
         if (midiMessage instanceof ShortMessage msg) {
@@ -68,7 +71,7 @@ public final class MidiUtil {
             byte[] data = msg.getData();
             StringBuilder sb = new StringBuilder();
             for (byte datum : data) {
-                sb.append(String.format("%02x", datum));
+                sb.append("%02x".formatted(datum));
                 sb.append(" ");
             }
             result = "channel=n/a" +
@@ -80,7 +83,7 @@ public final class MidiUtil {
             byte[] data = msg.getData();
             StringBuilder sb = new StringBuilder();
             for (byte datum : data) {
-                sb.append(String.format("%02x", datum));
+                sb.append("%02x".formatted(datum));
                 sb.append(" ");
             }
             result = "channel=n/a" +
@@ -92,7 +95,7 @@ public final class MidiUtil {
         return result;
     }
 
-    /** */
+    /** Gets strings stands for status byte. */
     private static String getChannelMessage(int statusByte, int value1) {
         switch (statusByte / 16) {
         case 8: // 128, 0x80
@@ -120,7 +123,7 @@ public final class MidiUtil {
 
     /**
      * read 1 ~ 4 bytes
-     * @return 0 ~ 268435455 (0x0fffffff)
+     * @return 0 ~ 268435455 (0x0fff_ffff)
      */
     public static int readVariableLength(DataInput input) throws IOException {
         int b = input.readUnsignedByte();
@@ -158,7 +161,7 @@ public final class MidiUtil {
         output.write(value & 0x7f);
     }
 
-    /** */
+    /** encoding for midi meta message */
     private static String decodingEncoding = "JISAutoDetect";
 
     /** compatible with MIDI data starting with 0xff (encoded) */
@@ -193,12 +196,18 @@ logger.log(Level.WARNING, "unknown cp: " + e.getMessage());
     /** TODO auto detection??? */
     private static String encodingEncoding = "Windows-31J";
 
-    /** */
+    /**
+     * Gets decoded string.
+     * @see #decodingEncoding
+     */
     public static byte[] getEncodedMessage(String text) {
         return getEncodedMessage(text, encodingEncoding);
     }
 
-    /** */
+    /**
+     * Gets decoded string.
+     * @see #decodingEncoding
+     */
     public static byte[] getEncodedMessage(String text, String encoding) {
         byte[] textData;
         try {
@@ -361,7 +370,7 @@ logger.log(Level.DEBUG, "default sequencer: " + provider.getClass().getName() + 
         throw new IllegalStateException("no default midi sequencer");
     }
 
-    /** */
+    /** spi */
     private static ServiceLoader<MidiDeviceProvider> providers;
 
     /*

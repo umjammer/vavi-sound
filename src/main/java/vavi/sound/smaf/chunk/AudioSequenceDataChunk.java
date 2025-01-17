@@ -44,7 +44,7 @@ logger.log(Level.DEBUG, "AudioSequenceData: " + size + " bytes");
 
     /** TODO how to get formatType from parent chunk ??? */
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 //logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
 //skip(is, size); // TODO

@@ -62,7 +62,7 @@ public class CuePointMessage extends ShortMessage
         return start;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "CuePoint:" + " start=" + start;
     }

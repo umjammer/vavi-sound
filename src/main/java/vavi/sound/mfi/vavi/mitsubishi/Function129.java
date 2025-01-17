@@ -47,7 +47,7 @@ public class Function129 implements MachineDependentFunction {
 
         this.channel = (data[7] & 0xc0) >> 6;   // 0 ~ 3
         this.volume  =  data[7] & 0x3f;         //
-logger.log(Level.DEBUG, String.format("ADPCM volume: %dch %02x\n", channel, volume));
+logger.log(Level.DEBUG, "ADPCM volume: %dch %02x\n".formatted(channel, volume));
     }
 
     /** */

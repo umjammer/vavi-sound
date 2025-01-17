@@ -32,6 +32,8 @@ import vavi.sound.mfi.vavi.header.VersMessage;
 
 import static java.lang.System.getLogger;
 
+import static vavi.sound.mfi.vavi.VaviMfiFileFormat.DumpContext.getDC;
+
 
 /**
  * MFi file format.
@@ -96,6 +98,10 @@ public class VaviMfiFileFormat extends MfiFileFormat {
 
     /** */
     private HeaderChunk headerChunk;
+
+    List<AudioDataMessage> audioDataChunks = new ArrayList<>();
+
+    List<TrackMessage> trackChunks = new ArrayList<>();
 
     /** Gets MFi data */
     public Sequence getSequence() {
@@ -216,9 +222,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
      *         {@link #setVersion(String) "vers"} }
      *         are not set
      */
-    public void writeTo(OutputStream os)
-        throws InvalidMfiDataException,
-               IOException {
+    public void writeTo(OutputStream os) throws InvalidMfiDataException, IOException {
 
         if (sequence == null) {
             throw new IllegalStateException("no sequence");
@@ -262,7 +266,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
         int audioDataCount = mff.getAudioDataChunkCount();
 //      boolean isAudioDataOnly = ff.isAudioDataOnly();
         Map<String, SubMessage> headerSubChunks = mff.headerChunk.getSubChunks();
-        List<AudioDataMessage> audioDataChunks = new ArrayList<>();
+        mff.audioDataChunks = new ArrayList<>();
 int dataLength = mff.headerChunk.getMfiDataLength() - (2 + mff.headerChunk.getDataLength());
 int l = 0;
 
@@ -273,7 +277,7 @@ logger.log(Level.DEBUG, "audio data number: " + audioDataNumber);
             AudioDataMessage audioDataChunk = new AudioDataMessage(audioDataNumber);
             audioDataChunk.readFrom(is);
 
-            audioDataChunks.add(audioDataChunk);
+            mff.audioDataChunks.add(audioDataChunk);
 
 l += audioDataChunk.getLength();
 logger.log(Level.DEBUG, "adat length sum: " + l + " / " + dataLength);
@@ -286,7 +290,8 @@ logger.log(Level.DEBUG, "track number: " + trackNumber);
             Track track = mff.sequence.createTrack();
 
             if (trackNumber == 0) {
-                doSpecial(headerSubChunks, audioDataChunks, track);
+                // TODO this should be done when conversion
+                doSpecial(headerSubChunks, mff.audioDataChunks, track);
             }
 
             // normal process
@@ -295,6 +300,7 @@ logger.log(Level.DEBUG, "track number: " + trackNumber);
             trackChunk.setExst(exst);
             trackChunk.readFrom(is);
 
+            mff.trackChunks.add(trackChunk);
 l += trackChunk.getLength();
 logger.log(Level.DEBUG, "trac length sum: " + l + " / " + dataLength);
         }
@@ -401,8 +407,7 @@ logger.log(Level.INFO, "no note info, use 0");
      * @param sorc 0: not protected, 1: protected
      * @see SorcMessage
      */
-    public void setSorc(int sorc)
-        throws InvalidMfiDataException {
+    public void setSorc(int sorc) throws InvalidMfiDataException {
 
         SorcMessage subChunk = (SorcMessage) headerChunk.getSubChunks().get(SorcMessage.TYPE);
         if (subChunk != null) {
@@ -428,8 +433,7 @@ logger.log(Level.INFO, "no note info, use 0");
     /**
      * @see TitlMessage
      */
-    public void setTitle(String title)
-        throws InvalidMfiDataException {
+    public void setTitle(String title) throws InvalidMfiDataException {
 
         TitlMessage subChunk = (TitlMessage) headerChunk.getSubChunks().get(TitlMessage.TYPE);
         if (subChunk != null) {
@@ -456,8 +460,7 @@ logger.log(Level.INFO, "no note info, use 0");
      * @param version 4 byte number as string (ex. "0400")
      * @see VersMessage
      */
-    public void setVersion(String version)
-        throws InvalidMfiDataException {
+    public void setVersion(String version) throws InvalidMfiDataException {
 
         VersMessage subChunk = (VersMessage) headerChunk.getSubChunks().get(VersMessage.TYPE);
         if (subChunk != null) {
@@ -484,8 +487,7 @@ logger.log(Level.INFO, "no note info, use 0");
      * Sets copyright string.
      * @see ProtMessage
      */
-    public void setProt(String prot)
-        throws InvalidMfiDataException {
+    public void setProt(String prot) throws InvalidMfiDataException {
 
         ProtMessage subChunk = (ProtMessage) headerChunk.getSubChunks().get(ProtMessage.TYPE);
         if (subChunk != null) {
@@ -512,8 +514,7 @@ logger.log(Level.INFO, "no note info, use 0");
      * Sets Extended Status A length.
      * @see ExstMessage
      */
-    public void setExst(int exst)
-        throws InvalidMfiDataException {
+    public void setExst(int exst) throws InvalidMfiDataException {
 
         ExstMessage subChunk = (ExstMessage) headerChunk.getSubChunks().get(ExstMessage.TYPE);
         if (subChunk != null) {
@@ -549,5 +550,40 @@ logger.log(Level.INFO, "no note info, use 0");
         } else {
             return false;
         }
+    }
+
+    // ----
+
+    /** indentation management */
+    static class DumpContext implements AutoCloseable /* i know this is abuse. */ {
+        /** indentation management store */
+        private static ThreadLocal<DumpContext> dc = new ThreadLocal<>();
+
+        static final String indent = " ".repeat(4);
+        int depth = 0;
+        String indent() { return indent.repeat(depth); }
+        DumpContext open() { depth++; return this; }
+        @Override public void close() { depth--; }
+
+        /** Gets indentation manager */
+        public static DumpContext getDC() {
+            if (dc.get() == null)
+                dc.set(new DumpContext());
+            return dc.get();
+        }
+
+        /** Gets indented string. */
+        String format(String x) { return getDC().indent() + " +--- " + x + "\n"; }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        try (var dc = getDC().open()) {
+            sb.append(headerChunk);
+        }
+        audioDataChunks.forEach(adc -> sb.append(getDC().format(adc.toString())));
+        trackChunks.forEach(tc -> sb.append(getDC().format(tc.toString())));
+        return sb.toString();
     }
 }

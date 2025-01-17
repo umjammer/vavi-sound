@@ -330,7 +330,7 @@ if (delta > 255) {
             for (int i = 0; i < track.size(); i++) {
                 MidiMessage midiMessage = track.get(i).getMessage();
                 if (midiMessage instanceof MetaMessage metaMessage &&
-                        ((MetaMessage) midiMessage).getType() == MetaEvent.META_TEMPO.number()) {
+                        metaMessage.getType() == MetaEvent.META_TEMPO.number()) {
 
                     byte[] data = metaMessage.getData();
 

@@ -42,24 +42,20 @@ class SmafMidiConverter implements SmafDevice {
                             "Format Converter between MIDI and SMAF",
                             "Version " + SmafDeviceProvider.version) {};
 
-    /* */
     @Override
     public Info getDeviceInfo() {
         return info;
     }
 
-    /* */
     @Override
     public void close() {
     }
 
-    /* */
     @Override
     public boolean isOpen() {
         return true;
     }
 
-    /* */
     @Override
     public void open() {
     }

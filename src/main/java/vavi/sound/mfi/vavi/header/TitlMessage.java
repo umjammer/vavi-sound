@@ -78,7 +78,7 @@ public class TitlMessage extends SubMessage
         }
     }
 
-    /** */
+    @Override
     public String toString() {
         return "titl: " + getDataLength() +
                ": \"" + getTitle() + "\"";

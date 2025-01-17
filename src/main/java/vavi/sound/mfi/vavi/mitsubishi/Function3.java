@@ -42,6 +42,6 @@ public class Function3 implements MachineDependentFunction {
 
         int voice = (data[7] & 0xc0) >> 6;  // 0 ~ 3
         int modulation = data[7] & 0x3f;    // 0 ~ 63
-logger.log(Level.DEBUG, String.format("Vibrato: %d %02x", voice, modulation));
+logger.log(Level.DEBUG, "Vibrato: %d %02x".formatted(voice, modulation));
     }
 }

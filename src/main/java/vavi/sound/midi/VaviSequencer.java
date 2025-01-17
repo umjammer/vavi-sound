@@ -27,7 +27,7 @@ import static java.lang.System.getLogger;
 
 
 /**
- * VaviSequencer.
+ * The base sequencer for MFi/SMAF sequencer as a midi sequencer.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 090110 nsano initial version <br>

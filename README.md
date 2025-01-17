@@ -7,7 +7,7 @@
 
 <img alt="logo" src="https://github.com/umjammer/vavi-sound/assets/493908/7a731744-643a-4b6c-b82b-68f2fcc436c9" width="160" />
 
-Provides old school Japanese cell phone sounds library as `javax.sound` SPI<br/>
+Provides old school Japanese cell phone sounds library as `javax.sound(.midi)` SPI<br/>
 includes many ADPCM codecs and the [SSRC](https://github.com/shibatch/SSRC) sampling rate converter.
 
 ### Status
@@ -38,6 +38,11 @@ includes many ADPCM codecs and the [SSRC](https://github.com/shibatch/SSRC) samp
 
 ## Usage
 
+### sample
+
+ * MFi (.mld) ... [PlayMFi](src/test/java/PlayMFi.java)
+ * SMAF (.mmf) ... [PlaySMAF](src/test/java/PlaySMAF.java)
+
 ### FAQ
 
 #### Q. can I use SSRC sampling converter under LGPL license?
@@ -57,7 +62,8 @@ A. yes you can, follow those steps
 
 ### Tech Know
 
-* github actions workflow on ubuntu java8 cannot deal line `PCM_SIGNED 8000.0 Hz, 16 bit, mono, 2 bytes/frame, little-endian`
+* \[github actions] workflow on ubuntu java8 cannot deal line `PCM_SIGNED 8000.0 Hz, 16 bit, mono, 2 bytes/frame, little-endian`
+* \[midi volume] avoiding noise, `SoundUtil#volume` should be called before `Sequencer#setSequence`
 
 ## References
 
@@ -74,6 +80,7 @@ A. yes you can, follow those steps
   * service loader instead of vavi.properties
   * [RTTTL (Ringing Tones text transfer language)](https://web.archive.org/web/20070704033948/http://www.convertyourtone.com/rtttl.html)
   * https://github.com/SatyrDiamond/adpcm
+  * midi -> smaf
 
 ---
 <sub>images by <a href="https://www.silhouette-illust.com/illust/49312">melody</a>, <a href="https://www.silhouette-illust.com/illust/257">cellphone</a></sub>

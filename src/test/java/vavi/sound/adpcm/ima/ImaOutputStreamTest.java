@@ -79,7 +79,7 @@ Debug.println(Level.FINE, "outFile: " + outFile.getCanonicalPath());
         byte[] buffer = new byte[505 * 2];
         while (true) {
             int amount = is.read(buffer);
-//System.err.println("amount: " + amount);
+//Debug.print("amount: " + amount);
             if (amount < 0) {
                 break;
             }

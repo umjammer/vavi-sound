@@ -117,7 +117,7 @@ Debug.println(Level.FINE, "wave: " + in.available());
             2,
             sampleRate,
             byteOrder.equals(ByteOrder.BIG_ENDIAN));
-System.err.println(audioFormat);
+Debug.print(audioFormat);
 
 Debug.printf(Level.FINE, "samplesPerBlock: %d, numberChannels: %d, blockSize: %d\n", samplesPerBlock, format.getNumberChannels(), format.getBlockSize());
         InputStream is = new MsInputStream(in,

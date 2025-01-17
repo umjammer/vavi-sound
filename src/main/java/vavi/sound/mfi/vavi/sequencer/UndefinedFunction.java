@@ -45,12 +45,12 @@ public class UndefinedFunction implements MachineDependentFunction {
         int f3;
         if (data.length > 8) {
             f3 = data[8] & 0xff;
-logger.log(Level.INFO, String.format("undefined function: %02x %02x %02x", f1, f2, f3));
+logger.log(Level.INFO, "undefined function: %02x %02x %02x".formatted(f1, f2, f3));
         } else if (data.length > 7) {
             f2 = data[7] & 0xff;
-logger.log(Level.INFO, String.format("undefined function: %02x %02x", f1, f2));
+logger.log(Level.INFO, "undefined function: %02x %02x".formatted(f1, f2));
         } else {
-logger.log(Level.INFO, String.format("undefined function: %02x", f1));
+logger.log(Level.INFO, "undefined function: %02x".formatted(f1));
         }
 logger.log(Level.INFO, StringUtil.getDump(message.getMessage(), 128));
     }

@@ -89,6 +89,7 @@ class SmafSequencer implements Sequencer, Synthesizer {
 
             midiSequencer.open();
             midiSynthesizer.open();
+            midiSequencer.getTransmitter().setReceiver(midiSynthesizer.getReceiver());
         } catch (MidiUnavailableException e) {
 logger.log(Level.ERROR, e.getMessage(), e);
             throw new SmafUnavailableException(e);

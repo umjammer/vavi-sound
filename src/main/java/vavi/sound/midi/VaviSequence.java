@@ -17,6 +17,8 @@ import javax.sound.midi.MetaEventListener;
  */
 public interface VaviSequence {
 
-    /** */
+    /**
+     * We use meta event listener for processing MFi/SMAF specific functionality internally.
+     */
     MetaEventListener getMetaEventListener();
 }

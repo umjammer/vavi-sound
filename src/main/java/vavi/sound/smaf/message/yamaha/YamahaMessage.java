@@ -175,13 +175,21 @@ logger.log(Level.INFO, "yamaha: " + data.length + "\n" + StringUtil.getDump(data
                 case 0x20: { //
 logger.log(Level.DEBUG, "YAMAHA UNKNOWN: ");
                     AudioEngine engine = WaveSequencer.Factory.getAudioEngine();
-                    engine.start(2);
+                    if (engine == null) { // TODO
+logger.log(Level.WARNING, "YAMAHA UNKNOWN: engine is null");
+                    } else {
+                        engine.start(2);
+                    }
                     break;
                 }
                 case 0x00: { // volume
 logger.log(Level.DEBUG, "YAMAHA VOLUME: ");
                     AudioEngine engine = WaveSequencer.Factory.getAudioEngine();
-                    engine.start(1);
+                    if (engine == null) { // TODO
+logger.log(Level.WARNING, "YAMAHA VOLUME: engine is null");
+                    } else {
+                        engine.start(1);
+                    }
                     break;
                 }
                 }

@@ -64,11 +64,11 @@ public class NecSequencer implements MachineDependentSequencer {
         if (f1 == 0x01) {
             f2 = data[7] & 0xff;        // 0 ~ 32
             int f3 = data[8] & 0x0f;    // 0 ~ 16
-logger.log(Level.DEBUG, String.format("%02x %02x %02x", f1, f2, f3));
+logger.log(Level.DEBUG, "%02x %02x %02x".formatted(f1, f2, f3));
             key = f1 + "." + f2 + "." + f3;
         } else {
             f2 = data[7] & 0x0f;        // 0 ~ 16
-logger.log(Level.DEBUG, String.format("%02x %02x", f1, f2));
+logger.log(Level.DEBUG, "%02x %02x".formatted(f1, f2));
             key = f1 + "." + f2;
         }
 
@@ -76,7 +76,7 @@ logger.log(Level.DEBUG, String.format("%02x %02x", f1, f2));
         if (mdf != null) {
             mdf.process(message);
         } else {
-logger.log(Level.WARNING, String.format("unsupported function: %s", key));
+logger.log(Level.WARNING, "unsupported function: %s".formatted(key));
         }
     }
 

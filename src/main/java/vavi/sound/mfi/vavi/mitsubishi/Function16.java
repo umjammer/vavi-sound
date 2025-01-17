@@ -42,6 +42,6 @@ public class Function16 implements MachineDependentFunction {
 
         int channel = (data[7] & 0xc0) >> 6;    // 0 ~ 3
         int f2 = data[7] & 0x3f;                // 0 ~ 31
-logger.log(Level.DEBUG, String.format("0x10: %02x %02x", channel, f2));
+logger.log(Level.DEBUG, "0x10: %02x %02x".formatted(channel, f2));
     }
 }

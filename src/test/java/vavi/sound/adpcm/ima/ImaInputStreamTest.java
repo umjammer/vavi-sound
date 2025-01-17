@@ -106,9 +106,9 @@ Debug.println(Level.FINE, "wave: " + in.available());
             2,
             sampleRate,
             byteOrder.equals(ByteOrder.BIG_ENDIAN));
-System.err.println(audioFormat);
+Debug.print(audioFormat);
 
-System.err.println("samplesPerBlock: " + samplesPerBlock + ", numberChannels: " + format.getNumberChannels() + ", blockSize: " + format.getBlockSize());
+Debug.print("samplesPerBlock: " + samplesPerBlock + ", numberChannels: " + format.getNumberChannels() + ", blockSize: " + format.getBlockSize());
         InputStream is = new ImaInputStream(in,
                                             samplesPerBlock,
                                             format.getNumberChannels(),

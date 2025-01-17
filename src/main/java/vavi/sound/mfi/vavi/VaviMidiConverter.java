@@ -54,24 +54,20 @@ class VaviMidiConverter implements MidiConverter {
         "Format Converter between MIDI and MFi",
         "Version " + VaviMfiDeviceProvider.version) {};
 
-    /* */
     @Override
     public MfiDevice.Info getDeviceInfo() {
         return info;
     }
 
-    /* */
     @Override
     public void close() {
     }
 
-    /* */
     @Override
     public boolean isOpen() {
         return true;
     }
 
-    /* */
     @Override
     public void open() {
     }
@@ -271,13 +267,13 @@ private final int[] deltas = new int[4];
         deltas[mfiTrackNumber] += mfiMessage.getDelta();
         double tickDash = deltas[mfiTrackNumber] * mfiContext.getScale();
 if ((tickDash / tick) * 100 < 95 && (tickDash / tick) * 100 != 0 && !(mfiMessage instanceof NopMessage)) {
- logger.log(Level.ERROR, "XXXXX track: %d, tick: %d, tick': %.2f (%.2f), %d, %s",
+ logger.log(Level.ERROR, "XXXXX track: %d, tick: %d, tick': %.2f (%.2f), %d, %s".formatted(
   mfiTrackNumber,
   tick,
   tickDash,
   tick != 0 ? (tickDash / tick) * 100 : 0,
   mfiContext.getPreviousTick(mfiTrackNumber),
-  mfiMessage);
+  mfiMessage));
 }
         mfiTrack.add(mfiEvent);
     }

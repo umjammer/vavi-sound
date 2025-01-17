@@ -48,7 +48,7 @@ public class GeneralPurposeDisplayMessage extends ShortMessage {
         this.duration = duration;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "GeneralPurposeDisplay:" +
             " duration=" + duration;
@@ -66,7 +66,6 @@ public class GeneralPurposeDisplayMessage extends ShortMessage {
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -93,7 +92,6 @@ public class GeneralPurposeDisplayMessage extends ShortMessage {
         return baos.toByteArray();
     }
 
-    /* */
     @Override
     public int getLength() {
         return getMessage().length;

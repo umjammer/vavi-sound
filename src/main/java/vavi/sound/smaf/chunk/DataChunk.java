@@ -49,7 +49,7 @@ logger.log(Level.DEBUG, "Data: lang: " + languageCode + ", size: " + size);
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
 logger.log(Level.TRACE, "available: " + dis.available());
@@ -169,7 +169,7 @@ logger.log(Level.TRACE, "SubData: " + subDatum.tag + ", " + subDatum.data.length
         /** Data */
         private final byte[] data;
 
-        /** */
+        @Override
         public String toString() {
             try {
                 String string = new String(data, defaultEncoding);

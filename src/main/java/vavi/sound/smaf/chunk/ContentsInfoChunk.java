@@ -53,15 +53,15 @@ public class ContentsInfoChunk extends Chunk {
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         this.contentsClass = dis.readUnsignedByte();
 logger.log(Level.DEBUG, "contentsClass: " + (contentsClass == 0 ? "YAMAHA" : "Vender ID(" + contentsClass + ")"));
         this.contentsType = dis.readUnsignedByte();
-logger.log(Level.DEBUG, String.format("contentsType: 0x%02x", contentsType));
+logger.log(Level.DEBUG, "contentsType: 0x%02x".formatted(contentsType));
         this.contentsCodeType = dis.readUnsignedByte();
-logger.log(Level.DEBUG, String.format("contentsCodeType: 0x%02x", contentsCodeType));
+logger.log(Level.DEBUG, "contentsCodeType: 0x%02x".formatted(contentsCodeType));
         this.copyStatus = dis.readUnsignedByte();
 logger.log(Level.DEBUG, "copyStatus: " + StringUtil.toBits(copyStatus, 8));
         this.copyCounts = dis.readUnsignedByte();

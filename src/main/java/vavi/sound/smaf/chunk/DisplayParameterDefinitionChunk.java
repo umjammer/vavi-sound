@@ -45,7 +45,7 @@ public class DisplayParameterDefinitionChunk extends Chunk {
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         int i = 0;
@@ -96,7 +96,7 @@ logger.log(Level.DEBUG, "parameters: " + parameter);
         static class Parameter {
             ParameterID parameterID;
             int value;
-            public String toString() {
+            @Override public String toString() {
                 return parameterID + ", " + value;
             }
         }

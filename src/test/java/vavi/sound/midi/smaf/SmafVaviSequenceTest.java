@@ -13,8 +13,10 @@ import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SmafVaviSequenceTest {
 
     @Test
+    @DisplayName("get sequence directly")
     public void test1() throws Exception {
         InputStream is = SmafVaviSequenceTest.class.getResourceAsStream("/test.mmf");
         Sequence sequence = new SmafMidiFileReader().getSequence(is);
@@ -36,6 +39,7 @@ public class SmafVaviSequenceTest {
     }
 
     @Test
+    @DisplayName("get sequence via spi")
     public void test2() throws Exception {
         InputStream is = SmafVaviSequenceTest.class.getResourceAsStream("/test.mmf");
         Sequence sequence = MidiSystem.getSequence(is);
@@ -43,6 +47,7 @@ public class SmafVaviSequenceTest {
     }
 
     @Test
+    @DisplayName("get file format directly")
     public void test3() throws Exception {
         InputStream is = SmafVaviSequenceTest.class.getResourceAsStream("/test.mmf");
         MidiFileFormat mff = new SmafMidiFileReader().getMidiFileFormat(is);
@@ -50,6 +55,7 @@ public class SmafVaviSequenceTest {
     }
 
     @Test
+    @DisplayName("get file format via spi")
     public void test4() throws Exception {
         InputStream is = SmafVaviSequenceTest.class.getResourceAsStream("/test.mmf");
         MidiFileFormat mff = MidiSystem.getMidiFileFormat(is);
@@ -61,6 +67,6 @@ public class SmafVaviSequenceTest {
     /** load smaf */
     public static void main(String[] args) throws Exception {
         MidiFileFormat mff = MidiSystem.getMidiFileFormat(new File(args[0]));
-System.err.println(StringUtil.paramString(mff));
+Debug.print(StringUtil.paramString(mff));
     }
 }

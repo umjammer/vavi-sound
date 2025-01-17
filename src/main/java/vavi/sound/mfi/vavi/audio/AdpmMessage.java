@@ -80,12 +80,12 @@ public class AdpmMessage extends SubMessage {
         return data[2] & 0x07;
     }
 
-    /** */
+    @Override
     public String toString() {
-        return TYPE + ": " + getDataLength() + ": " +
-            getSamplingRate() + ", " +
-            getSamplingBits() + ", " +
-            isInterleaved() + ", " +
+        return TYPE + ": length: " + getDataLength() + ": sampleRate: " +
+            getSamplingRate() + ", sampleBits: " +
+            getSamplingBits() + ", interleaved: " +
+            isInterleaved() + ", channels: " +
             getChannels();
     }
 }

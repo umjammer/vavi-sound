@@ -153,13 +153,13 @@ logger.log(Level.DEBUG, "IMA_ADPCM block ch" + channel + " initial-state (" + st
             if (c != cm) {
                 val -= dp;
                 if (val < -0x8000) {
-//logger.log(Level.TRACE, String.format("%04x -> %d", val, -0x8000));
+//logger.log(Level.TRACE, "%04x -> %d".formatted(val, -0x8000));
                     val = -0x8000;
                 }
             } else {
                 val += dp;
                 if (val > 0x7fff) {
-//logger.log(Level.TRACE, String.format("%04x -> %d", val, 0x7fff));
+//logger.log(Level.TRACE, "%04x -> %d".formatted(val, 0x7fff));
                     val = 0x7fff;
                 }
             }
@@ -318,14 +318,14 @@ logger.log(Level.DEBUG, "IMA_ADPCM block ch" + channel + " initial-state (" + st
      * @param outBuffer output buffer[blockAlign]
      * @param option non-zero allows some cpu-intensive code to improve output
      */
-    private void encodeChannel(int channel,
-                              int channels,
-                              int[] inBuffer,
-                              int length,
-                              int[] steps,
-                              int sp,
-                              byte[] outBuffer,
-                              int option) {
+    private static void encodeChannel(int channel,
+                                      int channels,
+                                      int[] inBuffer,
+                                      int length,
+                                      int[] steps,
+                                      int sp,
+                                      byte[] outBuffer,
+                                      int option) {
 
         int[] snext = new int[1];
         int d;

@@ -19,6 +19,7 @@ import javax.sound.sampled.AudioSystem;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import vavi.util.Debug;
 
 
 /**
@@ -45,7 +46,7 @@ public class MfiAudioFileWriterTest {
     public void test() throws Exception {
         Path path = Paths.get(MfiAudioFileWriterTest.class.getResource("/mono.wav").toURI());
         AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(Files.newInputStream(path)));
-System.err.println(ais.getFormat());
+Debug.print(ais.getFormat());
         Map<String, Object> properties = new HashMap<>();
         properties.put("mfi.divided", true);
         properties.put("mfi.directory", dir.toString());
@@ -73,7 +74,7 @@ System.err.println(ais.getFormat());
         String model = args[4];
         String nullDevice = args[5]; // "nul" or "/dev/null"
         AudioInputStream ais = AudioSystem.getAudioInputStream(new File(inFilename));
-System.err.println(ais.getFormat());
+Debug.print(ais.getFormat());
         Map<String, Object> properties = new HashMap<>();
         properties.put("mfi.divided", true);
         properties.put("mfi.directory", outDir);

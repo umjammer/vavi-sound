@@ -36,7 +36,7 @@ public class ColorPaletteDefinitionChunk extends Chunk {
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 dis.skipBytes((int) (long) size);
     }

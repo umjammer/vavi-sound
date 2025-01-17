@@ -7,6 +7,8 @@
 import java.util.Arrays;
 import java.util.ServiceLoader;
 
+import org.junit.jupiter.api.Test;
+
 
 /**
  * list midi device provider.
@@ -16,13 +18,19 @@ import java.util.ServiceLoader;
  */
 public class ShowMIDIProviders {
 
+    @Test
+    void test0() throws Exception {
+        ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class)
+                .forEach(provider -> Arrays.asList(provider.getDeviceInfo())
+                        .forEach(info -> System.out.println(info.getName())));
+    }
+
     /**
      *
      * @param args ignored
      */
     public static void main(String[] args) throws Exception {
-        ServiceLoader.load(javax.sound.midi.spi.MidiDeviceProvider.class)
-                .forEach(provider -> Arrays.asList(provider.getDeviceInfo())
-                        .forEach(info -> System.out.println(info.getName())));
+        ShowMIDIProviders app = new ShowMIDIProviders();
+        app.test0();
     }
 }

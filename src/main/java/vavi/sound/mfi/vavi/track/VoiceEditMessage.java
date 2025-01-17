@@ -42,7 +42,7 @@ public class VoiceEditMessage extends SysexMessage {
         throw new InvalidMfiDataException("unsupported: " + 0xf1);
     }
 
-    /** */
+    @Override
     public String toString() {
         return "VoiceEdit:";
     }

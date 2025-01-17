@@ -66,7 +66,7 @@ public class MidiConvertibleMessage extends vavi.sound.smaf.ShortMessage
         return value;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "MidiConvertible:" +
             " duration=" + duration +

@@ -46,7 +46,7 @@ logger.log(Level.DEBUG, "WaveData[" + waveNumber + "]: " + size + " bytes");
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
+    protected void init(CrcDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
         data = new byte[size];
         dis.readFully(data);
     }

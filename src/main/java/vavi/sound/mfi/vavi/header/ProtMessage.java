@@ -68,7 +68,7 @@ public class ProtMessage extends SubMessage
         setData(prot.getBytes());
     }
 
-    /** */
+    @Override
     public String toString() {
         return "prot: " + getDataLength() + ": " + getProt();
     }

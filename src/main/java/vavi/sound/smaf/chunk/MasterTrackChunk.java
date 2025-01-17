@@ -37,7 +37,7 @@ logger.log(Level.DEBUG, "MasterTrack: " + size);
     }
 
     @Override
-    protected void init(MyDataInputStream dis, Chunk parent)
+    protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
         this.formatType = FormatType.values()[dis.readUnsignedByte()];
@@ -77,7 +77,6 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
     // measureMark = read(is);
     // rehearsalMark = read(is);
 
-    /* */
     @Override
     public List<SmafEvent> getSmafEvents() throws InvalidSmafDataException {
         return null; // TODO

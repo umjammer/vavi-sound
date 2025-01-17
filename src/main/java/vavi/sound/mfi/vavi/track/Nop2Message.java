@@ -62,7 +62,7 @@ logger.log(Level.DEBUG, "NOP2: delta: " + delta);
 logger.log(Level.DEBUG, "NOP2: delta: " + delta);
     }
 
-    /** */
+    @Override
     public String toString() {
         return "Nop2:" + (data[3] & 0xff);
     }

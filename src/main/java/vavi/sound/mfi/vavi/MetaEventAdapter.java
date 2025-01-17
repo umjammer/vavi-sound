@@ -105,20 +105,20 @@ logger.log(Level.DEBUG, "no meta sub handler: " + message.getType());
      * 0x7f
      * </pre>
      */
-    private void processSpecial(javax.sound.midi.MetaMessage message)
+    private static void processSpecial(javax.sound.midi.MetaMessage message)
         throws InvalidMfiDataException {
 
         byte[] data = message.getData();
         int manufacturerId = data[0];
         switch (manufacturerId) {
         case 0:     // 3 byte manufacturer id
-logger.log(Level.WARNING, String.format("unhandled manufacturer: %02x %02x %02x", data[0], data[1], data[2]));
+logger.log(Level.WARNING, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
             break;
         case VaviMidiDeviceProvider.MANUFACTURER_ID:
             processSpecial_Vavi(message);
             break;
         default:
-logger.log(Level.WARNING, String.format("unhandled manufacturer: %02x", manufacturerId));
+logger.log(Level.WARNING, "unhandled manufacturer: %02x".formatted(manufacturerId));
             break;
         }
     }
@@ -141,7 +141,7 @@ logger.log(Level.WARNING, String.format("unhandled manufacturer: %02x", manufact
             processSpecial_Vavi_Mfi4(message);
             break;
         default:
-logger.log(Level.WARNING, String.format("unhandled function: %02x", functionId));
+logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId));
             break;
         }
     }
@@ -165,7 +165,7 @@ logger.log(Level.WARNING, String.format("unhandled function: %02x", functionId))
             sequencer = MachineDependentSequencer.factory.get(vendor);
         } catch (IllegalArgumentException | Error e) {
 logger.log(Level.ERROR, e.getMessage(), e);
-logger.log(Level.ERROR, String.format("error vendor: 0x%02x", vendor));
+logger.log(Level.ERROR, "error vendor: 0x%02x".formatted(vendor));
             sequencer = new UnknownVenderSequencer();
         }
         sequencer.sequence(mdm);

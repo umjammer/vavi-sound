@@ -55,7 +55,7 @@ public abstract class SysexMessage extends SmafMessage {
         this.data = tmp;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "SYSEX:" +
             " duration=" + duration +
@@ -63,13 +63,11 @@ public abstract class SysexMessage extends SmafMessage {
             StringUtil.getDump(data, 64);
     }
 
-    /* */
     @Override
     public byte[] getMessage() {
         return null; // TODO
     }
 
-    /* */
     @Override
     public int getLength() {
         return 0;   // TODO

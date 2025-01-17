@@ -42,7 +42,7 @@ public class UserMessage extends ShortMessage {
         this.userEventId = data[0] & 0x0f;
     }
 
-    /** */
+    @Override
     public String toString() {
         return "User:" +
         " duration=" + duration +
@@ -51,7 +51,6 @@ public class UserMessage extends ShortMessage {
 
     // ----
 
-    /* */
     @Override
     public byte[] getMessage() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -75,7 +74,6 @@ public class UserMessage extends ShortMessage {
         return baos.toByteArray();
     }
 
-    /* */
     @Override
     public int getLength() {
         return getMessage().length;
