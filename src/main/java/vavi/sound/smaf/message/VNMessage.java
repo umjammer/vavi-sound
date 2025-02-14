@@ -32,30 +32,30 @@ public class VNMessage extends SmafMessage
     private static final Logger logger = getLogger(VNMessage.class.getName());
 
     /** */
-    private String venderName;
+    private String vendorName;
 
     /**
      *
-     * @param venderName
+     * @param vendorName
      */
-    public VNMessage(String venderName) {
-        this.venderName = venderName;
+    public VNMessage(String vendorName) {
+        this.vendorName = vendorName;
     }
 
     /** */
-    public String getVenderName() {
-        return venderName;
+    public String getVendorName() {
+        return vendorName;
     }
 
     /** */
-    public void setVenderName(String venderName) {
-        this.venderName = venderName;
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
     }
 
     @Override
     public String toString() {
         return "VN:" +
-            " venderName=" + venderName;
+            " vendorName=" + vendorName;
     }
 
     // ----
@@ -67,7 +67,7 @@ public class VNMessage extends SmafMessage
 
     @Override
     public int getLength() {
-        return 0;   // TODO
+        return 0; // TODO
     }
 
     /**
@@ -77,10 +77,10 @@ public class VNMessage extends SmafMessage
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
         byte[] data;
         try {
-            data = venderName.getBytes("Windows-31J");
+            data = vendorName.getBytes("Windows-31J");
         } catch (UnsupportedEncodingException e) {
 logger.log(Level.DEBUG, e);
-            data = venderName.getBytes();
+            data = vendorName.getBytes();
         }
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(MetaEvent.META_TEXT_EVENT.number(),

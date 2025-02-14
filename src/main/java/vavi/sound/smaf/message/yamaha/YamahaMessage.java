@@ -128,9 +128,9 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
      * Since the default MIDI sequencer is used, only meta-events can be hooked,
      * so they are converted to meta-events.
      * </p>
-     * @see "http://www.music.ne.jp/~puc/mmf_format.html"
+     * @see "https://web.archive.org/web/20050210122232/http://www.music.ne.jp/~puc/mmf_format.html"
      * @see "ATS-MA5-SMAF_GL_133_HV.pdf"
-     * @see "http://murachue.ddo.jp/web/softlist.cgi?mode=desc&title=mmftool"
+     * @see "https://web.archive.org/web/20170523184307/http://murachue.ddo.jp/web/softlist.cgi?mode=desc&title=mmftool"
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {

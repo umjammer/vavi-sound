@@ -2,7 +2,7 @@
 
 Provides classes related to SMAF sound.
 
-## Abstract
+### Abstract
 
 It has almost the same structure as the `javax.sound.midi` package.
 Please refer to `javax.sound.midi` for usage.
