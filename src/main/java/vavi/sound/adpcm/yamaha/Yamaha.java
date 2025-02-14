@@ -1,5 +1,5 @@
 /*
- * http://www.hundredsoft.jp/wav2mld/source/n211cnv.c
+ * https://web.archive.org/web/20060813152127/http://www.hundredsoft.jp/wav2mld/source/n211cnv.c
  */
 
 package vavi.sound.adpcm.yamaha;
@@ -8,12 +8,12 @@ import vavi.sound.adpcm.Codec;
 
 
 /**
- * YAMAHA MA#.
+ * YAMAHA YM2608 (OPNA) ADPCM.
  *
  * @author Furuhon 19-Apl-2004 Rev.1.00
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 1.10 050402 nsano port to java <br>
- * @see "http://www.hundredsoft.jp/wav2mld/source/n211cnv.c"
+ * @see "https://web.archive.org/web/20060813152127/http://www.hundredsoft.jp/wav2mld/source/n211cnv.c"
  */
 class Yamaha implements Codec {
 

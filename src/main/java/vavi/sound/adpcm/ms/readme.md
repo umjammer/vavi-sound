@@ -2,22 +2,17 @@
 
 Provices MS ADPCM codec related classes.
 
-## Status
+### Status
 
 we assume completed because result is the same as sox.
 
-## Tech-know
+## References
+
+### Tech-know
 
  * result is different from ACM M$ ADPCM</li>
 
-## TODO
-
- * ~~111016 stop reading at once~~
- * ~~111016 ↑ or use EngineeringIO~~
- * ~~060124 sound is dirty~~
- * ~~end of the sound is cut~~ → #drain()
-
-## License
+### License
 
 ```
 /*
@@ -44,3 +39,10 @@ we assume completed because result is the same as sox.
  *
  */
 ```
+
+## TODO
+
+* ~~111016 stop reading at once~~
+* ~~111016 ↑ or use EngineeringIO~~
+* ~~060124 sound is dirty~~
+* ~~end of the sound is cut~~ → #drain()

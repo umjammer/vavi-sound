@@ -2,7 +2,9 @@
 
 Provides CCITT recommendation audio compression related classes.
 
-## Tech-know
+## References
+
+### Tech-know
 
  * encoder.exe is little endian
  * it's necessary to provide '16Bit Signed' value when `PCM_SIGNED`
@@ -10,11 +12,11 @@ Provides CCITT recommendation audio compression related classes.
 
  * G.711 ... VoIP
 
-## TODO
+## References
 
- * 3, 5bit
+ * https://www.itu.int/rec/T-REC-G.711
 
-## License
+### License
 
 ```
 /*
@@ -43,3 +45,7 @@ Provides CCITT recommendation audio compression related classes.
  * Mountain View, California  94043
  */
 ```
+
+## TODO
+
+* 3, 5bit

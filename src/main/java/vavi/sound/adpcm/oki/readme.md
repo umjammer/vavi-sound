@@ -2,15 +2,13 @@
 
 Provices OKI ADPCM codec related classes.
 
-## Status
+### Status
 
 completed
 
-## TODO
+## References
 
- * ~~separate Alaw, Ulaw~~
-
-## License
+### License
 
 ```
 /*
@@ -43,3 +41,7 @@ completed
  * SUCH DAMAGE.
  */
 ```
+
+## TODO
+
+* ~~separate Alaw, Ulaw~~

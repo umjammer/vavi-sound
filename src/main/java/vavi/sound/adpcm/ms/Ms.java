@@ -43,6 +43,7 @@ import static java.lang.System.getLogger;
  * @author <a href="mailto:stabro@megsinet.net">Stanley J. Brooks</a>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030715 nsano port to java <br>
+ * @see "https://chromium.googlesource.com/vcbox/third_party/libsox/+/refs/heads/master/src/src/adpcm.c"
  */
 class Ms {
 

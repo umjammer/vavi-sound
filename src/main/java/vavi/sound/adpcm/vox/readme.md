@@ -2,15 +2,15 @@
 
 Provides VOX ADPCM codec related classes.
 
-## Status
+### Status
 
 completed
 
-## TODO
+## References
 
- * ~~decode x16~~???
+ * https://github.com/furrykef/nesadpcm
 
-## License
+### License
 
 ```
 /*  File: adpcm.c
@@ -22,3 +22,7 @@ completed
 
 */
 ```
+
+## TODO
+
+* ~~decode x16~~???

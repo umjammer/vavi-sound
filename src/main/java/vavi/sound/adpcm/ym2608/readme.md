@@ -1,26 +1,22 @@
 # vavi.sound.adpcm.ym2608
 
-Provides YAMAHA (YM2608) ADPCM codec related classes.
+Provides YAMAHA YM2608 (OPNA) ADPCM codec related classes.
 
-## Status
+### Status
 
 completed (maybe)
 
-## TODO
+## References
 
- * ~~somehow the sound is small~~
- * ~~OutputStream~~
- * the C reference is strange. around `i =` at `encode` may be < 0.
-
-## License
+### License
 
 none
 
-## Basic knowledge of ADPCM and the ADPCM specifications of YM2608
+### Basic knowledge of ADPCM and the ADPCM specifications of YM2608
 
-[source](https://web.archive.org/web/20111013151432/http://hackipedia.org/Platform/Sega/Genesis/hardware,%20FM%20synthesis,%20YM2608/html/adpcm.html)
+[citation](https://web.archive.org/web/20111013151432/http://hackipedia.org/Platform/Sega/Genesis/hardware,%20FM%20synthesis,%20YM2608/html/adpcm.html)
 
-### ADPCM
+#### ADPCM
 
 ADPCM differs from MPEG in that it compresses the amplitude information of one sample of linear PCM data. The basic
 principle of ADPCM is that data compression is performed using differences between samples, but there are many types of
@@ -59,7 +55,7 @@ is recorded as data, data compression will not be efficient. If an appropriate s
 used during encoding, the conversion accuracy can be kept as high as possible. This means that the better the encoder
 and its waveform prediction rules, the higher the recovery rate of ADPCM data.
 
-### Encoding
+#### Encoding
 
 YM2608's ADPCM algorithm is relatively simple. YM2608's ADPCM converts 16-bit PCM to 4-bit ADPCM data. Also, the step
 size is bounded by a linear range of 1/4 unit. This encoding procedure is described below.
@@ -125,7 +121,12 @@ the restored value Xn.
 5. Find the step size S(n+1). The step size is updated using the relationship between the lower 3 bits of An and f in
    the table above.
 
-6.Saturate the step size S(n+1). The ADPCM step size of YM2608 is determined to be a minimum of 127 and a maximum of
-24576.
+6.Saturate the step size S(n+1). The ADPCM step size of YM2608 is determined to be a minimum of 127 and a maximum of 24576.
 
 7.Repeat steps 2 to 6 until the end of ADPCM data.
+
+## TODO
+
+* ~~somehow the sound is small~~
+* ~~OutputStream~~
+* the C reference is strange. around `i =` at `encode` may be < 0.

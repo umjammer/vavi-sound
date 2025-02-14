@@ -1,5 +1,5 @@
 /*
- * http://www.hundredsoft.jp/wav2mld/source/p211cnv.c
+ * https://www.salina.k-state.edu/academics/faculty/bios/documents/bower/bower-vox.pdf
  */
 
 package vavi.sound.adpcm.vox;
@@ -13,7 +13,7 @@ import vavi.sound.adpcm.Codec;
  * @author Furuhon
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030715 nsano port to java <br>
- * @see "http://www.hundredsoft.jp/wav2mld/source/p211cnv.c"
+ * @see "https://en.wikipedia.org/wiki/Dialogic_ADPCM"
  */
 class Vox implements Codec {
 

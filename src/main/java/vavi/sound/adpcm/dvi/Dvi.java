@@ -50,6 +50,7 @@ import vavi.sound.adpcm.Codec;
  * @author Stichting Mathematisch Centrum
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020707 nsano initial version <br>
+ * @see "https://github.com/etherzhhb/Shang/blob/master/testsuite/benchmark/DSPStone/adpcm/adpcm_c_nl/adpcm.c"
  */
 class Dvi implements Codec {
 

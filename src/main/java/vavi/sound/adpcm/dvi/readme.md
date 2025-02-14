@@ -1,21 +1,20 @@
 # vavi.sound.adpcm.dvi
 
-Provices Intel/DVI ADPCM codec related classes.
+Provides Intel/DVI ADPCM codec related classes.
 
-## Status
+### Status
 
 completed
 
-## Tech-know
+## References
+
+### Tech-know
 
  * the porting to java by audiocafe has bugs?
 
-## TODO
+## References
 
- * ~~060124 stop reading at once~~
- * ~~encode~~
-
-## License
+### License
 ```
 /***********************************************************
 Copyright 1992 by Stichting Mathematisch Centrum, Amsterdam, The
@@ -41,3 +40,8 @@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ******************************************************************/
 ```
+
+## TODO
+
+* ~~060124 stop reading at once~~
+* ~~encode~~
