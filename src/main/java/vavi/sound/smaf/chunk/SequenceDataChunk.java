@@ -489,7 +489,6 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
         size += smafMessage.getLength(); // TODO
     }
 
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

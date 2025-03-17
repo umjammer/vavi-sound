@@ -38,7 +38,7 @@ class MetaEventAdapter implements MetaEventListener, MfiDevice {
     /** the device information */
     private static final MfiDevice.Info info =
         new MfiDevice.Info("Java MFi ADPCM Sequencer",
-                           "Vavisoft",
+                           "vavi",
                            "Software sequencer using adpcm",
                            "Version " + VaviMfiDeviceProvider.version) {};
 

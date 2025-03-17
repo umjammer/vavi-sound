@@ -50,7 +50,7 @@ class VaviMidiConverter implements MidiConverter {
     /** the device information */
     private static final MfiDevice.Info info = new MfiDevice.Info(
         "Java MIDI, MFi Sequence Converter",
-        "Vavisoft",
+        "vavi",
         "Format Converter between MIDI and MFi",
         "Version " + VaviMfiDeviceProvider.version) {};
 

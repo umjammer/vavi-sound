@@ -38,7 +38,7 @@ class SmafMidiConverter implements SmafDevice {
     /** the device information */
     private static final SmafDevice.Info info =
         new SmafDevice.Info("Java MIDI, SMAF Sequence Converter",
-                            "Vavisoft",
+                            "vavi",
                             "Format Converter between MIDI and SMAF",
                             "Version " + SmafDeviceProvider.version) {};
 
