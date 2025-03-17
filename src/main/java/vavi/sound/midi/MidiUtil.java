@@ -88,7 +88,7 @@ public final class MidiUtil {
             }
             result = "channel=n/a" +
                 ",event=meta" +
-                ",data1=" + type +
+                ",data1=" + MidiConstants.MetaEvent.valueOf(type) +
                 ",data2=" + sb;
         }
 
