@@ -9,7 +9,9 @@ package vavi.sound.smaf.chunk;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import vavi.util.StringUtil;
@@ -26,7 +28,7 @@ import vavi.util.StringUtil;
  */
 class SubData {
 
-    /** */
+    /** @see ContentsInfoChunk#setContentsCodeType */
     private int contentsCodeType;
 
     /** */
@@ -104,13 +106,15 @@ class SubData {
         return data;
     }
 
+    /** tags which data is string */
+    private static final List<String> stringTags = List.of(
+            "VN", "CN", "CA", "ST", "AN", "WW", "SW", "AW", "CR", "GR", "MI", "CD", "UD",
+            "A0", "A2"
+    );
+
     @Override
     public String toString() {
-        try {
-            return tag + "(" + data.length + "): lang: " + contentsCodeType + ": " + new String(data, "Windows-31J")
-                   /* + "\n" + StringUtil.getDump(data) */;
-        } catch (UnsupportedEncodingException e) {
-            return tag + "(" + data.length + "): lang: " + contentsCodeType + ":\n" + StringUtil.getDump(data);
-        }
+        return tag + "(" + data.length + "): lang: " + contentsCodeType + ": " +
+                (stringTags.contains(tag) ? new String(data, Charset.forName("Windows-31J")) : Arrays.toString(data));
     }
 }

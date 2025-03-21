@@ -67,7 +67,6 @@ public class SequenceDataChunk extends Chunk {
         this.size = 0;
     }
 
-    /** TODO how to get formatType from parent chunk ??? */
     @Override
     protected void init(CrcDataInputStream dis, Chunk parent)
             throws InvalidSmafDataException, IOException {
@@ -128,18 +127,27 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
         while (dis.available() > 0) {
             // -------- duration --------
             int duration = MidiUtil.readVariableLength(dis);
-//logger.log(Level.TRACE, "duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
+//logger.log(Level.TRACE, "duration: %1$d, 0x%1$04x".formatted(duration));
             // -------- event --------
             int e1 = dis.readUnsignedByte();
             if (e1 == 0xff) { // exclusive, nop
                 int e2 = dis.readUnsignedByte();
                 switch (e2) {
+                    case 0x2f: // meta end of track
+                    case 0x51: // meta tempo
+                    case 0x58: // meta time signature
+                        int len = dis.readUnsignedByte();
+                        byte[] b = new byte[len];
+                        dis.readFully(b);
+                        smafMessage = new MetaMessage();
+                        ((MetaMessage) smafMessage).setMessage(e2, Map.of("data", b));
+                        logger.log(Level.WARNING, "meta 0xff, 0x%02x".formatted(e2));
+                        break;
                     case 0xf0: // exclusive
                         int messageSize = dis.readUnsignedByte();
                         byte[] data = new byte[messageSize];
                         dis.readFully(data);
-                        // TODO end check 0xf7
-                        smafMessage = SysexMessage.Factory.getSysexMessage(duration, data);
+                        smafMessage = SysexMessage.Factory.getSysexMessage(duration, 0xf0, data, messageSize);
                         break;
                     case 0x00: // nop
                         smafMessage = new NopMessage(duration);
@@ -338,9 +346,12 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
             } else if (status == 0xf0) { // exclusive
                 int messageSize = MidiUtil.readVariableLength(dis);
                 byte[] data = new byte[messageSize];
-                dis.readFully(data);
-                // TODO end check 0xf7
-                smafMessage = SysexMessage.Factory.getSysexMessage(duration, data);
+                int i = 0;
+                do {
+                    data[i] = dis.readByte();
+                    if (data[i] == (byte) 0xf7) break;
+                } while (i++ < messageSize);
+                smafMessage = SysexMessage.Factory.getSysexMessage(duration, status, data, i);
             } else if (status < 0x80) { // data
                 smafMessage = null;
                 if (cc < 10) {
@@ -437,12 +448,11 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                     case 0x00:
                         smafMessage = new NopMessage(duration);
                         break;
-                    case 0xF0:
+                    case 0xf0:
                         int messageSize = dis.readUnsignedByte();
                         byte[] data = new byte[messageSize];
                         dis.readFully(data);
-                        // TODO end check 0xf7
-                        smafMessage = SysexMessage.Factory.getSysexMessage(duration, data);
+                        smafMessage = SysexMessage.Factory.getSysexMessage(duration, sig2, data, messageSize);
                         break;
                     default:
                        smafMessage = new UndefinedMessage(e1, sig2, duration);
@@ -450,7 +460,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                 }
             } else {
                 var channel = e1 >> 6;
-                var note = e1 & 15 + ((e1 >> 4 & 3) + 3) * 12;
+                var note = (e1 & 15) + ((e1 >> 4 & 3) + 3) * 12;
                 var gateTime = MidiUtil.readVariableLength(dis);
                 smafMessage = new NoteMessage(duration, channel, note, gateTime);
 //logger.log(Level.INFO, smafMessage);
@@ -495,7 +505,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
 
         sb.append(super.toString());
         try (var dc = getDC().open()) {
-            messages.stream().map(cs -> dc.format(cs.toString())).forEach(sb::append);
+            messages.stream().map(m -> dc.format(m.toString())).forEach(sb::append);
         }
 
         return sb.toString();

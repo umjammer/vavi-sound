@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -20,6 +21,7 @@ import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -186,12 +188,24 @@ logger.log(Level.TRACE, "SubData: " + subDatum.tag + ", " + subDatum.data.length
                 if (printable) {
                     return "SubData(" + tag + ", lang: " + getLanguageCode() + ", size: " + data.length + "): " + string;
                 } else {
-                    return "SubData(" + tag + ", lang: " + getLanguageCode() + ", size: " + data.length + ")\n" + StringUtil.getDump(data, 128);
+                    return "SubData(" + tag + ", lang: " + getLanguageCode() + ", size: " + data.length + "): " + Arrays.toString(data); // \n" + StringUtil.getDump(data, 128);
                 }
             } catch (UnsupportedEncodingException e) {
                 assert false;
                 return null;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(super.toString());
+        try (var dc = getDC().open()) {
+            subData.values().stream().map(sd -> dc.format(sd.toString())).forEach(sb::append);
+        }
+
+        return sb.toString();
     }
 }

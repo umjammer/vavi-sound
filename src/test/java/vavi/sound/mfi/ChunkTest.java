@@ -34,8 +34,8 @@ class ChunkTest {
         return Files.exists(Paths.get("local.properties"));
     }
 
-    @Property
-    String mfiex = "src/test/resources/test.mld";
+    @Property(name = "mfi.dump")
+    String mfi = "src/test/resources/test.mld";
 
     @BeforeEach
     void setup() throws Exception {
@@ -47,7 +47,7 @@ class ChunkTest {
     @Test
     @DisplayName("dump")
     void test1() throws Exception {
-        Path path = Paths.get(mfiex);
+        Path path = Paths.get(mfi);
 Debug.println("path: " + path);
         InputStream is = new BufferedInputStream(Files.newInputStream(path));
         VaviMfiFileFormat chunk = VaviMfiFileFormat.readFrom(is);

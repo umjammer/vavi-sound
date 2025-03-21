@@ -6,16 +6,26 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringJoiner;
 
+import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.sound.smaf.SmafMessage;
+import vavi.sound.smaf.SysexMessage;
+import vavi.sound.smaf.message.EndOfSequenceMessage;
+import vavi.sound.smaf.message.UndefinedMessage;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -31,7 +41,8 @@ public class EXWVChunk extends Chunk {
 
     private static final Logger logger = getLogger(EXWVChunk.class.getName());
 
-    byte[] exclusive;
+    /** wave? */
+    byte[] data;
 
     public EXWVChunk(byte[] id, int size) {
         super(id, size);
@@ -39,9 +50,9 @@ public class EXWVChunk extends Chunk {
 
     @Override
     protected void init(CrcDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
-        exclusive = new byte[size];
-        dis.readFully(exclusive);
-logger.log(Level.DEBUG, "EXWV: " + size + "\n" + StringUtil.getDump(exclusive, 64));
+        data = new byte[size];
+        dis.readFully(data);
+logger.log(Level.DEBUG, "EXWV: " + size + "\n" + StringUtil.getDump(data, 16));
     }
 
     @Override
@@ -51,7 +62,6 @@ logger.log(Level.DEBUG, "EXWV: " + size + "\n" + StringUtil.getDump(exclusive, 6
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", EXWVChunk.class.getSimpleName() + "[", "]")
-                .toString();
+        return getDC().format(getId() + " " + data.length + " bytes");
     }
 }

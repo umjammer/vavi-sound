@@ -58,11 +58,14 @@ public abstract class TrackChunk extends Chunk {
 
     /** */
     public enum FormatType {
-        /** */
+        /** It is a data format that can be scaled across several generations of Handy Phones. */
         HandyPhoneStandard(2, false),
-        /** perform compression using Huffman encoding */
+        /**
+         * It is a data format that enables support for a level of expression close to that of MIDI data.
+         * perform compression using Huffman encoding
+         */
         MobileStandard_Compress(16, true),
-        /** */
+        /** It is a data format that enables support for a level of expression close to that of MIDI data. */
         MobileStandard_NoCompress(16, false),
 //        /** TODO what? */
 //        Unknown3(32, false);

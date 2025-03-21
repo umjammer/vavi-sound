@@ -17,6 +17,7 @@ import java.util.List;
 import vavi.sound.smaf.InvalidSmafDataException;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -96,4 +97,16 @@ logger.log(Level.DEBUG, "OptionalData: " + size + " bytes");
     //  start 4 bytes
     //  stop 4 bytes
     //  ??? 4 bytes
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(super.toString());
+        try (var dc = getDC().open()) {
+            dataChunks.stream().map(Chunk::toString).forEach(sb::append);
+        }
+
+        return sb.toString();
+    }
 }

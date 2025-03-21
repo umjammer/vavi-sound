@@ -7,11 +7,17 @@
 package vavi.sound.smaf;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +25,8 @@ import vavi.sound.smaf.chunk.Chunk;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
+
+import static java.util.function.Predicate.not;
 
 
 /**
@@ -34,8 +42,11 @@ class ChunkTest {
         return Files.exists(Paths.get("local.properties"));
     }
 
-    @Property
-    String mmfex = "src/test/resources/test.mmf";
+    @Property(name = "mmf.dump")
+    String mmf = "src/test/resources/test.mmf";
+
+    @Property(name = "mmf.dir")
+    String dir = "src/test/resources";
 
     @BeforeEach
     void setup() throws Exception {
@@ -47,10 +58,31 @@ class ChunkTest {
     @Test
     @DisplayName("dump")
     void test1() throws Exception {
-        Path path = Paths.get(mmfex);
+        Path path = Paths.get(mmf);
 Debug.println("path: " + path);
         InputStream is = new BufferedInputStream(Files.newInputStream(path));
         Chunk chunk = Chunk.readFrom(is, null);
 Debug.println("chunk:\n" + chunk);
+    }
+
+    @Test
+    @DisplayName("dump recursive")
+    void test2() throws Exception {
+        Path dir = Paths.get(this.dir);
+        AtomicInteger c = new AtomicInteger();
+        Files.walk(dir)
+                .filter(p -> p.getFileName().toString().endsWith(".mmf"))
+                .filter(not(p -> Stream.of("cracker", "test_data").anyMatch(s -> p.toString().contains(s))))
+                .forEach(path -> {
+Debug.println("---- path: " + path);
+            try (InputStream is = new BufferedInputStream(Files.newInputStream(path))) {
+                Chunk chunk = Chunk.readFrom(is, null);
+Debug.println("chunk:\n" + chunk);
+                c.getAndIncrement();
+            } catch (Exception e) {
+Debug.println(e.getMessage());
+            }
+        });
+Debug.println("smafs: " + c.get());
     }
 }

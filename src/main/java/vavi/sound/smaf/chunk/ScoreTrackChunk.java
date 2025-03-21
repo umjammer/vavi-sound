@@ -227,7 +227,7 @@ logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(super.toString());
+        sb.append(getDC().format(getId() + trackNumber + " " + formatType + ", " + sequenceType + ", durationTimeBase: " + durationTimeBase + ", gateTimeTimeBase: " + gateTimeTimeBase));
         try (var dc = getDC().open()) {
             Arrays.stream(channelStatuses).map(cs -> dc.format(cs.toString())).forEach(sb::append);
             if (seekAndPhraseInfoChunk != null) sb.append(seekAndPhraseInfoChunk);

@@ -16,7 +16,6 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.ByteUtil;
 import vavi.util.properties.PrefixedPropertiesFactory;
@@ -65,7 +64,7 @@ public abstract class Chunk {
 
     /** Chunk ID */
     public String getId() {
-        return new String(id);
+        return new String(id, 0, 3) + (Character.isLetterOrDigit((char) id[3]) ? (char) id[3] : "_");
     }
 
     /** note that the 8 bytes of Chunk Header are not included. */
