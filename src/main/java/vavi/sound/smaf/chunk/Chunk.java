@@ -91,7 +91,7 @@ public abstract class Chunk {
     public static Chunk readFrom(InputStream is, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
-        DataInputStream dis;
+        DataInputStream dis; // not want to count down and crc for now
         if (is instanceof CrcDataInputStream mdis) {
             dis = new DataInputStream(mdis.is);
         } else {
@@ -140,9 +140,15 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
     protected static class CrcDataInputStream extends InputStream implements DataInput {
         final InputStream is;
         final DataInputStream dis;
+        /** written from outside */
         int readSize;
         static final ThreadLocal<CRC16> crc = new ThreadLocal<>();
 
+        CRC16 getCrc() {
+            return crc.get();
+        }
+
+        /** {@code id} and {@code size} are used for crc */
         protected CrcDataInputStream(InputStream is, byte[] id, int size) {
             if (is instanceof CrcDataInputStream mdis) {
                 this.is = mdis.is;
@@ -153,48 +159,47 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
             this.dis = new DataInputStream(this.is);
             this.readSize = size;
 
-            if (crc.get() == null) {
+            if (getCrc() == null) {
                 crc.set(new CRC16());
             }
-            crc.get().update(id);
-            crc.get().update(ByteUtil.getBeBytes(size));
+            getCrc().update(id);
+            getCrc().update(ByteUtil.getBeBytes(size));
         }
         public int crc() {
-//logger.log(Level.TRACE, "crc len: " + crc.get().getCount());
-            return crc.get().getValue();
+//logger.log(Level.TRACE, "crc len: " + getCrc().getCount());
+            return getCrc().getValue();
         }
         @Override public long skip(long n) throws IOException {
             throw new UnsupportedOperationException();
         }
-        @Override
-        public int available() throws IOException {
+        @Override public int available() throws IOException {
             return readSize;
         }
-        @Override
-        public int readUnsignedByte() throws IOException {
+        @Override public int readUnsignedByte() throws IOException {
             int r = dis.readUnsignedByte();
-            crc.get().update((byte) r);
+            getCrc().update((byte) r);
             consume(1);
             return r;
         }
-        @Override
-        public void readFully(byte[] b) throws IOException {
+        @Override public void readFully(byte[] b) throws IOException {
             dis.readFully(b, 0, b.length);
-            crc.get().update(b);
+            getCrc().update(b);
             consume(b.length);
         }
-        @Override
-        public int read() throws IOException {
-            return is.read();
+        @Override public int read() throws IOException {
+            int r = dis.read();
+            if (r == -1) return -1;
+            getCrc().update((byte) r);
+            consume(1);
+            return r;
         }
         @Override public void readFully(byte[] b, int off, int len) throws IOException {
             throw new UnsupportedOperationException();
         }
-        @Override
-        public int skipBytes(int n) throws IOException {
+        @Override public int skipBytes(int n) throws IOException {
             byte[] b = new byte[n];
             dis.readFully(b);
-            crc.get().update(b);
+            getCrc().update(b);
             consume(n);
             return n;
         }
@@ -202,18 +207,20 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
             throw new UnsupportedOperationException();
         }
         @Override public byte readByte() throws IOException {
-            throw new UnsupportedOperationException();
+            byte b = dis.readByte();
+            getCrc().update(b);
+            consume(1);
+            return b;
         }
         @Override public short readShort() throws IOException {
             throw new UnsupportedOperationException();
         }
-        @Override
-        public int readUnsignedShort() throws IOException {
+        @Override public int readUnsignedShort() throws IOException {
             int r = dis.readUnsignedShort();
             if (available() > 2) {
                 // crc is located at last of the file
                 // and this condition assumed to get crc uses this method.
-                crc.get().update(ByteUtil.getBeBytes((short) r));
+                getCrc().update(ByteUtil.getBeBytes((short) r));
             }
             consume(2);
             return r;
@@ -222,7 +229,10 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
             throw new UnsupportedOperationException();
         }
         @Override public int readInt() throws IOException {
-            throw new UnsupportedOperationException();
+            int i = dis.readInt();
+            getCrc().update(ByteUtil.getBeBytes(i));
+            consume(4);
+            return i;
         }
         @Override public long readLong() throws IOException {
             throw new UnsupportedOperationException();

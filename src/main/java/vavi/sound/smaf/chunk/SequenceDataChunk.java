@@ -7,7 +7,7 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,10 +16,11 @@ import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.sound.smaf.MetaMessage;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.SysexMessage;
 import vavi.sound.smaf.message.BankSelectMessage;
@@ -36,7 +37,7 @@ import vavi.sound.smaf.message.PitchBendMessage;
 import vavi.sound.smaf.message.ProgramChangeMessage;
 import vavi.sound.smaf.message.UndefinedMessage;
 import vavi.sound.smaf.message.VolumeMessage;
-import vavix.io.huffman.Huffman;
+import vavi.util.codec.huffman.okumura.Huffman;
 
 import static java.lang.System.getLogger;
 import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
@@ -58,7 +59,7 @@ public class SequenceDataChunk extends Chunk {
     /** */
     public SequenceDataChunk(byte[] id, int size) {
         super(id, size);
-        logger.log(Level.DEBUG, "SequenceData: " + size + " bytes");
+logger.log(Level.DEBUG, "SequenceData: " + size + " bytes");
     }
 
     /** */
@@ -79,24 +80,17 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
                 readHandyPhoneStandard(dis);
                 break;
             case MobileStandard_Compress:
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                for (int i = 0; i < size; i++) {
-                    baos.write(dis.read());
-                }
-//OutputStream os1 = new FileOutputStream("/tmp/data.enc");
-//os1.write(baos.toByteArray());
-//os1.flush();
-//os1.close();
+                byte[] encoded = new byte[size];
+                new DataInputStream(dis).readFully(encoded);
+//Files.write(Path.of("tmp/data.enc"), encoded);
 //logger.log(Level.TRACE, "data.enc created");
-                byte[] decoded = new Huffman().decode(baos.toByteArray());
-//OutputStream os2 = new FileOutputStream("/tmp/data.dec");
-//os2.write(decoded);
-//os2.flush();
-//os2.close();
+                byte[] decoded = new Huffman.HuffmanInputStream(new ByteArrayInputStream(encoded), 32).readAllBytes();
+//Files.write(Path.of("tmp/data.dec"), decoded);
 //logger.log(Level.TRACE, "data.dec created");
-                logger.log(Level.DEBUG, "decode: " + size + " -> " + decoded.length);
-                size = decoded.length;
-                readMobileStandard(new CrcDataInputStream(new ByteArrayInputStream(decoded), id, decoded.length));
+logger.log(Level.DEBUG, "huffman decode: " + size + " -> " + decoded.length);
+                readMobileStandard(new CrcDataInputStream(new ByteArrayInputStream(decoded), id, decoded.length) {
+                    @Override CRC16 getCrc() { return new CRC16(); } // return dummy
+                });
                 break;
             case MobileStandard_NoCompress:
                 readMobileStandard(dis);
