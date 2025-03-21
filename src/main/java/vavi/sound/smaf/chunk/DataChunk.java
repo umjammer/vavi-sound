@@ -55,13 +55,14 @@ logger.log(Level.DEBUG, "Data: lang: " + languageCode + ", size: " + size);
         throws InvalidSmafDataException, IOException {
 
 logger.log(Level.TRACE, "available: " + dis.available());
-        while (dis.available() > 4) { // TODO normal files should be 0.
+        while (dis.available() > 4) { // TODO normal files should be 0. 4 means there is a case additional 4 bytes are exists at end
             SubData subDatum = new SubData(dis);
-logger.log(Level.DEBUG, subDatum);
+logger.log(Level.TRACE, subDatum);
             subData.put(subDatum.tag, subDatum);
 logger.log(Level.TRACE, "SubData: " + subDatum.tag + ", " + subDatum.data.length + ", " + dis.available());
         }
-        dis.skipBytes(dis.available()); // TODO not necessary if the file is normal
+logger.log(Level.INFO, "skip unexpected bytes left: " + dis.available());
+        dis.skipBytes(dis.available()); // TODO not necessary for a normal file, for illegal case that has additional 4 bytes are exists at end
     }
 
     @Override
@@ -201,7 +202,7 @@ logger.log(Level.TRACE, "SubData: " + subDatum.tag + ", " + subDatum.data.length
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(super.toString());
+        sb.append(getDC().format(getId() + languageCode));
         try (var dc = getDC().open()) {
             subData.values().stream().map(sd -> dc.format(sd.toString())).forEach(sb::append);
         }

@@ -31,9 +31,14 @@ public class StreamWaveDataChunk extends WaveDataChunk {
     private static final Logger logger = getLogger(StreamWaveDataChunk.class.getName());
 
     /** */
+    protected int waveNumber;
+
+    /** */
     public StreamWaveDataChunk(byte[] id, int size) {
         super(id, size);
-logger.log(Level.DEBUG, "StreamWaveData: " + size);
+
+        waveNumber = id[3] & 0xff;
+logger.log(Level.DEBUG, "StreamWaveData[" + waveNumber + "]: " + size);
     }
 
     /** */
@@ -72,6 +77,6 @@ logger.log(Level.DEBUG, "StreamWaveData: " + size);
 
     @Override
     public String toString() {
-        return getDC().format(getId() + " " + data.length + " bytes");
+        return getDC().format(getId() + waveNumber + " " + data.length + " bytes");
     }
 }
