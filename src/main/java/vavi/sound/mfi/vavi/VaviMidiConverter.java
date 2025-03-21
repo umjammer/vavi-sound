@@ -330,7 +330,7 @@ logger.log(Level.DEBUG, "resolution: " + resolution);
                         }
                     }
                 } else if (mfiMessage instanceof SubMessage) {
-logger.log(Level.WARNING, "ignore sequence: " + mfiMessage);
+logger.log(Level.WARNING, "ignore sub sequence: " + mfiMessage);
                 } else {
 logger.log(Level.WARNING, "unknown sequence: " + mfiMessage);
                 }

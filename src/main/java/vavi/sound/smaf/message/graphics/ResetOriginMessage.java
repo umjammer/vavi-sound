@@ -16,7 +16,7 @@ import vavi.sound.smaf.chunk.TrackChunk.FormatType;
 
 
 /**
- * ResetOrigneMessage.
+ * ResetOriginMessage.
  * (Short Control Event 0x00..0x1f)
  * <pre>
  *  duration    1or2
@@ -26,18 +26,18 @@ import vavi.sound.smaf.chunk.TrackChunk.FormatType;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 080517 nsano initial version <br>
  */
-public class ResetOrigneMessage extends ShortMessage {
+public class ResetOriginMessage extends ShortMessage {
 
     /**
      * @param duration
      */
-    public ResetOrigneMessage(int duration) {
+    public ResetOriginMessage(int duration) {
         this.duration = duration;
     }
 
     @Override
     public String toString() {
-        return "ResetOrigne:" +
+        return "ResetOrigin:" +
             " duration=" + duration;
     }
 

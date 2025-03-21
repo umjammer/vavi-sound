@@ -62,6 +62,7 @@ class PlaySMAF {
             PropsEntity.Util.bind(this);
         }
 
+Debug.println("volume: " + volume);
         sequencer = SmafSystem.getSequencer();
 Debug.println(sequencer.getClass().getName());
         sequencer.open();
