@@ -42,6 +42,8 @@ public class MfiMidiFileReaderTest {
         System.setProperty("javax.sound.midi.Synthesizer", "#Gervill");
         // should be set for playing adpcm (implemented as a meta event listener)
         System.setProperty("javax.sound.midi.Sequencer", "vavi.sound.midi.VaviSequencer");
+        // prior user volume setting than setting in a sequence
+        System.setProperty("vavi.sound.mfi.ignoreMasterVolume", "true");
     }
 
     static boolean localPropertiesExists() {

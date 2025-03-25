@@ -20,6 +20,10 @@ import vavi.sound.mfi.vavi.MidiConvertible;
  * <pre>
  *  0xff, 0xb0
  * </pre>
+ * <p>
+ * System Property
+ * <li>vavi.sound.mfi.ignoreMasterVolume ... ignore this setting when user want to set master volume by himself, default false</li>
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>
  *          0.01 030821 nsano implements {@link MidiConvertible} <br>
@@ -61,6 +65,9 @@ public class MasterVolumeMessage extends ShortMessage
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
+
+        if (Boolean.parseBoolean(System.getProperty("vavi.sound.mfi.ignoreMasterVolume", "false")))
+            return null;
 
         byte[] data = new byte[8];
 
