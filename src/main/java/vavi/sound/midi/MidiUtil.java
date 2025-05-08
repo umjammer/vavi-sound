@@ -12,12 +12,18 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
@@ -368,6 +374,69 @@ logger.log(Level.DEBUG, "default sequencer: " + provider.getClass().getName() + 
         }
 
         throw new IllegalStateException("no default midi sequencer");
+    }
+
+    /**
+     * @see #getMidiDevice
+     */
+    public static class MidiMatcher {
+        String name;
+        String vendor;
+        String description;
+        String version;
+
+        /**
+         *
+         * @param name nullable
+         * @param vendor nullable
+         * @param description nullable
+         * @param version nullable
+         */
+        public MidiMatcher(String name, String vendor, String description, String version) {
+            this.name = name;
+            this.vendor = vendor;
+            this.description = description;
+            this.version = version;
+        }
+
+        static final int NOT_MATCH = 4;
+        int matches(Info info) {
+            int score = NOT_MATCH;
+            if (info.getName() != null && name != null && info.getName().contains(name)) score--;
+            if (info.getVendor() != null && vendor != null && info.getVendor().contains(vendor)) score--;
+            if (info.getDescription() != null && description != null && info.getDescription().contains(description)) score--;
+            if (info.getVersion() != null && version != null && info.getVersion().contains(version)) score--;
+            return score;
+        }
+    }
+
+    /**
+     * @param isIn nullable
+     */
+    public static Info getMidiDevice(MidiMatcher matcher, Boolean isIn) throws MidiUnavailableException {
+        List<Info> result = new ArrayList<>();
+        Info[] infos = MidiSystem.getMidiDeviceInfo();
+        for (Info info : infos) {
+            int score = matcher.matches(info);
+            if (score == MidiMatcher.NOT_MATCH) continue;
+            MidiDevice device = MidiSystem.getMidiDevice(info);
+logger.log(Level.DEBUG, device.getClass().getName() + ", " + device.getMaxTransmitters() + ", " + device.getMaxReceivers());
+            if (isIn != null) {
+                if (isIn) {
+                    if (device.getMaxReceivers() == 0) {
+                        result.add(info);
+                    }
+                } else /* if (!isIn) */ {
+                    if (device.getMaxTransmitters() == 0) {
+                        result.add(info);
+                    }
+                }
+            } else {
+                result.add(info);
+            }
+        }
+        result.sort(Comparator.comparingInt(matcher::matches));
+        return result.get(0);
     }
 
     /** spi */
