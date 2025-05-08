@@ -1,6 +1,6 @@
 # vavi.sound.adpcm.ym2608
 
-Provides YAMAHA YM2608 (OPNA) ADPCM codec related classes.
+♪ Provides YAMAHA YM2608 (OPNA) ADPCM codec related classes.
 
 ### Status
 

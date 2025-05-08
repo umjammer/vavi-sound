@@ -1,6 +1,6 @@
 # vavi.sound.adpcm.ima
 
-Provides IMA ADPCM codec related classes.
+♪ Provides IMA ADPCM codec related classes.
 
 ## References
 

@@ -1,6 +1,6 @@
 # vavi.sound.adpcm.ms
 
-Provices MS ADPCM codec related classes.
+♪ Provides MS ADPCM codec related classes.
 
 ### Status
 

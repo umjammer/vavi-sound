@@ -1,6 +1,6 @@
 # vavi.sound.adpcm.oki
 
-Provices OKI ADPCM codec related classes.
+♪ Provides OKI ADPCM codec related classes.
 
 ### Status
 

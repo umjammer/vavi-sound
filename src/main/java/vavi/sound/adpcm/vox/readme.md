@@ -1,6 +1,6 @@
 # vavi.sound.adpcm.vox
 
-Provides VOX ADPCM codec related classes.
+♪ Provides VOX ADPCM codec related classes.
 
 ### Status
 
