@@ -8,6 +8,8 @@ completed
 
 ## References
 
+ * https://github.com/etherzhhb/Shang/blob/master/testsuite/benchmark/DSPStone/adpcm/adpcm_c_nl/adpcm.c
+
 ### Tech-know
 
  * the porting to java by audiocafe has bugs?

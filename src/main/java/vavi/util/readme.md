@@ -2,11 +2,6 @@
 
 Provides classes related to FFT and Bessel.
 
-## TODO
-
- * ~~FFT is wrong~~
- * FFT has been updated
-
 ## License
 
 ### SplitRasixFft
@@ -26,3 +21,8 @@ Provides classes related to FFT and Bessel.
     You may use, copy, modify this code for any purpose and 
     without fee. You may distribute this ORIGINAL package.
 ```
+
+## TODO
+
+* ~~FFT is wrong~~
+* FFT has been updated

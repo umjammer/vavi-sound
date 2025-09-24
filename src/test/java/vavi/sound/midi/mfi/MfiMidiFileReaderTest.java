@@ -13,17 +13,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Synthesizer;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import vavi.sound.midi.MidiConstants;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import static vavi.sound.midi.MidiUtil.volume;
 
@@ -59,6 +62,9 @@ public class MfiMidiFileReaderTest {
     @Property
     String mfi = "src/test/resources/test.mld";
 
+    @Property(name = "mfi.dir")
+    String dir = "src/test/resources";
+
     @BeforeEach
     public void setup() throws IOException {
         if (localPropertiesExists()) {
@@ -71,10 +77,29 @@ Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngi
 
     @Test
     public void test() throws Exception {
-        play();
+        play(this.mfi);
     }
 
-    void play() throws Exception {
+    @Test
+    @DisplayName("play recursive")
+    void test3() throws Exception {
+        Path dir = Paths.get(this.dir);
+        AtomicInteger c = new AtomicInteger();
+        Files.walk(dir)
+                .filter(p -> p.getFileName().toString().endsWith(".mld"))
+                .forEach(path -> {
+Debug.println("---- path: " + path);
+                    try {
+                        play(path.toString());
+                        c.getAndIncrement();
+                    } catch (Exception e) {
+Debug.println(e.getMessage());
+                    }
+                });
+Debug.println("mfis: " + c.get());
+    }
+
+    void play(String mfi) throws Exception {
 Debug.println("mld: " + mfi);
 
         CountDownLatch cdl = new CountDownLatch(1);
@@ -111,7 +136,6 @@ Debug.println("meta: " + MidiConstants.MetaEvent.valueOf(meta.getType()));
     public static void main(String[] args) throws Exception {
         MfiMidiFileReaderTest app = new MfiMidiFileReaderTest();
         app.setup();
-        app.mfi = args[0];
-        app.play();
+        app.play(args[0]);
     }
 }

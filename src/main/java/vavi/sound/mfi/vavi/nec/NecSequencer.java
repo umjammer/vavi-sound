@@ -15,6 +15,7 @@ import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.mobile.YamahaAudioEngine;
+import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
 
@@ -61,7 +62,7 @@ public class NecSequencer implements MachineDependentSequencer {
 
         String key;
 
-        if (f1 == 0x01) {
+        if (f1 == 0x01 || f1 == 0x02) {
             f2 = data[7] & 0xff;        // 0 ~ 32
             int f3 = data[8] & 0x0f;    // 0 ~ 16
 logger.log(Level.DEBUG, "%02x %02x %02x".formatted(f1, f2, f3));
@@ -76,7 +77,7 @@ logger.log(Level.DEBUG, "%02x %02x".formatted(f1, f2));
         if (mdf != null) {
             mdf.process(message);
         } else {
-logger.log(Level.WARNING, "unsupported function: %s".formatted(key));
+logger.log(Level.WARNING, "unsupported function: %s, %d%n%s".formatted(key, data.length, StringUtil.getDump(data)));
         }
     }
 

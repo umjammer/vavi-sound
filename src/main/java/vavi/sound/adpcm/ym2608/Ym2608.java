@@ -1,5 +1,5 @@
 /*
- * http://www.memb.jp/~dearna/ma/ym2608/ym2608adpcm.c
+ * https://web.archive.org/web/20050215154112/http://www.memb.jp/~dearna/ma/ym2608/ym2608adpcm.c
  */
 
 package vavi.sound.adpcm.ym2608;

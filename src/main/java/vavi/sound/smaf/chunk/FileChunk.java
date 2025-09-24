@@ -250,4 +250,8 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
         if (mmmgChunk != null) sb.append(mmmgChunk);
         return sb.toString();
     }
+
+    // TODO retrieve sysex chunks
+    // MMMD/MTR*/MTsu/SysEx...
+    // MMMD/MMMG/VOIC/EXVO...
 }

@@ -4,6 +4,7 @@
 
 ## References
 
+ * https://chromium.googlesource.com/vcbox/third_party/libsox/+/refs/heads/master/src/src/ima_rw.c
  * https://github.com/philburk/listenup/blob/master/src/com/softsynth/javasonics/util/ADPCM_IMA_Encoder.java
 
 ### License

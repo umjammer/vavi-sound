@@ -8,6 +8,8 @@ completed
 
 ## References
 
+ * http://www.pastel-flower.jp/~isaki/NetBSD/src/?sys/dev/ic/msm6258.c
+
 ### License
 
 ```

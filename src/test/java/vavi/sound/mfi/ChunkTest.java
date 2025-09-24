@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +37,9 @@ class ChunkTest {
     @Property(name = "mfi.dump")
     String mfi = "src/test/resources/test.mld";
 
+    @Property(name = "mfi.dir")
+    String dir = "src/test/resources";
+
     @BeforeEach
     void setup() throws Exception {
         if (localPropertiesExists()) {
@@ -52,5 +55,25 @@ Debug.println("path: " + path);
         InputStream is = new BufferedInputStream(Files.newInputStream(path));
         VaviMfiFileFormat chunk = VaviMfiFileFormat.readFrom(is);
 Debug.println("chunk:\n" + chunk);
+    }
+
+    @Test
+    @DisplayName("dump recursive")
+    void test2() throws Exception {
+        Path dir = Paths.get(this.dir);
+        AtomicInteger c = new AtomicInteger();
+        Files.walk(dir)
+                .filter(p -> p.getFileName().toString().endsWith(".mld"))
+                .forEach(path -> {
+Debug.println("---- path: " + path);
+                    try (InputStream is = new BufferedInputStream(Files.newInputStream(path))) {
+                        VaviMfiFileFormat chunk = VaviMfiFileFormat.readFrom(is);
+Debug.println("chunk:\n" + chunk);
+                        c.getAndIncrement();
+                    } catch (Exception e) {
+Debug.println(e.getMessage());
+                    }
+                });
+Debug.println("mfis: " + c.get());
     }
 }

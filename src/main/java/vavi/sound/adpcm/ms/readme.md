@@ -8,6 +8,8 @@ we assume completed because result is the same as sox.
 
 ## References
 
+ * https://chromium.googlesource.com/vcbox/third_party/libsox/+/refs/heads/master/src/src/adpcm.c
+
 ### Tech-know
 
  * result is different from ACM M$ ADPCM</li>

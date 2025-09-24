@@ -193,8 +193,8 @@ logger.log(Level.TRACE, "finally available: " + bitStream.available());
         Map<String, Object> context = new HashMap<>();
         context.put(WAVE.CHUNK_PARSE_STRICT_KEY, true);
         context.put(WAVE.MULTIPART_CHUNK_PARSE_STRICT_KEY, true);
-        context.put(WAVE.WAVE_DATA_NOT_LOAD_KEY, true);
-        WAVE wave = Chunk.readFrom(inputStream, WAVE.class, context);
+        context.put(WAVE.WAVE_DATA_NOT_LOAD_KEY, true); // not load data
+        WAVE wave = Chunk.readFrom(inputStream, WAVE.class, context); // data not loaded, so pointer would be the first of data
         return new AudioInputStream(inputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
     }
 }

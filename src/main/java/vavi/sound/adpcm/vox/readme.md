@@ -8,6 +8,7 @@ completed
 
 ## References
 
+ * https://en.wikipedia.org/wiki/Dialogic_ADPCM
  * https://github.com/furrykef/nesadpcm
 
 ### License

@@ -66,6 +66,7 @@ public abstract class BasicAudioEngine implements AudioEngine {
         }
         datum.continued = continued;
         this.data[streamNumber] = datum;
+logger.log(Level.INFO, "audio no: " + streamNumber + " stored");
 //debug1();
     }
 
