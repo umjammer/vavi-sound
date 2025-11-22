@@ -19,6 +19,8 @@ public interface VaviSequence {
 
     /**
      * We use meta event listener for processing MFi/SMAF specific functionality internally.
+     *
+     * @throws IllegalStateException when the listener available
      */
     MetaEventListener getMetaEventListener();
 }
