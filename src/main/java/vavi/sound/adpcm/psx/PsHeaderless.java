@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 import vavi.io.SeekableDataInputStream;
+import vavi.sound.adpcm.psx.Psx.LayoutType;
 import vavi.sound.adpcm.psx.Psx.VGMStreamChannel;
 import vavi.sound.adpcm.psx.Psx.VgmStream;
 
@@ -23,6 +24,7 @@ import static java.lang.System.getLogger;
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @see "https://claude.ai/chat/741eb151-c8c9-4db7-87ec-028804885eca"
+ * @see "https://gemini.google.com/app/ce7c6594310c8a72"
  */
 public class PsHeaderless {
 
@@ -225,9 +227,8 @@ logger.log(Level.DEBUG, "EOF");
         logger.log(Level.DEBUG, "channelCount: " + channelCount);
         logger.log(Level.DEBUG, "loopEnd: " + loopEnd);
 
-//        codingType = CodingType.PSX;
-//        layoutType = (channelCount == 1) ? LayoutType.NONE : LayoutType.INTERLEAVE;
-        logger.log(Level.DEBUG, "LayoutType: " + (channelCount == 1 ? "NONE" : "INTERLEAVE")); // TODO interleave
+        vgmstream.layoutType = (channelCount == 1) ? LayoutType.NONE : LayoutType.INTERLEAVE;
+logger.log(Level.DEBUG, "LayoutType: " + vgmstream.layoutType);
 
         vgmstream.interleaveBlockSize = interleave;
         logger.log(Level.DEBUG, "interleave: " + interleave);
@@ -246,7 +247,8 @@ logger.log(Level.DEBUG, "EOF");
 
         if (loopEnd != 0) {
             if (channelCount == 1) {
-                vgmstream.loopStartSample = loopStart / 16 * 18; // TODO 18 instead of 28 probably a bug
+                // FIXED: Typo 18 -> 28
+                vgmstream.loopStartSample = loopStart / 16 * 28;
                 vgmstream.loopEndSample = loopEnd / 16 * 28;
             } else {
                 vgmstream.loopStartSample = ((((loopStart / vgmstream.interleaveBlockSize) - 1) * vgmstream.interleaveBlockSize) / 16 * 14 * channelCount) / channelCount;
@@ -265,7 +267,6 @@ logger.log(Level.DEBUG, "EOF");
             }
         }
 
-        logger.log(Level.DEBUG, "loopToEnd: " + loopToEnd);
         if (loopToEnd) {
             // try to find if there's no empty line ...
             int emptySamples = 0;
@@ -290,9 +291,9 @@ logger.log(Level.DEBUG, "EOF");
         vgmstream.metaType = "PS_HEADERLESS";
         vgmstream.allowDualStereo = true;
 
-        logger.log(Level.DEBUG, "startOffset: " + startOffset + ", readOffset: " + readOffset);
         for (int ch = 0; ch < vgmstream.channels; ch++) {
-            vgmstream.ch[ch] = new VGMStreamChannel(dis, startOffset, ch);
+            // interleaveBlockSize arg is now ignored by Psx.VGMStreamChannel but passed for code compat
+            vgmstream.ch[ch] = new VGMStreamChannel(dis, startOffset, ch, channelCount != 1 ? vgmstream.interleaveBlockSize : -1);
         }
 
         return vgmstream;

@@ -81,7 +81,7 @@ Debug.println("size: " + size);
 //        assertTrue(Psx.checkFormat(dis, size, 0, size));
         int samples = Psx.bytesToSamples(size, 2);
 Debug.println("samples: " + samples);
-        VGMStreamChannel stream = new VGMStreamChannel(dis, 0, 1);
+        VGMStreamChannel stream = new VGMStreamChannel(dis, 0, 1, -1);
         short[] buf = new short[samples];
         Psx.decodePSX(stream, buf, 0, 0, samples, true, 0);
     }
@@ -208,8 +208,9 @@ logger.log(Level.DEBUG, "samples_per_frame=%d, samples_this_block=%d".formatted(
 
             short[][] buf = new short[stream.channels][16 * Short.BYTES * stream.channels];
             for (int ch = 0; ch < stream.channels; ch++) {
-//                logger.log(Level.TRACE, "decode: ch: " + ch);
-                Psx.decodePSX(stream.ch[ch], buf[ch], stream.channels, stream.samplesIntoBlock, samples_to_do,
+                // FIXED: channelSpacing must be 1 here because buf[ch] is a mono buffer for that channel only.
+                // We interleave them manually in the loop below.
+                Psx.decodePSX(stream.ch[ch], buf[ch], 1, stream.samplesIntoBlock, samples_to_do,
                         false, stream.codecConfig);
             }
 

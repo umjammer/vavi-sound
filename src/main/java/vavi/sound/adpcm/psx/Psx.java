@@ -22,6 +22,8 @@ import static java.lang.System.getLogger;
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @see "https://claude.ai/chat/fb5a6f35-d25f-4b91-a93b-f105bae0d6e5"
+ * @see "https://gemini.google.com/app/ce7c6594310c8a72"
+ * @see "https://psx-spx.consoledev.net/psx-spx.pdf"
  */
 public class Psx {
 
@@ -69,7 +71,6 @@ public class Psx {
     public static class VgmStream {
         public int sampleRate;
         public int numSamples;
-//        public CodingType codingType;
         public LayoutType layoutType;
         public int interleaveBlockSize;
         public String metaType;
@@ -83,7 +84,6 @@ public class Psx {
         public int currentSample;
         public boolean hitLoop;
         public boolean loopFlag;
-        public int interleave_block_size;
         public int interleave_first_skip;
         public int interleave_first_block_size;
         public int interleave_last_block_size;
@@ -152,6 +152,8 @@ public class Psx {
             // BEWARE: merge_vgmstream does some free'ing too
 
             //this.stream_name_size = STREAM_NAME_SIZE;
+
+            this.codec_internal_updates = false;
         }
     }
 
@@ -221,7 +223,7 @@ public class Psx {
             for (int ch = 0; ch < channels; ch++) {
                 int skip = vgmstream.interleave_first_skip * (channels - 1 - ch) +
                         vgmstream.interleave_first_block_size * (channels - ch) +
-                        vgmstream.interleave_block_size * ch;
+                        vgmstream.interleaveBlockSize * ch;
                 vgmstream.ch[ch].offset += skip;
             }
         } else if (layout.has_interleave_last &&
@@ -233,20 +235,20 @@ public class Psx {
                 p_samples_this_block[0] = vgmstream.numSamples;
 
             for (int ch = 0; ch < channels; ch++) {
-                int skip = vgmstream.interleave_block_size * (channels - ch) +
+                int skip = vgmstream.interleaveBlockSize * (channels - ch) +
                         vgmstream.interleave_last_block_size * ch;
                 vgmstream.ch[ch].offset += skip;
             }
         } else if (layout.has_interleave_internal_updates) {
             // interleave for some decoders that have already moved offsets over their data, so skip other channels' data
             for (int ch = 0; ch < channels; ch++) {
-                int skip = vgmstream.interleave_block_size * (channels - 1);
+                int skip = vgmstream.interleaveBlockSize * (channels - 1);
                 vgmstream.ch[ch].offset += skip;
             }
         } else {
             // regular interleave
             for (int ch = 0; ch < channels; ch++) {
-                int skip = vgmstream.interleave_block_size * channels;
+                int skip = vgmstream.interleaveBlockSize * channels;
                 vgmstream.ch[ch].offset += skip;
             }
         }
@@ -287,7 +289,7 @@ public class Psx {
     }
 
     static boolean setup_helper(layout_config_t layout, VgmStream vgmstream) {
-        //TO-DO: this could be pre-calc'd after main init
+        // TODO this could be pre-calc'd after main init
         layout.has_interleave_first = vgmstream.interleave_first_block_size != 0 && vgmstream.channels > 1;
         layout.has_interleave_last = vgmstream.interleave_last_block_size != 0 && vgmstream.channels > 1;
         layout.has_interleave_internal_updates = vgmstream.codec_internal_updates;
@@ -302,7 +304,7 @@ public class Psx {
 
         if (layout.has_interleave_first) {
             int frame_size_f = decode_get_frame_size(vgmstream);
-            layout.samples_per_frame_f = decode_get_samples_per_frame(vgmstream); // TODO samples per shortframe
+            layout.samples_per_frame_f = decode_get_samples_per_frame(vgmstream);
             if (frame_size_f == 0 || layout.samples_per_frame_f == 0)
                 return false;
             layout.samples_this_block_f = vgmstream.interleaveBlockSize / frame_size_f * layout.samples_per_frame_f;
@@ -340,8 +342,6 @@ public class Psx {
      * @return true if loop was done.
      */
     static boolean decode_do_loop(VgmStream vgmstream) {
-        //if (!vgmstream.loop_flag) return false;
-
         // is this the loop end? = new loop, continue from loop_start_sample
         if (vgmstream.currentSample == vgmstream.loopEndSample) {
 
@@ -353,19 +353,12 @@ public class Psx {
                 return false;
             }
 
-            // against everything I hold sacred, preserve adpcm history before looping for certain types
-//            if (vgmstream.metaType == meta_DSP_STD ||
-//                    vgmstream.metaType == meta_DSP_RS03 ||
-//                            vgmstream.metaType == meta_DSP_CSTR ||
-//                                    vgmstream.metaType == coding_PSX ||
-//                                            vgmstream.metaType == coding_PSX_badflags) {
             for (int ch = 0; ch < vgmstream.channels; ch++) {
                 vgmstream.loop_ch[ch].adpcmHistory1_16 = vgmstream.ch[ch].adpcmHistory1_16;
                 vgmstream.loop_ch[ch].adpcmHistory2_16 = vgmstream.ch[ch].adpcmHistory2_16;
                 vgmstream.loop_ch[ch].adpcmHistory1_32 = vgmstream.ch[ch].adpcmHistory1_32;
                 vgmstream.loop_ch[ch].adpcmHistory2_32 = vgmstream.ch[ch].adpcmHistory2_32;
             }
-//            }
 
             // TODO: improve
             // codecs with codec_data that decode_loop need special handling, usually:
@@ -377,7 +370,7 @@ public class Psx {
             // regular codecs will use copied vgmstream.loop_ch[].offset without issue
             decode_loop(vgmstream);
 
-            /* restore! */
+            // restore!
             System.arraycopy(vgmstream.loop_ch, 0, vgmstream.ch, 0, vgmstream.channels);
             vgmstream.currentSample = vgmstream.loop_current_sample;
             vgmstream.samplesIntoBlock = vgmstream.loop_samples_into_block;
@@ -386,21 +379,6 @@ public class Psx {
             vgmstream.current_block_offset = vgmstream.loop_block_offset;
             vgmstream.next_block_offset = vgmstream.loop_next_block_offset;
             vgmstream.full_block_size = vgmstream.loop_full_block_size;
-
-            // loop layouts (after restore, in case layout needs state manipulations)
-//            switch(vgmstream.layoutType) {
-//                case layout_segmented:
-//                    loop_layout_segmented(vgmstream, vgmstream.loop_current_sample);
-//                    break;
-//                case layout_layered:
-//                    loop_layout_layered(vgmstream, vgmstream.loop_current_sample);
-//                    break;
-//                default:
-//                    break;
-//            }
-
-            // play state is applied over loops and stream decoding, so it's not restored on loops
-//            vgmstream.pstate = vgmstream.lstate;
 
             return true; // has looped
         }
@@ -416,9 +394,6 @@ public class Psx {
             vgmstream.loop_block_offset = vgmstream.current_block_offset;
             vgmstream.loop_next_block_offset = vgmstream.next_block_offset;
             vgmstream.loop_full_block_size = vgmstream.full_block_size;
-
-            /* play state is applied over loops and stream decoding, so it's not saved on loops */
-            //vgmstream.lstate = vgmstream.pstate;
 
             vgmstream.hitLoop = true; /* info that loop is now ready to use */
         }
@@ -440,46 +415,6 @@ public class Psx {
     // TODO
     static void decode_seek(VgmStream vgmstream, int sample) {
         decode_state_reset(vgmstream);
-
-//        if (vgmstream.codec_data == null)
-//            return;
-//
-//        codec_info_t codec_info = codec_get_info(vgmstream);
-//        if (codec_info != null) {
-//            codec_info.seek(vgmstream, sample);
-//            return;
-//        }
-//
-//        if (vgmstream.coding_type == coding_CIRCUS_VQ) {
-//            seek_circus_vq(vgmstream.codec_data, sample);
-//        }
-//
-//        if (vgmstream.coding_type == coding_ICE_RANGE ||
-//                vgmstream.coding_type == coding_ICE_DCT) {
-//            seek_ice(vgmstream.codec_data, sample);
-//        }
-//
-//        if (vgmstream.coding_type == coding_UBI_ADPCM) {
-//            seek_ubi_adpcm(vgmstream.codec_data, sample);
-//        }
-//
-//        if (vgmstream.coding_type == coding_ONGAKUKAN_ADPCM) {
-//            seek_ongakukan_adp(vgmstream.codec_data, sample);
-//        }
-//
-//        if (vgmstream.coding_type == coding_EA_MT) {
-//            seek_ea_mt(vgmstream, sample);
-//        }
-//
-//#if defined(VGM_USE_MP4V2) && defined(VGM_USE_FDKAAC)
-//        if (vgmstream.coding_type == coding_MP4_AAC) {
-//            seek_mp4_aac(vgmstream, sample);
-//        }
-//#endif
-//
-//        if (vgmstream.coding_type == coding_NWA) {
-//            seek_nwa(vgmstream.codec_data, sample);
-//        }
     }
 
     /**
@@ -495,24 +430,12 @@ public class Psx {
         public SeekableDataInputStream streamFile;
         public int channel;
 
-        public VGMStreamChannel(SeekableDataInputStream streamFile, int offset, int channel) throws IOException {
-            this.streamFile = new SeekableDataInputStream(streamFile.origin()) {
-                @Override
-                public void position(long pos) throws IOException {
-System.out.printf("PS-ADPCM: frame_offset=%x\n", pos);
-                    super.position(offset + pos * 2 + channel);
-                }
-
-                @Override
-                public int readNBytes(byte[] b, int off, int len) throws IOException {
-                    byte[] buf = new byte[(len - off) * 2];
-                    int r = super.readNBytes(buf, 0, buf.length);
-                    for (int i = 0; i < r / 2; i ++) {
-                        b[i] = buf[i * 2];
-                    }
-                    return r / 2;
-                }
-            };
+        /**
+         * @param interleaveBlockSize Unused in this corrected version, kept for compatibility with call sites.
+         */
+        public VGMStreamChannel(SeekableDataInputStream streamFile, int offset, int channel, int interleaveBlockSize) throws IOException {
+            // Create a fresh stream pointer for this channel
+            this.streamFile = new SeekableDataInputStream(streamFile.origin());
             this.offset = offset;
             this.adpcmHistory1_32 = 0;
             this.adpcmHistory2_32 = 0;
@@ -578,7 +501,7 @@ System.out.printf("PS-ADPCM: frame_offset=%x\n", pos);
         // parse frame header
         frameOffset = stream.offset + bytesPerFrame * framesIn;
         stream.streamFile.position(frameOffset);
-//logger.log(Level.DEBUG, "frameOffset: %d, bytesPerFrame: %d, samplesToProcess: %d, buf: %d".formatted(frameOffset, bytesPerFrame, samplesToProcess, outbuf.length));
+
         int r = stream.streamFile.readNBytes(frame, 0, bytesPerFrame); // ignore EOF errors
         if (r != bytesPerFrame) {
 logger.log(Level.WARNING, "offset: %d, read underflow: %d / %d".formatted(frameOffset, r, bytesPerFrame));
@@ -589,8 +512,6 @@ logger.log(Level.WARNING, "offset: %d, read underflow: %d / %d".formatted(frameO
 
         // upper filters only used in few PS3 games, normally 0
         if (!extendedMode) {
-            // assert coefIndex > 5 || shiftFactor > 12 : "PS-ADPCM: incorrect coefs/shift at %x".formatted(frameOffset);
-//if (!(coefIndex > 5 || shiftFactor > 12)) { logger.log(Level.WARNING, "PS-ADPCM: incorrect coefs/shift at %x".formatted(frameOffset)); }
             if (coefIndex > 5)
                 coefIndex = 0;
             if (shiftFactor > 12)
@@ -599,8 +520,6 @@ logger.log(Level.WARNING, "offset: %d, read underflow: %d / %d".formatted(frameO
 
         if (isBadFlags) // some games store garbage or extra internal logic in the flags, must be ignored
             flag = 0;
-        // assert flag > 7 : "PS-ADPCM: unknown flag at %x".formatted(frameOffset);
-//if (!(flag > 7)) { logger.log(Level.WARNING, "PS-ADPCM: unknown flag at %x".formatted(frameOffset)); }
 
         shiftFactor = 20 - shiftFactor;
         // decode nibbles
