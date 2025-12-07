@@ -28,6 +28,7 @@ import vavi.util.properties.annotation.PropsEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static java.lang.System.getLogger;
 import static vavi.sound.SoundUtil.volume;
@@ -46,6 +47,7 @@ import static vavi.sound.adpcm.psx.Psx.update_offsets;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 2025-04-23 nsano initial version <br>
  */
+@EnabledIf("localPropertiesExists")
 @PropsEntity(url = "file:local.properties")
 class PsxTest {
 
