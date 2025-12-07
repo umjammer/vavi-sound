@@ -1,5 +1,5 @@
 /*
- * http://hackipedia.org/Platform/Sega/Genesis/hardware,%20FM%20synthesis,%20YM2608/html/adpcm.html
+ * https://web.archive.org/web/20050215154112/http://www.memb.jp/~dearna/ma/ym2608/ym2608adpcm.c
  */
 
 package vavi.sound.adpcm.ym2608;
@@ -8,9 +8,9 @@ import vavi.sound.adpcm.Codec;
 
 
 /**
- * YAMAHA (YM2608) ADPCM Codec
+ * YAMAHA YM2608 (OPNA) ADPCM-A Codec
  *
- * @author <a href="http://www.memb.jp/~dearna/">Masashi Wada</a> (DEARNA)
+ * @author <a href="https://web.archive.org/web/20050203192518/http://www.memb.jp/~dearna/">Masashi Wada</a> (DEARNA)
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030823 nsano port to java <br>
  */
@@ -34,7 +34,7 @@ class Ym2608 implements Codec {
     private final State state = new State();
 
     /** */
-    private static final int[] stepsizeTable = {
+    private static final int[] stepSizeTable = {
         57, 57, 57, 57, 77, 102, 128, 153,
         57, 57, 57, 57, 77, 102, 128, 153
     };
@@ -78,7 +78,7 @@ class Ym2608 implements Codec {
 
         // encode process 6
         // update step size
-        state.stepSize = (stepsizeTable[adpcm] * state.stepSize) / 64;
+        state.stepSize = (stepSizeTable[adpcm] * state.stepSize) / 64;
 //logger.log(Level.TRACE, "%05d: %d, %d, %d".formatted(ccc, i, adpcm, state.stepSize)); // OK
 
         // encode process 7
@@ -117,7 +117,7 @@ class Ym2608 implements Codec {
             state.xn = -32768;
         }
         // decode process 5
-        state.stepSize = state.stepSize * stepsizeTable[adpcm] / 64;
+        state.stepSize = state.stepSize * stepSizeTable[adpcm] / 64;
 
         // decode process 6
         if (state.stepSize < 127) {

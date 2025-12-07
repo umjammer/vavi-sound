@@ -1,16 +1,17 @@
 # vavi.sound.adpcm.vox
 
-Provides VOX ADPCM codec related classes.
+♪ Provides VOX ADPCM codec related classes.
 
-## Status
+### Status
 
 completed
 
-## TODO
+## References
 
- * ~~decode x16~~???
+ * https://en.wikipedia.org/wiki/Dialogic_ADPCM
+ * https://github.com/furrykef/nesadpcm
 
-## License
+### License
 
 ```
 /*  File: adpcm.c
@@ -22,3 +23,7 @@ completed
 
 */
 ```
+
+## TODO
+
+* ~~decode x16~~???

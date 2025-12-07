@@ -21,6 +21,7 @@ import vavi.sound.smaf.SysexMessage;
 import vavi.sound.smaf.message.UndefinedMessage;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -59,7 +60,7 @@ logger.log(Level.DEBUG, "SetupData: " + size + " bytes");
             readMobileStandard(dis); // TODO Huffman
             break;
         case MobileStandard_NoCompress:
-            case SEQU:
+        case SEQU:
             readMobileStandard(dis);
             break;
         }
@@ -91,8 +92,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                     int messageSize = dis.readUnsignedByte();
                     byte[] data = new byte[messageSize];
                     dis.readFully(data);
-                    // TODO end check 0xf7
-                    smafMessage = SysexMessage.Factory.getSysexMessage(0, data);
+                    smafMessage = SysexMessage.Factory.getSysexMessage(0, e2, data, messageSize);
                     break;
                 default:
                     smafMessage = new UndefinedMessage(e1, e2, 0);
@@ -121,8 +121,7 @@ logger.log(Level.WARNING, "unhandled: %02x".formatted(e1));
                 int messageSize = MidiUtil.readVariableLength(dis);
                 byte[] data = new byte[messageSize];
                 dis.readFully(data);
-                // TODO end check 0xf7
-                smafMessage = SysexMessage.Factory.getSysexMessage(0, data);
+                smafMessage = SysexMessage.Factory.getSysexMessage(0, status, data, messageSize);
             } else {
                 smafMessage = new UndefinedMessage(status, -1, 0);
 logger.log(Level.WARNING, "unhandled: %02x".formatted(status));
@@ -154,5 +153,17 @@ logger.log(Level.WARNING, "unhandled: %02x".formatted(status));
      */
     public List<SmafMessage> getSmafMessages() {
         return messages;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(super.toString());
+        try (var dc = getDC().open()) {
+            messages.stream().map(m -> dc.format(m.toString())).forEach(sb::append);
+        }
+
+        return sb.toString();
     }
 }

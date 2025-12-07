@@ -10,12 +10,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.Arrays;
 import java.util.List;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -80,5 +82,17 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
     @Override
     public List<SmafEvent> getSmafEvents() throws InvalidSmafDataException {
         return null; // TODO
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(getDC().format(getId() + " " + formatType + ", " + sequenceType + ", durationTimeBase: " + durationTimeBase + ", gateTimeTimeBase: " + gateTimeTimeBase));
+        try (var dc = getDC().open()) {
+            if (sequenceDataChunk != null) sb.append(sequenceDataChunk);
+        }
+
+        return sb.toString();
     }
 }

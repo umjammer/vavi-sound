@@ -95,7 +95,7 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
 
         sb.append(super.toString());
         try (var dc = getDC().open()) {
-            if (exwvChunk != null) sb.append(dc.format(exwvChunk.toString()));
+            if (exwvChunk != null) sb.append(exwvChunk.toString());
             exclusiveVoiceChunks.stream().map(cs -> dc.format(cs.toString())).forEach(sb::append);
         }
 

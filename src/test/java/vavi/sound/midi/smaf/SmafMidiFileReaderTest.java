@@ -1,10 +1,15 @@
 /*
- * Copyright (c) 2012 by Naohide Sano, All rights reserved.
+ * Copyright (c) 2025 by Naohide Sano, All rights reserved.
  *
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.midi.mfi;
+package vavi.sound.midi.smaf;
+
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.Synthesizer;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -13,40 +18,30 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.Sequence;
-import javax.sound.midi.Sequencer;
-import javax.sound.midi.Synthesizer;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import vavi.sound.midi.MidiConstants;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import static vavi.sound.midi.MidiUtil.volume;
 
 
 /**
- * MfiMidiFileReaderTest (javax.midi.spi for Mfi).
+ * SmafMidiFileReaderTest (javax.midi.spi for SMAF).
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
- * @version 0.00 2012/10/02 umjammer initial version <br>
+ * @version 0.00 2025/03/14 umjammer initial version <br>
  */
 @PropsEntity(url = "file:local.properties")
-public class MfiMidiFileReaderTest {
+public class SmafMidiFileReaderTest {
 
     static {
         // ensure synthesizer using default
         System.setProperty("javax.sound.midi.Synthesizer", "#Gervill");
         // should be set for playing adpcm (implemented as a meta event listener)
         System.setProperty("javax.sound.midi.Sequencer", "vavi.sound.midi.VaviSequencer");
-        // prior user volume setting than setting in a sequence
-        System.setProperty("vavi.sound.mfi.ignoreMasterVolume", "true");
     }
 
     static boolean localPropertiesExists() {
@@ -60,10 +55,7 @@ public class MfiMidiFileReaderTest {
     double volume = 0.2;
 
     @Property
-    String mfi = "src/test/resources/test.mld";
-
-    @Property(name = "mfi.dir")
-    String dir = "src/test/resources";
+    String mmf = "src/test/resources/test.mmf";
 
     @BeforeEach
     public void setup() throws IOException {
@@ -77,30 +69,11 @@ Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngi
 
     @Test
     public void test() throws Exception {
-        play(this.mfi);
+        play();
     }
 
-    @Test
-    @DisplayName("play recursive")
-    void test3() throws Exception {
-        Path dir = Paths.get(this.dir);
-        AtomicInteger c = new AtomicInteger();
-        Files.walk(dir)
-                .filter(p -> p.getFileName().toString().endsWith(".mld"))
-                .forEach(path -> {
-Debug.println("---- path: " + path);
-                    try {
-                        play(path.toString());
-                        c.getAndIncrement();
-                    } catch (Exception e) {
-Debug.println(e.getMessage());
-                    }
-                });
-Debug.println("mfis: " + c.get());
-    }
-
-    void play(String mfi) throws Exception {
-Debug.println("mld: " + mfi);
+    void play() throws Exception {
+Debug.println("mmf: " + mmf);
 
         CountDownLatch cdl = new CountDownLatch(1);
         Sequencer sequencer = MidiSystem.getSequencer(false); // "false" is important for volume!
@@ -111,11 +84,13 @@ Debug.println("@@@ synthesizer: " + synthesizer);
         synthesizer.open();
         sequencer.getTransmitter().setReceiver(synthesizer.getReceiver());
         Sequence sequence;
-        if (mfi.startsWith("http"))
-            sequence = MidiSystem.getSequence(URI.create(mfi).toURL());
+        if (mmf.startsWith("http"))
+            sequence = MidiSystem.getSequence(URI.create(mmf).toURL());
         else
-            sequence = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(Path.of(mfi))));
+            sequence = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(Path.of(mmf))));
 Debug.println("@@@ sequence: " + sequence);
+MidiSystem.write(sequence, 0, Files.newOutputStream(Path.of("tmp/mmf_out.mid")));
+
         volume(synthesizer.getReceiver(), midiVolume);
         sequencer.setSequence(sequence);
         sequencer.addMetaEventListener(meta -> {
@@ -130,12 +105,13 @@ Debug.println("meta: " + MidiConstants.MetaEvent.valueOf(meta.getType()));
     // ----
 
     /**
-     * Play MFi file.
+     * Play SMAF file.
      * @param args [0] filename
      */
     public static void main(String[] args) throws Exception {
-        MfiMidiFileReaderTest app = new MfiMidiFileReaderTest();
+        SmafMidiFileReaderTest app = new SmafMidiFileReaderTest();
         app.setup();
-        app.play(args[0]);
+        app.mmf = args[0];
+        app.play();
     }
 }

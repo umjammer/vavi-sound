@@ -6,11 +6,12 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-
 import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
 
@@ -33,10 +34,10 @@ public class MasterTrackSequenceDataChunk extends SequenceDataChunk {
 logger.log(Level.DEBUG, "MasterTrackSequenceData: " + size + " bytes");
     }
 
-    /** TODO how to get formatType from parent chunk ??? */
     @Override
     protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
-dis.skipBytes(size); // TODO
+
+        readHandyPhoneStandard(dis);
     }
 }

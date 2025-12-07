@@ -133,7 +133,7 @@ Debug.println(Level.FINE, "write: " + r);
 //     * @throws NoSuchElementException no next event
 //     * @throws IllegalStateException current event is not {@link ShortMessage}
 //     */
-//    public MidiEvent getNoteOffOrControllChangeMidiEvent() throws NoSuchElementException {
+//    public MidiEvent getNoteOffOrControlChangeMidiEvent() throws NoSuchElementException {
 //
 //        ShortMessage shortMessage = null;
 //

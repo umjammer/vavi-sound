@@ -15,6 +15,7 @@ import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.message.WaveDataMessage;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -30,9 +31,14 @@ public class StreamWaveDataChunk extends WaveDataChunk {
     private static final Logger logger = getLogger(StreamWaveDataChunk.class.getName());
 
     /** */
+    protected int waveNumber;
+
+    /** */
     public StreamWaveDataChunk(byte[] id, int size) {
         super(id, size);
-logger.log(Level.DEBUG, "StreamWaveData: " + size);
+
+        waveNumber = id[3] & 0xff;
+logger.log(Level.DEBUG, "StreamWaveData[" + waveNumber + "]: " + size);
     }
 
     /** */
@@ -67,5 +73,10 @@ logger.log(Level.DEBUG, "StreamWaveData: " + size);
               waveType.getWaveChannels());
 
         return waveDataMessage;
+    }
+
+    @Override
+    public String toString() {
+        return getDC().format(getId() + waveNumber + " " + data.length + " bytes");
     }
 }

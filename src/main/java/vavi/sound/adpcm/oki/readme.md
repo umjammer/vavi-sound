@@ -1,16 +1,16 @@
 # vavi.sound.adpcm.oki
 
-Provices OKI ADPCM codec related classes.
+♪ Provides OKI ADPCM codec related classes.
 
-## Status
+### Status
 
 completed
 
-## TODO
+## References
 
- * ~~separate Alaw, Ulaw~~
+ * http://www.pastel-flower.jp/~isaki/NetBSD/src/?sys/dev/ic/msm6258.c
 
-## License
+### License
 
 ```
 /*
@@ -43,3 +43,7 @@ completed
  * SUCH DAMAGE.
  */
 ```
+
+## TODO
+
+* ~~separate Alaw, Ulaw~~

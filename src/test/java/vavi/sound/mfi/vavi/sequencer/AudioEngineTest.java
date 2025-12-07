@@ -50,7 +50,7 @@ class AudioEngineTest {
         assertInstanceOf(FuetrekAudioEngine.class, audioEngine);
         // not exists
         assertThrows(IllegalArgumentException.class, () -> {
-            AudioDataSequencer.Factory.getAudioEngine(0x82);
+            AudioDataSequencer.Factory.getAudioEngine(0x83);
         });
     }
 }

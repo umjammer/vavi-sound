@@ -35,7 +35,7 @@ class MetaEventAdapter implements MetaEventListener, SmafDevice {
     /** the device information */
     private static final SmafDevice.Info info =
         new SmafDevice.Info("Java SMAF WAVE Sequencer",
-                           "Vavisoft",
+                           "vavi",
                            "Software sequencer using wave",
                            "Version " + SmafDeviceProvider.version) {};
 

@@ -31,6 +31,7 @@ import static java.lang.System.getLogger;
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050501 nsano initial version <br>
+ * @see "https://github.com/but80/smaf825/blob/v1/smaf/subtypes/exclusive.go#L85C1-L160C3"
  */
 public class YamahaMessage extends MachineDependentMessage
     implements MachineDependentSequencer, MidiConvertible {
@@ -91,26 +92,26 @@ FF F0 05 43 02 80 ** F7
 FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
                   ~~ ~~  1st byte is 00, 2nd byte is voice number
 
-[FMAll4HPS] (smaftool)
+[FMAll4HPS] (mmftool)
          43 03 00 00 47 50 01 25 1B 92 42 A0 14 72 71 00 A0 F7
                ~~ ~~ 1: no, 2: 00 or 0x80
 
-[MA-3 SetVoiceFM(0x1f,0x2f)/MA-3 SetVoiceWT(0x1e)] (smaftool)
+[MA-3 SetVoiceFM(0x1f,0x2f)/MA-3 SetVoiceWT(0x1e)] (mmftool)
          43 79 06 7F 01 xx tt nn
 
-[MA-5 SetVoiceFM(0x1c,0x2a)/MA-5 SetVoiceWT(0x1b)] (smaftool)
+[MA-5 SetVoiceFM(0x1c,0x2a)/MA-5 SetVoiceWT(0x1b)] (mmftool)
          43 79 07 7F 01
 
-[Reset] (smaftool)
+[Reset] (mmftool)
          43 79    7F 7F
 
-[Volume] (smaftool)
+[Volume] (mmftool)
          43 79    7F 00
 
-[???] (smaftool)
+[???] (mmftool)
          43 79    7F 07
 
-[MA-3,5 SetWave] (smaftool)
+[MA-3,5 SetWave] (mmftool)
          43 79    7F 03
 
 [stream PCM wave pan-pot] (proper)
@@ -123,21 +124,53 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
       F0 43 79 06 7F 10 dd F7
           dd: user event type 0 ~ 15 (0H ~ FH)
 
+[VM5] (smaf825)
+     10 <= len
+     43 79 07 7F 01 mm ll pc dn vt ...
+          mm: BankMSB
+          ll: BankLSB
+          pc: PC
+          dn: DrumNote
+          vt: VoiceType
+          vv: version
+
+[VM3Exclusive] (smaf825)
+     10 <= len
+     43 79 06 7F 01 mm ll pc dn vt ...
+         mm: BankMSB
+         ll: BankLSB
+         pc: PC
+         dn: DrumNote
+         vt: VoiceType
+         vv: version
+
+[VM5] (smaf825)
+     3 <= len
+     43 05 01 ll pc ...
+         ll: BankLSB
+         pc: PC
+
+[VoicePC] (smaf825)
+     6 <= len
+     43 03 __ ll pc ...
+         ll: BankLSB
+         pc: PC
+
 </pre>
      * <p>
      * Since the default MIDI sequencer is used, only meta-events can be hooked,
      * so they are converted to meta-events.
      * </p>
-     * @see "http://www.music.ne.jp/~puc/mmf_format.html"
+     * @see "https://web.archive.org/web/20050210122232/http://www.music.ne.jp/~puc/mmf_format.html"
      * @see "ATS-MA5-SMAF_GL_133_HV.pdf"
-     * @see "http://murachue.ddo.jp/web/softlist.cgi?mode=desc&title=mmftool"
+     * @see "https://web.archive.org/web/20170523184307/http://murachue.ddo.jp/web/softlist.cgi?mode=desc&title=mmftool"
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 
 //        MidiEvent[] events = new MidiEvent[1];
 //        javax.sound.midi.SysexMessage sysexMessage = new javax.sound.midi.SysexMessage();
-//logger.log(Level.TRACE, "(" + StringUtil.toHex2(command) + "): " + channel + "ch, " + StringUtil.toHex2(value));
+//logger.log(Level.TRACE, "(%1$02x): %1$dch, %2$02x".formatted(channel, value));
 //        byte[] temp = new byte[data.length + 1];
 //        temp[0] = (byte) 0xf0;
 //        System.arraycopy(data, 0, temp, 1, data.length);
@@ -163,15 +196,15 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
         };
     }
 
-    /* TODO super appropriate right now */
+    /* TODO super sloppy right now */
     @Override
     public void sequence() throws InvalidSmafDataException {
 logger.log(Level.INFO, "yamaha: " + data.length + "\n" + StringUtil.getDump(data, 64));
-        switch (data[1]) {
+        switch (data[2]) {
         case 0x79:
-            switch (data[3]) {
+            switch (data[4]) {
             case 0x7f:
-                switch (data[4]) {
+                switch (data[5]) {
                 case 0x20: { //
 logger.log(Level.DEBUG, "YAMAHA UNKNOWN: ");
                     AudioEngine engine = WaveSequencer.Factory.getAudioEngine();

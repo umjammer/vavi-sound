@@ -19,6 +19,7 @@ import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -208,7 +209,7 @@ logger.log(Level.TRACE, i + " / " + option.length + "\n" + StringUtil.getDump(op
             return null;
         }
         try {
-            return new String(subDatum.getData(), "Windows-31J"); // use contentsCodeType
+            return new String(subDatum.getData(), "Windows-31J"); // TODO use contentsCodeType
         } catch (UnsupportedEncodingException e) {
             return new String(subDatum.getData());
         }
@@ -246,11 +247,23 @@ logger.log(Level.TRACE, i + " / " + option.length + "\n" + StringUtil.getDump(op
     public void addSubData(String tag, String data) {
         SubData subDatum;
         try {
-            subDatum = new SubData(tag, data.getBytes("Windows-31J")); // use contentsCodeType
+            subDatum = new SubData(tag, data.getBytes("Windows-31J")); // TODO use contentsCodeType
         } catch (UnsupportedEncodingException e) {
             subDatum = new SubData(tag, data.getBytes());
         }
         subData.put(tag, subDatum);
         size += subDatum.getSize();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(getDC().format(getId() + " contentsClass: " + contentsClass + ", contentsType: " + contentsType + ", contentsCodeType: " + contentsCodeType + ", copyStatus: " + copyStatus + ", copyCounts: " + copyCounts));
+        try (var dc = getDC().open()) {
+            subData.values().stream().map(sd -> dc.format(sd.toString())).forEach(sb::append);
+        }
+
+        return sb.toString();
     }
 }

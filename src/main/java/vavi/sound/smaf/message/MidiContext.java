@@ -13,6 +13,8 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 
+import java.util.HashMap;
+import java.util.Map;
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
@@ -140,7 +142,7 @@ logger.log(Level.DEBUG, "channelStatuses: " + (channelStatuses != null ? channel
     }
 
     /** current ticks, index is smafTrackNumber */
-    private final long[] currentTicks = new long[4];
+    private final long[] currentTicks = new long[256];
 
     /**
      * smafTrackNumber must be set
@@ -155,6 +157,7 @@ logger.log(Level.DEBUG, "channelStatuses: " + (channelStatuses != null ? channel
      * @param ticks ticks
      */
     public void setCurrentTick(long ticks) {
+assert smafTrackNumber < currentTicks.length : "smaf tracks for currentTicks: " + smafTrackNumber;
         this.currentTicks[smafTrackNumber] = ticks;
     }
 
@@ -234,19 +237,31 @@ logger.log(Level.DEBUG, "drums: " + midiChannel + "ch, " + value + "\n" + sb1 + 
     /** program no, index is pseudo MIDI channel assigned to channel */
     private final int[] programs = new int[MAX_MIDI_CHANNELS];
 
+    /** <samf, pseudo midi> */
+    private final Map<Integer, Integer> channelMap = new HashMap<>();
+
     /**
      * @param smafChannel SMAF channel
      * @return pseudo MIDI channel
      */
     private int getMidiChannel(int smafChannel) {
+        int key;
+        int value;
+
         if (formatType == ScoreTrackChunk.FormatType.HandyPhoneStandard) {
-            return smafTrackNumber * 4 + smafChannel;
+            key = smafTrackNumber * 4 + smafChannel;
         } else {
-if (smafTrackNumber > 0 || smafChannel > 16) {
- logger.log(Level.DEBUG, "track > 0: " + smafTrackNumber + ", or smafChannel > 16: " + smafChannel);
-}
-            return smafTrackNumber * 16 + smafChannel % 16; // TODO smafChannel > 16
+            key = smafTrackNumber * 16 + smafChannel;
         }
+
+        value = channelMap.getOrDefault(key, channelMap.size());
+logger.log(Level.TRACE, "pseudo midi channel: (" + smafTrackNumber + ":" + smafChannel + ") -> " + value);
+if (value > 15) {
+ logger.log(Level.WARNING, "pseudo midi channel become > 15: smaf track: " + smafTrackNumber + ", smaf channel: " + smafChannel);
+        value = value % 16;
+}
+        channelMap.put(key, value);
+        return value;
     }
 
     /**

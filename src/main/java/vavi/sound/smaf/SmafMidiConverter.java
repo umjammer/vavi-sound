@@ -38,7 +38,7 @@ class SmafMidiConverter implements SmafDevice {
     /** the device information */
     private static final SmafDevice.Info info =
         new SmafDevice.Info("Java MIDI, SMAF Sequence Converter",
-                            "Vavisoft",
+                            "vavi",
                             "Format Converter between MIDI and SMAF",
                             "Version " + SmafDeviceProvider.version) {};
 
@@ -80,6 +80,7 @@ logger.log(Level.DEBUG, "resolution: " + resolution);
 
         midiTrack.add(midiContext.getTempoEvent());
 
+logger.log(Level.DEBUG, "smafTracks: " + smafTracks.length);
         for (int i = 0; i < smafTracks.length; i++) {
 
             midiContext.setMidiTrack(midiTrack);
@@ -97,7 +98,7 @@ logger.log(Level.DEBUG, "resolution: " + resolution);
                 midiContext.addCurrentTick(midiContext.getTicksOf(smafMessage.getDuration()));
 //logger.log(Level.TRACE, "■■■■■(" + i + ":" + j + ") ticks: " + midiContext.getCurrentTick() + "(" + midiContext.getTicksOf(smafMessage.getDuration()) + "," + smafMessage.getDuration() + "), " + smafMessage.getClass().getSimpleName());
 
-                if (smafMessage instanceof MidiConvertible) {
+                if (smafMessage instanceof MidiConvertible midiConvertible) {
 if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.ModulationMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.PitchBendMessage) &&
@@ -111,16 +112,16 @@ if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
 //  logger.log(Level.WARNING, "★★★★★(" + i + ":" + j + ") gateTime == 0: " + smafMessage);
 // }
 //}
-                    MidiEvent[] midiEvents = ((MidiConvertible) smafMessage).getMidiEvents(midiContext);
+                    MidiEvent[] midiEvents = midiConvertible.getMidiEvents(midiContext);
                     if (midiEvents != null) {
                         for (MidiEvent midiEvent : midiEvents) {
                             midiTrack.add(midiEvent);
 //                          addSmafMessage(midiTrack, midiEvents[k]);
                         }
                     }
-                } else if (smafMessage instanceof MetaMessage) {
-logger.log(Level.DEBUG, "meta: " + ((MetaMessage) smafMessage).getType());
-                    for (Map.Entry<String, Object> entry : ((MetaMessage) smafMessage).data.entrySet()) {
+                } else if (smafMessage instanceof MetaMessage metaMessage) {
+logger.log(Level.DEBUG, "meta: " + metaMessage.getType());
+                    for (Map.Entry<String, Object> entry : metaMessage.data.entrySet()) {
 logger.log(Level.DEBUG, entry.getKey() + "=" + entry.getValue());
                     }
                 } else {

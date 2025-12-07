@@ -74,7 +74,7 @@ class VaviSequencer implements Sequencer, Synthesizer {
     @Override
     public void close() {
         if (midiSequencer == null) {
-            throw new IllegalStateException("not opend");
+            throw new IllegalStateException("not opened");
         }
         midiSequencer.close();
         midiSynthesizer.close();
@@ -147,7 +147,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
     @Override
     public void start() {
         if (midiSequencer == null) {
-            throw new IllegalStateException("not opend");
+            throw new IllegalStateException("not opened");
         }
         on();
         midiSequencer.start();
@@ -156,7 +156,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
     @Override
     public void stop() {
         if (midiSequencer == null) {
-            throw new IllegalStateException("not opend");
+            throw new IllegalStateException("not opened");
         }
         midiSequencer.stop();
         off();
@@ -165,7 +165,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
     @Override
     public boolean isRunning() {
         if (midiSequencer == null) {
-            throw new IllegalStateException("not opend");
+            throw new IllegalStateException("not opened");
         }
         return midiSequencer.isRunning();
     }

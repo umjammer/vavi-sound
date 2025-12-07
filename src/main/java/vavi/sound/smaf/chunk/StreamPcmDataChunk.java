@@ -13,11 +13,11 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
-
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -88,5 +88,18 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
         }
 
         return messages;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+//logger.log(Level.DEBUG, "streamWaveDataChunks: " + streamWaveDataChunks.size());
+        sb.append(super.toString());
+        try (var dc = getDC().open()) {
+            streamWaveDataChunks.stream().map(Chunk::toString).forEach(sb::append);
+        }
+
+        return sb.toString();
     }
 }

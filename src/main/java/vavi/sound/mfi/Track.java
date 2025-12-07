@@ -15,12 +15,11 @@ import java.util.stream.Stream;
 /**
  * MFi Track.
  *
- * TODO is this class necessary?
- *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>
  *          0.10 020627 nsano refine <br>
  *          0.11 030915 nsano add insert <br>
+ * @see javax.sound.midi.Track
  */
 public class Track implements Iterable<MfiEvent> {
 

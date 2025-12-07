@@ -48,6 +48,6 @@ public class Sequence {
 
     /** */
     public Track[] getTracks() {
-        return tracks.toArray(new Track[0]);
+        return tracks.toArray(Track[]::new);
     }
 }

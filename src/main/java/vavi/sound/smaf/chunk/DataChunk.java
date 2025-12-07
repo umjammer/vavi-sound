@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -20,6 +21,7 @@ import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -53,13 +55,14 @@ logger.log(Level.DEBUG, "Data: lang: " + languageCode + ", size: " + size);
         throws InvalidSmafDataException, IOException {
 
 logger.log(Level.TRACE, "available: " + dis.available());
-        while (dis.available() > 4) { // TODO normal files should be 0.
+        while (dis.available() > 4) { // TODO normal files should be 0. 4 means there is a case additional 4 bytes are exists at end
             SubData subDatum = new SubData(dis);
-logger.log(Level.DEBUG, subDatum);
+logger.log(Level.TRACE, subDatum);
             subData.put(subDatum.tag, subDatum);
 logger.log(Level.TRACE, "SubData: " + subDatum.tag + ", " + subDatum.data.length + ", " + dis.available());
         }
-        dis.skipBytes(dis.available()); // TODO not necessary if the file is normal
+logger.log(Level.INFO, "skip unexpected bytes left: " + dis.available());
+        dis.skipBytes(dis.available()); // TODO not necessary for a normal file, for illegal case that has additional 4 bytes are exists at end
     }
 
     @Override
@@ -186,12 +189,24 @@ logger.log(Level.TRACE, "SubData: " + subDatum.tag + ", " + subDatum.data.length
                 if (printable) {
                     return "SubData(" + tag + ", lang: " + getLanguageCode() + ", size: " + data.length + "): " + string;
                 } else {
-                    return "SubData(" + tag + ", lang: " + getLanguageCode() + ", size: " + data.length + ")\n" + StringUtil.getDump(data, 128);
+                    return "SubData(" + tag + ", lang: " + getLanguageCode() + ", size: " + data.length + "): " + Arrays.toString(data); // \n" + StringUtil.getDump(data, 128);
                 }
             } catch (UnsupportedEncodingException e) {
                 assert false;
                 return null;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(getDC().format(getId() + languageCode));
+        try (var dc = getDC().open()) {
+            subData.values().stream().map(sd -> dc.format(sd.toString())).forEach(sb::append);
+        }
+
+        return sb.toString();
     }
 }

@@ -17,6 +17,7 @@ import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.message.WaveDataMessage;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -102,5 +103,10 @@ logger.log(Level.DEBUG, "WaveData[" + waveNumber + "]: " + size + " bytes");
               waveType.getWaveChannels());
 
         return waveDataMessage;
+    }
+
+    @Override
+    public String toString() {
+        return getDC().format(getId() + waveNumber + " " + data.length + " bytes");
     }
 }

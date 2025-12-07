@@ -7,7 +7,7 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,10 +16,11 @@ import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.sound.smaf.MetaMessage;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.SysexMessage;
 import vavi.sound.smaf.message.BankSelectMessage;
@@ -36,7 +37,7 @@ import vavi.sound.smaf.message.PitchBendMessage;
 import vavi.sound.smaf.message.ProgramChangeMessage;
 import vavi.sound.smaf.message.UndefinedMessage;
 import vavi.sound.smaf.message.VolumeMessage;
-import vavix.io.huffman.Huffman;
+import vavi.util.codec.huffman.okumura.Huffman;
 
 import static java.lang.System.getLogger;
 import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
@@ -58,7 +59,7 @@ public class SequenceDataChunk extends Chunk {
     /** */
     public SequenceDataChunk(byte[] id, int size) {
         super(id, size);
-        logger.log(Level.DEBUG, "SequenceData: " + size + " bytes");
+logger.log(Level.DEBUG, "SequenceData: " + size + " bytes");
     }
 
     /** */
@@ -67,7 +68,6 @@ public class SequenceDataChunk extends Chunk {
         this.size = 0;
     }
 
-    /** TODO how to get formatType from parent chunk ??? */
     @Override
     protected void init(CrcDataInputStream dis, Chunk parent)
             throws InvalidSmafDataException, IOException {
@@ -80,24 +80,17 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
                 readHandyPhoneStandard(dis);
                 break;
             case MobileStandard_Compress:
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                for (int i = 0; i < size; i++) {
-                    baos.write(dis.read());
-                }
-//OutputStream os1 = new FileOutputStream("/tmp/data.enc");
-//os1.write(baos.toByteArray());
-//os1.flush();
-//os1.close();
+                byte[] encoded = new byte[size];
+                new DataInputStream(dis).readFully(encoded);
+//Files.write(Path.of("tmp/data.enc"), encoded);
 //logger.log(Level.TRACE, "data.enc created");
-                byte[] decoded = new Huffman().decode(baos.toByteArray());
-//OutputStream os2 = new FileOutputStream("/tmp/data.dec");
-//os2.write(decoded);
-//os2.flush();
-//os2.close();
+                byte[] decoded = new Huffman.HuffmanInputStream(new ByteArrayInputStream(encoded), 32).readAllBytes();
+//Files.write(Path.of("tmp/data.dec"), decoded);
 //logger.log(Level.TRACE, "data.dec created");
-                logger.log(Level.DEBUG, "decode: " + size + " -> " + decoded.length);
-                size = decoded.length;
-                readMobileStandard(new CrcDataInputStream(new ByteArrayInputStream(decoded), id, decoded.length));
+logger.log(Level.DEBUG, "huffman decode: " + size + " -> " + decoded.length);
+                readMobileStandard(new CrcDataInputStream(new ByteArrayInputStream(decoded), id, decoded.length) {
+                    @Override CRC16 getCrc() { return new CRC16(); } // return dummy
+                });
                 break;
             case MobileStandard_NoCompress:
                 readMobileStandard(dis);
@@ -128,18 +121,27 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
         while (dis.available() > 0) {
             // -------- duration --------
             int duration = MidiUtil.readVariableLength(dis);
-//logger.log(Level.TRACE, "duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
+//logger.log(Level.TRACE, "duration: %1$d, 0x%1$04x".formatted(duration));
             // -------- event --------
             int e1 = dis.readUnsignedByte();
             if (e1 == 0xff) { // exclusive, nop
                 int e2 = dis.readUnsignedByte();
                 switch (e2) {
+                    case 0x2f: // meta end of track
+                    case 0x51: // meta tempo
+                    case 0x58: // meta time signature
+                        int len = dis.readUnsignedByte();
+                        byte[] b = new byte[len];
+                        dis.readFully(b);
+                        smafMessage = new MetaMessage();
+                        ((MetaMessage) smafMessage).setMessage(e2, Map.of("data", b));
+                        logger.log(Level.WARNING, "meta 0xff, 0x%02x".formatted(e2));
+                        break;
                     case 0xf0: // exclusive
                         int messageSize = dis.readUnsignedByte();
                         byte[] data = new byte[messageSize];
                         dis.readFully(data);
-                        // TODO end check 0xf7
-                        smafMessage = SysexMessage.Factory.getSysexMessage(duration, data);
+                        smafMessage = SysexMessage.Factory.getSysexMessage(duration, 0xf0, data, messageSize);
                         break;
                     case 0x00: // nop
                         smafMessage = new NopMessage(duration);
@@ -338,9 +340,12 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
             } else if (status == 0xf0) { // exclusive
                 int messageSize = MidiUtil.readVariableLength(dis);
                 byte[] data = new byte[messageSize];
-                dis.readFully(data);
-                // TODO end check 0xf7
-                smafMessage = SysexMessage.Factory.getSysexMessage(duration, data);
+                int i = 0;
+                do {
+                    data[i] = dis.readByte();
+                    if (data[i] == (byte) 0xf7) break;
+                } while (i++ < messageSize);
+                smafMessage = SysexMessage.Factory.getSysexMessage(duration, status, data, i);
             } else if (status < 0x80) { // data
                 smafMessage = null;
                 if (cc < 10) {
@@ -437,12 +442,11 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                     case 0x00:
                         smafMessage = new NopMessage(duration);
                         break;
-                    case 0xF0:
+                    case 0xf0:
                         int messageSize = dis.readUnsignedByte();
                         byte[] data = new byte[messageSize];
                         dis.readFully(data);
-                        // TODO end check 0xf7
-                        smafMessage = SysexMessage.Factory.getSysexMessage(duration, data);
+                        smafMessage = SysexMessage.Factory.getSysexMessage(duration, sig2, data, messageSize);
                         break;
                     default:
                        smafMessage = new UndefinedMessage(e1, sig2, duration);
@@ -450,7 +454,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                 }
             } else {
                 var channel = e1 >> 6;
-                var note = e1 & 15 + ((e1 >> 4 & 3) + 3) * 12;
+                var note = (e1 & 15) + ((e1 >> 4 & 3) + 3) * 12;
                 var gateTime = MidiUtil.readVariableLength(dis);
                 smafMessage = new NoteMessage(duration, channel, note, gateTime);
 //logger.log(Level.INFO, smafMessage);
@@ -489,14 +493,13 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
         size += smafMessage.getLength(); // TODO
     }
 
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
         sb.append(super.toString());
         try (var dc = getDC().open()) {
-            messages.stream().map(cs -> dc.format(cs.toString())).forEach(sb::append);
+            messages.stream().map(m -> dc.format(m.toString())).forEach(sb::append);
         }
 
         return sb.toString();

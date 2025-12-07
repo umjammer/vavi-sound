@@ -20,7 +20,7 @@ import vavi.sound.smaf.message.graphics.BackDropColorDefinitionMessage;
 import vavi.sound.smaf.message.graphics.GeneralPurposeDisplayMessage;
 import vavi.sound.smaf.message.graphics.NopMessage;
 import vavi.sound.smaf.message.graphics.OffsetOriginMessage;
-import vavi.sound.smaf.message.graphics.ResetOrigneMessage;
+import vavi.sound.smaf.message.graphics.ResetOriginMessage;
 import vavi.sound.smaf.message.graphics.UserMessage;
 
 import static java.lang.System.getLogger;
@@ -87,7 +87,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                 smafMessage = new NopMessage(duration);
                 break;
             case 0x01: // short event
-                smafMessage = new ResetOrigneMessage(duration);
+                smafMessage = new ResetOriginMessage(duration);
                 break;
             case 0x20: { // control event
                 int size = MidiUtil.readVariableLength(dis);

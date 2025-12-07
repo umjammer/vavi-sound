@@ -10,10 +10,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.util.Arrays;
 import java.util.StringJoiner;
-
 import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.sound.smaf.SysexMessage;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -48,6 +47,7 @@ public class ExclusiveVoiceChunk extends Chunk {
     }
 
     ExclusiveType exclusiveType;
+
     /**
      * ff f0 len 43 ..
      * len 10: 43 79 07 7F 01 ...
@@ -56,7 +56,7 @@ public class ExclusiveVoiceChunk extends Chunk {
      * len 6 : 43 03 ...
      * @see "https://github.com/but80/smaf825/blob/v1/smaf/subtypes/exclusive.go"
      */
-    byte[] exclusive;
+    SysexMessage exclusive;
 
     public ExclusiveVoiceChunk(byte[] id, int size) {
         super(id, size);
@@ -64,11 +64,15 @@ public class ExclusiveVoiceChunk extends Chunk {
 
     @Override
     protected void init(CrcDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
-        exclusive = new byte[size];
-        dis.readFully(exclusive);
-        exclusiveType = ExclusiveType.valueOf(exclusive[2]);
+        int e1 = dis.readUnsignedByte(); // ff
+        int e2 = dis.readUnsignedByte(); // f0
+        int len = dis.readUnsignedByte();
+        byte[] data = new byte[len];
+        dis.readFully(data);
+        assert e1 == 0xff && e2 == 0xf0;
+        exclusiveType = ExclusiveType.valueOf(data[2]);
 
-logger.log(Level.TRACE, "\n" + StringUtil.getDump(exclusive));
+        exclusive = SysexMessage.Factory.getSysexMessage(0, e2, data, len);
     }
 
     @Override
@@ -80,7 +84,7 @@ logger.log(Level.TRACE, "\n" + StringUtil.getDump(exclusive));
     public String toString() {
         return new StringJoiner(", ", getId() + ": {", "}")
                 .add("exclusiveType: " + exclusiveType)
-                .add("exclusive: " + Arrays.toString(exclusive))
+                .add("exclusive: " + exclusive)
                 .toString();
     }
 }

@@ -58,6 +58,7 @@ public class MetaMessage extends SmafMessage {
 
     /** */
     public MetaMessage() {
+        duration = 0;
     }
 
     /**

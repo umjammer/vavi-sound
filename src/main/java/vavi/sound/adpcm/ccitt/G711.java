@@ -43,6 +43,7 @@ import vavi.sound.adpcm.Codec;
  *                      corrected. <br>
  *          0.10 030713 nsano port to java <br>
  *          0.11 030714 nsano fine tune <br>
+ * @see "https://www.itu.int/rec/T-REC-G.711"
  */
 abstract class G711 implements Codec {
 

@@ -1,20 +1,18 @@
 # vavi.sound.adpcm.ccitt
 
-Provides CCITT recommendation audio compression related classes.
+♪ Provides CCITT recommendation audio compression related classes.
 
-## Tech-know
+## References
+
+ * G.711 ... VoIP
+   * https://www.itu.int/rec/T-REC-G.711
+
+### Tech-know
 
  * encoder.exe is little endian
  * it's necessary to provide '16Bit Signed' value when `PCM_SIGNED`
 
-
- * G.711 ... VoIP
-
-## TODO
-
- * 3, 5bit
-
-## License
+### License
 
 ```
 /*
@@ -43,3 +41,7 @@ Provides CCITT recommendation audio compression related classes.
  * Mountain View, California  94043
  */
 ```
+
+## TODO
+
+* 3, 5bit

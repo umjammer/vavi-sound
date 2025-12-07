@@ -17,6 +17,7 @@ import java.util.List;
 import vavi.sound.smaf.InvalidSmafDataException;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -49,7 +50,7 @@ logger.log(Level.DEBUG, "OptionalData: " + size + " bytes");
 
         while (dis.available() > 0) {
             Chunk data = readFrom(dis);
-            // TODO "Pro*"
+logger.log(Level.DEBUG, "OPDA: data chunk: " + data.getClass().getName());
             dataChunks.add(data);
         }
     }
@@ -82,18 +83,27 @@ logger.log(Level.DEBUG, "OptionalData: " + size + " bytes");
         size += dataChunk.getSize();
     }
 
-    /** ???Chunk "Pro*", ... */
-    private Chunk proChunk;
-
     /**
-     * @return Returns the "Pro*" chunk.
+     * @return Returns the "Pro*" chunk, nullable.
      */
     public Chunk getProChunk() {
-        return proChunk;
+        return dataChunks.stream().filter(dc -> dc.getId().startsWith("Pro")).findFirst().orElse(null);
     }
 
     // Pro* chunk (not in specification 3.06)
     //  start 4 bytes
     //  stop 4 bytes
     //  ??? 4 bytes
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(super.toString());
+        try (var dc = getDC().open()) {
+            dataChunks.stream().map(Chunk::toString).forEach(sb::append);
+        }
+
+        return sb.toString();
+    }
 }

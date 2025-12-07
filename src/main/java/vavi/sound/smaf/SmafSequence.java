@@ -9,12 +9,11 @@ package vavi.sound.smaf;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.util.List;
-
+import java.util.Map;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.chunk.Chunk;
 import vavi.sound.smaf.chunk.FileChunk;
 import vavi.sound.smaf.chunk.TrackChunk;
-import vavi.sound.smaf.message.STMessage;
-import vavi.sound.smaf.message.VNMessage;
 
 import static java.lang.System.getLogger;
 
@@ -33,21 +32,25 @@ class SmafSequence extends Sequence {
     SmafSequence(FileChunk fileChunk) throws InvalidSmafDataException {
         for (TrackChunk scoreTrackChunk : fileChunk.getScoreTrackChunks()) {
             createTrack(scoreTrackChunk.getSmafEvents());
+logger.log(Level.DEBUG, "ScoreTrack: " + getTracks()[getTracks().length - 1].size());
         }
         for (TrackChunk pcmAudioTrackChunk : fileChunk.getPcmAudioTrackChunks()) {
             createTrack(pcmAudioTrackChunk.getSmafEvents());
+logger.log(Level.DEBUG, "PcmAudioTrack: " + getTracks()[getTracks().length - 1].size());
         }
         for (TrackChunk graphicsTrackChunk : fileChunk.getGraphicsTrackChunks()) {
             createTrack(graphicsTrackChunk.getSmafEvents());
+logger.log(Level.DEBUG, "GraphicsTrack: " + getTracks()[getTracks().length - 1].size());
         }
         if (fileChunk.getMasterTrackChunk() != null) {
             createTrack(fileChunk.getMasterTrackChunk().getSmafEvents());
+logger.log(Level.DEBUG, "MasterTrack: " + getTracks()[getTracks().length - 1].size());
         }
         if (fileChunk.getMMMGChunk() != null) {
             for (int i = 0; i < fileChunk.getMMMGChunk().getTracks(); i++) {
                 fileChunk.getMMMGChunk().setCurrentTrack(i);
-logger.log(Level.DEBUG, "events: " + fileChunk.getMMMGChunk().getSmafEvents().size());
                 createTrack(fileChunk.getMMMGChunk().getSmafEvents());
+logger.log(Level.DEBUG, "events: " + getTracks()[getTracks().length - 1].size());
             }
         }
         // SMF XF Information | SMAF Contents Info Chunk
@@ -72,8 +75,12 @@ logger.log(Level.DEBUG, dataChunk);
             prot = fileChunk.getContentsInfoChunk().getSubDataByTag("SW");
             // TODO create meta for ContentsInfoChunk
         }
-        insert(track0, new SmafEvent(new VNMessage(prot == null ? "" : prot), 0), 0);
-        insert(track0, new SmafEvent(new STMessage(title == null ? "" : title), 0), 0);
+        MetaMessage metaMessage = new MetaMessage();
+        metaMessage.setMessage(MetaEvent.META_MARKER.number(), Map.of("prot", (prot == null ? "" : prot)));
+        insert(track0, new SmafEvent(metaMessage, 0), 0); // vn vendor name
+        metaMessage = new MetaMessage();
+        metaMessage.setMessage(MetaEvent.META_NAME.number(), Map.of("title", (title == null ? "" : title)));
+        insert(track0, new SmafEvent(metaMessage, 0), 0); // st song title
     }
 
     /** */

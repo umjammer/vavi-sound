@@ -1,6 +1,6 @@
 # vavi.sound
 
-provides about sound.
+♪ provides about sound related classes.
 
  * vavi.sound.adpcm ... adpcm
  * vavi.sound.mfi ... i-melody

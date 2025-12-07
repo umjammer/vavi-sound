@@ -13,6 +13,7 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.ByteOrder;
 
+import java.util.Arrays;
 import vavi.sound.adpcm.ma.MaInputStream;
 import vavi.sound.adpcm.ma.MaOutputStream;
 
@@ -41,6 +42,7 @@ public class YamahaAudioEngine extends BasicAudioEngine {
 
     @Override
     protected int getChannels(int streamNumber) {
+logger.log(Level.DEBUG, "streamNumber: " + streamNumber + " @" + data.hashCode() + ", " + Arrays.toString(data));
         int channels = 1;
         if (data[streamNumber].channel == -1) {
             // from 1_240_7
