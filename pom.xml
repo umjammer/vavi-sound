@@ -159,6 +159,19 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
         <configuration>
@@ -183,7 +196,7 @@
       <url>https://jitpack.io</url>
     </repository>
     <repository>
-      <id>gitlab-maven-packages</id>
+      <id>gitlab-maven-packages</id> <!-- vavi-sound-nda -->
       <url>https://gitlab.com/api/v4/projects/30804899/packages/maven</url>
     </repository>
   </repositories>
@@ -193,7 +206,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.10.3</version>
+        <version>5.14.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -204,7 +217,7 @@
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- vavi / com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.14</version>
+      <version>1.1.16</version>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
@@ -220,12 +233,12 @@
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- vavi / com.github.umjammer -->
       <artifactId>vavi-util-codec-sandbox</artifactId>
-      <version>1.0.2</version>
+      <version>1.0.4</version>
     </dependency>
     <dependency>
       <groupId>vavi</groupId>
       <artifactId>vavi-sound-nda</artifactId>
-      <version>1.0.14</version>
+      <version>1.0.15</version>
       <exclusions>
         <exclusion>
           <groupId>com.github.umjammer</groupId>
