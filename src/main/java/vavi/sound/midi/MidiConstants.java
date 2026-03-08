@@ -37,6 +37,11 @@ public final class MidiConstants {
         return props.getProperty("midi.inst.gm." + index);
     }
 
+    /** */
+    public static String getDrumInstrumentName(int index) {
+        return props.getProperty("midi.drum.gm." + index);
+    }
+
     // ----
 
     /**
