@@ -31,6 +31,9 @@ public interface AudioEngine {
     // TODO interlock midi volume
     double volume = Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume",  "0.2"));
 
+    /**  */
+    boolean accept(int format);
+
     /**
      * Sets adpcm data.
      * @param streamNumber packet id

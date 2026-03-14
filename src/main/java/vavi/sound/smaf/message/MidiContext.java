@@ -9,12 +9,12 @@ package vavi.sound.smaf.message;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 
-import java.util.HashMap;
-import java.util.Map;
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
@@ -78,7 +78,7 @@ public class MidiContext {
             if (message instanceof vavi.sound.smaf.MetaMessage metaMessage) {
                 if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
                     //
-                    this.formatType = (FormatType) metaMessage.getData().get("formatType"); // [ms]
+                    this.formatType = (FormatType) metaMessage.getMapData().get("formatType"); // [ms]
 logger.log(Level.DEBUG, "formatType: " + formatType);
                     for (int i = 0; i < MAX_MIDI_CHANNELS; i++) {
                         if (formatType == FormatType.HandyPhoneStandard) {
@@ -88,7 +88,7 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
                         }
                     }
                     //
-                    ChannelStatus[] channelStatuses = (ChannelStatus[]) metaMessage.getData().get("channelStatuses");
+                    ChannelStatus[] channelStatuses = (ChannelStatus[]) metaMessage.getMapData().get("channelStatuses");
 logger.log(Level.DEBUG, "channelStatuses: " + (channelStatuses != null ? channelStatuses.length : null));
                     if (channelStatuses != null) {
                         for (int i = 0; i < channelStatuses.length; i++) {
@@ -541,7 +541,7 @@ int t = 0;
                 SmafMessage message = event.getMessage();
                 if (message instanceof vavi.sound.smaf.MetaMessage metaMessage) {
                     if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
-                        this.timeBase = (Integer) metaMessage.getData().get("durationTimeBase"); // [ms]
+                        this.timeBase = (Integer) metaMessage.getMapData().get("durationTimeBase"); // [ms]
 logger.log(Level.DEBUG, "timebase: " + timeBase + ", (" + t + ":" + i + ")");
                         return tempo * timeBase;
                     }

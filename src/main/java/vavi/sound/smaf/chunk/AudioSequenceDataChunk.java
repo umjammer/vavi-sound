@@ -30,15 +30,23 @@ public class AudioSequenceDataChunk extends SequenceDataChunk {
 
     private static final Logger logger = getLogger(AudioSequenceDataChunk.class.getName());
 
-    /** */
-    public AudioSequenceDataChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Atsq";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public AudioSequenceDataChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "AudioSequenceData: " + size + " bytes");
+        return this;
     }
 
     /** */
     public AudioSequenceDataChunk() {
-        System.arraycopy("Atsq".getBytes(), 0, id, 0, 4);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
         this.size = 0;
     }
 

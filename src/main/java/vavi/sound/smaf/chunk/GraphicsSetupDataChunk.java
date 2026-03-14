@@ -29,15 +29,23 @@ public class GraphicsSetupDataChunk extends Chunk {
 
     private static final Logger logger = getLogger(GraphicsSetupDataChunk.class.getName());
 
-    /** */
-    public GraphicsSetupDataChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Gtsu";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public GraphicsSetupDataChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "GraphicsSetupData: " + size + " bytes");
+        return this;
     }
 
     /** */
     public GraphicsSetupDataChunk() {
-        System.arraycopy("Gtsu".getBytes(), 0, id, 0, 4);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
         this.size = 0;
     }
 

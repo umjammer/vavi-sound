@@ -82,6 +82,10 @@ logger.log(Level.INFO, "audio no: " + streamNumber + " stored");
 
     @Override
     public void start(int streamNumber) {
+        if (this.data[streamNumber] == null) {
+logger.log(Level.WARNING, getClass().getSimpleName() + ": data for ch " + streamNumber + " is null");
+            return;
+        }
 
         int channels = getChannels(streamNumber);
         if (channels == -1) {
@@ -116,7 +120,7 @@ logger.log(Level.DEBUG, audioFormat);
             while (iss[0].available() > 0) {
                 if (channels == 1) {
                     int l = iss[0].read(buf, 0, 1024);
-logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(buf, 64));
+logger.log(Level.TRACE, getClass().getSimpleName() + ": data:\n" + StringUtil.getDump(buf, 32));
                     line.write(buf, 0, l);
 //debug3(os);
                 } else {

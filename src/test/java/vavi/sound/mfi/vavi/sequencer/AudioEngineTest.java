@@ -43,7 +43,7 @@ class AudioEngineTest {
 
     @Test
     void test3() {
-        // exists in /vavi/sound/mfi/vavi/vavi.properties
+        // exists in /META-INF/services/vavi.sound.mfi.vavi.sequencer.AudioEngine
         AudioEngine audioEngine = AudioDataSequencer.Factory.getAudioEngine(0x80);
         assertInstanceOf(RohmAudioEngine.class, audioEngine);
         audioEngine = AudioDataSequencer.Factory.getAudioEngine(0x81);

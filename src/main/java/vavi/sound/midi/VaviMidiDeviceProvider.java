@@ -26,12 +26,12 @@ public class VaviMidiDeviceProvider extends MidiDeviceProvider {
 
     /**
      * TODO used without asking
-     * TODO 0x5f is occupied by "SD Card Association"
+     * 0x45 is "unused"
      */
-    public final static int MANUFACTURER_ID = 0x5f;
+    public final static int MANUFACTURER_ID = 0x45;
 
     /** */
-    private static final MidiDevice.Info[] infos = new MidiDevice.Info[] { VaviSequencer.info };
+    private static final MidiDevice.Info[] infos = { VaviSequencer.info };
 
     @Override
     public MidiDevice.Info[] getDeviceInfo() {

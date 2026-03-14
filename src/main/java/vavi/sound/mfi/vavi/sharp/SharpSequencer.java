@@ -17,14 +17,11 @@ import vavi.sound.mobile.AudioEngine;
 import vavi.sound.mobile.FuetrekAudioEngine;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mfi.vavi.sequencer.MachineDependentFunction.CARRIER_DOCOMO;
 
 
 /**
  * Sharp System exclusive message sequencer.
- * <pre>
- * properties file ... "/vavi/sound/mfi/vavi/sharp/sharp.properties"
- * name prefix ... "function."
- * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051111 nsano initial version <br>
@@ -32,6 +29,13 @@ import static java.lang.System.getLogger;
 public class SharpSequencer implements MachineDependentSequencer {
 
     private static final Logger logger = getLogger(SharpSequencer.class.getName());
+
+    static final int VENDOR_SHARP = 0x70; // SH
+
+    @Override
+    public int getId() {
+        return VENDOR_SHARP | CARRIER_DOCOMO;
+    }
 
     /**
      *
@@ -45,7 +49,8 @@ public class SharpSequencer implements MachineDependentSequencer {
         int function = data[6] & 0xff;
 logger.log(Level.TRACE, "function: 0x%02x".formatted(function));
 
-        MachineDependentFunction mdf = factory.getFunction(String.valueOf(function));
+        String key = VENDOR_SHARP + "." + function;
+        MachineDependentFunction mdf = MachineDependentFunction.Factory.getFunction(key);
         if (mdf != null) {
             mdf.process(message);
         } else {
@@ -62,10 +67,4 @@ logger.log(Level.WARNING, "unsupported function: 0x%02x".formatted(function));
     static AudioEngine getAudioEngine() {
         return player;
     }
-
-    // ----
-
-    /** */
-    private static final MachineDependentFunction.Factory factory =
-            new MachineDependentFunction.Factory("/vavi/sound/mfi/vavi/sharp/sharp.properties");
 }

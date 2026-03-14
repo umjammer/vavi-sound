@@ -14,10 +14,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.ServiceLoader;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MetaMessage;
@@ -44,9 +41,15 @@ import static java.lang.System.getLogger;
  * </pre>
  * <li>{@link #getLength()} returns data + 10 ({@link MetaMessage#HEADER_LENGTH meta header} +
  *     {@link #SUB_TYPE_LENGTH type's string length}).
+ * <p>
+ * <h4>system property</h4>
+ * <li>{@code vavi.sound.mfi.encoding.write} ... encoding for writing, default {@code Windows-31J}</li>
+ * <li>{@code vavi.sound.mfi.encoding.read} ... encoding for reading, default {@code JISAutoDetect}</li>
+ * <p>
  * <li>TODO does it have to be {@link MetaMessage}? (although it looks like MIDI)
  * <li>TODO ↑ the first thing to put in {@link vavi.sound.mfi.Track}[0] is summarized as {@link MetaMessage}
  * <li>TODO ↑ then {@link vavi.sound.mfi.vavi.AudioDataMessage} should be a subclass of {@link MetaMessage}
+ * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030819 nsano out source from {@link VaviMfiFileFormat} <br>
  *          0.10 030825 nsano merge {@link SubMessage} <br>
@@ -57,10 +60,10 @@ public abstract class SubMessage extends MetaMessage {
     private static final Logger logger = getLogger(SubMessage.class.getName());
 
     /** TODO use {@link vavi.sound.mfi.vavi.header.CodeMessage} */
-    protected static String readingEncoding = "JISAutoDetect";
+    protected static final String readingEncoding;
 
     /** TODO use {@link vavi.sound.mfi.vavi.header.CodeMessage} */
-    protected static String writingEncoding = "Windows-31J";
+    protected static final String writingEncoding;
 
     /** "port".length */
     protected static final int SUB_TYPE_LENGTH = 4;
@@ -68,13 +71,18 @@ public abstract class SubMessage extends MetaMessage {
     /** sequencer specific meta event */
     public static final int META_TYPE = 0x7f;
 
+    /** */
+    public abstract boolean accept(String subType);
+
     /**
      * @param subType ex. {@link vavi.sound.mfi.vavi.header.ProtMessage#TYPE "prot"}
+     * @return this
      */
-    protected SubMessage(String subType, byte[] data) {
+    protected SubMessage init(String subType, byte[] data) {
         try {
             byte[] message = getSubMessage(subType, data, data.length);
             setMessage(META_TYPE, message, message.length);
+            return this;
         } catch (InvalidMfiDataException e) {
             throw new IllegalStateException(e);
         }
@@ -83,18 +91,15 @@ public abstract class SubMessage extends MetaMessage {
     /**
      * @param subType ex. {@link vavi.sound.mfi.vavi.header.ProtMessage#TYPE "prot"}
      */
-    protected SubMessage(String subType, String data) {
+    protected SubMessage init(String subType, String data) {
         try {
             byte[] tmp = data.getBytes(writingEncoding);
             byte[] message = getSubMessage(subType, tmp, tmp.length);
             setMessage(META_TYPE, message, message.length);
+            return this;
         } catch (UnsupportedEncodingException | InvalidMfiDataException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    /** for {@link MfiConvertible} and {@link vavi.sound.mfi.vavi.header.AinfMessage} */
-    protected SubMessage() {
     }
 
     /**
@@ -192,36 +197,21 @@ logger.log(Level.DEBUG, this);
         DataInputStream dis = new DataInputStream(is);
 
         byte[] cs = new byte[SUB_TYPE_LENGTH];
-        dis.read(cs, 0, SUB_TYPE_LENGTH);       // type
+        dis.readNBytes(cs, 0, SUB_TYPE_LENGTH); // type
         String subType = new String(cs);
-
-        String key = null;
-        String headerKey = "mfi.header." + subType;
-        String audioKey = "mfi.audio." + subType;
-
-        if (subChunkConstructors.containsKey(headerKey)) {
-            key = headerKey;
-        } else if (subChunkConstructors.containsKey(audioKey)) {
-            key = audioKey;
-        }
-
-        SubMessage subChunk;
 
         int length = dis.readShort();
         byte[] subData = new byte[length];
         dis.readFully(subData, 0, length);
 
-        if (key != null) {
-            Constructor<SubMessage> constructor = subChunkConstructors.get(key);
-            try {
-                subChunk = constructor.newInstance(subType, subData);
-            } catch (Exception e) {
-logger.log(Level.ERROR, e.getMessage(), e);
-                throw new IllegalStateException(e);
-            }
+logger.log(Level.TRACE, "subType: " + subType + ", data.length: " + subData.length);
+        SubMessage subMessage = factory(subType);
+
+        if (subMessage != null) {
+            subMessage.init(subType, subData);
         } else {
 logger.log(Level.WARNING, "unknown sub chunk: " + subType);
-            subChunk = new SubMessage() {
+            subMessage = new SubMessage() {
                 {
                     try {
                         byte[] message = getSubMessage(subType, subData, subData.length);
@@ -230,52 +220,34 @@ logger.log(Level.WARNING, "unknown sub chunk: " + subType);
                         throw new IllegalStateException(e);
                     }
                 }
+                @Override public boolean accept(String subType) { return false; }
             };
         }
 
-logger.log(Level.DEBUG, subChunk);
-        return subChunk;
+logger.log(Level.DEBUG, subMessage);
+        return subMessage;
     }
 
     // ----
 
-    /** {@link SubMessage} constructors */
-    private static final Map<String, Constructor<SubMessage>> subChunkConstructors = new HashMap<>();
+    /** {@link SubMessage} */
+    private static final ServiceLoader<SubMessage> subMessages = ServiceLoader.load(SubMessage.class);
+
+    public static SubMessage factory(String subType) {
+        for (SubMessage subMessage : subMessages) {
+            if (subMessage.accept(subType)) {
+                return subMessage;
+            }
+        }
+logger.log(Level.WARNING, "no matched sub chunk: " + subType);
+        return null;
+    }
 
     static {
-        try {
-            // props
-            Properties props = new Properties();
-            final String path = "vavi.properties";
-            props.load(SubMessage.class.getResourceAsStream(path));
-
-            // header/audio sub chunks
-            for (Object o : props.keySet()) {
-                String key = (String) o;
-                if (key.matches("mfi\\.(header|audio)\\.\\w+")) {
-                    @SuppressWarnings("unchecked")
-                    Class<SubMessage> clazz = (Class<SubMessage>) Class.forName(props.getProperty(key));
-//logger.log(Level.TRACE, "sub class: " + StringUtil.getClassName(clazz));
-                    Constructor<SubMessage> constructor = clazz.getConstructor(String.class, byte[].class);
-
-                    subChunkConstructors.put(key, constructor);
-                }
-            }
-
-            // encodings
-            String value = props.getProperty("encoding.write");
-            if (value != null) {
-                writingEncoding = value;
+        // encodings
+        writingEncoding = System.getProperty("vavi.sound.mfi.encoding.write", "Windows-31J");
 logger.log(Level.DEBUG, "write encoding: " + writingEncoding);
-            }
-            value = props.getProperty("encoding.read");
-            if (value != null) {
-                readingEncoding = value;
+        readingEncoding = System.getProperty("vavi.sound.mfi.encoding.read","JISAutoDetect");
 logger.log(Level.DEBUG, "read encoding: " + readingEncoding);
-            }
-        } catch (Exception e) {
-logger.log(Level.ERROR, e.getMessage(), e);
-            throw new IllegalStateException(e);
-        }
     }
 }

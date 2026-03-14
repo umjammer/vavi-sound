@@ -48,6 +48,11 @@ public class FuetrekAudioEngine extends BasicAudioEngine {
     }
 
     @Override
+    public boolean accept(int format) {
+        return format == 0x81; // ADPCM Type2
+    }
+
+    @Override
     protected int getChannels(int streamNumber) {
         int channels = 1;
         if (data[streamNumber].channel != -1) {

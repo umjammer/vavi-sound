@@ -6,45 +6,34 @@
 
 package vavi.sound.smaf;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Map;
+
+import vavi.sound.midi.MidiUtil;
 
 
 /**
  * MetaMessage.
  * <pre>
-
-[MIDI]
-
-FF 7F nn mm
-      ~~ ~~
-      |  +- manufacturers id
-      +---- length
-
-[tempo]
-      FF 51 03 aa bb cc
-
-[text]
-      FF 01 ll dd … dd
-
-[copyright]
-      FF 02 ll dd … dd
-
-[cue point]
-      FF 07 05 53 54 41 52 54 (START)
-      FF 07 04 53 54 4F 50 (STOP)
-
-[XF cue point]
-      FF 7F 04 43 7B 02 rr
-
-[specify channel status]
-      FF 7F 14 43 02 00 04 dd ... dd
-
-[MA-5 AL specify channel ]
-      FF 7F 06 43 02 01 01 cc dd
-
-[MA-5 V specify voice channel]
-      FF 7F 06 43 02 01 02 cc dd
-
+ * [MIDI]
+ *
+ * [tempo]
+ * FF 51 03 aa bb cc
+ * 
+ * [text]
+ * FF 01 ll dd … dd
+ * 
+ * [copyright]
+ * FF 02 ll dd … dd
+ * 
+ * [cue point]
+ * FF 07 ll dd … dd
+ *
+ * FF 07 05 53 54 41 52 54 (START)
+ * FF 07 04 53 54 4F 50 (STOP)
  * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -53,8 +42,17 @@ FF 7F nn mm
  */
 public class MetaMessage extends SmafMessage {
 
+    /** */
+    protected int type;
+
+    /** */
+    protected int length;
+
     /** TODO better way? */
-    protected Map<String, Object> data;
+    protected Map<String, Object> mapData;
+
+    /** */
+    protected byte[] data;
 
     /** */
     public MetaMessage() {
@@ -62,26 +60,47 @@ public class MetaMessage extends SmafMessage {
     }
 
     /**
-     * @param data TODO better way?
+     * @param mapData TODO better way?
      */
-    protected MetaMessage(Map<String, Object> data) {
-        this.data = data;
+    protected MetaMessage(Map<String, Object> mapData) {
+        this.mapData = mapData;
     }
 
-    /** */
-    protected int type;
-
     /**
-     * @param data TODO better way?
+     * @param mapData TODO better way?
      * <p>
      * {@link javax.sound.midi.MetaMessage} nearly compatible.
      * </p>
      */
-    public void setMessage(int type, Map<String, Object> data)
-        throws InvalidSmafDataException {
+    public void setMessage(int type, Map<String, Object> mapData)
+            throws InvalidSmafDataException {
+
+        this.type = type;
+        this.mapData = mapData;
+    }
+
+    /**
+     * data
+     * <p>
+     * {@link javax.sound.midi.MetaMessage} nearly compatible.
+     * </p>
+     * @return copied data
+     */
+    public Map<String, Object> getMapData() {
+        return mapData;
+    }
+
+    /**
+     * <p>
+     * {@link javax.sound.midi.MetaMessage} compatible.
+     * </p>
+     */
+    public void setMessage(int type, byte[] data, int length)
+            throws InvalidSmafDataException {
 
         this.type = type;
         this.data = data;
+        this.length = length;
     }
 
     /**
@@ -94,29 +113,32 @@ public class MetaMessage extends SmafMessage {
         return type & 0xff;
     }
 
-    /**
-     * data
-     * <p>
-     * {@link javax.sound.midi.MetaMessage} nearly compatible.
-     * </p>
-     * @return copied data
-     */
-    public Map<String, Object> getData() {
+    /** */
+    public byte[] getData() {
         return data;
     }
 
     @Override
     public String toString() {
-        return "Meta: type=" + getType();
+        return "Meta: type=" + type;
     }
 
     @Override
     public byte[] getMessage() {
-        return null; // TODO
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(0xff);
+            DataOutputStream dos = new DataOutputStream(baos);
+            MidiUtil.writeVarInt(dos, length);
+            dos.write(data, 0, length);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override
     public int getLength() {
-        return 0;   // TODO
+        return length;
     }
 }

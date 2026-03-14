@@ -38,9 +38,18 @@ public class MMMGChunk extends TrackChunk {
 
     private static final Logger logger = getLogger(MMMGChunk.class.getName());
 
-    public MMMGChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "MMMG";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public MMMGChunk init(byte[] id, int size) {
+        super.init(id, size);
         formatType = FormatType.SEQU;
+        return this;
     }
 
     @Override

@@ -8,12 +8,12 @@ package vavi.sound.mfi.vavi.track;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 
-import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.SysexMessage;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage.SysexTrackMessage;
 
 import static java.lang.System.getLogger;
 
@@ -29,24 +29,28 @@ import static java.lang.System.getLogger;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020704 nsano initial version <br>
  */
-public class ExtendedEditMessage extends SysexMessage {
+public class ExtendedEditMessage extends SysexMessage implements SysexTrackMessage {
 
     private static final Logger logger = getLogger(ExtendedEditMessage.class.getName());
 
-    /** */
-    protected ExtendedEditMessage(byte[] message) {
-        super(message);
+    @Override
+    public boolean accept(String key) {
+        return "255.e.241".equals(key);
+    }
+
+    @Override
+    public ExtendedEditMessage init(byte[] message) {
+        return (ExtendedEditMessage) super.init(message);
     }
 
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
-     * @param is actual data (without header)
+     * for {@link TrackChunk}
+     *
+     * @param dis actual data (without header)
      */
-    public static ExtendedEditMessage readFrom(int delta, int status, int data1, InputStream is)
-        throws InvalidMfiDataException,
-               IOException {
-
-        DataInputStream dis = new DataInputStream(is);
+    @Override
+    public ExtendedEditMessage init(int delta, int status, int data1, DataInputStream dis)
+        throws IOException {
 
         int dummy  = dis.read();    // 0x00
         dummy      = dis.read();    // 0x03
@@ -55,7 +59,8 @@ public class ExtendedEditMessage extends SysexMessage {
         int zwitch = dis.read();
 logger.log(Level.DEBUG, "dummy " + dummy + ", part " + part + ", switch " + zwitch);
 
-        throw new InvalidMfiDataException("unsupported: " + 0xf2);
+        logger.log(Level.WARNING, "unsupported: " + 0xf2);
+        return this;
     }
 
     @Override

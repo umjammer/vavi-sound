@@ -41,7 +41,7 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
      */
     public static MfiEvent getMasterVolumeEvent(int masterVolume) {
         int realMasterVolume = (int) (masterVolume * maxMasterVolume / 100f);
-        MfiMessage message = new MasterVolumeMessage(0x00, 0xff, 0xb0, realMasterVolume);
+        MfiMessage message = new MasterVolumeMessage().init(0x00, 0xff, 0xb0, realMasterVolume);
         return new MfiEvent(message, 0L);
     }
 
@@ -50,7 +50,7 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
      * @param start true: start, false: end
      */
     public static MfiEvent getCuePointEvent(boolean start) {
-        MfiMessage message = new CuePointMessage(0x00, start ? 0x00 : 0x01);
+        MfiMessage message = new CuePointMessage().init(0x00, start ? 0x00 : 0x01);
         return new MfiEvent(message, 0L);
     }
 
@@ -68,7 +68,7 @@ public class FuetrekAudioMessage extends MachineDependentMessage {
         TempoMessage message;
         while (true) {
 logger.log(Level.DEBUG, "tempo: %d, timeBase: 0x%02x".formatted(baseTempo, baseTimeBase));
-            message = new TempoMessage(0x00, 0xff, baseTimeBase, baseTempo);
+            message = new TempoMessage().init(0x00, 0xff, baseTimeBase, baseTempo);
             aDelta = (60f / message.getTempo()) / message.getTimeBase();
             if (Math.round(time / aDelta) > 255) {
                 if ((baseTempo / 2) > 15) {
@@ -100,7 +100,7 @@ logger.log(Level.DEBUG, "a delta: " + aDelta + ", tempo: " + message.getTempo() 
         return Math.round(time / aDelta);
     }
 
-    private static final TempoMessage tempoMessageOld = new TempoMessage(0x00, 0xff, 0xc2, 50);
+    private static final TempoMessage tempoMessageOld = new TempoMessage().init(0x00, 0xff, 0xc2, 50);
 
     /**
      * older version

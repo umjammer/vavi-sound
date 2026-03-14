@@ -14,6 +14,7 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer.VENDOR_MITSUBISHI;
 
 
 /**
@@ -31,6 +32,11 @@ public class Function132 extends Function131 {
     /** header length of this data */
     @SuppressWarnings("hiding")
     public static final int HEADER_LENGTH = 14;
+
+    @Override
+    public String getId() {
+        return VENDOR_MITSUBISHI + "." + 132;
+    }
 
     /**
      * 0x84 Wave Packet Data3    MFi2, MFi3

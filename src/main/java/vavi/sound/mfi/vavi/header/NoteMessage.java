@@ -25,17 +25,25 @@ public class NoteMessage extends SubMessage {
     /** */
     public static final String TYPE = "note";
 
+    @Override
+    public boolean accept(String key) {
+        return TYPE.equals(key);
+    }
+
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
+     *
      * @param type ignored
+     * @return this
      */
-    public NoteMessage(String type, byte[] data) {
-        super(TYPE, data);
+    @Override
+    public SubMessage init(String type, byte[] data) {
+        return super.init(TYPE, data);
     }
 
     /** */
-    public NoteMessage(int data) {
-        super(TYPE, new byte[] {
+    public SubMessage init(int data) {
+        return super.init(TYPE, new byte[] {
             (byte) ((data & 0xff00) >> 8),
             (byte)  (data & 0x00ff)
         });

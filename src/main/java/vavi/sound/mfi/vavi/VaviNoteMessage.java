@@ -49,6 +49,11 @@ public class VaviNoteMessage extends NoteMessage
     }
 
     @Override
+    public boolean accept(String key) {
+        return "short.128".equals(key) || "short.144".equals(key);
+    }
+
+    @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 

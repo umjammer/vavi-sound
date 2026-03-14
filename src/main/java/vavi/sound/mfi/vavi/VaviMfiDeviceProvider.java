@@ -9,10 +9,6 @@ package vavi.sound.mfi.vavi;
 import java.io.InputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import vavi.sound.mfi.MfiDevice;
@@ -45,6 +41,7 @@ public class VaviMfiDeviceProvider extends MfiDeviceProvider {
                 }
             }
         } catch (Exception e) {
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new IllegalStateException(e);
         }
     }
@@ -52,17 +49,9 @@ public class VaviMfiDeviceProvider extends MfiDeviceProvider {
     /** */
     public static final String version;
 
-    /** */
-    private final MfiDevice.Info[] mfiDeviceInfos;
-
-    /** */
-    public VaviMfiDeviceProvider() {
-        this.mfiDeviceInfos = Factory.getMfiDeviceInfos();
-    }
-
     @Override
     public boolean isDeviceSupported(MfiDevice.Info info) {
-        for (MfiDevice.Info mfiDeviceInfo : mfiDeviceInfos) {
+        for (MfiDevice.Info mfiDeviceInfo : getDeviceInfo()) {
             if (mfiDeviceInfo.equals(info)) {
                 return true;
             }
@@ -72,67 +61,26 @@ public class VaviMfiDeviceProvider extends MfiDeviceProvider {
 
     @Override
     public MfiDevice.Info[] getDeviceInfo() {
-        return mfiDeviceInfos;
+        return new MfiDevice.Info[] {
+                VaviSequencer.info,
+                VaviSynthesizer.info,
+                VaviMidiConverter.info
+        };
     }
 
     @Override
-    public MfiDevice getDevice(MfiDevice.Info info)
-        throws IllegalArgumentException {
-
-        return Factory.getMfiDevice(info);
-    }
-
-    /** */
-    private static class Factory {
-
-        /** */
-        public static MfiDevice.Info[] getMfiDeviceInfos() {
-
-            List<MfiDevice.Info> tmp = new ArrayList<>(deviceMap.keySet());
-
-            return tmp.toArray(new MfiDevice.Info[0]);
-        }
-
-        /** */
-        public static MfiDevice getMfiDevice(MfiDevice.Info mfiDeviceInfo) {
-            if (deviceMap.containsKey(mfiDeviceInfo)) {
-                try {
-                    return deviceMap.get(mfiDeviceInfo).getDeclaredConstructor().newInstance();
-                } catch (Exception e) {
-logger.log(Level.ERROR, e.getMessage(), e);
-                }
-            }
-
-            throw new IllegalArgumentException(mfiDeviceInfo + " is not supported");
-        }
-
-        /** */
-        private static final Map<MfiDevice.Info, Class<MfiDevice>> deviceMap = new HashMap<>();
-
-        /* */
-        static {
-            try {
-                // props
-                Properties props = new Properties();
-                final String path = "vavi.properties";
-                props.load(Factory.class.getResourceAsStream(path));
-
-                // midi
-                for (Object o : props.keySet()) {
-                    String key = (String) o;
-                    if (key.startsWith("mfi.device.")) {
-                        @SuppressWarnings("unchecked")
-                        Class<MfiDevice> deviceClass = (Class<MfiDevice>) Class.forName(props.getProperty(key));
-//logger.log(Level.TRACE, "mfi device class: " + StringUtil.getClassName(deviceClass));
-                        MfiDevice.Info mfiDeviceInfo = deviceClass.getDeclaredConstructor().newInstance().getDeviceInfo();
-
-                        deviceMap.put(mfiDeviceInfo, deviceClass);
-                    }
-                }
-            } catch (Exception e) {
-logger.log(Level.ERROR, e.getMessage(), e);
-                throw new IllegalStateException(e);
-            }
+    public MfiDevice getDevice(MfiDevice.Info info) {
+        if (info == VaviSynthesizer.info) {
+            VaviSynthesizer synthesizer = new VaviSynthesizer();
+            return synthesizer;
+        } else if (info == VaviSequencer.info) {
+            VaviSequencer sequencer = new VaviSequencer();
+            return sequencer;
+        } else if (info == VaviMidiConverter.info) {
+            VaviMidiConverter converter = new VaviMidiConverter();
+            return converter;
+        } else {
+            throw new IllegalArgumentException("info is not suitable for this provider");
         }
     }
 }

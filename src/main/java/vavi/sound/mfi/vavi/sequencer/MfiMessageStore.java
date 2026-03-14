@@ -33,7 +33,7 @@ public class MfiMessageStore {
     }
 
     /**
-     * @return id used by {@link javax.sound.midi.MetaMessage}
+     * @return id used by {@link javax.sound.midi.SysexMessage}
      */
     public static /* synchronized */ int put(MfiMessage message) {
         try {

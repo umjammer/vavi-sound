@@ -28,10 +28,18 @@ public class BitmapChunk extends Chunk {
 
     private static final Logger logger = getLogger(BitmapChunk.class.getName());
 
-    /** */
-    public BitmapChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Gbm";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key.substring(0, 3));
+    }
+
+    @Override
+    public BitmapChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "Bitmap: " + size + " bytes");
+        return this;
     }
 
     /** */

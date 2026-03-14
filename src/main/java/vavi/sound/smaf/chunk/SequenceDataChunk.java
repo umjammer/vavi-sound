@@ -56,15 +56,23 @@ public class SequenceDataChunk extends Chunk {
 
     private static final Logger logger = getLogger(SequenceDataChunk.class.getName());
 
-    /** */
-    public SequenceDataChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Mtsq";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public SequenceDataChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "SequenceData: " + size + " bytes");
+        return this;
     }
 
     /** */
     public SequenceDataChunk() {
-        System.arraycopy("Mtsq".getBytes(), 0, id, 0, 4);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
         this.size = 0;
     }
 
@@ -134,7 +142,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                         byte[] b = new byte[len];
                         dis.readFully(b);
                         smafMessage = new MetaMessage();
-                        ((MetaMessage) smafMessage).setMessage(e2, Map.of("data", b));
+                        ((MetaMessage) smafMessage).setMessage(e2, b, len);
                         logger.log(Level.WARNING, "meta 0xff, 0x%02x".formatted(e2));
                         break;
                     case 0xf0: // exclusive

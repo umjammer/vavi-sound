@@ -173,11 +173,11 @@ logger.log(Level.DEBUG, "wave r chunk(" + numberOfChunks + "): " + chunkM.length
             }
             // nop2
             for (int j = 0; j < blockDelta / Nop2Message.maxDelta; j++) {
-                Nop2Message nop2 = new Nop2Message(0xff, 0xff);
+                Nop2Message nop2 = new Nop2Message().init(0xff, 0xff);
                 events.add(new MfiEvent(nop2, 0L));
             }
             int moduloOfBlockDelta = blockDelta % Nop2Message.maxDelta;
-            Nop2Message nop2 = new Nop2Message(moduloOfBlockDelta % 0x100, moduloOfBlockDelta / 0x100);
+            Nop2Message nop2 = new Nop2Message().init(moduloOfBlockDelta % 0x100, moduloOfBlockDelta / 0x100);
             events.add(new MfiEvent(nop2, 0L));
         }
         if (moduloOfChunks != 0) {
@@ -193,11 +193,11 @@ logger.log(Level.DEBUG, "wave r chunk(" + numberOfChunks + "): " + chunkM.length
             // nop2
             int moduloOfDelta = delta % blockDelta;
             for (int j = 0; j < moduloOfDelta / Nop2Message.maxDelta; j++) {
-                Nop2Message nop2 = new Nop2Message(0xff, 0xff);
+                Nop2Message nop2 = new Nop2Message().init(0xff, 0xff);
                 events.add(new MfiEvent(nop2, 0L));
             }
             int moduloOfBlockDelta = moduloOfDelta % Nop2Message.maxDelta;
-            Nop2Message nop2 = new Nop2Message(moduloOfBlockDelta % 0x100, moduloOfBlockDelta / 0x100);
+            Nop2Message nop2 = new Nop2Message().init(moduloOfBlockDelta % 0x100, moduloOfBlockDelta / 0x100);
             events.add(new MfiEvent(nop2, 0L));
         }
 
@@ -376,11 +376,11 @@ logger.log(Level.TRACE, "thread local sequence: " + sequence.get());
             events.add(getStreamOn(streamNumber++, velocity));
             // nop2
             for (int j = 0; j < blockDelta / Nop2Message.maxDelta; j++) {
-                Nop2Message nop2 = new Nop2Message(0xff, 0xff);
+                Nop2Message nop2 = new Nop2Message().init(0xff, 0xff);
                 events.add(new MfiEvent(nop2, 0L));
             }
             int moduloOfDelta = blockDelta % Nop2Message.maxDelta;
-            Nop2Message nop2 = new Nop2Message(moduloOfDelta % 0x100, moduloOfDelta / 0x100);
+            Nop2Message nop2 = new Nop2Message().init(moduloOfDelta % 0x100, moduloOfDelta / 0x100);
             events.add(new MfiEvent(nop2, 0L));
         }
         if (moduloOfChunks != 0) {
@@ -390,11 +390,11 @@ logger.log(Level.TRACE, "thread local sequence: " + sequence.get());
             // nop2
             int moduloOfBlockDelta = delta % blockDelta;
             for (int j = 0; j < moduloOfBlockDelta / Nop2Message.maxDelta; j++) {
-                Nop2Message nop2 = new Nop2Message(0xff, 0xff);
+                Nop2Message nop2 = new Nop2Message().init(0xff, 0xff);
                 events.add(new MfiEvent(nop2, 0L));
             }
             int moduloOfDelta = moduloOfBlockDelta % Nop2Message.maxDelta;
-            Nop2Message nop2 = new Nop2Message(moduloOfDelta % 0x100, moduloOfDelta / 0x100);
+            Nop2Message nop2 = new Nop2Message().init(moduloOfDelta % 0x100, moduloOfDelta / 0x100);
             events.add(new MfiEvent(nop2, 0L));
         }
 

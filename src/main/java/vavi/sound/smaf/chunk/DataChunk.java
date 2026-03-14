@@ -36,17 +36,26 @@ public class DataChunk extends Chunk {
 
     private static final Logger logger = getLogger(DataChunk.class.getName());
 
-    /** */
-    public DataChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Dch";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key.substring(0, 3));
+    }
+
+    @Override
+    public DataChunk init(byte[] id, int size) {
+        super.init(id, size);
 
         this.languageCode = id[3] & 0xff;
 logger.log(Level.DEBUG, "Data: lang: " + languageCode + ", size: " + size);
+
+        return this;
     }
 
     /** */
     public DataChunk() {
-        System.arraycopy("Dch".getBytes(), 0, id, 0, 3);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 3);
         this.size = 0;
     }
 
@@ -55,7 +64,7 @@ logger.log(Level.DEBUG, "Data: lang: " + languageCode + ", size: " + size);
         throws InvalidSmafDataException, IOException {
 
 logger.log(Level.TRACE, "available: " + dis.available());
-        while (dis.available() > 4) { // TODO normal files should be 0. 4 means there is a case additional 4 bytes are exists at end
+        while (dis.available() > 4) { // TODO normal files must be 0. 4 means there is a case additional 4 bytes are exists at end
             SubData subDatum = new SubData(dis);
 logger.log(Level.TRACE, subDatum);
             subData.put(subDatum.tag, subDatum);

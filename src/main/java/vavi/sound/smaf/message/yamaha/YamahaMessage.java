@@ -9,7 +9,7 @@ package vavi.sound.smaf.message.yamaha;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaMessage;
+import javax.sound.midi.SysexMessage;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.midi.VaviMidiDeviceProvider;
@@ -46,7 +46,7 @@ public class YamahaMessage extends MachineDependentMessage
      * After receiving the sync message, any note-on will cause the two sounds to be played simultaneously.
      * </p>
      * <pre>
-     * ex.)F0 xx 43 79 06 7F 08 cl id1 id2 F7
+     * ex. F0 xx 43 79 06 7F 08 cl id1 id2 F7
      *  　　cl=00(synchronize),01(cancel)
      *    　id1=00 ~ 20(Wave ID 1)
      *    　id2=00 ~ 20(Wave ID 2)
@@ -56,7 +56,7 @@ public class YamahaMessage extends MachineDependentMessage
      * Sets the stereo location position of the specified stream PCM wave.
      * </p>
      * <pre>
-     * ex.)F0 xx 43 79 06 7F 0B id pp dd F7
+     * ex. F0 xx 43 79 06 7F 0B id pp dd F7
      *  　　id=00 ~ 20(Wave ID)
      *  　　pp=00(specify),01(clear),02(off)
      *  　　dd=00 ~ 7F(localization: Center=40)
@@ -178,7 +178,7 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
 //        events[0] = new MidiEvent(sysexMessage, context.getCurrentTick());
 //        return events;
 
-        MetaMessage metaMessage = new MetaMessage();
+        SysexMessage sysexMessage = new SysexMessage();
 
         int id = SmafMessageStore.put(this);
         byte[] data = {
@@ -187,12 +187,12 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // sequencer specific meta event
+        sysexMessage.setMessage(0xf0,    // sysex
                                data,
                                data.length);
 
         return new MidiEvent[] {
-            new MidiEvent(metaMessage, context.getCurrentTick())
+            new MidiEvent(sysexMessage, context.getCurrentTick())
         };
     }
 

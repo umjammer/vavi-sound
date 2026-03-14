@@ -48,7 +48,7 @@ class VaviMidiConverter implements MidiConverter {
     private static final Logger logger = getLogger(VaviMidiConverter.class.getName());
 
     /** the device information */
-    private static final MfiDevice.Info info = new MfiDevice.Info(
+    static final MfiDevice.Info info = new MfiDevice.Info(
         "Java MIDI, MFi Sequence Converter",
         "vavi",
         "Format Converter between MIDI and MFi",
@@ -200,7 +200,7 @@ logger.log(Level.DEBUG, "create MFi track: 0");
 
             // convert
 try {
-            MfiConvertible converter = MfiConvertible.factory.get(key);
+            MfiConvertible converter = MfiConvertible.getConvertible(key);
             if (converter == null) {
 if (!uc.contains(key)) {
  logger.log(Level.WARNING, "no converter for: [" + key + "]");

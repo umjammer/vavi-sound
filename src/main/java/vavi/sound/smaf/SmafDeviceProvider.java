@@ -6,13 +6,11 @@
 
 package vavi.sound.smaf;
 
+import java.io.InputStream;
 import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
+
+import vavi.sound.mfi.vavi.VaviMfiDeviceProvider;
 
 import static java.lang.System.getLogger;
 
@@ -27,16 +25,37 @@ public class SmafDeviceProvider {
 
     private static final Logger logger = getLogger(SmafDeviceProvider.class.getName());
 
-    /** */
-    public static final String version = "1.0.10";
-
-    /** */
-    private final SmafDevice.Info[] smafDeviceInfos;
-
-    /** */
-    public SmafDeviceProvider() {
-        this.smafDeviceInfos = Factory.getSmafDeviceInfos();
+    static {
+        try {
+            try (InputStream is = VaviMfiDeviceProvider.class.getResourceAsStream("/META-INF/maven/vavi/vavi-sound/pom.properties")) {
+                if (is != null) {
+                    Properties props = new Properties();
+                    props.load(is);
+                    version = props.getProperty("version", "undefined in pom.properties");
+                } else {
+                    version = System.getProperty("vavi.test.version", "undefined");
+                }
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
+
+    /** */
+    public static final String version;
+
+    /**
+     * TODO used without asking
+     * 0x45 is "unused"
+     */
+    public final static int MANUFACTURER_ID = 0x45;
+
+    /** */
+    private static final SmafDevice.Info[] smafDeviceInfos = {
+            SmafSynthesizer.info,
+            SmafSequencer.info,
+            SmafMidiConverter.info
+    };
 
     /** */
     public boolean isDeviceSupported(SmafDevice.Info info) {
@@ -54,63 +73,18 @@ public class SmafDeviceProvider {
     }
 
     /** */
-    public SmafDevice getDevice(SmafDevice.Info info)
-        throws IllegalArgumentException {
-
-        return Factory.getSmafDevice(info);
-    }
-
-    /** */
-    private static class Factory {
-
-        /** */
-        public static SmafDevice.Info[] getSmafDeviceInfos() {
-
-            List<SmafDevice.Info> tmp = new ArrayList<>(deviceMap.keySet());
-
-            return tmp.toArray(new SmafDevice.Info[0]);
-        }
-
-        /** */
-        public static SmafDevice getSmafDevice(SmafDevice.Info smafDeviceInfo) {
-            if (deviceMap.containsKey(smafDeviceInfo)) {
-                try {
-                    return deviceMap.get(smafDeviceInfo).getDeclaredConstructor().newInstance();
-                } catch (Exception e) {
-logger.log(Level.ERROR, e.getMessage(), e);
-                }
-            }
-
-            throw new IllegalArgumentException(smafDeviceInfo + " is not supported");
-        }
-
-        /** */
-        private static final Map<SmafDevice.Info, Class<SmafDevice>> deviceMap = new HashMap<>();
-
-        /* */
-        static {
-            try {
-                // props
-                Properties props = new Properties();
-                final String path = "/vavi/sound/smaf/smaf.properties";
-                props.load(Factory.class.getResourceAsStream(path));
-
-                // midi
-                for (Object o : props.keySet()) {
-                    String key = (String) o;
-                    if (key.startsWith("smaf.device.")) {
-                        @SuppressWarnings("unchecked")
-                        Class<SmafDevice> deviceClass = (Class<SmafDevice>) Class.forName(props.getProperty(key));
-//logger.log(Level.TRACE, "smaf device class: " + StringUtil.getClassName(clazz));
-                        SmafDevice.Info smafDeviceInfo = deviceClass.getDeclaredConstructor().newInstance().getDeviceInfo();
-
-                        deviceMap.put(smafDeviceInfo, deviceClass);
-                    }
-                }
-            } catch (Exception e) {
-logger.log(Level.ERROR, e.getMessage(), e);
-                throw new IllegalStateException(e);
-            }
+    public SmafDevice getDevice(SmafDevice.Info info) throws IllegalArgumentException {
+        if (info == SmafSynthesizer.info) {
+            SmafSynthesizer synthesizer = new SmafSynthesizer();
+            return synthesizer;
+        } else if (info == SmafSequencer.info) {
+            SmafSequencer sequencer = new SmafSequencer();
+            return sequencer;
+        } else if (info == SmafMidiConverter.info) {
+            SmafMidiConverter converter = new SmafMidiConverter();
+            return converter;
+        } else {
+            throw new IllegalArgumentException("info is not suitable for this provider");
         }
     }
 }

@@ -11,6 +11,7 @@ import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 
+import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.vavi.AudioDataMessage;
@@ -51,7 +52,7 @@ public class CommonAudioMessage {
      */
     public static MfiEvent getMasterVolumeEvent(int masterVolume) {
         int realMasterVolume = (int) (masterVolume * maxMasterVolume / 100f);
-        MfiMessage message = new MasterVolumeMessage(0x00, 0xff, 0xb0, realMasterVolume);
+        MfiMessage message = new MasterVolumeMessage().init(0x00, 0xff, 0xb0, realMasterVolume);
         return new MfiEvent(message, 0L);
     }
 
@@ -61,7 +62,7 @@ public class CommonAudioMessage {
      */
     public static MfiEvent getVolumeEvent(int adpcmVolume) {
         int realAdpcmVolume = (int) (adpcmVolume * maxAdpcmVolume / 100f);
-        MfiMessage message = new AudioChannelVolumeMessage(0x00, 0x7f, 0x80, realAdpcmVolume);
+        MfiMessage message = new AudioChannelVolumeMessage().init(0x00, 0x7f, 0x80, realAdpcmVolume);
         return new MfiEvent(message, 0L);
     }
 
@@ -69,14 +70,14 @@ public class CommonAudioMessage {
      *
      * @param pan
      */
-    public static MfiEvent getPanEvent(int pan) {
-        MfiMessage message = new AudioChannelPanpotMessage(0x00, 0x7f, 0x81, pan);
+    public static MfiEvent getPanEvent(int pan) throws InvalidMfiDataException {
+        MfiMessage message = new AudioChannelPanpotMessage().init(0x00, 0x7f, 0x81, pan);
         return new MfiEvent(message, 0L);
     }
 
     /** */
     public static MfiEvent getPlayEvent() {
-        MfiMessage message = new AudioPlayMessage(0x00, 0x7f, 0x00, new byte[] { 0, 63 });
+        MfiMessage message = new AudioPlayMessage().init(0x00, 0x7f, 0x00, new byte[] { 0, 63 });
         return new MfiEvent(message, 0L);
     }
 
@@ -85,12 +86,12 @@ public class CommonAudioMessage {
      * @param start true: start, false: end
      */
     public static MfiEvent getCuePointEvent(boolean start) {
-        MfiMessage message = new CuePointMessage(0x00, start ? 0x00 : 0x01);
+        MfiMessage message = new CuePointMessage().init(0x00, 0xff, 0x00, start ? 0x00 : 0x01);
         return new MfiEvent(message, 0L);
     }
 
     /** */
-    private static final TempoMessage tempoMessage = new TempoMessage(0x00, 0xff, 0xcb, 100);
+    private static final TempoMessage tempoMessage = new TempoMessage().init(0x00, 0xff, 0xcb, 100);
 
     /** @return TempoMessage is always the same instance */
     public static MfiEvent getTempoEvent() {
@@ -111,10 +112,10 @@ logger.log(Level.DEBUG, "a delta: " + aDelta + ", tempo: " + tempoMessage.getTem
         int delta = getDelta(time);
 logger.log(Level.DEBUG, "delta: " + delta);
         for (int i = 0; i < delta / Nop2Message.maxDelta; i++) {
-            events.add(new MfiEvent(new Nop2Message(0xff, 0xff), 0L));
+            events.add(new MfiEvent(new Nop2Message().init(0xff, 0xff), 0L));
         }
         int moduloOfDelta = delta % Nop2Message.maxDelta;
-        events.add(new MfiEvent(new Nop2Message(moduloOfDelta % 0x100, moduloOfDelta / 0x100), 0L));
+        events.add(new MfiEvent(new Nop2Message().init(moduloOfDelta % 0x100, moduloOfDelta / 0x100), 0L));
 
         return events;
     }
@@ -133,15 +134,15 @@ logger.log(Level.DEBUG, "delta: " + delta);
     private static List<MfiEvent> getAudioEventsType1(byte[] data, int sampleRate, int bits, int channels) {
         List<MfiEvent> events = new ArrayList<>();
         // exst
-        events.add(new MfiEvent(new ExstMessage(1), 0L));
+        events.add(new MfiEvent(new ExstMessage().init(1), 0L));
 
         // ainf
-        events.add(new MfiEvent(new AinfMessage(false, 1), 0L));
+        events.add(new MfiEvent(new AinfMessage().init(false, 1), 0L));
 
         // audio data
         AudioEngine audioEngine = Factory.getAudioEngine(0x80); // TODO 0x80 is not defined in spec
         byte[] adpcm = audioEngine.encode(bits, channels, data);
-        AdpmMessage adpmMessage = new AdpmMessage(sampleRate / 1000, bits, false, channels);
+        AdpmMessage adpmMessage = (AdpmMessage) new AdpmMessage().init(sampleRate / 1000, bits, false, channels);
         AudioDataMessage audioData = new AudioDataMessage(0x80, 0x00, adpmMessage); // TODO 0x80 is not defined in spec
         audioData.setData(adpcm);
         events.add(new MfiEvent(audioData, 0L));
@@ -154,15 +155,15 @@ logger.log(Level.DEBUG, "delta: " + delta);
         List<MfiEvent> events = new ArrayList<>();
 
         // exst
-        events.add(new MfiEvent(new ExstMessage(1), 0L));
+        events.add(new MfiEvent(new ExstMessage().init(1), 0L));
 
         // ainf
-        events.add(new MfiEvent(new AinfMessage(false, 1, new AinfMessage.AudioInfo(0x81, new byte[] { 0x10, 0x08, 0x10, 0x10, 0x08, 0x10 })), 0L));
+        events.add(new MfiEvent(new AinfMessage().init(false, 1, new AinfMessage.AudioInfo(0x81, new byte[] { 0x10, 0x08, 0x10, 0x10, 0x08, 0x10 })), 0L));
 
         // audio data
         AudioEngine audioEngine = Factory.getAudioEngine(0x81);
         byte[] adpcm = audioEngine.encode(bits, channels, data);
-        AdpmMessage adpmMessage = new AdpmMessage(sampleRate / 1000, bits, false, channels);
+        AdpmMessage adpmMessage = (AdpmMessage) new AdpmMessage().init(sampleRate / 1000, bits, false, channels);
         AudioDataMessage audioData = new AudioDataMessage(AudioDataMessage.FORMAT_ADPCM_TYPE2, 0x00, adpmMessage);
         audioData.setData(adpcm);
         events.add(new MfiEvent(audioData, 0L));

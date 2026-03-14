@@ -42,14 +42,21 @@ public class ContentsInfoChunk extends Chunk {
 
     private static final Logger logger = getLogger(ContentsInfoChunk.class.getName());
 
-    /** */
-    public ContentsInfoChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "CNTI";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public ContentsInfoChunk init(byte[] id, int size) {
+        return (ContentsInfoChunk) super.init(id, size);
     }
 
     /** */
     public ContentsInfoChunk() {
-        System.arraycopy("CNTI".getBytes(), 0, id, 0, 4);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
         this.size = 5;
     }
 

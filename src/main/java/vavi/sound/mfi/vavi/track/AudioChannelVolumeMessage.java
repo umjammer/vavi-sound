@@ -7,13 +7,15 @@
 package vavi.sound.mfi.vavi.track;
 
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaMessage;
+import javax.sound.midi.SysexMessage;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.ChannelMessage;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
@@ -30,18 +32,23 @@ import vavi.sound.midi.VaviMidiDeviceProvider;
  * @version 0.00 070117 nsano initial version <br>
  */
 public class AudioChannelVolumeMessage extends vavi.sound.mfi.ShortMessage
-    implements ChannelMessage, MidiConvertible, AudioDataSequencer {
+    implements ChannelMessage, MidiConvertible, AudioDataSequencer, TrackMessage {
 
     /** */
     private int voice;
     /** 0 - 63 */
     private int volume = 63;
 
+    @Override
+    public boolean accept(String key) {
+        return "127.b.128".equals(key);
+    }
+
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
-     * @param status should be 0x7f
-     * @param data1 should be 0x80
+     * @param status must be 0x7f
+     * @param data1 must be 0x80
      * @param data2
      * <pre>
      *  76 543210
@@ -50,11 +57,14 @@ public class AudioChannelVolumeMessage extends vavi.sound.mfi.ShortMessage
      *  +- voice
      * </pre>
      */
-    public AudioChannelVolumeMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0x7f, 0x80, data2);
+    @Override
+    public AudioChannelVolumeMessage init(int delta, int status, int data1, int data2) {
+        super.init(delta, 0x7f, 0x80, data2);
 
         this.voice  = (data2 & 0xc0) >> 6;
         this.volume =  data2 & 0x3f;
+
+        return this;
     }
 
     /** */
@@ -92,7 +102,7 @@ public class AudioChannelVolumeMessage extends vavi.sound.mfi.ShortMessage
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        MetaMessage metaMessage = new MetaMessage();
+        SysexMessage SysexMessage = new SysexMessage();
 
         int id = MfiMessageStore.put(this);
         byte[] data = {
@@ -101,12 +111,12 @@ public class AudioChannelVolumeMessage extends vavi.sound.mfi.ShortMessage
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // sequencer specific meta event
+        SysexMessage.setMessage(0xf0,    // sysex
                                data,
                                data.length);
 
         return new MidiEvent[] {
-            new MidiEvent(metaMessage, context.getCurrent())
+            new MidiEvent(SysexMessage, context.getCurrent())
         };
     }
 

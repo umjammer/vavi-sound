@@ -17,6 +17,8 @@ import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 
 /**
@@ -34,15 +36,20 @@ import vavi.sound.mfi.vavi.MidiConvertible;
  *          0.14 031203 nsano implements {@link ChannelMessage} <br>
  */
 public class VolumeMessage extends vavi.sound.mfi.ShortMessage
-    implements ChannelMessage, MidiConvertible, MfiConvertible {
+    implements ChannelMessage, MidiConvertible, MfiConvertible, TrackMessage {
 
     /** */
     private int voice;
     /** 0 - 63 */
     private int volume = 63;
 
+    @Override
+    public boolean accept(String key) {
+        return "255.b.226".equals(key);
+    }
+
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status
      * @param data1 0xe2
@@ -54,16 +61,19 @@ public class VolumeMessage extends vavi.sound.mfi.ShortMessage
      *  +- voice
      * </pre>
      */
-    public VolumeMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, 0xe2, data2);
+    @Override
+    public VolumeMessage init(int delta, int status, int data1, int data2) {
+        super.init(delta, 0xff, 0xe2, data2);
 
         this.voice  = (data2 & 0xc0) >> 6;
         this.volume =  data2 & 0x3f;
+
+        return this;
     }
 
     /** for {@link MfiConvertible} */
-    public VolumeMessage() {
-        super(0, 0xff, 0xe2, 0);
+    public VolumeMessage init() {
+        return (VolumeMessage) super.init(0, 0xff, 0xe2, 0);
     }
 
     /** */

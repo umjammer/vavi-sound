@@ -28,15 +28,23 @@ public class LinkChunk extends Chunk {
 
     private static final Logger logger = getLogger(LinkChunk.class.getName());
 
-    /** */
-    public LinkChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Gln";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key.substring(0, 3));
+    }
+
+    @Override
+    public LinkChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "Link: " + size + " bytes");
+        return this;
     }
 
     /** */
     public LinkChunk() {
-        System.arraycopy("Gln".getBytes(), 0, id, 0, 3);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 3);
         this.size = 0;
     }
 

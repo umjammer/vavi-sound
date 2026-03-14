@@ -101,7 +101,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
 
     List<AudioDataMessage> audioDataChunks = new ArrayList<>();
 
-    List<TrackMessage> trackChunks = new ArrayList<>();
+    List<TrackChunk> trackChunks = new ArrayList<>();
 
     /** Gets MFi data */
     public Sequence getSequence() {
@@ -164,7 +164,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
         Track[] tracks = sequence.getTracks();
         int tracksLength = 0;
         for (int t = 0; t < tracks.length; t++) {
-            TrackMessage track = new TrackMessage(t, tracks[t]);
+            TrackChunk track = new TrackChunk(t, tracks[t]);
             tracksLength += track.getDataLength() + 4 + 4; // ... + type + length
         }
         return tracksLength;
@@ -207,7 +207,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
 
     /** types of messages omitted when exporting with {@link Track}[0] */
     static boolean isIgnored(MfiMessage message) {
-        // TODO is it ideal to omit just MetaMessage?
+        // TODO is it ideal to omit just SysexMessage?
         return message instanceof SubMessage || message instanceof AudioDataMessage;
     }
 
@@ -239,11 +239,11 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
         // 3. tracks
         Track[] tracks = sequence.getTracks();
         for (int t = 0; t < tracks.length; t++) {
-            TrackMessage track = new TrackMessage(t, tracks[t]);
+            TrackChunk track = new TrackChunk(t, tracks[t]);
             track.writeTo(os);
         }
 
-        os.flush(); // TODO is this needed?
+        os.flush();
     }
 
     /**
@@ -295,7 +295,7 @@ logger.log(Level.DEBUG, "track number: " + trackNumber);
             }
 
             // normal process
-            TrackMessage trackChunk = new TrackMessage(trackNumber, track);
+            TrackChunk trackChunk = new TrackChunk(trackNumber, track);
             trackChunk.setNoteLength(noteLength);
             trackChunk.setExst(exst);
             trackChunk.readFrom(is);
@@ -327,7 +327,7 @@ logger.log(Level.DEBUG, "is rest: " + is.available());
 
         // insert AudioDataMessage at next header sub chunks of Track 0
         for (AudioDataMessage audioDataChunk : audioDataChunks) {
-            // TODO convert to {@link MetaMessage}???
+            // TODO convert to {@link SysexMessage}???
             track.add(new MfiEvent(audioDataChunk, 0L));
         }
     }
@@ -384,7 +384,7 @@ logger.log(Level.INFO, "no note info, use 0");
         if (subChunk != null) {
             subChunk.setNoteLength(noteLength);
         } else {
-            headerChunk.getSubChunks().put(NoteMessage.TYPE, new NoteMessage(noteLength));
+            headerChunk.getSubChunks().put(NoteMessage.TYPE, new NoteMessage().init(noteLength));
         }
     }
 
@@ -413,7 +413,7 @@ logger.log(Level.INFO, "no note info, use 0");
         if (subChunk != null) {
             subChunk.setSorc(sorc);
         } else {
-            headerChunk.getSubChunks().put(SorcMessage.TYPE, new SorcMessage(sorc));
+            headerChunk.getSubChunks().put(SorcMessage.TYPE, new SorcMessage().init(sorc));
         }
     }
 
@@ -439,7 +439,7 @@ logger.log(Level.INFO, "no note info, use 0");
         if (subChunk != null) {
             subChunk.setTitle(title);
         } else {
-            headerChunk.getSubChunks().put(TitlMessage.TYPE, new TitlMessage(title));
+            headerChunk.getSubChunks().put(TitlMessage.TYPE, new TitlMessage().init(title));
         }
     }
 
@@ -466,7 +466,7 @@ logger.log(Level.INFO, "no note info, use 0");
         if (subChunk != null) {
             subChunk.setVersion(version);
         } else {
-            headerChunk.getSubChunks().put(VersMessage.TYPE, new VersMessage(version));
+            headerChunk.getSubChunks().put(VersMessage.TYPE, new VersMessage().init(version));
         }
     }
 
@@ -493,7 +493,7 @@ logger.log(Level.INFO, "no note info, use 0");
         if (subChunk != null) {
             subChunk.setProt(prot);
         } else {
-            headerChunk.getSubChunks().put(ProtMessage.TYPE, new ProtMessage(prot));
+            headerChunk.getSubChunks().put(ProtMessage.TYPE, new ProtMessage().init(prot));
         }
     }
 
@@ -520,7 +520,7 @@ logger.log(Level.INFO, "no note info, use 0");
         if (subChunk != null) {
             subChunk.setExst(exst);
         } else {
-            headerChunk.getSubChunks().put(ExstMessage.TYPE, new ExstMessage(exst));
+            headerChunk.getSubChunks().put(ExstMessage.TYPE, new ExstMessage().init(exst));
         }
     }
 

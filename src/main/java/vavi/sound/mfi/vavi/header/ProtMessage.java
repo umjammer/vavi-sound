@@ -39,22 +39,25 @@ public class ProtMessage extends SubMessage
     /** */
     public static final String TYPE = "prot";
 
+    @Override
+    public boolean accept(String key) {
+        return "meta.1".equals(key) || TYPE.equals(key);
+    }
+
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
+     *
      * @param type ignored
+     * @return this
      */
-    public ProtMessage(String type, byte[] data) {
-        super(TYPE, data);
+    @Override
+    public ProtMessage init(String type, byte[] data) {
+        return (ProtMessage) super.init(TYPE, data);
     }
 
     /** for creator */
-    public ProtMessage(String data) {
-        super(TYPE, data);
-    }
-
-    /** for {@link MfiConvertible} */
-    public ProtMessage() {
-        super();
+    public ProtMessage init(String data) {
+        return (ProtMessage) super.init(TYPE, data);
     }
 
     /** */
@@ -97,7 +100,7 @@ public class ProtMessage extends SubMessage
 
         MetaMessage metaMessage = (MetaMessage) midiEvent.getMessage();
 
-        ProtMessage mfiMessage = new ProtMessage(MidiUtil.getDecodedMessage(metaMessage.getMessage()));
+        ProtMessage mfiMessage = new ProtMessage().init(MidiUtil.getDecodedMessage(metaMessage.getMessage()));
 
         return new MfiEvent[] {
             new MfiEvent(mfiMessage, midiEvent.getTick())

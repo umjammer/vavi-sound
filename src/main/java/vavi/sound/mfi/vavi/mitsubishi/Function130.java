@@ -14,6 +14,7 @@ import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer.VENDOR_MITSUBISHI;
 
 
 /**
@@ -25,6 +26,11 @@ import static java.lang.System.getLogger;
 public class Function130 implements MachineDependentFunction {
 
     private static final Logger logger = getLogger(Function130.class.getName());
+
+    @Override
+    public String getId() {
+        return VENDOR_MITSUBISHI + "." + 130;
+    }
 
     /**
      * 0x82 ADPCM pan MFi2, MFi3

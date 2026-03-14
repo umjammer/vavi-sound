@@ -17,10 +17,12 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.smaf.SmafVaviSequence;
 import vavi.sound.smaf.message.MidiContext;
 import vavi.sound.smaf.message.MidiConvertible;
+import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
 
@@ -36,7 +38,7 @@ class SmafMidiConverter implements SmafDevice {
     private static final Logger logger = getLogger(SmafMidiConverter.class.getName());
 
     /** the device information */
-    private static final SmafDevice.Info info =
+    static final SmafDevice.Info info =
         new SmafDevice.Info("Java MIDI, SMAF Sequence Converter",
                             "vavi",
                             "Format Converter between MIDI and SMAF",
@@ -120,13 +122,19 @@ if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
                         }
                     }
                 } else if (smafMessage instanceof MetaMessage metaMessage) {
-logger.log(Level.DEBUG, "meta: " + metaMessage.getType());
-                    for (Map.Entry<String, Object> entry : metaMessage.data.entrySet()) {
-logger.log(Level.DEBUG, entry.getKey() + "=" + entry.getValue());
+logger.log(Level.DEBUG, "meta: " + MetaEvent.valueOf(metaMessage.getType()));
+                    if (metaMessage.getMapData() != null) {
+                        for (Map.Entry<String, Object> entry : metaMessage.getMapData().entrySet()) {
+logger.log(Level.DEBUG, "  " + entry.getKey() + "=" + entry.getValue());
+                        }
+                    } else {
+logger.log(Level.DEBUG, "  " + StringUtil.getDump(metaMessage.getData()));
+                        // TODO convert meta
                     }
+                // as for sysex message, all sysex messages are YamahaMessage. so those are handled by MidiConvertible
                 } else {
 if (!uc.contains(smafMessage.getClass())) {
- logger.log(Level.WARNING, "unhandled message: " + smafMessage);
+ logger.log(Level.WARNING, "unhandled message: " + smafMessage + " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
  uc.add(smafMessage.getClass());
 }
                 }

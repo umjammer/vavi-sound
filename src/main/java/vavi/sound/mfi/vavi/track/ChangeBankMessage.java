@@ -13,6 +13,8 @@ import vavi.sound.mfi.ChannelMessage;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 
 /**
@@ -29,15 +31,20 @@ import vavi.sound.mfi.vavi.MidiConvertible;
  *          0.13 031203 nsano implements {@link ChannelMessage} <br>
  */
 public class ChangeBankMessage extends ShortMessage
-    implements ChannelMessage, MidiConvertible {
+    implements ChannelMessage, MidiConvertible, TrackMessage {
 
     /** */
     private int voice;
     /** GM the 6 bit */
     private int bank;
 
+    @Override
+    public boolean accept(String key) {
+        return "255.b.225".equals(key);
+    }
+
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status
      * @param data1 0xe1
@@ -49,16 +56,19 @@ public class ChangeBankMessage extends ShortMessage
      *  +- voice
      * </pre>
      */
-    public ChangeBankMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, 0xe1, data2);
+    @Override
+    public ChangeBankMessage init(int delta, int status, int data1, int data2) {
+        super.init(delta, 0xff, 0xe1, data2);
 
         this.voice = (data2 & 0xc0) >> 6;
         this.bank  =  data2 & 0x3f;
+
+        return this;
     }
 
     /** for {@link MidiConvertible} */
-    public ChangeBankMessage() {
-        super(0, 0xff, 0xe1, 0);
+    public ChangeBankMessage init() {
+        return (ChangeBankMessage) super.init(0, 0xff, 0xe1, 0);
     }
 
     /** */

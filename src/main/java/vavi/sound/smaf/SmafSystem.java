@@ -15,7 +15,7 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.file.Files;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequence;
 
 import static java.lang.System.getLogger;
@@ -36,7 +36,7 @@ public final class SmafSystem {
     /** TODO SmafDeviceProvider */
     private static final SmafMidiConverter converter;
     /** TODO SmafDeviceProvider */
-    private static final MetaEventListener waveSequencer;
+    private static final SmafSynthesizer synthesizer;
     /** */
     private static final SmafFileReader reader;
     /** */
@@ -47,7 +47,7 @@ public final class SmafSystem {
         // TODO SmafDeviceProvider
         sequencer = new SmafSequencer();
         converter = new SmafMidiConverter();
-        waveSequencer = new MetaEventAdapter();
+        synthesizer = new SmafSynthesizer();
 
         reader = new SmafFileReader();
         writer = new SmafFileWriter();
@@ -58,17 +58,29 @@ public final class SmafSystem {
     }
 
     /** Gets a sequencer. */
-    public static Sequencer getSequencer()
-        throws SmafUnavailableException {
+    public static Sequencer getSequencer() throws SmafUnavailableException {
 
+        return getSequencer(false);
+    }
+
+    /** Gets a sequencer. */
+    public static Sequencer getSequencer(boolean connected) throws SmafUnavailableException {
+        if (connected) {
+            try {
+                sequencer.open();
+                sequencer.getTransmitter().setReceiver(getSynthesizer().getReceiver());
+            } catch (MidiUnavailableException e) {
+                throw new SmafUnavailableException(e);
+            }
+        }
         return sequencer;
     }
 
     /** Gets a listener to attach to a MIDI sequencer. */
-    public static MetaEventListener getMetaEventListener()
+    public static Synthesizer getSynthesizer()
         throws SmafUnavailableException {
 
-        return waveSequencer;
+        return synthesizer;
     }
 
     /**

@@ -32,17 +32,26 @@ public class WaveDataChunk extends Chunk {
 
     private static final Logger logger = getLogger(WaveDataChunk.class.getName());
 
-    /** */
-    public WaveDataChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Awa";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key.substring(0, 3));
+    }
+
+    @Override
+    public WaveDataChunk init(byte[] id, int size) {
+        super.init(id, size);
 
         waveNumber = id[3] & 0xff;
 logger.log(Level.DEBUG, "WaveData[" + waveNumber + "]: " + size + " bytes");
+
+        return this;
     }
 
     /** */
     public WaveDataChunk() {
-        System.arraycopy("Awa".getBytes(), 0, id, 0, 3);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 3);
         size = 0;
     }
 

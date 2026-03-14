@@ -12,6 +12,8 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
+import static vavi.sound.mfi.vavi.sharp.SharpSequencer.VENDOR_SHARP;
+
 
 /**
  * Sharp System exclusive message function 0x81 processor.
@@ -21,6 +23,11 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
  * @version 0.00 051111 nsano initial version <br>
  */
 public class Function129 implements MachineDependentFunction {
+
+    @Override
+    public String getId() {
+        return VENDOR_SHARP + "." + 129;
+    }
 
     /**
      * 0x81 Wave Channel Volume

@@ -32,14 +32,21 @@ public class FileChunk extends Chunk {
 
     private static final Logger logger = getLogger(FileChunk.class.getName());
 
-    /** */
-    public FileChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "MMMD";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public FileChunk init(byte[] id, int size) {
+        return (FileChunk) super.init(id, size);
     }
 
     /** */
     public FileChunk() {
-        System.arraycopy("MMMD".getBytes(), 0, id, 0, 4);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
         this.size = 2; // crc
     }
 

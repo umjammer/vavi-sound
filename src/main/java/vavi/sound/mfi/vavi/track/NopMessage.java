@@ -11,6 +11,8 @@ import javax.sound.midi.MidiEvent;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 
 /**
@@ -26,7 +28,12 @@ import vavi.sound.mfi.vavi.MidiConvertible;
  *          0.02 030920 nsano repackage <br>
  */
 public class NopMessage extends ShortMessage
-    implements MidiConvertible {
+    implements MidiConvertible, TrackMessage {
+
+    @Override
+    public boolean accept(String key) {
+        return "255.b.222".equals(key);
+    }
 
     /**
      * 0xde
@@ -34,20 +41,21 @@ public class NopMessage extends ShortMessage
      * @param delta delta time
      * @param data2 always 0
      */
-    public NopMessage(int delta, int data2) {
-        super(delta, 0xff, 0xde, data2);
+    public NopMessage init(int delta, int data2) {
+        return (NopMessage) super.init(delta, 0xff, 0xde, data2);
 //logger.log(Level.TRACE, "NOP: delta: " + delta);
     }
 
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status
      * @param data1 always 0xde
      * @param data2 always 0
      */
-    public NopMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, 0xde, data2);
+    @Override
+    public NopMessage init(int delta, int status, int data1, int data2) {
+        return (NopMessage) super.init(delta, 0xff, 0xde, data2);
 //logger.log(Level.TRACE, "NOP: delta: " + delta);
     }
 

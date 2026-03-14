@@ -23,15 +23,23 @@ import vavi.sound.smaf.InvalidSmafDataException;
  */
 public class ColorPaletteDefinitionChunk extends Chunk {
 
-    /** */
-    public ColorPaletteDefinitionChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Gcpd";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public ColorPaletteDefinitionChunk init(byte[] id, int size) {
+        super.init(id, size);
 //logger.log(Level.TRACE, "ColorPaletteDefinition: " + size);
+        return this;
     }
 
     /** */
     public ColorPaletteDefinitionChunk() {
-        System.arraycopy("Gcpd".getBytes(), 0, id, 0, 4);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
         this.size = 0;
     }
 

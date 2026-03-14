@@ -14,6 +14,8 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
 import vavi.util.StringUtil;
 
+import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
+
 
 /**
  * NEC System exclusive message function 0xf0, 0x_2 processor.
@@ -26,6 +28,11 @@ public class Function240_2 implements MachineDependentFunction {
 
     /** header length of this data */
     private static final int HEADER_LENGTH = 10;
+
+    @Override
+    public String getId() {
+        return VENDOR_NEC + "." + "240_2";
+    }
 
     /**
      * 0xf0, 0x_2 ADPCM, length 2

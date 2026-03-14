@@ -33,15 +33,22 @@ public class SeekAndPhraseInfoChunk extends Chunk {
 
     private static final Logger logger = getLogger(SeekAndPhraseInfoChunk.class.getName());
 
-    /** */
-    public SeekAndPhraseInfoChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "spI";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key.substring(1, 4));
+    }
+
+    @Override
+    public SeekAndPhraseInfoChunk init(byte[] id, int size) {
+        return (SeekAndPhraseInfoChunk) super.init(id, size);
 //logger.log(Level.TRACE, "SeekAndPhraseInfo: " + size);
     }
 
     /** */
     public SeekAndPhraseInfoChunk() {
-        System.arraycopy("spI".getBytes(), 0, id, 1, 3);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 1, 3);
         this.size = 0;
     }
 

@@ -33,7 +33,7 @@ public class SmafMessageStore {
     }
 
     /**
-     * @return id used in {@link javax.sound.midi.MetaMessage}
+     * @return id used in {@link javax.sound.midi.SysexMessage}
      */
     public static /* synchronized */ int put(SmafMessage message) {
         try {

@@ -6,12 +6,10 @@
 
 package vavi.sound.smaf.chunk;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
 
@@ -28,10 +26,18 @@ public class MasterTrackSequenceDataChunk extends SequenceDataChunk {
 
     private static final Logger logger = getLogger(MasterTrackSequenceDataChunk.class.getName());
 
-    /** */
-    public MasterTrackSequenceDataChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Mssq";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public MasterTrackSequenceDataChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "MasterTrackSequenceData: " + size + " bytes");
+        return this;
     }
 
     @Override

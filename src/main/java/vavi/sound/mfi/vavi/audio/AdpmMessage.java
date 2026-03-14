@@ -39,17 +39,25 @@ public class AdpmMessage extends SubMessage {
     /** */
     public static final String TYPE = "adpm";
 
+    @Override
+    public boolean accept(String subType) {
+        return TYPE.equals(subType);
+    }
+
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
+     *
      * @param type ignored
+     * @return this
      */
-    public AdpmMessage(String type, byte[] data) {
-        super(TYPE, data);
+    @Override
+    public SubMessage init(String type, byte[] data) {
+        return super.init(TYPE, data);
     }
 
     /** */
-    public AdpmMessage(int samplingRate, int samplingBits, boolean interleaved, int channels) {
-        super(TYPE, new byte[] {
+    public SubMessage init(int samplingRate, int samplingBits, boolean interleaved, int channels) {
+        return super.init(TYPE, new byte[] {
             (byte) (samplingRate & 0xff),
             (byte) (samplingBits & 0xff),
             (byte) ((interleaved ? 0x08 : 0x00) | (channels & 0x07))

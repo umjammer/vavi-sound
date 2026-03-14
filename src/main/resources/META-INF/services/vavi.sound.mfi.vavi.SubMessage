@@ -1,0 +1,14 @@
+vavi.sound.mfi.vavi.header.ProtMessage
+vavi.sound.mfi.vavi.header.AinfMessage
+vavi.sound.mfi.vavi.header.AuthMessage
+vavi.sound.mfi.vavi.header.CodeMessage
+vavi.sound.mfi.vavi.header.CopyMessage
+vavi.sound.mfi.vavi.header.DateMessage
+vavi.sound.mfi.vavi.header.ExstMessage
+vavi.sound.mfi.vavi.header.NoteMessage
+vavi.sound.mfi.vavi.header.SorcMessage
+vavi.sound.mfi.vavi.header.SuptMessage
+vavi.sound.mfi.vavi.header.ThrdMessage
+vavi.sound.mfi.vavi.header.TitlMessage
+vavi.sound.mfi.vavi.header.VersMessage
+vavi.sound.mfi.vavi.audio.AdpmMessage

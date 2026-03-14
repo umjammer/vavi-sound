@@ -69,10 +69,6 @@ class VaviSequencer implements Sequencer {
 
     @Override
     public void start() {
-        if (vaviSequence != null) {
-            sequencer.addMetaEventListener(vaviSequence.getMetaEventListener()); // TODO more smart way
-logger.log(Level.DEBUG, "★1 mel: " + vaviSequence);
-        }
         sequencer.start();
 logger.log(Level.DEBUG, "★1 start: " + sequencer.hashCode());
     }
@@ -81,10 +77,6 @@ logger.log(Level.DEBUG, "★1 start: " + sequencer.hashCode());
     public void stop() {
 logger.log(Level.DEBUG, "★1 stop: " + sequencer.hashCode());
         sequencer.stop();
-        if (vaviSequence != null) {
-logger.log(Level.DEBUG, "★1 mel: " + vaviSequence);
-            sequencer.removeMetaEventListener(vaviSequence.getMetaEventListener()); // TODO more smart way
-        }
     }
 
     @Override

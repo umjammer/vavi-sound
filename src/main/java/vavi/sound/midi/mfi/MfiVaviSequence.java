@@ -7,7 +7,8 @@
 package vavi.sound.midi.mfi;
 
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 
 import vavi.sound.mfi.MfiSystem;
@@ -34,10 +35,10 @@ public class MfiVaviSequence extends Sequence implements VaviSequence {
     }
 
     @Override
-    public MetaEventListener getMetaEventListener() {
+    public Receiver getReceiver() {
         try {
-            return MfiSystem.getMetaEventListener();
-        } catch (MfiUnavailableException e) {
+            return MfiSystem.getSynthesizer().getReceiver();
+        } catch (MfiUnavailableException | MidiUnavailableException e) {
             throw new IllegalStateException(e);
         }
     }

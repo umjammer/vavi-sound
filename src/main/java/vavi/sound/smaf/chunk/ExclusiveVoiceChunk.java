@@ -9,11 +9,9 @@ package vavi.sound.smaf.chunk;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.util.StringJoiner;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SysexMessage;
-import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
 
@@ -58,8 +56,16 @@ public class ExclusiveVoiceChunk extends Chunk {
      */
     SysexMessage exclusive;
 
-    public ExclusiveVoiceChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "EXVO";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public ExclusiveVoiceChunk init(byte[] id, int size) {
+        return (ExclusiveVoiceChunk) super.init(id, size);
     }
 
     @Override

@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Soundbank;
 
 import org.junit.jupiter.api.AfterEach;
@@ -40,8 +41,8 @@ class PlaySMAF {
     }
 
     static {
-        // should use this, but volume not works?
-//        System.setProperty("javax.sound.midi.Sequencer", "vavi.sound.midi.VaviSequencer");
+        // make sure smaf sequencer and synthesizer select below devices
+        System.setProperty("javax.sound.midi.Synthesizer", "#Gervill");
         System.setProperty("javax.sound.midi.Sequencer", "#Real Time Sequencer");
     }
 
@@ -54,7 +55,10 @@ class PlaySMAF {
     @Property
     String mmf = "src/test/resources/test.mmf";
 
+    boolean sfEnabled = false;
     private Sequencer sequencer;
+    Synthesizer synthesizer;
+    Receiver receiver;
 
     @BeforeEach
     void setup() throws Exception {
@@ -67,10 +71,11 @@ Debug.println("volume: " + volume);
 Debug.println(sequencer.getClass().getName());
         sequencer.open();
 
-Synthesizer synthesizer = (Synthesizer) sequencer;
+        synthesizer = SmafSystem.getSynthesizer();
+        synthesizer.open();
 // sf
 Path sf2Path = Path.of(sf2);
-if (Files.exists(sf2Path)) {
+if (sfEnabled && Files.exists(sf2Path)) {
  Soundbank soundbank = synthesizer.getDefaultSoundbank();
 //Instrument[] instruments = synthesizer.getAvailableInstruments();
  Debug.println("---- " + soundbank.getDescription() + " ----");
@@ -82,6 +87,8 @@ if (Files.exists(sf2Path)) {
  Debug.println("---- " + soundbank.getDescription() + " ----");
 //Arrays.asList(instruments).forEach(System.err::println);
 }
+        receiver = synthesizer.getReceiver();
+        sequencer.getTransmitter().setReceiver(receiver);
     }
 
     @AfterEach
@@ -103,7 +110,7 @@ Debug.println("META: " + meta.getType());
             if (meta.getType() == 47) cdl.countDown();
         };
         Sequence sequence = SmafSystem.getSequence(Path.of(mmf).toFile());
-        volume(((Synthesizer) sequencer).getReceiver(), volume);
+        volume(receiver, volume);
         sequencer.setSequence(sequence);
         sequencer.addMetaEventListener(mel);
         sequencer.start();

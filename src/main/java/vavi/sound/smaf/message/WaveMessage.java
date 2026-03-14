@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaMessage;
+import javax.sound.midi.SysexMessage;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.midi.MidiUtil;
@@ -151,10 +153,10 @@ public class WaveMessage extends SmafMessage
 
     /**
      * <p>
-     * Create {@link MetaMessage} of Meta type 0x7f as a MIDI message corresponding to
+     * Create {@link SysexMessage} of Meta type 0x7f as a MIDI message corresponding to
      * this instance of {@link WaveMessage}.
      * Store this instance of {@link WaveMessage} in {@link SmafMessageStore}
-     * as the actual data of {@link MetaMessage}
+     * as the actual data of {@link SysexMessage}
      * and store the numbered ID in 2 bytes big endian.
      * </p>
      * <p>
@@ -180,7 +182,7 @@ public class WaveMessage extends SmafMessage
      * |ff|7f|LL|5f|01|DH DL|
      * +--+--+--+--+--+--+--+
      *  0x5f manufacturer ID added arbitrarily
-     *  0x01 indicates {@link WaveMessage}  data
+     *  0x01 indicates {@link WaveMessage} data
      *  DH DL numbered id
      * </pre>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
@@ -190,7 +192,7 @@ public class WaveMessage extends SmafMessage
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        MetaMessage metaMessage = new MetaMessage();
+        SysexMessage metaMessage = new SysexMessage();
 
         int id = SmafMessageStore.put(this);
         byte[] data = {
@@ -199,7 +201,7 @@ public class WaveMessage extends SmafMessage
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // sequencer specific meta event
+        metaMessage.setMessage(0xf0,    // sysex
                                data,
                                data.length);
 
@@ -208,10 +210,12 @@ public class WaveMessage extends SmafMessage
         };
     }
 
+    private final ExecutorService es = Executors.newSingleThreadExecutor();
+
     @Override
     public void sequence() throws InvalidSmafDataException {
 logger.log(Level.DEBUG, "WAVE PLAY: " + number);
         AudioEngine engine = Factory.getAudioEngine();
-        engine.start(number);
+        es.submit(() -> engine.start(number));
     }
 }

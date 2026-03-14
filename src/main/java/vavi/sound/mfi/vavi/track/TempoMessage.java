@@ -9,6 +9,7 @@ package vavi.sound.mfi.vavi.track;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -21,6 +22,8 @@ import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 import static java.lang.System.getLogger;
 
@@ -37,7 +40,7 @@ import static java.lang.System.getLogger;
  *          0.13 031128 nsano refine <br/>
  */
 public class TempoMessage extends ShortMessage
-    implements MidiConvertible, MfiConvertible {
+    implements MidiConvertible, MfiConvertible, TrackMessage {
 
     private static final Logger logger = getLogger(TempoMessage.class.getName());
 
@@ -52,27 +55,43 @@ public class TempoMessage extends ShortMessage
         15, 30, 60, 120, 240, 480, 960, -1
     };
 
+    private static final String[] keys = {
+            "255.b.192", "255.b.192", "255.b.193", "255.b.194", "255.b.195", "255.b.196", "255.b.197", "255.b.198",
+            "255.b.199", "255.b.200", "255.b.201", "255.b.202", "255.b.203", "255.b.204", "255.b.205", "255.b.206",
+            "255.b.207"
+    };
+
+    @Override
+    public boolean accept(String key) {
+        return Arrays.asList(keys).contains(key);
+    }
+
     /**
      * Creates a tempo message.
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status 0xff fixed
      * @param data1 0xc0 ~ 0xcf index of time base
      * @param data2 20 ~ 255 tempo
      */
-    public TempoMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, data1, data2);
+    @Override
+    public TempoMessage init(int delta, int status, int data1, int data2) {
+        super.init(delta, 0xff, data1, data2);
 
         this.timeBase = timeBaseTable[data1 & 0x0f];
         this.tempo    = Math.max(data2, 20);
+
+        return this;
     }
 
     /** for {@link MfiConvertible} */
-    public TempoMessage() {
-        super(0, 0xff, 0xc3, 125);
+    public TempoMessage init() {
+        super.init(0, 0xff, 0xc3, 125);
 
         this.timeBase = 48;
         this.tempo    = 125;
+
+        return this;
     }
 
     /** */

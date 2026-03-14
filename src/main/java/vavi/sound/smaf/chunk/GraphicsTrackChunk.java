@@ -19,6 +19,7 @@ import java.util.Map;
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.MetaMessage;
+import vavi.sound.smaf.SmafDeviceProvider;
 import vavi.sound.smaf.SmafEvent;
 
 import static java.lang.System.getLogger;
@@ -45,15 +46,23 @@ public class GraphicsTrackChunk extends TrackChunk {
 
     private static final Logger logger = getLogger(GraphicsTrackChunk.class.getName());
 
-    /** */
-    public GraphicsTrackChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "GTR";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key.substring(0, 3));
+    }
+
+    @Override
+    public GraphicsTrackChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "Graphics[" + trackNumber + "]: " + size);
+        return this;
     }
 
     /** */
     public GraphicsTrackChunk() {
-        System.arraycopy("GTR".getBytes(), 0, id, 0, 3);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 3);
         this.size = 5;
     }
 
@@ -166,11 +175,17 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
         metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
         events.add(new SmafEvent(metaMessage, 0L));
 
-        return null; // TODO
+        return events;
     }
 
     /** "Gftd" */
     public static class FontDataChunk extends Chunk {
+
+        @Override
+        protected boolean accept(String key) {
+            return false;
+        }
+
         // "Ge**” ：Font Chunk
         // "Gu**” ：Unicode Font Chunk
         @Override

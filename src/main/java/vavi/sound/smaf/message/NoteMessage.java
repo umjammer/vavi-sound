@@ -109,14 +109,10 @@ public class NoteMessage extends SmafMessage
      */
     public int getNote() {
         return switch (octave) {
-            case 0 ->            // 00
-                    note;
-            case 1 ->         // 01
-                    note + 12;
-            case 2 ->            // 10
-                    note + 24;
-            case 3 ->         // 11
-                    note + 36;
+            case 0 -> note;      // 00
+            case 1 -> note + 12; // 01
+            case 2 -> note + 24; // 10
+            case 3 -> note + 36; // 11
             default -> note;
         };
     }

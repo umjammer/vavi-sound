@@ -31,6 +31,10 @@ public abstract class ShortMessage extends MfiMessage {
     /** @see #getCommand() */
     public static final int SOUND_CONTROL = 0xe0;
 
+    protected ShortMessage() {
+        super(null);
+    }
+
     /**
      *
      * @param delta

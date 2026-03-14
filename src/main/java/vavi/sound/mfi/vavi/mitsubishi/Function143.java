@@ -15,6 +15,8 @@ import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
+import static vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer.VENDOR_MITSUBISHI;
+
 
 /**
  * Mitsubishi System exclusive message function 0x8f processor.
@@ -26,6 +28,11 @@ public class Function143 implements MachineDependentFunction {
 
     /** header length of this data */
     private static final int HEADER_LENGTH = 7;
+
+    @Override
+    public String getId() {
+        return VENDOR_MITSUBISHI + "." + 143;
+    }
 
     /**
      * 0x8f Wave Setup

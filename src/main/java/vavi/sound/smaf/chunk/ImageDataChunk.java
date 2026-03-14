@@ -30,15 +30,23 @@ public class ImageDataChunk extends Chunk {
 
     private static final Logger logger = getLogger(ImageDataChunk.class.getName());
 
-    /** */
-    public ImageDataChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Gimd";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public ImageDataChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "ImageData: " + size + " bytes");
+        return this;
     }
 
     /** */
     public ImageDataChunk() {
-        System.arraycopy("Gimd".getBytes(), 0, id, 0, 4);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
         this.size = 0;
     }
 

@@ -9,6 +9,7 @@ package vavi.sound.mfi.vavi.audio;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 
+import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -38,14 +39,14 @@ public class RohmAudioMessage extends MachineDependentMessage {
      *
      * @param masterVolume in %
      */
-    public static MfiEvent getMasterVolumeEvent(int masterVolume) {
+    public static MfiEvent getMasterVolumeEvent(int masterVolume) throws InvalidMfiDataException {
         int realMasterVolume = (int) (masterVolume * maxMasterVolume / 100f);
-        MfiMessage message = new MasterVolumeMessage(0x00, 0xff, 0xb0, realMasterVolume);
+        MfiMessage message = new MasterVolumeMessage().init(0x00, 0xff, 0xb0, realMasterVolume);
         return new MfiEvent(message, 0L);
     }
 
     /** */
-    private static final TempoMessage tempoMessage = new TempoMessage(0x00, 0xff, 0xc2, 50);
+    private static final TempoMessage tempoMessage = new TempoMessage().init(0x00, 0xff, 0xc2, 50);
 
     /** @return TempoMessage is always the same instance */
     public static MfiEvent getTempoEvent() {

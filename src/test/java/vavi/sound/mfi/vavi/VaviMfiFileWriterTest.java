@@ -87,19 +87,19 @@ Debug.println(Level.FINE, "time: " + time + " ms");
         Track track = sequence.createTrack();
         MfiMessage message;
 
-        message = new CuePointMessage(0x00, 0x00);
+        message = new CuePointMessage().init(0x00, 0x00);
         track.add(new MfiEvent(message, 0L));
 
         double aDelta = (60d / 120d) / 120d * 1000;
         int delta = (int) Math.round(time / aDelta);
 Debug.println(Level.FINE, "delta: " + delta);
 
-        message = new TempoMessage(0x00, 0xff, 0xcb, 0x78);
+        message = new TempoMessage().init(0x00, 0xff, 0xcb, 0x78);
         track.add(new MfiEvent(message, 0L));
 
         d505i(track, data.getWave(), samplingRate, delta);
 
-        message = new EndOfTrackMessage(0, 0);
+        message = new EndOfTrackMessage().init(0, 0);
         track.add(new MfiEvent(message, 0L));
 
         int r = MfiSystem.write(sequence,

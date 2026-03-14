@@ -9,7 +9,7 @@ package vavi.sound.mfi.vavi.track;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaMessage;
+import javax.sound.midi.SysexMessage;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.ChannelMessage;
@@ -17,6 +17,8 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.LongMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
@@ -36,27 +38,35 @@ import static java.lang.System.getLogger;
  * @version 0.00 070117 nsano initial version <br>
  */
 public class AudioStopMessage extends LongMessage
-    implements ChannelMessage, MidiConvertible, AudioDataSequencer {
+    implements ChannelMessage, MidiConvertible, AudioDataSequencer, TrackMessage {
 
     private static final Logger logger = getLogger(AudioStopMessage.class.getName());
 
     /** */
     private int voice;
     /** */
-    private final int index;
+    private int index;
+
+    @Override
+    public boolean accept(String key) {
+        return "127.a.1".equals(key);
+    }
 
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
-     * @param status should be 0x7f
-     * @param data1 should be 0x01
+     * @param status must be 0x7f
+     * @param data1 must be 0x01
      * @param data2 1 byte
      */
-    public AudioStopMessage(int delta, int status, int data1, byte[] data2) {
-        super(delta, 0x7f, 0x01, data2);
+    @Override
+    public AudioStopMessage init(int delta, int status, int data1, byte[] data2) {
+        super.init(delta, 0x7f, 0x01, data2);
 
         this.voice = (data2[0] & 0xc0) >> 6;
         this.index =  data2[0] & 0x3f;
+
+        return this;
     }
 
     @Override
@@ -90,7 +100,7 @@ public class AudioStopMessage extends LongMessage
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 
-        MetaMessage metaMessage = new MetaMessage();
+        SysexMessage SysexMessage = new SysexMessage();
 
         int id = MfiMessageStore.put(this);
         byte[] data = {
@@ -99,12 +109,12 @@ public class AudioStopMessage extends LongMessage
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // sequencer specific meta event
+        SysexMessage.setMessage(0xf0,    // sysex
                                data,
                                data.length);
 
         return new MidiEvent[] {
-            new MidiEvent(metaMessage, context.getCurrent())
+            new MidiEvent(SysexMessage, context.getCurrent())
         };
     }
 

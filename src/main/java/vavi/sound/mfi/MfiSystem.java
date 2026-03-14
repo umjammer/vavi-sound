@@ -14,16 +14,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
-
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
 
+import vavi.sound.mfi.MfiDevice.Info;
 import vavi.sound.mfi.spi.MfiDeviceProvider;
 import vavi.sound.mfi.spi.MfiFileReader;
 import vavi.sound.mfi.spi.MfiFileWriter;
@@ -51,69 +54,100 @@ public final class MfiSystem {
 
     /** Gets all device from the default provider */
     public static MfiDevice.Info[] getMfiDeviceInfo() {
-        return provider.getDeviceInfo(); // TODO should search all providers
+        List<MfiDevice.Info> result = new ArrayList<>();
+
+        for (var provider : providers) {
+            MfiDevice.Info[] infos = provider.getDeviceInfo();
+            result.addAll(Arrays.asList(infos));
+        }
+
+        return result.toArray(MfiDevice.Info[]::new);
     }
 
     /** Get device by specified info from the default provider. */
-    public static MfiDevice getMfiDevice(MfiDevice.Info info)
-        throws MfiUnavailableException {
+    public static MfiDevice getMfiDevice(MfiDevice.Info info) throws MfiUnavailableException {
 
-        return provider.getDevice(info); // TODO should search all providers
+        for (var provider : providers) {
+            MfiDevice.Info[] infos = provider.getDeviceInfo();
+            for (MfiDevice.Info info_ : infos) {
+                if (info_.equals(info)) {
+                    return provider.getDevice(info);
+                }
+            }
+        }
+
+        throw new MfiUnavailableException("no sequencer available");
+    }
+
+    /** */
+    private static <T extends MfiDevice> T getDevice(String clazz, String name, Class<T> deviceClass) throws MfiUnavailableException {
+logger.log(Level.INFO, "name: " + name + ", clazz: " + clazz + ", deviceClass: " + deviceClass);
+        for (var provider : providers) {
+            MfiDevice.Info[] infos = provider.getDeviceInfo();
+            for (MfiDevice.Info info : infos) {
+                if (info.name.equals(name)) {
+                    MfiDevice device = provider.getDevice(info);
+                    if (clazz != null && device.getClass().getName().equals(clazz)) {
+                        return (T) device;
+                    } else if (deviceClass.isInstance(device)) {
+                        return (T) device;
+                    }
+                }
+            }
+        }
+
+        throw new MfiUnavailableException("no sequencer available");
+    }
+
+    /** */
+    private static String toKey(MfiDevice.Info info) throws MfiUnavailableException {
+        MfiDevice device = getMfiDevice(info);
+        return device.getClass().getName() + "#" + info.name;
     }
 
     /**
      * Get a sequencer from the default provider.
      * <p>
      * when playing by {@link #getSequencer()},
-     * set system property <code>javax.sound.midi.Sequencer</code> <code>"#Real Time Sequencer"</code>
-     * unless if <code>"Java MIDI(MFi/SMAF) ADPCM Sequencer"</code> become
-     * default sequencer, listeners get by {@link #getMetaEventListener()} are
-     * registered duplicate.
+     * set system property <code>vavi.sound.mfi.Sequencer</code> <code>"#Real Time Sequencer"</code>
+     * unless if <code>"Java MFi Sound Sequencer"</code> become
+     * default sequencer.
      * </p>
      */
-    public static Sequencer getSequencer()
-        throws MfiUnavailableException {
+    public static Sequencer getSequencer() throws MfiUnavailableException {
+        return getSequencer(false);
+    }
 
-        MfiDevice.Info[] infos = provider.getDeviceInfo();
-        for (MfiDevice.Info info : infos) {
-            MfiDevice device = provider.getDevice(info);
-            if (device instanceof Sequencer) {
-                return (Sequencer) device;
+    /** */
+    public static Sequencer getSequencer(boolean connected) throws MfiUnavailableException {
+        try {
+            String[] names = System.getProperty("vavi.sound.mfi.Sequencer", sequencerKey).split("#");
+
+            Sequencer sequencer = getDevice(names[0], names[1], Sequencer.class);
+            if (connected) {
+                sequencer.open();
+                sequencer.getTransmitter().setReceiver(getSynthesizer().getReceiver());
             }
+            return sequencer;
+        } catch (MidiUnavailableException e) {
+            throw new MfiUnavailableException(e);
         }
-        // TODO should search other providers when not found
-        throw new MfiUnavailableException("no sequencer available");
     }
 
     /** Gets a listener to add MIDI sequencer. */
-    public static javax.sound.midi.MetaEventListener getMetaEventListener()
-        throws MfiUnavailableException {
+    public static Synthesizer getSynthesizer() throws MfiUnavailableException {
 
-        MfiDevice.Info[] infos = provider.getDeviceInfo();
-        for (MfiDevice.Info info : infos) {
-            MfiDevice device = provider.getDevice(info);
-            if (device instanceof javax.sound.midi.MetaEventListener) {
-                return (javax.sound.midi.MetaEventListener) device;
-            }
-        }
+        String[] names = System.getProperty("vavi.sound.mfi.Synthesizer", synthesizerKey).split("#");
 
-        // TODO should search other providers when not found
-        throw new MfiUnavailableException("no MetaEventListener available");
+        return getDevice(names[0], names[1], Synthesizer.class);
     }
 
     /** Gets a MIDI - MFi converter from the default provider. */
-    public static MidiConverter getMidiConverter()
-        throws MfiUnavailableException {
+    public static MidiConverter getMidiConverter() throws MfiUnavailableException {
 
-        MfiDevice.Info[] infos = provider.getDeviceInfo();
-        for (MfiDevice.Info info : infos) {
-            MfiDevice device = provider.getDevice(info);
-            if (device instanceof MidiConverter) {
-                return (MidiConverter) device;
-            }
-        }
-        // TODO should search other providers when not found
-        throw new MfiUnavailableException("no midiConverter available");
+        String[] names = System.getProperty("vavi.sound.mfi.MidiConverter", midiConverterKey).split("#");
+
+        return getDevice(names[0], names[1], MidiConverter.class);
     }
 
     /** use #toMfiSequence(javax.sound.midi.Sequence sequence, int) */
@@ -121,7 +155,7 @@ public final class MfiSystem {
     public static Sequence toMfiSequence(javax.sound.midi.Sequence sequence)
         throws InvalidMidiDataException, MfiUnavailableException {
 
-        MidiConverter converter = MfiSystem.getMidiConverter();
+        MidiConverter converter = getMidiConverter();
         return converter.toMfiSequence(sequence);
     }
 
@@ -133,7 +167,7 @@ public final class MfiSystem {
     public static Sequence toMfiSequence(javax.sound.midi.Sequence sequence, int type)
         throws InvalidMidiDataException, MfiUnavailableException {
 
-        MidiConverter converter = MfiSystem.getMidiConverter();
+        MidiConverter converter = getMidiConverter();
         return converter.toMfiSequence(sequence, type);
     }
 
@@ -141,7 +175,7 @@ public final class MfiSystem {
     public static javax.sound.midi.Sequence toMidiSequence(Sequence sequence)
         throws InvalidMfiDataException, MfiUnavailableException {
 
-        MidiConverter converter = MfiSystem.getMidiConverter();
+        MidiConverter converter = getMidiConverter();
 //logger.log(Level.TRACE, converter);
         return converter.toMidiSequence(sequence);
     }
@@ -278,37 +312,45 @@ logger.log(Level.WARNING, "no writer found for: " + fileType);
     /** all writers */
     private static final ServiceLoader<MfiFileWriter> writers;
 
-    /** default provider */
-    private static final MfiDeviceProvider provider;
+    private static final String sequencerKey;
+    private static final String synthesizerKey;
+    private static final String midiConverterKey;
+
+    private static String getKey(Class<?> clazz) throws Exception {
+        Field field = clazz.getDeclaredField("info");
+        field.setAccessible(true);
+        return clazz.getName() + "#" + ((Info) field.get(null)).name;
+    }
 
     /*
-     * default is specified by MfiSystem.properties.
-     * <li>vavi.sound.mfi.spi.MfiDeviceProvider
+     * default sequencer, synthesizer, midiConverter classes are specified in MfiSystem.properties.
      */
     static {
-        Properties mfiSystemProps = new Properties();
-
         try {
-            Class<?> clazz = MfiSystem.class;
-
-            mfiSystemProps.load(clazz.getResourceAsStream("MfiSystem.properties"));
-            String defaultProvider = mfiSystemProps.getProperty("default.provider");
+            Properties props = new Properties();
+            props.load(MfiSystem.class.getResourceAsStream("MfiSystem.properties"));
+            sequencerKey = getKey(Class.forName(props.getProperty("vavi.sound.mfi.Sequencer")));
+            synthesizerKey = getKey(Class.forName(props.getProperty("vavi.sound.mfi.Synthesizer")));
+            midiConverterKey = getKey(Class.forName(props.getProperty("vavi.sound.mfi.MidiConverter")));
+if (logger.isLoggable(Level.TRACE)) {
+ System.err.println("sequencerKey: " + sequencerKey);
+ System.err.println("synthesizerKey: " + synthesizerKey);
+ System.err.println("midiConverterKey: " + midiConverterKey);
+}
 
             providers = ServiceLoader.load(vavi.sound.mfi.spi.MfiDeviceProvider.class);
 if (logger.isLoggable(Level.TRACE)) {
  providers.forEach(System.err::println);
 }
-            provider = StreamSupport.stream(providers.spliterator(), false).filter(p -> p.getClass().getName().equals(defaultProvider)).findFirst().get();
-logger.log(Level.DEBUG, "default provider: " + provider.getClass().getName());
 
             readers = ServiceLoader.load(vavi.sound.mfi.spi.MfiFileReader.class);
 if (logger.isLoggable(Level.TRACE)) {
- providers.forEach(System.err::println);
+ readers.forEach(System.err::println);
 }
 
             writers = ServiceLoader.load(vavi.sound.mfi.spi.MfiFileWriter.class);
 if (logger.isLoggable(Level.TRACE)) {
- providers.forEach(System.err::println);
+ writers.forEach(System.err::println);
 }
         } catch (Exception e) {
 logger.log(Level.ERROR, e.getMessage(), e);

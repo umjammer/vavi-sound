@@ -6,7 +6,7 @@
 
 package vavi.sound.midi;
 
-import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.Receiver;
 
 
 /**
@@ -22,5 +22,5 @@ public interface VaviSequence {
      *
      * @throws IllegalStateException when the listener available
      */
-    MetaEventListener getMetaEventListener();
+    Receiver getReceiver();
 }

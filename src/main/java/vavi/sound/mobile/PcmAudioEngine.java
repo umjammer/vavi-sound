@@ -57,6 +57,11 @@ public class PcmAudioEngine extends BasicAudioEngine {
     }
 
     @Override
+    public boolean accept(int format) {
+        return format == 0x90; // TODO
+    }
+
+    @Override
     protected int getChannels(int streamNumber) {
         int channels = 1;
         if (data[streamNumber].channel == -1) {
@@ -153,7 +158,7 @@ logger.log(Level.DEBUG, audioFormat);
                     line.write(buf, 0, l);
                 } else {
                     int lL = iss[0].read(buf, 0, 512);
-                    /*int lR = */iss[1].read(buf, 512, 512);
+                    /* int lR = */ iss[1].readNBytes(buf, 512, 512);
 //logger.log(Level.TRACE, "l : " + lL + ", r: " + lR);
                     for (int i = 0; i < lL / 2; i++) {
                         byte[] temp = new byte[4];

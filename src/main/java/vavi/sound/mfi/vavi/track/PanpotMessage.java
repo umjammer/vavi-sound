@@ -17,6 +17,8 @@ import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 
 /**
@@ -36,15 +38,20 @@ import vavi.sound.mfi.vavi.MidiConvertible;
  * @since MFi2
  */
 public class PanpotMessage extends vavi.sound.mfi.ShortMessage
-    implements ChannelMessage, MidiConvertible, MfiConvertible {
+    implements ChannelMessage, MidiConvertible, MfiConvertible, TrackMessage {
 
     /** */
     private int voice;
     /** left 0, 1 - center 32 - right 63 */
     private int panpot = 32;
 
+    @Override
+    public boolean accept(String key) {
+        return "255.b.227".equals(key);
+    }
+
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status
      * @param data1 0xe3
@@ -56,16 +63,19 @@ public class PanpotMessage extends vavi.sound.mfi.ShortMessage
      *  +- voice
      * </pre>
      */
-    public PanpotMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, 0xe3, data2);
+    @Override
+    public PanpotMessage init(int delta, int status, int data1, int data2) {
+        super.init(delta, 0xff, 0xe3, data2);
 
         this.voice  = (data2 & 0xc0) >> 6;
         this.panpot =  data2 & 0x3f;
+
+        return this;
     }
 
     /** for {@link MfiConvertible} */
-    public PanpotMessage() {
-        super(0, 0xff, 0xe3, 0);
+    public PanpotMessage init() {
+        return (PanpotMessage) super.init(0, 0xff, 0xe3, 0);
     }
 
     /** */

@@ -145,21 +145,21 @@ t = System.currentTimeMillis();
         MfiMessage message;
 
         // copyright
-        message = new SorcMessage(sorc);
+        message = new SorcMessage().init(sorc);
         track.add(new MfiEvent(message, 0L));
 
         // title
         String title = file.getName();
         title = title.substring(0, title.lastIndexOf('.'));
-        message = new TitlMessage(title);
+        message = new TitlMessage().init(title);
         track.add(new MfiEvent(message, 0L));
 
         // version
-        message = new VersMessage(vers);
+        message = new VersMessage().init(vers);
         track.add(new MfiEvent(message, 0L));
 
         // maker
-        message = new ProtMessage(prot);
+        message = new ProtMessage().init(prot);
         track.add(new MfiEvent(message, 0L));
 
         // machine depend, do every thing!
@@ -168,7 +168,7 @@ t = System.currentTimeMillis();
         }
 
         // eot
-        message = new EndOfTrackMessage(0, 0);
+        message = new EndOfTrackMessage().init(0, 0);
         track.add(new MfiEvent(message, 0L));
 
         if (!file.getParentFile().exists()) {

@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.util.Arrays;
 import java.util.List;
 
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -32,10 +31,18 @@ public class MasterTrackChunk extends TrackChunk {
 
     private static final Logger logger = getLogger(MasterTrackChunk.class.getName());
 
-    /** */
-    public MasterTrackChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "MSTR";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public MasterTrackChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "MasterTrack: " + size);
+        return this;
     }
 
     @Override

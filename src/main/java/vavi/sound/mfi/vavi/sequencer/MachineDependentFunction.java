@@ -8,10 +8,12 @@ package vavi.sound.mfi.vavi.sequencer;
 
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ServiceLoader;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
-import vavi.util.properties.PrefixedClassPropertiesFactory;
 
 import static java.lang.System.getLogger;
 
@@ -19,9 +21,9 @@ import static java.lang.System.getLogger;
 /**
  * Sub sequencer for machine dependent system exclusive message.
  * <p>
- * Currently, an implementation class of this interface should be an bean.
+ * Currently, an implementation class of this interface must be an bean.
  * (means having a contractor without argument)
- * {@link #process(MachineDependentMessage)} related should be state less.
+ * {@link #process(MachineDependentMessage)} related must be state less.
  * </p>
  * <pre>
  * properties file ... any
@@ -34,13 +36,10 @@ public interface MachineDependentFunction {
 
     Logger logger = getLogger(MachineDependentFunction.class.getName());
 
-    int VENDOR_NEC        = 0x10; // N
     int VENDOR_FUJITSU    = 0x20; // F
     int VENDOR_SONY       = 0x30; // SO
     int VENDOR_PANASONIC  = 0x40; // P
     int VENDOR_NIHONMUSEN = 0x50; // R
-    int VENDOR_MITSUBISHI = 0x60; // D
-    int VENDOR_SHARP      = 0x70; // SH
     int VENDOR_SANYO      = 0x80; // SA
     int VENDOR_MOTOROLA   = 0x90; // M
 
@@ -48,25 +47,29 @@ public interface MachineDependentFunction {
     int CARRIER_DOCOMO = 0x01;    // DoCoMo
 
     /** */
-    void process(MachineDependentMessage message)
-        throws InvalidMfiDataException;
+    String getId();
+
+    /** */
+    void process(MachineDependentMessage message) throws InvalidMfiDataException;
 
     /** factory */
-    class Factory extends PrefixedClassPropertiesFactory<String, MachineDependentFunction> {
+    class Factory {
+
+        static final Map<String, MachineDependentFunction> functions = new HashMap<>();
 
         /** */
-        public Factory(String path) {
-            super(path, "function.");
+        public static MachineDependentFunction getFunction(String key) {
+            MachineDependentFunction function = functions.get(key);
+            if (function == null) {
+logger.log(Level.WARNING, "no matched machine dependent function for: " + key);
+                return new UndefinedFunction(); // TODO should throw exception or not?
+            }
+            return function;
         }
 
-        /** */
-        public MachineDependentFunction getFunction(String key) {
-            try {
-                return get(key);
-            } catch (IllegalArgumentException e) {
-logger.log(Level.WARNING, key);
-logger.log(Level.WARNING, e.getMessage(), e);
-                return new UndefinedFunction(); // TODO should throw exception or not?
+        static {
+            for (MachineDependentFunction function : ServiceLoader.load(MachineDependentFunction.class)) {
+                functions.put(function.getId(), function);
             }
         }
     }

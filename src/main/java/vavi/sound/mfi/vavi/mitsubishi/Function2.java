@@ -12,6 +12,8 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
+import static vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer.VENDOR_MITSUBISHI;
+
 
 /**
  * Mitsubishi System exclusive message function 0x02 processor.
@@ -20,6 +22,11 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
  * @version 0.00 030822 nsano initial version <br>
  */
 public class Function2 implements MachineDependentFunction {
+
+    @Override
+    public String getId() {
+        return VENDOR_MITSUBISHI + "." + 2;
+    }
 
     /**
      * 0x02 Bend Range MFi2 only
