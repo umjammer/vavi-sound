@@ -55,6 +55,9 @@ public interface AudioEngine {
      */
     void start(int streamNumber);
 
+    /** close the line inside the engine */
+    void close();
+
     /**
      * Encodes pcm data.
      * @param bits adpcm sampling bits
