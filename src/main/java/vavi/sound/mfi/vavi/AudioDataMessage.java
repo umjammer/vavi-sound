@@ -255,7 +255,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
         int id = MfiMessageStore.put(this);
         byte[] data = {
             VaviMidiDeviceProvider.MANUFACTURER_ID,
-            META_FUNCTION_ID_MFi4,
+                SYSEX_FUNCTION_ID_MFi4,
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };

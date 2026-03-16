@@ -36,7 +36,7 @@ public interface MachineDependentSequencer {
     Logger logger = System.getLogger(MachineDependentSequencer.class.getName());
 
     /** for {@link MachineDependentSequencer} */
-    int META_FUNCTION_ID_MACHINE_DEPEND = 0x01;
+    int SYSEX_FUNCTION_ID_MACHINE_DEPEND = 0x01;
 
     /** */
     int getId();

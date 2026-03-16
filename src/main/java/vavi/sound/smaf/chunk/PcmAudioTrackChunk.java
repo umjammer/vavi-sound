@@ -173,6 +173,7 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
         props.put("durationTimeBase", timeBaseTable[durationTimeBase]);
         props.put("gateTimeTimeBase", timeBaseTable[gateTimeTimeBase]);
 
+        // internal use
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
         events.add(new SmafEvent(metaMessage, 0L));

@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.System.Logger;
 import java.util.Arrays;
-import java.util.Map;
 
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.message.yamaha.YamahaMessage;

@@ -23,9 +23,7 @@ import static java.lang.System.getLogger;
 /**
  * Sequencer implemented for SMAF.
  * <p>
- * don't use {@link javax.sound.midi.MidiSystem#getSequencer()},
- * {@link javax.sound.midi.MidiSystem#getSequencer(boolean)} in this program,
- * because this is the {@link javax.sound.midi.Sequencer}.
+ * <li>{@code /vavi/sound/mfi/vavi/midi.properties#defaultSynthesizer} ... internal midi synthesizer</li>
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>

@@ -172,7 +172,7 @@ logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".fo
      * so they are converted to meta-events.
      * </p>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
-     * @see MachineDependentSequencer#META_FUNCTION_ID_MACHINE_DEPEND
+     * @see MachineDependentSequencer#SYSEX_FUNCTION_ID_MACHINE_DEPEND
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
@@ -183,7 +183,7 @@ logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".fo
         int id = MfiMessageStore.put(this);
         byte[] data = {
             VaviMidiDeviceProvider.MANUFACTURER_ID,
-            MachineDependentSequencer.META_FUNCTION_ID_MACHINE_DEPEND,
+            MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND,
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };

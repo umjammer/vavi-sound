@@ -73,7 +73,7 @@ public class Function132 extends Function131 {
                           data[13];
 
         int adpcmLength = data.length - HEADER_LENGTH;
-logger.log(Level.DEBUG, "ADPCM voice: " + channel + "ch, No.%d, mode=%d, continued=%d, playSize=%d, %d".formatted(packetId, mode, continued, length, adpcmLength));
+logger.log(Level.DEBUG, "ADPCM voice: " + channel + "ch, No.%d, mode=%d, continued=%b, playSize=%d, %d".formatted(packetId, mode, continued, length, adpcmLength));
 logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(data, 32));
 
         this.sampleRate = getSamplingRateInternal(format1);

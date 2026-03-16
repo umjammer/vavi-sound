@@ -19,7 +19,6 @@ import javax.sound.midi.ShortMessage;
 
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
-import vavi.sound.midi.smaf.SmafVaviSequence;
 import vavi.sound.smaf.message.MidiContext;
 import vavi.sound.smaf.message.MidiConvertible;
 import vavi.util.StringUtil;
@@ -77,7 +76,7 @@ private final Set<Class<? extends SmafMessage>> uc = new HashSet<>();
 
         int resolution = midiContext.getResolution(smafTracks);
 logger.log(Level.DEBUG, "resolution: " + resolution);
-        Sequence midiSequence = new SmafVaviSequence(Sequence.PPQ, resolution, 1);
+        Sequence midiSequence = new Sequence(Sequence.PPQ, resolution, 1);
         javax.sound.midi.Track midiTrack = midiSequence.getTracks()[0];
 
         midiTrack.add(midiContext.getTempoEvent());

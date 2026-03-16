@@ -186,7 +186,7 @@ public class WaveMessage extends SmafMessage
      *  DH DL numbered id
      * </pre>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
-     * @see vavi.sound.smaf.sequencer.WaveSequencer#META_FUNCTION_ID_SMAF
+     * @see vavi.sound.smaf.sequencer.WaveSequencer#SYSEX_FUNCTION_ID_SMAF
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
@@ -197,7 +197,7 @@ public class WaveMessage extends SmafMessage
         int id = SmafMessageStore.put(this);
         byte[] data = {
             VaviMidiDeviceProvider.MANUFACTURER_ID,
-            WaveSequencer.META_FUNCTION_ID_SMAF,
+            WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };

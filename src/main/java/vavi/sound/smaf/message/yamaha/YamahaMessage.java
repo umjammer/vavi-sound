@@ -183,7 +183,7 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
         int id = SmafMessageStore.put(this);
         byte[] data = {
             VaviMidiDeviceProvider.MANUFACTURER_ID,
-            MachineDependentSequencer.META_FUNCTION_ID_MACHINE_DEPEND,
+            MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND,
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };

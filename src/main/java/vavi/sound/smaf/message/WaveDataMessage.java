@@ -100,7 +100,7 @@ public class WaveDataMessage extends SmafMessage
         int id = SmafMessageStore.put(this);
         byte[] data = {
             VaviMidiDeviceProvider.MANUFACTURER_ID,
-            WaveSequencer.META_FUNCTION_ID_SMAF,
+            WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };

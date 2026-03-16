@@ -27,7 +27,7 @@ import static java.lang.System.getLogger;
 public interface WaveSequencer {
 
     /** for {@link WaveSequencer} */
-    int META_FUNCTION_ID_SMAF = 0x03;
+    int SYSEX_FUNCTION_ID_SMAF = 0x03;
 
     /** */
     void sequence() throws InvalidSmafDataException;

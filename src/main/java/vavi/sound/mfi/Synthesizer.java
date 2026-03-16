@@ -41,4 +41,7 @@ public interface Synthesizer extends MfiDevice {
 
     /** @see javax.sound.midi.Synthesizer#getReceiver() */
     Receiver getReceiver() throws MidiUnavailableException;
+
+    /** */
+    javax.sound.midi.Synthesizer getWrapedSynthesizer();
 }

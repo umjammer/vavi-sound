@@ -149,6 +149,7 @@ logger.log(Level.DEBUG, audioFormat);
             SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
             line.open(audioFormat);
             line.start();
+            double volume = Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume",  "0.2"));
             volume(line, volume);
             byte[] buf = new byte[1024];
             while (iss[0].available() > 0) {

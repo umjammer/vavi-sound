@@ -6,9 +6,7 @@
 
 package vavi.sound.mfi.vavi.sequencer;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -26,7 +24,7 @@ import vavi.sound.mobile.AudioEngine;
 public interface AudioDataSequencer {
 
     /** for {@link AudioDataSequencer} */
-    int META_FUNCTION_ID_MFi4 = 0x02;
+    int SYSEX_FUNCTION_ID_MFi4 = 0x02;
 
     /** */
     void sequence() throws InvalidMfiDataException;

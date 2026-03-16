@@ -61,13 +61,6 @@ public class MetaMessage extends SmafMessage {
 
     /**
      * @param mapData TODO better way?
-     */
-    protected MetaMessage(Map<String, Object> mapData) {
-        this.mapData = mapData;
-    }
-
-    /**
-     * @param mapData TODO better way?
      * <p>
      * {@link javax.sound.midi.MetaMessage} nearly compatible.
      * </p>

@@ -19,7 +19,6 @@ import java.util.Map;
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.MetaMessage;
-import vavi.sound.smaf.SmafDeviceProvider;
 import vavi.sound.smaf.SmafEvent;
 
 import static java.lang.System.getLogger;
@@ -171,6 +170,7 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
         props.put("colorType", colorType);
         props.put("timeBase", durationTimeBase);
 
+        // internal use
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
         events.add(new SmafEvent(metaMessage, 0L));
