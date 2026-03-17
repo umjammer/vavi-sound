@@ -182,10 +182,10 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
 
         int id = SmafMessageStore.put(this);
         byte[] data = {
-            VaviMidiDeviceProvider.MANUFACTURER_ID,
-            MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND,
-            (byte) ((id / 0x100) & 0xff),
-            (byte) ((id % 0x100) & 0xff)
+                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
+                MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND,
+                (byte) ((id / 0x100) & 0xff),
+                (byte) ((id % 0x100) & 0xff)
         };
         sysexMessage.setMessage(0xf0,    // sysex
                                data,
@@ -199,7 +199,7 @@ FF F0 13 43 02 01 00 50 72 9B 3F C1 98 4B 3F C0 00 10 21 42 00 F7
     /* TODO super sloppy right now */
     @Override
     public void sequence() throws InvalidSmafDataException {
-logger.log(Level.INFO, "yamaha: " + data.length + "\n" + StringUtil.getDump(data, 64));
+logger.log(Level.DEBUG, "yamaha: " + data.length + "\n" + StringUtil.getDump(data, 64));
         switch (data[2]) {
         case 0x79:
             switch (data[4]) {

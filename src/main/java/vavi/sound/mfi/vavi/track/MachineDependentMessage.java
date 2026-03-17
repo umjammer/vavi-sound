@@ -182,10 +182,10 @@ logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".fo
 
         int id = MfiMessageStore.put(this);
         byte[] data = {
-            VaviMidiDeviceProvider.MANUFACTURER_ID,
-            MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND,
-            (byte) ((id / 0x100) & 0xff),
-            (byte) ((id % 0x100) & 0xff)
+                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
+                MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND,
+                (byte) ((id / 0x100) & 0xff),
+                (byte) ((id % 0x100) & 0xff)
         };
         SysexMessage.setMessage(0xf0,    // sysex
                                data,

@@ -95,21 +95,21 @@ public class WaveDataMessage extends SmafMessage
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        SysexMessage metaMessage = new SysexMessage();
+        SysexMessage sysexMessage = new SysexMessage();
 
         int id = SmafMessageStore.put(this);
         byte[] data = {
-            VaviMidiDeviceProvider.MANUFACTURER_ID,
+            VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
             WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
             (byte) ((id / 0x100) & 0xff),
             (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0xf0,    // sysex
+        sysexMessage.setMessage(0xf0,    // sysex
                                data,
                                data.length);
 
         return new MidiEvent[] {
-            new MidiEvent(metaMessage, context.getCurrentTick())
+            new MidiEvent(sysexMessage, context.getCurrentTick())
         };
     }
 

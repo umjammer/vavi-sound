@@ -103,8 +103,6 @@ logger.log(Level.DEBUG, audioFormat);
             line = (SourceDataLine) AudioSystem.getLine(info);
             line.open(audioFormat);
             line.start();
-            double volume = Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume",  "0.2"));
-            volume(line, volume);
         } catch (LineUnavailableException e) {
             throw new IllegalStateException(e);
         }
@@ -127,6 +125,9 @@ logger.log(Level.INFO, "always used: no: " + streamNumber + ", ch: " + this.data
 //logger.log(Level.TRACE, data.length);
             InputStream[] iss = getInputStreams(streamNumber, channels);
 //logger.log(Level.TRACE, "iss: " + iss[0].available());
+
+            double volume = Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume",  "0.2"));
+            volume(line, volume);
 
             byte[] buf = new byte[1024];
             while (iss[0].available() > 0) {

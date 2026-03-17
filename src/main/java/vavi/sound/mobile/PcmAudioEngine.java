@@ -157,6 +157,7 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + this.dat
 
             double volume = Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume",  "0.2"));
             volume(line, volume);
+
             byte[] buf = new byte[1024];
             while (iss[0].available() > 0) {
                 if (channels == 1) {

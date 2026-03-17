@@ -23,13 +23,13 @@ import vavi.sound.mobile.AudioEngine;
  */
 public interface AudioDataSequencer {
 
-    /** for {@link AudioDataSequencer} */
+    /** manufacturer vavi function id for {@link AudioDataSequencer} */
     int SYSEX_FUNCTION_ID_MFi4 = 0x02;
 
     /** */
     void sequence() throws InvalidMfiDataException;
 
-    /** */
+    /** factory for audio engine */
     class Factory {
 
         /** */

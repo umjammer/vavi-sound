@@ -113,10 +113,10 @@ public class AudioPlayMessage extends LongMessage
 
         int id = MfiMessageStore.put(this);
         byte[] data = {
-            VaviMidiDeviceProvider.MANUFACTURER_ID,
+                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
                 SYSEX_FUNCTION_ID_MFi4,
-            (byte) ((id / 0x100) & 0xff),
-            (byte) ((id % 0x100) & 0xff)
+                (byte) ((id / 0x100) & 0xff),
+                (byte) ((id % 0x100) & 0xff)
         };
         SysexMessage.setMessage(0xf0,    // sysex
                                data,

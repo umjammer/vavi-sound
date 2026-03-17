@@ -202,6 +202,7 @@ logger.log(Level.DEBUG, "★0 meta: type: " + message.getType());
                 MetaMessage metaMessage = new MetaMessage();
                 metaMessage.setMessage(0x2f, new byte[0], 0);
                 fireMeta(metaMessage);
+                // TODO closing engine
                 off();
             } catch (InvalidMfiDataException e) {
 logger.log(Level.ERROR, e.getMessage(), e);

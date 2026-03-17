@@ -26,7 +26,7 @@ import static java.lang.System.getLogger;
  */
 public interface WaveSequencer {
 
-    /** for {@link WaveSequencer} */
+    /** manufacturer vavi function id for {@link WaveSequencer} */
     int SYSEX_FUNCTION_ID_SMAF = 0x03;
 
     /** */
@@ -44,7 +44,7 @@ public interface WaveSequencer {
          * Second time or later.
          */
         public static AudioEngine getAudioEngine() {
-logger.log(Level.INFO, "audioEngineStore: " + audioEngineStore.get());
+logger.log(Level.TRACE, "audioEngineStore: " + audioEngineStore.get());
             return audioEngineStore.get();
         }
 

@@ -10,6 +10,8 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiDeviceReceiver;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
@@ -84,7 +86,7 @@ public class VaviSynthesizer implements Synthesizer {
      * a player using {@link MfiMessageStore}.
      * @see MachineDependentMessage#getMidiEvents(MidiContext)
      */
-    public static class VaviReceiver implements Receiver {
+    public static class VaviReceiver implements MidiDeviceReceiver {
         boolean isOpen;
 
         /** */
@@ -111,6 +113,7 @@ public class VaviSynthesizer implements Synthesizer {
  throw e;
 }
             }
+            // TODO MetaMessage 0x2f closing engine
             try {
                 midiSynthesizer.getReceiver().send(message, timeStamp);
             } catch (MidiUnavailableException e) {
@@ -121,6 +124,11 @@ public class VaviSynthesizer implements Synthesizer {
         @Override
         public void close() {
             isOpen = false;
+        }
+
+        @Override
+        public MidiDevice getMidiDevice() {
+            return midiSynthesizer;
         }
 
         // ----
@@ -139,7 +147,7 @@ public class VaviSynthesizer implements Synthesizer {
                 case 0:     // 3 byte manufacturer id
                     logger.log(Level.WARNING, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
                     break;
-                case VaviMidiDeviceProvider.MANUFACTURER_ID:
+                case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x45 vavi
                     processSpecial_Vavi(message);
                     break;
                 default:
@@ -149,7 +157,7 @@ public class VaviSynthesizer implements Synthesizer {
         }
 
         /**
-         * manufacturer id: vavi
+         * manufacturer id: vavi 0x45
          * <pre>
          * 0xf0 0x45
          * </pre>
@@ -172,7 +180,7 @@ public class VaviSynthesizer implements Synthesizer {
         }
 
         /**
-         * sysex function id: machine dependent
+         * sysex function id: machine dependent (message has vendor and carrier id)
          * <pre>
          * 0xf0 0x45 0x01
          * </pre>
@@ -197,7 +205,7 @@ public class VaviSynthesizer implements Synthesizer {
         }
 
         /**
-         * sysex function id: mfi4
+         * sysex function id: mfi4 (message is mfi4)
          * <pre>
          * 0xf0 0x45 0x02
          * </pre>
@@ -245,10 +253,5 @@ logger.log(Level.ERROR, e.getMessage(), e);
     @Override
     public void close() {
         midiSynthesizer.close();
-    }
-
-    @Override
-    public javax.sound.midi.Synthesizer getWrapedSynthesizer() {
-        return midiSynthesizer;
     }
 }

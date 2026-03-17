@@ -183,6 +183,7 @@ logger.log(Level.DEBUG, e);
                 MetaMessage metaMessage = new MetaMessage();
                 metaMessage.setMessage(MetaEvent.META_END_OF_TRACK.number(), new byte[0], 0);
                 fireMeta(metaMessage);
+                // TODO closing engine
                 off();
             } catch (InvalidSmafDataException e) {
 logger.log(Level.DEBUG, e);

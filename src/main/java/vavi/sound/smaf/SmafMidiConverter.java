@@ -117,7 +117,7 @@ if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
                     if (midiEvents != null) {
                         for (MidiEvent midiEvent : midiEvents) {
                             midiTrack.add(midiEvent);
-//                          addSmafMessage(midiTrack, midiEvents[k]);
+//                          addSmafMessage(midiTrack, midiEvent);
                         }
                     }
                 } else if (smafMessage instanceof MetaMessage metaMessage) {
@@ -130,7 +130,7 @@ logger.log(Level.DEBUG, "  " + entry.getKey() + "=" + entry.getValue());
 logger.log(Level.DEBUG, "  " + StringUtil.getDump(metaMessage.getData()));
                         // TODO convert meta
                     }
-                // as for sysex message, all sysex messages are YamahaMessage. so those are handled by MidiConvertible
+                // as for sysex message, all sysex messages id is vavi. so those are handled as MidiConvertible at above
                 } else {
 if (!uc.contains(smafMessage.getClass())) {
  logger.log(Level.WARNING, "unhandled message: " + smafMessage + " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -143,7 +143,7 @@ if (!uc.contains(smafMessage.getClass())) {
         return midiSequence;
     }
 
-    /** Note may be entered before Control/Program */
+    /** Note may be inserted before Control/Program */
     @SuppressWarnings("unused")
     private static void addSmafMessage(javax.sound.midi.Track midiTrack, MidiEvent midiEvent) {
 //logger.log(Level.TRACE, "★: " + midiEvent.getMessage());

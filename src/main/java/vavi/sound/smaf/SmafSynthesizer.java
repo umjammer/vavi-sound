@@ -10,6 +10,8 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiDeviceReceiver;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
@@ -97,8 +99,11 @@ logger.log(Level.ERROR, e.getMessage(), e);
         midiSynthesizer.unloadAllInstruments(soundbank);
     }
 
-    /** A Receiver w/ ADPCM driver */
-    public static class SmafReceiver implements Receiver {
+    /**
+     * A Receiver w/ ADPCM driver
+     * @see vavi.sound.smaf.sequencer.SmafMessageStore
+     */
+    public static class SmafReceiver implements MidiDeviceReceiver {
         boolean isOpen;
 
         /** */
@@ -125,6 +130,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
  throw e;
 }
             }
+            // TODO MetaMessage 0x2f closing engine
             try {
                 midiSynthesizer.getReceiver().send(message, timeStamp);
             } catch (MidiUnavailableException e) {
@@ -135,6 +141,11 @@ logger.log(Level.ERROR, e.getMessage(), e);
         @Override
         public void close() {
             isOpen = false;
+        }
+
+        @Override
+        public MidiDevice getMidiDevice() {
+            return midiSynthesizer;
         }
 
         // ----
@@ -153,7 +164,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                 case 0:     // 3 byte manufacturer id
                     logger.log(Level.WARNING, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
                     break;
-                case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x5f vavi
+                case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x45 vavi
                     processSpecial_Vavi(message);
                     break;
                 default:
@@ -165,7 +176,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
         /**
          * manufacturer id: vavi
          * <pre>
-         * 0x5f functionId
+         * 0x45 functionId
          * </pre>
          */
         private static void processSpecial_Vavi(javax.sound.midi.SysexMessage message)
@@ -188,8 +199,10 @@ logger.log(Level.ERROR, e.getMessage(), e);
 
         /**
          * function id: machine dependent
+         * <p>
+         * vendor is yamaha only, so process is same as the {@link #processSpecial_Vavi_Wave}
          * <pre>
-         * 0x5f 0x01
+         * 0x45 0x01 id(H) id(L)
          * </pre>
          */
         private static void processSpecial_Vavi_MachineDependent(javax.sound.midi.SysexMessage message)
@@ -203,9 +216,9 @@ logger.log(Level.ERROR, e.getMessage(), e);
         }
 
         /**
-         * function id: smaf
+         * function id: smaf (message is smaf message for wave)
          * <pre>
-         * 0x5f 0x03 id(H) id(L)
+         * 0x45 0x03 id(H) id(L)
          * </pre>
          */
         private static void processSpecial_Vavi_Wave(javax.sound.midi.SysexMessage message)
@@ -222,10 +235,5 @@ logger.log(Level.ERROR, e.getMessage(), e);
     @Override
     public Receiver getReceiver() throws MidiUnavailableException {
         return new SmafReceiver(midiSynthesizer);
-    }
-
-    @Override
-    public javax.sound.midi.Synthesizer getWrapedSynthesizer() {
-        return midiSynthesizer;
     }
 }
