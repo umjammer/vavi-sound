@@ -44,7 +44,7 @@ logger.log(Level.DEBUG, "Bitmap: " + size + " bytes");
 
     /** */
     public BitmapChunk() {
-        System.arraycopy("Gbm".getBytes(), 0, id, 0, 3);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 3);
         this.size = 0;
     }
 

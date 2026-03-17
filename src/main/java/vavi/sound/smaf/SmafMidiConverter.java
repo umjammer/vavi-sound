@@ -101,11 +101,12 @@ logger.log(Level.DEBUG, "smafTracks: " + smafTracks.length);
 
                 if (smafMessage instanceof MidiConvertible midiConvertible) {
 if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
+    !(smafMessage instanceof vavi.sound.smaf.message.ProgramChangeMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.ModulationMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.PitchBendMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.PanMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.ExpressionMessage)) {
- logger.log(Level.DEBUG, "midi convertible(" + i + ":" + j + "): " + smafMessage);
+ logger.log(Level.DEBUG, "special midi convertible(" + i + ":" + j + "): " + smafMessage);
 }
 //if (smafMessage instanceof vavi.sound.smaf.message.NoteMessage) {
 // int gateTime = ((vavi.sound.smaf.message.NoteMessage) smafMessage).getGateTime();

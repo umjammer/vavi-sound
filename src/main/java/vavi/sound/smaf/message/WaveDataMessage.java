@@ -99,10 +99,10 @@ public class WaveDataMessage extends SmafMessage
 
         int id = SmafMessageStore.put(this);
         byte[] data = {
-            VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
-            WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
-            (byte) ((id / 0x100) & 0xff),
-            (byte) ((id % 0x100) & 0xff)
+                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
+                WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
+                (byte) ((id / 0x100) & 0xff),
+                (byte) ((id % 0x100) & 0xff)
         };
         sysexMessage.setMessage(0xf0,    // sysex
                                data,

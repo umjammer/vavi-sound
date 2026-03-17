@@ -356,19 +356,19 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
      * HandyPhoneStandard only.
      * index is pseudo MIDI channel
      * <pre>
-     *  Value        | Description
-     * --------------+-----------------
-     *  0x00         | No Shift(Original)
-     *  0x01         | +1 Octave
-     *  0x02         | +2 Octave
-     *  0x03         | +3 Octave
-     *  0x04         | +4 Octave
-     *  0x05  ~  0x80 | Reserved
-     *  0x81         | -1 Octave
-     *  0x82         | -2 Octave
-     *  0x83         | -3 Octave
-     *  0x84         | -4 Octave
-     *  0x85  ~  0xFF | Reserved
+     *  Value       | Description
+     * -------------+-------------------
+     *  0x00        | No Shift(Original)
+     *  0x01        | +1 Octave
+     *  0x02        | +2 Octave
+     *  0x03        | +3 Octave
+     *  0x04        | +4 Octave
+     *  0x05 ~ 0x80 | Reserved
+     *  0x81        | -1 Octave
+     *  0x82        | -2 Octave
+     *  0x83        | -3 Octave
+     *  0x84        | -4 Octave
+     *  0x85 ~ 0xFF | Reserved
      * </pre>
      * @see OctaveShiftMessage
      */
@@ -395,7 +395,7 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
     public int setVelocity(int smafChannel, int velocity) {
         int midiChannel = getMidiChannel(smafChannel);
         velocities[midiChannel] = velocity;
-//logger.log(Level.TRACE, "velocities[" + mididChannel + "]: " + octaveShift);
+//logger.log(Level.TRACE, "velocities[" + midiChannel + "]: " + octaveShift);
         return velocity; // TODO mhh...
     }
 
@@ -491,12 +491,14 @@ logger.log(Level.TRACE, "tempoTable: " + tempoTable.length);
     /** if no tempo is specified, SSD will treat it as a quarter note = 120 */
     private static final int tempo = 120;
 
-    /** */
+    /** this will be changed at {@link #getResolution} */
     private int timeBase = 2;
 
     /**
+     * gate time to ticks.
      * @return Returns the ticks.
      * @see #timeBase
+     * @see #getResolution
      */
     public long getTicksOf(long gateTime) {
         return gateTime * timeBase;

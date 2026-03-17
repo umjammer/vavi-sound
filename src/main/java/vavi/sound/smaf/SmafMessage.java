@@ -18,7 +18,7 @@ public abstract class SmafMessage {
     protected int duration;
 
     /**
-     * @param duration
+     * @param duration raw data in a file
      */
     public void setDuration(int duration) {
         this.duration = duration;

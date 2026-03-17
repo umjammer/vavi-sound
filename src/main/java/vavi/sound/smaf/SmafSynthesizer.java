@@ -23,6 +23,7 @@ import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.smaf.sequencer.MachineDependentSequencer;
 import vavi.sound.smaf.sequencer.SmafMessageStore;
 import vavi.sound.smaf.sequencer.WaveSequencer;
+import vavi.util.StringUtil;
 
 
 /**
@@ -168,7 +169,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
                     processSpecial_Vavi(message);
                     break;
                 default:
-                    logger.log(Level.WARNING, "unhandled manufacturer: %02x".formatted(manufacturerId));
+                    logger.log(Level.WARNING, "unhandled manufacturer: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
                     break;
             }
         }
