@@ -59,7 +59,7 @@ public class SequenceDataChunk extends Chunk {
 
     @Override
     protected boolean accept(String key) {
-        return FOURCC.equals(key);
+        return FOURCC.equals(key) || "SEQU".equals(key);
     }
 
     @Override
