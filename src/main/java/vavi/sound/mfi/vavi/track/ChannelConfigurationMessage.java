@@ -13,6 +13,8 @@ import javax.sound.midi.MidiEvent;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 import static java.lang.System.getLogger;
 
@@ -28,17 +30,22 @@ import static java.lang.System.getLogger;
  *          0.02 030920 nsano repackage <br>
  */
 public class ChannelConfigurationMessage extends ShortMessage
-    implements MidiConvertible {
+    implements MidiConvertible, TrackMessage {
 
     private static final Logger logger = getLogger(ChannelConfigurationMessage.class.getName());
 
     /** */
-    private final int channel;
+    private int channel;
     /** */
-    private final boolean drum;
+    private boolean drum;
+
+    @Override
+    public boolean accept(String key) {
+        return "255.b.186".equals(key);
+    }
 
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status unused 0xff fixed
      * @param data1 0xba
@@ -49,11 +56,14 @@ public class ChannelConfigurationMessage extends ShortMessage
      *   +- channel
      * </pre>
      */
-    public ChannelConfigurationMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, 0xba, data2);
+    @Override
+    public ChannelConfigurationMessage init(int delta, int status, int data1, int data2) {
+        super.init(delta, 0xff, 0xba, data2);
 
         this.channel = (data2 & 0x78) >> 3;
         this.drum = (data2 & 0x07) == 1;
+
+        return this;
     }
 
     /** */

@@ -14,11 +14,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.util.ServiceLoader;
+
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.ByteUtil;
-import vavi.util.properties.PrefixedPropertiesFactory;
 
 import static java.lang.System.getLogger;
 import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
@@ -42,14 +41,15 @@ public abstract class Chunk {
     protected int size;
 
     /** */
-    public Chunk() {
-    }
+    protected abstract boolean accept(String key);
 
-    /** TODO bean might be fine */
-    protected Chunk(byte[] id, int size) {
+    /** */
+    protected Chunk init(byte[] id, int size) {
 
         this.id = id;
         this.size = size;
+
+        return this;
     }
 
     /**
@@ -104,7 +104,7 @@ public abstract class Chunk {
         int size = dis.readInt();
 logger.log(Level.DEBUG, "size: 0x%1$08x (%1$d)".formatted(size));
 
-        Chunk chunk = newInstance(id, size);
+        Chunk chunk = factory(id, size);
 //logger.log(Level.TRACE, chunk.getClass().getName() + "\n" + StringUtil.getDump(is, 0, 128));
 //logger.log(Level.TRACE, "is: " + is + " / " + chunk.getClass().getName());
         CrcDataInputStream mdis = new CrcDataInputStream(is, id, size);
@@ -323,72 +323,24 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
      * @param size chunk size
      * @return chunk
      */
-    private static Chunk newInstance(byte[] id, int size) throws InvalidSmafDataException {
-
-        try {
-            return chunkFactory.get(id).newInstance(id, size);
-        } catch (IllegalArgumentException e) {
-logger.log(Level.DEBUG, e);
-            return new UndefinedChunk(id, size); // TODO out source
-//          throw new InvalidSmafDataException("unsupported chunk id: " + StringUtil.getDump(id));
-        } catch (Exception e) {
-if (e instanceof InvocationTargetException) {
-logger.log(Level.ERROR, e.getCause().getMessage(), e.getCause());
-} else {
-logger.log(Level.ERROR, e.getMessage(), e);
-}
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /** prefix for property file */
-    private static final String keyBase = "chunk.";
-
-    /** constructors for factory */
-    private static final PrefixedPropertiesFactory<byte[], Constructor<? extends Chunk>> chunkFactory =
-            new PrefixedPropertiesFactory<>("/vavi/sound/smaf/smaf.properties", keyBase) {
-
-                @Override
-                public Constructor<? extends Chunk> get(byte[] id) {
-                    String type = new String(id);
+    private static Chunk factory(byte[] id, int size) {
+        String type = new String(id);
 logger.log(Level.DEBUG, "Chunk ID(read): " + (Character.isLetterOrDigit(type.charAt(3)) ? type : "%s+0x%02x".formatted(new String(id, 0, 3), (int) type.charAt(3) & 0xff)));
+        for (Chunk chunk : ServiceLoader.load(Chunk.class)) {
+            if (chunk.accept(type)) {
+                return chunk.init(id, size);
+            }
+        }
 
-                    for (String key : instances.keySet()) {
-                        if (key.charAt(3) == '*' && key.substring(0, 3).equals(type.substring(0, 3))) {
-                            return instances.get(key);
-                        } else if (key.equals(type)) {
-                            return instances.get(key);
-                        }
-                    }
-
-                    throw new IllegalArgumentException(type);
-                }
-
-                @Override
-                protected Constructor<? extends Chunk> getStoreValue(String value) {
-                    try {
-                        @SuppressWarnings("unchecked")
-                        Class<? extends Chunk> clazz = (Class<? extends Chunk>) Class.forName(value);
-//logger.log(Level.TRACE, "chunk class: " + StringUtil.getClassName(clazz));
-                        return clazz.getConstructor(byte[].class, Integer.TYPE);
-                    } catch (Exception e) {
-                        logger.log(Level.ERROR, e.getMessage(), e);
-                        throw new IllegalStateException(e);
-                    }
-                }
-
-                @Override
-                protected String getStoreKey(String key) {
-                    return key.substring(keyBase.length());
-                }
-            };
+        return new UndefinedChunk().init(id, size); // TODO out source
+    }
 
     // ----
 
     /** indentation management */
     protected static class DumpContext implements AutoCloseable /* i know this is abuse. */ {
         /** indentation management store */
-        private static ThreadLocal<DumpContext> dc = new ThreadLocal<>();
+        private static final ThreadLocal<DumpContext> dc = new ThreadLocal<>();
 
         static final String indent = " ".repeat(4);
         int depth = 0;

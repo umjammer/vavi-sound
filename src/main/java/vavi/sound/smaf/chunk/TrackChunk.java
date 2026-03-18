@@ -31,15 +31,13 @@ public abstract class TrackChunk extends Chunk {
      */
     protected int trackNumber;
 
-    /** */
-    public TrackChunk(byte[] id, int size) {
-        super(id, size);
+    @Override
+    public TrackChunk init(byte[] id, int size) {
+        super.init(id, size);
 
         this.trackNumber = id[3] & 0xff;
-    }
 
-    /** */
-    protected TrackChunk() {
+        return this;
     }
 
     /** */
@@ -204,7 +202,7 @@ public abstract class TrackChunk extends Chunk {
     }
 
     /**
-     * MetaMessage (META_MACHINE_DEPEND) is placed at the beginning.
+     * SysexMessage is placed at the beginning.
      * TrackChunk information is maintained in Properties.
      */
     public abstract List<SmafEvent> getSmafEvents()

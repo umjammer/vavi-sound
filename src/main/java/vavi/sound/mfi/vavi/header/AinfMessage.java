@@ -48,12 +48,20 @@ public class AinfMessage extends SubMessage {
     /** */
     private final List<AudioInfo> audioInfos = new ArrayList<>();
 
+    @Override
+    public boolean accept(String key) {
+        return TYPE.equals(key);
+    }
+
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
+     *
      * @param type ignored
+     * @return this
      */
-    public AinfMessage(String type, byte[] data) {
-        super(TYPE, data);
+    @Override
+    public SubMessage init(String type, byte[] data) {
+        super.init(TYPE, data);
 
         // audio info ...
         data = getData();
@@ -64,10 +72,12 @@ public class AinfMessage extends SubMessage {
 
             l += 1 + 2 + audioInfo.length; // format + length + ...
         }
+
+        return this;
     }
 
     /** */
-    public AinfMessage(boolean audioChunkOnly, int audioChunksCount, AudioInfo ... audioInfos) {
+    public SubMessage init(boolean audioChunkOnly, int audioChunksCount, AudioInfo ... audioInfos) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int tmp = audioChunksCount;
@@ -82,10 +92,9 @@ public class AinfMessage extends SubMessage {
             }
             byte[] message = getSubMessage(TYPE, baos.toByteArray(), baos.size());
             setMessage(META_TYPE, message, message.length);
-        } catch (InvalidMfiDataException e) {
+            return this;
+        } catch (InvalidMfiDataException | IOException e) {
             throw new IllegalStateException(e);
-        } catch (IOException e) {
-            assert false : e.toString();
         }
     }
 

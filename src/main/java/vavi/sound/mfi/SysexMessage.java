@@ -21,6 +21,18 @@ import java.io.Serializable;
 public abstract class SysexMessage extends MfiMessage implements Serializable {
 
     /** */
+    protected SysexMessage() {
+        super(null);
+    }
+
+    /** */
+    public SysexMessage init(byte[] message) {
+        data = message;
+        length = message.length;
+        return this;
+    }
+
+    /** */
     protected SysexMessage(byte[] message) {
         super(message);
     }

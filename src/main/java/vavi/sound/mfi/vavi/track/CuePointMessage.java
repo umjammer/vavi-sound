@@ -13,6 +13,8 @@ import javax.sound.midi.MidiEvent;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 import vavi.sound.midi.MidiConstants.MetaEvent;
 
 
@@ -29,10 +31,15 @@ import vavi.sound.midi.MidiConstants.MetaEvent;
  *          0.12 030920 nsano repackage <br>
  */
 public class CuePointMessage extends ShortMessage
-    implements MidiConvertible {
+    implements MidiConvertible, TrackMessage {
 
     /** 00: start, 01: end */
-    private final boolean start;
+    private boolean start;
+
+    @Override
+    public boolean accept(String key) {
+        return "255.b.208".equals(key);
+    }
 
     /**
      * 0xd0
@@ -40,21 +47,24 @@ public class CuePointMessage extends ShortMessage
      * @param delta delta time
      * @param data2 00: start, 01: end
      */
-    public CuePointMessage(int delta, int data2) {
-        this(delta, 0xff, 0xd0, data2);
+    public CuePointMessage init(int delta, int data2) {
+        return this.init(delta, 0xff, 0xd0, data2);
     }
 
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status
      * @param data1 always 0xd0
      * @param data2 00: start, 01: end
      */
-    public CuePointMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, 0xd0, data2);
+    @Override
+    public CuePointMessage init(int delta, int status, int data1, int data2) {
+        super.init(delta, 0xff, 0xd0, data2);
 
         this.start = (data2 == 0);
+
+        return this;
     }
 
     /** */

@@ -8,7 +8,7 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-sound</artifactId>
-  <version>1.0.22</version>
+  <version>1.0.23</version>
 
   <name>Vavi Sound SPIs</name>
   <url>https://github.com/umjammer/vavi-sound</url>
@@ -137,7 +137,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.12.1</version>
         <configuration>
-          <release>17</release>
+          <release>25</release>
         </configuration>
       </plugin>
       <plugin>
@@ -206,7 +206,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.14.0</version>
+        <version>6.0.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

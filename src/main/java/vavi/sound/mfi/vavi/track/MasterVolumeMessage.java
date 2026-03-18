@@ -13,6 +13,8 @@ import javax.sound.midi.SysexMessage;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 
 /**
@@ -31,22 +33,30 @@ import vavi.sound.mfi.vavi.MidiConvertible;
  *          0.03 030920 nsano repackage <br>
  */
 public class MasterVolumeMessage extends ShortMessage
-    implements MidiConvertible {
+    implements MidiConvertible, TrackMessage {
 
     /** 0 ~ 127 */
     private int volume = 100;
 
+    @Override
+    public boolean accept(String key) {
+        return "255.b.176".equals(key);
+    }
+
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status
      * @param data1 0xb0
      * @param data2 volume
      */
-    public MasterVolumeMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, 0xb0, data2);
+    @Override
+    public MasterVolumeMessage init(int delta, int status, int data1, int data2) {
+        super.init(delta, 0xff, 0xb0, data2);
 
         this.volume = data2;    // 0 ~ 127
+
+        return this;
     }
 
     /** */

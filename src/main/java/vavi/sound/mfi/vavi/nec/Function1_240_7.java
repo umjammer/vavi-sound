@@ -13,6 +13,8 @@ import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
+import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
+
 
 /**
  * NEC System exclusive message function 0x01, 0xf0, 0x07 processor.
@@ -26,6 +28,11 @@ public class Function1_240_7 implements MachineDependentFunction {
 
     /** header length of this data */
     public static final int HEADER_LENGTH = 13;
+
+    @Override
+    public String getId() {
+        return VENDOR_NEC + "." + "1_240_7";
+    }
 
     /**
      * 0x01, 0xf0, 0x07 extended stream wave control information

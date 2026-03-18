@@ -39,22 +39,25 @@ public class CopyMessage extends SubMessage implements MidiConvertible, MfiConve
     /** */
     public static final String TYPE = "copy";
 
+    @Override
+    public boolean accept(String key) {
+        return "meta.2".equals(key) || TYPE.equals(key);
+    }
+
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
+     *
      * @param type ignored
+     * @return this
      */
-    public CopyMessage(String type, byte[] data) {
-        super(TYPE, data);
+    @Override
+    public CopyMessage init(String type, byte[] data) {
+        return (CopyMessage) super.init(TYPE, data);
     }
 
     /** for creator */
-    public CopyMessage(String data) {
-        super(TYPE, data);
-    }
-
-    /** for {@link MfiConvertible} */
-    public CopyMessage() {
-        super();
+    public CopyMessage init(String data) {
+        return (CopyMessage) super.init(TYPE, data);
     }
 
     @Override
@@ -90,7 +93,7 @@ public class CopyMessage extends SubMessage implements MidiConvertible, MfiConve
 
         MetaMessage metaMessage = (MetaMessage) midiEvent.getMessage();
 
-        CopyMessage mfiMessage = new CopyMessage(MidiUtil.getDecodedMessage(metaMessage.getMessage()));
+        CopyMessage mfiMessage = new CopyMessage().init(MidiUtil.getDecodedMessage(metaMessage.getMessage()));
 
         return new MfiEvent[] {
             new MfiEvent(mfiMessage, midiEvent.getTick())

@@ -16,6 +16,7 @@ import vavi.sound.mobile.AudioEngine;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer.VENDOR_MITSUBISHI;
 
 
 /**
@@ -40,6 +41,11 @@ public class Function131 implements MachineDependentFunction {
 
     /** header length of this data */
     public static final int HEADER_LENGTH = 10;
+
+    @Override
+    public String getId() {
+        return VENDOR_MITSUBISHI + "." + 131;
+    }
 
     /**
      * 0x83 Wave Packet Data    MFi2, MFi3

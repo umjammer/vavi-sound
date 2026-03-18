@@ -13,13 +13,18 @@ import vavi.sound.smaf.SmafMessage;
 
 
 /**
- * temporary store.
- * <p>
- * TODO to remove this class somehow -> ThreadLocal?
- * </p>
+ * temporary store. avoiding creating data contained sysex message.
+ * referencing id, message behaves as a sequencer using data inside.
+ * <pre>
+ * handle sysex mi si hh ll
+ * mi (manufacturer id) ... must be vavi 0x45
+ * si (sub id) ... 1 or 2
+ * hh ll (currentId) ... store's key
+ * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
+ * @see vavi.sound.smaf.SmafSynthesizer.SmafReceiver
  */
 public class SmafMessageStore {
 
@@ -33,9 +38,9 @@ public class SmafMessageStore {
     }
 
     /**
-     * @return id used in {@link javax.sound.midi.MetaMessage}
+     * @return id used in {@link javax.sound.midi.SysexMessage}
      */
-    public static /* synchronized */ int put(SmafMessage message) {
+    public static synchronized int put(SmafMessage message) {
         try {
             stores.put(currentId, message);
             return currentId;

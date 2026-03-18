@@ -32,15 +32,23 @@ public class OptionalDataChunk extends Chunk {
 
     private static final Logger logger = getLogger(OptionalDataChunk.class.getName());
 
-    /** */
-    public OptionalDataChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "OPDA";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public OptionalDataChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "OptionalData: " + size + " bytes");
+        return this;
     }
 
     /** */
     public OptionalDataChunk() {
-        System.arraycopy("OPDA".getBytes(), 0, id, 0, 4);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
         this.size = 0;
     }
 
@@ -50,7 +58,7 @@ logger.log(Level.DEBUG, "OptionalData: " + size + " bytes");
 
         while (dis.available() > 0) {
             Chunk data = readFrom(dis);
-logger.log(Level.DEBUG, "OPDA: data chunk: " + data.getClass().getName());
+logger.log(Level.DEBUG, FOURCC + ": data chunk: " + data.getClass().getName());
             dataChunks.add(data);
         }
     }

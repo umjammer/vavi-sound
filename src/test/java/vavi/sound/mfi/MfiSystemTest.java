@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
+import javax.sound.midi.Receiver;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,7 +78,11 @@ Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngi
 Debug.println("path: " + path);
         CountDownLatch cdl = new CountDownLatch(1);
         Sequence sequence = MfiSystem.getSequence(new BufferedInputStream(Files.newInputStream(path)));
-        volume(((Synthesizer) sequencer).getReceiver(), midiVolume); // TODO interlock mid adpcm volume
+        Synthesizer synthesizer = MfiSystem.getSynthesizer();
+        synthesizer.open();
+        Receiver receiver = synthesizer.getReceiver();
+        sequencer.getTransmitter().setReceiver(receiver);
+        volume(receiver, midiVolume); // TODO interlock mid adpcm volume
         sequencer.setSequence(sequence);
         sequencer.addMetaEventListener(meta -> {
 Debug.println(Level.FINE, meta.getType());

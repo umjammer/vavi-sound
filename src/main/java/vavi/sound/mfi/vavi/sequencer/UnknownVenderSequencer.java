@@ -19,6 +19,11 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 public class UnknownVenderSequencer implements MachineDependentSequencer {
 
     @Override
+    public int getId() {
+        return 0;
+    }
+
+    @Override
     public void sequence(MachineDependentMessage message)
         throws InvalidMfiDataException {
 

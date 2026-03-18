@@ -33,15 +33,23 @@ public class StreamPcmDataChunk extends Chunk {
 
     private static final Logger logger = getLogger(StreamPcmDataChunk.class.getName());
 
-    /** */
-    public StreamPcmDataChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Mtsp";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public StreamPcmDataChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "StreamPcmData: " + size);
+        return this;
     }
 
     /** */
     public StreamPcmDataChunk() {
-        System.arraycopy("Mtsp".getBytes(), 0, id, 0, 4);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
         this.size = 0;
     }
 

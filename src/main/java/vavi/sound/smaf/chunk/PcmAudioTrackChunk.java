@@ -39,15 +39,23 @@ public class PcmAudioTrackChunk extends TrackChunk {
 
     private static final Logger logger = getLogger(PcmAudioTrackChunk.class.getName());
 
-    /** */
-    public PcmAudioTrackChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "ATR";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key.substring(0, 3));
+    }
+
+    @Override
+    public PcmAudioTrackChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "PcmAudioTrack[" + trackNumber + "]: " + size + " bytes");
+        return this;
     }
 
     /** */
     public PcmAudioTrackChunk() {
-        System.arraycopy("ATR".getBytes(), 0, id, 0, 3);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 3);
         this.size = 6;
     }
 
@@ -165,6 +173,7 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
         props.put("durationTimeBase", timeBaseTable[durationTimeBase]);
         props.put("gateTimeTimeBase", timeBaseTable[gateTimeTimeBase]);
 
+        // internal use
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
         events.add(new SmafEvent(metaMessage, 0L));

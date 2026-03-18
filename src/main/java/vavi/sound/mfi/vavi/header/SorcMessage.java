@@ -35,19 +35,25 @@ public class SorcMessage extends SubMessage {
     /** */
     public static final String TYPE = "sorc";
 
+    @Override
+    public boolean accept(String key) {
+        return TYPE.equals(key);
+    }
+
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
+     *
      * @param type ignored
+     * @return this
      */
-    public SorcMessage(String type, byte[] data) {
-        super(TYPE, data);
+    @Override
+    public SubMessage init(String type, byte[] data) {
+        return super.init(TYPE, data);
     }
 
     /** */
-    public SorcMessage(int sorc) {
-        super(TYPE, new byte[] {
-            (byte) sorc
-        });
+    public SubMessage init(int sorc) {
+        return super.init(TYPE, new byte[] {(byte) sorc});
     }
 
     /** @return 0: no copyright, 1: has copyright */

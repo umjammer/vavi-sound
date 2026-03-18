@@ -13,6 +13,8 @@ import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
+import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
+
 
 /**
  * NEC System exclusive message function 0xf0, 0x01 processor.
@@ -22,6 +24,11 @@ import vavi.util.StringUtil;
  * @version 0.00 030827 nsano initial version <br>
  */
 public class Function240_1 implements MachineDependentFunction {
+
+    @Override
+    public String getId() {
+        return VENDOR_NEC + "." + "240_1";
+    }
 
     /**
      * 0xf0, 0x_1 FM voice change

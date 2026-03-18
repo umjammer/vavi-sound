@@ -109,14 +109,10 @@ public class NoteMessage extends SmafMessage
      */
     public int getNote() {
         return switch (octave) {
-            case 0 ->            // 00
-                    note;
-            case 1 ->         // 01
-                    note + 12;
-            case 2 ->            // 10
-                    note + 24;
-            case 3 ->         // 11
-                    note + 36;
+            case 0 -> note;      // 00
+            case 1 -> note + 12; // 01
+            case 2 -> note + 24; // 10
+            case 3 -> note + 36; // 11
             default -> note;
         };
     }
@@ -224,7 +220,7 @@ if (gateTime == 0) {
  uc++;
  return null;
 }
-        int length = (int) context.getTicksOf(this.gateTime);
+        int length = (int) context.getTickOfGateTime(this.gateTime);
         int pitch = context.retrievePitch(this.channel, getNote());
         int midiChannel = context.retrieveChannel(this.channel);
         int velocity = this.velocity == -1 ? context.getVelocity(this.channel) : context.setVelocity(this.channel, this.velocity);

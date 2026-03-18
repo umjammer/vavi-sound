@@ -8,12 +8,15 @@ package vavi.sound.mfi.vavi.track;
 
 import javax.sound.midi.MidiEvent;
 
+import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 
 /**
@@ -30,31 +33,37 @@ import vavi.sound.mfi.vavi.MidiConvertible;
  *          0.13 031128 nsano implements {@link MfiConvertible} <br>
  */
 public class EndOfTrackMessage extends ShortMessage
-    implements MidiConvertible, MfiConvertible {
+    implements MidiConvertible, MfiConvertible, TrackMessage {
+
+    @Override
+    public boolean accept(String key) {
+        return "255.b.223".equals(key);
+    }
 
     /**
      *
      * @param delta delta time
      * @param data2 always 0
      */
-    public EndOfTrackMessage(int delta, int data2) {
-        super(delta, 0xff, 0xdf, data2);
+    public EndOfTrackMessage init(int delta, int data2) {
+        return (EndOfTrackMessage) super.init(delta, 0xff, 0xdf, data2);
     }
 
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status
      * @param data1 0xdf
      * @param data2 always 0
      */
-    public EndOfTrackMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, 0xdf, data2);
+    @Override
+    public EndOfTrackMessage init(int delta, int status, int data1, int data2) {
+        return (EndOfTrackMessage) super.init(delta, 0xff, 0xdf, data2);
     }
 
     /** for {@link MfiConvertible} */
-    public EndOfTrackMessage() {
-        super(0, 0xff, 0xdf, 0);
+    public EndOfTrackMessage init() throws InvalidMfiDataException {
+        return (EndOfTrackMessage) super.init(0, 0xff, 0xdf, 0);
     }
 
     @Override

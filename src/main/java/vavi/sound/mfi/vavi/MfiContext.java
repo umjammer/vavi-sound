@@ -211,7 +211,7 @@ logger.log(Level.DEBUG, "type: " + type);
      * </pre>
      * case of above, one NopMessage will be inserted
      *
-     * @return null current event is MetaMessage or SysexMessage or delta not supported.
+     * @return null current event is SysexMessage or SysexMessage or delta not supported.
      */
     public MfiEvent[] getIntervalMfiEvents(int mfiTrackNumber) {
 
@@ -230,8 +230,6 @@ logger.log(Level.DEBUG, "interval for tempo[" + mfiTrackNumber + "]: " + interva
             // eot
             interval = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
 //logger.log(Level.TRACE, "interval for EOT[" + mfiTrackNumber + "]: " + interval);
-        } else if (midiMessage instanceof MetaMessage) {
-            return null;
         } else if (midiMessage instanceof SysexMessage) {
             return null;
         } else {
@@ -249,7 +247,7 @@ if (interval < 0) {
         }
         MfiEvent[] mfiEvents = new MfiEvent[nopLength];
         for (int i = 0; i < nopLength; i++) {
-            NopMessage mfiMessage = new NopMessage(255, 0);
+            NopMessage mfiMessage = new NopMessage().init(255, 0);
             mfiEvents[i] = new MfiEvent(mfiMessage, 0L); // TODO 0l
             // shift backward by 255Δ
             incrementPreviousTick(mfiTrackNumber, Math.round(255 * scale));

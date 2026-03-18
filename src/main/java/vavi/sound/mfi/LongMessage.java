@@ -18,6 +18,10 @@ package vavi.sound.mfi;
  */
 public abstract class LongMessage extends MfiMessage {
 
+    protected LongMessage() {
+        super(null);
+    }
+
     /**
      *
      * @param delta
@@ -25,13 +29,16 @@ public abstract class LongMessage extends MfiMessage {
      * @param data1 extended status number
      * @param data2 function number
      */
-    public LongMessage(int delta, int status, int data1, byte[] data2) {
-        super(new byte[3 + data2.length]);
+    public LongMessage init(int delta, int status, int data1, byte[] data2) {
+        data = new byte[3 + data2.length];
+        length = data.length;
 
         data[0] = (byte) (delta & 0xff);
         data[1] = (byte) (status & 0xff);
         data[2] = (byte) (data1 & 0xff);    // extended status
         System.arraycopy(data2, 0, this.data, 3, data2.length);
+
+        return this;
     }
 
     /** extended status */

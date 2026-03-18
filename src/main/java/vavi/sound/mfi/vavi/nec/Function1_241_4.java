@@ -12,6 +12,8 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
+import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
+
 
 /**
  * NEC System exclusive message function 0x01, 0xf1, 0x04 processor.
@@ -21,6 +23,11 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
  * @version 0.00 070423 nsano initial version <br>
  */
 public class Function1_241_4 implements MachineDependentFunction {
+
+    @Override
+    public String getId() {
+        return VENDOR_NEC + "." + "1_241_4";
+    }
 
     /**
      * 0x01, 0xf1, 0x04 StreamSlaveOn

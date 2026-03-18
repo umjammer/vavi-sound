@@ -27,18 +27,26 @@ public class DateMessage extends SubMessage {
     /** */
     public static final String TYPE = "date";
 
+    @Override
+    public boolean accept(String key) {
+        return TYPE.equals(key);
+    }
+
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
      * <li>TODO format, 8 byte check
+     *
      * @param type ignored
+     * @return this
      */
-    public DateMessage(String type, byte[] data) {
-        super(TYPE, data);
+    @Override
+    public SubMessage init(String type, byte[] data) {
+        return super.init(TYPE, data);
     }
 
     /** TODO format, 8 byte check */
-    public DateMessage(Date date) {
-        super(TYPE, date.toString());
+    public SubMessage init(Date date) {
+        return super.init(TYPE, date.toString());
     }
 
     @Override

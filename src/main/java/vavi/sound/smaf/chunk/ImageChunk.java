@@ -34,17 +34,26 @@ public class ImageChunk extends Chunk {
     /** */
     private int imageNumer;
 
-    /** */
-    public ImageChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Gig";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key.substring(0, 3));
+    }
+
+    @Override
+    public ImageChunk init(byte[] id, int size) {
+        super.init(id, size);
 
         this.imageNumer = id[3];
 logger.log(Level.DEBUG, "Image[" + imageNumer + "]: " + size + " bytes");
+
+        return this;
     }
 
     /** */
     public ImageChunk() {
-        System.arraycopy("Gig".getBytes(), 0, id, 0, 3);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 3);
         this.size = 0;
     }
 

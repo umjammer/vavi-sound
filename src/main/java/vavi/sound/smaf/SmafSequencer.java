@@ -10,14 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiChannel;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.Soundbank;
+import javax.sound.midi.Transmitter;
 
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
 
 import static java.lang.System.getLogger;
@@ -26,19 +23,17 @@ import static java.lang.System.getLogger;
 /**
  * Sequencer implemented for SMAF.
  * <p>
- * don't use {@link javax.sound.midi.MidiSystem#getSequencer()},
- * {@link javax.sound.midi.MidiSystem#getSequencer(boolean)} in this program,
- * because this is the {@link javax.sound.midi.Sequencer}.
+ * <li>{@code /vavi/sound/mfi/vavi/midi.properties#defaultSynthesizer} ... internal midi synthesizer</li>
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
  */
-class SmafSequencer implements Sequencer, Synthesizer {
+class SmafSequencer implements Sequencer {
 
     private static final Logger logger = getLogger(SmafSequencer.class.getName());
 
     /** the device information */
-    private static final SmafDevice.Info info =
+    static final SmafDevice.Info info =
         new SmafDevice.Info("Java SMAF Sound Sequencer",
                            "vavi",
                            "Software sequencer using midi",
@@ -46,9 +41,6 @@ class SmafSequencer implements Sequencer, Synthesizer {
 
     /** sound source of this sequencer */
     private javax.sound.midi.Sequencer midiSequencer;
-
-    /** */
-    private javax.sound.midi.Synthesizer midiSynthesizer;
 
     /** the sequence of SMAF */
     private Sequence sequence;
@@ -64,7 +56,6 @@ class SmafSequencer implements Sequencer, Synthesizer {
             throw new IllegalStateException("not opened");
         }
         midiSequencer.close();
-        midiSynthesizer.close();
         off();
     }
 
@@ -76,20 +67,14 @@ class SmafSequencer implements Sequencer, Synthesizer {
         return midiSequencer.isOpen();
     }
 
-    /** ADPCM sequencer, TODO should be {@link javax.sound.midi.Transmitter} */
-    private final javax.sound.midi.MetaEventListener mea = new MetaEventAdapter();
-
     @Override
     public void open() throws SmafUnavailableException {
         try {
             if (midiSequencer == null) {
                 this.midiSequencer = MidiUtil.getDefaultSequencer(vavi.sound.midi.VaviMidiDeviceProvider.class);
-                this.midiSynthesizer = MidiSystem.getSynthesizer();
             }
 
             midiSequencer.open();
-            midiSynthesizer.open();
-            midiSequencer.getTransmitter().setReceiver(midiSynthesizer.getReceiver());
         } catch (MidiUnavailableException e) {
 logger.log(Level.ERROR, e.getMessage(), e);
             throw new SmafUnavailableException(e);
@@ -114,9 +99,7 @@ logger.log(Level.DEBUG, e);
     }
 
     @Override
-    public void setSequence(InputStream stream)
-        throws IOException,
-               InvalidSmafDataException {
+    public void setSequence(InputStream stream) throws IOException, InvalidSmafDataException {
 
         this.setSequence(SmafSystem.getSequence(stream));
     }
@@ -152,14 +135,21 @@ logger.log(Level.DEBUG, e);
         return midiSequencer.isRunning();
     }
 
+    @Override
+    public Transmitter getTransmitter() throws SmafUnavailableException {
+        try {
+            return midiSequencer.getTransmitter();
+        } catch (MidiUnavailableException e) {
+            throw new SmafUnavailableException(e);
+        }
+    }
+
     private void on() {
         midiSequencer.addMetaEventListener(mel);
-        midiSequencer.addMetaEventListener(mea);
     }
 
     private void off() {
         midiSequencer.removeMetaEventListener(mel);
-        midiSequencer.removeMetaEventListener(mea);
     }
 
     // ----
@@ -191,8 +181,9 @@ logger.log(Level.DEBUG, e);
         case 0x2f:  // added automatically at the end of the sequence
             try {
                 MetaMessage metaMessage = new MetaMessage();
-                metaMessage.setMessage(0x2f, null);
+                metaMessage.setMessage(MetaEvent.META_END_OF_TRACK.number(), new byte[0], 0);
                 fireMeta(metaMessage);
+                // TODO closing engine
                 off();
             } catch (InvalidSmafDataException e) {
 logger.log(Level.DEBUG, e);
@@ -204,36 +195,4 @@ throw e;
             break;
         }
     };
-
-    // synthesizer
-
-    @Override
-    public MidiChannel[] getChannels() {
-        return midiSynthesizer.getChannels(); // TODO SmafChannel?
-    }
-
-    @Override
-    public boolean loadAllInstruments(Soundbank soundbank) {
-        return midiSynthesizer.loadAllInstruments(soundbank);
-    }
-
-    @Override
-    public Instrument[] getAvailableInstruments() {
-        return midiSynthesizer.getAvailableInstruments();
-    }
-
-    @Override
-    public Soundbank getDefaultSoundbank() {
-        return midiSynthesizer.getDefaultSoundbank();
-    }
-
-    @Override
-    public void unloadAllInstruments(Soundbank soundbank) {
-        midiSynthesizer.unloadAllInstruments(soundbank);
-    }
-
-    @Override
-    public Receiver getReceiver() throws MidiUnavailableException {
-        return midiSynthesizer.getReceiver();
-    }
 }

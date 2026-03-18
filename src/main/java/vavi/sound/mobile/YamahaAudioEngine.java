@@ -41,9 +41,18 @@ public class YamahaAudioEngine extends BasicAudioEngine {
     }
 
     @Override
+    public boolean accept(int format) {
+        return format == 0x82 || format == 1; // Mfi ADPCM Type3, SMAF
+    }
+
+    @Override
     protected int getChannels(int streamNumber) {
-logger.log(Level.DEBUG, "streamNumber: " + streamNumber + " @" + data.hashCode() + ", " + Arrays.toString(data));
+logger.log(Level.DEBUG, "streamNumber: " + streamNumber + " @" + Arrays.hashCode(data) + ", " + data.length);
         int channels = 1;
+        if (data[streamNumber] == null) {
+logger.log(Level.WARNING, "data for ch " + streamNumber + " is null");
+            return -1;
+        }
         if (data[streamNumber].channel == -1) {
             // from 1_240_7
             if (data[streamNumber].channels == 2) {

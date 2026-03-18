@@ -16,7 +16,7 @@ import java.lang.System.Logger.Level;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaMessage;
+import javax.sound.midi.SysexMessage;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.InvalidMfiDataException;
@@ -54,7 +54,7 @@ import static vavi.sound.mfi.vavi.VaviMfiFileFormat.DumpContext.getDC;
  * <li>{@link #data} doesn't contain header, sub chunk part. it seems to be pure ADPCM data.
  * <li>{@link #length} is total length of AudioData Chunk
  * <li>TODO "extends {@link MfiMessage}" is needed? that should be AudioDataChunk isn't it?
- * <li>TODO this class should be merge into {@link vavi.sound.mfi.Track}? → extends {@link MetaMessage}？
+ * <li>TODO this class should be merge into {@link vavi.sound.mfi.Track}? → extends {@link SysexMessage}？
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050721 nsano initial version <br>
  * @since MFi 4.0
@@ -250,21 +250,21 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
-        MetaMessage metaMessage = new MetaMessage();
+        SysexMessage SysexMessage = new SysexMessage();
 
         int id = MfiMessageStore.put(this);
         byte[] data = {
-            VaviMidiDeviceProvider.MANUFACTURER_ID,
-            META_FUNCTION_ID_MFi4,
-            (byte) ((id / 0x100) & 0xff),
-            (byte) ((id % 0x100) & 0xff)
+                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
+                SYSEX_FUNCTION_ID_MFi4,
+                (byte) ((id / 0x100) & 0xff),
+                (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // sequencer specific meta event
+        SysexMessage.setMessage(0xf0,    // sysex
                                data,
                                data.length);
 
         return new MidiEvent[] {
-            new MidiEvent(metaMessage, context.getCurrent())
+            new MidiEvent(SysexMessage, context.getCurrent())
         };
     }
 

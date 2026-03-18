@@ -33,17 +33,26 @@ public class StreamWaveDataChunk extends WaveDataChunk {
     /** */
     protected int waveNumber;
 
-    /** */
-    public StreamWaveDataChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Mwa";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key.substring(0, 3));
+    }
+
+    @Override
+    public StreamWaveDataChunk init(byte[] id, int size) {
+        super.init(id, size);
 
         waveNumber = id[3] & 0xff;
 logger.log(Level.DEBUG, "StreamWaveData[" + waveNumber + "]: " + size);
+
+        return this;
     }
 
     /** */
     public StreamWaveDataChunk() {
-        System.arraycopy("Mwa".getBytes(), 0, id, 0, 3);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 3);
         size = 0;
     }
 

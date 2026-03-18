@@ -14,6 +14,7 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer.VENDOR_MITSUBISHI;
 
 
 /**
@@ -31,6 +32,11 @@ public class Function132 extends Function131 {
     /** header length of this data */
     @SuppressWarnings("hiding")
     public static final int HEADER_LENGTH = 14;
+
+    @Override
+    public String getId() {
+        return VENDOR_MITSUBISHI + "." + 132;
+    }
 
     /**
      * 0x84 Wave Packet Data3    MFi2, MFi3
@@ -67,7 +73,7 @@ public class Function132 extends Function131 {
                           data[13];
 
         int adpcmLength = data.length - HEADER_LENGTH;
-logger.log(Level.DEBUG, "ADPCM voice: " + channel + "ch, No.%d, mode=%d, continued=%d, playSize=%d, %d".formatted(packetId, mode, continued, length, adpcmLength));
+logger.log(Level.DEBUG, "ADPCM voice: " + channel + "ch, No.%d, mode=%d, continued=%b, playSize=%d, %d".formatted(packetId, mode, continued, length, adpcmLength));
 logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(data, 32));
 
         this.sampleRate = getSamplingRateInternal(format1);

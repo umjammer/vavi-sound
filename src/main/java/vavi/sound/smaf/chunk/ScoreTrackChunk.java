@@ -49,15 +49,23 @@ public class ScoreTrackChunk extends TrackChunk {
 
     private static final Logger logger = getLogger(ScoreTrackChunk.class.getName());
 
-    /** */
-    public ScoreTrackChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "MTR";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key.substring(0, 3));
+    }
+
+    @Override
+    public ScoreTrackChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "ScoreTrack[" + trackNumber + "]: " + size + " bytes");
+        return this;
     }
 
     /** */
     public ScoreTrackChunk() {
-        System.arraycopy("MTR".getBytes(), 0, id, 0, 3);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 3);
         this.size = 4;
     }
 
@@ -191,6 +199,7 @@ logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
         props.put("durationTimeBase", timeBaseTable[durationTimeBase]);
         props.put("gateTimeTimeBase", timeBaseTable[gateTimeTimeBase]);
 
+        // internal use
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
         events.add(new SmafEvent(metaMessage, 0L));

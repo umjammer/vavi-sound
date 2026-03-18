@@ -6,17 +6,16 @@
 
 package vavi.sound.mfi.vavi.sequencer;
 
+import java.util.HashSet;
+import java.util.ServiceLoader;
+import java.util.Set;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mobile.AudioEngine;
-import vavi.util.properties.PrefixedClassPropertiesFactory;
 
 
 /**
  * AudioData message sequencer.
- * <pre>
- * properties file ... "/vavi/sound/mfi/vavi/vavi.properties"
- * name prefix ... "audioEngine.format."
- * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070119 nsano initial version <br>
@@ -24,14 +23,14 @@ import vavi.util.properties.PrefixedClassPropertiesFactory;
  */
 public interface AudioDataSequencer {
 
-    /** for {@link AudioDataSequencer} */
-    int META_FUNCTION_ID_MFi4 = 0x02;
+    /** manufacturer vavi function id for {@link AudioDataSequencer} */
+    int SYSEX_FUNCTION_ID_MFi4 = 0x02;
 
     /** */
     void sequence() throws InvalidMfiDataException;
 
-    /** */
-    class Factory extends PrefixedClassPropertiesFactory<Integer, AudioEngine> {
+    /** factory for audio engine */
+    class Factory {
 
         /** */
         private static final ThreadLocal<AudioEngine> audioEngineStore = new ThreadLocal<>();
@@ -44,26 +43,27 @@ public interface AudioDataSequencer {
             return audioEngineStore.get();
         }
 
+        private static final Set<AudioEngine> engines = new HashSet<>();
+
         /**
          * First time.
          * @return same instance for each format
          * @throws IllegalArgumentException when audio engine not found
          */
         public static AudioEngine getAudioEngine(int format) {
-            AudioEngine engine = factory.get(format);
-            if (engine == null) {
-                throw new IllegalArgumentException("format: " + format);
+            for (AudioEngine engine : engines) {
+                if (engine.accept(format)) {
+                    audioEngineStore.set(engine);
+                    return engine;
+                }
             }
-            audioEngineStore.set(engine);
-            return engine;
+            throw new IllegalArgumentException("format: " + format);
         }
 
-        /** */
-        private static final Factory factory = new Factory();
-
-        /** */
-        private Factory() {
-            super("/vavi/sound/mfi/vavi/vavi.properties", "audioEngine.format.");
+        static {
+            for (AudioEngine engine : ServiceLoader.load(AudioEngine.class)) {
+                engines.add(engine);
+            }
         }
     }
 }

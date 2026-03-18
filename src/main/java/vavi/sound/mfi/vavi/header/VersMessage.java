@@ -28,21 +28,29 @@ public class VersMessage extends SubMessage {
     /** */
     public static final String TYPE = "vers";
 
+    @Override
+    public boolean accept(String key) {
+        return TYPE.equals(key);
+    }
+
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
      * <li>TODO length 4 check
+     *
      * @param type ignored
+     * @return
      */
-    public VersMessage(String type, byte[] data) {
-        super(TYPE, data);
+    @Override
+    public SubMessage init(String type, byte[] data) {
+        return super.init(TYPE, data);
     }
 
     /**
      * TODO length 4 check
      * @param data 4 bytes number (ex. { '0', '3', '0', '1' })
      */
-    public VersMessage(String data) {
-        super(TYPE, data);
+    public SubMessage init(String data) {
+        return super.init(TYPE, data);
     }
 
     /** */
@@ -58,9 +66,7 @@ public class VersMessage extends SubMessage {
      * TODO length 4 check
      * @param version 4 bytes number as string (ex. "0301")
      */
-    public void setVersion(String version)
-        throws InvalidMfiDataException {
-
+    public void setVersion(String version) throws InvalidMfiDataException {
         try {
             setData(version.getBytes(readingEncoding));
         } catch (UnsupportedEncodingException e) {
@@ -70,7 +76,6 @@ public class VersMessage extends SubMessage {
 
     @Override
     public String toString() {
-        return "vers: " + getDataLength() +
-               ": " + getVersion();
+        return "vers: " + getDataLength() + ": " + getVersion();
     }
 }

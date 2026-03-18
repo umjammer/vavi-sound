@@ -18,14 +18,11 @@ import vavi.sound.mobile.YamahaAudioEngine;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mfi.vavi.sequencer.MachineDependentFunction.CARRIER_DOCOMO;
 
 
 /**
  * NEC System exclusive message processor.
- * <pre>
- * properties file ... "/vavi/sound/mfi/vavi/nec/nec.properties"
- * name prefix ... "function."
- * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020703 nsano initial version <br>
@@ -36,6 +33,13 @@ import static java.lang.System.getLogger;
 public class NecSequencer implements MachineDependentSequencer {
 
     private static final Logger logger = getLogger(NecSequencer.class.getName());
+
+    static final int VENDOR_NEC = 0x10; // N
+
+    @Override
+    public int getId() {
+        return VENDOR_NEC | CARRIER_DOCOMO;
+    }
 
     /**
      *
@@ -60,20 +64,20 @@ public class NecSequencer implements MachineDependentSequencer {
         int f1 = data[6] & 0xff;
         int f2;
 
-        String key;
+        String key = VENDOR_NEC + ".";
 
         if (f1 == 0x01 || f1 == 0x02) {
             f2 = data[7] & 0xff;        // 0 ~ 32
             int f3 = data[8] & 0x0f;    // 0 ~ 16
 logger.log(Level.DEBUG, "%02x %02x %02x".formatted(f1, f2, f3));
-            key = f1 + "." + f2 + "." + f3;
+            key += f1 + "_" + f2 + "_" + f3;
         } else {
             f2 = data[7] & 0x0f;        // 0 ~ 16
 logger.log(Level.DEBUG, "%02x %02x".formatted(f1, f2));
-            key = f1 + "." + f2;
+            key += f1 + "_" + f2;
         }
 
-        MachineDependentFunction mdf = factory.getFunction(key);
+        MachineDependentFunction mdf = MachineDependentFunction.Factory.getFunction(key);
         if (mdf != null) {
             mdf.process(message);
         } else {
@@ -90,10 +94,4 @@ logger.log(Level.WARNING, "unsupported function: %s, %d%n%s".formatted(key, data
     static AudioEngine getAudioEngine() {
         return player;
     }
-
-    // ----
-
-    /** */
-    private static final MachineDependentFunction.Factory factory =
-            new MachineDependentFunction.Factory("/vavi/sound/mfi/vavi/nec/nec.properties");
 }

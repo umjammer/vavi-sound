@@ -52,8 +52,16 @@ public class VoiceChunk extends TrackChunk {
         byte[] Data;
     }
 
-    public VoiceChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "VOIC";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public VoiceChunk init(byte[] id, int size) {
+        return (VoiceChunk) super.init(id, size);
     }
 
     @Override
@@ -95,7 +103,7 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
 
         sb.append(super.toString());
         try (var dc = getDC().open()) {
-            if (exwvChunk != null) sb.append(exwvChunk.toString());
+            if (exwvChunk != null) sb.append(exwvChunk);
             exclusiveVoiceChunks.stream().map(cs -> dc.format(cs.toString())).forEach(sb::append);
         }
 

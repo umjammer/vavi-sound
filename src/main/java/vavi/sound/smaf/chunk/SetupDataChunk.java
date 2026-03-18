@@ -36,15 +36,23 @@ public class SetupDataChunk extends Chunk {
 
     private static final Logger logger = getLogger(SetupDataChunk.class.getName());
 
-    /** */
-    public SetupDataChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "tsu";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key.substring(1, 4));
+    }
+
+    @Override
+    public SetupDataChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "SetupData: " + size + " bytes");
+        return this;
     }
 
     /** */
     public SetupDataChunk() {
-        System.arraycopy("tsu".getBytes(), 0, id, 1, 3);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 1, 3);
         this.size = 0;
     }
 
@@ -83,7 +91,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
         SmafMessage smafMessage;
 
         while (dis.available() > 0) {
-            // -------- event --------
+            // event
             int e1 = dis.readUnsignedByte();
             if (e1 == 0xff) { // exclusive
                 int e2 = dis.readUnsignedByte();

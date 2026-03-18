@@ -9,12 +9,12 @@ package vavi.sound.smaf.message;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 
-import java.util.HashMap;
-import java.util.Map;
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
@@ -78,7 +78,7 @@ public class MidiContext {
             if (message instanceof vavi.sound.smaf.MetaMessage metaMessage) {
                 if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
                     //
-                    this.formatType = (FormatType) metaMessage.getData().get("formatType"); // [ms]
+                    this.formatType = (FormatType) metaMessage.getMapData().get("formatType"); // [ms]
 logger.log(Level.DEBUG, "formatType: " + formatType);
                     for (int i = 0; i < MAX_MIDI_CHANNELS; i++) {
                         if (formatType == FormatType.HandyPhoneStandard) {
@@ -88,7 +88,7 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
                         }
                     }
                     //
-                    ChannelStatus[] channelStatuses = (ChannelStatus[]) metaMessage.getData().get("channelStatuses");
+                    ChannelStatus[] channelStatuses = (ChannelStatus[]) metaMessage.getMapData().get("channelStatuses");
 logger.log(Level.DEBUG, "channelStatuses: " + (channelStatuses != null ? channelStatuses.length : null));
                     if (channelStatuses != null) {
                         for (int i = 0; i < channelStatuses.length; i++) {
@@ -356,19 +356,19 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
      * HandyPhoneStandard only.
      * index is pseudo MIDI channel
      * <pre>
-     *  Value        | Description
-     * --------------+-----------------
-     *  0x00         | No Shift(Original)
-     *  0x01         | +1 Octave
-     *  0x02         | +2 Octave
-     *  0x03         | +3 Octave
-     *  0x04         | +4 Octave
-     *  0x05  ~  0x80 | Reserved
-     *  0x81         | -1 Octave
-     *  0x82         | -2 Octave
-     *  0x83         | -3 Octave
-     *  0x84         | -4 Octave
-     *  0x85  ~  0xFF | Reserved
+     *  Value       | Description
+     * -------------+-------------------
+     *  0x00        | No Shift(Original)
+     *  0x01        | +1 Octave
+     *  0x02        | +2 Octave
+     *  0x03        | +3 Octave
+     *  0x04        | +4 Octave
+     *  0x05 ~ 0x80 | Reserved
+     *  0x81        | -1 Octave
+     *  0x82        | -2 Octave
+     *  0x83        | -3 Octave
+     *  0x84        | -4 Octave
+     *  0x85 ~ 0xFF | Reserved
      * </pre>
      * @see OctaveShiftMessage
      */
@@ -395,7 +395,7 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
     public int setVelocity(int smafChannel, int velocity) {
         int midiChannel = getMidiChannel(smafChannel);
         velocities[midiChannel] = velocity;
-//logger.log(Level.TRACE, "velocities[" + mididChannel + "]: " + octaveShift);
+//logger.log(Level.TRACE, "velocities[" + midiChannel + "]: " + octaveShift);
         return velocity; // TODO mhh...
     }
 
@@ -491,23 +491,39 @@ logger.log(Level.TRACE, "tempoTable: " + tempoTable.length);
     /** if no tempo is specified, SSD will treat it as a quarter note = 120 */
     private static final int tempo = 120;
 
-    /** */
-    private int timeBase = 2;
+    /**
+     * duration timeBase in [ms].
+     * this will be changed at {@link #getResolution}
+     */
+    private int durationTimeBase = 2;
 
     /**
-     * @return Returns the ticks.
-     * @see #timeBase
+     * gate time timeBase in [ms].
+     * this will be changed at {@link #getResolution}
      */
-    public long getTicksOf(long gateTime) {
-        return gateTime * timeBase;
+    private int gateTimeTimeBase = 2;
+
+    /**
+     * duration to ticks [ms].
+     * @return Returns the ticks.
+     * @see #durationTimeBase
+     * @see #getResolution
+     */
+    public long getTicksOfDuration(long duration) {
+        return duration * durationTimeBase;
+    }
+
+    /** gate time to ticks [ms]. */
+    public long getTickOfGateTime(long gateTime) {
+        return gateTime * gateTimeTimeBase;
     }
 
     /**
      * @see #tempo
-     * @see #timeBase
+     * @see #durationTimeBase
      */
     public MidiEvent getTempoEvent() throws InvalidMidiDataException {
-        int l = tempo * timeBase * 1000;
+        int l = tempo * durationTimeBase * 1000;
 //      int l = (int) Math.round(60d * 1000000d / tempo);
 logger.log(Level.INFO, "tempo: " + l);
         MetaMessage metaMessage = new MetaMessage();
@@ -525,7 +541,7 @@ logger.log(Level.INFO, "tempo: " + l);
      * @param smafTracks smaf tracks
      * @return resolution for MIDI
      * @see #tempo
-     * @see #timeBase
+     * @see #durationTimeBase
      */
     public int getResolution(Track[] smafTracks)
         throws InvalidSmafDataException {
@@ -541,9 +557,10 @@ int t = 0;
                 SmafMessage message = event.getMessage();
                 if (message instanceof vavi.sound.smaf.MetaMessage metaMessage) {
                     if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
-                        this.timeBase = (Integer) metaMessage.getData().get("durationTimeBase"); // [ms]
-logger.log(Level.DEBUG, "timebase: " + timeBase + ", (" + t + ":" + i + ")");
-                        return tempo * timeBase;
+                        this.gateTimeTimeBase = (Integer) metaMessage.getMapData().get("gateTimeTimeBase"); // [ms]
+                        this.durationTimeBase = (Integer) metaMessage.getMapData().get("durationTimeBase"); // [ms]
+logger.log(Level.DEBUG, "durationTimeBase: " + durationTimeBase + "gateTimeTimeBase: " + gateTimeTimeBase + ", (" + t + ":" + i + ")");
+                        return tempo * durationTimeBase;
                     }
                 }
             }

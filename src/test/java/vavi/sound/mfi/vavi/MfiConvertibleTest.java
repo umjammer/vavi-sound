@@ -22,11 +22,11 @@ class MfiConvertibleTest {
 
     @Test
     void test() {
-        // exists in /vavi/sound/mfi/vavi/vavi.properties
-        MfiConvertible converter = MfiConvertible.factory.get("short.144");
+        // exists in /META-INF/services/vavi.sound.mfi.vavi.MfiConvertible
+        MfiConvertible converter = MfiConvertible.getConvertible("short.144");
         assertInstanceOf(VaviNoteMessage.class, converter);
         // not exists
-        converter = MfiConvertible.factory.get("meta.144");
+        converter = MfiConvertible.getConvertible("meta.144");
         assertNull(converter);
     }
 }

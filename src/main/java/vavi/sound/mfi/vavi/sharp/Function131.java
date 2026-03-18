@@ -14,6 +14,8 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
 import vavi.util.StringUtil;
 
+import static vavi.sound.mfi.vavi.sharp.SharpSequencer.VENDOR_SHARP;
+
 
 /**
  * Sharp System exclusive message function 0x83 processor.
@@ -35,6 +37,11 @@ public class Function131 implements MachineDependentFunction {
 
     /** header length of this data */
     public static final int HEADER_LENGTH = 10;
+
+    @Override
+    public String getId() {
+        return VENDOR_SHARP + "." + 131;
+    }
 
     /**
      * 0x83 Wave Packet Data    MFi2, MFi3

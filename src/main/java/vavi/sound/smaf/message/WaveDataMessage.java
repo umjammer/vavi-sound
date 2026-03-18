@@ -11,7 +11,7 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.ByteBuffer;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaMessage;
+import javax.sound.midi.SysexMessage;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.midi.VaviMidiDeviceProvider;
@@ -95,21 +95,21 @@ public class WaveDataMessage extends SmafMessage
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        MetaMessage metaMessage = new MetaMessage();
+        SysexMessage sysexMessage = new SysexMessage();
 
         int id = SmafMessageStore.put(this);
         byte[] data = {
-            VaviMidiDeviceProvider.MANUFACTURER_ID,
-            WaveSequencer.META_FUNCTION_ID_SMAF,
-            (byte) ((id / 0x100) & 0xff),
-            (byte) ((id % 0x100) & 0xff)
+                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
+                WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
+                (byte) ((id / 0x100) & 0xff),
+                (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // sequencer specific meta event
+        sysexMessage.setMessage(0xf0,    // sysex
                                data,
                                data.length);
 
         return new MidiEvent[] {
-            new MidiEvent(metaMessage, context.getCurrentTick())
+            new MidiEvent(sysexMessage, context.getCurrentTick())
         };
     }
 

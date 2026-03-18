@@ -8,34 +8,32 @@ package vavi.sound.smaf.sequencer;
 
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.HashSet;
+import java.util.ServiceLoader;
+import java.util.Set;
 
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.smaf.InvalidSmafDataException;
-import vavi.util.properties.PrefixedClassPropertiesFactory;
 
 import static java.lang.System.getLogger;
 
 
 /**
  * WaveSequencer.
- * <pre>
- * properties file ... "/vavi/sound/smaf/smaf.properties"
- * name prefix ... "audioEngine.format."
- * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
  */
 public interface WaveSequencer {
 
-    /** for {@link WaveSequencer} */
-    int META_FUNCTION_ID_SMAF = 0x03;
+    /** manufacturer vavi function id for {@link WaveSequencer} */
+    int SYSEX_FUNCTION_ID_SMAF = 0x03;
 
     /** */
     void sequence() throws InvalidSmafDataException;
 
     /** factory */
-    class Factory extends PrefixedClassPropertiesFactory<Integer, AudioEngine> {
+    class Factory {
 
         private static final Logger logger = getLogger(Factory.class.getName());
 
@@ -46,9 +44,11 @@ public interface WaveSequencer {
          * Second time or later.
          */
         public static AudioEngine getAudioEngine() {
-logger.log(Level.INFO, "audioEngineStore: " + audioEngineStore.get());
+logger.log(Level.TRACE, "audioEngineStore: " + audioEngineStore.get());
             return audioEngineStore.get();
         }
+
+        private static final Set<AudioEngine> engines = new HashSet<>();
 
         /**
          * First time.
@@ -56,18 +56,19 @@ logger.log(Level.INFO, "audioEngineStore: " + audioEngineStore.get());
          * @throws IllegalArgumentException when audio engine not found
          */
         public static AudioEngine getAudioEngine(int format) {
-            AudioEngine engine = instance.get(format);
-logger.log(Level.INFO, "engine: " + engine);
-            audioEngineStore.set(engine);
-            return engine;
+            for (AudioEngine engine : engines) {
+                if (engine.accept(format)) {
+                    audioEngineStore.set(engine);
+                    return engine;
+                }
+            }
+            throw new IllegalArgumentException("format: " + format);
         }
 
-        /** */
-        private static final Factory instance = new Factory();
-
-        /** */
-        private Factory() {
-            super("/vavi/sound/smaf/smaf.properties", "audioEngine.format.");
+        static {
+            for (AudioEngine engine : ServiceLoader.load(AudioEngine.class)) {
+                engines.add(engine);
+            }
         }
     }
 }

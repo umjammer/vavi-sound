@@ -8,8 +8,9 @@ package vavi.sound.smaf;
 
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Map;
+
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.chunk.Chunk;
 import vavi.sound.smaf.chunk.FileChunk;
@@ -27,6 +28,9 @@ import static java.lang.System.getLogger;
 class SmafSequence extends Sequence {
 
     private static final Logger logger = getLogger(SmafSequence.class.getName());
+
+    /** TODO use encoding in header info */
+    private static final String writingEncoding;
 
     /** TODO content should be moved to SmafFileFormat/FileChunk */
     SmafSequence(FileChunk fileChunk) throws InvalidSmafDataException {
@@ -76,10 +80,12 @@ logger.log(Level.DEBUG, dataChunk);
             // TODO create meta for ContentsInfoChunk
         }
         MetaMessage metaMessage = new MetaMessage();
-        metaMessage.setMessage(MetaEvent.META_MARKER.number(), Map.of("prot", (prot == null ? "" : prot)));
+        byte[] b = (prot != null ? prot : "").getBytes(Charset.forName(writingEncoding));
+        metaMessage.setMessage(MetaEvent.META_MARKER.number(), b, b.length);
         insert(track0, new SmafEvent(metaMessage, 0), 0); // vn vendor name
         metaMessage = new MetaMessage();
-        metaMessage.setMessage(MetaEvent.META_NAME.number(), Map.of("title", (title == null ? "" : title)));
+        b = (title != null ? title : "").getBytes(Charset.forName(writingEncoding));
+        metaMessage.setMessage(MetaEvent.META_NAME.number(), b, b.length);
         insert(track0, new SmafEvent(metaMessage, 0), 0); // st song title
     }
 
@@ -108,5 +114,11 @@ logger.log(Level.DEBUG, dataChunk);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    static {
+        // encodings
+        writingEncoding = System.getProperty("vavi.sound.smaf.encoding.write", "Windows-31J");
+        logger.log(Level.DEBUG, "write encoding: " + writingEncoding);
     }
 }

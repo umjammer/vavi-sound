@@ -28,7 +28,6 @@ import vavi.sound.mfi.Track;
 import vavi.sound.mfi.vavi.track.EndOfTrackMessage;
 import vavi.sound.mfi.vavi.track.NopMessage;
 import vavi.sound.midi.MidiUtil;
-import vavi.sound.midi.mfi.MfiVaviSequence;
 
 import static java.lang.System.getLogger;
 
@@ -48,7 +47,7 @@ class VaviMidiConverter implements MidiConverter {
     private static final Logger logger = getLogger(VaviMidiConverter.class.getName());
 
     /** the device information */
-    private static final MfiDevice.Info info = new MfiDevice.Info(
+    static final MfiDevice.Info info = new MfiDevice.Info(
         "Java MIDI, MFi Sequence Converter",
         "vavi",
         "Format Converter between MIDI and MFi",
@@ -200,7 +199,7 @@ logger.log(Level.DEBUG, "create MFi track: 0");
 
             // convert
 try {
-            MfiConvertible converter = MfiConvertible.factory.get(key);
+            MfiConvertible converter = MfiConvertible.getConvertible(key);
             if (converter == null) {
 if (!uc.contains(key)) {
  logger.log(Level.WARNING, "no converter for: [" + key + "]");
@@ -305,7 +304,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
 
         int resolution = midiContext.getResolution(mfiTracks);
 logger.log(Level.DEBUG, "resolution: " + resolution);
-        Sequence midiSequence = new MfiVaviSequence(Sequence.PPQ, resolution, 1);
+        Sequence midiSequence = new Sequence(Sequence.PPQ, resolution, 1);
         javax.sound.midi.Track midiTrack = midiSequence.getTracks()[0];
 
         for (int i = 0; i < mfiTracks.length; i++) {

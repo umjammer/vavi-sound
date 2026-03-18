@@ -12,6 +12,8 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
+import static vavi.sound.mfi.vavi.sharp.SharpSequencer.VENDOR_SHARP;
+
 
 /**
  * Sharp System exclusive message function 0x84 processor.
@@ -25,6 +27,11 @@ public class Function132 extends Function131 {
     /** header length of this data */
     @SuppressWarnings("hiding")
     public static final int HEADER_LENGTH = 14;
+
+    @Override
+    public String getId() {
+        return VENDOR_SHARP + "." + 132;
+    }
 
     /**
      * 0x84 Wave Packet Data3

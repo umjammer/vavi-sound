@@ -27,11 +27,17 @@ public class UndefinedChunk extends Chunk {
 
     private static final Logger logger = getLogger(UndefinedChunk.class.getName());
 
-    /** */
-    public UndefinedChunk(byte[] id, int size) {
-        super(id, size);
+    @Override
+    protected boolean accept(String key) {
+        return false;
+    }
+
+    @Override
+    public UndefinedChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.WARNING, "unknown: " + getId());
 //new Exception("*** DUMMY ***").printStackTrace(System.err);
+        return this;
     }
 
     @Override

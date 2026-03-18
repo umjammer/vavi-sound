@@ -6,7 +6,6 @@
 
 package vavi.sound.mfi.vavi.sequencer;
 
-
 import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
@@ -21,6 +20,11 @@ import vavi.util.StringUtil;
  * @version 0.00 030822 nsano initial version <br>
  */
 public class UndefinedFunction implements MachineDependentFunction {
+
+    @Override
+    public String getId() {
+        return null;
+    }
 
     /**
      *

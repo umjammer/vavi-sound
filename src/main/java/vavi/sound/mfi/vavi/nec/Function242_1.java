@@ -12,6 +12,8 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
+import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
+
 
 /**
  * NEC System exclusive message function 0xf2, 0x_1 processor.
@@ -21,6 +23,11 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
  * @version 0.00 030827 nsano initial version <br>
  */
 public class Function242_1 implements MachineDependentFunction {
+
+    @Override
+    public String getId() {
+        return VENDOR_NEC + "." + "242_1";
+    }
 
     /**
      * 0xf2, 0x_1 ADPCM volume, length 4

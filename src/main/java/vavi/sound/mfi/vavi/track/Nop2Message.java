@@ -13,6 +13,8 @@ import javax.sound.midi.MidiEvent;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 import static java.lang.System.getLogger;
 
@@ -29,11 +31,16 @@ import static java.lang.System.getLogger;
  * @since MFi 3.0
  */
 public class Nop2Message extends ShortMessage
-    implements MidiConvertible {
+    implements MidiConvertible, TrackMessage {
 
     private static final Logger logger = getLogger(Nop2Message.class.getName());
 
     public static final int maxDelta = 0xff * 0x100 + 0xff;
+
+    @Override
+    public boolean accept(String key) {
+        return "255.b.220".equals(key);
+    }
 
     /**
      * 0xdc
@@ -45,21 +52,24 @@ public class Nop2Message extends ShortMessage
      * @param delta delta time
      * @param data2 0 ~ 255 (* 0xff)
      */
-    public Nop2Message(int delta, int data2) {
-        super(delta, 0xff, 0xdc, data2);
+    public Nop2Message init(int delta, int data2) {
+        super.init(delta, 0xff, 0xdc, data2);
 logger.log(Level.DEBUG, "NOP2: delta: " + delta);
+        return this;
     }
 
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status
      * @param data1 always 0xdc
      * @param data2 0 ~ 255 (* 0xff)
      */
-    public Nop2Message(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, 0xdc, data2);
+    @Override
+    public Nop2Message init(int delta, int status, int data1, int data2) {
+        super.init(delta, 0xff, 0xdc, data2);
 logger.log(Level.DEBUG, "NOP2: delta: " + delta);
+        return this;
     }
 
     @Override

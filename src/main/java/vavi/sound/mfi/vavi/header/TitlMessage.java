@@ -40,22 +40,25 @@ public class TitlMessage extends SubMessage
     /** */
     public static final String TYPE = "titl";
 
+    @Override
+    public boolean accept(String key) {
+        return "meta.3".equals(key) || TYPE.equals(key);
+    }
+
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
+     *
      * @param type ignored
+     * @return this
      */
-    public TitlMessage(String type, byte[] data) {
-        super(TYPE, data);
+    @Override
+    public TitlMessage init(String type, byte[] data) {
+        return (TitlMessage) super.init(TYPE, data);
     }
 
     /** for creator */
-    public TitlMessage(String data) {
-        super(TYPE, data);
-    }
-
-    /** for {@link MfiConvertible} */
-    public TitlMessage() {
-        super();
+    public TitlMessage init(String data) {
+        return (TitlMessage) super.init(TYPE, data);
     }
 
     /** */
@@ -108,7 +111,7 @@ public class TitlMessage extends SubMessage
 
         MetaMessage metaMessage = (MetaMessage) midiEvent.getMessage();
 
-        TitlMessage mfiMessage = new TitlMessage(MidiUtil.getDecodedMessage(metaMessage.getMessage()));
+        TitlMessage mfiMessage = new TitlMessage().init(MidiUtil.getDecodedMessage(metaMessage.getMessage()));
 
         return new MfiEvent[] {
             new MfiEvent(mfiMessage, midiEvent.getTick())

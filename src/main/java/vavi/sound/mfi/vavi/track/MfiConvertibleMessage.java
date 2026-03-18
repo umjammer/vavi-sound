@@ -6,6 +6,7 @@
 
 package vavi.sound.mfi.vavi.track;
 
+import java.util.Arrays;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
 
@@ -14,6 +15,7 @@ import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 
 /**
@@ -22,7 +24,17 @@ import vavi.sound.mfi.vavi.MidiContext;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071011 nsano initial version <br>
  */
-public class MfiConvertibleMessage implements MfiConvertible {
+public class MfiConvertibleMessage implements MfiConvertible, TrackMessage {
+
+    private static final String[] keys = {
+            // Bank select MSB, Data entry MSB, Bank select LSB,NRPN LSB, NRPN MSB, RPN LSB, RPN MSB
+            "176.0", "176.6", "176.32", "176.98", "176.99", "176.100", "176.101",
+    };
+
+    @Override
+    public boolean accept(String key) {
+        return Arrays.asList(keys).contains(key);
+    }
 
     /** BANK LSB */
     private final int[] bankLSB = new int[MidiContext.MAX_MIDI_CHANNELS];

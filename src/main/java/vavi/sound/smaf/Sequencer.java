@@ -47,4 +47,7 @@ public interface Sequencer extends SmafDevice {
 
     /** Removes {@link MetaEventListener Listener}. */
     void removeMetaEventListener(MetaEventListener l);
+
+    /** */
+    javax.sound.midi.Transmitter getTransmitter() throws SmafUnavailableException;
 }

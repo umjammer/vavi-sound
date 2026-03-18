@@ -13,6 +13,8 @@ import javax.sound.midi.MidiEvent;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 import static java.lang.System.getLogger;
 
@@ -30,19 +32,24 @@ import static java.lang.System.getLogger;
  *          0.02 030920 nsano repackage <br>
  */
 public class LoopPointMessage extends ShortMessage
-    implements MidiConvertible {
+    implements MidiConvertible, TrackMessage {
 
     private static final Logger logger = getLogger(LoopPointMessage.class.getName());
 
     /** 0 ~ 3 */
-    private final int nest;
+    private int nest;
     /** loop times, 01111b means forever */
     private int times;
     /** 00b: start, 01b: end */
-    private final int start;
+    private int start;
+
+    @Override
+    public boolean accept(String key) {
+        return "255.b.221".equals(key);
+    }
 
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status
      * @param data1 0xdd
@@ -55,8 +62,9 @@ public class LoopPointMessage extends ShortMessage
      *  +- nest
      * </pre>
      */
-    public LoopPointMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, 0xdd, data2);
+    @Override
+    public LoopPointMessage init(int delta, int status, int data1, int data2) {
+        super.init(delta, 0xff, 0xdd, data2);
 
         this.nest  = (data2 & 0xc0) >> 6;
         this.times = (data2 & 0x3c) >> 2;
@@ -64,6 +72,8 @@ public class LoopPointMessage extends ShortMessage
             times = -1;
         }
         this.start =  data2 & 0x03;
+
+        return this;
     }
 
     /** loop ID */

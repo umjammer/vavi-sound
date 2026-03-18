@@ -9,7 +9,7 @@ Please set `"#Java MIDI(MFi/SMAF) ADPCM Sequencer"`. ADPCM handling will no long
 
 ## Usage
 
-### MIDI file type for MFi/SMAF (⚠ this is not MIDI specs but proprietary)
+### MIDI file type for MFi/SMAF (⚠️ this is not MIDI specs but proprietary)
 
 ```
  8765 4321 LSB
@@ -37,7 +37,7 @@ Please set `"#Java MIDI(MFi/SMAF) ADPCM Sequencer"`. ADPCM handling will no long
    ```
  * ~~implement `DeveiceInfo` properly (`MidiSystem#getSequencer()` returns `SmafMidiSequencer`(first))~~ → specs
 
-## Deprecated
+## 🚫 Deprecated
 
 ```java
             File soundprops = new File(

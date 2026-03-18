@@ -59,6 +59,18 @@ public abstract class MfiMessage
         }
     }
 
+    /** */
+    public MfiMessage init(int delta, int status, int data1, int data2) {
+        data = new byte[] {
+                (byte) (delta & 0xff),
+                (byte) (status & 0xff),
+                (byte) (data1 & 0xff),
+                (byte) (data2 & 0xff)
+        };
+        this.length = 4;
+        return this;
+    }
+
     /**
      * Sets message of byte array.
      */
@@ -113,5 +125,17 @@ public abstract class MfiMessage
     /** Gets message length. */
     public int getLength() {
         return length;
+    }
+
+    @Override
+    public MfiMessage clone() {
+        try {
+            MfiMessage clone = (MfiMessage) super.clone();
+            clone.data = this.data;
+            clone.length = this.length;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

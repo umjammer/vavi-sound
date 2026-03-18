@@ -26,19 +26,27 @@ import vavi.sound.mfi.vavi.SubMessage;
 public class CodeMessage extends SubMessage {
 
     /** */
-    public static final String TYPE = "exst";
+    public static final String TYPE = "code";
+
+    @Override
+    public boolean accept(String key) {
+        return TYPE.equals(key);
+    }
 
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
+     *
      * @param type ignored
+     * @return this
      */
-    public CodeMessage(String type, byte[] data) {
-        super(TYPE, data);
+    @Override
+    public SubMessage init(String type, byte[] data) {
+        return super.init(TYPE, data);
     }
 
     /** TODO check endian */
-    public CodeMessage(int data) {
-        super(TYPE, new byte[] {
+    public SubMessage init(int data) {
+        return super.init(TYPE, new byte[] {
             (byte) ((data & 0xff000000) >> 24),
             (byte) ((data & 0x00ff0000) >> 16),
             (byte) ((data & 0x0000ff00) >> 8),

@@ -41,6 +41,11 @@ public class RohmAudioEngine extends BasicAudioEngine {
     }
 
     @Override
+    public boolean accept(int format) {
+        return format == 0x80; // ADPCM Type1
+    }
+
+    @Override
     protected int getChannels(int streamNumber) {
         int channels = 1;
         if (data[streamNumber].channel != -1) {

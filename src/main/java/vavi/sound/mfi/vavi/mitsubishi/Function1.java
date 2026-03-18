@@ -14,6 +14,7 @@ import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer.VENDOR_MITSUBISHI;
 
 
 /**
@@ -25,6 +26,11 @@ import static java.lang.System.getLogger;
 public class Function1 implements MachineDependentFunction {
 
     private static final Logger logger = getLogger(Function1.class.getName());
+
+    @Override
+    public String getId() {
+        return VENDOR_MITSUBISHI + "." + 1;
+    }
 
     /**
      * 0x01 Pitch Bend MFi2 only

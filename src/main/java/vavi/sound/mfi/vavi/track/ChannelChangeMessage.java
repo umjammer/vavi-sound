@@ -14,6 +14,8 @@ import vavi.sound.mfi.ChannelMessage;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 import static java.lang.System.getLogger;
 
@@ -33,17 +35,22 @@ import static java.lang.System.getLogger;
  * @since MFi2
  */
 public class ChannelChangeMessage extends ShortMessage
-    implements ChannelMessage, MidiConvertible {
+    implements ChannelMessage, MidiConvertible, TrackMessage {
 
     private static final Logger logger = getLogger(ChannelChangeMessage.class.getName());
 
     /** */
     private int voice;
     /** 0 - 15 ch */
-    private final int channel;
+    private int channel;
+
+    @Override
+    public boolean accept(String key) {
+        return "255.b.229".equals(key);
+    }
 
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status
      * @param data1 0xe5
@@ -55,11 +62,14 @@ public class ChannelChangeMessage extends ShortMessage
      *  +- voice
      * </pre>
      */
-    public ChannelChangeMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, 0xe5, data2);
+    @Override
+    public ChannelChangeMessage init(int delta, int status, int data1, int data2) {
+        super.init(delta, 0xff, 0xe5, data2);
 
         this.voice   = (data2 & 0xc0) >> 6;
         this.channel =  data2 & 0x0f;
+
+        return this;
     }
 
     /** 0 - 15 ch */

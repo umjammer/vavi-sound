@@ -8,18 +8,19 @@ package vavi.sound.mfi.vavi.track;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.SysexMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
+import vavi.sound.mfi.vavi.TrackMessage.SysexTrackMessage;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
@@ -41,18 +42,23 @@ import static java.lang.System.getLogger;
  *          0.05 030821 nsano implements {@link MidiConvertible} <br>
  */
 public class MachineDependentMessage extends SysexMessage
-    implements MidiConvertible, Serializable {
+    implements MidiConvertible, TrackMessage, SysexTrackMessage, Serializable {
 
     private static final Logger logger = getLogger(MachineDependentMessage.class.getName());
 
-    /** */
-    protected MachineDependentMessage(byte[] message) {
-        super(message);
+    @Override
+    public boolean accept(String key) {
+        return "255.e.255".equals(key);
+    }
+
+    @Override
+    public MachineDependentMessage init(byte[] message) {
+        return (MachineDependentMessage) super.init(message);
     }
 
     /** */
-    public MachineDependentMessage() {
-        super(new byte[0]);
+    public MachineDependentMessage init() {
+        return (MachineDependentMessage) super.init(new byte[0]);
     }
 
     /**
@@ -79,15 +85,14 @@ public class MachineDependentMessage extends SysexMessage
     }
 
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
-     * @param is actual data (without header, data2 ~)
+     * for {@link TrackChunk}
+     * @param dis actual data (without header, data2 ~)
      */
-    public static MachineDependentMessage readFrom(int delta, int status, int data1, InputStream is)
-        throws InvalidMfiDataException,
-               IOException {
+    @Override
+    public MachineDependentMessage init(int delta, int status, int data1, DataInputStream dis)
+        throws IOException {
 
 //logger.log(Level.TRACE, "\n" + StringUtil.getDump(is);
-        DataInputStream dis = new DataInputStream(is);
 
         int length = dis.readUnsignedShort();
 //logger.log(Level.TRACE, "length: " + length);
@@ -107,7 +112,7 @@ public class MachineDependentMessage extends SysexMessage
         // 6
         // 7
 logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".formatted(data[0], data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0)));
-        MachineDependentMessage message = new MachineDependentMessage(data);
+        MachineDependentMessage message = new MachineDependentMessage().init(data);
         return message;
     }
 
@@ -130,10 +135,10 @@ logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".fo
 
     /**
      * <p>
-     * Create {@link MetaMessage} of Meta type 0x7f as a MIDI message
+     * Create {@link SysexMessage} of Meta type 0x7f as a MIDI message
      * corresponding to this instance of {@link MachineDependentMessage}.
      * Store this {@link MachineDependentMessage} instance in {@link MfiMessageStore}
-     * as the actual data of {@link MetaMessage}
+     * as the actual data of {@link SysexMessage}
      * and store the numbered ID in 2 bytes big endian.
      * </p>
      * <p>
@@ -167,27 +172,27 @@ logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".fo
      * so they are converted to meta-events.
      * </p>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
-     * @see MachineDependentSequencer#META_FUNCTION_ID_MACHINE_DEPEND
+     * @see MachineDependentSequencer#SYSEX_FUNCTION_ID_MACHINE_DEPEND
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        MetaMessage metaMessage = new MetaMessage();
+        javax.sound.midi.SysexMessage SysexMessage = new javax.sound.midi.SysexMessage();
 
         int id = MfiMessageStore.put(this);
         byte[] data = {
-            VaviMidiDeviceProvider.MANUFACTURER_ID,
-            MachineDependentSequencer.META_FUNCTION_ID_MACHINE_DEPEND,
-            (byte) ((id / 0x100) & 0xff),
-            (byte) ((id % 0x100) & 0xff)
+                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
+                MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND,
+                (byte) ((id / 0x100) & 0xff),
+                (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // sequencer specific meta event
+        SysexMessage.setMessage(0xf0,    // sysex
                                data,
                                data.length);
 
         return new MidiEvent[] {
-            new MidiEvent(metaMessage, context.getCurrent())
+            new MidiEvent(SysexMessage, context.getCurrent())
         };
     }
 }

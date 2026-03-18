@@ -11,7 +11,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
+import java.util.Arrays;
+
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.message.yamaha.YamahaMessage;
 import vavi.util.StringUtil;
@@ -23,24 +24,53 @@ import static java.lang.System.getLogger;
  * System exclusive message.
  * <pre>
  * [MIDI]
- *  FF id (id id) ... F7
+ *  F0 id (id id) len (len len) mid ... F7
+ * </pre>
+ * <pre>
+ *
+ * F0 ll mm nn
+ *    ~~ ~~ ~~
+ *    |  |  +---
+ *    |  +------ manufacturers id
+ *    +--------- length
+ *
+ * [XF cue point]
+ * F0 04 43 7B 02 rr
+ *
+ * [specify channel status]
+ * F0 14 43 02 00 04 dd ... dd
+ *
+ * [MA-5 AL specify channel]
+ * F0 06 43 02 01 01 cc dd
+ *
+ * [MA-5 V specify voice channel]
+ * F0 06 43 02 01 02 cc dd
  * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
- * @see "ATS-MA5-SMAF_GL_133_HV.pdf"
+ * @see "https://ia800507.us.archive.org/27/items/at-manual-e/AT_Manual_e.pdf"
  */
 public class SysexMessage extends SmafMessage {
 
     private static final Logger logger = getLogger(SysexMessage.class.getName());
 
+    protected byte[] data;
+
     /** */
-    protected SysexMessage() {
+    public SysexMessage() {
         duration = 0;
     }
 
-    /** includes 0xf0 or 0xf7 at top of the array and at end of the array 0xf7 */
-    protected byte[] data;
+    /**
+     * w/o status
+     * <p>
+     * {@link javax.sound.midi.MetaMessage} compatible.
+     * </p>
+     */
+    public byte[] getData() {
+        return Arrays.copyOfRange(data, 1, data.length - 1);
+    }
 
     /**
      * <pre>
@@ -70,7 +100,7 @@ public class SysexMessage extends SmafMessage {
         this.data = tmp;
     }
 
-    /** @param data 0: must be 0xf0 or 0xf7 */
+    /** @param data 0: must be status byte (0xf0 or 0xf7) */
     public void setMessage(byte[] data, int length) throws InvalidSmafDataException {
         if (data[0] != (byte) 0xf0 && data[0] != (byte) 0xf7) {
             throw new InvalidSmafDataException("status: " + data[0]);
@@ -102,11 +132,11 @@ public class SysexMessage extends SmafMessage {
      * Realtime Universal System exclusive message.
      * <pre>
      * [MIDI]
-     *  FF 7F ... F7
+     *  F0 7F ... F7
      * </pre>
      * <pre>
      *  0xf0
-     *  0xff
+     *  0x7f
      *  SUB-ID#1 | SUB-ID#2  | function
      *  ---------+-----------+------------------------------------------
      *   00H     | --        | unused
@@ -122,7 +152,7 @@ public class SysexMessage extends SmafMessage {
      *           | 42H       |  Time Signature(Delayed)
      *   04H     | nn        | Device Control
      *           | 01H       |  Master Volume
-     *           | 02H       |  Master Ballance
+     *           | 02H       |  Master Balance
      *   05H     | nn        | Real Time MTC Cueing
      *           | 00H       |  Special
      *           | 01H       |  Punch In Points
@@ -180,11 +210,11 @@ public class SysexMessage extends SmafMessage {
      * Non Realtime Universal System exclusive message.
      * <pre>
      * [MIDI]
-     *  FF 7E ... F7
+     *  F0 7E ... F7
      * </pre>
      * <pre>
      *  0xf0
-     *  0xfe
+     *  0x7e
      *  SUB-ID#1 | SUB-ID#2   | function
      *  ---------|------------|-----------------------
      *   00H     | --         | unused
@@ -250,7 +280,7 @@ public class SysexMessage extends SmafMessage {
 
                 SysexMessage sysexMessage = switch (data[0]) {
                     case 0x43 -> new YamahaMessage();
-                    default -> new SysexMessage();
+                    default -> new SysexMessage(); // TODO no one comes here bec smaf is for yamaha only?
                 };
                 sysexMessage.setDuration(duration);
                 sysexMessage.setMessage(tmp, tmp.length);

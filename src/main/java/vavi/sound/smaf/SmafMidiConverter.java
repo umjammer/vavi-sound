@@ -17,10 +17,11 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
-import vavi.sound.midi.smaf.SmafVaviSequence;
 import vavi.sound.smaf.message.MidiContext;
 import vavi.sound.smaf.message.MidiConvertible;
+import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
 
@@ -36,7 +37,7 @@ class SmafMidiConverter implements SmafDevice {
     private static final Logger logger = getLogger(SmafMidiConverter.class.getName());
 
     /** the device information */
-    private static final SmafDevice.Info info =
+    static final SmafDevice.Info info =
         new SmafDevice.Info("Java MIDI, SMAF Sequence Converter",
                             "vavi",
                             "Format Converter between MIDI and SMAF",
@@ -75,7 +76,7 @@ private final Set<Class<? extends SmafMessage>> uc = new HashSet<>();
 
         int resolution = midiContext.getResolution(smafTracks);
 logger.log(Level.DEBUG, "resolution: " + resolution);
-        Sequence midiSequence = new SmafVaviSequence(Sequence.PPQ, resolution, 1);
+        Sequence midiSequence = new Sequence(Sequence.PPQ, resolution, 1);
         javax.sound.midi.Track midiTrack = midiSequence.getTracks()[0];
 
         midiTrack.add(midiContext.getTempoEvent());
@@ -95,16 +96,17 @@ logger.log(Level.DEBUG, "smafTracks: " + smafTracks.length);
                 SmafEvent smafEvent = smafTrack.get(j);
                 SmafMessage smafMessage = smafEvent.getMessage();
 
-                midiContext.addCurrentTick(midiContext.getTicksOf(smafMessage.getDuration()));
+                midiContext.addCurrentTick(midiContext.getTicksOfDuration(smafMessage.getDuration()));
 //logger.log(Level.TRACE, "■■■■■(" + i + ":" + j + ") ticks: " + midiContext.getCurrentTick() + "(" + midiContext.getTicksOf(smafMessage.getDuration()) + "," + smafMessage.getDuration() + "), " + smafMessage.getClass().getSimpleName());
 
                 if (smafMessage instanceof MidiConvertible midiConvertible) {
 if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
+    !(smafMessage instanceof vavi.sound.smaf.message.ProgramChangeMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.ModulationMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.PitchBendMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.PanMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.ExpressionMessage)) {
- logger.log(Level.DEBUG, "midi convertible(" + i + ":" + j + "): " + smafMessage);
+ logger.log(Level.DEBUG, "special midi convertible(" + i + ":" + j + "): " + smafMessage);
 }
 //if (smafMessage instanceof vavi.sound.smaf.message.NoteMessage) {
 // int gateTime = ((vavi.sound.smaf.message.NoteMessage) smafMessage).getGateTime();
@@ -116,17 +118,23 @@ if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
                     if (midiEvents != null) {
                         for (MidiEvent midiEvent : midiEvents) {
                             midiTrack.add(midiEvent);
-//                          addSmafMessage(midiTrack, midiEvents[k]);
+//                          addSmafMessage(midiTrack, midiEvent);
                         }
                     }
                 } else if (smafMessage instanceof MetaMessage metaMessage) {
-logger.log(Level.DEBUG, "meta: " + metaMessage.getType());
-                    for (Map.Entry<String, Object> entry : metaMessage.data.entrySet()) {
-logger.log(Level.DEBUG, entry.getKey() + "=" + entry.getValue());
+logger.log(Level.DEBUG, "meta: " + MetaEvent.valueOf(metaMessage.getType()));
+                    if (metaMessage.getMapData() != null) {
+                        for (Map.Entry<String, Object> entry : metaMessage.getMapData().entrySet()) {
+logger.log(Level.DEBUG, "  " + entry.getKey() + "=" + entry.getValue());
+                        }
+                    } else {
+logger.log(Level.DEBUG, "  " + StringUtil.getDump(metaMessage.getData()));
+                        // TODO convert meta
                     }
+                // as for sysex message, all sysex messages id is vavi. so those are handled as MidiConvertible at above
                 } else {
 if (!uc.contains(smafMessage.getClass())) {
- logger.log(Level.WARNING, "unhandled message: " + smafMessage);
+ logger.log(Level.WARNING, "unhandled message: " + smafMessage + " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
  uc.add(smafMessage.getClass());
 }
                 }
@@ -136,7 +144,7 @@ if (!uc.contains(smafMessage.getClass())) {
         return midiSequence;
     }
 
-    /** Note may be entered before Control/Program */
+    /** Note may be inserted before Control/Program */
     @SuppressWarnings("unused")
     private static void addSmafMessage(javax.sound.midi.Track midiTrack, MidiEvent midiEvent) {
 //logger.log(Level.TRACE, "★: " + midiEvent.getMessage());

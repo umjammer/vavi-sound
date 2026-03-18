@@ -1,11 +1,11 @@
 [![Release](https://jitpack.io/v/umjammer/vavi-sound.svg)](https://jitpack.io/#umjammer/vavi-sound)
 [![Java CI](https://github.com/umjammer/vavi-sound/actions/workflows/maven.yml/badge.svg)](https://github.com/umjammer/vavi-sound/actionsworkflows/maven.yml)
 [![CodeQL](https://github.com/umjammer/vavi-sound/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/vavi-sound/actions/workflows/codeql-analysis.yml)
-![Java](https://img.shields.io/badge/Java-17-b07219)
+![Java](https://img.shields.io/badge/Java-25-b07219)
 
 # vavi-sound
 
-<img alt="logo" src="https://github.com/umjammer/vavi-sound/assets/493908/7a731744-643a-4b6c-b82b-68f2fcc436c9" width="160" />
+<img alt="logo" src="src/test/resources/duke_cellphone.png" width="160" />
 
 Provides old school Japanese cell phone sounds library as `javax.sound(.midi)` SPI<br/>
 includes many ADPCM codecs and the [SSRC](https://github.com/shibatch/SSRC) sampling rate converter.
@@ -28,7 +28,7 @@ includes many ADPCM codecs and the [SSRC](https://github.com/shibatch/SSRC) samp
 | sampled | [VOX ADPCM](src/main/java/vavi/sound/adpcm/vox)                         | Dialogic ADPCM (VOX)      |       ✅       |       ✅        | ✅ <sup>[2]</sup> | OKI MSM7580                                 |
 | sampled | [YM2068 ADPCM](src/main/java/vavi/sound/adpcm/ym2608)                   | YAMAHA ADPCM-A            |       ✅       |       ✅        |        -         | YM2608 etc.                                 |
 | sampled | [YAMAHA ADPCM](src/main/java/vavi/sound/adpcm/yamaha)                   | YAMAHA ADPCM-A            |       ✅       |       ✅        | ✅ <sup>[2]</sup> | same as YM2608 ADPCM                        |
-| sampled | [PSX ADPCM]()                                                           | SONY ADPCM                |       ✅       |       -        |                  | .mi\[bh], .mic                              |
+| sampled | [PSX ADPCM]()                                                           | SONY ADPCM                |       ✅       |       -        |        ⏳️        | .mi\[bh], .mic                              |
 | sampled | [ssrc](src/main/java/vavi/sound/pcm/resampling/ssrc)                    | resampling                |       ✅       |       -        |  ✅ <su>*</sup>   | [*] need to wait for phase 1                |
 
 <sub>[1] implemented in another library</sub><br/>
@@ -57,7 +57,7 @@ A. yes you can, follow those steps
     * `vavi/util/I0Bessel.class`
 * ⚠️ **caution**:
     * your application complies with the LGPL. customers **have a right to reverse engineering your application**.
-    * if you include ssrc.jar with a distribution, you **must offer a way to get ssrc source code**.
+    * if you bundle ssrc.jar with a distribution, you **must offer a way to get ssrc source code**.
 * see also
     * https://opensource.org/licenses/LGPL-2.1
     * http://www.gnu.org/licenses/lgpl-java.en.html
@@ -93,15 +93,18 @@ A. yes you can, follow those steps
 
 ## TODO
 
-  * use `Receiver` and sysex instead of `MetaEventListener`
+  * ~~use `Receiver` and sysex instead of `MetaEventListener`~~
   * ssrc: use nio pipe for 1st pass
     * on macos m2 ultra 1st pass is in a blink of an eye
   * ~~`ima`, `ms` adpcm: wav reader~~
     * ~~`tritonus:tritonus-remaining:org.tritonus.sampled.file.WaveAudioFileReader`~~
-  * use service provider for mfi, smaf sequencer
-  * service loader instead of vavi.properties
+  * ~~use service provider for mfi, smaf sequencer~~
+  * ~~service loader instead of vavi.properties~~
   * midi -> smaf
-  * https://github.com/but80/smaf825 (patch dump)
- 
+  * ~~https://github.com/but80/smaf825 (patch dump)~~ -> https://github.com/umjammer/vavi-sound-ma
+  * psx adpcm spi
+  * adpcm playback precisely
+
 ---
-<sub>images by <a href="https://www.silhouette-illust.com/illust/49312">melody</a>, <a href="https://www.silhouette-illust.com/illust/257">cellphone</a></sub>
+
+<sub>image designed by @umjammer, drawn by nano banana</sub>

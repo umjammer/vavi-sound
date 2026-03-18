@@ -12,9 +12,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
+import javax.sound.midi.SysexMessage;
 
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
@@ -30,7 +32,6 @@ import static java.lang.System.getLogger;
 
 /**
  * WaveMessage.
- * TODO isn't it something like SysexMessage?
  * <pre>
  *  format 0x00
  *   duration   1or2
@@ -151,10 +152,10 @@ public class WaveMessage extends SmafMessage
 
     /**
      * <p>
-     * Create {@link MetaMessage} of Meta type 0x7f as a MIDI message corresponding to
+     * Create {@link SysexMessage} of Meta type 0x7f as a MIDI message corresponding to
      * this instance of {@link WaveMessage}.
      * Store this instance of {@link WaveMessage} in {@link SmafMessageStore}
-     * as the actual data of {@link MetaMessage}
+     * as the actual data of {@link SysexMessage}
      * and store the numbered ID in 2 bytes big endian.
      * </p>
      * <p>
@@ -180,38 +181,45 @@ public class WaveMessage extends SmafMessage
      * |ff|7f|LL|5f|01|DH DL|
      * +--+--+--+--+--+--+--+
      *  0x5f manufacturer ID added arbitrarily
-     *  0x01 indicates {@link WaveMessage}  data
+     *  0x01 indicates {@link WaveMessage} data
      *  DH DL numbered id
      * </pre>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
-     * @see vavi.sound.smaf.sequencer.WaveSequencer#META_FUNCTION_ID_SMAF
+     * @see vavi.sound.smaf.sequencer.WaveSequencer#SYSEX_FUNCTION_ID_SMAF
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        MetaMessage metaMessage = new MetaMessage();
+        this.midiGateTimeTicks = context.getTickOfGateTime(gateTime);
+logger.log(Level.INFO, "midiGateTimeTics: " + midiGateTimeTicks);
+
+        SysexMessage sysexMessage = new SysexMessage();
 
         int id = SmafMessageStore.put(this);
         byte[] data = {
-            VaviMidiDeviceProvider.MANUFACTURER_ID,
-            WaveSequencer.META_FUNCTION_ID_SMAF,
-            (byte) ((id / 0x100) & 0xff),
-            (byte) ((id % 0x100) & 0xff)
+                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
+                WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
+                (byte) ((id / 0x100) & 0xff),
+                (byte) ((id % 0x100) & 0xff)
         };
-        metaMessage.setMessage(0x7f,    // sequencer specific meta event
+        sysexMessage.setMessage(0xf0,    // sysex
                                data,
                                data.length);
 
         return new MidiEvent[] {
-            new MidiEvent(metaMessage, context.getCurrentTick())
+            new MidiEvent(sysexMessage, context.getCurrentTick())
         };
     }
+
+    private long midiGateTimeTicks;
+
+    private final ExecutorService es = Executors.newSingleThreadExecutor();
 
     @Override
     public void sequence() throws InvalidSmafDataException {
 logger.log(Level.DEBUG, "WAVE PLAY: " + number);
         AudioEngine engine = Factory.getAudioEngine();
-        engine.start(number);
+        es.submit(() -> engine.start(number, midiGateTimeTicks)); // TODO not precisely
     }
 }

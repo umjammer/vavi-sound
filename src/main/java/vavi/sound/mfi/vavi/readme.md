@@ -2,7 +2,7 @@
 
 Provides a class for MFi service provider implementation example.
 
- * As a special specification, the empty number 0xfd in the extension information is used as MetaMessage.
+ * As a special specification, the empty number 0x45 in the extension information is used as SysexMessage.
 
 ## References
 

@@ -7,6 +7,7 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.ByteArrayInputStream;
+import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,7 +17,6 @@ import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -56,15 +56,23 @@ public class SequenceDataChunk extends Chunk {
 
     private static final Logger logger = getLogger(SequenceDataChunk.class.getName());
 
-    /** */
-    public SequenceDataChunk(byte[] id, int size) {
-        super(id, size);
+    private static final String FOURCC = "Mtsq";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key) || "SEQU".equals(key);
+    }
+
+    @Override
+    public SequenceDataChunk init(byte[] id, int size) {
+        super.init(id, size);
 logger.log(Level.DEBUG, "SequenceData: " + size + " bytes");
+        return this;
     }
 
     /** */
     public SequenceDataChunk() {
-        System.arraycopy("Mtsq".getBytes(), 0, id, 0, 4);
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
         this.size = 0;
     }
 
@@ -112,6 +120,22 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
         return new NoteMessage(duration, data, gateTime);
     }
 
+    /** for HPS */
+    int readVariableLength(DataInput di) throws IOException {
+        int val = 0;
+
+        int d1 = di.readUnsignedByte();
+        if ((d1 & 0x80) != 0) {
+            val = ((d1 & 0x7F) + 1) << 7;
+            int d2 = di.readUnsignedByte();
+            val |= d2;
+        } else {
+            val = d1;
+        }
+
+        return val;
+    }
+
     /** formatType 0 */
     protected void readHandyPhoneStandard(CrcDataInputStream dis)
             throws InvalidSmafDataException, IOException {
@@ -120,7 +144,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
 
         while (dis.available() > 0) {
             // -------- duration --------
-            int duration = MidiUtil.readVariableLength(dis);
+            int duration = readVariableLength(dis);
 //logger.log(Level.TRACE, "duration: %1$d, 0x%1$04x".formatted(duration));
             // -------- event --------
             int e1 = dis.readUnsignedByte();
@@ -134,7 +158,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                         byte[] b = new byte[len];
                         dis.readFully(b);
                         smafMessage = new MetaMessage();
-                        ((MetaMessage) smafMessage).setMessage(e2, Map.of("data", b));
+                        ((MetaMessage) smafMessage).setMessage(e2, b, len);
                         logger.log(Level.WARNING, "meta 0xff, 0x%02x".formatted(e2));
                         break;
                     case 0xf0: // exclusive

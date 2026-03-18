@@ -57,6 +57,11 @@ public class PcmAudioEngine extends BasicAudioEngine {
     }
 
     @Override
+    public boolean accept(int format) {
+        return format == 0x90; // TODO
+    }
+
+    @Override
     protected int getChannels(int streamNumber) {
         int channels = 1;
         if (data[streamNumber].channel == -1) {
@@ -107,6 +112,28 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[str
         return iss;
     }
 
+    @Override
+    protected void init(int sampleRate, int channels) {
+        try {
+            AudioFormat audioFormat = new AudioFormat(
+                    AudioFormat.Encoding.PCM_UNSIGNED,
+                    sampleRate,
+                    8,
+                    channels,
+                    1 * channels,
+                    sampleRate,
+                    false);
+logger.log(Level.DEBUG, audioFormat);
+
+            DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+            SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
+            line.open(audioFormat);
+            line.start();
+        } catch (LineUnavailableException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     // ----
 
     @Override
@@ -123,28 +150,14 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + this.dat
             return;
         }
 
-        AudioFormat audioFormat = new AudioFormat(
-            AudioFormat.Encoding.PCM_UNSIGNED,
-            this.data[streamNumber].sampleRate,
-            8,
-            channels,
-            1 * channels,
-            this.data[streamNumber].sampleRate,
-            false);
-logger.log(Level.DEBUG, audioFormat);
-
         try {
-
 //logger.log(Level.TRACE, data.length);
             InputStream[] iss = getInputStreams(streamNumber, channels);
+//logger.log(Level.TRACE, "is: " + iss[0].available());
 
-//logger.log(Level.TRACE, "is: " + is.available());
-
-            DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-            SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
-            line.open(audioFormat);
-            line.start();
+            double volume = Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume",  "0.2"));
             volume(line, volume);
+
             byte[] buf = new byte[1024];
             while (iss[0].available() > 0) {
                 if (channels == 1) {
@@ -153,7 +166,7 @@ logger.log(Level.DEBUG, audioFormat);
                     line.write(buf, 0, l);
                 } else {
                     int lL = iss[0].read(buf, 0, 512);
-                    /*int lR = */iss[1].read(buf, 512, 512);
+                    /* int lR = */ iss[1].readNBytes(buf, 512, 512);
 //logger.log(Level.TRACE, "l : " + lL + ", r: " + lR);
                     for (int i = 0; i < lL / 2; i++) {
                         byte[] temp = new byte[4];
@@ -165,11 +178,7 @@ logger.log(Level.DEBUG, audioFormat);
                     }
                 }
             }
-            line.drain();
-            line.stop();
-            line.close();
-
-        } catch (IOException | LineUnavailableException e) {
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }

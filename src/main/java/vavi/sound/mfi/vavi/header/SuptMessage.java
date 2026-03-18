@@ -22,17 +22,25 @@ public class SuptMessage extends SubMessage {
     /** */
     public static final String TYPE = "supt";
 
+    @Override
+    public boolean accept(String key) {
+        return TYPE.equals(key);
+    }
+
     /**
      * for {@link SubMessage#readFrom(java.io.InputStream)}
+     *
      * @param type ignored
+     * @return this
      */
-    public SuptMessage(String type, byte[] data) {
-        super(TYPE, data);
+    @Override
+    public SubMessage init(String type, byte[] data) {
+        return super.init(TYPE, data);
     }
 
     /** */
-    public SuptMessage(String data) {
-        super(TYPE, data);
+    public SubMessage init(String data) {
+        return super.init(TYPE, data);
     }
 
     @Override

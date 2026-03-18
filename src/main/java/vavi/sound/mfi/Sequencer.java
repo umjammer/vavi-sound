@@ -47,4 +47,7 @@ public interface Sequencer extends MfiDevice {
 
     /** Removes a {@link MetaEventListener Listener}. */
     void removeMetaEventListener(MetaEventListener l);
+
+    /** */
+    javax.sound.midi.Transmitter getTransmitter() throws MfiUnavailableException;
 }

@@ -17,6 +17,8 @@ import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.TrackChunk;
+import vavi.sound.mfi.vavi.TrackMessage;
 
 
 /**
@@ -35,15 +37,20 @@ import vavi.sound.mfi.vavi.MidiConvertible;
  *          0.05 031203 nsano implements {@link ChannelMessage} <br>
  */
 public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
-    implements ChannelMessage, MidiConvertible, MfiConvertible {
+    implements ChannelMessage, MidiConvertible, MfiConvertible, TrackMessage {
 
     /** */
     private int voice;
     /** 0 ~ 63 */
     private int modulationDepth;
 
+    @Override
+    public boolean accept(String key) {
+        return "255.b.234".equals(key);
+    }
+
     /**
-     * for {@link vavi.sound.mfi.vavi.TrackMessage}
+     * for {@link TrackChunk}
      * @param delta delta time
      * @param status
      * @param data1 0xea
@@ -55,16 +62,19 @@ public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
      *  +- voice
      * </pre>
      */
-    public ModulationDepthMessage(int delta, int status, int data1, int data2) {
-        super(delta, 0xff, 0xea, data2);
+    @Override
+    public ModulationDepthMessage init(int delta, int status, int data1, int data2) {
+        super.init(delta, 0xff, 0xea, data2);
 
         this.voice           = (data2 & 0xc0) >> 6;
         this.modulationDepth =  data2 & 0x3f;
+
+        return this;
     }
 
     /** for {@link MfiConvertible} */
-    public ModulationDepthMessage() {
-        super(0, 0xff, 0xea, 0);
+    public ModulationDepthMessage init() {
+        return (ModulationDepthMessage) super.init(0, 0xff, 0xea, 0);
     }
 
     /** */
