@@ -491,25 +491,39 @@ logger.log(Level.TRACE, "tempoTable: " + tempoTable.length);
     /** if no tempo is specified, SSD will treat it as a quarter note = 120 */
     private static final int tempo = 120;
 
-    /** this will be changed at {@link #getResolution} */
-    private int timeBase = 2;
+    /**
+     * duration timeBase in [ms].
+     * this will be changed at {@link #getResolution}
+     */
+    private int durationTimeBase = 2;
 
     /**
-     * gate time to ticks.
+     * gate time timeBase in [ms].
+     * this will be changed at {@link #getResolution}
+     */
+    private int gateTimeTimeBase = 2;
+
+    /**
+     * duration to ticks [ms].
      * @return Returns the ticks.
-     * @see #timeBase
+     * @see #durationTimeBase
      * @see #getResolution
      */
-    public long getTicksOf(long gateTime) {
-        return gateTime * timeBase;
+    public long getTicksOfDuration(long duration) {
+        return duration * durationTimeBase;
+    }
+
+    /** gate time to ticks [ms]. */
+    public long getTickOfGateTime(long gateTime) {
+        return gateTime * gateTimeTimeBase;
     }
 
     /**
      * @see #tempo
-     * @see #timeBase
+     * @see #durationTimeBase
      */
     public MidiEvent getTempoEvent() throws InvalidMidiDataException {
-        int l = tempo * timeBase * 1000;
+        int l = tempo * durationTimeBase * 1000;
 //      int l = (int) Math.round(60d * 1000000d / tempo);
 logger.log(Level.INFO, "tempo: " + l);
         MetaMessage metaMessage = new MetaMessage();
@@ -527,7 +541,7 @@ logger.log(Level.INFO, "tempo: " + l);
      * @param smafTracks smaf tracks
      * @return resolution for MIDI
      * @see #tempo
-     * @see #timeBase
+     * @see #durationTimeBase
      */
     public int getResolution(Track[] smafTracks)
         throws InvalidSmafDataException {
@@ -543,9 +557,10 @@ int t = 0;
                 SmafMessage message = event.getMessage();
                 if (message instanceof vavi.sound.smaf.MetaMessage metaMessage) {
                     if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
-                        this.timeBase = (Integer) metaMessage.getMapData().get("durationTimeBase"); // [ms]
-logger.log(Level.DEBUG, "timebase: " + timeBase + ", (" + t + ":" + i + ")");
-                        return tempo * timeBase;
+                        this.gateTimeTimeBase = (Integer) metaMessage.getMapData().get("gateTimeTimeBase"); // [ms]
+                        this.durationTimeBase = (Integer) metaMessage.getMapData().get("durationTimeBase"); // [ms]
+logger.log(Level.DEBUG, "durationTimeBase: " + durationTimeBase + "gateTimeTimeBase: " + gateTimeTimeBase + ", (" + t + ":" + i + ")");
+                        return tempo * durationTimeBase;
                     }
                 }
             }

@@ -14,10 +14,9 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.SysexMessage;
 import javax.sound.midi.MidiEvent;
+import javax.sound.midi.SysexMessage;
 
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
@@ -33,7 +32,6 @@ import static java.lang.System.getLogger;
 
 /**
  * WaveMessage.
- * TODO isn't it something like SysexMessage?
  * <pre>
  *  format 0x00
  *   duration   1or2
@@ -193,6 +191,9 @@ public class WaveMessage extends SmafMessage
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
+        this.midiGateTimeTicks = context.getTickOfGateTime(gateTime);
+logger.log(Level.INFO, "midiGateTimeTics: " + midiGateTimeTicks);
+
         SysexMessage sysexMessage = new SysexMessage();
 
         int id = SmafMessageStore.put(this);
@@ -211,12 +212,14 @@ public class WaveMessage extends SmafMessage
         };
     }
 
+    private long midiGateTimeTicks;
+
     private final ExecutorService es = Executors.newSingleThreadExecutor();
 
     @Override
     public void sequence() throws InvalidSmafDataException {
 logger.log(Level.DEBUG, "WAVE PLAY: " + number);
         AudioEngine engine = Factory.getAudioEngine();
-        es.submit(() -> engine.start(number));
+        es.submit(() -> engine.start(number, midiGateTimeTicks)); // TODO not precisely
     }
 }

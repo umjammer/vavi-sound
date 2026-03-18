@@ -220,7 +220,7 @@ if (gateTime == 0) {
  uc++;
  return null;
 }
-        int length = (int) context.getTicksOf(this.gateTime);
+        int length = (int) context.getTickOfGateTime(this.gateTime);
         int pitch = context.retrievePitch(this.channel, getNote());
         int midiChannel = context.retrieveChannel(this.channel);
         int velocity = this.velocity == -1 ? context.getVelocity(this.channel) : context.setVelocity(this.channel, this.velocity);

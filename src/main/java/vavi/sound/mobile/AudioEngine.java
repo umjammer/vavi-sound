@@ -28,7 +28,7 @@ import java.nio.ByteOrder;
  */
 public interface AudioEngine {
 
-    /** */
+    /** Checks if the format is acceptable by this engine. */
     boolean accept(int format);
 
     /**
@@ -44,16 +44,23 @@ public interface AudioEngine {
     void setData(int streamNumber, int channel, int sampleRate, int bits, int channels, byte[] adpcm, boolean continued);
 
     /**
-     * Stop adpcm playing.
+     * Stops adpcm playing.
      * @param streamNumber packet id
      */
     void stop(int streamNumber);
 
     /**
-     * Start adpcm playing.
+     * Starts adpcm playing.
      * @param streamNumber packet id
      */
     void start(int streamNumber);
+
+    /**
+     * Starts adpcm playing and stops after gateTime.
+     * @param streamNumber packet id
+     * @param gateTime playing time [ms], -1 play whole
+     */
+    void start(int streamNumber, long gateTime);
 
     /** close the line inside the engine */
     void close();

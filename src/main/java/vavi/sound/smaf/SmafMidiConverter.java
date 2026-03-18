@@ -96,7 +96,7 @@ logger.log(Level.DEBUG, "smafTracks: " + smafTracks.length);
                 SmafEvent smafEvent = smafTrack.get(j);
                 SmafMessage smafMessage = smafEvent.getMessage();
 
-                midiContext.addCurrentTick(midiContext.getTicksOf(smafMessage.getDuration()));
+                midiContext.addCurrentTick(midiContext.getTicksOfDuration(smafMessage.getDuration()));
 //logger.log(Level.TRACE, "■■■■■(" + i + ":" + j + ") ticks: " + midiContext.getCurrentTick() + "(" + midiContext.getTicksOf(smafMessage.getDuration()) + "," + smafMessage.getDuration() + "), " + smafMessage.getClass().getSimpleName());
 
                 if (smafMessage instanceof MidiConvertible midiConvertible) {

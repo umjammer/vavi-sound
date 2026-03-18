@@ -110,6 +110,11 @@ logger.log(Level.DEBUG, audioFormat);
 
     @Override
     public void start(int streamNumber) {
+        start(streamNumber, -1);
+    }
+
+    @Override
+    public void start(int streamNumber, long gateTime) {
         if (this.data[streamNumber] == null) {
 logger.log(Level.WARNING, getClass().getSimpleName() + ": data for ch " + streamNumber + " is null");
             return;
@@ -130,7 +135,11 @@ logger.log(Level.INFO, "always used: no: " + streamNumber + ", ch: " + this.data
             volume(line, volume);
 
             byte[] buf = new byte[1024];
+            long startTime = System.currentTimeMillis();
             while (iss[0].available() > 0) {
+                if (gateTime > 0 && (System.currentTimeMillis() - startTime) > gateTime) { // TODO not precisely
+                    break;
+                }
                 if (channels == 1) {
                     int l = iss[0].read(buf, 0, 1024);
 logger.log(Level.TRACE, getClass().getSimpleName() + ": data:\n" + StringUtil.getDump(buf, 32));
