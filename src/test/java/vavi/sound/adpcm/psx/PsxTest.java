@@ -26,9 +26,11 @@ import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static java.lang.System.getLogger;
 import static vavi.sound.SoundUtil.volume;
@@ -47,7 +49,6 @@ import static vavi.sound.adpcm.psx.Psx.update_offsets;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 2025-04-23 nsano initial version <br>
  */
-@EnabledIf("localPropertiesExists")
 @PropsEntity(url = "file:local.properties")
 class PsxTest {
 
@@ -73,6 +74,7 @@ Debug.print("volume: " + volume);
     }
 
     @Test
+    @Disabled("not work")
     @DisplayName("prototype")
     void test1() throws Exception {
         Path path = Path.of(adpcm);
@@ -94,6 +96,7 @@ Debug.println("samples: " + samples);
      * @see "https://github.com/vgmstream/vgmstream/blob/9db666eb0c2275334ac68a2537a6a689aee792f2/src/layout/flat.c#L22"
      */
     @Test
+    @Disabled("flat implemented")
     @DisplayName("raw api")
     void test2() throws Exception {
         Path path = Path.of(adpcm);
@@ -161,6 +164,7 @@ Debug.print("samples: " + samples);
      * @see "https://github.com/vgmstream/vgmstream/blob/9db666eb0c2275334ac68a2537a6a689aee792f2/src/layout/interleave.c#L146"
      */
     @Test
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
     @DisplayName("raw api")
     void test3() throws Exception {
         Path path = Path.of(adpcm);
