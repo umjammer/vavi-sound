@@ -7,6 +7,7 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.ByteArrayInputStream;
+import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -119,6 +120,22 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
         return new NoteMessage(duration, data, gateTime);
     }
 
+    /** for HPS */
+    int readVariableLength(DataInput di) throws IOException {
+        int val = 0;
+
+        int d1 = di.readUnsignedByte();
+        if ((d1 & 0x80) != 0) {
+            val = ((d1 & 0x7F) + 1) << 7;
+            int d2 = di.readUnsignedByte();
+            val |= d2;
+        } else {
+            val = d1;
+        }
+
+        return val;
+    }
+
     /** formatType 0 */
     protected void readHandyPhoneStandard(CrcDataInputStream dis)
             throws InvalidSmafDataException, IOException {
@@ -127,7 +144,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
 
         while (dis.available() > 0) {
             // -------- duration --------
-            int duration = MidiUtil.readVariableLength(dis);
+            int duration = readVariableLength(dis);
 //logger.log(Level.TRACE, "duration: %1$d, 0x%1$04x".formatted(duration));
             // -------- event --------
             int e1 = dis.readUnsignedByte();
