@@ -1,0 +1,14 @@
+vavi.sound.mfi.vavi.header.CopyMessage
+vavi.sound.mfi.vavi.header.ProtMessage
+vavi.sound.mfi.vavi.header.TitlMessage
+vavi.sound.mfi.vavi.track.ChangeVoiceMessage
+vavi.sound.mfi.vavi.track.EndOfTrackMessage
+vavi.sound.mfi.vavi.track.ExpressionMessage
+vavi.sound.mfi.vavi.track.MfiConvertibleMessage
+vavi.sound.mfi.vavi.track.ModulationDepthMessage
+vavi.sound.mfi.vavi.track.PanpotMessage
+vavi.sound.mfi.vavi.track.PitchBendMessage
+vavi.sound.mfi.vavi.track.PitchBendRangeMessage
+vavi.sound.mfi.vavi.track.TempoMessage
+vavi.sound.mfi.vavi.track.VolumeMessage
+vavi.sound.mfi.vavi.VaviNoteMessage

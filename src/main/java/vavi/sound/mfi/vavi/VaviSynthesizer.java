@@ -192,7 +192,7 @@ public class VaviSynthesizer implements Synthesizer {
 //logger.log(Level.TRACE, "message id: " + id);
             MachineDependentMessage mdm = (MachineDependentMessage) MfiMessageStore.get(id);
 
-            int vendor = mdm.getVendor() | mdm.getCarrier(); // TODO carrier works?
+            int vendor = mdm.getVendor() | mdm.getCarrier();
             MachineDependentSequencer sequencer;
             try {
                 sequencer = MachineDependentSequencer.Factory.getSequencer(vendor);
