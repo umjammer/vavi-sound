@@ -15,7 +15,7 @@ package vavi.sound.smaf;
  */
 public class SmafEvent {
 
-    /** */
+    /** (dutation?) */
     private final long tick;
 
     /** */
@@ -23,7 +23,7 @@ public class SmafEvent {
 
     /**
      * @param smafMessage
-     * @param tick
+     * @param tick (dutation?)
      */
     public SmafEvent(SmafMessage smafMessage, long tick) {
         this.smafMessage = smafMessage;
@@ -38,7 +38,7 @@ public class SmafEvent {
     }
 
     /**
-     * @return Returns the tick.
+     * @return Returns the tick. (dutation?)
      */
     public long getTick() {
         return tick;

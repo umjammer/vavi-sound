@@ -22,6 +22,7 @@ import vavi.sound.smaf.MetaMessage;
 import vavi.sound.smaf.SmafEvent;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -68,9 +69,9 @@ logger.log(Level.DEBUG, "Graphics[" + trackNumber + "]: " + size);
     @Override
     protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
-//skip(is, size);
 
         this.formatType = FormatType.values()[dis.readUnsignedByte()];
+logger.log(Level.DEBUG, "formatType: " + formatType);
 
         this.playerType = dis.readUnsignedByte();
         this.textEncodeType = dis.readUnsignedByte();
@@ -198,5 +199,20 @@ dis.skipBytes((int) (long) size); // TODO
         @Override
         public void writeTo(OutputStream os) throws IOException {
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(getDC().format(getId() + " " + formatType + ", " + playerType + ", durationTimeBase: " + durationTimeBase + ", gateTimeTimeBase: " + gateTimeTimeBase));
+        try (var dc = getDC().open()) {
+            if (setupDataChunk != null) sb.append(setupDataChunk);
+            if (fontDataChunk != null) sb.append(fontDataChunk);
+            if (imageDataChunk != null) sb.append(imageDataChunk);
+            for (var sequenceDataChunk : sequenceDataChunks) sb.append(sequenceDataChunk);
+        }
+
+        return sb.toString();
     }
 }

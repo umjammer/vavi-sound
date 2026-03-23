@@ -12,11 +12,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+
 import vavi.sound.smaf.chunk.Chunk;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
@@ -63,9 +67,11 @@ Debug.println("chunk:\n" + chunk);
 
     @Test
     @DisplayName("dump recursive")
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
     void test2() throws Exception {
         Path dir = Paths.get(this.dir);
         AtomicInteger c = new AtomicInteger();
+        List<Path> f = new ArrayList<>();
         Files.walk(dir)
                 .filter(p -> p.getFileName().toString().endsWith(".mmf"))
                 .filter(not(p -> Stream.of("cracker", "test_data").anyMatch(s -> p.toString().contains(s))))
@@ -76,9 +82,11 @@ Debug.println("---- path: " + path);
 Debug.println("chunk:\n" + chunk);
                 c.getAndIncrement();
             } catch (Exception e) {
-Debug.println(e.getMessage());
+Debug.println(e.toString());
+                f.add(path);
             }
         });
-Debug.println("smafs: " + c.get());
+Debug.println("smafs: " + c.get() + ", failure: " + f.size());
+f.forEach(System.err::println);
     }
 }

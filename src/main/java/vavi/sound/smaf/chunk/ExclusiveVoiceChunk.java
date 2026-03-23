@@ -6,12 +6,17 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.util.StringJoiner;
+
+import vavi.sound.mobile.AudioEngine.Data;
 import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.SysexMessage;
+import vavi.sound.smaf.message.MachineDependentMessage.Factory;
 
 import static java.lang.System.getLogger;
 
@@ -78,12 +83,25 @@ public class ExclusiveVoiceChunk extends Chunk {
         assert e1 == 0xff && e2 == 0xf0;
         exclusiveType = ExclusiveType.valueOf(data[2]);
 
-        exclusive = SysexMessage.Factory.getSysexMessage(0, e2, data, len);
+        exclusive = Factory.getSysexMessage(0, e2, data, len);
     }
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
+        DataOutputStream dos = new DataOutputStream(os);
 
+        dos.write(id);
+        dos.writeInt(size);
+
+        dos.writeInt(0xff);
+        dos.writeInt(0xf0);
+        dos.writeInt(exclusive.getData().length);
+        dos.write(exclusive.getData());
+    }
+
+    /** */
+    public SmafMessage getSmafMessage() {
+        return exclusive;
     }
 
     @Override

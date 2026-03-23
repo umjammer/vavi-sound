@@ -154,7 +154,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
         /**
          * sysex
          * <pre>
-         * 0x7f manufacturerId
+         * 0xf0 manufacturerId
          * </pre>
          */
         private static void processSpecial(javax.sound.midi.SysexMessage message) throws InvalidSmafDataException {
@@ -163,13 +163,16 @@ logger.log(Level.ERROR, e.getMessage(), e);
             int manufacturerId = data[0];
             switch (manufacturerId) {
                 case 0:     // 3 byte manufacturer id
-                    logger.log(Level.WARNING, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
+                    logger.log(Level.DEBUG, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
                     break;
                 case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x45 vavi
                     processSpecial_Vavi(message);
                     break;
+                case 0x7f:
+                    logger.log(Level.DEBUG, "unhandled Realtime Universal: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
+                    break;
                 default:
-                    logger.log(Level.WARNING, "unhandled manufacturer: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
+                    logger.log(Level.DEBUG, "unhandled manufacturer: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
                     break;
             }
         }
@@ -177,7 +180,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
         /**
          * manufacturer id: vavi
          * <pre>
-         * 0x45 functionId
+         * 0xf0 0x45 functionId
          * </pre>
          */
         private static void processSpecial_Vavi(javax.sound.midi.SysexMessage message)
@@ -186,7 +189,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
             byte[] data = message.getData();
             int functionId = data[1];
             switch (functionId) {
-                case MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND:
+                case MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND: // currently not used
                     processSpecial_Vavi_MachineDependent(message);
                     break;
                 case WaveSequencer.SYSEX_FUNCTION_ID_SMAF:
@@ -203,7 +206,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
          * <p>
          * vendor is yamaha only, so process is same as the {@link #processSpecial_Vavi_Wave}
          * <pre>
-         * 0x45 0x01 id(H) id(L)
+         * 0xf0 0x45 0x01 id(H) id(L)
          * </pre>
          */
         private static void processSpecial_Vavi_MachineDependent(javax.sound.midi.SysexMessage message)
@@ -219,7 +222,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
         /**
          * function id: smaf (message is smaf message for wave)
          * <pre>
-         * 0x45 0x03 id(H) id(L)
+         * 0xf0 0x45 0x03 id(H) id(L)
          * </pre>
          */
         private static void processSpecial_Vavi_Wave(javax.sound.midi.SysexMessage message)

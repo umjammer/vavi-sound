@@ -32,7 +32,7 @@ public final class SmafSystem {
     private static final Logger logger = getLogger(SmafSystem.class.getName());
 
     /** TODO spi */
-    private static SmafDeviceProvider deviceProvider = new SmafDeviceProvider();
+    private static final SmafDeviceProvider deviceProvider = new SmafDeviceProvider();
     /** TODO spi */
     private static final SmafFileReader reader = new SmafFileReader();
     /** TODO spi */

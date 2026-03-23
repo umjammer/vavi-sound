@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.lang.System.Logger;
 import java.util.Properties;
 
-import vavi.sound.mfi.vavi.VaviMfiDeviceProvider;
-
 import static java.lang.System.getLogger;
 
 
@@ -27,7 +25,7 @@ public class SmafDeviceProvider {
 
     static {
         try {
-            try (InputStream is = VaviMfiDeviceProvider.class.getResourceAsStream("/META-INF/maven/vavi/vavi-sound/pom.properties")) {
+            try (InputStream is = SmafDeviceProvider.class.getResourceAsStream("/META-INF/maven/vavi/vavi-sound/pom.properties")) {
                 if (is != null) {
                     Properties props = new Properties();
                     props.load(is);
@@ -51,15 +49,8 @@ public class SmafDeviceProvider {
     public final static int MANUFACTURER_ID = 0x45;
 
     /** */
-    private static final SmafDevice.Info[] smafDeviceInfos = {
-            SmafSynthesizer.info,
-            SmafSequencer.info,
-            SmafMidiConverter.info
-    };
-
-    /** */
     public boolean isDeviceSupported(SmafDevice.Info info) {
-        for (SmafDevice.Info smafDeviceInfo : smafDeviceInfos) {
+        for (SmafDevice.Info smafDeviceInfo : getDeviceInfo()) {
             if (smafDeviceInfo.equals(info)) {
                 return true;
             }
@@ -69,7 +60,11 @@ public class SmafDeviceProvider {
 
     /** */
     public SmafDevice.Info[] getDeviceInfo() {
-        return smafDeviceInfos;
+        return new SmafDevice.Info[] {
+                SmafSynthesizer.info,
+                SmafSequencer.info,
+                SmafMidiConverter.info
+        };
     }
 
     /** */

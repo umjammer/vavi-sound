@@ -159,29 +159,28 @@ public class WaveMessage extends SmafMessage
      * and store the numbered ID in 2 bytes big endian.
      * </p>
      * <p>
-     * For playback, listen to Meta type 0x7f with {@link javax.sound.midi.MetaEventListener}
+     * For playback, listen to Sysex manufacturer id 0x45 with {@link vavi.sound.smaf.SmafSynthesizer.SmafReceiver}
      * and find the message with the corresponding id from {@link SmafMessageStore}.
      * Apply it to {@link vavi.sound.smaf.sequencer.WaveSequencer} for playback processing.
      * </p>
      * <p>
-     * See vavi.sound.smaf.MetaEventAdapter for the playback mechanism.
+     * See {@link vavi.sound.smaf.SmafSynthesizer.SmafReceiver} for the playback mechanism.
      * </p>
      * <pre>
-     * MIDI Meta
+     * MIDI Systex should be
      * +--+--+--+--+--+--+--+--+--+--+--+-
-     * |ff|7f|LL|ID|DD DD ...
+     * |f0|45|ID|DD DD ...
      * +--+--+--+--+--+--+--+--+--+--+--+-
-     *  0x7f sequencer specific meta event
-     *  LL really 1 byte?
-     *  ID manufacturer ID
+     *  0x45 manufacturer id
+     *  ID function ID
      * </pre>
      * <pre>
      * current specs.
      * +--+--+--+--+--+--+--+
-     * |ff|7f|LL|5f|01|DH DL|
+     * |f0|45|01|DH DL|
      * +--+--+--+--+--+--+--+
-     *  0x5f manufacturer ID added arbitrarily
-     *  0x01 indicates {@link WaveMessage} data
+     *  0x45 manufacturer ID added arbitrarily
+     *  0x01 function id, indicates {@link WaveMessage} data
      *  DH DL numbered id
      * </pre>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID

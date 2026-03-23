@@ -12,6 +12,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import vavi.sound.mfi.vavi.SubMessage;
 
 
 /**
@@ -103,15 +107,30 @@ class SubData {
         return data;
     }
 
+    /** tag and description */
+    static final Properties tags = new Properties();
+
     /** tags which data is string */
-    private static final List<String> stringTags = List.of(
-            "VN", "CN", "CA", "ST", "AN", "WW", "SW", "AW", "CR", "GR", "MI", "CD", "UD",
-            "A0", "A2"
-    );
+    static final List<String> stringTags = new ArrayList<>();
+
+    static {
+        try {
+            Properties props = new Properties();
+            props.load(SubMessage.class.getResourceAsStream("/vavi/sound/smaf/chunk/tag.properties"));
+
+            for (String name : props.stringPropertyNames()) {
+                String[] pair = props.getProperty(name).split(",");
+                if (Boolean.parseBoolean(pair[1])) stringTags.add(name);
+                tags.put(name, pair[0]);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     @Override
     public String toString() {
-        return tag + "(" + data.length + "): lang: " + contentsCodeType + ": " +
+        return "SubData(" + tag + ", " + data.length + ",lang: " + contentsCodeType + ", " + tags.getProperty(tag) + "): " +
                 (stringTags.contains(tag) ? new String(data, Charset.forName("Windows-31J")) : Arrays.toString(data));
     }
 }

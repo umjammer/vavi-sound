@@ -13,11 +13,12 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
-import vavi.sound.smaf.SysexMessage;
+import vavi.sound.smaf.message.MachineDependentMessage.Factory;
 import vavi.sound.smaf.message.UndefinedMessage;
 
 import static java.lang.System.getLogger;
@@ -36,11 +37,11 @@ public class SetupDataChunk extends Chunk {
 
     private static final Logger logger = getLogger(SetupDataChunk.class.getName());
 
-    private static final String FOURCC = "tsu";
+    private static final String FOURCC = "[MA]tsu";
 
     @Override
     protected boolean accept(String key) {
-        return FOURCC.equals(key.substring(1, 4));
+        return Pattern.compile(FOURCC).matcher(key).matches();
     }
 
     @Override
@@ -59,7 +60,7 @@ logger.log(Level.DEBUG, "SetupData: " + size + " bytes");
     @Override
     protected void init(CrcDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
 
-        ScoreTrackChunk.FormatType formatType = ((ScoreTrackChunk) parent).getFormatType();
+        ScoreTrackChunk.FormatType formatType = ((TrackChunk) parent).getFormatType();
         switch (formatType) {
         case HandyPhoneStandard:
             readHandyPhoneStandard(dis);
@@ -100,7 +101,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                     int messageSize = dis.readUnsignedByte();
                     byte[] data = new byte[messageSize];
                     dis.readFully(data);
-                    smafMessage = SysexMessage.Factory.getSysexMessage(0, e2, data, messageSize);
+                    smafMessage = Factory.getSysexMessage(0, e2, data, messageSize);
                     break;
                 default:
                     smafMessage = new UndefinedMessage(e1, e2, 0);
@@ -129,7 +130,7 @@ logger.log(Level.WARNING, "unhandled: %02x".formatted(e1));
                 int messageSize = MidiUtil.readVariableLength(dis);
                 byte[] data = new byte[messageSize];
                 dis.readFully(data);
-                smafMessage = SysexMessage.Factory.getSysexMessage(0, status, data, messageSize);
+                smafMessage = Factory.getSysexMessage(0, status, data, messageSize);
             } else {
                 smafMessage = new UndefinedMessage(status, -1, 0);
 logger.log(Level.WARNING, "unhandled: %02x".formatted(status));

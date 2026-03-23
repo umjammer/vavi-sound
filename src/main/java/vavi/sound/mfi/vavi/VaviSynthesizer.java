@@ -25,10 +25,11 @@ import vavi.sound.mfi.Synthesizer;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
-import vavi.sound.mfi.vavi.sequencer.UnknownVenderSequencer;
+import vavi.sound.mfi.vavi.sequencer.UnknownVendorSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
+import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
 
@@ -136,7 +137,7 @@ public class VaviSynthesizer implements Synthesizer {
         /**
          * sysex
          * <pre>
-         * 0xf0
+         * 0xf0 manufacturerId
          * </pre>
          */
         private static void processSpecial(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
@@ -145,13 +146,16 @@ public class VaviSynthesizer implements Synthesizer {
             int manufacturerId = data[0];
             switch (manufacturerId) {
                 case 0:     // 3 byte manufacturer id
-                    logger.log(Level.WARNING, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
+                    logger.log(Level.DEBUG, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
                     break;
                 case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x45 vavi
                     processSpecial_Vavi(message);
                     break;
+                case 0x7f:
+                    logger.log(Level.DEBUG, "unhandled Realtime Universal: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
+                    break;
                 default:
-                    logger.log(Level.WARNING, "unhandled manufacturer: %02x".formatted(manufacturerId));
+                    logger.log(Level.DEBUG, "unhandled manufacturer: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
                     break;
             }
         }
@@ -159,7 +163,7 @@ public class VaviSynthesizer implements Synthesizer {
         /**
          * manufacturer id: vavi 0x45
          * <pre>
-         * 0xf0 0x45
+         * 0xf0 0x45 functionId
          * </pre>
          */
         private static void processSpecial_Vavi(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
@@ -182,7 +186,7 @@ public class VaviSynthesizer implements Synthesizer {
         /**
          * sysex function id: machine dependent (message has vendor and carrier id)
          * <pre>
-         * 0xf0 0x45 0x01
+         * 0xf0 0x45 0x01 id(H) id(L)
          * </pre>
          */
         private static void processSpecial_Vavi_MachineDependent(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
@@ -199,7 +203,7 @@ public class VaviSynthesizer implements Synthesizer {
             } catch (IllegalArgumentException | Error e) {
                 logger.log(Level.ERROR, e.getMessage(), e);
                 logger.log(Level.ERROR, "error vendor: 0x%02x".formatted(vendor));
-                sequencer = new UnknownVenderSequencer();
+                sequencer = new UnknownVendorSequencer();
             }
             sequencer.sequence(mdm);
         }
@@ -207,7 +211,7 @@ public class VaviSynthesizer implements Synthesizer {
         /**
          * sysex function id: mfi4 (message is mfi4)
          * <pre>
-         * 0xf0 0x45 0x02
+         * 0xf0 0x04 0x45 0x02 id(H) id(L)
          * </pre>
          * @since MFi 4.0
          */

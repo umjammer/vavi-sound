@@ -142,29 +142,28 @@ logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".fo
      * and store the numbered ID in 2 bytes big endian.
      * </p>
      * <p>
-     * For playback, listen to Meta type 0x7f with {@link javax.sound.midi.MetaEventListener}
+     * For playback, listen to Manufacturer id 0x45 with {@link vavi.sound.mfi.vavi.VaviSynthesizer.VaviReceiver}
      * and find the message with the corresponding id from {@link MfiMessageStore}.
      * Playback is performed by applying it to {@link vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer}.
      * </p>
      * <p>
-     * see also {@code vavi.sound.mfi.vavi.MetaEventAdapter} for playing functionality.
+     * see also {@link vavi.sound.mfi.vavi.VaviSynthesizer.VaviReceiver} for playing functionality.
      * </p>
      * <pre>
-     * MIDI Meta
+     * MIDI Sysex should be
      * +--+--+--+--+--+--+--+--+--+--+--+-
-     * |ff|7f|LL|ID|DD DD ...
+     * |f0|45|ID|DD DD ...
      * +--+--+--+--+--+--+--+--+--+--+--+-
-     *  0x7f sequencer specific meta event
-     *  LL is really 1 byte?
-     *  ID manufacturer ID
+     *  0x45 sequencer specific meta event
+     *  ID function id
      * </pre>
      * <pre>
      * Current Spec.
      * +--+--+--+--+--+--+--+
-     * |ff|7f|LL|5f|01|DH DL|
+     * |f0|45|01|DH DL|
      * +--+--+--+--+--+--+--+
-     *  0x5f manufacturer ID added arbitrarily
-     *  0x01 indicates {@link MachineDependentMessage} data
+     *  0x45 manufacturer ID added arbitrarily
+     *  0x01 function id, indicates {@link MachineDependentMessage} data
      *  DH DL numbered id
      * </pre>
      * <p>

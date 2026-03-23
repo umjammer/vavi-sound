@@ -6,12 +6,16 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 
+import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.sound.smaf.SmafMessage;
+import vavi.sound.smaf.message.WaveDataMessage;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -31,7 +35,7 @@ public class EXWVChunk extends Chunk {
 
     private static final Logger logger = getLogger(EXWVChunk.class.getName());
 
-    /** wave? */
+    /** adpcm */
     byte[] data;
 
     private static final String FOURCC = "EXWV";
@@ -51,11 +55,30 @@ public class EXWVChunk extends Chunk {
         data = new byte[size];
         dis.readFully(data);
 logger.log(Level.DEBUG, FOURCC + ": " + size + "\n" + StringUtil.getDump(data, 16));
+//Files.write(Path.of("tmp", "exwv.bin"), data, StandardOpenOption.CREATE_NEW);
     }
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
+        DataOutputStream dos = new DataOutputStream(os);
 
+        dos.write(id);
+        dos.writeInt(size);
+
+        dos.write(data);
+    }
+
+    public SmafMessage getSmafMessage() {
+        WaveType waveType = new WaveType(1, 1, 8000, 4); // TODO
+        WaveDataMessage waveDataMessage = new WaveDataMessage(
+                -1, // TODO
+                waveType.getWaveFormat(),
+                data,
+                waveType.getWaveSamplingFreq(),
+                waveType.getWaveBaseBit(),
+                waveType.getWaveChannels());
+
+        return waveDataMessage;
     }
 
     @Override

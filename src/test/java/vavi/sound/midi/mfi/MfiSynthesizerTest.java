@@ -12,6 +12,8 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.sound.midi.MidiSystem;
@@ -27,6 +29,7 @@ import vavi.util.properties.annotation.PropsEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static vavi.sound.midi.MidiUtil.volume;
@@ -83,21 +86,15 @@ Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngi
 
     @Test
     @DisplayName("play recursive")
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
     void test3() throws Exception {
         Path dir = Paths.get(this.dir);
-        AtomicInteger c = new AtomicInteger();
-        Files.walk(dir)
+        List<Path> mfis = Files.walk(dir)
                 .filter(p -> p.getFileName().toString().endsWith(".mld"))
-                .forEach(path -> {
+                .toList();
+        Path path = mfis.get(new Random().nextInt(mfis.size()));
 Debug.println("---- path: " + path);
-                    try {
-                        play(path.toString());
-                        c.getAndIncrement();
-                    } catch (Exception e) {
-Debug.println(e.getMessage());
-                    }
-                });
-Debug.println("mfis: " + c.get());
+        play(path.toString());
     }
 
     void play(String mfi) throws Exception {

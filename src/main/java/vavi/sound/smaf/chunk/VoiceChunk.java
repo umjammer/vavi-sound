@@ -66,7 +66,17 @@ public class VoiceChunk extends TrackChunk {
 
     @Override
     public List<SmafEvent> getSmafEvents() throws InvalidSmafDataException {
-        return List.of();
+        List<SmafEvent> events = new ArrayList<>();
+        if (sequenceDataChunk != null) {
+            events.addAll(sequenceDataChunk.getSmafMessages().stream().map(m -> new SmafEvent(m, m.getDuration())).toList());
+        }
+        if (exwvChunk != null) {
+            events.add(new SmafEvent(exwvChunk.getSmafMessage(), 0));
+        }
+        if (!exclusiveVoiceChunks.isEmpty()) {
+            events.addAll(exclusiveVoiceChunks.stream().map(c -> new SmafEvent(c.getSmafMessage(), 0)).toList());
+        }
+        return events;
     }
 
     @Override
@@ -74,14 +84,11 @@ public class VoiceChunk extends TrackChunk {
         while (dis.available() > 0) {
 //logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
             Chunk chunk = readFrom(dis);
-            if (chunk instanceof SequenceDataChunk) { // "Mssq"
-                sequenceDataChunk = chunk;
-            } else if (chunk instanceof EXWVChunk ewvc) { // "EXWV"
-                exwvChunk = ewvc;
-            } else if (chunk instanceof ExclusiveVoiceChunk evc) { // "EXVC"
-                exclusiveVoiceChunks.add(evc);
-            } else {
-logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
+            switch (chunk) {
+                case SequenceDataChunk subChunk -> this.sequenceDataChunk = subChunk; // "Mssq"
+                case EXWVChunk subChunk -> this.exwvChunk = subChunk; // "EXWV"
+                case ExclusiveVoiceChunk subChunk -> exclusiveVoiceChunks.add(subChunk); // "EXVC"
+                default -> logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
     }

@@ -109,16 +109,12 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
         while (dis.available() > 0) {
 //logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
             Chunk chunk = readFrom(dis);
-            if (chunk instanceof SeekAndPhraseInfoChunk) {
-                seekAndPhraseInfoChunk = chunk;
-            } else if (chunk instanceof SequenceDataChunk) { // Mtsq
-                sequenceDataChunk = chunk;
-            } else if (chunk instanceof SetupDataChunk) { // Mtsu
-                setupDataChunk = chunk;
-            } else if (chunk instanceof StreamPcmDataChunk) {
-                streamPcmDataChunk = chunk;
-            } else {
-logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
+            switch (chunk) {
+                case SeekAndPhraseInfoChunk subChunk -> this.seekAndPhraseInfoChunk = subChunk;
+                case SequenceDataChunk subChunk -> this.sequenceDataChunk = subChunk; // Mtsq
+                case SetupDataChunk subChunk -> this.setupDataChunk = subChunk; // Mtsu
+                case StreamPcmDataChunk subChunk -> this.streamPcmDataChunk = subChunk;
+                default -> logger.log(Level.WARNING, "unsupported chunk: " + chunk.getClass());
             }
         }
     }

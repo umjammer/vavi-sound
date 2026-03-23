@@ -15,6 +15,7 @@ import java.lang.System.Logger.Level;
 import vavi.sound.smaf.InvalidSmafDataException;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -81,5 +82,18 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
         if (colorPaletteDefinitionChunk != null) {
             colorPaletteDefinitionChunk.writeTo(os);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(getDC().format(getId()));
+        try (var dc = getDC().open()) {
+            if (displayParameterDefinitionChunk != null) sb.append(displayParameterDefinitionChunk);
+            if (colorPaletteDefinitionChunk != null) sb.append(colorPaletteDefinitionChunk);
+        }
+
+        return sb.toString();
     }
 }

@@ -16,6 +16,7 @@ import java.util.List;
 import vavi.sound.smaf.InvalidSmafDataException;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -75,5 +76,17 @@ logger.log(Level.DEBUG, "messages: " + imageDataChunks.size());
     /** TODO */
     @Override
     public void writeTo(OutputStream os) throws IOException {
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(getDC().format(getId()));
+        try (var dc = getDC().open()) {
+            for (var imageDataChunk : imageDataChunks) sb.append(dc.format(imageDataChunk.toString()));
+        }
+
+        return sb.toString();
     }
 }

@@ -14,10 +14,10 @@ import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 
-import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 
 
 /**
@@ -58,11 +58,11 @@ public class DisplayParameterDefinitionChunk extends Chunk {
 
         int i = 0;
         while (i < size) {
-            int eventSize = MidiUtil.readVariableLength(dis);
+            int eventSize = readVariableLength(dis);
             int eventType = dis.readUnsignedByte();
             Event event = new Event();
             event.eventType = eventType;
-logger.log(Level.DEBUG, "event: " + eventType);
+logger.log(Level.DEBUG, "eventType: " + eventType + ", eventSize: " + eventSize);
             for (int j = 0; j < ((eventSize - 1) / 2); j++) {
                 int parameterId = dis.readUnsignedByte();
                 int parameterValue = dis.readUnsignedByte();
@@ -70,10 +70,12 @@ logger.log(Level.DEBUG, "event: " + eventType);
                 parameter.parameterID = ParameterID.valueOf(parameterId);
                 parameter.value = parameterValue;
                 event.parameters.add(parameter);
-logger.log(Level.DEBUG, "parameters: " + parameter);
+logger.log(Level.TRACE, "parameters: " + parameter);
             }
+            events.add(event);
             i += (eventSize > 127 ? 2 : 1) + eventSize;
         }
+logger.log(Level.DEBUG, "events: " + events.size());
     }
 
     @Override
@@ -111,6 +113,10 @@ logger.log(Level.DEBUG, "parameters: " + parameter);
         /** */
         public void writeTo(OutputStream os) {
             // TODO
+        }
+        @Override
+        public String toString() {
+            return eventType + ": " + parameters;
         }
     }
 
@@ -159,5 +165,17 @@ logger.log(Level.DEBUG, "parameters: " + parameter);
             }
             throw new IllegalArgumentException(String.valueOf(value));
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(getDC().format(getId()));
+        try (var dc = getDC().open()) {
+            for (var event : events) sb.append(dc.format(event.toString()));
+        }
+
+        return sb.toString();
     }
 }

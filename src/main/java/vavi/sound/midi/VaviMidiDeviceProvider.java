@@ -53,15 +53,12 @@ public class VaviMidiDeviceProvider extends MidiDeviceProvider {
      */
     public final static int MANUFACTURER_ID = 0x45;
 
-    /** */
-    private static final MidiDevice.Info[] infos = {
-            MfiSynthesizer.info,
-            SmafSynthesizer.info
-    };
-
     @Override
     public MidiDevice.Info[] getDeviceInfo() {
-        return infos;
+        return new MidiDevice.Info[] {
+                MfiSynthesizer.info,
+                SmafSynthesizer.info
+        };
     }
 
     /**

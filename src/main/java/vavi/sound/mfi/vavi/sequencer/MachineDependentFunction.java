@@ -36,13 +36,6 @@ public interface MachineDependentFunction {
 
     Logger logger = getLogger(MachineDependentFunction.class.getName());
 
-    int VENDOR_FUJITSU    = 0x20; // F
-    int VENDOR_SONY       = 0x30; // SO
-    int VENDOR_PANASONIC  = 0x40; // P
-    int VENDOR_NIHONMUSEN = 0x50; // R
-    int VENDOR_SANYO      = 0x80; // SA
-    int VENDOR_MOTOROLA   = 0x90; // M
-
     int CARRIER_AU     = 0x00;    // au
     int CARRIER_DOCOMO = 0x01;    // DoCoMo
 
