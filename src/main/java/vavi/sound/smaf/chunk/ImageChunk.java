@@ -84,4 +84,9 @@ logger.log(Level.DEBUG, "image: " + getImage());
     @Override
     public void writeTo(OutputStream os) throws IOException {
     }
+
+    @Override
+    public String toString() {
+        return super.getId() + ": " + imageNumer + ", " + imageData.length + " bytes";
+    }
 }

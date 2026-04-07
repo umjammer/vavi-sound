@@ -61,8 +61,8 @@ logger.log(Level.DEBUG, "sequenceType: " + sequenceType);
         while (dis.available() > 0) {
 //logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
               Chunk chunk = readFrom(dis);
-              if (chunk instanceof MasterTrackSequenceDataChunk) { // "Mssq"
-                  sequenceDataChunk = chunk;
+              if (chunk instanceof MasterTrackSequenceDataChunk subChunk) { // "Mssq"
+                  this.sequenceDataChunk = subChunk;
               } else {
 logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
               }

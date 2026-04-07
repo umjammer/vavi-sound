@@ -54,6 +54,7 @@ public interface MachineDependentSequencer {
          */
         public static MachineDependentSequencer getSequencer(int key) {
             MachineDependentSequencer sequencer = sequencers.get(key);
+            // TODO UnknownVendorSequencer
             if (sequencer == null) throw new IllegalArgumentException("no sequencer for: " + key);
             return sequencer;
         }

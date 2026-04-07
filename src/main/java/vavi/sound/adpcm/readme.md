@@ -2,6 +2,10 @@
 
 Provides ADPCM CODEC related packages.
 
+## References
+
+ - https://github.com/philpem/oki-adpcm2
+
 ## TODO
 
  * ~~make those as javax.sound.sampled.spi~~

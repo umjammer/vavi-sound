@@ -1,4 +1,4 @@
-# vavi.sound.mfi.vavi.system
+# vavi.sound.mfi.vavi.track
 
 Provides a derived class of SysexMessage.
 

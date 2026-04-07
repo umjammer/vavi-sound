@@ -19,7 +19,10 @@ import javax.sound.midi.Sequencer;
 import org.junit.jupiter.api.Test;
 import vavi.util.Debug;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static vavi.sound.midi.MidiUtil.decode87;
+import static vavi.sound.midi.MidiUtil.encode87;
 
 
 /**
@@ -107,5 +110,27 @@ Debug.println(Level.FINE, "sequencer: " + sequencer);
         MidiUtil.writeVarInt(new DataOutputStream(baos), v);
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         return MidiUtil.readVariableLength(new DataInputStream(bais));
+    }
+
+    @Test
+    void testCodec87() {
+        byte[] indata = {
+                (byte) 0x85, (byte) 0x85, (byte) 0x85, (byte) 0x81, (byte) 0x85, (byte) 0x82, (byte) 0x88,
+                (byte) 0x71, (byte) 203,  (byte) 135,  (byte) 230,  (byte) 122,  (byte) 232,  (byte) 0x80,
+                (byte) 0x71, (byte) 203,  (byte) 135,  (byte) 230,  (byte) 122,  (byte) 232,  (byte) 0x00,
+                (byte) 0x81, (byte) 110,  (byte) 120,  (byte) 230,  (byte) 100,  (byte) 100,  (byte) 0xFE,
+                (byte) 0x81, (byte) 0x92, (byte) 0x12
+        };
+
+        byte[] outdata = new byte[indata.length * 8 / 7 + 1];
+        byte[] decoded = new byte[indata.length];
+
+        int n = encode87(indata, outdata, 0, indata.length);
+        assertEquals(indata.length * 8 / 7 + 1, n);
+
+        n = decode87(outdata, decoded, 0, n);
+        assertEquals(indata.length, n);
+
+        assertArrayEquals(indata, decoded);
     }
 }

@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
@@ -22,6 +23,8 @@ import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
 import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
+import static vavi.sound.smaf.chunk.SubData.stringTags;
+import static vavi.sound.smaf.chunk.SubData.tags;
 
 
 /**
@@ -183,26 +186,10 @@ logger.log(Level.INFO, "skip unexpected bytes left: " + dis.available());
 
         @Override
         public String toString() {
-            try {
-                String string = new String(data, defaultEncoding);
-                boolean printable = true;
-//System.err.print("@@@: ");
-                for (char c : string.toCharArray()) {
-//System.err.print(c);
-                    if (!StringUtil.isPrintableChar(c)) {
-                        printable = false;
-                        break;
-                    }
-                }
-//System.err.println();
-                if (printable) {
-                    return "SubData(" + tag + ", lang: " + getLanguageCode() + ", size: " + data.length + "): " + string;
-                } else {
-                    return "SubData(" + tag + ", lang: " + getLanguageCode() + ", size: " + data.length + "): " + Arrays.toString(data); // \n" + StringUtil.getDump(data, 128);
-                }
-            } catch (UnsupportedEncodingException e) {
-                assert false;
-                return null;
+            if (stringTags.contains(tag)) {
+                return "SubData(" + tag + ", lang: " + getLanguageCode() + ", size: " + data.length + ", " + tags.getProperty(tag) + "): " + new String(data, Charset.forName(defaultEncoding));
+            } else {
+                return "SubData(" + tag + ", lang: " + getLanguageCode() + ", size: " + data.length + ", " + tags.getProperty(tag) + "): " + Arrays.toString(data); // \n" + StringUtil.getDump(data, 128);
             }
         }
     }

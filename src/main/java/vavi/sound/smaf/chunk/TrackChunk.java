@@ -193,7 +193,7 @@ public abstract class TrackChunk extends Chunk {
     }
 
     /** */
-    protected Chunk sequenceDataChunk;
+    protected SequenceDataChunk sequenceDataChunk;
 
     /** "[MA]tsq" */
     public void setSequenceDataChunk(SequenceDataChunk sequenceDataChunk) {

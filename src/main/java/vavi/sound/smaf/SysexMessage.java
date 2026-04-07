@@ -6,15 +6,9 @@
 
 package vavi.sound.smaf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.lang.System.Logger;
 import java.util.Arrays;
 
-import vavi.sound.midi.MidiUtil;
-import vavi.sound.smaf.message.yamaha.YamahaMessage;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -23,28 +17,22 @@ import static java.lang.System.getLogger;
 /**
  * System exclusive message.
  * <pre>
- * [MIDI]
- *  F0 id (id id) len (len len) mid ... F7
- * </pre>
- * <pre>
+ * [SMAF]
+ * HPS
+ *  {dd} FF F0 ll mm ... F7
+ *   ~~        ~~ ~~
+ *   |         |  |
+ *   |         |  +-------- manufacturers id
+ *   |         +----------- length 1 byte
+ *   +--------------------- hps duration (1~2)
  *
- * F0 ll mm nn
- *    ~~ ~~ ~~
- *    |  |  +---
- *    |  +------ manufacturers id
- *    +--------- length
- *
- * [XF cue point]
- * F0 04 43 7B 02 rr
- *
- * [specify channel status]
- * F0 14 43 02 00 04 dd ... dd
- *
- * [MA-5 AL specify channel]
- * F0 06 43 02 01 01 cc dd
- *
- * [MA-5 V specify voice channel]
- * F0 06 43 02 01 02 cc dd
+ * MS
+ *  {dd} F0 {ll} mm ... F7
+ *   ~~      ~~  ~~
+ *   |       |   |
+ *   |       |   +-------- manufacturers id
+ *   |       +------------ midi length (1~4)
+ *   +-------------------- midi duration (1~4)
  * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -69,29 +57,30 @@ public class SysexMessage extends SmafMessage {
      * </p>
      */
     public byte[] getData() {
-        return Arrays.copyOfRange(data, 1, data.length - 1);
+        return Arrays.copyOfRange(data, 1, data.length);
     }
 
     /**
      * <pre>
      * + HandyPhoneStandard
      *
+     *  ...         hps duration (1~2)
      *  0xff
      *  0xf0
-     *  0x##        maker id, 7d: edu, 7e: non realtime, 7f: realtime
-     *  0x##        format id
-     *  0x##        message size ???
+     *  0x##        maker id, 0x7d: edu, 0x7e: non realtime, 0x7f: realtime
+     *  0x## ...    data length 1 byte
      *  ... ~ 0xf7  data
      *
      * + MobileStandard
      *
+     *  ...         midi duration (1~4)
      *  0xf0
-     *  ...         size
+     *  ...         midi data length (1~4)
      *  ... ~ 0xf7  data
      * </pre>
      *
      * @param status 0xf0
-     * @param data after 0xf0
+     * @param data after 0xf0, and size to 0xf7, 8bit acceptable
      */
     public void setMessage(int status, byte[] data, int length) throws InvalidSmafDataException {
         byte[] tmp = new byte[length + 1];
@@ -100,7 +89,7 @@ public class SysexMessage extends SmafMessage {
         this.data = tmp;
     }
 
-    /** @param data 0: must be status byte (0xf0 or 0xf7) */
+    /** @param data 0: must be status byte (0xf0 or 0xf7), 8bit acceptable */
     public void setMessage(byte[] data, int length) throws InvalidSmafDataException {
         if (data[0] != (byte) 0xf0 && data[0] != (byte) 0xf7) {
             throw new InvalidSmafDataException("status: " + data[0]);
@@ -180,6 +169,7 @@ public class SysexMessage extends SmafMessage {
      */
 
     /*
+[MIDI]
 
 [master volume]
       F0 7F 7F 04 01 ll mm F7
@@ -260,34 +250,4 @@ public class SysexMessage extends SmafMessage {
      *   7FH     | (not used) | ACK
      * </pre>
      */
-
-    /** TODO use properties file */
-    public static class Factory {
-        /**
-         * @param data 0: maker id ...
-         */
-        public static SysexMessage getSysexMessage(int duration, int status, byte[] data, int length) throws InvalidSmafDataException {
-            try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                DataOutputStream dos = new DataOutputStream(baos);
-                dos.writeByte(status);
-                MidiUtil.writeVarInt(dos, length);
-                dos.write(data);
-                byte[] tmp = baos.toByteArray();
-
-//logger.log(Level.DEBUG, "sysex " + data.length + " bytes\n" + StringUtil.getDump(tmp, 32));
-//                assert data[data.length - 1] == (byte) 0xf7;
-
-                SysexMessage sysexMessage = switch (data[0]) {
-                    case 0x43 -> new YamahaMessage();
-                    default -> new SysexMessage(); // TODO no one comes here bec smaf is for yamaha only?
-                };
-                sysexMessage.setDuration(duration);
-                sysexMessage.setMessage(tmp, tmp.length);
-                return sysexMessage;
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
-    }
 }

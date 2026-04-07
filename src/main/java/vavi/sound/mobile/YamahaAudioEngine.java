@@ -47,7 +47,7 @@ public class YamahaAudioEngine extends BasicAudioEngine {
 
     @Override
     protected int getChannels(int streamNumber) {
-logger.log(Level.DEBUG, "streamNumber: " + streamNumber + " @" + Arrays.hashCode(data) + ", " + data.length);
+logger.log(Level.DEBUG, "streamNumber: " + streamNumber + " @" + Integer.toHexString(System.identityHashCode(this)) + ": @" + Integer.toHexString(Arrays.hashCode(data)) + ", " + data.length);
         int channels = 1;
         if (data[streamNumber] == null) {
 logger.log(Level.WARNING, "data for ch " + streamNumber + " is null");

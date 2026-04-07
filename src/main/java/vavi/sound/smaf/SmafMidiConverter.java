@@ -105,6 +105,9 @@ if (!(smafMessage instanceof vavi.sound.smaf.message.NoteMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.ModulationMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.PitchBendMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.PanMessage) &&
+    !(smafMessage instanceof vavi.sound.smaf.message.VolumeMessage) &&
+    !(smafMessage instanceof vavi.sound.smaf.message.BankSelectMessage) &&
+    !(smafMessage instanceof vavi.sound.smaf.message.yamaha.YamahaMessage) &&
     !(smafMessage instanceof vavi.sound.smaf.message.ExpressionMessage)) {
  logger.log(Level.DEBUG, "special midi convertible(" + i + ":" + j + "): " + smafMessage);
 }
@@ -128,10 +131,13 @@ logger.log(Level.DEBUG, "meta: " + MetaEvent.valueOf(metaMessage.getType()));
 logger.log(Level.DEBUG, "  " + entry.getKey() + "=" + entry.getValue());
                         }
                     } else {
+                        // TODO should be MidiConvertible
 logger.log(Level.DEBUG, "  " + StringUtil.getDump(metaMessage.getData()));
-                        // TODO convert meta
+                        javax.sound.midi.MetaMessage mididMetaMessage = new javax.sound.midi.MetaMessage();
+                        mididMetaMessage.setMessage(metaMessage.getType(), metaMessage.getData(), metaMessage.getLength());
+                        midiTrack.add(new MidiEvent(mididMetaMessage, midiContext.getCurrentTick()));
                     }
-                // as for sysex message, all sysex messages id is vavi. so those are handled as MidiConvertible at above
+                // as for sysex message, all sysex messagess are handled as MidiConvertible at above
                 } else {
 if (!uc.contains(smafMessage.getClass())) {
  logger.log(Level.WARNING, "unhandled message: " + smafMessage + " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");

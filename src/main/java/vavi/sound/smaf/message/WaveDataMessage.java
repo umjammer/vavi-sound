@@ -26,7 +26,6 @@ import static java.lang.System.getLogger;
 
 /**
  * WaveDataMessage.
- * TODO isn't it something like SysexMessage?
  * <pre>
  *
  * </pre>

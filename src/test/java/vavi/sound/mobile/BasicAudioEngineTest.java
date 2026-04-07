@@ -7,22 +7,22 @@
 package vavi.sound.mobile;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
-
-import javax.sound.sampled.SourceDataLine;
-
-import org.junit.jupiter.api.Test;
+import java.util.concurrent.TimeUnit;
 
 import vavi.sound.mfi.MfiSystemTest;
 import vavi.util.Debug;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 
 /**
@@ -31,9 +31,25 @@ import vavi.util.Debug;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
-public class BasicAudioEngineTest {
+@PropsEntity(url = "file:local.properties")
+class BasicAudioEngineTest {
 
-    static final float volume = (float) Double.parseDouble(System.getProperty("vavi.test.volume.midi",  "0.2"));
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
+    @Property(name = "vavi.test.volume")
+    double volume = 0.2;
+
+    @BeforeEach
+    public void setup() throws IOException {
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(this);
+        }
+
+        System.setProperty("vavi.sound.mobile.AudioEngine.volume", String.valueOf(volume));
+Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngine.volume"));
+    }
 
     @Test
     public void test() throws Exception {
@@ -54,6 +70,17 @@ Debug.println(meta.getType());
         sequencer.close();
     }
 
+    @Test
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
+    public void test2() throws Exception {
+        YamahaAudioEngine audioEngine = new YamahaAudioEngine();
+        byte[] data = Files.readAllBytes(Path.of("tmp", "exwv.bin"));
+        audioEngine.setData(1, 1, 8000, 4, 1, data, false);
+        audioEngine.start(1);
+        CountDownLatch cdl = new CountDownLatch(1);
+        cdl.await(10, TimeUnit.MINUTES);
+    }
+
     // ----
 
     /** */
@@ -61,82 +88,6 @@ Debug.println(meta.getType());
 
     /** */
     private static String pcmFileName;
-
-
-    /** */
-    public static class WrappedLineOutputStream extends OutputStream {
-        final SourceDataLine line;
-        final OutputStream out;
-        public WrappedLineOutputStream(SourceDataLine line, OutputStream out) {
-            this.out = out;
-            this.line = line;
-        }
-        @Override
-        public void write(int b) throws IOException {
-            write(new byte[] { (byte) b });
-        }
-        @Override
-        public void write(byte[] b, int off, int len) throws IOException {
-            line.write(b, off, len);
-            if (out != null) {
-                out.write(b, off, len);
-            }
-        }
-        @Override
-        public void flush() throws IOException {
-            if (out != null) {
-                out.flush();
-            }
-        }
-        /** {@link #line} not closed */
-        @Override
-        public void close() throws IOException {
-            if (out != null) {
-                out.close();
-            }
-        }
-    }
-
-    /** */
-    void debug1(byte[] adpcm) {
-        try {
-            OutputStream os;
-            if (fileName != null) {
-Debug.println("★★★★★★★★ adpcm out to file: " + fileName);
-                os = new BufferedOutputStream(new FileOutputStream(fileName, true));
-                os.write(adpcm, 0, adpcm.length);
-                os.flush();
-                os.close();
-            }
-        } catch (IOException e) {
-            Debug.printStackTrace(e);
-        }
-    }
-
-    /** */
-    OutputStream debug2() throws IOException {
-        OutputStream os = null;
-        if (pcmFileName != null) {
-Debug.println("★★★★★★★★ output PCM to file: " + pcmFileName);
-            os = new BufferedOutputStream(Files.newOutputStream(Paths.get(pcmFileName)));
-        }
-        return os;
-    }
-
-    /** */
-    void debug3(OutputStream os, byte[] buf, int l) throws IOException {
-        if (os != null) {
-            os.write(buf, 0, l);
-        }
-    }
-
-    /** */
-    void debug4(OutputStream os) throws IOException {
-        if (os != null) {
-            os.flush();
-            os.close();
-        }
-    }
 
     /**
      * Tests this class.

@@ -6,24 +6,30 @@
 
 package vavi.sound.midi.smaf;
 
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.Sequence;
-import javax.sound.midi.Sequencer;
-import javax.sound.midi.Synthesizer;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CountDownLatch;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.Synthesizer;
+
 import vavi.sound.midi.MidiConstants;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static vavi.sound.midi.MidiUtil.volume;
@@ -58,6 +64,9 @@ public class SmafSynthesizerTest {
     @Property
     String mmf = "src/test/resources/test.mmf";
 
+    @Property(name = "mmf.dir")
+    String dir = "src/test/resources";
+
     @BeforeEach
     public void setup() throws IOException {
         if (localPropertiesExists()) {
@@ -70,11 +79,24 @@ Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngi
 
     @Test
     public void test() throws Exception {
-        play();
+        play(this.mmf);
     }
 
-    void play() throws Exception {
-Debug.println("mmf: " + mmf);
+    @Test
+    @DisplayName("play recursive")
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
+    void test2() throws Exception {
+        Path dir = Paths.get(this.dir);
+        List<Path> mmfs = Files.walk(dir)
+                .filter(p -> p.getFileName().toString().endsWith(".mmf"))
+                .toList();
+        Path path = mmfs.get(new Random().nextInt(mmfs.size()));
+Debug.println("---- path: " + path);
+        play(path.toString());
+    }
+
+    void play(String file) throws Exception {
+Debug.println("mmf: " + file);
 
         CountDownLatch cdl = new CountDownLatch(1);
         Sequencer sequencer = MidiSystem.getSequencer(false); // "false" is important for volume!
@@ -87,9 +109,9 @@ Debug.println("@@@ synthesizer: " + synthesizer);
         sequencer.getTransmitter().setReceiver(synthesizer.getReceiver());
         Sequence sequence;
         if (mmf.startsWith("http"))
-            sequence = MidiSystem.getSequence(URI.create(mmf).toURL());
+            sequence = MidiSystem.getSequence(URI.create(file).toURL());
         else
-            sequence = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(Path.of(mmf))));
+            sequence = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(Path.of(file))));
 Debug.println("@@@ sequence: " + sequence);
 MidiSystem.write(sequence, 0, Files.newOutputStream(Path.of("tmp/mmf_out.mid")));
 
@@ -113,7 +135,6 @@ Debug.println("meta: " + MidiConstants.MetaEvent.valueOf(meta.getType()));
     public static void main(String[] args) throws Exception {
         SmafSynthesizerTest app = new SmafSynthesizerTest();
         app.setup();
-        app.mmf = args[0];
-        app.play();
+        app.play(args[0]);
     }
 }

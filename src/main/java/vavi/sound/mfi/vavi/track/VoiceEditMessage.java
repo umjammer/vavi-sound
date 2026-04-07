@@ -48,7 +48,9 @@ public class VoiceEditMessage extends SysexMessage implements SysexTrackMessage 
      */
     @Override
     public VoiceEditMessage init(int delta, int status, int data1, DataInputStream dis) throws IOException {
-        logger.log(Level.WARNING, "unsupported: " + 0xf1);
+        logger.log(Level.WARNING, "unsupported: " + 0xf0);
+byte[] data = new byte[length];
+dis.readFully(data);
         return this;
     }
 

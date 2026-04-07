@@ -128,7 +128,7 @@ public class MMMGChunk extends TrackChunk {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(super.toString());
+        sb.append(getDC().format(getId() + " enigma: " + enigma));
         try (var dc = getDC().open()) {
             if (voiceChunk != null) sb.append(voiceChunk);
             sequChunks.forEach(sb::append);

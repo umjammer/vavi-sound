@@ -12,6 +12,7 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.nio.file.Path;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 
@@ -68,7 +69,7 @@ logger.log(DEBUG, "object1: " + c.getName());
                     pathField.setAccessible(true);
                     String path = (String) pathField.get(object);
 logger.log(DEBUG, "source: java.io.FileInputStream: path : " + path);
-                    return path != null ? URI.create(path) : null;
+                    return path != null ? Path.of(path).toRealPath().toUri() : null;
                 }
                 if (object.getClass().getName().equals("sun.nio.ch.ChannelInputStream")) { // because it's package private
                     Field pathField = object.getClass().getDeclaredField("ch");
@@ -80,7 +81,7 @@ logger.log(DEBUG, "source: java.io.FileInputStream: path : " + path);
                     pathField.setAccessible(true);
                     String path = (String) pathField.get(object);
 logger.log(DEBUG, "source: sun.nio.ch.FileChannelImpl: path : " + path);
-                    return path != null ? URI.create(path) : null;
+                    return path != null ? Path.of(path).toRealPath().toUri() : null;
                 }
 logger.log(DEBUG, "object2: " + object.getClass().getName());
                 c = c.getSuperclass();

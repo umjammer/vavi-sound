@@ -167,6 +167,61 @@ public final class MidiUtil {
         output.write(value & 0x7f);
     }
 
+    /**
+     * to 7bit
+     * @see "https://qiita.com/ringorou/items/5e2384f7cf226d9e648a"
+     * @see "https://chatgpt.com/c/69bfda03-4618-83a8-b338-ec80f9dc81e6"
+     */
+    public static int encode87(byte[] src, byte[] dst, int off, int len) {
+        int n = off;
+        int end = off + len;
+        int pt = 0;
+
+        while (n < end) {
+            int b8 = 0;
+
+            for (int i = 0; i < 7 && n < end; i++, n++) {
+                int v = src[n] & 0xff;
+                dst[pt++] = (byte) (v & 0x7f);
+                b8 |= ((v >>> 7) & 1) << i;
+            }
+
+            dst[pt++] = (byte) b8;
+        }
+
+        return pt; // actual encoded size
+    }
+
+    /**
+     * to 8bit
+     * @see "https://qiita.com/ringorou/items/5e2384f7cf226d9e648a"
+     * @see "https://chatgpt.com/c/69bfda03-4618-83a8-b338-ec80f9dc81e6"
+     */
+    public static int decode87(byte[] src, byte[] dst, int off, int len) {
+        int n = off;
+        int end = off + len;
+        int pt = 0;
+
+        while (n < end) {
+            int blockStart = pt;
+            int i = 0;
+
+            for (; i < 7 && n < end - 1; i++, n++) {
+                dst[pt++] = src[n];
+            }
+
+            int b8 = src[n++] & 0xff;
+
+            for (int j = 0; j < i; j++) {
+                int v = dst[blockStart + j] & 0xff;
+                v |= ((b8 >> j) & 1) << 7;
+                dst[blockStart + j] = (byte) v;
+            }
+        }
+
+        return pt;
+    }
+
     /** encoding for midi meta message */
     private static String decodingEncoding = "JISAutoDetect";
 

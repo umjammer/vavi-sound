@@ -7,7 +7,6 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,15 +17,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.MetaMessage;
 import vavi.sound.smaf.SmafMessage;
-import vavi.sound.smaf.SysexMessage;
 import vavi.sound.smaf.message.BankSelectMessage;
 import vavi.sound.smaf.message.EndOfSequenceMessage;
 import vavi.sound.smaf.message.ExpressionMessage;
 import vavi.sound.smaf.message.FineTuneMessage;
+import vavi.sound.smaf.message.MachineDependentMessage.Factory;
 import vavi.sound.smaf.message.MidiConvertibleMessage;
 import vavi.sound.smaf.message.ModulationMessage;
 import vavi.sound.smaf.message.NopMessage;
@@ -46,7 +46,7 @@ import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
 /**
  * SequenceData Chunk.
  * <pre>
- * "Mtsq"
+ * "Mtsq" or "SEQU"
  * </pre>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -70,7 +70,7 @@ logger.log(Level.DEBUG, "SequenceData: " + size + " bytes");
         return this;
     }
 
-    /** */
+    /** TODO "Mtsq" fixed */
     public SequenceDataChunk() {
         System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
         this.size = 0;
@@ -120,22 +120,6 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
         return new NoteMessage(duration, data, gateTime);
     }
 
-    /** for HPS */
-    int readVariableLength(DataInput di) throws IOException {
-        int val = 0;
-
-        int d1 = di.readUnsignedByte();
-        if ((d1 & 0x80) != 0) {
-            val = ((d1 & 0x7F) + 1) << 7;
-            int d2 = di.readUnsignedByte();
-            val |= d2;
-        } else {
-            val = d1;
-        }
-
-        return val;
-    }
-
     /** formatType 0 */
     protected void readHandyPhoneStandard(CrcDataInputStream dis)
             throws InvalidSmafDataException, IOException {
@@ -165,7 +149,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                         int messageSize = dis.readUnsignedByte();
                         byte[] data = new byte[messageSize];
                         dis.readFully(data);
-                        smafMessage = SysexMessage.Factory.getSysexMessage(duration, 0xf0, data, messageSize);
+                        smafMessage = Factory.getSysexMessage(duration, 0xf0, data, messageSize);
                         break;
                     case 0x00: // nop
                         smafMessage = new NopMessage(duration);
@@ -176,7 +160,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                         break;
                 }
             } else if (e1 != 0x00) { // note
-                int gateTime = MidiUtil.readVariableLength(dis);
+                int gateTime = readVariableLength(dis);
 //logger.log(Level.TRACE, "gateTime: %d, 0x%04x".formatted(gateTime, gateTime));
                 smafMessage = getHandyPhoneStandardMessage(duration, e1, gateTime);
             } else { // e1 == 0x00 other event
@@ -369,7 +353,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                     data[i] = dis.readByte();
                     if (data[i] == (byte) 0xf7) break;
                 } while (i++ < messageSize);
-                smafMessage = SysexMessage.Factory.getSysexMessage(duration, status, data, i);
+                smafMessage = Factory.getSysexMessage(duration, status, data, i);
             } else if (status < 0x80) { // data
                 smafMessage = null;
                 if (cc < 10) {
@@ -470,7 +454,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                         int messageSize = dis.readUnsignedByte();
                         byte[] data = new byte[messageSize];
                         dis.readFully(data);
-                        smafMessage = SysexMessage.Factory.getSysexMessage(duration, sig2, data, messageSize);
+                        smafMessage = Factory.getSysexMessage(duration, sig2, data, messageSize);
                         break;
                     default:
                        smafMessage = new UndefinedMessage(e1, sig2, duration);

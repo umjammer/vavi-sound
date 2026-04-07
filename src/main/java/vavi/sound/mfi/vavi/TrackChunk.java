@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.util.ServiceLoader;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.LongMessage;
@@ -24,6 +23,7 @@ import vavi.sound.mfi.SysexMessage;
 import vavi.sound.mfi.Track;
 import vavi.sound.mfi.vavi.TrackMessage.SysexTrackMessage;
 import vavi.sound.mfi.vavi.track.UndefinedMessage;
+import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
 import static vavi.sound.mfi.vavi.VaviMfiFileFormat.DumpContext.getDC;
@@ -138,7 +138,7 @@ try {
      * @throws InvalidMfiDataException at the beginning of <code>is</code> is not {@link #TYPE}
      */
     public void readFrom(InputStream is) throws InvalidMfiDataException, IOException {
-//logger.log(Level.TRACE, "\n" + StringUtil.getDump(is, 512));
+//logger.log(Level.TRACE, "\n" + StringUtil.getDump(is, 0, 512));
 
         if (noteLength == -1 || exst == -1) {
             throw new IllegalStateException("noteLength and exst must be set.");
@@ -151,7 +151,7 @@ try {
         dis.readFully(bytes, 0, 4);
         String string = new String(bytes);
         if (!TYPE.equals(string)) {
-//logger.log(Level.TRACE, "dump:\n" + StringUtil.getDump(is, 64));
+//logger.log(Level.TRACE, "dump:\n" + StringUtil.getDump(is, 0, 64));
             throw new InvalidMfiDataException("invalid track: " + string);
         }
 
@@ -161,15 +161,20 @@ logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
 
         // events
         int l = 0;
-        while (l < trackLength) {
+        while (l < trackLength && dis.available() > 2) {
             MfiMessage message = getMessage(dis);
             track.add(new MfiEvent(message, 0L));
 
             l += message.getLength();
+//logger.log(Level.INFO, "delta: " + message.getDelta() + ", status: " + message.getStatus() + ", length: " + message.getLength() + ", message: " + message.getClass().getSimpleName() + ", available: " + dis.available());
 //logger.log(Level.TRACE, "track[" + trackNumber + "] event: " + message.getClass().getSimpleName() + ", length: " + message.getLength());
 //logger.log(Level.TRACE, "track[" + trackNumber + "] event length sum: " + l + " / " + trackLength + ", available: " + is.available());
         }
-
+if (trackLength - l != 0 && trackLength - l < dis.available()) {
+ byte[] b = new byte[trackLength - l];
+ dis.readFully(b);
+logger.log(Level.INFO, "rest: " + StringUtil.getDump(b));
+}
         //
         this.length = trackLength + 4 + 4; // + type + length
     }
@@ -265,7 +270,7 @@ logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
 
         String key = "%d.e.%d".formatted(status, data1);
 
-        SysexMessage sysexMessage = (SysexMessage) factory(key);
+        SysexMessage sysexMessage = (SysexMessage) TrackMessage.factory(key);
         if (sysexMessage != null) {
             return (MfiMessage) ((SysexTrackMessage) sysexMessage).init(delta, status, data1, dis);
         } else {
@@ -298,7 +303,7 @@ logger.log(Level.WARNING, "sysex unhandled: delta: %02x, status: %02x, extended 
         //
         String key = "%d.b.%d".formatted(status, data1);
 
-        ShortMessage shortMessage = (ShortMessage) factory(key);
+        ShortMessage shortMessage = (ShortMessage) TrackMessage.factory(key);
         if (shortMessage != null) {
             return shortMessage.init(delta, status, data1, data2);
         } else {
@@ -328,7 +333,7 @@ logger.log(Level.WARNING, "short unhandled: delta: %02x, status: %02x, extended 
         //
         String key = "%d.a.%d".formatted(status, data1);
 
-        LongMessage longMessage = (LongMessage) factory(key);
+        LongMessage longMessage = (LongMessage) TrackMessage.factory(key);
         if (longMessage != null) {
             return longMessage.init(delta, status, data1, data2);
         } else {
@@ -349,16 +354,5 @@ logger.log(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended s
         }
         sb.setLength(sb.length() - 1);
         return sb.toString();
-    }
-
-    /** */
-    private static TrackMessage factory(String key) {
-        for (TrackMessage message : ServiceLoader.load(TrackMessage.class)) {
-            if (message.accept(key)) {
-                return message;
-            }
-        }
-logger.log(Level.WARNING, "no matched track message for: " + key);
-        return null;
     }
 }

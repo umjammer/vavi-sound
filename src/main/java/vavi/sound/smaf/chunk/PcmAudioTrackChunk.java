@@ -79,16 +79,12 @@ logger.log(Level.DEBUG, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGate
 
         while (dis.available() > 0) {
             Chunk chunk = readFrom(dis);
-            if (chunk instanceof SeekAndPhraseInfoChunk) {
-                seekAndPhraseInfoChunk = chunk;
-            } else if (chunk instanceof AudioSequenceDataChunk) {
-                sequenceDataChunk = chunk;
-            } else if (chunk instanceof SetupDataChunk) {
-                setupDataChunk = chunk;
-            } else if (chunk instanceof WaveDataChunk) {
-                waveDataChunks.add(chunk);
-            } else {
-logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
+            switch (chunk) {
+                case SeekAndPhraseInfoChunk subChunk -> this.seekAndPhraseInfoChunk = subChunk;
+                case AudioSequenceDataChunk subChunk -> this.sequenceDataChunk = subChunk;
+                case SetupDataChunk subChunk -> this.setupDataChunk = subChunk;
+                case WaveDataChunk subChunk -> waveDataChunks.add(subChunk);
+                default -> logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
     }

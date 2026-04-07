@@ -872,13 +872,13 @@ logger.log(Level.WARNING, "offset: %d, read underflow: %d / %d".formatted(frameO
                 if (readOffset < 0)
                     readOffset = 0; // ?
                 bytes = sf.read(buf, readOffset, buf.length);
-                bufPos = (bytes / (int) frameSize * (int) frameSize);
+                bufPos = (bytes / frameSize * frameSize);
             }
 
-            bufPos -= (int) frameSize;
+            bufPos -= frameSize;
             offset -= frameSize;
 
-            ByteBuffer byteBuffer = ByteBuffer.wrap(buf, bufPos, (int) frameSize).order(ByteOrder.BIG_ENDIAN);
+            ByteBuffer byteBuffer = ByteBuffer.wrap(buf, bufPos, frameSize).order(ByteOrder.BIG_ENDIAN);
             f1 = byteBuffer.getInt();
             f2 = byteBuffer.getInt();
             f3 = byteBuffer.getInt();

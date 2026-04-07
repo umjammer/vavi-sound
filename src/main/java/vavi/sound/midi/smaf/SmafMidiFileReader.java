@@ -60,7 +60,7 @@ public class SmafMidiFileReader extends BasicMidiFileReader {
             return SmafSystem.toMidiSequence(sequence);
         } catch (InvalidSmafDataException e) {
 logger.log(Level.DEBUG, e);
-logger.log(Level.TRACE, e.getMessage(), e);
+logger.log(Level.TRACE, e.getMessage(), e.getCause());
             throw (InvalidMidiDataException) new InvalidMidiDataException().initCause(e);
         } catch (SmafUnavailableException e) {
 logger.log(Level.ERROR, e.getMessage(), e);

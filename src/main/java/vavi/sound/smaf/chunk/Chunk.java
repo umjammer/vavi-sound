@@ -40,7 +40,7 @@ public abstract class Chunk {
     /** Chunk size */
     protected int size;
 
-    /** */
+    /** accepts the key (forecc) or not */
     protected abstract boolean accept(String key);
 
     /** */
@@ -56,8 +56,6 @@ public abstract class Chunk {
      * @param dis chunk Header must be read
      * @throws IOException when an io error occurs
      * @throws InvalidSmafDataException when input smaf is wrong
-     * TODO Chunk -> constructor ???
-     *      because of passing the parent
      */
     protected abstract void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException;
@@ -102,7 +100,7 @@ public abstract class Chunk {
         dis.readFully(id); // not want to count down
 
         int size = dis.readInt();
-logger.log(Level.DEBUG, "size: 0x%1$08x (%1$d)".formatted(size));
+logger.log(Level.DEBUG, "size: 0x%1$08x (%1$d) / %2$d".formatted(size, dis.available()));
 
         Chunk chunk = factory(id, size);
 //logger.log(Level.TRACE, chunk.getClass().getName() + "\n" + StringUtil.getDump(is, 0, 128));
@@ -131,7 +129,23 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
         return chunk;
     }
 
-    /** */
+    /** for HPS */
+    protected int readVariableLength(DataInput di) throws IOException {
+        int val = 0;
+
+        int d1 = di.readUnsignedByte();
+        if ((d1 & 0x80) != 0) {
+            val = ((d1 & 0x7F) + 1) << 7;
+            int d2 = di.readUnsignedByte();
+            val |= d2;
+        } else {
+            val = d1;
+        }
+
+        return val;
+    }
+
+    /** Write this chunk to samf data stream. */
     public abstract void writeTo(OutputStream os) throws IOException;
 
     // ----
@@ -325,13 +339,14 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
      */
     private static Chunk factory(byte[] id, int size) {
         String type = new String(id);
-logger.log(Level.DEBUG, "Chunk ID(read): " + (Character.isLetterOrDigit(type.charAt(3)) ? type : "%s+0x%02x".formatted(new String(id, 0, 3), (int) type.charAt(3) & 0xff)));
+logger.log(Level.DEBUG, "Chunk ID(read): " + (Character.isLetterOrDigit(type.charAt(3)) ? type : "%s+0x%02x".formatted(new String(id, 0, 3), (int) type.charAt(3) & 0xff)) + ", size: " + size);
         for (Chunk chunk : ServiceLoader.load(Chunk.class)) {
             if (chunk.accept(type)) {
                 return chunk.init(id, size);
             }
         }
 
+logger.log(Level.WARNING, "undefined Chunk ID(read): " + (Character.isLetterOrDigit(type.charAt(3)) ? type : "%s+0x%02x".formatted(new String(id, 0, 3), (int) type.charAt(3) & 0xff)) + ", size: " + size);
         return new UndefinedChunk().init(id, size); // TODO out source
     }
 

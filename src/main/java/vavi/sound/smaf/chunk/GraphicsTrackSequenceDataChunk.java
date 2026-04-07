@@ -6,6 +6,7 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.lang.System.Logger;
@@ -22,6 +23,7 @@ import vavi.sound.smaf.message.graphics.NopMessage;
 import vavi.sound.smaf.message.graphics.OffsetOriginMessage;
 import vavi.sound.smaf.message.graphics.ResetOriginMessage;
 import vavi.sound.smaf.message.graphics.UserMessage;
+import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
 
@@ -80,14 +82,14 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
     }
 
     /** formatType 0 */
-    protected void readHandyPhoneStandard(DataInputStream dis)
-        throws InvalidSmafDataException, IOException {
+    @Override
+    protected void readHandyPhoneStandard(CrcDataInputStream dis) throws IOException {
 
         SmafMessage smafMessage;
 
         while (dis.available() > 0) {
             // -------- duration --------
-            int duration = MidiUtil.readVariableLength(dis);
+            int duration = readVariableLength(dis);
 //logger.log(Level.TRACE, "duration: " + duration + ", 0x" + StringUtil.toHex4(duration));
             // -------- event --------
             int e1 = dis.readUnsignedByte();
@@ -99,31 +101,31 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                 smafMessage = new ResetOriginMessage(duration);
                 break;
             case 0x20: { // control event
-                int size = MidiUtil.readVariableLength(dis);
+                int size = readVariableLength(dis);
                 byte[] data = new byte[size];
                 dis.readFully(data);
                 smafMessage = new BackDropColorDefinitionMessage(duration, data);
               } break;
             case 0x21: { // control event
-                int size = MidiUtil.readVariableLength(dis);
+                int size = readVariableLength(dis);
                 byte[] data = new byte[size];
                 dis.readFully(data);
                 smafMessage = new OffsetOriginMessage(duration, data);
               } break;
             case 0x22: { // control event
-                int size = MidiUtil.readVariableLength(dis);
+                int size = readVariableLength(dis);
                 byte[] data = new byte[size];
                 dis.readFully(data);
                 smafMessage = new UserMessage(duration, data);
               } break;
             case 0x40: { // display object event
-                int size = MidiUtil.readVariableLength(dis);
+                int size = readVariableLength(dis);
                 byte[] data = new byte[size];
                 dis.readFully(data);
                 smafMessage = new GeneralPurposeDisplayMessage(duration, e1, data);
               } break;
             default: {
-                int size = MidiUtil.readVariableLength(dis);
+                int size = readVariableLength(dis);
                 byte[] data = new byte[size];
                 dis.readFully(data);
                 smafMessage = new UndefinedMessage(e1, -1, duration);

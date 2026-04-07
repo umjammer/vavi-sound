@@ -270,7 +270,7 @@ logger.log(Level.DEBUG, "numberTracks: " + headerChunk.tracksCount);
             SubMessage subChunk = SubMessage.readFrom(is);
             headerChunk.subChunks.put(subChunk.getSubType(), subChunk);
             l +=  4 + 2 + subChunk.getDataLength(); // type + length +
-//logger.log(Level.TRACE, "header subchunk length sum: " + l + " / " + (headerLength - 3));
+//logger.log(Level.TRACE, "header subchunk length sum: " + l + " / " + (headerChunk.dataLength - 3));
         }
 
         return headerChunk;
@@ -281,7 +281,7 @@ logger.log(Level.DEBUG, "numberTracks: " + headerChunk.tracksCount);
         StringBuilder sb = new StringBuilder();
         sb.append(HeaderChunk.TYPE).append("\n");
         // TODO subChunks should be one liner?
-        subChunks.values().forEach(sc -> sb.append(getDC().format(sc.toString().replaceAll("\n", " ↵ "))));
+        subChunks.values().forEach(sc -> sb.append(getDC().format(sc.toString().replace("\n", " ↵ "))));
         return sb.toString();
     }
 }
