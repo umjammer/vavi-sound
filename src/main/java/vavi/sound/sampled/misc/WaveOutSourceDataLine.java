@@ -195,7 +195,7 @@ logger.log(Level.INFO, "open: " + format + ", " + tempPath);
     @Override
     public void open() throws LineUnavailableException {
         if (format == null) {
-            throw new IllegalStateException("Format not set");
+            throw new IllegalStateException("format not set, use open(AudioFormat) or open(AudioFormat, int) for wave out");
         }
         open(format);
     }
