@@ -37,9 +37,13 @@ public final class SoundUtil {
      * @before {@link DataLine#open()}
      */
     public static void volume(DataLine line, double gain) {
-        FloatControl gainControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
-        float dB = (float) (Math.log10(gain) * 20.0);
-        gainControl.setValue(dB);
+        try {
+            FloatControl gainControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
+            float dB = (float) (Math.log10(gain) * 20.0);
+            gainControl.setValue(dB);
+        } catch (IllegalArgumentException e) {
+            logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 
     /**
