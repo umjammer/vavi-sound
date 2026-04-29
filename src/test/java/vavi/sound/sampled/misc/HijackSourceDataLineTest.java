@@ -20,6 +20,7 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.Synthesizer;
 
 import vavi.util.Debug;
+import vavi.util.StringUtil;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
@@ -32,14 +33,14 @@ import static vavi.sound.midi.MidiUtil.volume;
 
 
 /**
- * we cannot touch source data line inside gervill.
- * but this makes wave out enabled for the source data line.
+ * we cannot touch the source data line inside gervill.
+ * but this makes data hijack enabled for the source data line.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
- * @version 0.00 2026-03-19 nsano initial version <br>
+ * @version 0.00 2026-04-27 nsano initial version <br>
  */
 @PropsEntity(url = "file:local.properties")
-class WaveOutSourceDataLineTest {
+class HijackSourceDataLineTest {
 
     static boolean localPropertiesExists() {
         return Files.exists(Paths.get("local.properties"));
@@ -66,8 +67,7 @@ Debug.println("volume: " + volume);
     @BeforeAll
     static void setupAll() {
         System.setProperty("javax.sound.midi.Synthesizer", "#Gervill");
-        System.setProperty("javax.sound.sampled.SourceDataLine", "#WaveOut Mixer");
-//        System.setProperty("javax.sound.sampled.SourceDataLine", "#Null Mixer");
+        System.setProperty("javax.sound.sampled.SourceDataLine", "#Hijack Mixer");
     }
 
     @Test
@@ -100,6 +100,12 @@ Debug.println("START");
 
         volume(receiver, volume);
 
+        // TODO better way needed
+        HijackSourceDataLine.specialListener = e -> {
+            byte[] data = ((HijackSourceDataLine.HijackLineEvent) e).getData();
+Debug.println("WRITE: " + data.length + " bytes\n" + StringUtil.getDump(data, Math.min(32, data.length)));
+        };
+
 if (!onIde) {
  Thread.sleep(time);
  sequencer.stop();
@@ -112,9 +118,6 @@ Debug.println("END");
         sequencer.close();
 
         synthesizer.close();
-
-        if ("#WaveOut Mixer".equals(System.getProperty("javax.sound.sampled.SourceDataLine")))
-            Files.move(Path.of(System.getProperty("vavi.sound.sampled.misc.waveout")), Path.of("tmp", "waveout.wav"), StandardCopyOption.REPLACE_EXISTING);
     }
 
     @AfterAll
