@@ -26,7 +26,6 @@ Please refer to `javax.sound.midi` for usage.
   * http://www.interq.or.jp/blue/mitta/k-tai/chakumelo.html
   * https://isaji.jp/smaf.shtml
 
-
 ## TODO
 
  * ~~080512 Something is wrong with smaf -> midi~~
@@ -34,3 +33,4 @@ Please refer to `javax.sound.midi` for usage.
  * Conversion between HV and VSQ?
  * MobaRad with GraphicsTrackChunk
  * gervill
+ * line that levelizing volume
