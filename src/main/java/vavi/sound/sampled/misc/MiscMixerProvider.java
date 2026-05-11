@@ -14,8 +14,6 @@ import javax.sound.sampled.Mixer;
 import javax.sound.sampled.Mixer.Info;
 import javax.sound.sampled.spi.MixerProvider;
 
-import vavi.sound.mfi.vavi.VaviMfiDeviceProvider;
-
 import static java.lang.System.getLogger;
 
 
@@ -27,7 +25,7 @@ import static java.lang.System.getLogger;
  */
 public class MiscMixerProvider extends MixerProvider {
 
-    private static final Logger logger = getLogger(VaviMfiDeviceProvider.class.getName());
+    private static final Logger logger = getLogger(MiscMixerProvider.class.getName());
 
     static {
         try {
