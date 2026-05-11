@@ -13,8 +13,17 @@ import java.lang.System.Logger.Level;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
+import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.Line.Info;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.TargetDataLine;
 
 import static java.lang.System.Logger.Level.DEBUG;
 import static java.lang.System.getLogger;
@@ -44,6 +53,47 @@ public final class SoundUtil {
         } catch (IllegalArgumentException e) {
             logger.log(Level.WARNING, e.getMessage(), e);
         }
+    }
+
+    /**
+     * @throws NoSuchElementException if {@code clazz} not found
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends DataLine> T getLine(String name, Class<T> clazz) {
+        Mixer.Info[] mixersInfo = AudioSystem.getMixerInfo();
+        for (Mixer.Info mixerInfo : mixersInfo) {
+            if (("#" + mixerInfo.getName()).equals(name)) {
+                Mixer mixer = AudioSystem.getMixer(mixerInfo);
+                if (clazz == SourceDataLine.class) {
+                    Line.Info[] sourceLineInfo = mixer.getSourceLineInfo();
+logger.log(Level.TRACE, sourceLineInfo.length + ", " + Arrays.stream(sourceLineInfo).map(Info::getLineClass).toList());
+                    for (Line.Info info : sourceLineInfo) {
+                        try {
+                            T t = (T) mixer.getLine(info);
+logger.log(DEBUG, t.getClass().getName() + ", " + mixerInfo.getName());
+                            return t;
+                        } catch (LineUnavailableException e) {
+                            logger.log(Level.TRACE, e.toString());
+                        }
+                    }
+                } else if (clazz == TargetDataLine.class) {
+                    Line.Info[] targetLineInfo = mixer.getTargetLineInfo();
+logger.log(Level.TRACE, targetLineInfo.length + ", " + Arrays.stream(targetLineInfo).map(Info::getLineClass).toList());
+                    for (Line.Info info : targetLineInfo) {
+                        try {
+                            T t = (T) mixer.getLine(info);
+logger.log(DEBUG, t.getClass().getName() + ", " + mixerInfo.getName());
+                            return t;
+                        } catch (LineUnavailableException e) {
+                            logger.log(Level.TRACE, e.toString());
+                        }
+                    }
+                } else {
+                    throw new IllegalArgumentException("unsupported class: " + clazz.getName());
+                }
+            }
+        }
+        throw new NoSuchElementException(name);
     }
 
     /**
