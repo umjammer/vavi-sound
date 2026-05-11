@@ -6,45 +6,32 @@
 
 package vavi.sound.sampled.misc;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UncheckedIOException;
 import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import javax.sound.sampled.AudioFileFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Control;
 import javax.sound.sampled.Control.Type;
 import javax.sound.sampled.Line;
+import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 
 /**
- * WaveOutSourceDataLine.
- * <p>
- * system property
- * <li>{@code vavi.sound.sampled.misc.waveout} ... wave out file path (get after {@link #close})</li>
- * </p>
+ * HijackSourceDataLine.
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
- * @version 0.00 2026-03-18 nsano initial version <br>
- * @see "https://github.com/fourthline/mmlTools/blob/master/src/jp/fourthline/mabiicco/midi/WavoutDataLine.java"
+ * @version 0.00 2026-04-27 nsano initial version <br>
  */
-public class WaveOutSourceDataLine implements SourceDataLine {
+public class HijackSourceDataLine implements SourceDataLine {
 
-    private static final Logger logger = System.getLogger(WaveOutSourceDataLine.class.getName());
+    private static final Logger logger = System.getLogger(HijackSourceDataLine.class.getName());
 
     private AudioFormat format;
-    private Path tempPath;
-    private OutputStream os;
     private long totalBytes;
     private boolean running;
     private boolean open;
@@ -53,19 +40,13 @@ public class WaveOutSourceDataLine implements SourceDataLine {
     private long startTime;
     private int bufferSize = 4096;
 
+    public static HijackLineListener specialListener; // TODO gross
+
     @Override
     public void open(AudioFormat format, int bufferSize) throws LineUnavailableException {
         this.format = format;
         this.bufferSize = bufferSize > 0 ? bufferSize : 4096;
         this.open = true;
-        try {
-            tempPath = Files.createTempFile("waveout", ".raw");
-            os = Files.newOutputStream(tempPath);
-            totalBytes = 0;
-logger.log(Level.INFO, "open: " + format + ", " + tempPath);
-        } catch (IOException e) {
-            throw new LineUnavailableException(e.getMessage());
-        }
     }
 
     @Override
@@ -75,32 +56,29 @@ logger.log(Level.INFO, "open: " + format + ", " + tempPath);
 
     @Override
     public int write(byte[] b, int off, int len) {
-        if (!open || os == null) return 0;
-        try {
-            os.write(b, off, len);
-            totalBytes += len;
+        if (!open) return 0;
 
-            if (running && format != null) {
-                int frameSize = format.getFrameSize();
-                float sampleRate = format.getSampleRate();
-                if (frameSize > 0 && sampleRate > 0) {
-                    long expectedMs = (long) (totalBytes * 1000.0 / (frameSize * sampleRate));
-                    long elapsedMs = System.currentTimeMillis() - startTime;
-                    long waitTime = expectedMs - elapsedMs;
-                    if (waitTime > 0) {
-                        try {
-                            Thread.sleep(waitTime);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
+        fireUpdate(new HijackLineEvent(this, HijackType.WRITE, totalBytes, Arrays.copyOfRange(b, off, off + len)));
+        totalBytes += len;
+
+        if (running && format != null) {
+            int frameSize = format.getFrameSize();
+            float sampleRate = format.getSampleRate();
+            if (frameSize > 0 && sampleRate > 0) {
+                long expectedMs = (long) (totalBytes * 1000.0 / (frameSize * sampleRate));
+                long elapsedMs = System.currentTimeMillis() - startTime;
+                long waitTime = expectedMs - elapsedMs;
+                if (waitTime > 0) {
+                    try {
+                        Thread.sleep(waitTime);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     }
                 }
             }
-
-            return len;
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         }
+
+        return len;
     }
 
     @Override
@@ -110,13 +88,6 @@ logger.log(Level.INFO, "open: " + format + ", " + tempPath);
 
     @Override
     public void flush() {
-        try {
-            if (os != null) {
-                os.flush();
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
     }
 
     @Override
@@ -205,23 +176,6 @@ logger.log(Level.INFO, "open: " + format + ", " + tempPath);
         if (!open) return;
         running = false;
         open = false;
-        if (os != null) {
-            try {
-                os.close();
-                Path path = Files.createTempFile(Path.of("tmp"), "waveout", ".wav");
-                try (InputStream is = new BufferedInputStream(Files.newInputStream(tempPath))) {
-                    long frameLength = format.getFrameSize() > 0 ? totalBytes / format.getFrameSize() : AudioSystem.NOT_SPECIFIED;
-                    AudioInputStream ais = new AudioInputStream(is, format, frameLength);
-                    AudioSystem.write(ais, AudioFileFormat.Type.WAVE, path.toFile());
-                }
-                Files.deleteIfExists(tempPath);
-                os = null;
-logger.log(Level.INFO, "close: " + Files.size(path));
-                System.setProperty("vavi.sound.sampled.misc.waveout", path.toString());
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
     }
 
     @Override
@@ -244,11 +198,50 @@ logger.log(Level.INFO, "close: " + Files.size(path));
         throw new IllegalArgumentException("Control not supported: " + control);
     }
 
+    public static class HijackLineEvent extends LineEvent {
+        private byte[] data;
+        public HijackLineEvent(Line line, Type type, long position, byte[] data) {
+            super(line, type, position);
+            this.data = data;
+        }
+        public byte[] getData() {
+            return data;
+        }
+    }
+
+    public static class HijackType extends LineEvent.Type {
+        protected HijackType(String name) {
+            super(name);
+        }
+
+        public static final HijackType WRITE = new HijackType("WRITE");
+    }
+
+    public interface HijackLineListener extends LineListener {
+    }
+
+    private final List<HijackLineListener> listeners = new ArrayList<>();
+
+    private void fireUpdate(LineEvent event) {
+        listeners.forEach(l -> l.update(event));
+        if (specialListener != null) specialListener.update(event); // TODO gross
+    }
+
     @Override
     public void addLineListener(LineListener listener) {
+        if (listener instanceof HijackLineListener hijackLineListener) {
+            listeners.add(hijackLineListener);
+        } else {
+            throw new IllegalArgumentException("only accept HijackLineListener");
+        }
     }
 
     @Override
     public void removeLineListener(LineListener listener) {
+        if (listener instanceof HijackLineListener hijackLineListener) {
+            listeners.remove(hijackLineListener);
+        } else {
+            throw new IllegalArgumentException("only accept HijackLineListener");
+        }
     }
 }

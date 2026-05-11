@@ -103,7 +103,7 @@ A. yes you can, follow those steps
   * midi -> smaf
   * ~~https://github.com/but80/smaf825 (patch dump)~~ -> https://github.com/umjammer/vavi-sound-ma
   * psx adpcm spi
-  * adpcm playback precisely
+  * adpcm playback timing precisely
 
 ---
 

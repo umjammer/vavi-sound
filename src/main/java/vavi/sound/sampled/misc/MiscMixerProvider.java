@@ -14,8 +14,6 @@ import javax.sound.sampled.Mixer;
 import javax.sound.sampled.Mixer.Info;
 import javax.sound.sampled.spi.MixerProvider;
 
-import vavi.sound.mfi.vavi.VaviMfiDeviceProvider;
-
 import static java.lang.System.getLogger;
 
 
@@ -27,7 +25,7 @@ import static java.lang.System.getLogger;
  */
 public class MiscMixerProvider extends MixerProvider {
 
-    private static final Logger logger = getLogger(VaviMfiDeviceProvider.class.getName());
+    private static final Logger logger = getLogger(MiscMixerProvider.class.getName());
 
     static {
         try {
@@ -53,7 +51,8 @@ public class MiscMixerProvider extends MixerProvider {
     public Info[] getMixerInfo() {
         return new Info[] {
                 WaveOutMixer.mixerInfo,
-                NullMixer.mixerInfo
+                NullMixer.mixerInfo,
+                HijackMixer.mixerInfo
         };
     }
 
@@ -66,6 +65,10 @@ logger.log(Level.DEBUG, "★1 info: " + info);
         } else if (info == NullMixer.mixerInfo) {
 logger.log(Level.DEBUG, "★1 info: " + info);
             NullMixer mixer = new NullMixer();
+            return mixer;
+        } else if (info == HijackMixer.mixerInfo) {
+logger.log(Level.DEBUG, "★1 info: " + info);
+            HijackMixer mixer = new HijackMixer();
             return mixer;
         } else {
 logger.log(Level.DEBUG, "not suitable for this provider: " + info);

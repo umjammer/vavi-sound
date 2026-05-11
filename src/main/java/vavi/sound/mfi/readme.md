@@ -7,12 +7,6 @@
 It has almost the same structure as the {@link javax.sound.midi} package.
 Please refer to {@link javax.sound.midi} for usage.
 
-When playing with {@link vavi.sound.mfi.MfiSystem.getSequencer()}
-"#Real Time Sequencer" in system property javax.sound.midi.Sequencer
-Please make it clear. {@link vavi.sound.midi.VaviSequencer}
-If it becomes the default sequencer {@link vavi.sound.mfi.MfiSystem#getMetaEventListener()}
-will be registered twice.
-
 ## References
 
  * https://web.archive.org/web/20070614134617/http://www.ne.jp/asahi/phs/phs/ezpmd.html

@@ -13,6 +13,13 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.SourceDataLine;
+
+import vavi.sound.sampled.misc.HijackSourceDataLine;
+import vavi.util.Debug;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,5 +60,25 @@ class SoundUtilTest {
         uri = SoundUtil.getSource(is);
         assertNotNull(uri);
         assertTrue(uri.toString().endsWith("target/test-classes/test.mid"));
+    }
+
+    @Test
+    void test2() throws Exception {
+        AudioFormat format = new AudioFormat(44100, 16, 2, true, false);
+        SourceDataLine sdl = AudioSystem.getSourceDataLine(format);
+Debug.print("AudioSystem.getSourceDataLine: " + sdl.getClass().getName());
+
+        System.setProperty("javax.sound.sampled.SourceDataLine", "#Hijack Mixer");
+
+        sdl = AudioSystem.getSourceDataLine(format);
+        assertInstanceOf(HijackSourceDataLine.class, sdl);
+
+        assertDoesNotThrow(() -> {
+            SourceDataLine line = SoundUtil.getLine("#Default Audio Device", SourceDataLine.class);
+Debug.print(line.getClass().getName());
+            assertEquals("com.sun.media.sound.DirectAudioDevice$DirectSDL", line.getClass().getName());
+        });
+
+        System.setProperty("javax.sound.sampled.SourceDataLine", "");
     }
 }

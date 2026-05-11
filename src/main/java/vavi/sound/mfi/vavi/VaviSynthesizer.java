@@ -44,7 +44,7 @@ import static java.lang.System.getLogger;
  */
 public class VaviSynthesizer implements Synthesizer {
 
-    private static final Logger logger = getLogger(VaviSequencer.class.getName());
+    private static final Logger logger = getLogger(VaviSynthesizer.class.getName());
 
     /** the device information */
     static final MfiDevice.Info info =
