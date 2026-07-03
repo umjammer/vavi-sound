@@ -9,6 +9,7 @@ package vavi.sound.mfi.vavi.nec;
 import java.lang.System.Logger.Level;
 
 import vavi.sound.mfi.InvalidMfiDataException;
+import vavi.sound.mobile.AudioEngine;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
@@ -63,7 +64,8 @@ public class Function1_241_4 implements MachineDependentFunction {
 
 logger.log(Level.DEBUG, "StreamSlaveOn: " + channel + "ch, No." + streamNumber + ", velocity=" + velocity);
 
-        NecSequencer.getAudioEngine().start(streamNumber);
+        int streamNumber = this.streamNumber; // this instance is a shared singleton
+        AudioEngine.Sync.schedule(() -> NecSequencer.getAudioEngine().start(streamNumber));
     }
 
     /** channel 0 ~ 3 */

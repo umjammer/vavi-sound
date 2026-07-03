@@ -29,6 +29,7 @@ import vavi.sound.mfi.vavi.sequencer.UnknownVendorSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
+import vavi.sound.mobile.AudioEngine;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -95,6 +96,12 @@ public class VaviSynthesizer implements Synthesizer {
 
         public VaviReceiver(javax.sound.midi.Synthesizer midiSynthesizer) {
             this.midiSynthesizer = midiSynthesizer;
+            try {
+                AudioEngine.Sync.setSynthesizerLatency(midiSynthesizer.getLatency() / 1000);
+logger.log(Level.DEBUG, "synthesizer latency: " + midiSynthesizer.getLatency() / 1000 + " ms");
+            } catch (Exception e) {
+logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
+            }
             isOpen = true;
         }
 
@@ -221,7 +228,7 @@ public class VaviSynthesizer implements Synthesizer {
             int id = (data[2] & 0xff) * 0xff + (data[3] & 0xff);
 //logger.log(Level.TRACE, "message id: " + id);
             AudioDataSequencer sequencer = (AudioDataSequencer) MfiMessageStore.get(id);
-
+logger.log(Level.DEBUG, "audio sysex received: id: " + id + ", at: " + System.nanoTime() + " ns");
             sequencer.sequence();
         }
     }

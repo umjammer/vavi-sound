@@ -134,7 +134,7 @@ public class AudioPlayMessage extends LongMessage
 
         AudioEngine engine = Factory.getAudioEngine();
         if (engine != null)
-            engine.start(id);
+            AudioEngine.Sync.schedule(() -> engine.start(id));
         else
             logger.log(Level.ERROR, "audio engine is not set");
     }

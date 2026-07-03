@@ -20,6 +20,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
+import vavi.sound.SoundUtil;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -86,23 +87,43 @@ logger.log(Level.INFO, "audio no: " + streamNumber + " stored");
     /** audio line */
     protected SourceDataLine line;
 
+    /** audio line format */
+    protected AudioFormat getAudioFormat(int sampleRate, int channels) {
+        return new AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                sampleRate,
+                16,
+                channels,
+                2 * channels,
+                sampleRate,
+                false);
+    }
+
     /** init audio line */
     protected void init(int sampleRate, int channels) {
         try {
-            AudioFormat audioFormat = new AudioFormat(
-                    AudioFormat.Encoding.PCM_SIGNED,
-                    sampleRate,
-                    16,
-                    channels,
-                    2 * channels,
-                    sampleRate,
-                    false);
+            AudioFormat audioFormat = getAudioFormat(sampleRate, channels);
 logger.log(Level.DEBUG, audioFormat);
 
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-            line = (SourceDataLine) AudioSystem.getLine(info);
-            line.open(audioFormat);
-            line.start();
+            SourceDataLine newLine = null;
+            String mixerName = System.getProperty("vavi.sound.mobile.AudioEngine.mixer");
+            if (mixerName != null) {
+                try {
+                    newLine = SoundUtil.getLine(mixerName, SourceDataLine.class);
+                } catch (Exception e) {
+logger.log(Level.WARNING, "mixer: " + mixerName + ": " + e);
+                }
+            }
+            if (newLine == null) {
+                newLine = (SourceDataLine) AudioSystem.getLine(info);
+            }
+            // explicit buffer keeps this line's latency small and predictable
+            int bufferMillis = Integer.getInteger("vavi.sound.mobile.AudioEngine.bufferSize", 100);
+            int bufferBytes = (int) (bufferMillis * audioFormat.getSampleRate() / 1000) * audioFormat.getFrameSize();
+            newLine.open(audioFormat, bufferBytes);
+            newLine.start();
+            this.line = newLine;
         } catch (LineUnavailableException e) {
             throw new IllegalStateException(e);
         }
@@ -134,27 +155,33 @@ logger.log(Level.INFO, "always used: no: " + streamNumber + ", ch: " + this.data
             double volume = Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume",  "0.2"));
             volume(line, volume);
 
+            // gate time as an exact number of frames instead of wall clock polling
+            AudioFormat format = line.getFormat();
+            long gateFrames = gateTime > 0 ? Math.round(gateTime * format.getSampleRate() / 1000.0) : Long.MAX_VALUE;
+logger.log(Level.DEBUG, "start: no: " + streamNumber + ", gateFrames: " + (gateFrames == Long.MAX_VALUE ? "all" : gateFrames) + ", at: " + System.nanoTime() + " ns");
+
             byte[] buf = new byte[1024];
-            long startTime = System.currentTimeMillis();
-            while (iss[0].available() > 0) {
-                if (gateTime > 0 && (System.currentTimeMillis() - startTime) > gateTime) { // TODO not precisely
-                    break;
-                }
+            long framesWritten = 0;
+            while (iss[0].available() > 0 && framesWritten < gateFrames) {
                 if (channels == 1) {
-                    int l = iss[0].read(buf, 0, 1024);
+                    int frameSize = format.getFrameSize();
+                    long budget = Math.min(1024 / frameSize, gateFrames - framesWritten) * frameSize;
+                    int l = iss[0].read(buf, 0, (int) budget);
 logger.log(Level.TRACE, getClass().getSimpleName() + ": data:\n" + StringUtil.getDump(buf, 32));
                     line.write(buf, 0, l);
+                    framesWritten += l / frameSize;
                 } else {
                     int lL = iss[0].read(buf, 0, 512);
                     int lR = iss[1].read(buf, 512, 512);
 //logger.log(Level.TRACE, "l : " + lL + ", r: " + lR);
-                    for (int i = 0; i < lL / 2; i++) {
+                    for (int i = 0; i < lL / 2 && framesWritten < gateFrames; i++) {
                         byte[] temp = new byte[4];
                         temp[0] = buf[i * 2];
                         temp[1] = buf[i * 2 + 1];
                         temp[2] = buf[512 + i * 2];
                         temp[3] = buf[512 + i * 2 + 1];
                         line.write(temp, 0, 4);
+                        framesWritten++;
                     }
                 }
             }

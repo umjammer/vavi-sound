@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.SysexMessage;
@@ -213,12 +211,11 @@ logger.log(Level.INFO, "midiGateTimeTics: " + midiGateTimeTicks);
 
     private long midiGateTimeTicks;
 
-    private final ExecutorService es = Executors.newSingleThreadExecutor();
-
     @Override
     public void sequence() throws InvalidSmafDataException {
-logger.log(Level.DEBUG, "WAVE PLAY: " + number);
+        // resolve here: the engine is held in a ThreadLocal set on this (receiver) thread
         AudioEngine engine = Factory.getAudioEngine();
-        es.submit(() -> engine.start(number, midiGateTimeTicks)); // TODO not precisely
+logger.log(Level.DEBUG, "WAVE PLAY: " + number + ", delay: " + AudioEngine.Sync.getDelay() + " ms");
+        AudioEngine.Sync.schedule(() -> engine.start(number, midiGateTimeTicks));
     }
 }

@@ -6,7 +6,11 @@
 
 package vavi.sound.mobile;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.ByteOrder;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -76,6 +80,91 @@ public interface AudioEngine {
      * <li> TODO pcm bits
      */
     byte[] encode(int bits, int channels, byte[] pcm);
+
+    /**
+     * Synchronization between the midi synthesizer stream and the adpcm line.
+     * <p>
+     * The midi synthesizer (gervill) buffers its output (~120 ms by default), the adpcm
+     * line does not; delaying adpcm start/stop by that latency makes both sound together.
+     * <p>
+     * system property
+     * <ul>
+     *  <li>vavi.sound.midi.synthesizer.latency ... explicit synthesizer latency [ms], overrides auto-detection</li>
+     *  <li>vavi.sound.mobile.AudioEngine.latency ... adpcm output path latency [ms], subtracted from the delay</li>
+     * </ul>
+     */
+    class Sync {
+
+        private static final Logger logger = System.getLogger(Sync.class.getName());
+
+        /** true when the system property fixes the latency, auto-detection is ignored */
+        private static final boolean latencyFixed = System.getProperty("vavi.sound.midi.synthesizer.latency") != null;
+
+        /** the midi synthesizer latency [ms] */
+        private static volatile long synthesizerLatencyMillis = Long.getLong("vavi.sound.midi.synthesizer.latency", 0);
+
+        /** auto-detected latency, ignored when the system property is set explicitly */
+        public static void setSynthesizerLatency(long millis) {
+            if (!latencyFixed) {
+                synthesizerLatencyMillis = millis;
+            }
+        }
+
+        /** @return the midi synthesizer latency [ms] */
+        public static long getSynthesizerLatency() {
+            return synthesizerLatencyMillis;
+        }
+
+        /** @return delay [ms] to apply to adpcm playback */
+        public static long getDelay() {
+            long lineLatency = Long.getLong("vavi.sound.mobile.AudioEngine.latency", 0);
+            return Math.max(0, synthesizerLatencyMillis - lineLatency);
+        }
+
+        /**
+         * Shared by all adpcm play/stop events. single-threaded on purpose: events of
+         * one sequence write to one {@link javax.sound.sampled.SourceDataLine}, so this
+         * both applies the latency-compensation delay and serializes the line access,
+         * keeping event order (fifo for equal delays).
+         */
+        private static final ScheduledThreadPoolExecutor scheduler =
+                new ScheduledThreadPoolExecutor(1, r -> {
+                    Thread thread = new Thread(r, "ADPCM Player");
+                    thread.setDaemon(true);
+                    return thread;
+                });
+
+        static {
+            // the midi sequence can end (and the app exit) while a delayed start is
+            // still pending: e.g. an adpcm only song fires end of track right after
+            // the start event. drain pending plays before the jvm goes away, this
+            // also covers System.exit() which does not wait for non daemon threads.
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                scheduler.shutdown(); // still executes already queued delayed tasks
+                try {
+                    if (!scheduler.awaitTermination(30, TimeUnit.SECONDS)) {
+logger.log(Level.WARNING, "adpcm still playing at jvm shutdown, cut off");
+                    }
+                } catch (InterruptedException ignored) {
+                }
+            }, "ADPCM Player shutdown"));
+        }
+
+        /** runs an adpcm play/stop task delayed by {@link #getDelay()} */
+        public static void schedule(Runnable task) {
+            try {
+                scheduler.schedule(() -> {
+                    try {
+                        task.run();
+                    } catch (Throwable t) {
+logger.log(Level.ERROR, "adpcm task: " + t, t);
+                    }
+                }, getDelay(), TimeUnit.MILLISECONDS);
+            } catch (java.util.concurrent.RejectedExecutionException e) {
+logger.log(Level.WARNING, "adpcm task after shutdown, dropped: " + e);
+            }
+        }
+    }
 
     /** */
     class Data {

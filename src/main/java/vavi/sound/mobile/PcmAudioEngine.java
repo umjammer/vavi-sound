@@ -7,19 +7,13 @@
 package vavi.sound.mobile;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
 
 import static java.lang.System.getLogger;
-import static vavi.sound.SoundUtil.volume;
 
 
 /**
@@ -113,25 +107,15 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[str
     }
 
     @Override
-    protected void init(int sampleRate, int channels) {
-        try {
-            AudioFormat audioFormat = new AudioFormat(
-                    AudioFormat.Encoding.PCM_UNSIGNED,
-                    sampleRate,
-                    8,
-                    channels,
-                    1 * channels,
-                    sampleRate,
-                    false);
-logger.log(Level.DEBUG, audioFormat);
-
-            DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-            SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
-            line.open(audioFormat);
-            line.start();
-        } catch (LineUnavailableException e) {
-            throw new IllegalStateException(e);
-        }
+    protected AudioFormat getAudioFormat(int sampleRate, int channels) {
+        return new AudioFormat(
+                AudioFormat.Encoding.PCM_UNSIGNED,
+                sampleRate,
+                8,
+                channels,
+                1 * channels,
+                sampleRate,
+                false);
     }
 
     // ----
@@ -139,47 +123,5 @@ logger.log(Level.DEBUG, audioFormat);
     @Override
     protected OutputStream getOutputStream(OutputStream os) {
         return os;
-    }
-
-    @Override
-    public void start(int streamNumber) {
-
-        int channels = getChannels(streamNumber);
-        if (channels == -1) {
-logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + this.data[streamNumber].channel);
-            return;
-        }
-
-        try {
-//logger.log(Level.TRACE, data.length);
-            InputStream[] iss = getInputStreams(streamNumber, channels);
-//logger.log(Level.TRACE, "is: " + iss[0].available());
-
-            double volume = Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume",  "0.2"));
-            volume(line, volume);
-
-            byte[] buf = new byte[1024];
-            while (iss[0].available() > 0) {
-                if (channels == 1) {
-                    int l = iss[0].read(buf, 0, 1024);
-//logger.log(Level.TRACE, "\n" + StringUtil.getDump(buf, 64));
-                    line.write(buf, 0, l);
-                } else {
-                    int lL = iss[0].read(buf, 0, 512);
-                    /* int lR = */ iss[1].readNBytes(buf, 512, 512);
-//logger.log(Level.TRACE, "l : " + lL + ", r: " + lR);
-                    for (int i = 0; i < lL / 2; i++) {
-                        byte[] temp = new byte[4];
-                        temp[0] = buf[i * 2];
-                        temp[1] = buf[i * 2 + 1];
-                        temp[2] = buf[512 + i * 2];
-                        temp[3] = buf[512 + i * 2 + 1];
-                        line.write(temp, 0, 4);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
     }
 }
