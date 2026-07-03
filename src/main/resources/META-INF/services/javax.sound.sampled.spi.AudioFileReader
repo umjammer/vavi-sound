@@ -11,5 +11,6 @@ vavi.sound.sampled.adpcm.ccitt.G721WaveAudioFileReader
 vavi.sound.sampled.adpcm.ima.ImaWaveAudioFileReader
 vavi.sound.sampled.adpcm.ms.MsWaveAudioFileReader
 vavi.sound.sampled.adpcm.oki.OkiWaveAudioFileReader
+vavi.sound.sampled.adpcm.psx.PsxAudioFileReader
 vavi.sound.sampled.adpcm.vox.VoxWaveAudioFileReader
 vavi.sound.sampled.adpcm.yamaha.YamahaWaveAudioFileReader

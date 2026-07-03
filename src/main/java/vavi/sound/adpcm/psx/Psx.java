@@ -485,12 +485,8 @@ public class Psx {
                                  int firstSample, int samplesToProcess, boolean isBadFlags, int config) throws IOException {
         byte[] frame = new byte[0x10];
         int frameOffset;
-        int i, framesIn, sampleCount = 0;
+        int framesIn;
         int bytesPerFrame, samplesPerFrame;
-        int coefIndex, shiftFactor, flag;
-        int hist1 = stream.adpcmHistory1_32;
-        int hist2 = stream.adpcmHistory2_32;
-        boolean extendedMode = (config == 1);
 
         // external interleave (fixed size), mono
         bytesPerFrame = 0x10;
@@ -506,9 +502,37 @@ public class Psx {
         if (r != bytesPerFrame) {
 logger.log(Level.WARNING, "offset: %d, read underflow: %d / %d".formatted(frameOffset, r, bytesPerFrame));
         }
-        coefIndex = (frame[0] >> 4) & 0x0F;
-        shiftFactor = frame[0] & 0x0F;
-        flag = frame[1] & 0xFF; // only lower nibble needed
+
+        int[] hist = { stream.adpcmHistory1_32, stream.adpcmHistory2_32 };
+        decodePsxFrame(frame, 0, outbuf, 0, channelSpacing, firstSample, samplesToProcess,
+                isBadFlags, config == 1, hist);
+        stream.adpcmHistory1_32 = hist[0];
+        stream.adpcmHistory2_32 = hist[1];
+    }
+
+    /**
+     * Decodes samples from a single 0x10-byte PS-ADPCM frame already in memory.
+     *
+     * @param frame            buffer containing the frame
+     * @param frameOffset      offset of the frame within {@code frame}
+     * @param outbuf           the output buffer to write the decoded samples to
+     * @param outOffset        the first index written in {@code outbuf}
+     * @param channelSpacing   the spacing between channels in the output buffer
+     * @param firstSample      the first sample to decode within the frame (0..27)
+     * @param samplesToDo      the number of samples to decode
+     * @param isBadFlags       whether to ignore flags
+     * @param extendedMode     true for extended mode (upper filters, few PS3 games)
+     * @param hist             in/out decoder state {hist1, hist2}
+     */
+    static void decodePsxFrame(byte[] frame, int frameOffset, short[] outbuf, int outOffset,
+                               int channelSpacing, int firstSample, int samplesToDo,
+                               boolean isBadFlags, boolean extendedMode, int[] hist) {
+        int hist1 = hist[0];
+        int hist2 = hist[1];
+
+        int coefIndex = (frame[frameOffset] >> 4) & 0x0F;
+        int shiftFactor = frame[frameOffset] & 0x0F;
+        int flag = frame[frameOffset + 1] & 0xFF; // only lower nibble needed
 
         // upper filters only used in few PS3 games, normally 0
         if (!extendedMode) {
@@ -523,11 +547,12 @@ logger.log(Level.WARNING, "offset: %d, read underflow: %d / %d".formatted(frameO
 
         shiftFactor = 20 - shiftFactor;
         // decode nibbles
-        for (i = firstSample; i < firstSample + samplesToProcess; i++) {
+        int sampleCount = outOffset;
+        for (int i = firstSample; i < firstSample + samplesToDo; i++) {
             int sample = 0;
 
             if (flag < 0x07) { // with flag 0x07 decoded sample must be 0
-                int nibbles = frame[0x02 + i / 2] & 0xff;
+                int nibbles = frame[frameOffset + 0x02 + i / 2] & 0xff;
 
                 if ((i & 1) != 0) { // high nibble first
                     sample = getHighNibbleSigned(nibbles) << shiftFactor; // scale
@@ -545,8 +570,8 @@ logger.log(Level.WARNING, "offset: %d, read underflow: %d / %d".formatted(frameO
             hist1 = sample;
         }
 
-        stream.adpcmHistory1_32 = hist1;
-        stream.adpcmHistory2_32 = hist2;
+        hist[0] = hist1;
+        hist[1] = hist2;
     }
 
     /**
