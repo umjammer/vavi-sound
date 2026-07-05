@@ -47,7 +47,7 @@ public class UndefinedMessage extends MfiMessage
      */
     @Override
     public UndefinedMessage init(int delta, int status, int data1, int data2) {
-        return this.init(delta, status, data1, new byte[] { (byte) data2 });
+        return (UndefinedMessage) super.init(delta, status, data1, data2);
     }
 
     /**
@@ -64,6 +64,8 @@ public class UndefinedMessage extends MfiMessage
         data[1] = (byte) (status & 0xff);
         data[2] = (byte) (data1 & 0xff);
         System.arraycopy(data2, 0, data, 3, data2.length);
+
+        this.length = data.length;
 
         return this;
     }
