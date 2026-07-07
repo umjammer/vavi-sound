@@ -40,6 +40,10 @@ includes many ADPCM codecs and the [SSRC](https://github.com/shibatch/SSRC) samp
 
 ## Usage
 
+### system properties
+
+- `vavi.sound.sampled.spi.ssrc` ... ssrc sampling rate conversion provider on/off, default `false`
+
 ### sample
 
  * MFi (.mld) ... [PlayMFi](src/test/java/PlayMFi.java)

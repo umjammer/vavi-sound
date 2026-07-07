@@ -2,7 +2,7 @@
  * https://github.com/hutm/JSSRC
  */
 
-package vavi.sound.pcm.resampling.ssrc;
+package vavi.sound.sampled.ssrc;
 
 import java.io.IOException;
 
@@ -11,11 +11,14 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.spi.FormatConversionProvider;
 
+import vavi.sound.pcm.resampling.ssrc.SSRCInputStream;
+
 
 /**
  * SSRCSampleRateConversionProvider.
- *
- * TODO not integrated as spi, see /META-INF/services/javax.sound.sampled.spi.FormatConversionProvider
+ * <p>
+ * ⚠️ CAUTION this spi is off as default, let the system property "vavi.sound.sampled.spi.ssrc" {@code true}
+ * when you use this provider.
  *
  * @author Maksim Khadkevich
  */
@@ -103,6 +106,8 @@ public class SSRCSampleRateConversionProvider extends FormatConversionProvider {
 
     @Override
     public boolean isConversionSupported(AudioFormat inputFormat, AudioFormat outputFormat) {
+        if (!Boolean.parseBoolean(System.getProperty("vavi.sound.sampled.spi.ssrc", "false")))
+            return false;
 
         AudioFormat.Encoding inputEncoding = inputFormat.getEncoding();
         AudioFormat.Encoding outputEncoding = outputFormat.getEncoding();
