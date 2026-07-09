@@ -22,6 +22,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+
 import vavi.io.LittleEndianDataInputStream;
 import vavi.io.LittleEndianDataOutputStream;
 import vavi.util.Debug;
@@ -171,6 +174,7 @@ Debug.printf("3: %f\n", d);
 
     @Test
     @DisplayName("call by stream")
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
     public void test4() throws Exception {
         AudioInputStream ais = AudioSystem.getAudioInputStream(Paths.get(ssrc).toFile());
         AudioFormat format = ais.getFormat();

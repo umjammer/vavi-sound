@@ -219,7 +219,7 @@ logger.log(Level.INFO, "open: " + format + ", " + tempPath);
 logger.log(Level.INFO, "close: " + Files.size(path));
                 System.setProperty("vavi.sound.sampled.misc.waveout", path.toString());
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
     }

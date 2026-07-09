@@ -8,7 +8,7 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-sound</artifactId>
-  <version>1.0.25</version>
+  <version>1.0.26</version>
 
   <name>Vavi Sound SPIs</name>
   <url>https://github.com/umjammer/vavi-sound</url>
@@ -178,6 +178,7 @@
           <argLine>
             --add-opens=java.base/java.io=ALL-UNNAMED
             --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+            --add-opens=java.desktop/javax.sound.sampled=ALL-UNNAMED
             -Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties
             -Dvavi.test.dev.null=@{dev.null}
             -Dvavi.test.volume=@{vavi.test.volume}
@@ -217,7 +218,7 @@
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- vavi / com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.17</version>
+      <version>1.1.18</version>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>

@@ -28,17 +28,21 @@ includes many ADPCM codecs and the [SSRC](https://github.com/shibatch/SSRC) samp
 | sampled | [VOX ADPCM](src/main/java/vavi/sound/adpcm/vox)                         | Dialogic ADPCM (VOX)      |       ✅       |       ✅        | ✅ <sup>[2]</sup> | OKI MSM7580                                 |
 | sampled | [YM2068 ADPCM](src/main/java/vavi/sound/adpcm/ym2608)                   | YAMAHA ADPCM-A            |       ✅       |       ✅        |        -         | YM2608 etc.                                 |
 | sampled | [YAMAHA ADPCM](src/main/java/vavi/sound/adpcm/yamaha)                   | YAMAHA ADPCM-A            |       ✅       |       ✅        | ✅ <sup>[2]</sup> | same as YM2608 ADPCM                        |
-| sampled | [PSX ADPCM]()                                                           | SONY ADPCM                |       ✅       |       -        |        ⏳️        | .mi\[bh], .mic                              |
+| sampled | [PSX ADPCM](src/main/java/vavi/sound/adpcm/psx)                         | SONY ADPCM                |       ✅       |       -        |        ✅         | .mi\[bh], .mic                              |
 | sampled | [ssrc](src/main/java/vavi/sound/pcm/resampling/ssrc)                    | resampling                |       ✅       |       -        |  ✅ <su>*</sup>   | [*] need to wait for phase 1                |
 
-<sub>[1] implemented in another library</sub><br/>
-<sub>[2] wav file readable</sub>
+<sub>\[1] implemented in another library</sub><br/>
+<sub>\[2] wav file readable</sub>
 
 ## Install
 
 * https://jitpack.io/#umjammer/vavi-sound
 
 ## Usage
+
+### system properties
+
+- `vavi.sound.sampled.spi.ssrc` ... ssrc sampling rate conversion provider on/off, default `false`
 
 ### sample
 
@@ -90,6 +94,9 @@ A. yes you can, follow those steps
  * mfi
    * https://github.com/starg2/timidity41/blob/dev41/timidity/mfi.c
    * https://github.com/logue/smfplayer.js/blob/master/src/mld.js
+   * https://github.com/SquirrelJME/SquirrelJME/tree/trunk/modules/vendor-api-keitaiwiki-music/src/main/java/com/keitaiwiki/music
+   * https://github.com/GrenderG/openDoJa (futrek)
+   * https://github.com/TASEmulators/freej2me-plus/blob/devel/src/javax/microedition/media/decoders/MLDDecoder.java
 
 ## TODO
 
@@ -102,8 +109,8 @@ A. yes you can, follow those steps
   * ~~service loader instead of vavi.properties~~
   * midi -> smaf
   * ~~https://github.com/but80/smaf825 (patch dump)~~ -> https://github.com/umjammer/vavi-sound-ma
-  * psx adpcm spi
-  * adpcm playback timing precisely
+  * ~~psx adpcm spi~~
+  * ~~adpcm playback timing precisely~~
 
 ---
 

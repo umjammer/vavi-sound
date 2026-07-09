@@ -100,16 +100,17 @@ logger.log(Level.DEBUG, "sampling: %02x: rate=%d, bits=%d".formatted(data[8] & 0
     protected void play() {
 
         AudioEngine player = SharpSequencer.getAudioEngine();
+        int packetId = this.packetId; // this instance is a shared singleton
         switch (mode) {
         case MODE_STORE:
             player.setData(packetId, channel, sampleRate, bits, 1, adpcm, continued);
             break;
         case MODE_SET:
             player.setData(packetId, channel, sampleRate, bits, 1, adpcm, continued);
-            player.start(packetId);
+            AudioEngine.Sync.schedule(() -> player.start(packetId));
             break;
         case MODE_RECYCLE:
-            player.start(packetId);
+            AudioEngine.Sync.schedule(() -> player.start(packetId));
             break;
         }
     }

@@ -20,6 +20,7 @@ import javax.sound.midi.SysexMessage;
 
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
+import vavi.sound.mobile.AudioEngine;
 import vavi.sound.smaf.sequencer.MachineDependentSequencer;
 import vavi.sound.smaf.sequencer.SmafMessageStore;
 import vavi.sound.smaf.sequencer.WaveSequencer;
@@ -112,6 +113,12 @@ logger.log(Level.ERROR, e.getMessage(), e);
 
         public SmafReceiver(javax.sound.midi.Synthesizer midiSynthesizer) {
             this.midiSynthesizer = midiSynthesizer;
+            try {
+                AudioEngine.Sync.setSynthesizerLatency(midiSynthesizer.getLatency() / 1000);
+logger.log(Level.DEBUG, "synthesizer latency: " + midiSynthesizer.getLatency() / 1000 + " ms");
+            } catch (Exception e) {
+logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
+            }
             isOpen = true;
         }
 
@@ -232,6 +239,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
             int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
 //logger.log(Level.TRACE, "message id: " + id);
             WaveSequencer sequencer = (WaveSequencer) SmafMessageStore.get(id);
+logger.log(Level.DEBUG, "wave sysex received: id: " + id + ", at: " + System.nanoTime() + " ns");
             sequencer.sequence();
         }
     }

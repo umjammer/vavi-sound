@@ -292,8 +292,11 @@ logger.log(Level.DEBUG, "LayoutType: " + vgmstream.layoutType);
         vgmstream.allowDualStereo = true;
 
         for (int ch = 0; ch < vgmstream.channels; ch++) {
+            // interleaved layout: each channel starts one interleave block after the previous
+            // (Psx.update_offsets advances every channel by interleave * channels per block set)
+            int channelOffset = startOffset + (channelCount != 1 ? vgmstream.interleaveBlockSize * ch : 0);
             // interleaveBlockSize arg is now ignored by Psx.VGMStreamChannel but passed for code compat
-            vgmstream.ch[ch] = new VGMStreamChannel(dis, startOffset, ch, channelCount != 1 ? vgmstream.interleaveBlockSize : -1);
+            vgmstream.ch[ch] = new VGMStreamChannel(dis, channelOffset, ch, channelCount != 1 ? vgmstream.interleaveBlockSize : -1);
         }
 
         return vgmstream;

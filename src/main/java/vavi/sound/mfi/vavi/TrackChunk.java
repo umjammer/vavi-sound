@@ -170,11 +170,17 @@ logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
 //logger.log(Level.TRACE, "track[" + trackNumber + "] event: " + message.getClass().getSimpleName() + ", length: " + message.getLength());
 //logger.log(Level.TRACE, "track[" + trackNumber + "] event length sum: " + l + " / " + trackLength + ", available: " + is.available());
         }
-if (trackLength - l != 0 && trackLength - l < dis.available()) {
- byte[] b = new byte[trackLength - l];
- dis.readFully(b);
-logger.log(Level.INFO, "rest: " + StringUtil.getDump(b));
-}
+//if (trackLength - l != 0) {
+// if (trackLength - l < dis.available()) {
+//  if (trackLength - l > 0) {
+//   byte[] b = new byte[trackLength - l];
+//   dis.readFully(b);
+//logger.log(Level.WARNING, "correct: " + StringUtil.getDump(b));
+//  }
+// } else {
+//logger.log(Level.WARNING, "cannot correct. negative or eof: " + (trackLength - l));
+// }
+//}
         //
         this.length = trackLength + 4 + 4; // + type + length
     }
