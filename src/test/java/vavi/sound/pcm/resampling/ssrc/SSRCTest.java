@@ -22,7 +22,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import vavi.io.LittleEndianDataInputStream;
@@ -172,6 +171,7 @@ Debug.printf("3: %f\n", d);
         buffer[offset * 8 + 7] = (byte) ((l & 0xff00000000000000L) >> 56);
     }
 
+    // TODO why this test stops by `mvn test`? on the ide it passes.
     @Test
     @DisplayName("call by stream")
     @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")

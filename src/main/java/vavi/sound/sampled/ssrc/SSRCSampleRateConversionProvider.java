@@ -7,6 +7,7 @@ package vavi.sound.sampled.ssrc;
 import java.io.IOException;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.spi.FormatConversionProvider;
@@ -102,6 +103,14 @@ public class SSRCSampleRateConversionProvider extends FormatConversionProvider {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    public boolean isConversionSupported(Encoding targetEncoding, AudioFormat sourceFormat) {
+        if (!Boolean.parseBoolean(System.getProperty("vavi.sound.sampled.spi.ssrc", "false")))
+            return false;
+
+        return super.isConversionSupported(targetEncoding, sourceFormat);
     }
 
     @Override

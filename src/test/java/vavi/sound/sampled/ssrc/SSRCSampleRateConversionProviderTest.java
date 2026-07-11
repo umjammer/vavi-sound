@@ -37,22 +37,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 2026-07-09 nsano initial version <br>
  */
-@PropsEntity(url = "file:local.properties")
 public class SSRCSampleRateConversionProviderTest {
-
-    static boolean localPropertiesExists() {
-        return Files.exists(Paths.get("local.properties"));
-    }
 
     String inFile = "src/test/resources/mono.wav";
 
-    @Property(name = "vavi.test.volume")
-    double volume = 0.2;
-
     @BeforeAll
     static void setup() throws IOException {
-        Files.createDirectories(Paths.get("tmp"));
-
         // SSRCSampleRateConversionProvider is off as default
         System.setProperty("vavi.sound.sampled.spi.ssrc", "true");
     }
@@ -60,13 +50,6 @@ public class SSRCSampleRateConversionProviderTest {
     @AfterAll
     static void tearDown() throws IOException {
         System.setProperty("vavi.sound.sampled.spi.ssrc", "false");
-    }
-
-    @BeforeEach
-    void setupEach() throws Exception {
-        if (localPropertiesExists()) {
-            PropsEntity.Util.bind(this);
-        }
     }
 
     /** `--add-opens=java.desktop/javax.sound.sampled` is needed */
@@ -86,7 +69,7 @@ Debug.println("IN: " + sourceAis.getFormat());
                 inAudioFormat.getSampleSizeInBits(),
                 inAudioFormat.getChannels(),
                 inAudioFormat.getFrameSize(),
-                inAudioFormat.getFrameRate(),
+                outSamplingRate,
                 inAudioFormat.isBigEndian());
 
         assertTrue(AudioSystem.isConversionSupported(outAudioFormat, inAudioFormat));

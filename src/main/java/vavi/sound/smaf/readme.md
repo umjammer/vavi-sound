@@ -29,7 +29,7 @@ Please refer to `javax.sound.midi` for usage.
 ## TODO
 
  * ~~080512 Something is wrong with smaf -> midi~~
- * sequencer using ma# emu? [mmftool](https://murachue.sytes.net/web/softlist.cgi?mode=desc&title=mmftool)
+ * ~~sequencer using ma# emu? [mmftool](https://murachue.sytes.net/web/softlist.cgi?mode=desc&title=mmftool)~~ ... dosbox win addon, vavi-apps-mfiplayer, vavi-sound-sion 
  * Conversion between HV and VSQ?
  * MobaRad with GraphicsTrackChunk
  * gervill
