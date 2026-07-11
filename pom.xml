@@ -239,7 +239,7 @@
     <dependency>
       <groupId>vavi</groupId>
       <artifactId>vavi-sound-nda</artifactId>
-      <version>1.0.16</version>
+      <version>1.0.17</version>
       <exclusions>
         <exclusion>
           <groupId>com.github.umjammer</groupId>
