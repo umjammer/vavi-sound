@@ -29,19 +29,33 @@ public class G723_16InputStream extends AdpcmInputStream {
 
     /**
      * {@link vavi.io.BitInputStream} is 2bit little endian fixed
-     * <li>TODO endian for BitInputStream
-     * <li>TODO PCM encoding
      */
     public G723_16InputStream(InputStream in, ByteOrder byteOrder) {
-        super(in, byteOrder, 2, ByteOrder.LITTLE_ENDIAN);
+        this(in, byteOrder, ByteOrder.LITTLE_ENDIAN);
+    }
+
+    /**
+     * @param bitOrder order of the packed two-bit ADPCM code words
+     */
+    public G723_16InputStream(InputStream in, ByteOrder byteOrder, ByteOrder bitOrder) {
+        super(in, byteOrder, 2, bitOrder);
         ((G723_16) decoder).setEncoding(encoding);
 //logger.log(Level.TRACE, this.in);
     }
 
-    /** ADPCM (4bit) length */
+    /**
+     * Number of PCM bytes that can be read without blocking.
+     *
+     * <p>{@link vavi.io.BitInputStream#available()} already reports the
+     * number of two-bit code words (four per input byte).  Each decoded code
+     * word produces one 16-bit PCM sample, so the normal ADPCM calculation in
+     * {@link AdpcmInputStream} is the correct one here.  The old override
+     * multiplied that value by four once more, causing the MFi player to run
+     * past the real end of short Type-2 streams and to reuse stale bytes at
+     * their boundaries.</p>
+     */
     @Override
     public int available() throws IOException {
-//logger.log(Level.TRACE, "0: " + in.available() + ", " + ((in.available() * 2) + (rest ? 1 : 0)));
-        return (in.available() * 4) + (rest ? 1 : 0); // TODO check * 4 ???
+        return super.available();
     }
 }
