@@ -39,6 +39,9 @@ import static java.lang.System.getLogger;
  * VaviSynthesizer.
  * <p>
  * <li>{@code /vavi/sound/mfi/vavi/midi.properties#defaultSynthesizer} ... internal midi synthesizer</li>
+ * <p>
+ * system property
+ * <li>{@code vavi.sound.mobile.AudioEngine.syncLead} ... control midi latency, default 120</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 2026-03-13 nsano initial version <br>
@@ -97,10 +100,16 @@ public class VaviSynthesizer implements Synthesizer {
         public VaviReceiver(javax.sound.midi.Synthesizer midiSynthesizer) {
             this.midiSynthesizer = midiSynthesizer;
             try {
-                AudioEngine.Sync.setSynthesizerLatency(midiSynthesizer.getLatency() / 1000);
-logger.log(Level.DEBUG, "synthesizer latency: " + midiSynthesizer.getLatency() / 1000 + " ms");
-            } catch (Exception e) {
-logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
+                long reportedLatency = midiSynthesizer.getLatency() / 1000;
+                // Gervill's reported latency includes a sizable output
+                // buffer.  ADPCM is written directly to a SourceDataLine and
+                // does not need the full value; compensating it in full made
+                // short MFi percussion audibly late.  Keep the lead tunable
+                // for sound cards with a different hardware path.
+                long lead = Long.getLong("vavi.sound.mobile.AudioEngine.syncLead", 120);
+                long effectiveLatency = Math.max(0, reportedLatency - lead);
+                AudioEngine.Sync.setSynthesizerLatency(effectiveLatency);
+logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " ms, effective=" + effectiveLatency + " ms");            } catch (Exception e) {
             }
             isOpen = true;
         }
@@ -201,7 +210,10 @@ logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
             byte[] data = message.getData();
             int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
 //logger.log(Level.TRACE, "message id: " + id);
-            MachineDependentMessage mdm = (MachineDependentMessage) MfiMessageStore.get(id);
+            if (!(MfiMessageStore.get(id) instanceof MachineDependentMessage mdm)) {
+                logger.log(Level.WARNING, "machine-dependent sysex refers to no machine-dependent message: " + id);
+                return;
+            }
 
             int vendor = mdm.getVendor() | mdm.getCarrier();
             MachineDependentSequencer sequencer;
@@ -227,7 +239,10 @@ logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
             byte[] data = message.getData();
             int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
 //logger.log(Level.TRACE, "message id: " + id);
-            AudioDataSequencer sequencer = (AudioDataSequencer) MfiMessageStore.get(id);
+            if (!(MfiMessageStore.get(id) instanceof AudioDataSequencer sequencer)) {
+                logger.log(Level.WARNING, "MFi4 sysex refers to no audio message: " + id);
+                return;
+            }
 logger.log(Level.DEBUG, "audio sysex received: id: " + id + ", at: " + System.nanoTime() + " ns");
             sequencer.sequence();
         }
