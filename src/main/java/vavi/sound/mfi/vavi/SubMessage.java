@@ -230,12 +230,14 @@ logger.log(Level.DEBUG, subMessage);
 
     // ----
 
-    /** {@link SubMessage} */
-    private static final ServiceLoader<SubMessage> subMessages = ServiceLoader.load(SubMessage.class);
-
     public static SubMessage factory(String subType) {
-        for (SubMessage subMessage : subMessages) {
+        for (SubMessage subMessage : ServiceLoader.load(SubMessage.class)) {
             if (subMessage.accept(subType)) {
+                // ServiceLoader caches provider instances.  SubMessage holds
+                // the parsed payload, so returning that cached instance makes
+                // every chunk share the last chunk's data (e.g. all ADPM
+                // entries become the final 2-bit header).  Create a fresh
+                // provider instance for every parsed subchunk.
                 return subMessage;
             }
         }

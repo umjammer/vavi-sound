@@ -72,6 +72,18 @@ logger.log(Level.DEBUG, "NOP2: delta: " + delta);
         return this;
     }
 
+    /**
+     * Gets the complete two-byte delta time.
+     *
+     * <p>NOP2 stores the low byte in the event delta field and the high byte
+     * in its data byte.  Treating only {@code data[0]} as the delta silently
+     * advances following events by up to 255 * 256 ticks.</p>
+     */
+    @Override
+    public int getDelta() {
+        return (data[0] & 0xff) | ((data[3] & 0xff) << 8);
+    }
+
     @Override
     public String toString() {
         return "Nop2:" + (data[3] & 0xff);

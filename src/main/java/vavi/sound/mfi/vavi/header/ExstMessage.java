@@ -49,7 +49,7 @@ public class ExstMessage extends SubMessage {
     /** */
     public int getExst() {
         byte[] data = getData();
-        return data[0] * 0xff + data[1];
+        return (data[0] & 0xff) * 0x100 + (data[1] & 0xff);
     }
 
     /** TODO check endian */

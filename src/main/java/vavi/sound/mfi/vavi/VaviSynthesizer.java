@@ -199,7 +199,7 @@ logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
         private static void processSpecial_Vavi_MachineDependent(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
 
             byte[] data = message.getData();
-            int id = (data[2] & 0xff) * 0xff + (data[3] & 0xff);
+            int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
 //logger.log(Level.TRACE, "message id: " + id);
             MachineDependentMessage mdm = (MachineDependentMessage) MfiMessageStore.get(id);
 
@@ -225,7 +225,7 @@ logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
         private static void processSpecial_Vavi_Mfi4(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
 
             byte[] data = message.getData();
-            int id = (data[2] & 0xff) * 0xff + (data[3] & 0xff);
+            int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
 //logger.log(Level.TRACE, "message id: " + id);
             AudioDataSequencer sequencer = (AudioDataSequencer) MfiMessageStore.get(id);
 logger.log(Level.DEBUG, "audio sysex received: id: " + id + ", at: " + System.nanoTime() + " ns");

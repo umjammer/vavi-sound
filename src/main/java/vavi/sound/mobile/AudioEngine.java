@@ -25,7 +25,8 @@ import java.util.concurrent.TimeUnit;
  * </p>
  * system property
  * <ul>
- *  <li>vavi.sound.mobile.AudioEngine.volume ... adpcm volume</li>
+ *  <li>{@code vavi.sound.mobile.AudioEngine.volume} ... adpcm volume</li>
+ *  <li>{@code vavi.sound.mobile.AudioEngine.workers} ... audio engine thread pool size</li>
  * </ul>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051116 nsano initial version <br>
@@ -89,8 +90,8 @@ public interface AudioEngine {
      * <p>
      * system property
      * <ul>
-     *  <li>vavi.sound.midi.synthesizer.latency ... explicit synthesizer latency [ms], overrides auto-detection</li>
-     *  <li>vavi.sound.mobile.AudioEngine.latency ... adpcm output path latency [ms], subtracted from the delay</li>
+     *  <li>{@code vavi.sound.midi.synthesizer.latency} ... explicit synthesizer latency [ms], overrides auto-detection</li>
+     *  <li>{@code vavi.sound.mobile.AudioEngine.latency} ... adpcm output path latency [ms], subtracted from the delay</li>
      * </ul>
      */
     class Sync {
@@ -122,14 +123,14 @@ public interface AudioEngine {
         }
 
         /**
-         * Shared by all adpcm play/stop events. single-threaded on purpose: events of
-         * one sequence write to one {@link javax.sound.sampled.SourceDataLine}, so this
-         * both applies the latency-compensation delay and serializes the line access,
-         * keeping event order (fifo for equal delays).
+         * Shared by all adpcm play/stop events. Each stream has its own
+         * {@link javax.sound.sampled.SourceDataLine}. MFi percussion uses many
+         * short, overlapping start/stop events, so leave enough workers for the
+         * normal four voices plus overlaps; the pool remains configurable.
          */
         private static final ScheduledThreadPoolExecutor scheduler =
-                new ScheduledThreadPoolExecutor(1, r -> {
-                    Thread thread = new Thread(r, "ADPCM Player");
+                new ScheduledThreadPoolExecutor(
+                        Integer.getInteger("vavi.sound.mobile.AudioEngine.workers", 1), r -> {                    Thread thread = new Thread(r, "ADPCM Player");
                     thread.setDaemon(true);
                     return thread;
                 });
