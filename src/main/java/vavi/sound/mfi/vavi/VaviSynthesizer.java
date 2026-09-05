@@ -147,105 +147,105 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
         public MidiDevice getMidiDevice() {
             return midiSynthesizer;
         }
+    }
 
-        // ----
+    // ----
 
-        /**
-         * sysex
-         * <pre>
-         * 0xf0 manufacturerId
-         * </pre>
-         */
-        private static void processSpecial(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
+    /**
+     * sysex
+     * <pre>
+     * 0xf0 manufacturerId
+     * </pre>
+     */
+    public static void processSpecial(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
 
-            byte[] data = message.getData();
-            int manufacturerId = data[0];
-            switch (manufacturerId) {
-                case 0:     // 3 byte manufacturer id
-                    logger.log(Level.DEBUG, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
-                    break;
-                case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x45 vavi
-                    processSpecial_Vavi(message);
-                    break;
-                case 0x7f:
-                    logger.log(Level.DEBUG, "unhandled Realtime Universal: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
-                    break;
-                default:
-                    logger.log(Level.DEBUG, "unhandled manufacturer: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
-                    break;
-            }
+        byte[] data = message.getData();
+        int manufacturerId = data[0];
+        switch (manufacturerId) {
+            case 0:     // 3 byte manufacturer id
+                logger.log(Level.DEBUG, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
+                break;
+            case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x45 vavi
+                processSpecial_Vavi(message);
+                break;
+            case 0x7f:
+                logger.log(Level.DEBUG, "unhandled Realtime Universal: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
+                break;
+            default:
+                logger.log(Level.DEBUG, "unhandled manufacturer: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
+                break;
         }
+    }
 
-        /**
-         * manufacturer id: vavi 0x45
-         * <pre>
-         * 0xf0 0x45 functionId
-         * </pre>
-         */
-        private static void processSpecial_Vavi(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
+    /**
+     * manufacturer id: vavi 0x45
+     * <pre>
+     * 0xf0 0x45 functionId
+     * </pre>
+     */
+    private static void processSpecial_Vavi(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
 
-            byte[] data = message.getData();
-            int functionId = data[1];
-            switch (functionId) {
-                case MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND:
-                    processSpecial_Vavi_MachineDependent(message);
-                    break;
-                case AudioDataSequencer.SYSEX_FUNCTION_ID_MFi4:
-                    processSpecial_Vavi_Mfi4(message);
-                    break;
-                default:
-                    logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId));
-                    break;
-            }
+        byte[] data = message.getData();
+        int functionId = data[1];
+        switch (functionId) {
+            case MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND:
+                processSpecial_Vavi_MachineDependent(message);
+                break;
+            case AudioDataSequencer.SYSEX_FUNCTION_ID_MFi4:
+                processSpecial_Vavi_Mfi4(message);
+                break;
+            default:
+                logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId));
+                break;
         }
+    }
 
-        /**
-         * sysex function id: machine dependent (message has vendor and carrier id)
-         * <pre>
-         * 0xf0 0x45 0x01 id(H) id(L)
-         * </pre>
-         */
-        private static void processSpecial_Vavi_MachineDependent(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
+    /**
+     * sysex function id: machine dependent (message has vendor and carrier id)
+     * <pre>
+     * 0xf0 0x45 0x01 id(H) id(L)
+     * </pre>
+     */
+    private static void processSpecial_Vavi_MachineDependent(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
 
-            byte[] data = message.getData();
-            int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
+        byte[] data = message.getData();
+        int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
 //logger.log(Level.TRACE, "message id: " + id);
-            if (!(MfiMessageStore.get(id) instanceof MachineDependentMessage mdm)) {
-                logger.log(Level.WARNING, "machine-dependent sysex refers to no machine-dependent message: " + id);
-                return;
-            }
-
-            int vendor = mdm.getVendor() | mdm.getCarrier();
-            MachineDependentSequencer sequencer;
-            try {
-                sequencer = MachineDependentSequencer.Factory.getSequencer(vendor);
-            } catch (IllegalArgumentException | Error e) {
-                logger.log(Level.ERROR, e.getMessage(), e);
-                logger.log(Level.ERROR, "error vendor: 0x%02x".formatted(vendor));
-                sequencer = new UnknownVendorSequencer();
-            }
-            sequencer.sequence(mdm);
+        if (!(MfiMessageStore.get(id) instanceof MachineDependentMessage mdm)) {
+            logger.log(Level.WARNING, "machine-dependent sysex refers to no machine-dependent message: " + id);
+            return;
         }
 
-        /**
-         * sysex function id: mfi4 (message is mfi4)
-         * <pre>
-         * 0xf0 0x04 0x45 0x02 id(H) id(L)
-         * </pre>
-         * @since MFi 4.0
-         */
-        private static void processSpecial_Vavi_Mfi4(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
+        int vendor = mdm.getVendor() | mdm.getCarrier();
+        MachineDependentSequencer sequencer;
+        try {
+            sequencer = MachineDependentSequencer.Factory.getSequencer(vendor);
+        } catch (IllegalArgumentException | Error e) {
+            logger.log(Level.ERROR, e.getMessage(), e);
+            logger.log(Level.ERROR, "error vendor: 0x%02x".formatted(vendor));
+            sequencer = new UnknownVendorSequencer();
+        }
+        sequencer.sequence(mdm);
+    }
 
-            byte[] data = message.getData();
-            int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
+    /**
+     * sysex function id: mfi4 (message is mfi4)
+     * <pre>
+     * 0xf0 0x04 0x45 0x02 id(H) id(L)
+     * </pre>
+     * @since MFi 4.0
+     */
+    private static void processSpecial_Vavi_Mfi4(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
+
+        byte[] data = message.getData();
+        int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
 //logger.log(Level.TRACE, "message id: " + id);
-            if (!(MfiMessageStore.get(id) instanceof AudioDataSequencer sequencer)) {
-                logger.log(Level.WARNING, "MFi4 sysex refers to no audio message: " + id);
-                return;
-            }
+        if (!(MfiMessageStore.get(id) instanceof AudioDataSequencer sequencer)) {
+            logger.log(Level.WARNING, "MFi4 sysex refers to no audio message: " + id);
+            return;
+        }
 logger.log(Level.DEBUG, "audio sysex received: id: " + id + ", at: " + System.nanoTime() + " ns");
-            sequencer.sequence();
-        }
+        sequencer.sequence();
     }
 
     @Override
