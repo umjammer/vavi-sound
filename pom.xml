@@ -207,7 +207,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>6.0.3</version>
+        <version>6.1.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -218,7 +218,7 @@
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- vavi / com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.19</version>
+      <version>1.1.20</version>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
@@ -239,7 +239,7 @@
     <dependency>
       <groupId>vavi</groupId>
       <artifactId>vavi-sound-nda</artifactId>
-      <version>1.0.17</version>
+      <version>1.0.18</version>
       <exclusions>
         <exclusion>
           <groupId>com.github.umjammer</groupId>
