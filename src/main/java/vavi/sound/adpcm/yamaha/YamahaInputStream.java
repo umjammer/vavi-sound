@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.nio.ByteOrder;
 
 import vavi.sound.adpcm.AdpcmInputStream;
+import vavi.sound.adpcm.AdpcmInputStreamFactory;
 import vavi.sound.adpcm.Codec;
 
 
@@ -32,5 +33,12 @@ public class YamahaInputStream extends AdpcmInputStream {
      */
     public YamahaInputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);
+    }
+
+    /** */
+    public static class YamahaInputStreamFactory implements AdpcmInputStreamFactory {
+        @Override public AdpcmInputStream factory(InputStream in) {
+            return new YamahaInputStream(in, ByteOrder.LITTLE_ENDIAN);
+        }
     }
 }

@@ -31,7 +31,12 @@ import static vavi.sound.mfi.vavi.VaviMfiFileFormat.DumpContext.getDC;
 
 /**
  * TrackMessage.
- * </p>
+ * <p>
+ * system properties
+ * <ul>
+ *  <li>{@code vavi.sound.mfi.vavi.strict} ... parse mfi strictly or not. default {@code false}</li>
+ * </ul>
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030825 nsano initial version <br>
  *          0.01 030826 nsano refactoring <br>
@@ -130,6 +135,11 @@ try {
         return trackLength;
     }
 
+/** for rotten mfi */
+private static boolean strict = Boolean.getBoolean("vavi.sound.mfi.vavi.strict");
+/** for rotten mfi */
+private int remaining;
+
     /**
      * @before {@link #noteLength}, {@link #exst} are must be set
      * @after {@link #length} will be set as Track Chunk length
@@ -162,6 +172,7 @@ logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
         // events
         int l = 0;
         while (l < trackLength && dis.available() > 2) {
+remaining = trackLength - l;
             MfiMessage message = getMessage(dis);
             track.add(new MfiEvent(message, 0L));
 
@@ -170,17 +181,19 @@ logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
 //logger.log(Level.TRACE, "track[" + trackNumber + "] event: " + message.getClass().getSimpleName() + ", length: " + message.getLength());
 //logger.log(Level.TRACE, "track[" + trackNumber + "] event length sum: " + l + " / " + trackLength + ", available: " + is.available());
         }
-//if (trackLength - l != 0) {
-// if (trackLength - l < dis.available()) {
-//  if (trackLength - l > 0) {
-//   byte[] b = new byte[trackLength - l];
-//   dis.readFully(b);
-//logger.log(Level.WARNING, "correct: " + StringUtil.getDump(b));
-//  }
-// } else {
-//logger.log(Level.WARNING, "cannot correct. negative or eof: " + (trackLength - l));
-// }
-//}
+if (!strict && trackLength - l != 0) {
+ if (trackLength - l > 0) {
+  if (trackLength - l < dis.available()) {
+   byte[] b = new byte[trackLength - l];
+   dis.readFully(b);
+logger.log(Level.WARNING, "correct: " + StringUtil.getDump(b));
+  } else {
+logger.log(Level.WARNING, "cannot correct. correction over eof: " + (trackLength - l));
+  }
+ } else {
+logger.log(Level.WARNING, "cannot correct. negative or eof: " + (trackLength - l));
+ }
+}
         //
         this.length = trackLength + 4 + 4; // + type + length
     }
@@ -242,18 +255,27 @@ logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
      * </pre>
      * @param dis data1 ~
      */
-    private static MfiMessage getNoteMessage(int delta,
+    private MfiMessage getNoteMessage(int delta,
                                              int status,
                                              DataInputStream dis,
                                              int noteLength)
         throws IOException {
 
         if (noteLength == 1) {
+if (!strict && remaining - 2 < 2) { // for rotten mfi
+ logger.log(Level.WARNING, "correction: wrong mfi track length");
+ int data1 = dis.readUnsignedByte();
+ return new UndefinedMessage().init(delta, status, data1, new byte[0]);
+}
             int data1 = dis.readUnsignedByte();
             int data2 = dis.readUnsignedByte();
 
             return new VaviNoteMessage(delta, status, data1, data2);
         } else {
+if (!strict && remaining - 2 < 1) { // for rotten mfi
+ logger.log(Level.WARNING, "correction: wrong mfi track length");
+ return new UndefinedMessage().init(delta, status, 0, new byte[0]);
+}
             int data1 = dis.readUnsignedByte();
 
             return new VaviNoteMessage(delta, status, data1);

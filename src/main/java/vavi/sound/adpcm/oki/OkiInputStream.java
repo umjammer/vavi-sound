@@ -12,6 +12,7 @@ import java.lang.System.Logger.Level;
 import java.nio.ByteOrder;
 
 import vavi.sound.adpcm.AdpcmInputStream;
+import vavi.sound.adpcm.AdpcmInputStreamFactory;
 import vavi.sound.adpcm.Codec;
 
 import static java.lang.System.getLogger;
@@ -39,5 +40,12 @@ public class OkiInputStream extends AdpcmInputStream {
     public OkiInputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN); // oki adpcm is little endian fixed
 logger.log(Level.DEBUG, this.in);
+    }
+
+    /** */
+    public static class OkiInputStreamFactory implements AdpcmInputStreamFactory {
+        @Override public AdpcmInputStream factory(InputStream in) {
+            return new OkiInputStream(in, ByteOrder.LITTLE_ENDIAN);
+        }
     }
 }

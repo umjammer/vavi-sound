@@ -136,7 +136,7 @@ public class AinfMessage extends SubMessage {
         private AudioInfo(int index, byte[] in, int offset) {
             this.index = index;
             this.format = in[2 + offset] & 0xff;
-            this.length = in[2 + offset + 1] * 0xff + in[2 + offset + 2];
+            this.length = (in[2 + offset + 1] & 0xff) * 0x100 + (in[2 + offset + 2] & 0xff);
             this.data = new byte[length];
             System.arraycopy(in, 2 + offset + 3, data, 0, length);
         }
