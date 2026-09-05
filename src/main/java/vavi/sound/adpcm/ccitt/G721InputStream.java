@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.nio.ByteOrder;
 
 import vavi.sound.adpcm.AdpcmInputStream;
+import vavi.sound.adpcm.AdpcmInputStreamFactory;
 import vavi.sound.adpcm.Codec;
 
 
@@ -40,5 +41,12 @@ public class G721InputStream extends AdpcmInputStream {
     public G721InputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);
         ((G721) decoder).setEncoding(encoding);
+    }
+
+    /** */
+    public static class G721InputStreamFactory implements AdpcmInputStreamFactory {
+        @Override public AdpcmInputStream factory(InputStream in) {
+            return new G721InputStream(in, ByteOrder.LITTLE_ENDIAN);
+        }
     }
 }

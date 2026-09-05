@@ -1,0 +1,5 @@
+vavi.sound.adpcm.ccitt.G721InputStream$G721InputStreamFactory
+vavi.sound.adpcm.dvi.DviInputStream$DviInputStreamFactory
+vavi.sound.adpcm.oki.OkiInputStream$OkiInputStreamFactory
+vavi.sound.adpcm.vox.VoxInputStream$VoxInputStreamFactory
+vavi.sound.adpcm.yamaha.YamahaInputStream$YamahaInputStreamFactory

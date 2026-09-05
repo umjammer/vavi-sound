@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.nio.ByteOrder;
 
 import vavi.sound.adpcm.AdpcmInputStream;
+import vavi.sound.adpcm.AdpcmInputStreamFactory;
 import vavi.sound.adpcm.Codec;
 
 
@@ -31,5 +32,12 @@ public class DviInputStream extends AdpcmInputStream {
      */
     public DviInputStream(InputStream in, ByteOrder byteOrder) {
         super(in, byteOrder, 4, ByteOrder.BIG_ENDIAN);
+    }
+
+    /** */
+    public static class DviInputStreamFactory implements AdpcmInputStreamFactory {
+        @Override public AdpcmInputStream factory(InputStream in) {
+            return new DviInputStream(in, ByteOrder.LITTLE_ENDIAN);
+        }
     }
 }

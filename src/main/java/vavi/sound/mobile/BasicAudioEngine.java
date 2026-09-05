@@ -68,8 +68,17 @@ public abstract class BasicAudioEngine implements AudioEngine {
         }
         datum.continued = continued;
         this.data[streamNumber] = datum;
-logger.log(Level.INFO, "audio no: " + streamNumber + " stored");
-//debug1();
+        String decoder = getDecoderName(streamNumber, bits, datum.adpcm);
+logger.log(Level.INFO, "audio no: " + streamNumber + " stored" +
+            (decoder == null || decoder.isBlank() ? "" : ", decoder: " + decoder));
+    }
+
+    /**
+     * Returns a diagnostic decoder name for a stored stream.  Engines that do
+     * not have selectable codecs may leave this {@code null}.
+     */
+    protected String getDecoderName(int streamNumber, int bits, byte[] adpcm) {
+        return null;
     }
 
     @Override
