@@ -2,9 +2,6 @@
 
 Provides MFi Header Sub Chunks (sub classes of `SubMessage`).
 
-
-
-
 ### AudioDataChunk SubChunk
 
 + ADPCM information
