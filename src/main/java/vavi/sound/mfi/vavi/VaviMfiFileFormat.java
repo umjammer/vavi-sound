@@ -557,7 +557,7 @@ logger.log(Level.INFO, "no note info, use 0");
     /** indentation management */
     static class DumpContext implements AutoCloseable /* i know this is abuse. */ {
         /** indentation management store */
-        private static ThreadLocal<DumpContext> dc = new ThreadLocal<>();
+        private static final ThreadLocal<DumpContext> dc = new ThreadLocal<>();
 
         static final String indent = " ".repeat(4);
         int depth = 0;

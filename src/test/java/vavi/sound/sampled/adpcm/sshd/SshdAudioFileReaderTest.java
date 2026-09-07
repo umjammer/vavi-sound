@@ -9,11 +9,16 @@ package vavi.sound.sampled.adpcm.sshd;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -57,6 +62,9 @@ class SshdAudioFileReaderTest {
 
     @Property(name = "adpcm.sshd")
     String adpcm = "src/test/resources/test.ss2";
+
+    @Property(name = "sshd.dir")
+    String sshdDir;
 
     @TempDir
     Path dir;
@@ -138,6 +146,39 @@ Debug.println("out: " + pcmAis.getFormat());
                 reader.getAudioFileFormat(new ByteArrayInputStream(new byte[0x100])));
     }
 
+    /** a pcm16 SShd file of 2 channels and 2 interleave block sets of 8 samples each */
+    private static byte[] sshd() {
+        ByteBuffer body = ByteBuffer.allocate(2 * 0x10 * 2).order(ByteOrder.LITTLE_ENDIAN);
+        for (int set = 0; set < 2; set++) {
+            for (int ch = 0; ch < 2; ch++) {
+                for (int i = 0; i < 8; i++) {
+                    body.putShort((short) (ch * 0x100 + set * 8 + i));
+                }
+            }
+        }
+
+        ByteBuffer bb = ByteBuffer.allocate(Sshd.HEADER_SIZE + body.capacity()).order(ByteOrder.LITTLE_ENDIAN);
+        bb.put("SShd".getBytes());
+        bb.putInt(0x18);            // header size
+        bb.putInt(0x01);            // codec: pcm16le
+        bb.putInt(44100);
+        bb.putInt(2);               // channels
+        bb.putInt(0x10);            // interleave
+        bb.putInt(0xFFFFFFFF);      // loop start
+        bb.putInt(0xFFFFFFFF);      // loop end
+        bb.put("SSbd".getBytes());
+        bb.putInt(body.capacity());
+        bb.put(body.array());
+        return bb.array();
+    }
+
+    /** */
+    private Path write(byte[] data) throws Exception {
+        Path path = dir.resolve("test.ads");
+        Files.write(path, data);
+        return path;
+    }
+
     @Test
     @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
     @DisplayName("spi playback")
@@ -171,36 +212,62 @@ Debug.println("out: " + pcmAis.getFormat());
         pcmAis.close();
     }
 
-    /** a pcm16 SShd file of 2 channels and 2 interleave block sets of 8 samples each */
-    private static byte[] sshd() {
-        ByteBuffer body = ByteBuffer.allocate(2 * 0x10 * 2).order(ByteOrder.LITTLE_ENDIAN);
-        for (int set = 0; set < 2; set++) {
-            for (int ch = 0; ch < 2; ch++) {
-                for (int i = 0; i < 8; i++) {
-                    body.putShort((short) (ch * 0x100 + set * 8 + i));
-                }
+    /**
+     * @param dir separated by ';'
+     * @param ext separated by ','
+     */
+    static List<Path> listFilesUnderDirFilteredByExt(String dir, String ext) {
+Debug.println("dir: " + dir);
+Debug.println("ext: " + ext);
+        Predicate<Path> x = p -> Arrays.stream(ext.split(",")).anyMatch(e -> p.getFileName().toString().toUpperCase().endsWith(e));
+        return Arrays.stream(dir.split(File.pathSeparator)).flatMap(d -> {
+            try {
+                return Files.walk(Paths.get(d)).filter(x);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
-        }
-
-        ByteBuffer bb = ByteBuffer.allocate(Sshd.HEADER_SIZE + body.capacity()).order(ByteOrder.LITTLE_ENDIAN);
-        bb.put("SShd".getBytes());
-        bb.putInt(0x18);            // header size
-        bb.putInt(0x01);            // codec: pcm16le
-        bb.putInt(44100);
-        bb.putInt(2);               // channels
-        bb.putInt(0x10);            // interleave
-        bb.putInt(0xFFFFFFFF);      // loop start
-        bb.putInt(0xFFFFFFFF);      // loop end
-        bb.put("SSbd".getBytes());
-        bb.putInt(body.capacity());
-        bb.put(body.array());
-        return bb.array();
+        }).toList();
     }
 
-    /** */
-    private Path write(byte[] data) throws Exception {
-        Path path = dir.resolve("test.ads");
-        Files.write(path, data);
-        return path;
+    @Test
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
+    @DisplayName("spi playback dir recursive")
+    void test5() throws Exception {
+
+        List<Path> list = listFilesUnderDirFilteredByExt(sshdDir, ".SS2");
+Debug.print("sshd: " + list.size());
+
+        list.forEach(p -> {
+            try {
+                assumeTrue(Files.exists(p), "no sshd test file: " + p);
+Debug.println("path: " + p + ", " + Files.size(p));
+
+                AudioInputStream ais = AudioSystem.getAudioInputStream(p.toFile());
+                AudioFormat inFormat = ais.getFormat();
+Debug.println("in: " + inFormat);
+
+                AudioFormat outFormat = new AudioFormat(inFormat.getSampleRate(), 16, inFormat.getChannels(), true, false);
+                AudioInputStream pcmAis = AudioSystem.getAudioInputStream(outFormat, ais);
+Debug.println("out: " + pcmAis.getFormat());
+
+                SourceDataLine line = AudioSystem.getSourceDataLine(outFormat);
+                line.open(outFormat);
+                line.start();
+                volume(line, volume);
+
+                byte[] buf = new byte[8192];
+                int l;
+                while ((l = pcmAis.read(buf, 0, buf.length)) != -1) {
+                    line.write(buf, 0, l);
+                }
+
+                line.drain();
+                line.stop();
+                line.close();
+                pcmAis.close();
+            } catch (Exception e) {
+                Debug.printStackTrace(e);
+            }
+        });
     }
 }

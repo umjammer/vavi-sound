@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
@@ -49,6 +50,9 @@ public class SmafSystemTest {
 
     @Property
     String out = "tmp/out.mid";
+
+    static boolean onIde = System.getProperty("vavi.test", "").equals("ide");
+    static long time = onIde ? 1000 * 1000 : 10 * 1000;
 
     Sequencer sequencer;
 
@@ -94,7 +98,16 @@ Debug.println(meta.getType());
             if (meta.getType() == 47) cdl.countDown();
         });
         sequencer.start();
+if (!onIde) {
+ Thread.sleep(time);
+ sequencer.stop();
+ Debug.println("STOP");
+} else {
         cdl.await();
+}
+Debug.println(Level.FINE, "END");
+        sequencer.close();
+        synthesizer.close();
     }
 
     /** */

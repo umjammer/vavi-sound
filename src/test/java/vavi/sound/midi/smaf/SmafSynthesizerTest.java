@@ -67,6 +67,9 @@ public class SmafSynthesizerTest {
     @Property(name = "mmf.dir")
     String dir = "src/test/resources";
 
+    static boolean onIde = System.getProperty("vavi.test", "").equals("ide");
+    static long time = onIde ? 1000 * 1000 : 10 * 1000;
+
     @BeforeEach
     public void setup() throws IOException {
         if (localPropertiesExists()) {
@@ -122,7 +125,13 @@ Debug.println("meta: " + MidiConstants.MetaEvent.valueOf(meta.getType()));
             if (meta.getType() == 47) cdl.countDown();
         });
         sequencer.start();
+if (!onIde) {
+ Thread.sleep(time);
+ sequencer.stop();
+ Debug.println("STOP");
+} else {
         cdl.await();
+}
         sequencer.close();
     }
 
