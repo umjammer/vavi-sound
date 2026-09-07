@@ -10,7 +10,6 @@ import java.io.BufferedInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.concurrent.CountDownLatch;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MidiSystem;
@@ -72,52 +71,52 @@ Debug.println("volume: " + volume);
 
     @Test
     void test() throws Exception {
-Debug.println(midi);
-
-        Synthesizer synthesizer = MidiSystem.getSynthesizer();
-        synthesizer.open();
-Debug.println("synthesizer: " + synthesizer);
-
-        Sequencer sequencer = MidiSystem.getSequencer(false);
-        Receiver receiver = synthesizer.getReceiver();
-        sequencer.getTransmitter().setReceiver(receiver);
-        sequencer.open();
-Debug.println("sequencer: " + sequencer + ", " + sequencer.getClass().getName());
-
-        Path file = Paths.get(midi);
-
-        Sequence seq = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(file)));
-
-        CountDownLatch cdl = new CountDownLatch(1);
-        MetaEventListener mel = meta -> {
-Debug.println("META: " + meta.getType());
-            if (meta.getType() == 47) cdl.countDown();
-        };
-        sequencer.setSequence(seq);
-        sequencer.addMetaEventListener(mel);
-Debug.println("START");
-        sequencer.start();
-
-        volume(receiver, volume);
-
-        // TODO better way needed
-        HijackSourceDataLine.specialListener = e -> {
+        ScopedValue.where(HijackSourceDataLine.specialListener, e -> {
             byte[] data = ((HijackSourceDataLine.HijackLineEvent) e).getData();
 Debug.println("WRITE: " + data.length + " bytes\n" + StringUtil.getDump(data, Math.min(32, data.length)));
-        };
+        }).call(() -> {
+Debug.println(midi);
+
+            Synthesizer synthesizer = MidiSystem.getSynthesizer();
+            synthesizer.open();
+Debug.println("synthesizer: " + synthesizer);
+
+            Sequencer sequencer = MidiSystem.getSequencer(false);
+            Receiver receiver = synthesizer.getReceiver();
+            sequencer.getTransmitter().setReceiver(receiver);
+            sequencer.open();
+Debug.println("sequencer: " + sequencer + ", " + sequencer.getClass().getName());
+
+            Path file = Paths.get(midi);
+
+            Sequence seq = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(file)));
+
+            CountDownLatch cdl = new CountDownLatch(1);
+            MetaEventListener mel = meta -> {
+Debug.println("META: " + meta.getType());
+                if (meta.getType() == 47) cdl.countDown();
+            };
+            sequencer.setSequence(seq);
+            sequencer.addMetaEventListener(mel);
+Debug.println("START");
+            sequencer.start();
+
+            volume(receiver, volume);
 
 if (!onIde) {
  Thread.sleep(time);
  sequencer.stop();
  Debug.println("STOP");
 } else {
-        cdl.await();
+            cdl.await();
 }
 Debug.println("END");
-        sequencer.removeMetaEventListener(mel);
-        sequencer.close();
+            sequencer.removeMetaEventListener(mel);
+            sequencer.close();
 
-        synthesizer.close();
+            synthesizer.close();
+            return null;
+        });
     }
 
     @AfterAll

@@ -40,13 +40,17 @@ public class HijackSourceDataLine implements SourceDataLine {
     private long startTime;
     private int bufferSize = 4096;
 
-    public static HijackLineListener specialListener; // TODO gross
+    public static final ScopedValue<HijackLineListener> specialListener = ScopedValue.newInstance();
+    private volatile HijackLineListener scopedListener;
 
     @Override
     public void open(AudioFormat format, int bufferSize) throws LineUnavailableException {
         this.format = format;
         this.bufferSize = bufferSize > 0 ? bufferSize : 4096;
         this.open = true;
+        if (specialListener.isBound()) {
+            this.scopedListener = specialListener.get();
+        }
     }
 
     @Override
@@ -93,6 +97,9 @@ public class HijackSourceDataLine implements SourceDataLine {
     @Override
     public void start() {
         running = true;
+        if (scopedListener == null && specialListener.isBound()) {
+            this.scopedListener = specialListener.get();
+        }
         if (format != null) {
             int frameSize = format.getFrameSize();
             float sampleRate = format.getSampleRate();
@@ -176,6 +183,7 @@ public class HijackSourceDataLine implements SourceDataLine {
         if (!open) return;
         running = false;
         open = false;
+        scopedListener = null;
     }
 
     @Override
@@ -224,7 +232,11 @@ public class HijackSourceDataLine implements SourceDataLine {
 
     private void fireUpdate(LineEvent event) {
         listeners.forEach(l -> l.update(event));
-        if (specialListener != null) specialListener.update(event); // TODO gross
+        if (scopedListener != null) {
+            scopedListener.update(event);
+        } else if (specialListener.isBound()) {
+            specialListener.get().update(event);
+        }
     }
 
     @Override
