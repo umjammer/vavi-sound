@@ -72,13 +72,14 @@ public interface AudioEngine {
 
     /**
      * Encodes pcm data.
+     * <p>
+     * TODO pcm bits
+     *
      * @param bits adpcm sampling bits
      * @param channels input pcm and output adpcm channels
      * @param pcm pcm data, currently 16bit only
-     * @return adpcm data,
-     *               when channels = 2, return L, R concatenated byte array,
-     *               currently 4 bit only
-     * <li> TODO pcm bits
+     * @return adpcm data, when channels = 2, return L, R concatenated byte array,
+     *         currently 4 bit only
      */
     byte[] encode(int bits, int channels, byte[] pcm);
 

@@ -12,7 +12,6 @@ import javax.sound.sampled.Line;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
-import javax.sound.sampled.SourceDataLine;
 
 import static vavi.sound.sampled.misc.MiscMixerProvider.version;
 

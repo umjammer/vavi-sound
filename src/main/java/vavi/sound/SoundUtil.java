@@ -51,7 +51,8 @@ public final class SoundUtil {
             float dB = (float) (Math.log10(gain) * 20.0);
             gainControl.setValue(dB);
         } catch (IllegalArgumentException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            logger.log(Level.TRACE, e.getMessage(), e);
+            logger.log(Level.WARNING, e.getMessage());
         }
     }
 

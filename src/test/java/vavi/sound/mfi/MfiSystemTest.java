@@ -49,6 +49,9 @@ public class MfiSystemTest {
 
     Sequencer sequencer;
 
+    static boolean onIde = System.getProperty("vavi.test", "").equals("ide");
+    static long time = onIde ? 1000 * 1000 : 10 * 1000;
+
     @BeforeEach
     void setup() throws Exception {
         if (localPropertiesExists()) {
@@ -73,7 +76,6 @@ Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngi
         play();
     }
 
-    // TODO time
     void play() throws Exception {
         Path path = Path.of(mfi);
 Debug.println("path: " + path);
@@ -91,8 +93,16 @@ Debug.println(Level.FINE, meta.getType());
         });
 Debug.println(Level.FINE, "START");
         sequencer.start();
+if (!onIde) {
+ Thread.sleep(time);
+ sequencer.stop();
+ Debug.println("STOP");
+} else {
         cdl.await();
+}
 Debug.println(Level.FINE, "END");
+        sequencer.close();
+        synthesizer.close();
     }
 
     // ----

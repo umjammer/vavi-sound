@@ -181,7 +181,7 @@ remaining = trackLength - l;
 //logger.log(Level.TRACE, "track[" + trackNumber + "] event: " + message.getClass().getSimpleName() + ", length: " + message.getLength());
 //logger.log(Level.TRACE, "track[" + trackNumber + "] event length sum: " + l + " / " + trackLength + ", available: " + is.available());
         }
-if (!strict && trackLength - l != 0) {
+if (!strict && trackLength - l != 0) { // for rotten mfi
  if (trackLength - l > 0) {
   if (trackLength - l < dis.available()) {
    byte[] b = new byte[trackLength - l];
