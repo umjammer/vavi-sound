@@ -218,7 +218,7 @@
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- vavi / com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.20</version>
+      <version>1.1.21</version>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
