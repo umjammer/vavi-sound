@@ -6,7 +6,6 @@
 
 package vavi.sound.smaf.chunk;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
@@ -73,14 +72,11 @@ logger.log(Level.TRACE, "SeekAndPhraseInfo: subData: " + subDatum);
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
-
-        dos.write(id);
-        dos.writeInt(size);
-
-        for (SubData subDatum : subData) {
-            subDatum.writeTo(os);
-        }
+        writeChunk(os, bos -> {
+            for (SubData subDatum : subData) {
+                subDatum.writeTo(bos);
+            }
+        });
     }
 
     /** */

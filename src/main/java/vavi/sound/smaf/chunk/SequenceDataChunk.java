@@ -7,8 +7,6 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
@@ -83,28 +81,25 @@ logger.log(Level.TRACE, "available: " + dis.available());
 //skip(is, size);
         ScoreTrackChunk.FormatType formatType = ((TrackChunk) parent).getFormatType();
 logger.log(Level.DEBUG, "formatType: " + formatType);
+        CrcDataInputStream body = keep(dis);
         switch (formatType) {
             case HandyPhoneStandard:
-                readHandyPhoneStandard(dis);
+                readHandyPhoneStandard(body);
                 break;
             case MobileStandard_Compress:
-                byte[] encoded = new byte[size];
-                new DataInputStream(dis).readFully(encoded);
-//Files.write(Path.of("tmp/data.enc"), encoded);
+//Files.write(Path.of("tmp/data.enc"), raw);
 //logger.log(Level.TRACE, "data.enc created");
-                byte[] decoded = new Huffman.HuffmanInputStream(new ByteArrayInputStream(encoded), 32).readAllBytes();
+                byte[] decoded = new Huffman.HuffmanInputStream(new ByteArrayInputStream(raw), 32).readAllBytes();
 //Files.write(Path.of("tmp/data.dec"), decoded);
 //logger.log(Level.TRACE, "data.dec created");
 logger.log(Level.DEBUG, "huffman decode: " + size + " -> " + decoded.length);
-                readMobileStandard(new CrcDataInputStream(new ByteArrayInputStream(decoded), id, decoded.length) {
-                    @Override CRC16 getCrc() { return new CRC16(); } // return dummy
-                });
+                readMobileStandard(detachedStream(decoded));
                 break;
             case MobileStandard_NoCompress:
-                readMobileStandard(dis);
+                readMobileStandard(body);
                 break;
             case SEQU:
-                readSEQU(dis);
+                readSEQU(body);
                 break;
         }
 logger.log(Level.DEBUG, "messages: " + messages.size());
@@ -473,16 +468,40 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
         }
     }
 
+    /**
+     * Writes the sequence back.
+     * <p>
+     * When this chunk was read from a file the source bytes are written verbatim: parsing is
+     * lossy (the short events, the tables and the Huffman coding of
+     * {@link TrackChunk.FormatType#MobileStandard_Compress} do not survive it) and most
+     * {@link SmafMessage#getMessage()} are not implemented for those formats. A chunk built by
+     * {@link #addSmafMessage(SmafMessage)} has no source bytes and is written from its messages.
+     * </p>
+     */
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
+        writeChunk(os, bos -> {
+            if (raw != null) {
+                bos.write(raw);
+            } else {
+                for (SmafMessage message : messages) {
+                    bos.write(message.getMessage());
+                }
+            }
+        });
+    }
 
-        dos.write(id);
-        dos.writeInt(size);
+    /** the body as it was read, null when this chunk was not read from a file */
+    protected byte[] raw;
 
-        for (SmafMessage message : messages) {
-            os.write(message.getMessage());
-        }
+    /**
+     * Reads the whole body, keeping it for {@link #writeTo(OutputStream)}, and gives a stream
+     * over it to parse.
+     */
+    protected CrcDataInputStream keep(CrcDataInputStream dis) throws IOException {
+        raw = new byte[dis.available()];
+        dis.readFully(raw);
+        return detachedStream(raw);
     }
 
     /** */
@@ -499,6 +518,7 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
     public void addSmafMessage(SmafMessage smafMessage) {
         messages.add(smafMessage);
         size += smafMessage.getLength(); // TODO
+        raw = null; // the messages are the source now
     }
 
     @Override

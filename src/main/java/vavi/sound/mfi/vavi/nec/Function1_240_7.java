@@ -8,6 +8,8 @@ package vavi.sound.mfi.vavi.nec;
 
 import java.lang.System.Logger.Level;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -37,30 +39,31 @@ public class Function1_240_7 implements MachineDependentFunction {
     /**
      * 0x01, 0xf0, 0x07 extended stream wave control information
      *
-     * @param message see below
-     * <pre>
-     * 0        delta
-     * 1        ff
-     * 2        ff
-     * 3-4      length
-     * 5        vendor
+     * @param message  see below
+     *                 <pre>
+     *                 0        delta
+     *                 1        ff
+     *                 2        ff
+     *                 3-4      length
+     *                 5        vendor
      *
-     * 6        01
-     * 7        f0
-     * 8        0x07
+     *                 6        01
+     *                 7        f0
+     *                 8        0x07
      *
-     * 9        stream number
-     * 10       7.....10
-     *          ~     ~~
-     *          |     +-------- format
-     *          +-------------- mono
-     * 11-12    sampling rate
-     * 13-      data ...
+     *                 9        stream number
+     *                 10       7.....10
+     *                          ~     ~~
+     *                          |     +-------- format
+     *                          +-------------- mono
+     *                 11-12    sampling rate
+     *                 13-      data ...
      *
-     * </pre>
+     *                 </pre>
+     * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message)
+    public void process(MachineDependentMessage message, Receiver receiver)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();
@@ -68,7 +71,7 @@ public class Function1_240_7 implements MachineDependentFunction {
         this.streamNumber = data[ 9] & 0xff;            // stream number 0 ~ 31
         this.mono =        (data[10] & 0x80) == 0;      // 0: mono, 1: stereo
         this.format =      (data[10] & 0x03) >> 1;      // 0: 4bit ADPCM (0db Center fixed), 1: 4bit ADPCM
-        this.sampleRate =  ((data[11] & 0xff) << 8) + (data[12] & 0xff);  // 4000 ~ 16000 (make it half when stereo)
+        this.sampleRate = ((data[11] & 0xff) << 8) + (data[12] & 0xff);  // 4000 ~ 16000 (make it half when stereo)
 
         int adpcmLength = data.length - HEADER_LENGTH;
 logger.log(Level.DEBUG, "ADPCM: No." + streamNumber + ", " + sampleRate + "Hz, " + adpcmLength + " bytes, " + (mono ? "mono" : "stereo") + ", " + format);

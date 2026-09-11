@@ -9,6 +9,8 @@ package vavi.sound.mfi.vavi.mitsubishi;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
@@ -41,10 +43,11 @@ public class MitsubishiSequencer implements MachineDependentSequencer {
 
     /**
      *
-     * @param message see below
+     * @param message  see below
+     * @param receiver
      */
     @Override
-    public void sequence(MachineDependentMessage message)
+    public void sequence(MachineDependentMessage message, Receiver receiver)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();
@@ -52,12 +55,9 @@ public class MitsubishiSequencer implements MachineDependentSequencer {
 logger.log(Level.TRACE, "function: 0x%02x".formatted(function));
 
         String key = VENDOR_MITSUBISHI + "." + function;
+
         MachineDependentFunction mdf = MachineDependentFunction.Factory.getFunction(key);
-        if (mdf != null) {
-            mdf.process(message);
-        } else {
-logger.log(Level.WARNING, "unsupported function: 0x%02x".formatted(function));
-        }
+        mdf.process(message, receiver);
     }
 
     // ----

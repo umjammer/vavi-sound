@@ -109,6 +109,7 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
         while (dis.available() > 0) {
 //logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
             Chunk chunk = readFrom(dis);
+            chunks.add(chunk);
             switch (chunk) {
                 case SeekAndPhraseInfoChunk subChunk -> this.seekAndPhraseInfoChunk = subChunk;
                 case SequenceDataChunk subChunk -> this.sequenceDataChunk = subChunk; // Mtsq
@@ -119,32 +120,26 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
         }
     }
 
+    /**
+     * Writes the track header, the Channel Status field (whose width depends on the
+     * {@link TrackChunk.FormatType}) and the sub chunks in the order they were read or added.
+     */
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
+        writeChunk(os, bos -> {
+            DataOutputStream dos = new DataOutputStream(bos);
 
-        dos.write(id);
-        dos.writeInt(size + formatType.size);
+            dos.writeByte(formatType.ordinal());
+            dos.writeByte(sequenceType.ordinal());
+            dos.writeByte(durationTimeBase);
+            dos.writeByte(gateTimeTimeBase);
+            ChannelStatus.writeTo(channelStatuses, formatType, dos);
 
-        dos.writeByte(formatType.ordinal());
-        dos.writeByte(sequenceType.ordinal());
-        dos.writeByte(durationTimeBase);
-        dos.writeByte(gateTimeTimeBase);
-        for (ChannelStatus channelStatus : channelStatuses) {
-            channelStatus.writeTo(os);
-        }
-        if (seekAndPhraseInfoChunk != null) {
-            seekAndPhraseInfoChunk.writeTo(os);
-        }
-        if (sequenceDataChunk != null) {
-            sequenceDataChunk.writeTo(os);
-        }
-        if (setupDataChunk != null) {
-            setupDataChunk.writeTo(os);
-        }
-        if (streamPcmDataChunk != null) {
-            streamPcmDataChunk.writeTo(os);
-        }
+            for (Chunk chunk : chunks) {
+                chunk.writeTo(dos);
+            }
+            dos.flush();
+        });
     }
 
     /** */
@@ -155,6 +150,7 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
         if (this.seekAndPhraseInfoChunk == null) {
             size += seekAndPhraseInfoChunk.getSize() + 8;
         }
+        replaceChunk(this.seekAndPhraseInfoChunk, seekAndPhraseInfoChunk);
         this.seekAndPhraseInfoChunk = seekAndPhraseInfoChunk;
         seekAndPhraseInfoChunk.id[0] = 'M';
     }
@@ -167,6 +163,7 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
         if (this.setupDataChunk == null) {
             size += setupDataChunk.getSize() + 8;
         }
+        replaceChunk(this.setupDataChunk, setupDataChunk);
         this.setupDataChunk = setupDataChunk;
         setupDataChunk.id[0] = 'M';
     }
@@ -179,6 +176,7 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
         if (this.streamPcmDataChunk == null) {
             size += streamPcmDataChunk.getSize() + 8;
         }
+        replaceChunk(this.streamPcmDataChunk, streamPcmDataChunk);
         this.streamPcmDataChunk = streamPcmDataChunk;
     }
 

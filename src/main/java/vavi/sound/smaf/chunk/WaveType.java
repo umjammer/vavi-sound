@@ -150,6 +150,22 @@ logger.log(Level.DEBUG, "waveType: " + this);
         return waveType;
     }
 
+    /** for "Mwa*", the inverse of {@link #WaveType(byte[])} */
+    byte[] getBytes() {
+        int format = 0;
+        for (int i = 0; i < tableForMwq.length; i++) {
+            if (tableForMwq[i] == waveFormat) {
+                format = i;
+                break;
+            }
+        }
+        return new byte[] {
+            (byte) ((waveChannels == 2 ? 0x80 : 0) | (format << 4) | (waveBaseBit / 4 - 1)),
+            (byte) ((waveSamplingFreq >> 8) & 0xff),
+            (byte) (waveSamplingFreq & 0xff)
+        };
+    }
+
     /** @return 1, 2 */
     int getWaveChannels() {
         return waveChannels;

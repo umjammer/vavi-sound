@@ -9,6 +9,7 @@ package vavi.sound.mfi.vavi.track;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.MidiEvent;
 
@@ -120,7 +121,7 @@ public class AudioStopMessage extends LongMessage
 
     /** @throws IllegalArgumentException when audio engine does not found */
     @Override
-    public void sequence() throws InvalidMfiDataException {
+    public void sequence(Receiver receiver) throws InvalidMfiDataException {
         int id = getIndex();
 
         AudioEngine engine = Factory.getAudioEngine();

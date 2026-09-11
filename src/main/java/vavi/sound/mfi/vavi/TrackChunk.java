@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.List;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.LongMessage;
@@ -34,7 +35,10 @@ import static vavi.sound.mfi.vavi.VaviMfiFileFormat.DumpContext.getDC;
  * <p>
  * system properties
  * <ul>
- *  <li>{@code vavi.sound.mfi.vavi.strict} ... parse mfi strictly or not. default {@code false}</li>
+ *  <li>{@code vavi.sound.mfi.vavi.parserLevel} ... {@code strict}, {@code medium} or {@code loose}.
+ *      {@code medium} ignores a corrupt note message.
+ *      {@code loose} ignores a track chunk size.
+ *      default {@code medium}</li>
  * </ul>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -135,8 +139,26 @@ try {
         return trackLength;
     }
 
+enum ParserLevel {
+    strict, medium, loose;
+
+    static ParserLevel getDefault() {
+        String name = null;
+        try {
+            name = System.getProperty("vavi.sound.mfi.vavi.parserLevel", medium.name());
+            return valueOf(name);
+        } catch (IllegalArgumentException e) {
+logger.log(Level.WARNING, "wrong level: " + name);
+            return medium;
+        }
+    }
+
+    boolean isAcceptable(ParserLevel expected) {
+        return ordinal() >= expected.ordinal();
+    }
+}
 /** for rotten mfi */
-private static boolean strict = Boolean.getBoolean("vavi.sound.mfi.vavi.strict");
+private static final ParserLevel parserLevel = ParserLevel.getDefault();
 /** for rotten mfi */
 private int remaining;
 
@@ -170,9 +192,10 @@ private int remaining;
 logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
 
         // events
+boolean loose = parserLevel.isAcceptable(ParserLevel.loose) && is.markSupported(); // for rotten mfi, track length is not trustworthy
         int l = 0;
-        while (l < trackLength && dis.available() > 2) {
-remaining = trackLength - l;
+        while ((loose ? !isNextChunk(is) : l < trackLength) && dis.available() > 2) {
+remaining = loose ? dis.available() : trackLength - l;
             MfiMessage message = getMessage(dis);
             track.add(new MfiEvent(message, 0L));
 
@@ -181,7 +204,11 @@ remaining = trackLength - l;
 //logger.log(Level.TRACE, "track[" + trackNumber + "] event: " + message.getClass().getSimpleName() + ", length: " + message.getLength());
 //logger.log(Level.TRACE, "track[" + trackNumber + "] event length sum: " + l + " / " + trackLength + ", available: " + is.available());
         }
-if (!strict && trackLength - l != 0) { // for rotten mfi
+if (loose && trackLength - l != 0) { // for rotten mfi
+logger.log(Level.WARNING, "ignore wrong track length: " + trackLength + " -> " + l);
+ trackLength = l;
+} else
+if (parserLevel.isAcceptable(ParserLevel.medium) && trackLength - l != 0) { // for rotten mfi
  if (trackLength - l > 0) {
   if (trackLength - l < dis.available()) {
    byte[] b = new byte[trackLength - l];
@@ -196,6 +223,21 @@ logger.log(Level.WARNING, "cannot correct. negative or eof: " + (trackLength - l
 }
         //
         this.length = trackLength + 4 + 4; // + type + length
+    }
+
+    /** for rotten mfi: chunk types which may follow a track chunk */
+    private static final List<String> nextTypes = List.of(TYPE, HeaderChunk.TYPE, AudioDataMessage.TYPE);
+
+    /**
+     * for rotten mfi: peeks whether a next chunk starts here, instead of relying on the track length.
+     * @param is must support mark
+     */
+    private static boolean isNextChunk(InputStream is) throws IOException {
+        is.mark(4);
+        byte[] bytes = new byte[4];
+        int r = is.readNBytes(bytes, 0, 4);
+        is.reset();
+        return r == 4 && nextTypes.contains(new String(bytes));
     }
 
     /**
@@ -262,7 +304,7 @@ logger.log(Level.WARNING, "cannot correct. negative or eof: " + (trackLength - l
         throws IOException {
 
         if (noteLength == 1) {
-if (!strict && remaining - 2 < 2) { // for rotten mfi
+if (parserLevel.isAcceptable(ParserLevel.medium) && remaining - 2 < 2) { // for rotten mfi
  logger.log(Level.WARNING, "correction: wrong mfi track length");
  int data1 = dis.readUnsignedByte();
  return new UndefinedMessage().init(delta, status, data1, new byte[0]);
@@ -272,7 +314,7 @@ if (!strict && remaining - 2 < 2) { // for rotten mfi
 
             return new VaviNoteMessage(delta, status, data1, data2);
         } else {
-if (!strict && remaining - 2 < 1) { // for rotten mfi
+if (parserLevel.isAcceptable(ParserLevel.medium) && remaining - 2 < 1) { // for rotten mfi
  logger.log(Level.WARNING, "correction: wrong mfi track length");
  return new UndefinedMessage().init(delta, status, 0, new byte[0]);
 }

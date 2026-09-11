@@ -15,8 +15,8 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.StringUtil;
@@ -70,37 +70,44 @@ logger.log(Level.TRACE, "available: " + dis.available());
         while (dis.available() > 4) { // TODO normal files must be 0. 4 means there is a case additional 4 bytes are exists at end
             SubData subDatum = new SubData(dis);
 logger.log(Level.TRACE, subDatum);
-            subData.put(subDatum.tag, subDatum);
+            subData.add(subDatum);
 logger.log(Level.TRACE, "SubData: " + subDatum.tag + ", " + subDatum.data.length + ", " + dis.available());
         }
 logger.log(Level.INFO, "skip unexpected bytes left: " + dis.available());
-        dis.skipBytes(dis.available()); // TODO not necessary for a normal file, for illegal case that has additional 4 bytes are exists at end
+        // TODO not necessary for a normal file, for illegal case that has additional 4 bytes are exists at end
+        this.tail = new byte[dis.available()];
+        dis.readFully(tail);
     }
+
+    /** the odd bytes some files have after the last sub data, written back as they were read */
+    private byte[] tail = new byte[0];
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
-
-        dos.write(id);
-        dos.writeInt(size);
-
-        for (SubData subDatum : subData.values()) {
-            subDatum.writeTo(os);
-        }
+        writeChunk(os, bos -> {
+            for (SubData subDatum : subData) {
+                subDatum.writeTo(bos);
+            }
+            bos.write(tail);
+        });
     }
 
     /** */
     private static final String defaultEncoding = "Windows-31J";
 
     /** */
-    private final Map<String, SubData> subData = new TreeMap<>();
+    private final List<SubData> subData = new ArrayList<>(); // a tag may appear twice, and the order is kept as it was read
 
-    /** */
+    /** @return null when there is no such sub data */
     String getSubDataByTag(String tag) {
+        SubData subDatum = subData.stream().filter(sd -> sd.tag.equals(tag)).findFirst().orElse(null);
+        if (subDatum == null) {
+            return null;
+        }
         try {
-            return new String(subData.get(tag).data, defaultEncoding); // use #getLnaguageCode()
+            return new String(subDatum.data, defaultEncoding); // use #getLnaguageCode()
         } catch (UnsupportedEncodingException e) {
-            return new String(subData.get(tag).data);
+            return new String(subDatum.data);
         }
     }
 
@@ -112,7 +119,16 @@ logger.log(Level.INFO, "skip unexpected bytes left: " + dis.available());
         } catch (UnsupportedEncodingException e) {
             subDatum = new SubData(tag, data.getBytes());
         }
-        subData.put(tag, subDatum);
+        int i = 0;
+        while (i < subData.size() && !subData.get(i).tag.equals(tag)) {
+            i++;
+        }
+        if (i < subData.size()) {
+            size -= subData.get(i).getSize();
+            subData.set(i, subDatum);
+        } else {
+            subData.add(subDatum);
+        }
         size += subDatum.getSize();
     }
 
@@ -200,7 +216,7 @@ logger.log(Level.INFO, "skip unexpected bytes left: " + dis.available());
 
         sb.append(getDC().format(getId() + languageCode));
         try (var dc = getDC().open()) {
-            subData.values().stream().map(sd -> dc.format(sd.toString())).forEach(sb::append);
+            subData.stream().map(sd -> dc.format(sd.toString())).forEach(sb::append);
         }
 
         return sb.toString();

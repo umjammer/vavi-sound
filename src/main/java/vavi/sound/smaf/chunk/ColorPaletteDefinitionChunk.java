@@ -6,7 +6,6 @@
 
 package vavi.sound.smaf.chunk;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -46,16 +45,26 @@ public class ColorPaletteDefinitionChunk extends Chunk {
     @Override
     protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
-dis.skipBytes((int) (long) size);
+        // TODO the palette is not parsed yet, keep it as it is so it can be written back
+        this.data = new byte[size];
+        dis.readFully(data);
+    }
+
+    /** the palette body, not parsed yet */
+    private byte[] data = new byte[0];
+
+    /** the palette body, not parsed yet */
+    public byte[] getData() {
+        return data;
+    }
+
+    /** the palette body, not parsed yet */
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
-
-        dos.write(id);
-        dos.writeInt(size);
-
-        // TODO
+        writeChunk(os, bos -> bos.write(data));
     }
 }

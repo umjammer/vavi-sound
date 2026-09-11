@@ -197,6 +197,7 @@ public abstract class TrackChunk extends Chunk {
 
     /** "[MA]tsq" */
     public void setSequenceDataChunk(SequenceDataChunk sequenceDataChunk) {
+        replaceChunk(this.sequenceDataChunk, sequenceDataChunk);
         this.sequenceDataChunk = sequenceDataChunk;
         size += sequenceDataChunk.getSize() + 8;
     }

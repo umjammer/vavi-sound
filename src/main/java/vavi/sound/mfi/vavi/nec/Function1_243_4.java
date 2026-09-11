@@ -8,6 +8,8 @@ package vavi.sound.mfi.vavi.nec;
 
 import java.lang.System.Logger.Level;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -32,26 +34,27 @@ public class Function1_243_4 implements MachineDependentFunction {
     /**
      * 0x01, 0xf3, 0x04 Stream Number Setting
      *
-     * @param message see below
-     * <pre>
-     * 0        delta
-     * 1        ff
-     * 2        ff
-     * 3-4      length
-     * 5        vendor
+     * @param message  see below
+     *                 <pre>
+     *                 0        delta
+     *                 1        ff
+     *                 2        ff
+     *                 3-4      length
+     *                 5        vendor
      *
-     * 6        01
-     * 7        f3
-     * 8        ....0100
-     *              ~~~~
-     *              +------ 0x4
-     * 9        ......00
-     *                ~~
-     *                +---- max stream number, 0 ~ 2, default 0
-     * </pre>
+     *                 6        01
+     *                 7        f3
+     *                 8        ....0100
+     *                              ~~~~
+     *                              +------ 0x4
+     *                 9        ......00
+     *                                ~~
+     *                                +---- max stream number, 0 ~ 2, default 0
+     *                 </pre>
+     * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message)
+    public void process(MachineDependentMessage message, Receiver receiver)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();

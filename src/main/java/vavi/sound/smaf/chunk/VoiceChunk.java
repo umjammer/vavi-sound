@@ -84,6 +84,7 @@ public class VoiceChunk extends TrackChunk {
         while (dis.available() > 0) {
 //logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
             Chunk chunk = readFrom(dis);
+            chunks.add(chunk);
             switch (chunk) {
                 case SequenceDataChunk subChunk -> this.sequenceDataChunk = subChunk; // "Mssq"
                 case EXWVChunk subChunk -> this.exwvChunk = subChunk; // "EXWV"
@@ -91,11 +92,23 @@ public class VoiceChunk extends TrackChunk {
                 default -> logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
+
+        // an "EXVO" pcm voice tells the sampling rate of the "EXWV" wave it links to
+        if (exwvChunk != null) {
+            exclusiveVoiceChunks.stream()
+                    .filter(c -> c.isPcmVoice() && !c.isRomWave() && c.getWaveId() == exwvChunk.getWaveId())
+                    .findFirst()
+                    .ifPresent(c -> exwvChunk.setSamplingRate(c.getSamplingRate()));
+        }
     }
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-
+        writeChunk(os, bos -> {
+            for (Chunk chunk : chunks) {
+                chunk.writeTo(bos);
+            }
+        });
     }
 
     // ----

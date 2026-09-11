@@ -50,7 +50,7 @@ logger.log(Level.DEBUG, "MasterTrackSequenceData: " + size + " bytes");
     protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
 
-        readHandyPhoneStandard(dis);
+        readHandyPhoneStandard(keep(dis));
 
 //byte[] data = new byte[size];
 //dis.readFully(data);

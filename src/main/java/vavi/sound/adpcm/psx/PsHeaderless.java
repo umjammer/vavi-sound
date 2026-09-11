@@ -7,6 +7,8 @@ package vavi.sound.adpcm.psx;
 import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -29,6 +31,31 @@ import static java.lang.System.getLogger;
 public class PsHeaderless {
 
     private static final Logger logger = getLogger(PsHeaderless.class.getName());
+
+    /** bulk read size for the sequential scan below, a 0x10 multiple */
+    private static final int SCAN_BUFFER_SIZE = 0x10000;
+
+    /**
+     * Reads {@code b.length} bytes at the current channel position.
+     * <p>
+     * {@link SeekableDataInputStream} doesn't override {@link java.io.InputStream#read(byte[], int, int)},
+     * so reading through it costs one channel read (i.e. one syscall) per byte. The scan below touches
+     * every 0x10 line of the file, so it goes to the channel directly.
+     *
+     * @return the byte count actually read, 0 at EOF ({@code b} is left untouched then)
+     */
+    private static int read(SeekableByteChannel sbc, byte[] b) throws IOException {
+        ByteBuffer bb = ByteBuffer.wrap(b);
+        while (bb.hasRemaining() && sbc.read(bb) > 0) {
+        }
+        return bb.position();
+    }
+
+    /** {@link #read(SeekableByteChannel, byte[])} at {@code offset} */
+    private static int read(SeekableByteChannel sbc, long offset, byte[] b) throws IOException {
+        sbc.position(offset);
+        return read(sbc, b);
+    }
 
     /**
      * Headerless PS-ADPCM
@@ -81,22 +108,33 @@ logger.log(Level.DEBUG, "ext: " + fileExt);
         // Interleave value is the offset where those repeat, and channels the number of times.
         // Loop flags in second byte are: 0x06 = start, 0x03 = end (per channel).
         // Interleave can be large (up to 0x20000 found so far) and is always a 0x10 multiple value.
-        int r = dis.readNBytes(mibBuffer, 0, 0x10);
+        SeekableByteChannel sbc = dis.origin();
+        int r = read(sbc, 0x00, mibBuffer);
         readOffset += r;
         mibBuffer[0] = 0;
 
         boolean doChannelUpdate = true;
         boolean bDoUpdateInterleave = true;
 
+        // the scan walks the whole file line by line, so it reads in big chunks rather than seeking per line
+        byte[] scanBuffer = new byte[SCAN_BUFFER_SIZE];
+        int scanLimit = 0;
+        int scanOffset = 0;
+
         readOffset = 0;
+        sbc.position(0);
         do {
-            dis.position(readOffset);
-            r = dis.readNBytes(testBuffer, 0, 0x10);
-            if (r <= 0) {
+            if (scanOffset == scanLimit) {
+                scanLimit = read(sbc, scanBuffer);
+                scanOffset = 0;
+            }
+            if (scanLimit - scanOffset < 0x10) {
 logger.log(Level.DEBUG, "EOF");
                 break;
             }
-            readOffset += r;
+            System.arraycopy(scanBuffer, scanOffset, testBuffer, 0, 0x10);
+            scanOffset += 0x10;
+            readOffset += 0x10;
 
             // be sure to point to an interleave value
             if (readOffset < (fileLength * 0.5)) {
@@ -212,8 +250,7 @@ logger.log(Level.DEBUG, "EOF");
             // count empty lines at interleave = channels
             do {
                 newChannelCount++;
-                dis.position(readOffset);
-                dis.readNBytes(testBuffer, 0, 0x10);
+                read(sbc, readOffset, testBuffer);
                 readOffset += interleave;
             } while (Arrays.equals(testBuffer, 0, 16, mibBuffer, 0, 16));
 
@@ -277,8 +314,7 @@ logger.log(Level.DEBUG, "LayoutType: " + vgmstream.layoutType);
 
             readOffset = fileLength - 0x10;
             do {
-                dis.position(readOffset);
-                dis.readNBytes(testBuffer, 0, 0x10);
+                read(sbc, readOffset, testBuffer);
                 if (Arrays.equals(mibBuffer, 0, 16, testBuffer, 0, 16)) {
                     emptySamples += 28;
                 }

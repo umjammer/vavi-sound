@@ -9,13 +9,14 @@ package vavi.sound.mfi.vavi.nec;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.mobile.YamahaAudioEngine;
-import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
 import static vavi.sound.mfi.vavi.sequencer.MachineDependentFunction.CARRIER_DOCOMO;
@@ -43,20 +44,21 @@ public class NecSequencer implements MachineDependentSequencer {
 
     /**
      *
-     * @param message see below
-     * <pre>
-     * 0        delta
-     * 1        ff
-     * 2        ff
-     * 3-4      length
-     * 5        vendor
-     * ---- MFi <= 2 ----
-     * 6        f1
-     * 7        f2, channel
-     * </pre>
+     * @param message  see below
+     *                 <pre>
+     *                 0        delta
+     *                 1        ff
+     *                 2        ff
+     *                 3-4      length
+     *                 5        vendor
+     *                 ---- MFi <= 2 ----
+     *                 6        f1
+     *                 7        f2, channel
+     *                 </pre>
+     * @param receiver
      */
     @Override
-    public void sequence(MachineDependentMessage message)
+    public void sequence(MachineDependentMessage message, Receiver receiver)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();
@@ -78,11 +80,7 @@ logger.log(Level.DEBUG, "%02x %02x".formatted(f1, f2));
         }
 
         MachineDependentFunction mdf = MachineDependentFunction.Factory.getFunction(key);
-        if (mdf != null) {
-            mdf.process(message);
-        } else {
-logger.log(Level.WARNING, "unsupported function: %s, %d%n%s".formatted(key, data.length, StringUtil.getDump(data)));
-        }
+        mdf.process(message, receiver);
     }
 
     // ----

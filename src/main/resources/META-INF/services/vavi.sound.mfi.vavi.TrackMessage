@@ -22,3 +22,4 @@ vavi.sound.mfi.vavi.track.TempoMessage
 vavi.sound.mfi.vavi.track.VoiceEditMessage
 vavi.sound.mfi.vavi.track.VolumeMessage
 vavi.sound.mfi.vavi.track.AudioChannelPanpotMessage
+vavi.sound.mfi.vavi.track.PitchBendFineMessage

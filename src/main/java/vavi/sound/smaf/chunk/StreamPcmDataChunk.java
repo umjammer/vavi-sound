@@ -6,7 +6,6 @@
 
 package vavi.sound.smaf.chunk;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
@@ -57,6 +56,7 @@ logger.log(Level.DEBUG, "StreamPcmData: " + size);
     protected void init(CrcDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
         while (dis.available() > 0) {
             Chunk chunk = readFrom(dis);
+            chunks.add(chunk);
             if (chunk instanceof StreamWaveDataChunk) {
                 streamWaveDataChunks.add(chunk);
             } else {
@@ -67,14 +67,11 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
-
-        dos.write(id);
-        dos.writeInt(size);
-
-        for (Chunk streamWaveDataChunk : streamWaveDataChunks) {
-            streamWaveDataChunk.writeTo(os);
-        }
+        writeChunk(os, bos -> {
+            for (Chunk streamWaveDataChunk : chunks) {
+                streamWaveDataChunk.writeTo(bos);
+            }
+        });
     }
 
     /** */
@@ -83,6 +80,7 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
     /** "Mwa*" */
     public void addWaveDataChunk(Chunk streamWaveDataChunk) {
         streamWaveDataChunks.add(streamWaveDataChunk);
+        chunks.add(streamWaveDataChunk);
         size += streamWaveDataChunk.getSize() + 8;
     }
 
