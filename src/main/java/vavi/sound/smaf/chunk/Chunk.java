@@ -148,6 +148,7 @@ logger.log(Level.DEBUG, "size: 0x%1$08x (%1$d) / %2$d".formatted(size, dis.avail
         } else {
 //logger.log(Level.TRACE, "crc (calc): %04x, avail: %d, %s, %s".formatted(mdis.crc(), mdis.available(), mdis, chunk.getClass().getName()));
             if (chunk instanceof FileChunk fc) {
+                fc.setCalcCrc(mdis.crc());
                 if (fc.getCrc() != mdis.crc()) {
 logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted(fc.getCrc(), mdis.crc()));
                 }
@@ -236,7 +237,7 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
         final DataInputStream dis;
         /** written from outside */
         int readSize;
-        static final ThreadLocal<CRC16> crc = new ThreadLocal<>();
+        static final ThreadLocal<CRC16> crc = ThreadLocal.withInitial(CRC16::new);
 
         CRC16 getCrc() {
             return crc.get();
@@ -247,15 +248,13 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
             if (is instanceof CrcDataInputStream mdis) {
                 this.is = mdis.is;
             } else {
+                getCrc().reset();
                 this.is = is;
             }
 //logger.log(Level.TRACE, "is: " + this.is);
             this.dis = new DataInputStream(this.is);
             this.readSize = size;
 
-            if (getCrc() == null) {
-                crc.set(new CRC16());
-            }
             getCrc().update(id);
             getCrc().update(ByteUtil.getBeBytes(size));
         }
@@ -351,7 +350,7 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
     }
 
     /** CCITT X.25 */
-    static class CRC16 {
+    public static class CRC16 {
         /** number of bits in a char */
         static final int BYTE_BIT = 8;
         /** maximum unsigned char value */
@@ -384,8 +383,19 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
          * @return CRC value
          */
         public int update(byte[] c) {
-            for (byte b : c) {
-                crc = (crc << BYTE_BIT) ^ crcTable[((crc >> (16 - BYTE_BIT)) & 0xff) ^ (b & 0xff)];
+            return update(c, 0, c.length);
+        }
+
+        /**
+         * Determine the 16-bit CRC using method 1.
+         * @param c data
+         * @param offset offset
+         * @param length length
+         * @return CRC value
+         */
+        public int update(byte[] c, int offset, int length) {
+            for (int i = offset; i < offset + length; i++) {
+                crc = (crc << BYTE_BIT) ^ crcTable[((crc >> (16 - BYTE_BIT)) & 0xff) ^ (c[i] & 0xff)];
                 count++;
             }
             return ~crc & 0xffff;
@@ -406,6 +416,12 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
         /** */
         public int getCount() {
             return count;
+        }
+
+        /** */
+        public void reset() {
+            crc = 0xffff;
+            count = 0;
         }
     }
 

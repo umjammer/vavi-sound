@@ -24,12 +24,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import vavi.sound.smaf.chunk.Chunk;
+import vavi.sound.smaf.chunk.FileChunk;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
 import static java.util.function.Predicate.not;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -143,5 +146,89 @@ Debug.println(e.toString());
         });
 Debug.println("smafs: " + c.get() + ", failure: " + f.size());
 f.forEach(System.err::println);
+    }
+
+    @Test
+    @DisplayName("probe crc correctness")
+    void test5() throws Exception {
+        List<Path> paths = new ArrayList<>();
+        paths.add(Paths.get("src/test/resources/test.mmf"));
+        Path tmp = Paths.get("tmp");
+        if (Files.exists(tmp)) {
+            try (Stream<Path> s = Files.walk(tmp)) {
+                s.filter(p -> p.getFileName().toString().endsWith(".mmf"))
+                 .filter(not(p -> Stream.of("cracker", "test_data").anyMatch(str -> p.toString().contains(str))))
+                 .forEach(paths::add);
+            }
+        }
+
+        AtomicInteger checked = new AtomicInteger();
+        for (Path path : paths) {
+            byte[] data = Files.readAllBytes(path);
+            if (data.length < 8) continue;
+
+            Chunk chunk;
+            try (InputStream is = new BufferedInputStream(Files.newInputStream(path))) {
+                chunk = Chunk.readFrom(is, null);
+            }
+            if (chunk instanceof FileChunk fc) {
+                int chunkLen = 8 + fc.getSize();
+                Chunk.CRC16 crc16 = new Chunk.CRC16();
+                crc16.update(data, 0, chunkLen - 2);
+                int rawCrc = crc16.getValue();
+
+                assertEquals(rawCrc, fc.getCalcCrc(), "calculated CRC should match raw stream CRC for " + path);
+                checked.incrementAndGet();
+            }
+        }
+Debug.println("probed CRCs: " + checked.get());
+        assertTrue(checked.get() > 0);
+    }
+
+    @Test
+    @DisplayName("probe crc correctness recursive")
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
+    void test6() throws Exception {
+        Path dir = Paths.get(this.dir);
+        AtomicInteger checked = new AtomicInteger();
+        AtomicInteger matchedFileCrc = new AtomicInteger();
+        List<Path> brokenCrc = new ArrayList<>();
+        List<Path> failure = new ArrayList<>();
+
+        Files.walk(dir)
+                .filter(p -> p.getFileName().toString().endsWith(".mmf"))
+                .filter(not(p -> Stream.of("cracker", "test_data").anyMatch(s -> p.toString().contains(s))))
+                .forEach(path -> {
+            try {
+                byte[] data = Files.readAllBytes(path);
+                if (data.length < 8) return;
+
+                Chunk chunk;
+                try (InputStream is = new BufferedInputStream(Files.newInputStream(path))) {
+                    chunk = Chunk.readFrom(is, null);
+                }
+                if (chunk instanceof FileChunk fc) {
+                    int chunkLen = 8 + fc.getSize();
+                    Chunk.CRC16 crc16 = new Chunk.CRC16();
+                    crc16.update(data, 0, chunkLen - 2);
+                    int rawCrc = crc16.getValue();
+
+                    assertEquals(rawCrc, fc.getCalcCrc(), "calculated CRC should match raw stream CRC for " + path);
+                    checked.incrementAndGet();
+                    if (fc.getCrc() == rawCrc) {
+                        matchedFileCrc.incrementAndGet();
+                    } else {
+                        brokenCrc.add(path);
+                    }
+                }
+            } catch (Exception e) {
+                Debug.println(e.toString());
+                failure.add(path);
+            }
+        });
+Debug.println("probed CRCs: " + checked.get() + ", matched file CRC: " + matchedFileCrc.get() +
+                ", broken file CRC: " + brokenCrc.size() + ", failure: " + failure.size());
+        brokenCrc.forEach(System.err::println);
+        failure.forEach(System.err::println);
     }
 }

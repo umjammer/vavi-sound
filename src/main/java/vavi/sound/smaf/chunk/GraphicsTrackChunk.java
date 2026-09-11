@@ -185,9 +185,11 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
     /** "Gftd" */
     public static class FontDataChunk extends Chunk {
 
+        private static final String FOURCC = "Gftd";
+
         @Override
         protected boolean accept(String key) {
-            return false;
+            return FOURCC.equals(key);
         }
 
         // "Ge**” ：Font Chunk

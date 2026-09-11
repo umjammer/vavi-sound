@@ -114,6 +114,7 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
         dos.flush();
 
         this.crc = cos.getCrc();
+        this.calcCrc = this.crc;
         new DataOutputStream(os).writeShort(crc);
         os.flush();
     }
@@ -251,6 +252,19 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
     /** CCITT X.25 */
     public int getCrc() {
         return crc;
+    }
+
+    /** calculated crc when readFrom */
+    private int calcCrc;
+
+    /** calculated crc when readFrom */
+    public int getCalcCrc() {
+        return calcCrc;
+    }
+
+    /** */
+    void setCalcCrc(int calcCrc) {
+        this.calcCrc = calcCrc;
     }
 
     @Override
