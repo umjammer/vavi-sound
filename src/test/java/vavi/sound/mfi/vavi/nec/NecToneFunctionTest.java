@@ -6,12 +6,16 @@
 
 package vavi.sound.mfi.vavi.nec;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
+import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
+import vavi.sound.mfi.vavi.sequencer.SmafExclusiveCapture;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -29,6 +33,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @version 0.00 260911 nsano initial version <br>
  */
 class NecToneFunctionTest {
+
+    /** collects the SMAF exclusives the functions hand to the synthesizer */
+    final SmafExclusiveCapture receiver = new SmafExclusiveCapture();
+
+    @BeforeEach
+    void setup() {
+        receiver.clear();
+    }
+
+    /** the header of a voice exclusive: bank MSB, bank LSB, program, drum note, voice type */
+    private static int[] voiceHeader(byte[] exclusive) {
+        assertArrayEquals(bytes(0x43, 0x79, 0x07, 0x7f, 0x01), Arrays.copyOf(exclusive, 5));
+        assertEquals((byte) 0xf7, exclusive[exclusive.length - 1]);
+        return new int[] {exclusive[5] & 0xff, exclusive[6] & 0xff, exclusive[7] & 0xff,
+                exclusive[8] & 0xff, exclusive[9] & 0xff};
+    }
+
+    /** the voice image of a voice exclusive */
+    private static byte[] voiceImage(byte[] exclusive) {
+        return Arrays.copyOfRange(exclusive, 10, exclusive.length - 1);
+    }
 
     private static MachineDependentMessage message(byte[] payload) throws Exception {
         MachineDependentMessage message = new MachineDependentMessage().init();
@@ -85,7 +110,7 @@ class NecToneFunctionTest {
         System.arraycopy(rec4b, 0, payload, 58, 34);
 
         Function1_240_4 in = new Function1_240_4();
-        in.process(message(payload));
+        in.process(message(payload), receiver);
         List<ToneFunction.Tone> tones = in.getTones();
         assertEquals(3, tones.size());
 
@@ -105,6 +130,18 @@ class NecToneFunctionTest {
         assertEquals(31, tones.get(2).voice.length);
 
         assertArrayEquals(payload, in.getMessage());
+
+        // one FM voice exclusive per record, the voice handed over as is
+        assertEquals(3, receiver.getExclusives().size());
+        // bank 7 program 1 -> midi program 0x41, a melody voice so no drum note
+        assertArrayEquals(new int[] {0, 0, 0x41, 0, SmafExclusive.VoiceType.FM.ordinal()},
+                voiceHeader(receiver.getExclusives().get(0)));
+        assertArrayEquals(tones.get(0).voice, voiceImage(receiver.getExclusives().get(0)));
+        // bank 5 program 16 drum -> midi program 0x50, note 16 + 35
+        assertArrayEquals(new int[] {0, 0, 0x50, 16 + 35, SmafExclusive.VoiceType.FM.ordinal()},
+                voiceHeader(receiver.getExclusives().get(1)));
+        assertArrayEquals(tones.get(1).voice, voiceImage(receiver.getExclusives().get(1)));
+        assertArrayEquals(tones.get(2).voice, voiceImage(receiver.getExclusives().get(2)));
     }
 
     /** "(I NEED A)MIRACLE" registers this one: bank 4 + drum, program 1, 12000Hz, rom wave 0 */
@@ -115,7 +152,7 @@ class NecToneFunctionTest {
                 0x2e, 0xe0, 0x79, 0x00, 0x08, 0xf0, 0xf0, 0x10, 0x00, 0x00, 0x00, 0x03, 0xa9, 0x03, 0xa9, 0x80);
 
         Function1_240_5 in = new Function1_240_5();
-        in.process(message(payload));
+        in.process(message(payload), receiver);
         assertEquals(1, in.getTones().size());
 
         ToneFunction.Tone tone = in.getTones().get(0);
@@ -131,6 +168,11 @@ class NecToneFunctionTest {
         assertEquals(0, Function1_240_5.getWaveId(tone));
 
         assertArrayEquals(payload, in.getMessage());
+
+        // bank 4 program 1 drum -> midi program 0x01, note 1 + 35
+        assertArrayEquals(new int[] {0, 0, 0x01, 1 + 35, SmafExclusive.VoiceType.PCM.ordinal()},
+                voiceHeader(receiver.getOnly()));
+        assertArrayEquals(tone.voice, voiceImage(receiver.getOnly()));
     }
 
     @Test
@@ -143,13 +185,23 @@ class NecToneFunctionTest {
             payload[6] = 0x10;  // program
 
             Function1_240_8 in = new Function1_240_8();
-            in.process(message(payload));
+            in.process(message(payload), receiver);
             assertEquals(1, in.getTones().size());
             assertEquals(shape[0], in.getTones().get(0).type);
             assertEquals(7, in.getTones().get(0).bank);
             assertEquals(0x10, in.getTones().get(0).program);
             assertEquals(shape[2], in.getTones().get(0).voice.length);
             assertArrayEquals(payload, in.getMessage());
+
+            // the AL (filter) part is dropped, the plain voice behind it is handed over
+            assertArrayEquals(new int[] {0, 0, 0x50, 0,
+                            shape[0] == Function1_240_8.TYPE_WT ?
+                                    SmafExclusive.VoiceType.PCM.ordinal() : SmafExclusive.VoiceType.FM.ordinal()},
+                    voiceHeader(receiver.getOnly()));
+            assertEquals(shape[2] - Function1_240_8.FILTER, voiceImage(receiver.getOnly()).length);
+            assertArrayEquals(Arrays.copyOfRange(in.getTones().get(0).voice, Function1_240_8.FILTER, shape[2]),
+                    voiceImage(receiver.getOnly()));
+            receiver.clear();
         }
     }
 
@@ -164,19 +216,28 @@ class NecToneFunctionTest {
         out.setData(data);
 
         Function1_240_6 in = new Function1_240_6();
-        in.process(message(out.getMessage()));
+        in.process(message(out.getMessage()), receiver);
         assertEquals(0, in.getWaveId());
         assertEquals(Function1_240_6.FORMAT_ADPCM, in.getFormat());
         assertEquals(1526, in.getData().length);
         // the end point of the voice that uses the wave, 3052 in "01 キラキラ.mld"
         assertEquals(3052, in.getSampleCount());
 
+        // handed over as the smaf "EXWV" exclusive, 43 05 00 <wave id> <adpcm> f7
+        byte[] exclusive = receiver.getOnly();
+        assertArrayEquals(bytes(0x43, 0x05, 0x00, 0x00), Arrays.copyOf(exclusive, 4));
+        assertArrayEquals(data, Arrays.copyOfRange(exclusive, 4, exclusive.length - 1));
+        assertEquals((byte) 0xf7, exclusive[exclusive.length - 1]);
+
+        // 8 bit pcm has no place in that exclusive, so it is decoded but not sent
+        receiver.clear();
         out.setFormat(Function1_240_6.FORMAT_PCM8);
-        in.process(message(out.getMessage()));
+        in.process(message(out.getMessage()), receiver);
         assertEquals(1526, in.getSampleCount());
+        assertTrue(receiver.getExclusives().isEmpty());
 
         assertThrows(InvalidMfiDataException.class,
-                () -> new Function1_240_6().process(message(bytes(0x11, 0x01, 0xf0, 0x06, 0x00))));
+                () -> new Function1_240_6().process(message(bytes(0x11, 0x01, 0xf0, 0x06, 0x00)), receiver));
     }
 
     @Test
@@ -190,14 +251,14 @@ class NecToneFunctionTest {
         assertEquals(4 + 16, out.getMessage().length);
 
         Function1_242_7 in = new Function1_242_7();
-        in.process(message(out.getMessage()));
+        in.process(message(out.getMessage()), receiver);
         assertArrayEquals(statuses, in.getChannelStatuses());
         assertEquals(1, in.getType(3));
         assertEquals(2, in.getType(8));
         assertEquals(0, in.getKeyControlStatus(8));
 
         assertThrows(InvalidMfiDataException.class,
-                () -> new Function1_242_7().process(message(bytes(0x11, 0x01, 0xf2, 0x07, 0x00))));
+                () -> new Function1_242_7().process(message(bytes(0x11, 0x01, 0xf2, 0x07, 0x00)), receiver));
     }
 
     /**
@@ -215,7 +276,7 @@ class NecToneFunctionTest {
         byte[] wt = bytes(0x11, 0x81, 0xf0, 0x05,
                 0x84, 0x00,
                 0x27, 0x10, 0x79, 0x00, 0x08, 0xf0, 0xf0, 0x10, 0x00, 0x00, 0x00, 0x03, 0xa9, 0x03, 0xa9, 0x80);
-        new Function129_0().process(message(wt));
+        new Function129_0().process(message(wt), receiver);
 
         Function1_240_5 delegate = (Function1_240_5) MachineDependentFunction.Factory.getFunction("16.1_240_5");
         assertEquals(1, delegate.getTones().size());
@@ -223,20 +284,23 @@ class NecToneFunctionTest {
         assertTrue(delegate.getTones().get(0).drum);
         assertEquals(0, delegate.getTones().get(0).program);
         assertEquals(10000, Function1_240_5.getSamplingRate(delegate.getTones().get(0)));
+        // the alias sends the voice just like the level 0x01 function it delegates to
+        assertArrayEquals(new int[] {0, 0, 0x00, 0 + 35, SmafExclusive.VoiceType.PCM.ordinal()},
+                voiceHeader(receiver.getOnly()));
 
         // 11 81 f3 01 00 FM mode setting
-        new Function129_3().process(message(bytes(0x11, 0x81, 0xf3, 0x01, 0x00)));
+        new Function129_3().process(message(bytes(0x11, 0x81, 0xf3, 0x01, 0x00)), receiver);
         assertEquals(0, ((Function1_243_1) MachineDependentFunction.Factory.getFunction("16.1_243_1")).getValue());
 
         // 11 81 f2 07 + 16 bytes of channel status
         byte[] cs = new byte[4 + Function1_242_7.CHANNELS];
         cs[0] = 0x11; cs[1] = (byte) 0x81; cs[2] = (byte) 0xf2; cs[3] = 0x07;
         cs[4 + 15] = 0x02;
-        new Function129_2().process(message(cs));
+        new Function129_2().process(message(cs), receiver);
         assertEquals(2, ((Function1_242_7) MachineDependentFunction.Factory.getFunction("16.1_242_7")).getType(15));
 
         assertThrows(InvalidMfiDataException.class,
-                () -> new Function129_3().process(message(bytes(0x11, 0x81, 0xf3))));
+                () -> new Function129_3().process(message(bytes(0x11, 0x81, 0xf3)), receiver));
     }
 
     /** the shape the three MFi 2.0 files that have it write */
@@ -251,13 +315,13 @@ class NecToneFunctionTest {
         assertArrayEquals(bytes(0x11, 0xf2, 0x06, 0x40, 0x00), out.getMessage());
 
         Function242_6 in = new Function242_6();
-        in.process(message(out.getMessage()));
+        in.process(message(out.getMessage()), receiver);
         assertEquals(0, in.getChannel());
         assertEquals(0x40, in.getData1());
         assertEquals(0x00, in.getData2());
 
         assertThrows(InvalidMfiDataException.class,
-                () -> new Function242_6().process(message(bytes(0x11, 0xf2, 0x06, 0x00))));
+                () -> new Function242_6().process(message(bytes(0x11, 0xf2, 0x06, 0x00)), receiver));
     }
 
     @Test
@@ -266,7 +330,7 @@ class NecToneFunctionTest {
         playOn.setChannel(2);
         assertArrayEquals(bytes(0x11, 0x01, 0xf1, 0x89), playOn.getMessage());
         Function1_241_9 in = new Function1_241_9();
-        in.process(message(playOn.getMessage()));
+        in.process(message(playOn.getMessage()), receiver);
         assertEquals(2, in.getChannel());
 
         Function1_241_7 hold1 = new Function1_241_7();
@@ -278,7 +342,7 @@ class NecToneFunctionTest {
         fmMode.setValue(1);
         assertArrayEquals(bytes(0x11, 0x01, 0xf3, 0x01, 0x01), fmMode.getMessage());
         Function1_243_1 fmModeIn = new Function1_243_1();
-        fmModeIn.process(message(fmMode.getMessage()));
+        fmModeIn.process(message(fmMode.getMessage()), receiver);
         assertEquals(1, fmModeIn.getValue());
     }
 }

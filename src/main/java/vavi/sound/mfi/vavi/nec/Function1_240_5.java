@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.nec;
 
+import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
+
 
 /**
  * NEC System exclusive message function 0x01, 0xf0, 0x05 processor.
@@ -62,6 +64,12 @@ public class Function1_240_5 extends ToneFunction {
     @Override
     int getRecordLength(byte[] data, int offset, int remaining) {
         return 2 + VOICE;
+    }
+
+    /** the voice is already the VM35 PCM voice image */
+    @Override
+    SmafExclusive.VoiceType getVoiceType(Tone tone) {
+        return SmafExclusive.VoiceType.PCM;
     }
 
     /** 1 ~ 48000 [Hz] */

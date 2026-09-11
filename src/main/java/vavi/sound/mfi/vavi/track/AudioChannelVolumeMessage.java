@@ -7,6 +7,7 @@
 package vavi.sound.mfi.vavi.track;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.MidiEvent;
 
@@ -121,7 +122,7 @@ public class AudioChannelVolumeMessage extends vavi.sound.mfi.ShortMessage
     }
 
     @Override
-    public void sequence() throws InvalidMfiDataException {
+    public void sequence(Receiver receiver) throws InvalidMfiDataException {
         // TODO Auto-generated method stub
     }
 }

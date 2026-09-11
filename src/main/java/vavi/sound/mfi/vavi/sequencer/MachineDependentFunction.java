@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
@@ -23,7 +25,7 @@ import static java.lang.System.getLogger;
  * <p>
  * Currently, an implementation class of this interface must be an bean.
  * (means having a contractor without argument)
- * {@link #process(MachineDependentMessage)} related must be state less.
+ * {@link #process(MachineDependentMessage, Receiver)} related must be state less.
  * </p>
  * <pre>
  * properties file ... any
@@ -42,15 +44,15 @@ public interface MachineDependentFunction {
     /** */
     String getId();
 
-    /** */
-    void process(MachineDependentMessage message) throws InvalidMfiDataException;
+    /** sequence a midi sysex */
+    void process(MachineDependentMessage message, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException;
 
     /** factory */
     class Factory {
 
         static final Map<String, MachineDependentFunction> functions = new HashMap<>();
 
-        /** */
+        /** @return not null. if the key not found, returns UndefinedFunction */
         public static MachineDependentFunction getFunction(String key) {
             MachineDependentFunction function = functions.get(key);
             if (function == null) {

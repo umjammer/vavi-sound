@@ -25,6 +25,7 @@ import vavi.sound.mfi.Synthesizer;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
+import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
 import vavi.sound.mfi.vavi.sequencer.UnknownVendorSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.midi.MidiUtil;
@@ -45,6 +46,7 @@ import static java.lang.System.getLogger;
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 2026-03-13 nsano initial version <br>
+ *          0.01 2026-09-11 nsano pass packed smaf exclusives through <br>
  */
 public class VaviSynthesizer implements Synthesizer {
 
@@ -120,7 +122,7 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
 
             if (message instanceof SysexMessage sysexMessage) {
                 try {
-                    processSpecial(sysexMessage);
+                    processSpecial(sysexMessage, this);
                 } catch (InvalidMfiDataException e) {
                     logger.log(Level.ERROR, e.getCause().getMessage(), e.getCause());
 } catch (RuntimeException e) {
@@ -157,7 +159,7 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
      * 0xf0 manufacturerId
      * </pre>
      */
-    public static void processSpecial(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
+    public static void processSpecial(javax.sound.midi.SysexMessage message, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException {
 
         byte[] data = message.getData();
         int manufacturerId = data[0];
@@ -166,7 +168,7 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
                 logger.log(Level.DEBUG, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
                 break;
             case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x45 vavi
-                processSpecial_Vavi(message);
+                processSpecial_Vavi(message, receiver);
                 break;
             case 0x7f:
                 logger.log(Level.DEBUG, "unhandled Realtime Universal: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
@@ -183,16 +185,20 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
      * 0xf0 0x45 functionId
      * </pre>
      */
-    private static void processSpecial_Vavi(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
+    private static void processSpecial_Vavi(javax.sound.midi.SysexMessage message, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException {
 
         byte[] data = message.getData();
         int functionId = data[1];
         switch (functionId) {
             case MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND:
-                processSpecial_Vavi_MachineDependent(message);
+                processSpecial_Vavi_MachineDependent(message, receiver);
                 break;
             case AudioDataSequencer.SYSEX_FUNCTION_ID_MFi4:
-                processSpecial_Vavi_Mfi4(message);
+                processSpecial_Vavi_Mfi4(message, receiver);
+                break;
+            case SmafExclusive.SYSEX_PACKED:
+                // a packed smaf exclusive a machine dependent function issued,
+                // it is addressed to the synthesizer behind us, just pass it on
                 break;
             default:
                 logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId));
@@ -206,7 +212,7 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
      * 0xf0 0x45 0x01 id(H) id(L)
      * </pre>
      */
-    private static void processSpecial_Vavi_MachineDependent(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
+    private static void processSpecial_Vavi_MachineDependent(javax.sound.midi.SysexMessage message, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException {
 
         byte[] data = message.getData();
         int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
@@ -225,7 +231,7 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
             logger.log(Level.ERROR, "error vendor: 0x%02x".formatted(vendor));
             sequencer = new UnknownVendorSequencer();
         }
-        sequencer.sequence(mdm);
+        sequencer.sequence(mdm, receiver);
     }
 
     /**
@@ -235,7 +241,7 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
      * </pre>
      * @since MFi 4.0
      */
-    private static void processSpecial_Vavi_Mfi4(javax.sound.midi.SysexMessage message) throws InvalidMfiDataException {
+    private static void processSpecial_Vavi_Mfi4(javax.sound.midi.SysexMessage message, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException {
 
         byte[] data = message.getData();
         int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
@@ -245,7 +251,7 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
             return;
         }
 logger.log(Level.DEBUG, "audio sysex received: id: " + id + ", at: " + System.nanoTime() + " ns");
-        sequencer.sequence();
+        sequencer.sequence(receiver);
     }
 
     @Override

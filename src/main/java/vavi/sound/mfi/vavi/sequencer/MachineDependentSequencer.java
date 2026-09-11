@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
@@ -42,7 +44,7 @@ public interface MachineDependentSequencer {
     int getId();
 
     /** processes a message */
-    void sequence(MachineDependentMessage message) throws InvalidMfiDataException;
+    void sequence(MachineDependentMessage message, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException;
 
     class Factory {
 

@@ -9,6 +9,8 @@ package vavi.sound.mfi.vavi.mitsubishi;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -35,18 +37,19 @@ public class Function1 implements MachineDependentFunction {
     /**
      * 0x01 Pitch Bend MFi2 only
      *
-     * @param message see below
-     * <pre>
-     * 0    delta
-     * 1    ff
-     * 2    ff
-     * 3-4  length
-     * 5    vendor
-     * 6    01
-     * </pre>
+     * @param message  see below
+     *                 <pre>
+     *                 0    delta
+     *                 1    ff
+     *                 2    ff
+     *                 3-4  length
+     *                 5    vendor
+     *                 6    01
+     *                 </pre>
+     * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message)
+    public void process(MachineDependentMessage message, Receiver receiver)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();

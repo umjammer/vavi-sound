@@ -10,6 +10,8 @@ import java.lang.System.Logger.Level;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -44,31 +46,32 @@ public class Function1_242_7 implements MachineDependentFunction {
     /**
      * 0x01, 0xf2, 0x07 Channel Status control information
      *
-     * @param message see below
-     * <pre>
-     * 0        delta
-     * 1        ff
-     * 2        ff
-     * 3-4      length
-     * 5        vendor
+     * @param message  see below
+     *                 <pre>
+     *                 0        delta
+     *                 1        ff
+     *                 2        ff
+     *                 3-4      length
+     *                 5        vendor
      *
-     * 6        01
-     * 7        f2
-     * 8        ....0111
-     *              ~~~~
-     *              +------ 0x7
+     *                 6        01
+     *                 7        f2
+     *                 8        ....0111
+     *                              ~~~~
+     *                              +------ 0x7
      *
-     * 9~24     channel status, one byte per channel
-     *          76543210
-     *          ~~ ||  ~~
-     *          |  ||  ++-- type (0: no care, 1: melody, 2: no melody, 3: rhythm)
-     *          |  |+------ LED
-     *          |  +------- vibration
-     *          +---------- KCS (key control status), 2 means on
-     * </pre>
+     *                 9~24     channel status, one byte per channel
+     *                          76543210
+     *                          ~~ ||  ~~
+     *                          |  ||  ++-- type (0: no care, 1: melody, 2: no melody, 3: rhythm)
+     *                          |  |+------ LED
+     *                          |  +------- vibration
+     *                          +---------- KCS (key control status), 2 means on
+     *                 </pre>
+     * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message)
+    public void process(MachineDependentMessage message, Receiver receiver)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();

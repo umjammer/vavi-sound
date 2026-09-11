@@ -12,8 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
+import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
+import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
@@ -41,9 +45,14 @@ import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
  * package readme (the MA-7 messages carry the expanded <em>destination</em> side
  * instead).
  * </p>
+ * <p>
+ * Every registered voice is also handed to the synthesizer as the SMAF voice
+ * exclusive it is, see {@link SmafExclusive} and {@link #getVoiceType(Tone)}.
+ * </p>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260911 nsano initial version <br>
+ *          0.01 260911 nsano hand the voice to the synthesizer <br>
  */
 abstract class ToneFunction implements MachineDependentFunction {
 
@@ -105,13 +114,54 @@ abstract class ToneFunction implements MachineDependentFunction {
      */
     abstract int getRecordLength(byte[] data, int offset, int remaining);
 
+    /** what shape {@link Tone#voice} has */
+    abstract SmafExclusive.VoiceType getVoiceType(Tone tone);
+
+    /**
+     * The plain VM35 voice image of a tone, 17 or 31 bytes for
+     * {@link SmafExclusive.VoiceType#FM} and 16 for
+     * {@link SmafExclusive.VoiceType#PCM}.
+     *
+     * @return null when the tone carries no voice this can hand over
+     */
+    byte[] getVm35Voice(Tone tone) {
+        return tone.voice;
+    }
+
+    /**
+     * Hands a tone to the synthesizer as the SMAF voice exclusive it is.
+     * <p>
+     * The MFi bank and program collapse into one MIDI program on the way to the
+     * synthesizer ({@link MidiContext#toProgram(int, int)}), and a drum voice is
+     * addressed by its note (program + 35, the MFi drum note offset) the way
+     * {@link MidiContext#retrievePitch(int, int)} computes it, so the voice is
+     * registered for exactly the patch the sequence will ask for.
+     * </p>
+     */
+    void send(Tone tone, Receiver receiver) {
+        byte[] voice = getVm35Voice(tone);
+        if (voice == null) {
+            return;
+        }
+        SmafExclusive.send(receiver, SmafExclusive.voice(
+                0,
+                0,
+                MidiContext.toProgram(tone.bank, tone.program),
+                tone.drum ? tone.program + DRUM_NOTE_OFFSET : 0,
+                getVoiceType(tone),
+                voice));
+    }
+
+    /** MIDI note number of the drum voice whose program (drum index) is 0 */
+    static final int DRUM_NOTE_OFFSET = 35;
+
     @Override
     public String getId() {
         return VENDOR_NEC + "." + "1_240_" + getFunction();
     }
 
     @Override
-    public void process(MachineDependentMessage message)
+    public void process(MachineDependentMessage message, Receiver receiver)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();
@@ -136,6 +186,10 @@ abstract class ToneFunction implements MachineDependentFunction {
 
 logger.log(Level.DEBUG, getName() + ": " + tones.size() + " voice(s): " +
         tones.stream().map(Tone::toString).collect(Collectors.joining("; ")));
+
+        for (Tone tone : tones) {
+            send(tone, receiver);
+        }
     }
 
     /** */

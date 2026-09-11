@@ -8,9 +8,9 @@ package vavi.sound.mfi.vavi.track;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
+import javax.sound.midi.ShortMessage;
 
 import vavi.sound.mfi.ChannelMessage;
-import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
@@ -30,7 +30,7 @@ import vavi.sound.mfi.vavi.TrackMessage;
  *          0.12 030920 nsano repackage <br>
  *          0.13 031203 nsano implements {@link ChannelMessage} <br>
  */
-public class ChangeBankMessage extends ShortMessage
+public class ChangeBankMessage extends vavi.sound.mfi.ShortMessage
     implements ChannelMessage, MidiConvertible, TrackMessage {
 
     /** */
@@ -112,6 +112,13 @@ public class ChangeBankMessage extends ShortMessage
 //logger.log(Level.TRACE, "bank[" + channel + "]: " + getBank());
         channel = context.setBank(channel, getBank());
 
-        return null;
+        ShortMessage shortMessage = new ShortMessage();
+        shortMessage.setMessage(ShortMessage.PROGRAM_CHANGE,
+                channel,
+                context.getProgram(channel),
+                0);
+        return new MidiEvent[] {
+                new MidiEvent(shortMessage, context.getCurrent())
+        };
     }
 }

@@ -6,6 +6,8 @@
 
 package vavi.sound.mfi.vavi.nec;
 
+import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
+
 
 /**
  * NEC System exclusive message function 0x01, 0xf0, 0x04 processor.
@@ -70,5 +72,11 @@ public class Function1_240_4 extends ToneFunction {
             case TYPE_4OP -> 34;
             default -> -1;
         };
+    }
+
+    /** the voice is already the VM35 FM voice image */
+    @Override
+    SmafExclusive.VoiceType getVoiceType(Tone tone) {
+        return SmafExclusive.VoiceType.FM;
     }
 }

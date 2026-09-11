@@ -26,6 +26,7 @@ import static java.lang.System.getLogger;
  * @version 0.00 030821 nsano initial version <br>
  *          0.01 020826 nsano add pitch bend related <br>
  *          0.02 031214 nsano add resolution related <br>
+ *          0.03 260911 nsano add {@link #toProgram(int, int)} <br>
  */
 public class MidiContext {
 
@@ -166,6 +167,20 @@ logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + program);
         programs[channel] = (programs[channel] & 0x40) | program;
 
         return channel;
+    }
+
+    /**
+     * The MIDI program an MFi bank / program pair ends up as.
+     * <p>
+     * {@link #setBank(int, int)} and {@link #setProgram(int, int)} write the two
+     * halves of the same 7 bit program number, so a voice registered for an MFi
+     * (bank, program) has to be registered at this MIDI program to be found
+     * again. Note that only bit 0 of the 6 bit MFi bank survives, so two banks
+     * whose numbers differ above bit 0 collide.
+     * </p>
+     */
+    public static int toProgram(int bank, int program) {
+        return ((bank & 0x01) << 6) | (program & 0x3f);
     }
 
     /**

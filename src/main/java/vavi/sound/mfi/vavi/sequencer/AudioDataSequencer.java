@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mobile.AudioEngine;
 
@@ -27,7 +29,7 @@ public interface AudioDataSequencer {
     int SYSEX_FUNCTION_ID_MFi4 = 0x02;
 
     /** */
-    void sequence() throws InvalidMfiDataException;
+    void sequence(javax.sound.midi.Receiver receiver) throws InvalidMfiDataException;
 
     /** factory for audio engine */
     class Factory {

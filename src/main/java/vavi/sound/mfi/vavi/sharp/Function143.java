@@ -10,6 +10,8 @@ import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -38,18 +40,19 @@ public class Function143 implements MachineDependentFunction {
     /**
      * 0x8f Wave Setup
      *
-     * @param message see below
-     * <pre>
-     *  0    delta
-     *  1    ff
-     *  2    ff
-     *  3-4  length
-     *  5    vendor
-     *  6    0x8f
-     * </pre>
+     * @param message  see below
+     *                 <pre>
+     *                  0    delta
+     *                  1    ff
+     *                  2    ff
+     *                  3-4  length
+     *                  5    vendor
+     *                  6    0x8f
+     *                 </pre>
+     * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message)
+    public void process(MachineDependentMessage message, Receiver receiver)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();

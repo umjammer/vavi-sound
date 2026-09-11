@@ -587,15 +587,78 @@ copied. Bytes not listed are always 0.
 | 32 | 0x1f | FRR | 16.0x1f |
 | 33 | 0xff | RM, WaveID | 43.0xff |
 
+## handing the voices to the synthesizer
+
+A tone message and a SMAF "VOIC" / "EXVO" / "EXWV" chunk describe the very same
+MA-3 / MA-5 voice, only wrapped differently, so the way to give an MFi voice to a
+MIDI synthesizer is to give it the SMAF exclusive it already speaks. The tone and
+wave functions therefore build that exclusive and send it to the `Receiver` the
+sequencer hands them, packed exactly the way
+`vavi.sound.smaf.message.yamaha.YamahaMessage` packs one while a SMAF file plays:
+
+```
+ f0 45 7f <encode87(43 ... f7)> f7
+    ~~ ~~
+    |  +--- SYSEX_PACKED, an 8 bit smaf exclusive packed into 7 bit bytes
+    +------ VaviMidiDeviceProvider.MANUFACTURER_ID
+```
+
+`vavi.sound.mfi.vavi.sequencer.SmafExclusive` builds and sends them, the payload
+being one of
+
+```
+ 43 79 07 7f 01 mm ll pc dn vt <voice> f7    a MA-5 (VM5) voice setting
+ 43 05 00 <wave id> <4 bit adpcm> f7         a wave, the body of a SMAF "EXWV"
+```
+
+`vavi.sound.midi.ymf262.NukedSynthesizer#processYamahaSmafSysexMessage` of
+`../vavi-apps-mfiplayer` is a receiving side; a synthesizer which does not want
+the voices just ignores the manufacturer.
+
+| message | what is sent |
+|---|---|
+| `01.f0._4` | the voice as is, it already **is** the VM35 FM voice image |
+| `01.f0._5` | the voice as is, it already **is** the VM35 PCM voice image |
+| `01.f0._6` | the wave, `FORMAT_ADPCM` only - the SMAF wave exclusive has no field for the format, so a `FORMAT_PCM8` wave would arrive as ADPCM |
+| `01.f0._8` | the plain voice behind the AL part, see below |
+| `02.f0.0c` | the MA-7 register image folded back into the VM35 voice image, see below |
+
+- **the AL (filter) part is dropped.** `VoiceType.AL` has no decoder anywhere
+  (neither smaf825 nor `vavi-sound-ma` reads one), and a voice without its filter
+  still sounds like the voice. In `01.f0._8` that part is the first 27 bytes of
+  the voice (the MA-7 source bytes 1 ~ 27) in all three forms, so what follows is
+  the plain 17 / 31 byte FM or 16 byte WT voice. In `02.f0.0c` it follows the
+  voice instead, 16 bytes, and `WTAL` keeps its `RM, WaveID` byte behind it.
+- **the MA-7 register image folds back into the VM35 image.** It is the expanded
+  form of the same voice: an FM operator takes 10 bytes there against 7 (the
+  extra ones are the EX rates, which VM35 has no field for, the FIX pitch of an
+  AL voice and two bytes that are always 0, and `MULTI, DT` sits at +9 instead of
+  +5), and a wave table voice has one byte more for its EX rates. See
+  `Function2_240_12#getVm35Voice`.
+- **bank and program collapse.** The MFi bank and program end up as one 7 bit
+  MIDI program (`MidiContext#toProgram`, only bit 0 of the 6 bit bank survives),
+  and a drum voice is addressed by its note (`program + 35`, which is also what
+  `02.f0.0c` writes in its `c` byte). The voice is registered for exactly that
+  patch, so the program change the sequence sends finds it. Two banks whose
+  numbers differ above bit 0 therefore collide - that is the MFi to MIDI
+  conversion, not this message.
+- **the EX rates, the filter and the key split are lost** on the way. Playing a
+  MA-7 voice as written would need a MA-7 tone generator (see the
+  `SimpleSoundbank` idea in the adpcm sync notes); this is the best a VM35
+  synthesizer can be told.
+
 ## TODO
 
 - every level 0x02 message that occurs in `tmp/samples/n703id` or in the ~4400
   file `~/Public/np2/mfi` corpus is decoded now (`Function2_240_12 / _14 / _15`,
   `Function2_241_10 / _11 / _13 / _14 / _15`, `Function2_242_7`,
-  `Function2_243_3 / _10 / _11`), but none of them can be applied to the MIDI
-  synthesizer the sequencer plays with - they only decode and log. driving a real
-  MA-7 voice would need an MA-7 tone generator (see the `SimpleSoundbank` idea in
-  the adpcm sync notes)
+  `Function2_243_3 / _10 / _11`). Only the tone message reaches the synthesizer
+  (see above), the rest still only decodes and logs - the channel status, the
+  send levels and the SFX blocks have no MIDI or SMAF counterpart to be issued as
+- `01.f0._4 / _5 / _6 / _8` and `02.f0.0c` are the only messages that reach the
+  synthesizer, and what they lose on the way (the AL filter, the EX rates, the
+  key split, banks above bit 0) is listed in "handing the voices to the
+  synthesizer" above
 - `02.f1.x7 / x8 / x9 / xc` are implemented from the converter alone (internal
   events 209 ~ 211 and 214 all push a payload length of 1), nothing in either
   corpus uses them so the decoding is untested against real data. `xc` has no

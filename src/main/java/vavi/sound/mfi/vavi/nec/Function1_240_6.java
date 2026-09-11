@@ -9,8 +9,11 @@ package vavi.sound.mfi.vavi.nec;
 import java.lang.System.Logger.Level;
 import java.util.Arrays;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
+import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
@@ -26,9 +29,16 @@ import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
  * that relation holds for 1751 of the 2055 wave / voice pairs in the ~4400 file
  * corpus and the rest are voices that stop before the end of the wave.
  * </p>
+ * <p>
+ * A {@link #FORMAT_ADPCM} wave is also handed to the synthesizer as the SMAF
+ * "EXWV" exclusive it is, see {@link SmafExclusive#wave(int, byte[])}. That
+ * exclusive has no field for the format, so a {@link #FORMAT_PCM8} wave is
+ * decoded but not sent - it would arrive as ADPCM and be read as noise.
+ * </p>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260911 nsano initial version <br>
+ *          0.01 260911 nsano hand the wave to the synthesizer <br>
  */
 public class Function1_240_6 implements MachineDependentFunction {
 
@@ -46,27 +56,28 @@ public class Function1_240_6 implements MachineDependentFunction {
     /**
      * 0x01, 0xf0, 0x06 Extended WT waveform specification
      *
-     * @param message see below
-     * <pre>
-     * 0        delta
-     * 1        ff
-     * 2        ff
-     * 3-4      length
-     * 5        vendor
+     * @param message  see below
+     *                 <pre>
+     *                 0        delta
+     *                 1        ff
+     *                 2        ff
+     *                 3-4      length
+     *                 5        vendor
      *
-     * 6        01
-     * 7        f0
-     * 8        ....0110
-     *              ~~~~
-     *              +------ 0x6
+     *                 6        01
+     *                 7        f0
+     *                 8        ....0110
+     *                              ~~~~
+     *                              +------ 0x6
      *
-     * 9        wave id, referred to by the RM/WaveID byte of a WT voice
-     * 10       format, 0: 4bit ADPCM, 2: 8bit PCM
-     * 11~      wave data
-     * </pre>
+     *                 9        wave id, referred to by the RM/WaveID byte of a WT voice
+     *                 10       format, 0: 4bit ADPCM, 2: 8bit PCM
+     *                 11~      wave data
+     *                 </pre>
+     * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message)
+    public void process(MachineDependentMessage message, Receiver receiver)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();
@@ -82,6 +93,12 @@ public class Function1_240_6 implements MachineDependentFunction {
 logger.log(Level.DEBUG, "WT-WaveSetting: No." + waveId + ", " +
         (format == FORMAT_ADPCM ? "4bit adpcm" : format == FORMAT_PCM8 ? "8bit pcm" : "format " + format) +
         ", " + this.data.length + " bytes, " + getSampleCount() + " samples");
+
+        if (format == FORMAT_ADPCM) {
+            SmafExclusive.send(receiver, SmafExclusive.wave(waveId, this.data));
+        } else {
+logger.log(Level.DEBUG, "WT-WaveSetting: No." + waveId + ": not sent, the smaf wave exclusive is adpcm only");
+        }
     }
 
     /** wave id */

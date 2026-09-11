@@ -8,6 +8,8 @@ package vavi.sound.mfi.vavi.sharp;
 
 import java.lang.System.Logger.Level;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
@@ -46,31 +48,32 @@ public class Function131 implements MachineDependentFunction {
     /**
      * 0x83 Wave Packet Data    MFi2, MFi3
      *
-     * @param message see below
-     * <pre>
-     * 0        delta
-     * 1        ff
-     * 2        ff
-     * 3-4      length
-     * 5        vendor (0x61)
+     * @param message  see below
+     *                 <pre>
+     *                 0        delta
+     *                 1        ff
+     *                 2        ff
+     *                 3-4      length
+     *                 5        vendor (0x61)
      *
-     * 6        0x83
-     * 7        76 543210
-     *          ~~ ~~~~~~
-     *          |  +----------- packet id
-     *          +-------------- channel
-     * 8        76 5432 10
-     *          ~~ ~~~~ ~~
-     *          |  |    +------ bits
-     *          |  +----------- sampling rate
-     *          +-------------- mode
-     * 9        .......0
-     *                 ~
-     *                 +------- continue flag
-     * </pre>
+     *                 6        0x83
+     *                 7        76 543210
+     *                          ~~ ~~~~~~
+     *                          |  +----------- packet id
+     *                          +-------------- channel
+     *                 8        76 5432 10
+     *                          ~~ ~~~~ ~~
+     *                          |  |    +------ bits
+     *                          |  +----------- sampling rate
+     *                          +-------------- mode
+     *                 9        .......0
+     *                                 ~
+     *                                 +------- continue flag
+     *                 </pre>
+     * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message)
+    public void process(MachineDependentMessage message, Receiver receiver)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();

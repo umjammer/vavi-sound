@@ -9,8 +9,12 @@ package vavi.sound.mfi.vavi.nec;
 import java.lang.System.Logger.Level;
 import java.util.Arrays;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mfi.InvalidMfiDataException;
+import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
+import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
@@ -29,13 +33,16 @@ import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
  * </p>
  * <p>
  * The voice parameters themselves are the MA-7 register image, the layout of
- * every {@link Type} is written down in the package readme. They cannot be
- * applied to the MIDI synthesizer the sequencer plays with, so this function
- * only decodes and keeps them.
+ * every {@link Type} is written down in the package readme. That image is the
+ * <em>expanded</em> form of the very voice a level 0x01 message
+ * ({@link ToneFunction}) carries, so {@link #getVm35Voice()} folds it back into
+ * the VM35 voice image and this function hands it to the synthesizer as a SMAF
+ * voice exclusive, see {@link SmafExclusive}.
  * </p>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260911 nsano initial version <br>
+ *          0.01 260911 nsano fold the MA-7 image back into a VM35 voice <br>
  * @see "tmp/SCP-MA-N-210-j/Bin/Plugin_SM7_N40/CnvMA7MFi_N.dll"
  */
 public class Function2_240_12 implements MachineDependentFunction {
@@ -68,6 +75,11 @@ public class Function2_240_12 implements MachineDependentFunction {
             this.length = length;
         }
 
+        /** wave table (bit 0 of {@link #flags}) rather than FM */
+        public boolean isWaveTable() {
+            return (flags & 0x01) != 0;
+        }
+
         /** @return null when the combination is unknown */
         static Type valueOf(int flags, int length) {
             for (Type type : values()) {
@@ -87,32 +99,33 @@ public class Function2_240_12 implements MachineDependentFunction {
     /**
      * 0x02, 0xf0, 0x0c ToneSetting
      *
-     * @param message see below
-     * <pre>
-     * 0        delta
-     * 1        ff
-     * 2        ff
-     * 3-4      length
-     * 5        vendor
+     * @param message  see below
+     *                 <pre>
+     *                 0        delta
+     *                 1        ff
+     *                 2        ff
+     *                 3-4      length
+     *                 5        vendor
      *
-     * 6        02
-     * 7        f0
-     * 8        ....1100
-     *              ~~~~
-     *              +------ 0xc
+     *                 6        02
+     *                 7        f0
+     *                 8        ....1100
+     *                              ~~~~
+     *                              +------ 0xc
      *
-     * 9        d.......    bank
-     *          ~
-     *          +---------- drum (rhythm) voice
-     * 10       program, for a drum voice the drum index (note - 35)
-     * 11       drum voice: the note number (program + 35),
-     *          melody voice: 0, or the split region value
-     * 12       upper key limit of the split region, 0 when not split
-     * 13~      voice data, 13 is the type flags
-     * </pre>
+     *                 9        d.......    bank
+     *                          ~
+     *                          +---------- drum (rhythm) voice
+     *                 10       program, for a drum voice the drum index (note - 35)
+     *                 11       drum voice: the note number (program + 35),
+     *                          melody voice: 0, or the split region value
+     *                 12       upper key limit of the split region, 0 when not split
+     *                 13~      voice data, 13 is the type flags
+     *                 </pre>
+     * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message)
+    public void process(MachineDependentMessage message, Receiver receiver)
         throws InvalidMfiDataException {
 
         byte[] data = message.getMessage();
@@ -129,6 +142,96 @@ public class Function2_240_12 implements MachineDependentFunction {
 logger.log(Level.DEBUG, "ToneSetting: bank: " + bank + (drum ? " (drum)" : "") + ", program: " + program +
         ", note: " + note + ", keyHigh: " + keyHigh + ", type: " + (type != null ? type : "unknown(%02x, %d)".formatted(voice[0], voice.length)));
 logger.log(Level.TRACE, "voice:\n" + StringUtil.getDump(voice));
+
+        send(receiver);
+    }
+
+    /**
+     * Hands the voice to the synthesizer as the SMAF voice exclusive it is.
+     * <p>
+     * The MFi bank and program collapse into one MIDI program on the way to the
+     * synthesizer ({@link MidiContext#toProgram(int, int)}) and a drum voice is
+     * addressed by {@link #getNote()}, so the voice is registered for exactly
+     * the patch the sequence will ask for.
+     * </p>
+     */
+    private void send(Receiver receiver) {
+        byte[] vm35 = getVm35Voice();
+        if (vm35 == null) {
+logger.log(Level.DEBUG, "ToneSetting: not sent, no VM35 image for " +
+        (type != null ? type.toString() : "unknown(%02x, %d)".formatted(voice[0], voice.length)));
+            return;
+        }
+        SmafExclusive.send(receiver, SmafExclusive.voice(
+                0,
+                0,
+                MidiContext.toProgram(bank, program),
+                drum ? note : 0,
+                type.isWaveTable() ? SmafExclusive.VoiceType.PCM : SmafExclusive.VoiceType.FM,
+                vm35));
+    }
+
+    /**
+     * The plain VM35 voice image of {@link #getVoice()}, the shape a level 0x01
+     * tone message carries and a MA-3 / MA-5 synthesizer takes.
+     * <p>
+     * The MA-7 register image spends 10 bytes on an FM operator where the VM35
+     * image spends 7 (the extra ones are the EX rates, which VM35 has no field
+     * for, the FIX pitch of an AL voice and two bytes that are always 0), and one
+     * byte more on the EX rates of a wave table voice. The AL (filter) section,
+     * which follows the voice, is dropped - nothing decodes it and a voice
+     * without its filter still sounds like the voice.
+     * </p>
+     *
+     * @return null when {@link #getType()} is unknown
+     */
+    public byte[] getVm35Voice() {
+        if (type == null) {
+            return null;
+        }
+        return switch (type) {
+            case FM_2Op, FM_2OpAL -> toFm(2);
+            case FM_4Op, FM_4OpAL -> toFm(4);
+            case WT, WTAL -> toWt();
+        };
+    }
+
+    /** bytes an FM operator takes in the MA-7 register image */
+    private static final int OPERATOR = 10;
+
+    /** the 3 global bytes and 7 bytes per operator a VM35 FM voice is */
+    private byte[] toFm(int operators) {
+        byte[] vm35 = new byte[3 + 7 * operators];
+
+        vm35[0] = voice[1];                     // KeyNumber
+        vm35[1] = voice[2];                     // Panpot, BO
+        vm35[2] = voice[3];                     // LFO, PE, ALG
+
+        for (int op = 0; op < operators; op++) {
+            int src = 4 + OPERATOR * op;
+            int dst = 3 + 7 * op;
+            vm35[dst    ] = voice[src    ];     // SR, XOF, SUS, KSR
+            vm35[dst + 1] = voice[src + 1];     // RR, DR
+            vm35[dst + 2] = voice[src + 2];     // AR, SL
+            vm35[dst + 3] = voice[src + 3];     // TL, KSL
+            vm35[dst + 4] = voice[src + 4];     // DAM, EAM, DVB, EVB
+            vm35[dst + 5] = voice[src + 9];     // MULTI, DT
+            vm35[dst + 6] = voice[src + 6];     // WS, FB
+        }
+
+        return vm35;
+    }
+
+    /** the 16 bytes a VM35 PCM (wave table) voice is */
+    private byte[] toWt() {
+        byte[] vm35 = new byte[16];
+
+        System.arraycopy(voice,  1, vm35, 0, 9);    // Fs(MSB) ~ DAM, EAM, DVB, EVB
+                                                    // voice[10] is EXAR ~ EXRR, dropped
+        System.arraycopy(voice, 11, vm35, 9, 6);    // StartAddressOffset(MSB) ~ EndPoint(LSB)
+        vm35[15] = voice[type == Type.WTAL ? 33 : 17]; // RM, WaveID, behind the filter when AL
+
+        return vm35;
     }
 
     /** 0 ~ 127 */
