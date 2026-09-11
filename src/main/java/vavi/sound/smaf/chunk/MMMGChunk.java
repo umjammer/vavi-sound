@@ -75,6 +75,10 @@ public class MMMGChunk extends TrackChunk {
 
     // ----
 
+    /**
+     * {@code <voice format> 0x14}, the voice format being 1 for VMA (MA-1/MA-2) and
+     * 2 for VM35 (MA-3/MA-5), which decides how "EXVO" is read.
+     */
     private int enigma;
 
     private VoiceChunk voiceChunk;

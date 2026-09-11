@@ -91,6 +91,14 @@ public class VoiceChunk extends TrackChunk {
                 default -> logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
+
+        // an "EXVO" pcm voice tells the sampling rate of the "EXWV" wave it links to
+        if (exwvChunk != null) {
+            exclusiveVoiceChunks.stream()
+                    .filter(c -> c.isPcmVoice() && !c.isRomWave() && c.getWaveId() == exwvChunk.getWaveId())
+                    .findFirst()
+                    .ifPresent(c -> exwvChunk.setSamplingRate(c.getSamplingRate()));
+        }
     }
 
     @Override
