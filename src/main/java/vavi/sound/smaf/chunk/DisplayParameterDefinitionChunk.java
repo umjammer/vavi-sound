@@ -6,6 +6,8 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -80,14 +82,11 @@ logger.log(Level.DEBUG, "events: " + events.size());
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
-
-        dos.write(id);
-        dos.writeInt(size);
-
-        for (Event event : events) {
-            event.writeTo(os);
-        }
+        writeChunk(os, bos -> {
+            for (Event event : events) {
+                event.writeTo(this, bos);
+            }
+        });
     }
 
     /** */
@@ -110,9 +109,28 @@ logger.log(Level.DEBUG, "events: " + events.size());
                 return parameterID + ", " + value;
             }
         }
-        /** */
-        public void writeTo(OutputStream os) {
-            // TODO
+        /**
+         * <pre>
+         * event size  : 1 ~ 2 byte, variable length, counts the event type and the parameters
+         * event type  : 1 byte
+         * parameters  : 2 byte each, parameter id and its value
+         * </pre>
+         * @param chunk the owner, for {@link Chunk#writeVariableLength(DataOutput, int)}
+         */
+        public void writeTo(Chunk chunk, OutputStream os) throws IOException {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream body = new DataOutputStream(baos);
+            body.writeByte(eventType);
+            for (Parameter parameter : parameters) {
+                body.writeByte(parameter.parameterID.value);
+                body.writeByte(parameter.value);
+            }
+            body.flush();
+
+            DataOutputStream dos = new DataOutputStream(os);
+            chunk.writeVariableLength(dos, baos.size());
+            baos.writeTo(dos);
+            dos.flush();
         }
         @Override
         public String toString() {

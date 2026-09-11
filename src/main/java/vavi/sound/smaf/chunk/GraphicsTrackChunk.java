@@ -84,6 +84,7 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
 
         while (dis.available() > 0) {
             Chunk chunk = readFrom(dis);
+            chunks.add(chunk);
             if (chunk instanceof GraphicsSetupDataChunk) {
                 setupDataChunk = chunk;
             } else if (chunk instanceof GraphicsTrackSequenceDataChunk) {
@@ -100,21 +101,22 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
+        writeChunk(os, bos -> {
+            DataOutputStream dos = new DataOutputStream(bos);
 
-        dos.write(id);
-        dos.writeInt(size); // TODO add option, other chunks size
+            dos.writeByte(formatType.ordinal());
+            dos.writeByte(playerType);
+            dos.writeByte(textEncodeType);
+            dos.writeByte(colorType);
+            dos.writeByte(durationTimeBase);
+            dos.writeByte(optionData.length);
+            dos.write(optionData);
 
-        setupDataChunk.writeTo(os);
-        for (Chunk sequenceDataChunk : sequenceDataChunks) {
-            sequenceDataChunk.writeTo(os);
-        }
-        if (fontDataChunk != null) {
-            fontDataChunk.writeTo(os);
-        }
-        if (imageDataChunk != null) {
-            imageDataChunk.writeTo(os);
-        }
+            for (Chunk chunk : chunks) {
+                chunk.writeTo(dos);
+            }
+            dos.flush();
+        });
     }
 
     // header
@@ -134,7 +136,7 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
     private int colorType;
 
     /** */
-    private byte[] optionData;
+    private byte[] optionData = new byte[0];
 
     // ----
 
@@ -146,6 +148,7 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
         if (this.setupDataChunk == null) {
             size += setupDataChunk.getSize() + 8;
         }
+        replaceChunk(this.setupDataChunk, setupDataChunk);
         this.setupDataChunk = setupDataChunk;
         setupDataChunk.id[0] = 'G';
     }
@@ -192,12 +195,22 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
         @Override
         protected void init(CrcDataInputStream dis, Chunk parent)
             throws InvalidSmafDataException, IOException {
-dis.skipBytes((int) (long) size); // TODO
+            // TODO the fonts are not parsed yet, keep them as they are so they can be written back
+            this.data = new byte[size];
+            dis.readFully(data);
         }
 
-        /** TODO */
+        /** the font body, not parsed yet */
+        private byte[] data = new byte[0];
+
+        /** the font body, not parsed yet */
+        public byte[] getData() {
+            return data;
+        }
+
         @Override
         public void writeTo(OutputStream os) throws IOException {
+            writeChunk(os, bos -> bos.write(data));
         }
     }
 

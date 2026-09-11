@@ -6,7 +6,6 @@
 
 package vavi.sound.smaf.chunk;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
@@ -63,12 +62,7 @@ logger.log(Level.DEBUG, "WaveData[" + waveNumber + "]: " + size + " bytes");
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
-
-        dos.write(id);
-        dos.writeInt(size);
-
-        os.write(data);
+        writeChunk(os, bos -> bos.write(data));
     }
 
     /** */
@@ -86,7 +80,7 @@ logger.log(Level.DEBUG, "WaveData[" + waveNumber + "]: " + size + " bytes");
     }
 
     /** */
-    protected byte[] data;
+    protected byte[] data = new byte[0];
 
     /** */
     public byte[] getWaveData() {

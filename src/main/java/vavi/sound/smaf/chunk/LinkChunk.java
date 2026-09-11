@@ -51,11 +51,26 @@ logger.log(Level.DEBUG, "Link: " + size + " bytes");
     @Override
     protected void init(CrcDataInputStream dis, Chunk parent)
         throws InvalidSmafDataException, IOException {
-dis.skipBytes((int) (long) size); // TODO
+        // TODO the body is not parsed yet, keep it as it is so it can be written back
+        this.data = new byte[size];
+        dis.readFully(data);
     }
 
-    /** TODO */
+    /** the link body, not parsed yet */
+    private byte[] data = new byte[0];
+
+    /** the link body, not parsed yet */
+    public byte[] getData() {
+        return data;
+    }
+
+    /** the link body, not parsed yet */
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
     @Override
     public void writeTo(OutputStream os) throws IOException {
+        writeChunk(os, bos -> bos.write(data));
     }
 }

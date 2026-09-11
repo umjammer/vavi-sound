@@ -149,17 +149,26 @@ logger.log(Level.DEBUG, "EXVO: pcm voice: bank: %d, program: %d, %dHz, lp: %d, e
         exclusive = Factory.getSysexMessage(0, e2, data, len);
     }
 
+    /**
+     * <pre>
+     *  0xff        : 1 byte, exclusive prefix
+     *  0xf0        : 1 byte, exclusive
+     *  length      : 1 byte
+     *  data        : length byte
+     * </pre>
+     */
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
+        writeChunk(os, bos -> {
+            DataOutputStream dos = new DataOutputStream(bos);
 
-        dos.write(id);
-        dos.writeInt(size);
-
-        dos.writeInt(0xff);
-        dos.writeInt(0xf0);
-        dos.writeInt(exclusive.getData().length);
-        dos.write(exclusive.getData());
+            byte[] data = exclusive.getData();
+            dos.writeByte(0xff);
+            dos.writeByte(0xf0);
+            dos.writeByte(data.length);
+            dos.write(data);
+            dos.flush();
+        });
     }
 
     /** */

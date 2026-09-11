@@ -6,7 +6,6 @@
 
 package vavi.sound.smaf.chunk;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
@@ -60,19 +59,17 @@ logger.log(Level.DEBUG, "OptionalData: " + size + " bytes");
             Chunk data = readFrom(dis);
 logger.log(Level.DEBUG, FOURCC + ": data chunk: " + data.getClass().getName());
             dataChunks.add(data);
+            chunks.add(data);
         }
     }
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
-
-        dos.write(id);
-        dos.writeInt(size);
-
-        for (Chunk dataChunk : dataChunks) {
-            dataChunk.writeTo(os);
-        }
+        writeChunk(os, bos -> {
+            for (Chunk dataChunk : chunks) {
+                dataChunk.writeTo(bos);
+            }
+        });
     }
 
     /** DataChunk "Dch*", ... */
@@ -88,7 +85,8 @@ logger.log(Level.DEBUG, FOURCC + ": data chunk: " + data.getClass().getName());
     /** */
     public void addDataChunks(DataChunk dataChunk) {
         dataChunks.add(dataChunk);
-        size += dataChunk.getSize();
+        chunks.add(dataChunk);
+        size += dataChunk.getSize() + 8;
     }
 
     /**

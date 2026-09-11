@@ -73,7 +73,7 @@ logger.log(Level.DEBUG, "GraphicsTrackSequenceData[" + sequenceNumber + "]: " + 
         FormatType formatType = ((TrackChunk) parent).getFormatType();
         switch (formatType) {
         case HandyPhoneStandard:
-            readHandyPhoneStandard(dis);
+            readHandyPhoneStandard(keep(dis));
             break;
         default:
             throw new InvalidSmafDataException("FormatType: " + formatType);

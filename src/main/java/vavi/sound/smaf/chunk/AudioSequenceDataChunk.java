@@ -58,7 +58,7 @@ logger.log(Level.DEBUG, "AudioSequenceData: " + size + " bytes");
         FormatType formatType = ((TrackChunk) parent).getFormatType();
         switch (formatType) {
         case HandyPhoneStandard:
-            readHandyPhoneStandard(dis);
+            readHandyPhoneStandard(keep(dis));
             break;
         default:
             throw new InvalidSmafDataException("FormatType: " + formatType);

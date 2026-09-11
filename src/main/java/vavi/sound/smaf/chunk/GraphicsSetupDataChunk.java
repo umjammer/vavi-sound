@@ -6,7 +6,6 @@
 
 package vavi.sound.smaf.chunk;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
@@ -54,6 +53,7 @@ logger.log(Level.DEBUG, "GraphicsSetupData: " + size + " bytes");
     protected void init(CrcDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
         while (dis.available() > 0) {
             Chunk chunk = readFrom(dis);
+            chunks.add(chunk);
             if (chunk instanceof DisplayParameterDefinitionChunk) {
                 displayParameterDefinitionChunk = chunk;
             } else if (chunk instanceof ColorPaletteDefinitionChunk) {
@@ -73,15 +73,11 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
-
-        dos.write(id);
-        dos.writeInt(size);
-
-        displayParameterDefinitionChunk.writeTo(os);
-        if (colorPaletteDefinitionChunk != null) {
-            colorPaletteDefinitionChunk.writeTo(os);
-        }
+        writeChunk(os, bos -> {
+            for (Chunk chunk : chunks) {
+                chunk.writeTo(bos);
+            }
+        });
     }
 
     @Override

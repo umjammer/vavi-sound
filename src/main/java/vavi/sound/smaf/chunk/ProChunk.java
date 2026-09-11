@@ -6,6 +6,7 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
@@ -62,7 +63,12 @@ logger.log(Level.TRACE, FOURCC + ": start: " + start + ", stop: " + stop + ", un
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-
+        writeChunk(os, bos -> {
+            DataOutputStream dos = new DataOutputStream(bos);
+            dos.writeInt(start);
+            dos.writeInt(stop);
+            dos.writeInt(unknown);
+        });
     }
 
     @Override

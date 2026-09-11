@@ -12,8 +12,8 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.util.StringUtil;
@@ -81,7 +81,7 @@ logger.log(Level.DEBUG, "option: " + option.length + " bytes (subData)");
         while (i < option.length) {
 logger.log(Level.TRACE, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
             SubData subDatum = new SubData(option, i, contentsCodeType);
-            subData.put(subDatum.getTag(), subDatum);
+            subData.add(subDatum);
 logger.log(Level.DEBUG, "ContentsInfo: subDatum: " + subDatum);
             i += 2 + 1 + subDatum.getData().length + 1; // tag ':' data ','
 logger.log(Level.TRACE, i + " / " + option.length + "\n" + StringUtil.getDump(option, i, option.length - i));
@@ -90,19 +90,19 @@ logger.log(Level.TRACE, i + " / " + option.length + "\n" + StringUtil.getDump(op
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
+        writeChunk(os, bos -> {
+            DataOutputStream dos = new DataOutputStream(bos);
 
-        dos.write(id);
-        dos.writeInt(size);
-
-        dos.writeByte(contentsClass);
-        dos.writeByte(contentsType);
-        dos.writeByte(contentsCodeType);
-        dos.writeByte(copyStatus);
-        dos.writeByte(copyCounts);
-        for (SubData subDatum : subData.values()) {
-            subDatum.writeTo(os);
-        }
+            dos.writeByte(contentsClass);
+            dos.writeByte(contentsType);
+            dos.writeByte(contentsCodeType);
+            dos.writeByte(copyStatus);
+            dos.writeByte(copyCounts);
+            for (SubData subDatum : subData) {
+                subDatum.writeTo(dos);
+            }
+            dos.flush();
+        });
     }
 
     /** */
@@ -205,13 +205,13 @@ logger.log(Level.TRACE, i + " / " + option.length + "\n" + StringUtil.getDump(op
     }
 
     /** */
-    private final Map<String, SubData> subData = new TreeMap<>();
+    private final List<SubData> subData = new ArrayList<>(); // a tag may appear twice, and the Option order is kept as it was read
 
     /**
      * @return null when specified sub chunk is not found
      */
     public String getSubDataByTag(String tag) {
-        SubData subDatum = subData.get(tag);
+        SubData subDatum = subData.stream().filter(sd -> sd.getTag().equals(tag)).findFirst().orElse(null);
         if (subDatum == null) {
             return null;
         }
@@ -258,7 +258,16 @@ logger.log(Level.TRACE, i + " / " + option.length + "\n" + StringUtil.getDump(op
         } catch (UnsupportedEncodingException e) {
             subDatum = new SubData(tag, data.getBytes());
         }
-        subData.put(tag, subDatum);
+        int i = 0;
+        while (i < subData.size() && !subData.get(i).getTag().equals(tag)) {
+            i++;
+        }
+        if (i < subData.size()) {
+            size -= subData.get(i).getSize();
+            subData.set(i, subDatum);
+        } else {
+            subData.add(subDatum);
+        }
         size += subDatum.getSize();
     }
 
@@ -268,7 +277,7 @@ logger.log(Level.TRACE, i + " / " + option.length + "\n" + StringUtil.getDump(op
 
         sb.append(getDC().format(getId() + " contentsClass: " + contentsClass + ", contentsType: " + contentsType + ", contentsCodeType: " + contentsCodeType + ", copyStatus: " + copyStatus + ", copyCounts: " + copyCounts));
         try (var dc = getDC().open()) {
-            subData.values().stream().map(sd -> dc.format(sd.toString())).forEach(sb::append);
+            subData.stream().map(sd -> dc.format(sd.toString())).forEach(sb::append);
         }
 
         return sb.toString();

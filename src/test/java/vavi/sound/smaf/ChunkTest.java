@@ -7,12 +7,14 @@
 package vavi.sound.smaf;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -27,6 +29,7 @@ import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
 import static java.util.function.Predicate.not;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 
 /**
@@ -60,9 +63,61 @@ class ChunkTest {
     void test1() throws Exception {
         Path path = Paths.get(mmf);
 Debug.println("path: " + path);
-        InputStream is = new BufferedInputStream(Files.newInputStream(path));
-        Chunk chunk = Chunk.readFrom(is, null);
+        try (InputStream is = new BufferedInputStream(Files.newInputStream(path))) {
+            Chunk chunk = Chunk.readFrom(is, null);
 Debug.println("chunk:\n" + chunk);
+        }
+    }
+
+    @Test
+    @DisplayName("write back")
+    void test3() throws Exception {
+        Path path = Paths.get(mmf);
+Debug.println("path: " + path);
+        byte[] expected = Files.readAllBytes(path);
+        Chunk chunk;
+        try (InputStream is = new BufferedInputStream(Files.newInputStream(path))) {
+            chunk = Chunk.readFrom(is, null);
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        chunk.writeTo(baos);
+        assertArrayEquals(expected, baos.toByteArray());
+    }
+
+    @Test
+    @DisplayName("write back recursive")
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
+    void test4() throws Exception {
+        Path dir = Paths.get(this.dir);
+        AtomicInteger c = new AtomicInteger();
+        List<Path> f = new ArrayList<>();
+        List<Path> d = new ArrayList<>();
+        Files.walk(dir)
+                .filter(p -> p.getFileName().toString().endsWith(".mmf"))
+                .filter(not(p -> Stream.of("cracker", "test_data").anyMatch(s -> p.toString().contains(s))))
+                .forEach(path -> {
+            try {
+                byte[] expected = Files.readAllBytes(path);
+                Chunk chunk;
+                try (InputStream is = new BufferedInputStream(Files.newInputStream(path))) {
+                    chunk = Chunk.readFrom(is, null);
+                }
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                chunk.writeTo(baos);
+                if (Arrays.equals(expected, baos.toByteArray())) {
+                    c.getAndIncrement();
+                } else {
+                    // a file whose crc is broken comes back with the correct one, so it is not identical
+                    d.add(path);
+                }
+            } catch (Exception e) {
+Debug.println(e.toString());
+                f.add(path);
+            }
+        });
+Debug.println("smafs: " + c.get() + ", not identical: " + d.size() + ", failure: " + f.size());
+d.forEach(System.err::println);
+f.forEach(System.err::println);
     }
 
     @Test

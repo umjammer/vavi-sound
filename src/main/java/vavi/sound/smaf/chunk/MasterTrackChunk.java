@@ -6,6 +6,7 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
@@ -61,6 +62,7 @@ logger.log(Level.DEBUG, "sequenceType: " + sequenceType);
         while (dis.available() > 0) {
 //logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
               Chunk chunk = readFrom(dis);
+              chunks.add(chunk);
               if (chunk instanceof MasterTrackSequenceDataChunk subChunk) { // "Mssq"
                   this.sequenceDataChunk = subChunk;
               } else {
@@ -69,15 +71,38 @@ logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
         }
     }
 
+    /**
+     * <pre>
+     *  Format Type   : 1 byte
+     *  Sequence Type : 1 byte
+     *  TimeBase_D    : 1 byte
+     *  Option Size   : 1 byte
+     *  Option Data   : size specified in Option Size (0 ~ 255 byte)
+     *  "Mssq"        : n byte
+     * </pre>
+     */
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        // TODO
+        writeChunk(os, bos -> {
+            DataOutputStream dos = new DataOutputStream(bos);
+
+            dos.writeByte(formatType.ordinal());
+            dos.writeByte(sequenceType.ordinal());
+            dos.writeByte(durationTimeBase);
+            dos.writeByte(optionData.length);
+            dos.write(optionData);
+
+            for (Chunk chunk : chunks) {
+                chunk.writeTo(dos);
+            }
+            dos.flush();
+        });
     }
 
     // header
 
     /** */
-    private byte[] optionData;
+    private byte[] optionData = new byte[0];
 
     // chordName = readOneToFour(is);
     // keySignature = readShort(is);

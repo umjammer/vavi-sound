@@ -49,14 +49,22 @@ logger.log(Level.WARNING, "read size is larger than available stream");
 //new Exception("*** DUMMY ***").printStackTrace(System.err);
             throw new InvalidSmafDataException("read size is larger than available stream");
         }
-        byte[] data = new byte[size];
+        this.data = new byte[size];
         dis.readFully(data);
 logger.log(Level.WARNING, "Undefined: size: " + size + "\n" + StringUtil.getDump(data, 64));
     }
 
+    /** the body of the chunk we do not know how to parse */
+    private byte[] data = new byte[0];
+
+    /** the body of the chunk we do not know how to parse */
+    public byte[] getData() {
+        return data;
+    }
+
+    /** writes the unparsed body back as it was read */
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        // TODO
-logger.log(Level.WARNING, "not implemented skip");
+        writeChunk(os, bos -> bos.write(data));
     }
 }

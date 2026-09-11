@@ -6,6 +6,7 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -56,6 +57,7 @@ public class FileChunk extends Chunk {
 
         while (dis.available() > 2) {
             Chunk chunk = readFrom(dis);
+            chunks.add(chunk);
             if (chunk instanceof ContentsInfoChunk cic) {
                 this.contentsInfoChunk = cic;
             } else if (chunk instanceof OptionalDataChunk qdc) {
@@ -86,33 +88,34 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
         }
     }
 
+    /**
+     * Writes the whole file.
+     * <p>
+     * The sub chunks go out in the order they were read (or added), the size counts the
+     * trailing crc and the crc itself is computed over this chunk's header and everything
+     * before it, which is what {@link Chunk#readFrom(InputStream, Chunk)} checks against.
+     * </p>
+     */
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        Crc16OutputStream cos = new Crc16OutputStream(os);
+        ByteArrayOutputStream body = new ByteArrayOutputStream();
+        for (Chunk chunk : chunks) {
+            chunk.writeTo(body);
+        }
 
+        this.size = body.size() + 2; // + crc
+
+        Crc16OutputStream cos = new Crc16OutputStream(os);
         DataOutputStream dos = new DataOutputStream(cos);
 
         dos.write(id);
         dos.writeInt(size);
+        body.writeTo(dos);
+        dos.flush();
 
-        contentsInfoChunk.writeTo(cos);
-        if (optionalDataChunk != null) {
-            optionalDataChunk.writeTo(cos);
-        }
-        for (Chunk scoreTrackChunk : scoreTrackChunks) {
-            scoreTrackChunk.writeTo(cos);
-        }
-        for (Chunk pcmAudioTrackChunk : pcmAudioTrackChunks) {
-            pcmAudioTrackChunk.writeTo(cos);
-        }
-        for (Chunk graphicsTrackChunk : graphicsTrackChunks) {
-            graphicsTrackChunk.writeTo(cos);
-        }
-        if (masterTrackChunk != null) {
-            masterTrackChunk.writeTo(cos);
-        }
-
-        dos.writeShort(~cos.getCrc());
+        this.crc = cos.getCrc();
+        new DataOutputStream(os).writeShort(crc);
+        os.flush();
     }
 
     /** */
@@ -149,6 +152,7 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
         if (this.contentsInfoChunk == null) {
             size += contentsInfoChunk.getSize() + 8;
         }
+        replaceChunk(this.contentsInfoChunk, contentsInfoChunk);
         this.contentsInfoChunk = contentsInfoChunk;
     }
 
@@ -165,6 +169,7 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
         if (this.optionalDataChunk == null) {
             size += optionalDataChunk.getSize() + 8;
         }
+        replaceChunk(this.optionalDataChunk, optionalDataChunk);
         this.optionalDataChunk = optionalDataChunk;
     }
 
@@ -179,6 +184,7 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
     /** */
     public void addScoreTrackChunk(ScoreTrackChunk scoreTrackChunk) {
         scoreTrackChunks.add(scoreTrackChunk);
+        chunks.add(scoreTrackChunk);
         size += scoreTrackChunk.getSize() + 8;
     }
 
@@ -193,6 +199,7 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
     /** */
     public void addPcmAudioTrackChunk(PcmAudioTrackChunk pcmAudioTrackChunk) {
         pcmAudioTrackChunks.add(pcmAudioTrackChunk);
+        chunks.add(pcmAudioTrackChunk);
         size += pcmAudioTrackChunk.getSize() + 8;
     }
 
@@ -207,6 +214,7 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
     /** */
     public void addGraphicsTrackChunk(GraphicsTrackChunk graphicsTrackChunk) {
         graphicsTrackChunks.add(graphicsTrackChunk);
+        chunks.add(graphicsTrackChunk);
         size += graphicsTrackChunk.getSize() + 8;
     }
 
@@ -223,6 +231,7 @@ logger.log(Level.DEBUG, "has kddi crc: %04x, %04x".formatted(kddiCrc, kddiMark))
         if (this.masterTrackChunk == null) {
             size += masterTrackChunk.getSize() + 8;
         }
+        replaceChunk(this.masterTrackChunk, masterTrackChunk);
         this.masterTrackChunk = masterTrackChunk;
     }
 

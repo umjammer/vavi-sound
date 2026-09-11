@@ -6,7 +6,6 @@
 
 package vavi.sound.smaf.chunk;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
@@ -61,16 +60,17 @@ logger.log(Level.DEBUG, "SetupData: " + size + " bytes");
     protected void init(CrcDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
 
         ScoreTrackChunk.FormatType formatType = ((TrackChunk) parent).getFormatType();
+        CrcDataInputStream body = keep(dis);
         switch (formatType) {
         case HandyPhoneStandard:
-            readHandyPhoneStandard(dis);
+            readHandyPhoneStandard(body);
             break;
         case MobileStandard_Compress:
-            readMobileStandard(dis); // TODO Huffman
+            readMobileStandard(body); // TODO Huffman
             break;
         case MobileStandard_NoCompress:
         case SEQU:
-            readMobileStandard(dis);
+            readMobileStandard(body);
             break;
         }
 logger.log(Level.DEBUG, "messages: " + messages.size());
@@ -141,17 +141,37 @@ logger.log(Level.WARNING, "unhandled: %02x".formatted(status));
         }
     }
 
-    /** TODO formatType */
+    /**
+     * Writes the setup data back.
+     * <p>
+     * When this chunk was read from a file the source bytes are written verbatim, see
+     * {@link SequenceDataChunk#writeTo(OutputStream)}.
+     * </p>
+     */
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
+        writeChunk(os, bos -> {
+            if (raw != null) {
+                bos.write(raw);
+            } else {
+                for (SmafMessage message : messages) {
+                    bos.write(message.getMessage());
+                }
+            }
+        });
+    }
 
-        dos.write(id);
-        dos.writeInt(size);
+    /** the body as it was read, null when this chunk was not read from a file */
+    private byte[] raw;
 
-        for (SmafMessage message : messages) {
-            os.write(message.getMessage());
-        }
+    /**
+     * Reads the whole body, keeping it for {@link #writeTo(OutputStream)}, and gives a stream
+     * over it to parse.
+     */
+    private CrcDataInputStream keep(CrcDataInputStream dis) throws IOException {
+        raw = new byte[dis.available()];
+        dis.readFully(raw);
+        return detachedStream(raw);
     }
 
     /** SysEx messages */

@@ -79,6 +79,7 @@ logger.log(Level.DEBUG, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGate
 
         while (dis.available() > 0) {
             Chunk chunk = readFrom(dis);
+            chunks.add(chunk);
             switch (chunk) {
                 case SeekAndPhraseInfoChunk subChunk -> this.seekAndPhraseInfoChunk = subChunk;
                 case AudioSequenceDataChunk subChunk -> this.sequenceDataChunk = subChunk;
@@ -91,28 +92,20 @@ logger.log(Level.DEBUG, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGate
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
+        writeChunk(os, bos -> {
+            DataOutputStream dos = new DataOutputStream(bos);
 
-        dos.write(id);
-        dos.writeInt(size);
+            dos.writeByte(formatType.ordinal());
+            dos.writeByte(sequenceType.ordinal());
+            dos.writeShort(waveType.intValue());
+            dos.writeByte(durationTimeBase);
+            dos.writeByte(gateTimeTimeBase);
 
-        dos.writeByte(formatType.ordinal());
-        dos.writeByte(sequenceType.ordinal());
-        dos.writeShort(waveType.intValue());
-        dos.writeByte(durationTimeBase);
-        dos.writeByte(gateTimeTimeBase);
-        if (seekAndPhraseInfoChunk != null) {
-            seekAndPhraseInfoChunk.writeTo(os);
-        }
-        if (sequenceDataChunk != null) {
-            sequenceDataChunk.writeTo(os);
-        }
-        if (setupDataChunk != null) {
-            setupDataChunk.writeTo(os);
-        }
-        for (Chunk waveDataChunk : waveDataChunks) {
-            waveDataChunk.writeTo(os);
-        }
+            for (Chunk chunk : chunks) {
+                chunk.writeTo(dos);
+            }
+            dos.flush();
+        });
     }
 
     /** */
@@ -133,6 +126,7 @@ logger.log(Level.DEBUG, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGate
         if (this.seekAndPhraseInfoChunk == null) {
             size += seekAndPhraseInfoChunk.getSize() + 8;
         }
+        replaceChunk(this.seekAndPhraseInfoChunk, seekAndPhraseInfoChunk);
         this.seekAndPhraseInfoChunk = seekAndPhraseInfoChunk;
         seekAndPhraseInfoChunk.id[0] = 'A';
     }
@@ -145,6 +139,7 @@ logger.log(Level.DEBUG, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGate
         if (this.setupDataChunk == null) {
             size += setupDataChunk.getSize() + 8;
         }
+        replaceChunk(this.setupDataChunk, setupDataChunk);
         this.setupDataChunk = setupDataChunk;
     }
 
@@ -154,6 +149,7 @@ logger.log(Level.DEBUG, "gateTimeTimeBase: " + gateTimeTimeBase + ", " + getGate
     /** "Awa*" TODO is there really more than one? */
     public void addWaveDataChunk(Chunk waveDataChunk) {
         waveDataChunks.add(waveDataChunk);
+        chunks.add(waveDataChunk);
         size += waveDataChunk.getSize() + 8;
     }
 

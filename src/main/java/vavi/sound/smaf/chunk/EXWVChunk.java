@@ -125,29 +125,34 @@ public class EXWVChunk extends Chunk {
         if (eox != EOX) {
             throw new InvalidSmafDataException("EXWV: no eox: %02x".formatted(eox));
         }
-        dis.skipBytes(size - (length + 4)); // normally none
+        padding = new byte[size - (length + 4)]; // normally none
+        dis.readFully(padding);
 logger.log(Level.DEBUG, FOURCC + ": " + size + ", waveId: " + waveId + ", adpcm: " + data.length + "\n" + StringUtil.getDump(data, 16));
     }
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
+        writeChunk(os, bos -> {
+            DataOutputStream dos = new DataOutputStream(bos);
 
-        dos.write(id);
-        dos.writeInt(size);
-
-        int length = data.length + OVERHEAD;
-        dos.writeByte(STATUS);
-        dos.writeByte(LONG_EXCLUSIVE);
-        dos.writeByte(length & 0xff);
-        dos.writeByte((length >> 8) & 0xff);
-        dos.writeByte(MANUFACTURER);
-        dos.writeByte(DEVICE);
-        dos.writeByte(SUB_ID);
-        dos.writeByte(waveId);
-        dos.write(data);
-        dos.writeByte(EOX);
+            int length = data.length + OVERHEAD;
+            dos.writeByte(STATUS);
+            dos.writeByte(LONG_EXCLUSIVE);
+            dos.writeByte(length & 0xff);
+            dos.writeByte((length >> 8) & 0xff);
+            dos.writeByte(MANUFACTURER);
+            dos.writeByte(DEVICE);
+            dos.writeByte(SUB_ID);
+            dos.writeByte(waveId);
+            dos.write(data);
+            dos.writeByte(EOX);
+            dos.write(padding);
+            dos.flush();
+        });
     }
+
+    /** the bytes after the eox some files have, written back as they were read */
+    private byte[] padding = new byte[0];
 
     /** 0 ~ 15, the "WaveID" an "EXVO" refers to */
     public int getWaveId() {

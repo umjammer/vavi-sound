@@ -84,6 +84,7 @@ public class VoiceChunk extends TrackChunk {
         while (dis.available() > 0) {
 //logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
             Chunk chunk = readFrom(dis);
+            chunks.add(chunk);
             switch (chunk) {
                 case SequenceDataChunk subChunk -> this.sequenceDataChunk = subChunk; // "Mssq"
                 case EXWVChunk subChunk -> this.exwvChunk = subChunk; // "EXWV"
@@ -103,7 +104,11 @@ public class VoiceChunk extends TrackChunk {
 
     @Override
     public void writeTo(OutputStream os) throws IOException {
-
+        writeChunk(os, bos -> {
+            for (Chunk chunk : chunks) {
+                chunk.writeTo(bos);
+            }
+        });
     }
 
     // ----

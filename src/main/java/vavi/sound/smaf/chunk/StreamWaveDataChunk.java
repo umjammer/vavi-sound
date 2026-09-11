@@ -7,6 +7,7 @@
 package vavi.sound.smaf.chunk;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 
@@ -64,6 +65,21 @@ logger.log(Level.DEBUG, "StreamWaveData[" + waveNumber + "]: " + size);
 
         data = new byte[dis.available()];
         dis.readFully(data);
+    }
+
+    /**
+     * <pre>
+     *  wave type : 3 byte
+     *  wave data : n byte
+     * </pre>
+     * unlike a "Awa*" {@link WaveDataChunk}, whose wave type lives in the "ATR*" header.
+     */
+    @Override
+    public void writeTo(OutputStream os) throws IOException {
+        writeChunk(os, bos -> {
+            bos.write(waveType.getBytes());
+            bos.write(data);
+        });
     }
 
     /** */

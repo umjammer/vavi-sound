@@ -6,6 +6,7 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
@@ -59,6 +60,7 @@ public class MMMGChunk extends TrackChunk {
         while (dis.available() > 0) {
 //logger.log(Level.TRACE, "available: " + is.available() + ", " + available());
             Chunk chunk = readFrom(dis);
+            chunks.add(chunk);
             if (chunk instanceof VoiceChunk vc) { // "VOIC"
                 voiceChunk = vc;
             } else if (chunk instanceof SequenceDataChunk sdc) { // "SEQU"
@@ -69,9 +71,24 @@ public class MMMGChunk extends TrackChunk {
         }
     }
 
+    /**
+     * <pre>
+     *  &lt;voice format&gt; 0x14 : 2 byte
+     *  "VOIC", "SEQU" ...  : n byte
+     * </pre>
+     */
     @Override
     public void writeTo(OutputStream os) throws IOException {
+        writeChunk(os, bos -> {
+            DataOutputStream dos = new DataOutputStream(bos);
 
+            dos.writeShort(enigma);
+
+            for (Chunk chunk : chunks) {
+                chunk.writeTo(dos);
+            }
+            dos.flush();
+        });
     }
 
     // ----

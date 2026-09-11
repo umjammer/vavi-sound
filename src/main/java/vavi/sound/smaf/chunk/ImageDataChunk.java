@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.util.ArrayList;
-import java.util.List;
 
 import vavi.sound.smaf.InvalidSmafDataException;
 
@@ -57,25 +55,23 @@ logger.log(Level.DEBUG, "ImageData: " + size + " bytes");
 
         while (dis.available() > 0) {
             Chunk chunk = readFrom(dis);
-            if (chunk instanceof ImageChunk) { // "Gig*"
-                imageDataChunks.add(chunk);
-            } else if (chunk instanceof BitmapChunk) { // ""
-                imageDataChunks.add(chunk);
-            } else if (chunk instanceof LinkChunk) { // ""
-                imageDataChunks.add(chunk);
-            } else {
+            chunks.add(chunk);
+            if (!(chunk instanceof ImageChunk) &&    // "Gig*"
+                !(chunk instanceof BitmapChunk) &&   // "Gbm*"
+                !(chunk instanceof LinkChunk)) {     // "Gln*"
                 logger.log(Level.WARNING, "unknown chunk: " + chunk.getClass());
             }
         }
-logger.log(Level.DEBUG, "messages: " + imageDataChunks.size());
+logger.log(Level.DEBUG, "messages: " + chunks.size());
     }
 
-    /** */
-    private final List<Chunk> imageDataChunks = new ArrayList<>();
-
-    /** TODO */
     @Override
     public void writeTo(OutputStream os) throws IOException {
+        writeChunk(os, bos -> {
+            for (Chunk imageDataChunk : chunks) {
+                imageDataChunk.writeTo(bos);
+            }
+        });
     }
 
     @Override
@@ -84,7 +80,7 @@ logger.log(Level.DEBUG, "messages: " + imageDataChunks.size());
 
         sb.append(getDC().format(getId()));
         try (var dc = getDC().open()) {
-            for (var imageDataChunk : imageDataChunks) sb.append(dc.format(imageDataChunk.toString()));
+            for (var imageDataChunk : chunks) sb.append(dc.format(imageDataChunk.toString()));
         }
 
         return sb.toString();

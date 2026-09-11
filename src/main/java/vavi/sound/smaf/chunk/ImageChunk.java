@@ -68,7 +68,7 @@ logger.log(Level.DEBUG, "image: " + getImage());
     }
 
     /** */
-    private byte[] imageData;
+    private byte[] imageData = new byte[0];
 
     /** */
     public BufferedImage getImage() {
@@ -80,9 +80,9 @@ logger.log(Level.DEBUG, "image: " + getImage());
         }
     }
 
-    /** TODO */
     @Override
     public void writeTo(OutputStream os) throws IOException {
+        writeChunk(os, bos -> bos.write(imageData));
     }
 
     @Override

@@ -6,14 +6,20 @@
 
 package vavi.sound.smaf.chunk;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ServiceLoader;
 
 import vavi.sound.smaf.InvalidSmafDataException;
@@ -39,6 +45,28 @@ public abstract class Chunk {
 
     /** Chunk size */
     protected int size;
+
+    /**
+     * The sub chunks in the order they were read or added. A container chunk writes them out
+     * of this list, so a file which was read keeps its sub chunk order (the order of "MspI",
+     * "Mtsu" and "Mtsq" in a "MTR*" for instance really does vary from file to file).
+     */
+    protected final List<Chunk> chunks = new ArrayList<>();
+
+    /** the sub chunks in the order they were read or added */
+    public List<Chunk> getChunks() {
+        return chunks;
+    }
+
+    /** Replaces {@code old} in {@link #chunks}, or appends {@code chunk} when there is none. */
+    protected void replaceChunk(Chunk old, Chunk chunk) {
+        int i = old == null ? -1 : chunks.indexOf(old);
+        if (i < 0) {
+            chunks.add(chunk);
+        } else {
+            chunks.set(i, chunk);
+        }
+    }
 
     /** accepts the key (forecc) or not */
     protected abstract boolean accept(String key);
@@ -145,8 +173,60 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
         return val;
     }
 
+    /** for HPS */
+    protected void writeVariableLength(DataOutput dof, int value) throws IOException {
+        if (value < 0x80) {
+            dof.writeByte(value);
+        } else {
+            dof.writeByte(0x80 | (((value >> 7) - 1) & 0x7f));
+            dof.writeByte(value & 0x7f);
+        }
+    }
+
+    /**
+     * A stream over a chunk body which has already been read out of the file.
+     * <p>
+     * Its crc is a dummy, those bytes have been counted for the real one while they were read.
+     * </p>
+     * @param body the bytes to parse again
+     */
+    protected CrcDataInputStream detachedStream(byte[] body) {
+        return new CrcDataInputStream(new ByteArrayInputStream(body), id, body.length) {
+            @Override CRC16 getCrc() { return new CRC16(); } // dummy
+        };
+    }
+
     /** Write this chunk to samf data stream. */
     public abstract void writeTo(OutputStream os) throws IOException;
+
+    /** writes a chunk body, {@link #writeChunk(OutputStream, Body)} wraps it with the chunk header */
+    @FunctionalInterface
+    protected interface Body {
+        /** @param os the body destination */
+        void writeTo(OutputStream os) throws IOException;
+    }
+
+    /**
+     * Writes the chunk header ({@link #id} and the size) followed by {@code body}.
+     * <p>
+     * The size written is the real length of {@code body}, not the {@link #size} field, so a
+     * chunk which was built by the setters (which only guess the size) and a chunk which was
+     * read from a file (whose sub chunks might have been replaced) both come out consistent.
+     * {@link #size} is updated to the value written.
+     * </p>
+     */
+    protected void writeChunk(OutputStream os, Body body) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        body.writeTo(baos);
+
+        DataOutputStream dos = new DataOutputStream(os);
+        dos.write(id);
+        dos.writeInt(baos.size());
+        baos.writeTo(dos);
+        dos.flush();
+
+        this.size = baos.size();
+    }
 
     // ----
 
