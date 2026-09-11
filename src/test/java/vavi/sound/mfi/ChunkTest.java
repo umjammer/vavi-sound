@@ -44,11 +44,17 @@ class ChunkTest {
     @Property(name = "mfi.dir")
     String dir = "src/test/resources";
 
+    @Property(name = "mfi.parserLevel")
+    String parserLevel = "medium";
+
     @BeforeEach
     void setup() throws Exception {
         if (localPropertiesExists()) {
             PropsEntity.Util.bind(this);
         }
+
+        if (parserLevel != null) System.setProperty("vavi.sound.mfi.vavi.parserLevel", parserLevel);
+Debug.print("vavi.sound.mfi.vavi.parserLevel: " + System.getProperty("vavi.sound.mfi.vavi.parserLevel"));
     }
 
     @Test
@@ -65,6 +71,7 @@ Debug.println("chunk:\n" + chunk);
     @DisplayName("dump recursive")
     @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
     void test2() throws Exception {
+Debug.println("---- dir: " + this.dir);
         Path dir = Paths.get(this.dir);
         AtomicInteger c = new AtomicInteger();
         List<Path> f = new ArrayList<>();
