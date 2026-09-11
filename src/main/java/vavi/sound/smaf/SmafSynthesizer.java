@@ -23,6 +23,7 @@ import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.smaf.sequencer.MachineDependentSequencer;
 import vavi.sound.smaf.sequencer.SmafMessageStore;
+import vavi.sound.smaf.message.MachineDependentMessage;
 import vavi.sound.smaf.sequencer.WaveSequencer;
 import vavi.util.StringUtil;
 
@@ -201,6 +202,10 @@ logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
                     break;
                 case WaveSequencer.SYSEX_FUNCTION_ID_SMAF:
                     processSpecial_Vavi_Wave(message);
+                    break;
+                case MachineDependentMessage.SYSEX_PACKED:
+                    // a packed yamaha exclusive (a voice, see YamahaMessage), it is
+                    // addressed to the synthesizer behind us, just pass it on
                     break;
                 default:
                     logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId));

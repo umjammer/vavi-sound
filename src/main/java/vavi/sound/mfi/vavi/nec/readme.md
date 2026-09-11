@@ -615,6 +615,15 @@ being one of
 `../vavi-apps-mfiplayer` is a receiving side; a synthesizer which does not want
 the voices just ignores the manufacturer.
 
+How that one takes them is worth knowing, because it is what any FM synthesizer
+has to do: an FM voice becomes an OPL3 timbre, but a **wave table voice is not a
+timbre at all**. OPL3 has no sample path, so `NukedWaveTable` hands the wave to
+`vavi.sound.mobile.AudioEngine` - the very engine the MFi 4.0 audio messages and
+the SMAF stream PCM already play through - and a note on for such a patch starts
+that stream instead of keying the OPL3. A voice whose `RM` bit says *preset (rom)
+wave* has no data anywhere outside the chip, so it stays silent; the MA-7 samples
+in `tmp/samples/n703id` are all of that kind.
+
 | message | what is sent |
 |---|---|
 | `01.f0._4` | the voice as is, it already **is** the VM35 FM voice image |

@@ -88,6 +88,15 @@ that the wave data has no header of its own: it is the raw wave ram image. The n
 samples is `(end point + 1)`, that is `wave data bytes * 2`, which is what says the data
 is 4 bit.
 
+Both reach the player, through the two different routes the "EXWV" / "EXVO" split
+implies: "EXWV" becomes a `WaveDataMessage`, which the ADPCM driver in front of the
+synthesizer (`SmafSynthesizer.SmafReceiver`) loads into a `vavi.sound.mobile.AudioEngine`
+stream, while "EXVO" becomes a `YamahaMessage` and is packed into an `f0 45 7f ... f7`
+sysex for the synthesizer itself. A synthesizer which wants wavetable voices reads the
+"EXVO" for the (bank, program) to wave id mapping and starts that stream on a note on;
+`vavi.sound.midi.ymf262.NukedWaveTable` of `../vavi-apps-mfiplayer` does exactly that.
+`MMMGChunk#getSmafEvents` emits the "VOIC" events once, ahead of its first "SEQU" track.
+
 Reversed from the aarch64 `libM7_EmuSmw7.so` of MMF-Player
 (`YAMAHA::MaPhrCnv_ReqVoice`, `YAMAHA::MaSndDrv_SetWtWave`,
 `YAMAHA::MaDevDrv_SendDirectRamData`).
@@ -102,6 +111,7 @@ Reversed from the aarch64 `libM7_EmuSmw7.so` of MMF-Player
  * https://gist.github.com/bryc/e85315f758ff3eced19d2d4fdeef01c5/
  * https://github.com/denjhang/MA-3-MegaMod
  * https://github.com/but80/smaf825/blob/v1/smaf/voice/vm35_pcm_voice.go
+ * https://web.archive.org/web/*/https://smaf-yamaha.com/jp/tools/nec/tools.html
 
 ## TODO
 

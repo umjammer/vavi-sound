@@ -33,6 +33,7 @@ import static vavi.sound.smaf.chunk.Chunk.DumpContext.getDC;
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 2024-12-14 nsano initial version <br>
+ *          0.01 2026-09-11 nsano let the "VOIC" events out <br>
  */
 public class MMMGChunk extends TrackChunk {
 
@@ -86,8 +87,12 @@ public class MMMGChunk extends TrackChunk {
     /** TODO multiple??? */
     private final List<SequenceDataChunk> sequChunks = new ArrayList<>();
 
+    /**
+     * The "SEQU" chunks, or one when there is none but a "VOIC" - the voices of a
+     * "VOIC" have to go out even when this chunk carries no sequence of its own.
+     */
     public int getTracks() {
-        return sequChunks.size();
+        return Math.max(sequChunks.size(), voiceChunk != null ? 1 : 0);
     }
 
     /** adhoc */
@@ -115,6 +120,14 @@ public class MMMGChunk extends TrackChunk {
         MetaMessage metaMessage = new MetaMessage();
         metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(), props);
         events.add(new SmafEvent(metaMessage, 0L));
+
+        // the "VOIC" voices belong to this whole chunk, not to one "SEQU", so they
+        // go out once, ahead of the first track. Without this the "EXWV" wave and
+        // the "EXVO" voices are parsed and then dropped, and a wave table voice
+        // never reaches the synthesizer.
+        if (voiceChunk != null && currentTrack == 0) {
+            events.addAll(voiceChunk.getSmafEvents());
+        }
 
         //
         if (!sequChunks.isEmpty()) {
