@@ -160,6 +160,10 @@ logger.log(Level.WARNING, "wrong level: " + name);
 /** for rotten mfi */
 private static final ParserLevel parserLevel = ParserLevel.getDefault();
 /** for rotten mfi */
+static boolean isLoose() {
+    return parserLevel.isAcceptable(ParserLevel.loose);
+}
+/** for rotten mfi */
 private int remaining;
 
     /**
@@ -192,7 +196,7 @@ private int remaining;
 logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
 
         // events
-boolean loose = parserLevel.isAcceptable(ParserLevel.loose) && is.markSupported(); // for rotten mfi, track length is not trustworthy
+boolean loose = isLoose() && is.markSupported(); // for rotten mfi, track length is not trustworthy
         int l = 0;
         while ((loose ? !isNextChunk(is) : l < trackLength) && dis.available() > 2) {
 remaining = loose ? dis.available() : trackLength - l;
@@ -229,15 +233,31 @@ logger.log(Level.WARNING, "cannot correct. negative or eof: " + (trackLength - l
     private static final List<String> nextTypes = List.of(TYPE, HeaderChunk.TYPE, AudioDataMessage.TYPE);
 
     /**
-     * for rotten mfi: peeks whether a next chunk starts here, instead of relying on the track length.
+     * for rotten mfi: peeks the next 4 bytes as a chunk type, {@code null} when the stream ends.
      * @param is must support mark
      */
-    private static boolean isNextChunk(InputStream is) throws IOException {
+    private static String peekType(InputStream is) throws IOException {
         is.mark(4);
         byte[] bytes = new byte[4];
         int r = is.readNBytes(bytes, 0, 4);
         is.reset();
-        return r == 4 && nextTypes.contains(new String(bytes));
+        return r == 4 ? new String(bytes) : null;
+    }
+
+    /**
+     * for rotten mfi: peeks whether a next chunk starts here, instead of relying on the track length.
+     * @param is must support mark
+     */
+    private static boolean isNextChunk(InputStream is) throws IOException {
+        String type = peekType(is);
+        return type != null && nextTypes.contains(type);
+    }
+
+    /**
+     * for rotten mfi: peeks whether a track chunk still remains, instead of relying on the tracks count.
+     */
+    static boolean isNextTrack(InputStream is) throws IOException {
+        return !is.markSupported() || TYPE.equals(peekType(is));
     }
 
     /**
