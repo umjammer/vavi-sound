@@ -8,14 +8,14 @@ package vavi.sound.mfi.vavi.nec;
 
 
 /**
- * NEC System exclusive message function 0x02, 0xf1, 0x0d processor.
- * (MA-7 SendLevel #1)
+ * NEC System exclusive message function 0x02, 0xf1, 0x0f processor.
+ * (MA-7 SendLevel #3)
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260911 nsano initial version <br>
  * @see ChannelValueFunction
  */
-public class Function2_241_13 extends ChannelValueFunction {
+public class Function2_241_15 extends ChannelValueFunction {
 
     @Override
     int getLevel() {
@@ -24,11 +24,11 @@ public class Function2_241_13 extends ChannelValueFunction {
 
     @Override
     int getFunction() {
-        return 0x0d;
+        return 0x0f;
     }
 
     @Override
     String getName() {
-        return "SendLevel#1";
+        return "SendLevel#3";
     }
 }
