@@ -27,7 +27,7 @@ import static vavi.sound.midi.MidiUtil.encode87;
  * An MFi tone message and a SMAF "VOIC" / "EXVO" / "EXWV" chunk describe the very
  * same MA-3 / MA-5 voice, only wrapped differently, so the way to hand an MFi
  * voice to a MIDI synthesizer is to hand it the SMAF exclusive it already speaks.
- * That is what {@link vavi.sound.smaf.message.yamaha.YamahaMessage} emits while a
+ * That is what {@link vavi.sound.smaf.vavi.message.yamaha.YamahaMessage} emits while a
  * SMAF file plays, and this class emits the same thing for MFi:
  * </p>
  * <pre>
@@ -45,7 +45,7 @@ import static vavi.sound.midi.MidiUtil.encode87;
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260911 nsano initial version <br>
- * @see vavi.sound.smaf.message.yamaha.YamahaMessage
+ * @see vavi.sound.smaf.vavi.message.yamaha.YamahaMessage
  */
 public final class SmafExclusive {
 
@@ -55,7 +55,7 @@ public final class SmafExclusive {
     }
 
     /** 7 bit packed sysex which carries an 8 bit smaf exclusive */
-    public static final int SYSEX_PACKED = vavi.sound.smaf.message.MachineDependentMessage.SYSEX_PACKED;
+    public static final int SYSEX_PACKED = vavi.sound.smaf.vavi.message.MachineDependentMessage.SYSEX_PACKED;
 
     /** YAMAHA */
     private static final int MANUFACTURER = 0x43;
@@ -120,7 +120,7 @@ public final class SmafExclusive {
      * </pre>
      *
      * @param waveId what the {@code RM, WaveID} byte of a wave table voice refers to
-     * @see vavi.sound.smaf.chunk.EXWVChunk
+     * @see vavi.sound.smaf.vavi.chunk.EXWVChunk
      */
     public static byte[] wave(int waveId, byte[] wave) {
         byte[] data = new byte[4 + wave.length + 1];
@@ -138,7 +138,7 @@ public final class SmafExclusive {
 
     /**
      * Packs an 8 bit smaf exclusive the way
-     * {@link vavi.sound.smaf.message.yamaha.YamahaMessage} does.
+     * {@link vavi.sound.smaf.vavi.message.yamaha.YamahaMessage} does.
      *
      * @param exclusive 0: manufacturer id ... last: 0xf7, 8 bit
      */

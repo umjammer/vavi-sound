@@ -29,7 +29,7 @@ import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260911 nsano initial version <br>
- * @see vavi.sound.smaf.chunk.ChannelStatus
+ * @see vavi.sound.smaf.vavi.chunk.ChannelStatus
  */
 public class Function2_242_7 implements MachineDependentFunction {
 

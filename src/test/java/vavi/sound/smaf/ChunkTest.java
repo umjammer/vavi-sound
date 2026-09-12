@@ -23,8 +23,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import vavi.sound.smaf.chunk.Chunk;
-import vavi.sound.smaf.chunk.FileChunk;
+import vavi.sound.smaf.vavi.chunk.Chunk;
+import vavi.sound.smaf.vavi.chunk.FileChunk;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;

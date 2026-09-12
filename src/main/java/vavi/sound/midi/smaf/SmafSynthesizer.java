@@ -19,7 +19,7 @@ import javax.sound.midi.Transmitter;
 import javax.sound.midi.VoiceStatus;
 
 import vavi.sound.midi.MidiUtil;
-import vavi.sound.smaf.SmafSynthesizer.SmafReceiver;
+import vavi.sound.smaf.vavi.VaviSmafSynthesizer.SmafReceiver;
 
 import static vavi.sound.midi.VaviMidiDeviceProvider.version;
 

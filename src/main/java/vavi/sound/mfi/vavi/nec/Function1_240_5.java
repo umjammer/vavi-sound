@@ -39,7 +39,7 @@ import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260911 nsano initial version <br>
  * @see ToneFunction
- * @see vavi.sound.smaf.chunk.ExclusiveVoiceChunk
+ * @see vavi.sound.smaf.vavi.chunk.ExclusiveVoiceChunk
  */
 public class Function1_240_5 extends ToneFunction {
 

@@ -37,7 +37,7 @@ import static java.lang.System.getLogger;
  *      internal event 22, right between 0xe4 -&gt; 21 ({@link PitchBendMessage})
  *      and 0xe7 -&gt; 23 ({@link PitchBendRangeMessage}).</li>
  *  <li>SMAF's own pitch bend is 14 bit
- *      ({@link vavi.sound.smaf.message.PitchBendMessage}) while the MFi 0xe4
+ *      ({@link vavi.sound.smaf.vavi.message.PitchBendMessage}) while the MFi 0xe4
  *      message only carries 6, so a second half has to exist.</li>
  *  <li>0xe9 is immediately followed by 0xe4 in 140762 of the 140914 messages in
  *      the ~4400 file corpus.</li>

@@ -13,8 +13,8 @@ import javax.sound.midi.SysexMessage;
 import org.junit.jupiter.api.Test;
 
 import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.sound.smaf.message.MidiContext;
-import vavi.sound.smaf.message.yamaha.YamahaMessage;
+import vavi.sound.smaf.vavi.message.MidiContext;
+import vavi.sound.smaf.vavi.message.yamaha.YamahaMessage;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
