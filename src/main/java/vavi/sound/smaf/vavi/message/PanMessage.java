@@ -42,7 +42,7 @@ public class PanMessage extends vavi.sound.smaf.ShortMessage
     }
 
     /** for SmafConvertible */
-    protected PanMessage() {
+    public PanMessage() {
     }
 
     /** */
@@ -77,12 +77,12 @@ public class PanMessage extends vavi.sound.smaf.ShortMessage
 
     @Override
     public byte[] getMessage() {
-        return null; // TODO
+        return HandyPhoneStandard.control(duration, channel, 0x0a, panpot);
     }
 
     @Override
     public int getLength() {
-        return 0;   // TODO
+        return getMessage().length;
     }
 
     @Override
@@ -102,6 +102,11 @@ public class PanMessage extends vavi.sound.smaf.ShortMessage
     }
 
     @Override
+    public boolean accept(String key) {
+        return "short.176.10".equals(key);
+    }
+
+    @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
 
@@ -113,7 +118,7 @@ public class PanMessage extends vavi.sound.smaf.ShortMessage
         int voice = context.retrieveVoice(channel);
 
         PanMessage smafMessage = new PanMessage();
-        smafMessage.setDuration(context.getDuration());
+        smafMessage.setDuration(context.getDuration(track));
         smafMessage.setChannel(voice);
         smafMessage.setPanpot(data2);
 

@@ -55,6 +55,20 @@ public abstract class TrackChunk extends Chunk {
     protected ChannelStatus[] channelStatuses;
 
     /** */
+    public ChannelStatus[] getChannelStatuses() {
+        return channelStatuses;
+    }
+
+    /**
+     * The status of each channel of this track, as many as the {@link FormatType} has.
+     * @param channelStatuses nullable, the missing ones are written as 0
+     * @see ChannelStatus#writeTo(ChannelStatus[], FormatType, java.io.OutputStream)
+     */
+    public void setChannelStatuses(ChannelStatus[] channelStatuses) {
+        this.channelStatuses = channelStatuses;
+    }
+
+    /** */
     public enum FormatType {
         /** It is a data format that can be scaled across several generations of Handy Phones. */
         HandyPhoneStandard(2, false),

@@ -8,17 +8,24 @@ package vavi.sound.smaf.vavi.message;
 
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
-import javax.sound.midi.SysexMessage;
 import javax.sound.midi.Track;
 
+import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 
@@ -30,6 +37,7 @@ import static java.lang.System.getLogger;
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 041227 nsano port from MFi <br>
+ *          0.01 260912 nsano midi to smaf <br>
  */
 public class SmafContext implements SmafConvertible {
 
@@ -37,6 +45,19 @@ public class SmafContext implements SmafConvertible {
 
     /** max SMAF track number */
     public static final int MAX_SMAF_TRACKS = 4;
+
+    /** SMAF channels of one {@link vavi.sound.smaf.vavi.chunk.TrackChunk.FormatType#HandyPhoneStandard} track */
+    public static final int MAX_SMAF_CHANNELS = 4;
+
+    /**
+     * Timebase_D and Timebase_G of the tracks written, in [msec].
+     * 4 msec is what the Handy Phone Standard files out there use.
+     * @see vavi.sound.smaf.vavi.chunk.TrackChunk#setDurationTimeBase(int)
+     */
+    public static final int TIME_BASE = 4;
+
+    /** no tempo in a MIDI sequence means a quarter note = 120 */
+    private static final int DEFAULT_TEMPO = 500_000;
 
     // ----
 
@@ -53,7 +74,7 @@ public class SmafContext implements SmafConvertible {
         this.type = type;
     }
 
-    /** TODO currently sequence#resolution */
+    /** the resolution of the MIDI sequence, in ticks per quarter note */
     private int timeBase;
 
     /** */
@@ -88,89 +109,73 @@ public class SmafContext implements SmafConvertible {
     // ----
 
     /**
-     * tick magnification
+     * The tempo map of the MIDI sequence, the ticks the tempo changes at (ascending, the
+     * first one is 0), what it changes to in [μsec/beat] and the time each change is at.
      */
-    private double scale = 1.0d;
+    private long[] tempoTicks = {0};
+    /** @see #tempoTicks */
+    private int[] tempoValues = {DEFAULT_TEMPO};
+    /** @see #tempoTicks */
+    private long[] tempoMicroseconds = {0};
 
-    /** */
-    public double getScale() {
-        return scale;
+    /**
+     * The SMAF duration step a MIDI tick is at, counted from the beginning of the sequence.
+     * <p>
+     * A Δ of HandyPhoneStandard is a real time, a multiple of Timebase_D, and there is no
+     * tempo message, so the tempo map of the MIDI sequence has to be baked into the Δs. Every
+     * Δ being the difference of two of these, a rounding error never accumulates.
+     * </p>
+     *
+     * @see #TIME_BASE
+     */
+    public long retrieveSteps(long tick) {
+        int i = Arrays.binarySearch(tempoTicks, tick);
+        if (i < 0) {
+            i = Math.max(-i - 2, 0); // the tempo before the tick
+        }
+        long microseconds = tempoMicroseconds[i] + (tick - tempoTicks[i]) * tempoValues[i] / timeBase;
+        return Math.round((double) microseconds / (TIME_BASE * 1000));
     }
 
-    /** */
-    public void setScale(float scale) {
-logger.log(Level.DEBUG, "scale: " + scale);
-        this.scale = scale;
-    }
-
-    // ----
-
-    /** the previous tick, index is SMAF Track No. */
-    private final long[] beforeTicks = new long[MAX_SMAF_TRACKS];
+    /** the step the previous message of the track is at, index is SMAF Track No. */
+    private final long[] beforeSteps = new long[MAX_SMAF_TRACKS];
 
     /* init */ {
-        Arrays.fill(beforeTicks, 0);
+        Arrays.fill(beforeSteps, 0);
     }
 
     /**
-     * @param smafTrackNumber midi channel
+     * Remembers where the previous message of the track is.
+     *
+     * @param smafTrackNumber smaf track number
+     * @param tick the MIDI tick of the message
      */
-    public long getBeforeTick(int smafTrackNumber) {
-        return beforeTicks[smafTrackNumber];
+    public void setBeforeTick(int smafTrackNumber, long tick) {
+        this.beforeSteps[smafTrackNumber] = retrieveSteps(tick);
     }
 
     /**
-     * @param smafTrackNumber midi track number
+     * Shifts the previous message of the track forward, for the Δ a Nop message has eaten.
+     *
+     * @param smafTrackNumber smaf track number
      */
-    public void setBeforeTick(int smafTrackNumber, long beforeTick) {
-        this.beforeTicks[smafTrackNumber] = beforeTick;
+    public void incrementBeforeStep(int smafTrackNumber, long steps) {
+        this.beforeSteps[smafTrackNumber] += steps;
     }
 
     /**
-     * @param smafTrackNumber midi track number
+     * @param smafTrackNumber smaf track number
+     * @return the Δ between the previous message of the track and {@code tick}
      */
-    public void incrementBeforeTick(int smafTrackNumber, long delta) {
-        this.beforeTicks[smafTrackNumber] += getAdjustedDelta(smafTrackNumber, delta * scale);
-    }
-
-    /** @return with correction Δ time */
-    public int retrieveAdjustedDelta(int smafTrackNumber, long currentTick) {
-        return getAdjustedDelta(smafTrackNumber, (currentTick - beforeTicks[smafTrackNumber]) / scale);
-    }
-
-    /**
-     * @return no correction Δ time
-     * TODO why does this work?
-     */
-    private int retrieveDelta(int smafTrackNumber, long currentTick) {
-        return (int) Math.round((currentTick - beforeTicks[smafTrackNumber]) / scale);
-    }
-
-    /** error rounded with Math#round() */
-    private final double[] roundedSum = new double[MAX_SMAF_TRACKS];
-
-    /** correction when the sum of rounding errors with Math#round() is larger than 1 */
-    private int getAdjustedDelta(int smafTrackNumber, double floatDelta) {
-        int delta = (int) Math.round(floatDelta);
-        double rounded = floatDelta - delta;
-        roundedSum[smafTrackNumber] += rounded;
-        if (roundedSum[smafTrackNumber] >= 1f) {
-logger.log(Level.DEBUG, "rounded over 1, plus 1: " + roundedSum[smafTrackNumber] + "[" + smafTrackNumber + "]");
-            delta += 1;
-            roundedSum[smafTrackNumber] -= 1;
-        } else if (roundedSum[smafTrackNumber] <= -1f) {
-logger.log(Level.DEBUG, "rounded under -1, minus 1: " + roundedSum[smafTrackNumber] + "[" + smafTrackNumber + "]");
-            delta -= 1;
-            roundedSum[smafTrackNumber] += 1;
-        }
-        return delta;
+    public int retrieveDelta(int smafTrackNumber, long tick) {
+        return (int) (retrieveSteps(tick) - beforeSteps[smafTrackNumber]);
     }
 
     // ----
 
     /**
-     * Finds how many Δs(integer value, truncating too much) can be included in the time since the previous
-     * NoteOn (currentTick - beforeTicks[track]) and returns an array of NopMessages to be inserted for that number.
+     * Finds how many Δs of the largest size a message can tell fit in the time since the previous
+     * message of the track, and returns an array of NopMessages to be inserted for that number.
      * <pre>
      *     event    index    process
      *   |
@@ -189,95 +194,88 @@ logger.log(Level.DEBUG, "rounded under -1, minus 1: " + roundedSum[smafTrackNumb
      * --+-
      * </pre>
      * in the above figure, one NopMessage is inserted.
+     *
+     * @param smafTrackNumber the SMAF track the current MIDI event is going to
+     * @return null when nothing is to be inserted
      */
-    public SmafEvent[] getIntervalSmafEvents() {
+    public SmafEvent[] getIntervalSmafEvents(int smafTrackNumber) {
+        return getIntervalSmafEvents(smafTrackNumber, midiEvents.get(midiEventIndex).getTick());
+    }
 
-        int interval;
-        int track;
-        MidiEvent midiEvent = midiTrack.get(midiEventIndex);
+    /**
+     * Nop messages for the Δ which does not fit in one message, as
+     * {@link #getIntervalSmafEvents(int)} but for any tick.
+     *
+     * @param smafTrackNumber the SMAF track the message is going to
+     * @param currentTick the MIDI tick the message is at
+     * @return null when nothing is to be inserted
+     */
+    public SmafEvent[] getIntervalSmafEvents(int smafTrackNumber, long currentTick) {
 
-        MidiMessage midiMessage = midiEvent.getMessage();
-        if (midiMessage instanceof ShortMessage shortMessage) {
-            // note
-            int channel = shortMessage.getChannel();
-
-            track = retrieveSmafTrack(channel);
-            interval = retrieveDelta(track, midiEvent.getTick());
-        } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
-            // tempo
-            track = smafTrackNumber;
-            interval = retrieveDelta(track, midiEvent.getTick());
-logger.log(Level.DEBUG, "interval for tempo[" + smafTrackNumber + "]: " + interval);
-        } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 47) {
-            // eot
-            track = smafTrackNumber;
-            interval = retrieveDelta(track, midiEvent.getTick());
-logger.log(Level.DEBUG, "interval for EOT[" + smafTrackNumber + "]: " + interval);
-        } else if (midiMessage instanceof SysexMessage) {
-            return null;
-        } else {
-logger.log(Level.WARNING, "not supported message: " + midiMessage);
-            return null;
-        }
-//if (interval > 255) {
-// logger.log(Level.DEBUG, "interval: " + interval + ", " + (interval - 256));
-//}
+        int interval = retrieveDelta(smafTrackNumber, currentTick);
 if (interval < 0) {
  // it shouldn't be possible
- logger.log(Level.WARNING, "interval: " + interval);
+ logger.log(Level.WARNING, "interval: " + interval + "[" + smafTrackNumber + "] @" + currentTick);
  interval = 0;
 }
-        int nopLength = interval / 255;
+        int nopLength = interval / HandyPhoneStandard.maxSteps;
         if (nopLength == 0) {
             return null;
         }
         SmafEvent[] smafEvents = new SmafEvent[nopLength];
         for (int i = 0; i < nopLength; i++) {
-            NopMessage smafMessage = new NopMessage(255);
+            NopMessage smafMessage = new NopMessage(HandyPhoneStandard.maxSteps);
             smafEvents[i] = new SmafEvent(smafMessage, 0L);    // TODO 0l
-            // shift backward by 255 Δ minutes
-            incrementBeforeTick(track, 255);
+            // shift forward by the Δ the Nop has eaten
+            incrementBeforeStep(smafTrackNumber, HandyPhoneStandard.maxSteps);
         }
 
-//logger.log(Level.TRACE, nopLength + " nops inserted");
+logger.log(Level.DEBUG, nopLength + " nops inserted[" + smafTrackNumber + "]");
         return smafEvents;
     }
 
     /**
      * Gets the Δ (time) since the previous data (MIDI NoteOn) was executed.
-     * Be sure to execute #getIntervalSmafEvents() in advance to return Δ less than 255.
+     * Be sure to execute #getIntervalSmafEvents(int) in advance to return Δ less than
+     * {@link HandyPhoneStandard#maxSteps}.
+     *
+     * @param smafTrackNumber the SMAF track the current MIDI event is going to
      */
-    public int getDuration() {
+    public int getDuration(int smafTrackNumber) {
 
-        int delta = 0;
-        MidiEvent midiEvent = midiTrack.get(midiEventIndex);
+        MidiEvent midiEvent = midiEvents.get(midiEventIndex);
+        int delta = retrieveDelta(smafTrackNumber, midiEvent.getTick());
 
-        MidiMessage midiMessage = midiEvent.getMessage();
-        if (midiMessage instanceof ShortMessage shortMessage) {
-            // note
-            int channel = shortMessage.getChannel();
-
-            delta = retrieveAdjustedDelta(retrieveSmafTrack(channel), midiEvent.getTick());
-        } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
-            // tempo
-            delta = retrieveAdjustedDelta(smafTrackNumber, midiEvent.getTick()); // TODO is smafTrackNumber ok?
-logger.log(Level.DEBUG, "delta for tempo[" + smafTrackNumber + "]: " + delta);
-        } else {
-logger.log(Level.DEBUG, "no delta defined for: " + midiMessage);
-        }
-
-if (delta > 255) {
+if (delta > HandyPhoneStandard.maxSteps) {
  // this is impossible because it should be handled by getIntervalSmafEvents
- logger.log(Level.WARNING, "Δ: " + delta + ", " + (delta % 256));
+ logger.log(Level.WARNING, "Δ: " + delta + ", " + (delta % (HandyPhoneStandard.maxSteps + 1)));
 }
-        return delta % 256;
+        return delta % (HandyPhoneStandard.maxSteps + 1);
     }
 
     // ----
 
-    /** Gets the corrected SMAF Pitch. sound -45, percussion -35 */
+    /**
+     * Gets the corrected SMAF Pitch.
+     * <p>
+     * A HandyPhoneStandard note is an octave 0 ~ 3 and a note 1 ~ 12 of it, which
+     * {@link MidiContext#retrievePitch(int, int)} plays as the MIDI pitch 37 ~ 84.
+     * </p>
+     *
+     * @param channel MIDI channel
+     * @param pitch MIDI pitch
+     * @return SMAF pitch 1 ~ 48
+     */
     public int retrievePitch(int channel, int pitch) {
-        return pitch - 45 + (channel == MidiContext.CHANNEL_DRUM ? 10 : 0);
+        int smafPitch = pitch - 36;
+        if (smafPitch < 1) {
+            // out of range, the lowest octave of the same note
+            smafPitch = Math.floorMod(smafPitch - 1, 12) + 1;
+        } else if (smafPitch > 48) {
+            // out of range, the highest octave of the same note
+            smafPitch = Math.floorMod(smafPitch - 1, 12) + 37;
+        }
+        return smafPitch;
     }
 
     /**
@@ -285,7 +283,7 @@ if (delta > 255) {
      * @param channel MIDI channel
      */
     public int retrieveVoice(int channel) {
-        return channel % 4;
+        return channel % MAX_SMAF_CHANNELS;
     }
 
     /**
@@ -293,7 +291,7 @@ if (delta > 255) {
      * @param voice SMAF channel
      */
     public int retrieveChannel(int voice) {
-    return smafTrackNumber * 4 + voice;
+        return smafTrackNumber * MAX_SMAF_CHANNELS + voice;
     }
 
     /**
@@ -301,7 +299,16 @@ if (delta > 255) {
      * @param channel MIDI channel
      */
     public int retrieveSmafTrack(int channel) {
-        return channel / 4;
+        return channel / MAX_SMAF_CHANNELS;
+    }
+
+    /**
+     * Whether the channel plays rhythm, which is the MIDI drum channel only.
+     * @param channel MIDI channel
+     * @see MidiContext#CHANNEL_DRUM
+     */
+    public boolean isPercussion(int channel) {
+        return channel == MidiContext.CHANNEL_DRUM;
     }
 
     // ----
@@ -319,13 +326,92 @@ if (delta > 255) {
         return smafTrackNumber;
     }
 
-    /** current MIDI track */
-    private Track midiTrack;
+    /** the MIDI events of all the MIDI tracks, ordered by tick */
+    private final List<MidiEvent> midiEvents = new ArrayList<>();
 
-    /** Sets current MIDI track. */
-    public void setMidiTrack(Track midiTrack) {
-        this.midiTrack = midiTrack;
-        this.noteOffEventUsed = new BitSet(midiTrack.size());
+    /**
+     * Flattens the MIDI sequence into one event sequence, ordered by tick, and takes its
+     * resolution and its tempo map.
+     *
+     * @see #retrieveSteps(long)
+     */
+    public void setMidiSequence(Sequence midiSequence) {
+
+        this.timeBase = midiSequence.getResolution();
+if (midiSequence.getDivisionType() != Sequence.PPQ) {
+ logger.log(Level.WARNING, "not PPQ, the resolution is not ticks per beat: " + midiSequence.getDivisionType());
+}
+
+        SortedMap<Long, Integer> tempos = new TreeMap<>();
+        for (Track midiTrack : midiSequence.getTracks()) {
+            for (int i = 0; i < midiTrack.size(); i++) {
+                MidiEvent midiEvent = midiTrack.get(i);
+                MidiMessage midiMessage = midiEvent.getMessage();
+                if (midiMessage instanceof MetaMessage metaMessage &&
+                    metaMessage.getType() == MetaEvent.META_TEMPO.number()) {
+
+                    byte[] data = metaMessage.getData();
+                    tempos.put(midiEvent.getTick(),
+                            (data[0] & 0xff) << 16 | (data[1] & 0xff) << 8 | data[2] & 0xff);
+                }
+                midiEvents.add(midiEvent);
+            }
+        }
+        setTempos(tempos);
+
+        midiEvents.sort(Comparator
+                .comparingLong(MidiEvent::getTick)
+                .thenComparingInt(SmafContext::getChannel));
+
+        this.noteOffEventUsed = new BitSet(midiEvents.size());
+    }
+
+    /**
+     * @param tempos tick to [μsec/beat], the tempo before the first one is a quarter note = 120
+     * @see #tempoTicks
+     */
+    private void setTempos(SortedMap<Long, Integer> tempos) {
+
+        if (tempos.isEmpty() || tempos.firstKey() != 0) {
+            tempos.put(0L, DEFAULT_TEMPO);
+        }
+logger.log(Level.DEBUG, "resolution: " + timeBase + ", tempos: " + tempos.size() + ", first: " +
+        Math.round(60_000_000d / tempos.get(tempos.firstKey())) + " bpm");
+
+        tempoTicks = new long[tempos.size()];
+        tempoValues = new int[tempos.size()];
+        tempoMicroseconds = new long[tempos.size()];
+
+        int i = 0;
+        for (Map.Entry<Long, Integer> tempo : tempos.entrySet()) {
+            tempoTicks[i] = tempo.getKey();
+            tempoValues[i] = tempo.getValue();
+            if (i > 0) {
+                tempoMicroseconds[i] = tempoMicroseconds[i - 1] +
+                        (tempoTicks[i] - tempoTicks[i - 1]) * tempoValues[i - 1] / timeBase;
+            }
+            i++;
+        }
+    }
+
+    /** @return -1 when the event is not a {@link ShortMessage} */
+    private static int getChannel(MidiEvent midiEvent) {
+        MidiMessage midiMessage = midiEvent.getMessage();
+        return midiMessage instanceof ShortMessage shortMessage ? shortMessage.getChannel() : -1;
+    }
+
+    /** @return the number of the MIDI events of the whole sequence */
+    public int getSequenceSize() {
+        return midiEvents.size();
+    }
+
+    /**
+     * @param midiEventIndex index into the flattened MIDI sequence
+     * @return MIDI event, it becomes the current one
+     */
+    public MidiEvent getMidiEvent(int midiEventIndex) {
+        this.midiEventIndex = midiEventIndex;
+        return midiEvents.get(midiEventIndex);
     }
 
     /** index value of the current MIDI event */
@@ -342,44 +428,6 @@ if (delta > 255) {
     }
 
     /**
-     * Gets the next ShortMessage MIDI event on the same channel.
-     *
-     * @throws NoSuchElementException no next MIDI event
-     * @throws IllegalStateException current event is not a ShortMessage
-     */
-    public MidiEvent getNextMidiEvent() throws NoSuchElementException {
-
-        ShortMessage shortMessage;
-
-        MidiEvent midiEvent = midiTrack.get(midiEventIndex);
-        MidiMessage midiMessage = midiEvent.getMessage();
-        if (midiMessage instanceof ShortMessage) {
-            shortMessage = (ShortMessage) midiMessage;
-        } else {
-            throw new IllegalStateException("current is not ShortMessage");
-        }
-
-        int channel = shortMessage.getChannel();
-        int data1 = shortMessage.getData1();
-
-        for (int i = midiEventIndex + 1; i < midiTrack.size(); i++) {
-            midiEvent = midiTrack.get(i);
-            midiMessage = midiEvent.getMessage();
-            if (midiMessage instanceof ShortMessage) {
-                shortMessage = (ShortMessage) midiMessage;
-                if (shortMessage.getChannel() == channel &&
-                    shortMessage.getCommand() == ShortMessage.NOTE_ON &&
-                    shortMessage.getData1() != data1) {
-logger.log(Level.DEBUG, "next: " + shortMessage.getChannel() + "ch, " + shortMessage.getData1());
-                    return midiEvent;
-                }
-            }
-        }
-
-        throw new NoSuchElementException("no next event of channel: " + channel);
-    }
-
-    /**
      * Gets the currently selected NoteOn event and its counterpart NoteOff event.
      * Use IllegalStateException only for bug traps.
      * @see NoteMessage
@@ -391,7 +439,7 @@ logger.log(Level.DEBUG, "next: " + shortMessage.getChannel() + "ch, " + shortMes
 
         ShortMessage shortMessage;
 
-        MidiEvent midiEvent = midiTrack.get(midiEventIndex);
+        MidiEvent midiEvent = midiEvents.get(midiEventIndex);
         MidiMessage midiMessage = midiEvent.getMessage();
         if (midiMessage instanceof ShortMessage) {
             shortMessage = (ShortMessage) midiMessage;
@@ -402,13 +450,15 @@ logger.log(Level.DEBUG, "next: " + shortMessage.getChannel() + "ch, " + shortMes
         int channel = shortMessage.getChannel();
         int data1 = shortMessage.getData1();
 
-        for (int i = midiEventIndex + 1; i < midiTrack.size(); i++) {
-            midiEvent = midiTrack.get(i);
+        for (int i = midiEventIndex + 1; i < midiEvents.size(); i++) {
+            midiEvent = midiEvents.get(i);
             midiMessage = midiEvent.getMessage();
             if (midiMessage instanceof ShortMessage) {
                 shortMessage = (ShortMessage) midiMessage;
                 if (shortMessage.getChannel() == channel &&
-                    shortMessage.getData1() == data1) {
+                    shortMessage.getData1() == data1 &&
+                    isNoteOff(shortMessage) &&
+                    !noteOffEventUsed.get(i)) {
 
                     noteOffEventUsed.set(i);    // consumption flag on
                     return midiEvent;
@@ -417,6 +467,12 @@ logger.log(Level.DEBUG, "next: " + shortMessage.getChannel() + "ch, " + shortMes
         }
 
         throw new NoSuchElementException(channel + "ch, " + data1);
+    }
+
+    /** A NoteOn with the velocity 0 is a NoteOff too. */
+    static boolean isNoteOff(ShortMessage shortMessage) {
+        return shortMessage.getCommand() == ShortMessage.NOTE_OFF ||
+               (shortMessage.getCommand() == ShortMessage.NOTE_ON && shortMessage.getData2() == 0);
     }
 
     /** whether it has already been consumed */
@@ -456,6 +512,15 @@ logger.log(Level.DEBUG, "next: " + shortMessage.getChannel() + "ch, " + shortMes
     private final int[] nrpnLSB = new int[MidiContext.MAX_MIDI_CHANNELS];
     /** NRPN MSB */
     private final int[] nrpnMSB = new int[MidiContext.MAX_MIDI_CHANNELS];
+
+    /** the control changes which are remembered here instead of being converted */
+    private static final List<String> keys = List.of(
+            "short.176.32", "short.176.98", "short.176.99", "short.176.100", "short.176.101");
+
+    @Override
+    public boolean accept(String key) {
+        return keys.contains(key);
+    }
 
     /** bank, rpn, nrpn */
     @Override

@@ -35,7 +35,7 @@ class SmafSequence extends Sequence {
     private static final Logger logger = getLogger(SmafSequence.class.getName());
 
     /** TODO use encoding in header info */
-    private static final String writingEncoding;
+    static final String writingEncoding;
 
     /** TODO content should be moved to SmafFileFormat/FileChunk */
     SmafSequence(FileChunk fileChunk) throws InvalidSmafDataException {

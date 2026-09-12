@@ -42,7 +42,7 @@ public class ModulationMessage extends vavi.sound.smaf.ShortMessage
     }
 
     /** for SmafConvertible */
-    protected ModulationMessage() {
+    public ModulationMessage() {
     }
 
     /** */
@@ -77,12 +77,12 @@ public class ModulationMessage extends vavi.sound.smaf.ShortMessage
 
     @Override
     public byte[] getMessage() {
-        return null; // TODO
+        return HandyPhoneStandard.control(duration, channel, 0x03, modulation);
     }
 
     @Override
     public int getLength() {
-        return 0;   // TODO
+        return getMessage().length;
     }
 
     @Override
@@ -102,6 +102,11 @@ public class ModulationMessage extends vavi.sound.smaf.ShortMessage
     }
 
     @Override
+    public boolean accept(String key) {
+        return "short.176.1".equals(key);
+    }
+
+    @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
 
@@ -113,7 +118,7 @@ public class ModulationMessage extends vavi.sound.smaf.ShortMessage
         int voice = context.retrieveVoice(channel);
 
         ModulationMessage smafMessage = new ModulationMessage();
-        smafMessage.setDuration(context.getDuration());
+        smafMessage.setDuration(context.getDuration(track));
         smafMessage.setChannel(voice);
         smafMessage.setModulation(data2);
 

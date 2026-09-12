@@ -42,7 +42,7 @@ public class FineTuneMessage extends vavi.sound.smaf.ShortMessage
     }
 
     /** for SmafConvertible */
-    protected FineTuneMessage() {
+    public FineTuneMessage() {
     }
 
     /** */
@@ -100,6 +100,12 @@ public class FineTuneMessage extends vavi.sound.smaf.ShortMessage
         return events;
     }
 
+    /** TODO the MIDI RPN fine tuning is not converted, {@link SmafContext} swallows the RPN messages */
+    @Override
+    public boolean accept(String key) {
+        return false;
+    }
+
     @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
@@ -111,7 +117,7 @@ public class FineTuneMessage extends vavi.sound.smaf.ShortMessage
         int voice = context.retrieveVoice(channel);
 
         FineTuneMessage smafMessage = new FineTuneMessage();
-        smafMessage.setDuration(context.getDuration());
+        smafMessage.setDuration(context.getDuration(track));
         smafMessage.setChannel(voice);
         smafMessage.setFineTune(shortMessage.getData2()); // TODO data is 16bit
 

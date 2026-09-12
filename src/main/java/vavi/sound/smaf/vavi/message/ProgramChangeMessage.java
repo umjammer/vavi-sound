@@ -44,7 +44,7 @@ public class ProgramChangeMessage extends vavi.sound.smaf.ShortMessage
     }
 
     /** for SmafConvertible */
-    protected ProgramChangeMessage() {
+    public ProgramChangeMessage() {
     }
 
     /** */
@@ -79,12 +79,12 @@ public class ProgramChangeMessage extends vavi.sound.smaf.ShortMessage
 
     @Override
     public byte[] getMessage() {
-        return null; // TODO
+        return HandyPhoneStandard.control(duration, channel, 0x00, program);
     }
 
     @Override
     public int getLength() {
-        return 0;   // TODO
+        return getMessage().length;
     }
 
     @Override
@@ -111,7 +111,16 @@ public class ProgramChangeMessage extends vavi.sound.smaf.ShortMessage
         }
     }
 
-    /** TODO */
+    @Override
+    public boolean accept(String key) {
+        return "short.192".equals(key);
+    }
+
+    /**
+     * A percussion channel has no program of its own, the program selects the drum sound of
+     * each single note there.
+     * @see NoteMessage#getSmafEvents
+     */
     @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
@@ -123,9 +132,14 @@ public class ProgramChangeMessage extends vavi.sound.smaf.ShortMessage
         int track = context.retrieveSmafTrack(channel);
         int voice = context.retrieveVoice(channel);
 
+        if (context.isPercussion(channel)) {
+            return null;
+        }
+
         ProgramChangeMessage changeVoiceMessage = new ProgramChangeMessage();
+        changeVoiceMessage.setDuration(context.getDuration(track));
         changeVoiceMessage.setChannel(voice);
-        changeVoiceMessage.setProgram(channel == 9 ? 0 : data1);
+        changeVoiceMessage.setProgram(data1);
 
         context.setBeforeTick(track, midiEvent.getTick());
 

@@ -79,7 +79,7 @@ public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
     }
 
     /** for SmafConvertible */
-    protected BankSelectMessage() {
+    public BankSelectMessage() {
     }
 
     /** */
@@ -87,9 +87,9 @@ public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
         return bank;
     }
 
-    /** */
+    /** @param bank 0x00 ~ 0xff, 0x80 ~ 0xff selects a percussion bank for HandyPhoneStandard */
     public void setBank(int bank) {
-        this.bank = bank & 0x7f;
+        this.bank = bank & 0xff;
     }
 
     /** */
@@ -114,12 +114,12 @@ public class BankSelectMessage extends vavi.sound.smaf.ShortMessage
 
     @Override
     public byte[] getMessage() {
-        return null; // TODO
+        return HandyPhoneStandard.control(duration, channel, 0x01, bank);
     }
 
     @Override
     public int getLength() {
-        return 0;   // TODO
+        return getMessage().length;
     }
 
     @Override
@@ -175,24 +175,33 @@ logger.log(Level.DEBUG, "BankSelect(" + significant + "): [" + duration + "] " +
         }
     }
 
-    /** TODO */
+    @Override
+    public boolean accept(String key) {
+        return "short.176.0".equals(key) || "short.176.32".equals(key);
+    }
+
+    /**
+     * HandyPhoneStandard has one bank per channel, the MSB 0x00 ~ 0x7f of the MIDI bank is
+     * used, its 0x80 bit telling a percussion bank instead.
+     */
     @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
 
         ShortMessage shortMessage = (ShortMessage) midiEvent.getMessage();
         int channel = shortMessage.getChannel();
-        int data1 = shortMessage.getData1();
+        int data2 = shortMessage.getData2();
 
         int track = context.retrieveSmafTrack(channel);
+        int voice = context.retrieveVoice(channel);
 
         BankSelectMessage changeBankMessage = new BankSelectMessage();
-        changeBankMessage.setDuration(context.getDuration());
-        changeBankMessage.setChannel(channel % 4);
-        changeBankMessage.setBank(data1);
+        changeBankMessage.setDuration(context.getDuration(track));
+        changeBankMessage.setChannel(voice);
+        changeBankMessage.setBank((data2 & 0x7f) | (context.isPercussion(channel) ? 0x80 : 0x00));
 
         context.setBeforeTick(track, midiEvent.getTick());
-//logger.log(Level.TRACE, channel + ": " + StringUtil.toHex2(data1) + ", " + StringUtil.toHex2(changeVoiceMessage.getProgram()) + ", " + changeBankMessage.getBank());
+logger.log(Level.DEBUG, "BankSelect: " + channel + "ch, 0x%02x".formatted(changeBankMessage.getBank()));
 
         return new SmafEvent[] {
             new SmafEvent(changeBankMessage, midiEvent.getTick()),

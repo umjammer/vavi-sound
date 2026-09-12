@@ -43,7 +43,7 @@ public class PitchBendMessage extends vavi.sound.smaf.ShortMessage
     }
 
     /** for SmafConvertible */
-    protected PitchBendMessage() {
+    public PitchBendMessage() {
     }
 
     /** */
@@ -78,12 +78,12 @@ public class PitchBendMessage extends vavi.sound.smaf.ShortMessage
 
     @Override
     public byte[] getMessage() {
-        return null; // TODO
+        return HandyPhoneStandard.control(duration, channel, 0x04, pitchBend >> 7);
     }
 
     @Override
     public int getLength() {
-        return 0;   // TODO
+        return getMessage().length;
     }
 
     /**
@@ -106,6 +106,12 @@ public class PitchBendMessage extends vavi.sound.smaf.ShortMessage
     }
 
     @Override
+    public boolean accept(String key) {
+        return "short.224".equals(key);
+    }
+
+    /** HandyPhoneStandard keeps the MSB of the MIDI pitch bend only. */
+    @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
 
@@ -117,9 +123,9 @@ public class PitchBendMessage extends vavi.sound.smaf.ShortMessage
         int voice = context.retrieveVoice(channel);
 
         PitchBendMessage smafMessage = new PitchBendMessage();
-        smafMessage.setDuration(context.getDuration());
+        smafMessage.setDuration(context.getDuration(track));
         smafMessage.setChannel(voice);
-        smafMessage.setPitchBend(data2);
+        smafMessage.setPitchBend(data2 << 7);
 
         context.setBeforeTick(track, midiEvent.getTick());
 

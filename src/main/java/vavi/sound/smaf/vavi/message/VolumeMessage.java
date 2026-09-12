@@ -6,16 +6,12 @@
 
 package vavi.sound.smaf.vavi.message;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
 
-import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.vavi.chunk.TrackChunk.FormatType;
@@ -95,26 +91,7 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
 
     @Override
     public byte[] getMessage() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        FormatType formatType = FormatType.HandyPhoneStandard; // TODO
-        switch (formatType) {
-        case HandyPhoneStandard:
-            try {
-                MidiUtil.writeVarInt(new DataOutputStream(baos), duration);
-            } catch (IOException e) {
-                assert false;
-            }
-            baos.write(0x00);
-            baos.write((channel << 6) | 0x37);
-            baos.write(volume);
-            break;
-        case MobileStandard_Compress:
-        case MobileStandard_NoCompress:
-        default:
-            throw new UnsupportedOperationException("not implemented"); // TODO
-//            break;
-        }
-        return baos.toByteArray();
+        return HandyPhoneStandard.control(duration, channel, 0x07, volume);
     }
 
     @Override
@@ -150,6 +127,11 @@ logger.log(Level.DEBUG, "volume: " + volume);
     }
 
     @Override
+    public boolean accept(String key) {
+        return "short.176.7".equals(key);
+    }
+
+    @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
 
@@ -161,7 +143,7 @@ logger.log(Level.DEBUG, "volume: " + volume);
         int voice = context.retrieveVoice(channel);
 
         VolumeMessage smafMessage = new VolumeMessage();
-        smafMessage.setDuration(context.getDuration());
+        smafMessage.setDuration(context.getDuration(track));
         smafMessage.setChannel(voice);
         smafMessage.setVolume(data2);
 logger.log(Level.DEBUG, "voice: " + voice + ", volume: " + data2);

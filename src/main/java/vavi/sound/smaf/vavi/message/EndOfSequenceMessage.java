@@ -6,16 +6,11 @@
 
 package vavi.sound.smaf.vavi.message;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import javax.sound.midi.MidiEvent;
 
-import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.SmafEvent;
-import vavi.sound.smaf.vavi.chunk.TrackChunk.FormatType;
 
 import static java.lang.System.getLogger;
 
@@ -55,26 +50,7 @@ public class EndOfSequenceMessage extends vavi.sound.smaf.ShortMessage
 
     @Override
     public byte[] getMessage() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        FormatType formatType = FormatType.HandyPhoneStandard; // TODO
-        switch (formatType) {
-        case HandyPhoneStandard:
-            try {
-                MidiUtil.writeVarInt(new DataOutputStream(baos), duration);
-            } catch (IOException e) {
-                assert false;
-            }
-            baos.write(0x00);
-            baos.write(0x00);
-            baos.write(0x00);
-            break;
-        case MobileStandard_Compress:
-        case MobileStandard_NoCompress:
-        default:
-            throw new UnsupportedOperationException("not implemented"); // TODO
-//            break;
-        }
-        return baos.toByteArray();
+        return HandyPhoneStandard.message(duration, 0x00, 0x00, 0x00);
     }
 
     @Override
@@ -93,6 +69,11 @@ logger.log(Level.DEBUG, "EOT: " + midiEvent.getMessage().getClass().getName());
         return null;
     }
 
+    @Override
+    public boolean accept(String key) {
+        return "meta.47".equals(key);
+    }
+
     /**
      * @return The only return value of this method is the SmafEvent of EndOfSequenceMessage for SMAF tracks 0 to 3.
      *         Contains null if there is no track.
@@ -105,7 +86,7 @@ logger.log(Level.DEBUG, "EOT: " + midiEvent.getMessage().getClass().getName());
         for (int track = 0; track < SmafContext.MAX_SMAF_TRACKS; track++) {
             if (context.isTrackUsed(track)) {
                 long currentTick = midiEvent.getTick();
-                int delta = context.retrieveAdjustedDelta(track, currentTick);
+                int delta = context.retrieveDelta(track, currentTick);
 
                 EndOfSequenceMessage smafMessage = new EndOfSequenceMessage();
                 smafMessage.setDuration(delta);

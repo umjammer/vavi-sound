@@ -34,8 +34,10 @@ public class YamahaMessage extends MachineDependentMessage implements MidiConver
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
-        byte[] encoded = new byte[(getLength() - 1) * 8 / 7 + 1];
-        int encodedLength = encode87(getData(), encoded, 0, getLength() - 1);
+        // getLength() is the length of the whole smaf message, the data is what is packed
+        byte[] data = getData();
+        byte[] encoded = new byte[data.length * 8 / 7 + 1];
+        int encodedLength = encode87(data, encoded, 0, data.length);
 
         // pack 7bit
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

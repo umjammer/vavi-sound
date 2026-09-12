@@ -42,7 +42,7 @@ public class ExpressionMessage extends vavi.sound.smaf.ShortMessage
     }
 
     /** for SmafConvertible */
-    protected ExpressionMessage() {
+    public ExpressionMessage() {
     }
 
     /** */
@@ -77,12 +77,12 @@ public class ExpressionMessage extends vavi.sound.smaf.ShortMessage
 
     @Override
     public byte[] getMessage() {
-        return null; // TODO
+        return HandyPhoneStandard.control(duration, channel, 0x0b, volume);
     }
 
     @Override
     public int getLength() {
-        return 0;   // TODO
+        return getMessage().length;
     }
 
     @Override
@@ -103,6 +103,11 @@ public class ExpressionMessage extends vavi.sound.smaf.ShortMessage
     }
 
     @Override
+    public boolean accept(String key) {
+        return "short.176.11".equals(key);
+    }
+
+    @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
 
@@ -113,7 +118,7 @@ public class ExpressionMessage extends vavi.sound.smaf.ShortMessage
         int voice = context.retrieveVoice(channel);
 
         ExpressionMessage smafMessage = new ExpressionMessage();
-        smafMessage.setDuration(context.getDuration());
+        smafMessage.setDuration(context.getDuration(track));
         smafMessage.setChannel(voice);
         smafMessage.setVolume(shortMessage.getData2());
 

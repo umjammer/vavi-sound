@@ -27,7 +27,7 @@ import static java.lang.System.getLogger;
  * @version 0.00 041227 nsano port from MFi <br>
  */
 public class NoteMessage extends SmafMessage
-    implements MidiConvertible {
+    implements MidiConvertible, SmafConvertible {
 
     private static final Logger logger = getLogger(NoteMessage.class.getName());
 
@@ -99,8 +99,10 @@ public class NoteMessage extends SmafMessage
         this.velocity = velocity;
     }
 
-    /** */
-    protected NoteMessage() {
+    /** for SmafConvertible, a HandyPhoneStandard note without velocity */
+    public NoteMessage() {
+        this.octave = 0;
+        this.velocity = -1;
     }
 
     /**
@@ -199,12 +201,12 @@ public class NoteMessage extends SmafMessage
 
     @Override
     public byte[] getMessage() {
-        return null; // TODO
+        return HandyPhoneStandard.note(duration, (channel << 6) | (octave << 4) | note, gateTime);
     }
 
     @Override
     public int getLength() {
-        return 0;   // TODO
+        return getMessage().length;
     }
 
 private static int uc = 0;
@@ -244,78 +246,72 @@ if (gateTime == 0) {
         return events;
     }
 
+    @Override
+    public boolean accept(String key) {
+        return "short.128".equals(key) || "short.144".equals(key);
+    }
+
     /**
+     * The NoteOff of the pair is consumed here, so only the NoteOn becomes a message.
+     *
      * TODO if the Δ time is smaller than the gate time of the previous NoteMessage of the same voice and same key,
      *      it will be the continuation sound from the previous NoteMessage.
      * TODO if there is room for the next note, do you extend it, and if there is not, cut it? (unimplemented)
      */
+    @Override
     public SmafEvent[] getSmafEvents(MidiEvent midiEvent, SmafContext context)
         throws InvalidSmafDataException {
 
         ShortMessage shortMessage = (ShortMessage) midiEvent.getMessage();
         int channel = shortMessage.getChannel();
-        int command = shortMessage.getCommand();
         int data1 = shortMessage.getData1();
-        int data2 = shortMessage.getData2();
-//logger.log(Level.TRACE, midiEvent.getTick() + ", " + channel + ", " + command + ", " + (context.retrievePitch(channel, data1) + 45) + ", " + (data2 / 2));
+//logger.log(Level.TRACE, midiEvent.getTick() + ", " + channel + ", " + command + ", " + context.retrievePitch(channel, data1));
 
-        if (command == ShortMessage.NOTE_OFF ||
-            // note on with velocity 0
-            (command == ShortMessage.NOTE_ON && data2 == 0)) {
-
+        if (SmafContext.isNoteOff(shortMessage)) {
             if (!context.isNoteOffEventUsed()) {
 logger.log(Level.DEBUG, "[" + context.getMidiEventIndex() + "] no pair of ON for: " + channel + "ch, " + data1);
             }
 
             return null;
-        } else /* if (command == ShortMessage.NOTE_ON) */ {
-
-            MidiEvent noteOffEvent;
-
-            try {
-                noteOffEvent = context.getNoteOffMidiEvent();
-            } catch (NoSuchElementException e) {
-logger.log(Level.WARNING, "[" + context.getMidiEventIndex() + "] no pair of OFF for: " + channel + "ch, " + data1);
-                return null;
-            }
-
-            int track = context.retrieveSmafTrack(channel);
-            int voice = context.retrieveVoice(channel);
-
-            double scale = context.getScale();
-
-            long currentTick = midiEvent.getTick();
-            long noteOffTick = noteOffEvent.getTick();
-            int length = (int) Math.round((noteOffTick - currentTick) / scale);
-
-            int delta = context.getDuration();
-
-            int onLength = (length + 254) / 255;
-            SmafEvent[] smafEvents = new SmafEvent[1/* onLength */];
-            for (int i = 0; i < onLength; i++) {
-
-                NoteMessage smafMessage = new NoteMessage();
-                smafMessage.setDuration(i == 0 ? delta : 0);
-                smafMessage.setChannel(voice);
-                smafMessage.setNote(context.retrievePitch(channel, data1));
-                smafMessage.setGateTime(i == onLength - 1 ? length % 255 : 255);
-if (length >= 255) {
- logger.log(Level.DEBUG, channel + "ch, " + smafMessage.getNote() + ", " + smafMessage.getDuration() + ":[" + i + "]:" + (i == onLength - 1 ? length % 255 : 255) + "/" + length);
-}
-//logger.log(Level.TRACE, channel + ", " + smafMessage.getVoice() + ", " + ((smafMessage.getMessage()[1] & 0xc0) >> 6));
-                smafEvents[i] = new SmafEvent(smafMessage, 0L); // TODO 0l
-if (smafEvents[i] == null) {
- logger.log(Level.DEBUG, "[" + i + "]: " + smafEvents[i]);
-}
-                if (i == 0) {
-                    context.setBeforeTick(track, midiEvent.getTick());
-                    break;
-                } else {
-//                    context.incrementBeforeTick(track, i == onLength - 1 ? length % 255 : 255);
-                }
-            }
-
-            return smafEvents;
         }
+
+        MidiEvent noteOffEvent;
+
+        try {
+            noteOffEvent = context.getNoteOffMidiEvent();
+        } catch (NoSuchElementException e) {
+logger.log(Level.WARNING, "[" + context.getMidiEventIndex() + "] no pair of OFF for: " + channel + "ch, " + data1);
+            return null;
+        }
+
+        int track = context.retrieveSmafTrack(channel);
+        int voice = context.retrieveVoice(channel);
+
+        int length = (int) (context.retrieveSteps(noteOffEvent.getTick()) - context.retrieveSteps(midiEvent.getTick()));
+        // a gate time of 0 is no note at all, and one message cannot be longer than maxSteps
+        int gateTime = Math.clamp(length, 1, HandyPhoneStandard.maxSteps);
+        int duration = context.getDuration(track);
+
+        context.setBeforeTick(track, midiEvent.getTick());
+
+        NoteMessage smafMessage = new NoteMessage();
+        smafMessage.setDuration(duration);
+        smafMessage.setChannel(voice);
+        smafMessage.setNote(context.retrievePitch(channel, data1));
+        smafMessage.setGateTime(gateTime);
+//logger.log(Level.TRACE, channel + "ch, " + smafMessage);
+
+        if (context.isPercussion(channel)) {
+            // a rhythm channel has no pitch, the program change before the note selects the drum sound
+            smafMessage.setDuration(0);
+            return new SmafEvent[] {
+                new SmafEvent(new ProgramChangeMessage(duration, voice, data1), midiEvent.getTick()),
+                new SmafEvent(smafMessage, midiEvent.getTick())
+            };
+        }
+
+        return new SmafEvent[] {
+            new SmafEvent(smafMessage, midiEvent.getTick())
+        };
     }
 }

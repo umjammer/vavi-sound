@@ -1,0 +1,10 @@
+vavi.sound.smaf.vavi.message.NoteMessage
+vavi.sound.smaf.vavi.message.ProgramChangeMessage
+vavi.sound.smaf.vavi.message.BankSelectMessage
+vavi.sound.smaf.vavi.message.ModulationMessage
+vavi.sound.smaf.vavi.message.PitchBendMessage
+vavi.sound.smaf.vavi.message.VolumeMessage
+vavi.sound.smaf.vavi.message.PanMessage
+vavi.sound.smaf.vavi.message.ExpressionMessage
+vavi.sound.smaf.vavi.message.EndOfSequenceMessage
+vavi.sound.smaf.vavi.message.SmafContext

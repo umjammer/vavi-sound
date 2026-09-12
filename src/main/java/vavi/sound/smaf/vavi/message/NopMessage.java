@@ -6,15 +6,9 @@
 
 package vavi.sound.smaf.vavi.message;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import javax.sound.midi.MidiEvent;
 
-import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.ShortMessage;
-import vavi.sound.smaf.vavi.chunk.TrackChunk.FormatType;
 
 
 /**
@@ -31,8 +25,8 @@ import vavi.sound.smaf.vavi.chunk.TrackChunk.FormatType;
 public class NopMessage extends ShortMessage
     implements MidiConvertible {
 
-    /** TODO formatType */
-    public static final int maxSteps = 16511;
+    /** the largest duration of one message */
+    public static final int maxSteps = HandyPhoneStandard.maxSteps;
 
     /**
      * @param duration
@@ -52,25 +46,7 @@ public class NopMessage extends ShortMessage
 
     @Override
     public byte[] getMessage() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        FormatType formatType = FormatType.HandyPhoneStandard; // TODO
-        switch (formatType) {
-        case HandyPhoneStandard:
-            try {
-                MidiUtil.writeVarInt(new DataOutputStream(baos), duration);
-            } catch (IOException e) {
-                assert false;
-            }
-            baos.write(0xff);
-            baos.write(0x00);
-            break;
-        case MobileStandard_Compress:
-        case MobileStandard_NoCompress:
-        default:
-            throw new UnsupportedOperationException("not implemented"); // TODO
-//            break;
-        }
-        return baos.toByteArray();
+        return HandyPhoneStandard.message(duration, 0xff, 0x00);
     }
 
     @Override

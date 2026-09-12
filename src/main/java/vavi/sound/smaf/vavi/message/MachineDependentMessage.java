@@ -28,6 +28,39 @@ public abstract class MachineDependentMessage extends SysexMessage {
     /** 7bit packed sysex message for 8bit smaf sysex message */
     public static final int SYSEX_PACKED = 0x7f;
 
+    /**
+     * {@link vavi.sound.smaf.vavi.chunk.TrackChunk.FormatType#HandyPhoneStandard}
+     * <pre>
+     *  duration    1 or 2
+     *  0xff
+     *  0xf0
+     *  length      1 byte
+     *  data        the maker id ~ 0xf7
+     * </pre>
+     *
+     * @throws IllegalArgumentException the data is longer than the 1 byte length can tell
+     */
+    @Override
+    public byte[] getMessage() {
+        int length = data.length - 1; // data[0] is the status
+        if (length > 0xff) {
+            throw new IllegalArgumentException("too long for HandyPhoneStandard: " + length);
+        }
+        int[] message = new int[3 + length];
+        message[0] = 0xff;
+        message[1] = 0xf0;
+        message[2] = length;
+        for (int i = 0; i < length; i++) {
+            message[3 + i] = data[i + 1];
+        }
+        return HandyPhoneStandard.message(duration, message);
+    }
+
+    @Override
+    public int getLength() {
+        return getMessage().length;
+    }
+
     /** */
     public static class Factory {
         /**
