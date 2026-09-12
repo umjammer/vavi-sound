@@ -108,7 +108,7 @@ A. yes you can, follow those steps
     * ~~`tritonus:tritonus-remaining:org.tritonus.sampled.file.WaveAudioFileReader`~~
   * ~~use service provider for mfi, smaf sequencer~~
   * ~~service loader instead of vavi.properties~~
-  * midi -> smaf ... ~~fill `Chunk#writeTo`~~ -> now `SmafMessage#getMessage` (mostly `return null`)
+  * ~~midi -> smaf~~
   * ~~https://github.com/but80/smaf825 (patch dump)~~ -> https://github.com/umjammer/vavi-sound-ma
   * ~~psx adpcm spi~~
   * ~~sshd (.ss2) spi~~
