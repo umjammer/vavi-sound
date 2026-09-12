@@ -6,8 +6,10 @@
 
 package vavi.sound.sampled.misc;
 
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.Control;
 import javax.sound.sampled.Control.Type;
+import javax.sound.sampled.DataLine;
 import javax.sound.sampled.Line;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
@@ -64,6 +66,12 @@ public class HijackMixer implements Mixer {
 
     @Override
     public Line getLine(Line.Info info) throws LineUnavailableException {
+        if (info instanceof DataLine.Info dataLineInfo) {
+            AudioFormat[] formats = dataLineInfo.getFormats();
+            if (formats.length > 0) {
+                line.setFormat(formats[0]);
+            }
+        }
         return line;
     }
 

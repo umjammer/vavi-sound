@@ -135,6 +135,10 @@ public class HijackSourceDataLine implements SourceDataLine {
         return format;
     }
 
+    void setFormat(AudioFormat format) {
+        this.format = format;
+    }
+
     @Override
     public int getBufferSize() {
         return bufferSize;
