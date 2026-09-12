@@ -19,6 +19,7 @@ import javax.sound.midi.SysexMessage;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
+import vavi.sound.mobile.StreamExclusive;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.vavi.VaviSmafSynthesizer;
@@ -41,6 +42,9 @@ import static java.lang.System.getLogger;
  *              +--------- channel
  *   gateTime   1or2
  * </pre>
+ * system property
+ * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
+ * to send {@link StreamExclusive}s to the synthesizer, default {@code false}</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071009 nsano initial version <br>
@@ -179,7 +183,7 @@ public class WaveMessage extends SmafMessage
      * |f0|45|01|DH DL|
      * +--+--+--+--+--+--+--+
      *  0x45 manufacturer ID added arbitrarily
-     *  0x01 function id, indicates {@link WaveMessage} data
+     *  0x03 function id, indicates {@link WaveMessage} data
      *  DH DL numbered id
      * </pre>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
@@ -192,22 +196,30 @@ public class WaveMessage extends SmafMessage
         this.midiGateTimeTicks = context.getTickOfGateTime(gateTime);
 logger.log(Level.INFO, "midiGateTimeTics: " + midiGateTimeTicks);
 
-        SysexMessage sysexMessage = new SysexMessage();
+        if (!StreamExclusive.isEnabled()) {
+            SysexMessage sysexMessage = new SysexMessage();
+            int id = SmafMessageStore.put(this);
+            byte[] data = {
+                    VaviMidiDeviceProvider.MANUFACTURER_ID,
+                    WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
+                    (byte) ((id / 0x100) & 0xff),
+                    (byte) ((id % 0x100) & 0xff)
+            };
+            sysexMessage.setMessage(0xf0,    // sysex
+                                    data,
+                                    data.length);
 
-        int id = SmafMessageStore.put(this);
-        byte[] data = {
-                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
-                WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
-                (byte) ((id / 0x100) & 0xff),
-                (byte) ((id % 0x100) & 0xff)
-        };
-        sysexMessage.setMessage(0xf0,    // sysex
-                               data,
-                               data.length);
-
-        return new MidiEvent[] {
-            new MidiEvent(sysexMessage, context.getCurrentTick())
-        };
+            return new MidiEvent[] {
+                new MidiEvent(sysexMessage, context.getCurrentTick())
+            };
+        } else {
+            // the synthesizer plays the wave, it is told when to start and when to stop,
+            // the wave itself came as a WaveDataMessage of the same number
+            return new MidiEvent[] {
+                new MidiEvent(StreamExclusive.pack(StreamExclusive.on(number, 127, channel)), context.getCurrentTick()),
+                new MidiEvent(StreamExclusive.pack(StreamExclusive.off(number)), context.getCurrentTick() + midiGateTimeTicks)
+            };
+        }
     }
 
     private long midiGateTimeTicks;

@@ -8,16 +8,14 @@ package vavi.sound.mfi.vavi.sequencer;
 
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Receiver;
-import javax.sound.midi.SysexMessage;
 
 import vavi.sound.midi.VaviMidiDeviceProvider;
+import vavi.sound.mobile.StreamExclusive;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
-import static vavi.sound.midi.MidiUtil.encode87;
 
 
 /**
@@ -33,7 +31,7 @@ import static vavi.sound.midi.MidiUtil.encode87;
  * <pre>
  *  f0 45 7f &lt;encode87(43 ... f7)&gt; f7
  *     ~~ ~~
- *     |  +--- {@link #SYSEX_PACKED}, an 8 bit smaf exclusive packed into 7 bit bytes
+ *     |  +--- {@link StreamExclusive#SYSEX_PACKED}, an 8 bit smaf exclusive packed into 7 bit bytes
  *     +------ {@link VaviMidiDeviceProvider#MANUFACTURER_ID}
  * </pre>
  * <p>
@@ -47,15 +45,12 @@ import static vavi.sound.midi.MidiUtil.encode87;
  * @version 0.00 260911 nsano initial version <br>
  * @see vavi.sound.smaf.vavi.message.yamaha.YamahaMessage
  */
-public final class SmafExclusive {
+public final class YamahaExclusive {
 
-    private static final Logger logger = getLogger(SmafExclusive.class.getName());
+    private static final Logger logger = getLogger(YamahaExclusive.class.getName());
 
-    private SmafExclusive() {
+    private YamahaExclusive() {
     }
-
-    /** 7 bit packed sysex which carries an 8 bit smaf exclusive */
-    public static final int SYSEX_PACKED = vavi.sound.smaf.vavi.message.MachineDependentMessage.SYSEX_PACKED;
 
     /** YAMAHA */
     private static final int MANUFACTURER = 0x43;
@@ -137,27 +132,6 @@ public final class SmafExclusive {
     }
 
     /**
-     * Packs an 8 bit smaf exclusive the way
-     * {@link vavi.sound.smaf.vavi.message.yamaha.YamahaMessage} does.
-     *
-     * @param exclusive 0: manufacturer id ... last: 0xf7, 8 bit
-     */
-    public static SysexMessage pack(byte[] exclusive) throws InvalidMidiDataException {
-        byte[] encoded = new byte[exclusive.length * 8 / 7 + 1];
-        int encodedLength = encode87(exclusive, encoded, 0, exclusive.length);
-
-        byte[] data = new byte[2 + encodedLength + 1];
-        data[0] = (byte) VaviMidiDeviceProvider.MANUFACTURER_ID;
-        data[1] = (byte) SYSEX_PACKED;
-        System.arraycopy(encoded, 0, data, 2, encodedLength);
-        data[data.length - 1] = exclusive[exclusive.length - 1]; // 0xf7
-
-        SysexMessage sysexMessage = new SysexMessage();
-        sysexMessage.setMessage(0xf0, data, data.length);
-        return sysexMessage;
-    }
-
-    /**
      * Packs and sends an 8 bit smaf exclusive.
      * <p>
      * A receiver which cannot take it is not an error here - the MFi message it
@@ -172,7 +146,7 @@ public final class SmafExclusive {
             return;
         }
         try {
-            receiver.send(pack(exclusive), -1);
+            receiver.send(StreamExclusive.pack(exclusive), -1);
 logger.log(Level.DEBUG, "smaf exclusive: " + exclusive.length + " bytes\n" + StringUtil.getDump(exclusive, 32));
         } catch (InvalidMidiDataException | RuntimeException e) {
 logger.log(Level.WARNING, "cannot send a smaf exclusive: " + e);

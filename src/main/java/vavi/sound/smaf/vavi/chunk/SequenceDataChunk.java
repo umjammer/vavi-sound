@@ -271,10 +271,10 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
                 int value = dis.readUnsignedByte();
                 switch (control) { // TODO no specification
                     case 0x00: // bank select MSB
-                        smafMessage = new BankSelectMessage(duration, channel, value, BankSelectMessage.Significant.Least);
+                        smafMessage = new BankSelectMessage(duration, channel, value, BankSelectMessage.Significant.Most);
                         break;
                     case 0x20: // bank select LSB
-                        smafMessage = new BankSelectMessage(duration, channel, value, BankSelectMessage.Significant.Most);
+                        smafMessage = new BankSelectMessage(duration, channel, value, BankSelectMessage.Significant.Least);
                         break;
                     case 0x01: // modulation depth MSB
                         smafMessage = new ModulationMessage(duration, channel, value);

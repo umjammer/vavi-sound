@@ -11,11 +11,13 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.ByteBuffer;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.SysexMessage;
 import javax.sound.midi.MidiEvent;
+import javax.sound.midi.SysexMessage;
 
+import vavi.sound.mfi.vavi.sequencer.YamahaExclusive;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
+import vavi.sound.mobile.StreamExclusive;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.vavi.sequencer.SmafMessageStore;
@@ -26,9 +28,12 @@ import static java.lang.System.getLogger;
 
 /**
  * WaveDataMessage.
- * <pre>
+ * <p>
+ * system property
+ * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
+ * to send the wave to the synthesizer as an exclusive, {@link StreamExclusive#wave} or, for a wave table
+ * one, {@code 43 05 00}, default {@code false}</li>
  *
- * </pre>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071010 nsano initial version <br>
  */
@@ -94,32 +99,51 @@ public class WaveDataMessage extends SmafMessage
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        SysexMessage sysexMessage = new SysexMessage();
+        SysexMessage sysexMessage;
 
-        int id = SmafMessageStore.put(this);
-        byte[] data = {
-                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
-                WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
-                (byte) ((id / 0x100) & 0xff),
-                (byte) ((id % 0x100) & 0xff)
-        };
-        sysexMessage.setMessage(0xf0,    // sysex
-                               data,
-                               data.length);
+        if (!StreamExclusive.isEnabled()) {
+            sysexMessage = new SysexMessage();
+            int id = SmafMessageStore.put(this);
+            byte[] data = {
+                    VaviMidiDeviceProvider.MANUFACTURER_ID,
+                    WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
+                    (byte) ((id / 0x100) & 0xff),
+                    (byte) ((id % 0x100) & 0xff)
+            };
+            sysexMessage.setMessage(0xf0,    // sysex
+                                    data,
+                                    data.length);
+        } else if (waveTable) {
+            // the "EXWV" exclusive as it is in the file, a wave table voice ("EXVO") plays it
+            sysexMessage = StreamExclusive.pack(YamahaExclusive.wave(number, data));
+        } else {
+            StreamExclusive.Format streamFormat = StreamExclusive.Format.valueOf(format);
+            if (streamFormat == null) {
+logger.log(Level.WARNING, "stream wave format not supported, skipped: " + this);
+                return new MidiEvent[0];
+            }
+            sysexMessage = StreamExclusive.pack(StreamExclusive.wave(number, streamFormat, channels, samplingBits, samplingRate, data));
+        }
 
         return new MidiEvent[] {
             new MidiEvent(sysexMessage, context.getCurrentTick())
         };
     }
 
+    /** true: the wave of a wave table voice ("EXWV"), false: a stream one ("Mwa*", "Awa*") */
+    private boolean waveTable;
+
+    /** tells this is the wave of a wave table voice, an "EXWV" one, not a stream wave */
+    public WaveDataMessage setWaveTable(boolean waveTable) {
+        this.waveTable = waveTable;
+        return this;
+    }
+
     @Override
     public void sequence() throws InvalidSmafDataException {
 logger.log(Level.DEBUG, "WAVE DATA[" + number + "]: " + this);
 //try {
-// java.io.OutputStream os = new java.io.FileOutputStream("out.pcm");
-// os.write(data);
-// os.flush();
-// os.close();
+// java.nio.file.Files.write(Path.of("out.pcm"), data);
 // logger.log(Level.DEBUG, "WAVE DATA saved to out.pcm");
 //} catch (java.io.IOException e) {
 // logger.log(Level.ERROR, e.getMessage(), e);

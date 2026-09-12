@@ -177,7 +177,7 @@ logger.log(Level.DEBUG, FOURCC + ": " + size + ", waveId: " + waveId + ", adpcm:
                 data,
                 waveType.getWaveSamplingFreq(),
                 waveType.getWaveBaseBit(),
-                waveType.getWaveChannels());
+                waveType.getWaveChannels()).setWaveTable(true);
     }
 
     @Override

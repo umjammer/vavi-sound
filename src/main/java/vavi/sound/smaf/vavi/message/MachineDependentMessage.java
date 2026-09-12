@@ -25,9 +25,6 @@ public abstract class MachineDependentMessage extends SysexMessage {
 
     private static final Logger logger = System.getLogger(MachineDependentMessage.class.getName());
 
-    /** 7bit packed sysex message for 8bit smaf sysex message */
-    public static final int SYSEX_PACKED = 0x7f;
-
     /**
      * {@link vavi.sound.smaf.vavi.chunk.TrackChunk.FormatType#HandyPhoneStandard}
      * <pre>

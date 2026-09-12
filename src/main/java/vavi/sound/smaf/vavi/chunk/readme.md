@@ -94,8 +94,15 @@ synthesizer (`SmafSynthesizer.SmafReceiver`) loads into a `vavi.sound.mobile.Aud
 stream, while "EXVO" becomes a `YamahaMessage` and is packed into an `f0 45 7f ... f7`
 sysex for the synthesizer itself. A synthesizer which wants wavetable voices reads the
 "EXVO" for the (bank, program) to wave id mapping and starts that stream on a note on;
-`vavi.sound.midi.ymf262.NukedWaveTable` of `../vavi-apps-mfiplayer` does exactly that.
+`vavi.sound.midi.ymf262.NukedWaveTable` of `../vavi-apps-mfiplayer` does that when it has
+no wave of its own for the voice.
 `MMMGChunk#getSmafEvents` emits the "VOIC" events once, ahead of its first "SEQU" track.
+
+With `vavi.sound.mobile.AudioEngine.disabled` set there is no ADPCM driver in front of the
+synthesizer: "EXWV" goes to it as the `43 05 00` exclusive it is, packed like "EXVO", and so
+does every stream wave ("Mwa*", "Awa*") with its start and stop, see
+`vavi.sound.mobile.StreamExclusive`. `NukedWaveTable` then plays the wave table voices and
+the streams itself.
 
 Reversed from the aarch64 `libM7_EmuSmw7.so` of MMF-Player
 (`YAMAHA::MaPhrCnv_ReqVoice`, `YAMAHA::MaSndDrv_SetWtWave`,

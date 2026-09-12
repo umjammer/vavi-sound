@@ -6,7 +6,7 @@
 
 package vavi.sound.mfi.vavi.nec;
 
-import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
+import vavi.sound.mfi.vavi.sequencer.YamahaExclusive;
 
 
 /**
@@ -68,8 +68,8 @@ public class Function1_240_5 extends ToneFunction {
 
     /** the voice is already the VM35 PCM voice image */
     @Override
-    SmafExclusive.VoiceType getVoiceType(Tone tone) {
-        return SmafExclusive.VoiceType.PCM;
+    YamahaExclusive.VoiceType getVoiceType(Tone tone) {
+        return YamahaExclusive.VoiceType.PCM;
     }
 
     /** 1 ~ 48000 [Hz] */

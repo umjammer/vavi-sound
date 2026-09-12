@@ -29,10 +29,6 @@ class MetaEventAdapter implements MetaEventListener {
 
     private static final Logger logger = getLogger(MetaEventAdapter.class.getName());
 
-    /**
-     * Implements playback mechanism using {@link SmafMessageStore}.
-     * @see WaveMessage#getMidiEvents(MidiContext)
-     */
     @Override
     public void meta(javax.sound.midi.MetaMessage message) {
 //logger.log(Level.TRACE, "type: " + message.getType());

@@ -25,12 +25,12 @@ import vavi.sound.mfi.Synthesizer;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
-import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
 import vavi.sound.mfi.vavi.sequencer.UnknownVendorSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
+import vavi.sound.mobile.StreamExclusive;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -196,7 +196,7 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
             case AudioDataSequencer.SYSEX_FUNCTION_ID_MFi4:
                 processSpecial_Vavi_Mfi4(message, receiver);
                 break;
-            case SmafExclusive.SYSEX_PACKED:
+            case StreamExclusive.SYSEX_PACKED:
                 // a packed smaf exclusive a machine dependent function issued,
                 // it is addressed to the synthesizer behind us, just pass it on
                 break;

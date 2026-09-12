@@ -16,6 +16,7 @@ import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.midi.MidiConstants.MetaEvent;
+import vavi.sound.mobile.StreamExclusive;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.SmafMessage;
@@ -271,7 +272,9 @@ if (value > 15) {
     public int setProgram(int smafChannel, int program) {
         int midiChannel = getMidiChannel(smafChannel);
 
-        if (formatType != FormatType.HandyPhoneStandard) {
+        // for a synthesizer which plays the file's own voices the program of a drum channel is
+        // the drum kit (Bank_Program3 of the MA-3 driver), see StreamExclusive#isEnabled
+        if (formatType != FormatType.HandyPhoneStandard && !StreamExclusive.isEnabled()) {
             if (midiChannel != drumSwapChannel && drums[midiChannel] == ChannelConfiguration.PERCUSSION) {
 logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
                 program = 0;

@@ -16,6 +16,7 @@ import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
+import vavi.sound.mobile.StreamExclusive;
 import vavi.sound.mobile.YamahaAudioEngine;
 
 import static java.lang.System.getLogger;
@@ -88,8 +89,11 @@ logger.log(Level.DEBUG, "%02x %02x".formatted(f1, f2));
     /** */
     private static final AudioEngine player = new YamahaAudioEngine();
 
-    /** */
+    /**
+     * @return the exclusive sending one when {@code vavi.sound.mobile.AudioEngine.disabled} is set,
+     *         see {@link StreamExclusive#engine}
+     */
     static AudioEngine getAudioEngine() {
-        return player;
+        return StreamExclusive.isEnabled() ? StreamExclusive.engine : player;
     }
 }

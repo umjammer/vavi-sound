@@ -152,8 +152,19 @@ logger.log(Level.WARNING, "adpcm still playing at jvm shutdown, cut off");
             }, "ADPCM Player shutdown"));
         }
 
-        /** runs an adpcm play/stop task delayed by {@link #getDelay()} */
+        /**
+         * runs an adpcm play/stop task delayed by {@link #getDelay()}.
+         * <p>
+         * when {@code vavi.sound.mobile.AudioEngine.disabled} is set there is no engine to
+         * synchronize with the synthesizer: the task only turns into exclusives, see
+         * {@link StreamExclusive#capture}, and runs at once so they are there when it returns.
+         * </p>
+         */
         public static void schedule(Runnable task) {
+            if (StreamExclusive.isEnabled()) {
+                task.run();
+                return;
+            }
             try {
                 scheduler.schedule(() -> {
                     try {
