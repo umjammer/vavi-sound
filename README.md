@@ -14,8 +14,8 @@ includes many ADPCM codecs and the [SSRC](https://github.com/shibatch/SSRC) samp
 
 | **SPI** | **Codec**                                                               | **Description**           | **IN Status** | **OUT Status** |  **SPI Status**  | **Comment**                                 |
 |:--------|:------------------------------------------------------------------------|:--------------------------|:-------------:|:--------------:|:----------------:|:--------------------------------------------|
-| midi    | [MFi](src/main/java/vavi/sound/midi/mfi)                                | Japanese ring tone format |      🚧       |       ✅        |        ✅         | DoCoMo                                      |
-| midi    | [SMAF](src/main/java/vavi/sound/midi/smaf)                              | YAMAHA ring tone format   |      🚧       |       ✅        |        ✅         | au, Softbank                                |
+| midi    | [MFi](src/main/java/vavi/sound/midi/mfi)                                | Japanese ring tone format |       ✅       |       ✅        |        ✅         | DoCoMo                                      |
+| midi    | [SMAF](src/main/java/vavi/sound/midi/smaf)                              | YAMAHA ring tone format   |       ✅       |       ✅        |        ✅         | au, Softbank                                |
 | sampled | [MFi](src/main/java/vavi/sound/sampled/mfi)                             | Japanese ring tone format |       ✅       |       ✅        |        ✅         | DoCoMo                                      |
 | sampled | [SMAF](src/main/java/vavi/sound/sampled/smaf)                           | YAMAHA ring tone format   |       ✅       |       ✅        |        ✅         | au, Softbank                                |
 | sampled | [CCITT ADPCM](src/main/java/vavi/sound/adpcm/ccitt)                     | G711, G721, G723          |       ✅       |       ✅        |        ✅         | G721 cellphone w/ Fuetrek chip              |
