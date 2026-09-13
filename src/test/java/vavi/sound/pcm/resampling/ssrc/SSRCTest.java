@@ -423,4 +423,30 @@ Debug.printf("rate: %d, lag: %d", rate, best);
         AudioFormat bits32 = new AudioFormat(8000, 32, 2, true, false);
         assertThrows(IllegalArgumentException.class, () -> new SSRCInputStream(new AudioFormat(44100, 32, 2, true, false), bits32, new ByteArrayInputStream(pcm)));
     }
+
+    @Test
+    @DisplayName("close closes the source once, and the stream can not be read after that")
+    public void test11() throws Exception {
+        byte[] pcm = pcm16();
+        for (boolean twopass : new boolean[] {true, false}) {
+            Map<String, Object> props = props(twopass, 0, 0);
+            AudioFormat inFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false, props);
+            AudioFormat outFormat = new AudioFormat(8000, 16, 2, true, false);
+            int[] closed = {0};
+            InputStream source = new ByteArrayInputStream(pcm) {
+                @Override public void close() {
+                    closed[0]++;
+                }
+            };
+            // as a spi conversion chain does
+            AudioInputStream ais = new AudioInputStream(new SSRCInputStream(inFormat, outFormat, source), outFormat, AudioSystem.NOT_SPECIFIED);
+            byte[] buf = new byte[100];
+            assertEquals(100, ais.read(buf));
+            ais.close();
+            ais.close();
+            assertEquals(1, closed[0]);
+            assertThrows(java.io.IOException.class, () -> ais.read(buf));
+            assertThrows(java.io.IOException.class, ais::available);
+        }
+    }
 }

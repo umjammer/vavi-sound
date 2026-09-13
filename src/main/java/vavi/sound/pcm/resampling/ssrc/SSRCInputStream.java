@@ -63,6 +63,9 @@ public class SSRCInputStream extends InputStream {
     /** the converter has finished */
     private boolean eof;
 
+    /** {@link #close()} has been called */
+    private boolean closed;
+
     /** output is signed 8bit, ssrc makes unsigned 8bit */
     private final boolean flipOutput;
 
@@ -142,6 +145,7 @@ public class SSRCInputStream extends InputStream {
 
     /** @return false when no more data */
     private boolean fill() throws IOException {
+        ensureOpen();
         while (position == buffer.length) {
             if (eof) {
                 return false;
@@ -182,11 +186,28 @@ public class SSRCInputStream extends InputStream {
 
     @Override
     public int available() throws IOException {
+        ensureOpen();
         return buffer.length - position;
     }
 
+    /** @throws IOException closed */
+    private void ensureOpen() throws IOException {
+        if (closed) {
+            throw new IOException("Stream closed");
+        }
+    }
+
+    /**
+     * deletes the temporary file of the two pass mode and closes the source stream,
+     * same as other format conversion streams do.
+     */
     @Override
     public void close() throws IOException {
+        if (closed) {
+            return;
+        }
+        closed = true;
+        buffer = new byte[0];
         try {
             converter.close();
         } finally {

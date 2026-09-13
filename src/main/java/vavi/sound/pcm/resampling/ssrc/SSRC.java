@@ -2469,8 +2469,8 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
         private boolean finished;
 
         // 2nd pass
-        private File file;
-        private FileChannel pipeIn;
+        /** the temporary file, deleted when this is closed */
+        private FileChannel pipe;
         private double gain = 0;
         private int ch = 0;
         private long fptlen, sumread;
@@ -2648,17 +2648,17 @@ logger.log(Level.DEBUG, "nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d
 
         /** 1st pass, all the input is converted into doubles in a temporary file */
         private void pass1() throws IOException {
-            file = File.createTempFile("ssrc", ".tmp");
-            file.deleteOnExit();
+            // on unix the file is unlinked as soon as it is opened
+            pipe = FileChannel.open(Files.createTempFile("ssrc", ".tmp"),
+                    StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.DELETE_ON_CLOSE);
 
             if (!quiet) {
                 System.err.print("Pass 1\n");
             }
 
-            try (FileChannel pipeOut = FileChannel.open(file.toPath(), StandardOpenOption.WRITE)) {
-                while (resampler.step(fpi, pipeOut)) {
-                }
+            while (resampler.step(fpi, pipe)) {
             }
+            pipe.position(0);
             fptlen = resampler.sumWritten;
             peak[0] = resampler.peak[0];
 
@@ -2704,7 +2704,6 @@ logger.log(Level.DEBUG, "nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d
 
             fptlen /= 8;
 
-            pipeIn = FileChannel.open(file.toPath(), StandardOpenOption.READ);
             inBuf = ByteBuffer.allocate(PASS2_BLOCK * nch * 8);
             outBuf = ByteBuffer.allocate(PASS2_BLOCK * nch * 3).order(ByteOrder.LITTLE_ENDIAN);
         }
@@ -2713,7 +2712,7 @@ logger.log(Level.DEBUG, "nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d
         private void pass2(WritableByteChannel fpo, int n) throws IOException {
             inBuf.clear();
             inBuf.limit(n * 8);
-            while (inBuf.hasRemaining() && pipeIn.read(inBuf) > 0) {
+            while (inBuf.hasRemaining() && pipe.read(inBuf) > 0) {
             }
             inBuf.flip();
 
@@ -2790,13 +2789,9 @@ logger.log(Level.DEBUG, "nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d
         /** releases the temporary file, the input stream is not closed */
         @Override
         public void close() throws IOException {
-            if (pipeIn != null) {
-                pipeIn.close();
-                pipeIn = null;
-            }
-            if (file != null) {
-                Files.deleteIfExists(file.toPath());
-                file = null;
+            if (pipe != null) {
+                pipe.close();
+                pipe = null;
             }
         }
     }
