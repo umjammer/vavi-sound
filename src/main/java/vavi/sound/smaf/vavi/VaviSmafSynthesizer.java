@@ -144,15 +144,34 @@ logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
             }
             // TODO MetaMessage 0x2f closing engine
             try {
-                midiSynthesizer.getReceiver().send(message, timeStamp);
+                receiver().send(message, timeStamp);
             } catch (MidiUnavailableException e) {
                 logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
 
+        /** the receiver of the synthesizer behind this, one for all the messages */
+        private Receiver receiver;
+
+        /**
+         * Gets the receiver of the synthesizer once: a synthesizer may well hand out a new
+         * receiver each time it is asked, which every message would leave behind in its list.
+         * Not in the constructor, the synthesizer may not be open yet then.
+         */
+        private synchronized Receiver receiver() throws MidiUnavailableException {
+            if (receiver == null) {
+                receiver = midiSynthesizer.getReceiver();
+            }
+            return receiver;
+        }
+
         @Override
-        public void close() {
+        public synchronized void close() {
             isOpen = false;
+            if (receiver != null) {
+                receiver.close();
+                receiver = null;
+            }
         }
 
         @Override
