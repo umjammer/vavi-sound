@@ -102,8 +102,8 @@ A. yes you can, follow those steps
 ## TODO
 
   * ~~use `Receiver` and sysex instead of `MetaEventListener`~~
-  * ssrc: use nio pipe for 1st pass
-    * on macos m2 ultra 1st pass is in a blink of an eye
+  * ~~ssrc: use nio pipe for 1st pass~~
+    * ~~on macos m2 ultra 1st pass is in a blink of an eye~~
   * ~~`ima`, `ms` adpcm: wav reader~~
     * ~~`tritonus:tritonus-remaining:org.tritonus.sampled.file.WaveAudioFileReader`~~
   * ~~use service provider for mfi, smaf sequencer~~
