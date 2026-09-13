@@ -148,6 +148,7 @@ Debug.println(format);
     }
 
     @Test
+    @DisplayName("check double")
     public void test2() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         LittleEndianDataOutputStream leos = new LittleEndianDataOutputStream(baos);
@@ -447,6 +448,33 @@ Debug.printf("rate: %d, lag: %d", rate, best);
             assertEquals(1, closed[0]);
             assertThrows(java.io.IOException.class, () -> ais.read(buf));
             assertThrows(java.io.IOException.class, ais::available);
+        }
+    }
+
+    /** https://github.com/umjammer/vavi-sound/issues/4 */
+    @Test
+    @DisplayName("short input shorter than the filter delay")
+    public void test12() throws Exception {
+        byte[] stereo = pcm16();
+        for (int samples : new int[] {1, 10, 1000, 13093, 20000, 40000}) {
+            byte[] mono = new byte[samples * 2];
+            for (int i = 0; i < samples; i++) {
+                mono[i * 2] = stereo[i * 4];
+                mono[i * 2 + 1] = stereo[i * 4 + 1];
+            }
+            for (int rate : new int[] {48000, 8000}) {
+                for (boolean twopass : new boolean[] {true, false}) {
+                    Map<String, Object> props = new HashMap<>();
+                    props.put("twopass", twopass);
+                    AudioFormat inFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 1, 2, 44100, false, props);
+                    AudioFormat outFormat = new AudioFormat(rate, 16, 1, true, false);
+                    try (InputStream in = new SSRCInputStream(inFormat, outFormat, new AudioInputStream(new ByteArrayInputStream(mono), inFormat, samples))) {
+                        int actual = in.readAllBytes().length / 2;
+Debug.printf("samples: %d, rate: %d, twopass: %b, out: %d", samples, rate, twopass, actual);
+                        assertEquals((int) Math.floor((double) samples * rate / 44100) + 2, actual, samples + ", " + rate + ", " + twopass);
+                    }
+                }
+            }
         }
     }
 }

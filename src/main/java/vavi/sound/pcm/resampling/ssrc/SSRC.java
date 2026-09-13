@@ -1118,15 +1118,17 @@ System.err.println("upsample");
                 if (nSmplWrt2 < delay) {
                     delay -= nSmplWrt2;
                 } else {
+                    // sumWrite counts the samples after the delay, so the delay is not subtracted again from the rest (C has the bug, issue #4)
                     if (ending) {
                         if ((double) sumRead * dfrq / sfrq + 2 > sumWrite + nSmplWrt2 - delay) {
                             rawOutBuf.position(dbps * nch * delay);
                             rawOutBuf.limit(dbps * nch * nSmplWrt2);
                             sumWritten += fpo.write(rawOutBuf);
                             sumWrite += nSmplWrt2 - delay;
+                            init = false;
                         } else {
                             rawOutBuf.position(dbps * nch * delay);
-                            rawOutBuf.limit(dbps * nch * (delay + Math.max(0, (int) (Math.floor((double) sumRead * dfrq / sfrq) + 2 - sumWrite - delay))));
+                            rawOutBuf.limit(dbps * nch * (delay + Math.max(0, (int) (Math.floor((double) sumRead * dfrq / sfrq) + 2 - sumWrite))));
                             sumWritten += fpo.write(rawOutBuf);
                             return finish();
                         }
@@ -1673,15 +1675,17 @@ System.err.println("downsample");
                 if (nSmplWrt2 < delay) {
                     delay -= nSmplWrt2;
                 } else {
+                    // sumWrite counts the samples after the delay, so the delay is not subtracted again from the rest (C has the bug, issue #4)
                     if (ending) {
                         if ((double) sumRead * dfrq / sfrq + 2 > sumWrite + nSmplWrt2 - delay) {
                             rawOutBuf.position(dbps * nch * delay);
                             rawOutBuf.limit(dbps * nch * nSmplWrt2);
                             sumWritten += fpo.write(rawOutBuf);
                             sumWrite += nSmplWrt2 - delay;
+                            init = false;
                         } else {
                             rawOutBuf.position(dbps * nch * delay);
-                            rawOutBuf.limit(dbps * nch * (delay + Math.max(0, (int) (Math.floor((double) sumRead * dfrq / sfrq) + 2 - sumWrite - delay))));
+                            rawOutBuf.limit(dbps * nch * (delay + Math.max(0, (int) (Math.floor((double) sumRead * dfrq / sfrq) + 2 - sumWrite))));
                             sumWritten += fpo.write(rawOutBuf);
                             return finish();
                         }
