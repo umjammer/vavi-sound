@@ -24,6 +24,7 @@ import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
+import vavi.sound.mobile.StreamExclusive;
 
 import static java.lang.System.getLogger;
 
@@ -35,6 +36,10 @@ import static java.lang.System.getLogger;
  *  channel true
  *  delta   ?
  * </pre>
+ * system property
+ * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
+ * to send {@link StreamExclusive#on} to the synthesizer, default {@code false}</li>
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070117 nsano initial version <br>
  */
@@ -110,21 +115,27 @@ public class AudioPlayMessage extends LongMessage
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 
-        SysexMessage SysexMessage = new SysexMessage();
+        SysexMessage sysexMessage;
 
-        int id = MfiMessageStore.put(this);
-        byte[] data = {
-                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
-                SYSEX_FUNCTION_ID_MFi4,
-                (byte) ((id / 0x100) & 0xff),
-                (byte) ((id % 0x100) & 0xff)
-        };
-        SysexMessage.setMessage(0xf0,    // sysex
-                               data,
-                               data.length);
+        if (!StreamExclusive.isEnabled()) {
+            sysexMessage = new SysexMessage();
+            int id = MfiMessageStore.put(this);
+            byte[] data = {
+                    VaviMidiDeviceProvider.MANUFACTURER_ID,
+                    SYSEX_FUNCTION_ID_MFi4,
+                    (byte) ((id / 0x100) & 0xff),
+                    (byte) ((id % 0x100) & 0xff)
+            };
+            sysexMessage.setMessage(0xf0,    // sysex
+                                   data,
+                                   data.length);
+        } else {
+            // velocity is 0 ~ 63
+            sysexMessage = StreamExclusive.pack(StreamExclusive.on(index, velocity * 127 / 63, voice));
+        }
 
         return new MidiEvent[] {
-            new MidiEvent(SysexMessage, context.getCurrent())
+            new MidiEvent(sysexMessage, context.getCurrent())
         };
     }
 

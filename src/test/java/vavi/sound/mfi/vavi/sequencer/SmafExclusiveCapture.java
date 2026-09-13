@@ -9,18 +9,18 @@ package vavi.sound.mfi.vavi.sequencer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.SysexMessage;
 
 import vavi.sound.midi.VaviMidiDeviceProvider;
+import vavi.sound.mobile.StreamExclusive;
 
 import static vavi.sound.midi.MidiUtil.decode87;
 
 
 /**
- * A {@link Receiver} which collects the SMAF exclusives {@link SmafExclusive}
+ * A {@link Receiver} which collects the SMAF exclusives {@link YamahaExclusive}
  * sends, unpacked back to 8 bit.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -46,7 +46,7 @@ public class SmafExclusiveCapture implements Receiver {
         if (exclusives.size() != 1) {
             throw new IllegalStateException("not exactly one exclusive: " + exclusives.size());
         }
-        return exclusives.get(0);
+        return exclusives.getFirst();
     }
 
     @Override
@@ -57,7 +57,7 @@ public class SmafExclusiveCapture implements Receiver {
         byte[] data = sysexMessage.getData();
         if (data.length < 3 ||
                 (data[0] & 0xff) != (VaviMidiDeviceProvider.MANUFACTURER_ID & 0xff) ||
-                (data[1] & 0xff) != SmafExclusive.SYSEX_PACKED) {
+                (data[1] & 0xff) != StreamExclusive.SYSEX_PACKED) {
             return;
         }
         byte[] encoded = Arrays.copyOfRange(data, 2, data.length - 1);

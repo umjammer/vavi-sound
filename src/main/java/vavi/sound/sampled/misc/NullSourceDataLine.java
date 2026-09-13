@@ -121,6 +121,10 @@ logger.log(Level.INFO, "open: " + format);
         return format;
     }
 
+    void setFormat(AudioFormat format) {
+        this.format = format;
+    }
+
     @Override
     public int getBufferSize() {
         return bufferSize;

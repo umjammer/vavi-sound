@@ -1,0 +1,115 @@
+/*
+ * Copyright (c) 2004 by Naohide Sano, All rights reserved.
+ *
+ * Programmed by Naohide Sano
+ */
+
+package vavi.sound.smaf.vavi.chunk;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+import java.util.ArrayList;
+import java.util.List;
+
+import vavi.sound.smaf.InvalidSmafDataException;
+
+import static java.lang.System.getLogger;
+import static vavi.sound.smaf.vavi.chunk.Chunk.DumpContext.getDC;
+
+
+/**
+ * OptionalData Chunk.
+ * <pre>
+ * "OPDA"
+ * </pre>
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
+ * @version 0.00 041222 nsano initial version <br>
+ */
+public class OptionalDataChunk extends Chunk {
+
+    private static final Logger logger = getLogger(OptionalDataChunk.class.getName());
+
+    private static final String FOURCC = "OPDA";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key);
+    }
+
+    @Override
+    public OptionalDataChunk init(byte[] id, int size) {
+        super.init(id, size);
+logger.log(Level.DEBUG, "OptionalData: " + size + " bytes");
+        return this;
+    }
+
+    /** */
+    public OptionalDataChunk() {
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
+        this.size = 0;
+    }
+
+    @Override
+    protected void init(CrcDataInputStream dis, Chunk parent)
+        throws InvalidSmafDataException, IOException {
+
+        while (dis.available() > 0) {
+            Chunk data = readFrom(dis);
+logger.log(Level.DEBUG, FOURCC + ": data chunk: " + data.getClass().getName());
+            dataChunks.add(data);
+            chunks.add(data);
+        }
+    }
+
+    @Override
+    public void writeTo(OutputStream os) throws IOException {
+        writeChunk(os, bos -> {
+            for (Chunk dataChunk : chunks) {
+                dataChunk.writeTo(bos);
+            }
+        });
+    }
+
+    /** DataChunk "Dch*", ... */
+    private final List<Chunk> dataChunks = new ArrayList<>();
+
+    /**
+     * @return Returns the subChunks.
+     */
+    public List<Chunk> getDataChunks() {
+        return dataChunks;
+    }
+
+    /** */
+    public void addDataChunks(DataChunk dataChunk) {
+        dataChunks.add(dataChunk);
+        chunks.add(dataChunk);
+        size += dataChunk.getSize() + 8;
+    }
+
+    /**
+     * @return Returns the "Pro*" chunk, nullable.
+     */
+    public Chunk getProChunk() {
+        return dataChunks.stream().filter(dc -> dc.getId().startsWith("Pro")).findFirst().orElse(null);
+    }
+
+    // Pro* chunk (not in specification 3.06)
+    //  start 4 bytes
+    //  stop 4 bytes
+    //  ??? 4 bytes
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(super.toString());
+        try (var dc = getDC().open()) {
+            dataChunks.stream().map(Chunk::toString).forEach(sb::append);
+        }
+
+        return sb.toString();
+    }
+}

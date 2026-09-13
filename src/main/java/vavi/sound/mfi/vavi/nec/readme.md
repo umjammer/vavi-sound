@@ -99,7 +99,7 @@ carry more than one voice shape:
   operator (`SR,XOF,SUS,KSR` / `RR,DR` / `AR,SL` / `TL,KSL` / `DAM,EAM,DVB,EVB` /
   `MULTI,DT` / `WS,FB`).
 - the WT voice is the 16 byte VM35 PCM voice, the same bytes a SMAF `EXVO`
-  `43 05 02` exclusive carries (`vavi.sound.smaf.chunk.ExclusiveVoiceChunk`).
+  `43 05 02` exclusive carries (`vavi.sound.smaf.vavi.chunk.ExclusiveVoiceChunk`).
   All 5167 records in the corpus decode to a sampling rate inside 1 ~ 48000 Hz,
   peaking at 8000 / 12000 / 15000 / 13200 / 10000. Its two bytes that
   `ExclusiveVoiceChunk` still calls "?" (+9, +10) are the
@@ -125,7 +125,7 @@ file addresses. Unlike the MA-7 message the bytes are **not** rotated - the
 converter copies the SMAF channel status bytes straight through
 (`CnvMA5MFi_N.dll` at `0x10017e93`, source length checked to be 20 and 16 bytes
 copied out of it), so they are `KCS:7-6, vibration:5, LED:4, type:1-0` as
-`vavi.sound.smaf.chunk.ChannelStatus` reads them.
+`vavi.sound.smaf.vavi.chunk.ChannelStatus` reads them.
 
 ## Level 0x81 - level 0x01 with bit 7 set
 
@@ -227,7 +227,7 @@ mfi = ((smaf << 2) | (smaf >>> 6)) & 0xff;
 
 (see `CnvMA7MFi_N.dll` `0x1000bde0`; the input length must be exactly 32).
 With the `MobileStandard` channel status layout of
-`vavi.sound.smaf.chunk.ChannelStatus` (`KCS:7-6, vibration:5, LED:4, type:1-0`)
+`vavi.sound.smaf.vavi.chunk.ChannelStatus` (`KCS:7-6, vibration:5, LED:4, type:1-0`)
 the MFi byte therefore is `vibration:7, LED:6, -:5-4, type:3-2, KCS:1-0`.
 
 The level 1 message (`01.f2._7`) is the same thing with **16** bytes, which is
@@ -594,7 +594,7 @@ MA-3 / MA-5 voice, only wrapped differently, so the way to give an MFi voice to 
 MIDI synthesizer is to give it the SMAF exclusive it already speaks. The tone and
 wave functions therefore build that exclusive and send it to the `Receiver` the
 sequencer hands them, packed exactly the way
-`vavi.sound.smaf.message.yamaha.YamahaMessage` packs one while a SMAF file plays:
+`vavi.sound.smaf.vavi.yamaha.message.YamahaMessage` packs one while a SMAF file plays:
 
 ```
  f0 45 7f <encode87(43 ... f7)> f7

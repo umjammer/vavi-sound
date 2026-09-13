@@ -27,6 +27,7 @@ import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
+import vavi.sound.mobile.StreamExclusive;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -56,6 +57,11 @@ import static vavi.sound.mfi.vavi.VaviMfiFileFormat.DumpContext.getDC;
  * <li>{@link #length} is total length of AudioData Chunk
  * <li>TODO "extends {@link MfiMessage}" is needed? that should be AudioDataChunk isn't it?
  * <li>TODO this class should be merge into {@link vavi.sound.mfi.Track}? → extends {@link SysexMessage}？
+ * <p>
+ * system property
+ * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
+ * to send {@link StreamExclusive#wave} to the synthesizer, default {@code false}</li>
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050721 nsano initial version <br>
  * @since MFi 4.0
@@ -251,21 +257,34 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
-        SysexMessage SysexMessage = new SysexMessage();
+        SysexMessage sysexMessage;
 
-        int id = MfiMessageStore.put(this);
-        byte[] data = {
-                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
-                SYSEX_FUNCTION_ID_MFi4,
-                (byte) ((id / 0x100) & 0xff),
-                (byte) ((id % 0x100) & 0xff)
-        };
-        SysexMessage.setMessage(0xf0,    // sysex
-                               data,
-                               data.length);
+        if (!StreamExclusive.isEnabled()) {
+            sysexMessage = new SysexMessage();
+            int id = MfiMessageStore.put(this);
+            byte[] data = {
+                    VaviMidiDeviceProvider.MANUFACTURER_ID,
+                    SYSEX_FUNCTION_ID_MFi4,
+                    (byte) ((id / 0x100) & 0xff),
+                    (byte) ((id % 0x100) & 0xff)
+            };
+            sysexMessage.setMessage(0xf0,    // sysex
+                                   data,
+                                   data.length);
+        } else {
+            // the wave goes to the synthesizer, which plays it on an AudioPlayMessage
+            StreamExclusive.Format streamFormat = StreamExclusive.Format.valueOf(format);
+            AdpmMessage adpm = (AdpmMessage) subChunks.get(AdpmMessage.TYPE);
+            if (streamFormat == null || adpm == null) {
+logger.log(Level.WARNING, "audio data not supported, skipped: format: %02x, adpm: %s".formatted(format, adpm));
+                return new MidiEvent[0];
+            }
+            sysexMessage = StreamExclusive.pack(StreamExclusive.wave(audioDataNumber, streamFormat,
+                    adpm.getChannels(), adpm.getSamplingBits(), adpm.getSamplingRate() * 1000, getData()));
+        }
 
         return new MidiEvent[] {
-            new MidiEvent(SysexMessage, context.getCurrent())
+            new MidiEvent(sysexMessage, context.getCurrent())
         };
     }
 

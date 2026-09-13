@@ -8,7 +8,7 @@ package vavi.sound.mfi.vavi.nec;
 
 import java.util.Arrays;
 
-import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
+import vavi.sound.mfi.vavi.sequencer.YamahaExclusive;
 
 
 /**
@@ -33,7 +33,7 @@ import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
  * <p>
  * The filter part is {@value #FILTER} bytes long in all three forms (the MA-7
  * source bytes 1 ~ 27), so what is handed to the synthesizer is the plain voice
- * behind it - {@link SmafExclusive.VoiceType#AL} has no decoder anywhere, and a
+ * behind it - {@link YamahaExclusive.VoiceType#AL} has no decoder anywhere, and a
  * voice without its filter still sounds like the voice.
  * </p>
  *
@@ -77,8 +77,8 @@ public class Function1_240_8 extends ToneFunction {
     }
 
     @Override
-    SmafExclusive.VoiceType getVoiceType(Tone tone) {
-        return tone.type == TYPE_WT ? SmafExclusive.VoiceType.PCM : SmafExclusive.VoiceType.FM;
+    YamahaExclusive.VoiceType getVoiceType(Tone tone) {
+        return tone.type == TYPE_WT ? YamahaExclusive.VoiceType.PCM : YamahaExclusive.VoiceType.FM;
     }
 
     /** drops the AL (filter) part, what is left is the plain VM35 voice image */

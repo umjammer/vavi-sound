@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.sequencer.SmafExclusive;
+import vavi.sound.mfi.vavi.sequencer.YamahaExclusive;
 import vavi.sound.mfi.vavi.sequencer.SmafExclusiveCapture;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
@@ -134,11 +134,11 @@ class NecToneFunctionTest {
         // one FM voice exclusive per record, the voice handed over as is
         assertEquals(3, receiver.getExclusives().size());
         // bank 7 program 1 -> midi program 0x41, a melody voice so no drum note
-        assertArrayEquals(new int[] {0, 0, 0x41, 0, SmafExclusive.VoiceType.FM.ordinal()},
+        assertArrayEquals(new int[] {0, 0, 0x41, 0, YamahaExclusive.VoiceType.FM.ordinal()},
                 voiceHeader(receiver.getExclusives().get(0)));
         assertArrayEquals(tones.get(0).voice, voiceImage(receiver.getExclusives().get(0)));
         // bank 5 program 16 drum -> midi program 0x50, note 16 + 35
-        assertArrayEquals(new int[] {0, 0, 0x50, 16 + 35, SmafExclusive.VoiceType.FM.ordinal()},
+        assertArrayEquals(new int[] {0, 0, 0x50, 16 + 35, YamahaExclusive.VoiceType.FM.ordinal()},
                 voiceHeader(receiver.getExclusives().get(1)));
         assertArrayEquals(tones.get(1).voice, voiceImage(receiver.getExclusives().get(1)));
         assertArrayEquals(tones.get(2).voice, voiceImage(receiver.getExclusives().get(2)));
@@ -170,7 +170,7 @@ class NecToneFunctionTest {
         assertArrayEquals(payload, in.getMessage());
 
         // bank 4 program 1 drum -> midi program 0x01, note 1 + 35
-        assertArrayEquals(new int[] {0, 0, 0x01, 1 + 35, SmafExclusive.VoiceType.PCM.ordinal()},
+        assertArrayEquals(new int[] {0, 0, 0x01, 1 + 35, YamahaExclusive.VoiceType.PCM.ordinal()},
                 voiceHeader(receiver.getOnly()));
         assertArrayEquals(tone.voice, voiceImage(receiver.getOnly()));
     }
@@ -196,7 +196,7 @@ class NecToneFunctionTest {
             // the AL (filter) part is dropped, the plain voice behind it is handed over
             assertArrayEquals(new int[] {0, 0, 0x50, 0,
                             shape[0] == Function1_240_8.TYPE_WT ?
-                                    SmafExclusive.VoiceType.PCM.ordinal() : SmafExclusive.VoiceType.FM.ordinal()},
+                                    YamahaExclusive.VoiceType.PCM.ordinal() : YamahaExclusive.VoiceType.FM.ordinal()},
                     voiceHeader(receiver.getOnly()));
             assertEquals(shape[2] - Function1_240_8.FILTER, voiceImage(receiver.getOnly()).length);
             assertArrayEquals(Arrays.copyOfRange(in.getTones().get(0).voice, Function1_240_8.FILTER, shape[2]),
@@ -285,7 +285,7 @@ class NecToneFunctionTest {
         assertEquals(0, delegate.getTones().get(0).program);
         assertEquals(10000, Function1_240_5.getSamplingRate(delegate.getTones().get(0)));
         // the alias sends the voice just like the level 0x01 function it delegates to
-        assertArrayEquals(new int[] {0, 0, 0x00, 0 + 35, SmafExclusive.VoiceType.PCM.ordinal()},
+        assertArrayEquals(new int[] {0, 0, 0x00, 0 + 35, YamahaExclusive.VoiceType.PCM.ordinal()},
                 voiceHeader(receiver.getOnly()));
 
         // 11 81 f3 01 00 FM mode setting

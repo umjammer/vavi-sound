@@ -1,0 +1,107 @@
+/*
+ * Copyright (c) 2004 by Naohide Sano, All rights reserved.
+ *
+ * Programmed by Naohide Sano
+ */
+
+package vavi.sound.smaf.vavi.chunk;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+
+import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.sound.smaf.SmafMessage;
+import vavi.sound.smaf.vavi.message.WaveDataMessage;
+
+import static java.lang.System.getLogger;
+import static vavi.sound.smaf.vavi.chunk.Chunk.DumpContext.getDC;
+
+
+/**
+ * Stream WaveData Chunk.
+ * <pre>
+ * "Mwa*" *: chunk number
+ * </pre>
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
+ * @version 0.00 050101 nsano initial version <br>
+ */
+public class StreamWaveDataChunk extends WaveDataChunk {
+
+    private static final Logger logger = getLogger(StreamWaveDataChunk.class.getName());
+
+    /** */
+    protected int waveNumber;
+
+    private static final String FOURCC = "Mwa";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key.substring(0, 3));
+    }
+
+    @Override
+    public StreamWaveDataChunk init(byte[] id, int size) {
+        super.init(id, size);
+
+        waveNumber = id[3] & 0xff;
+logger.log(Level.DEBUG, "StreamWaveData[" + waveNumber + "]: " + size);
+
+        return this;
+    }
+
+    /** */
+    public StreamWaveDataChunk() {
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 3);
+        size = 0;
+    }
+
+    @Override
+    protected void init(CrcDataInputStream dis, Chunk parent) throws InvalidSmafDataException, IOException {
+        byte[] weveTypeBytes = new byte[3];
+        dis.readFully(weveTypeBytes);
+        this.waveType = new WaveType(weveTypeBytes);
+
+        data = new byte[dis.available()];
+        dis.readFully(data);
+    }
+
+    /**
+     * <pre>
+     *  wave type : 3 byte
+     *  wave data : n byte
+     * </pre>
+     * unlike a "Awa*" {@link WaveDataChunk}, whose wave type lives in the "ATR*" header.
+     */
+    @Override
+    public void writeTo(OutputStream os) throws IOException {
+        writeChunk(os, bos -> {
+            bos.write(waveType.getBytes());
+            bos.write(data);
+        });
+    }
+
+    /** */
+    private WaveType waveType;
+
+    /** */
+    SmafMessage toSmafMessage() {
+        int waveNumber = this.getWaveNumber();
+        byte[] waveData = this.getWaveData();
+        WaveDataMessage waveDataMessage = new WaveDataMessage(
+              waveNumber,
+              waveType.getWaveFormat(),
+              waveData,
+              waveType.getWaveSamplingFreq(),
+              waveType.getWaveBaseBit(),
+              waveType.getWaveChannels());
+
+        return waveDataMessage;
+    }
+
+    @Override
+    public String toString() {
+        return getDC().format(getId() + waveNumber + " " + data.length + " bytes");
+    }
+}

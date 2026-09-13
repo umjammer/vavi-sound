@@ -5,7 +5,7 @@ Provides a wave sequencer class for mobile.
 ## References
 
  - [mfi](../mfi/vavi/sequencer/AudioDataSequencer.java)
- - [smaf](../smaf/sequencer/WaveSequencer.java)
+ - [smaf](../smaf/vavi/sequencer/WaveSequencer.java)
 
 ## TODO
 

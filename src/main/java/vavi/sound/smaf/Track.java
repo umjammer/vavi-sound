@@ -54,4 +54,11 @@ public class Track {
     }
 
 // TODO public long ticks()
+
+    /**
+     * special for smaf
+     */
+    public void insert(SmafEvent event, int index) {
+        events.add(index, event);
+    }
 }

@@ -1,0 +1,535 @@
+/*
+ * Copyright (c) 2004 by Naohide Sano, All rights reserved.
+ *
+ * Programmed by Naohide Sano
+ */
+
+package vavi.sound.smaf.vavi.chunk;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import vavi.sound.midi.MidiUtil;
+import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.sound.smaf.MetaMessage;
+import vavi.sound.smaf.SmafMessage;
+import vavi.sound.smaf.vavi.message.BankSelectMessage;
+import vavi.sound.smaf.vavi.message.EndOfSequenceMessage;
+import vavi.sound.smaf.vavi.message.ExpressionMessage;
+import vavi.sound.smaf.vavi.message.FineTuneMessage;
+import vavi.sound.smaf.vavi.message.MachineDependentMessage.Factory;
+import vavi.sound.smaf.vavi.message.MidiConvertibleMessage;
+import vavi.sound.smaf.vavi.message.ModulationMessage;
+import vavi.sound.smaf.vavi.message.NopMessage;
+import vavi.sound.smaf.vavi.message.NoteMessage;
+import vavi.sound.smaf.vavi.message.OctaveShiftMessage;
+import vavi.sound.smaf.vavi.message.PanMessage;
+import vavi.sound.smaf.vavi.message.PitchBendMessage;
+import vavi.sound.smaf.vavi.message.ProgramChangeMessage;
+import vavi.sound.smaf.vavi.message.UndefinedMessage;
+import vavi.sound.smaf.vavi.message.VolumeMessage;
+import vavi.util.codec.huffman.okumura.Huffman;
+
+import static java.lang.System.getLogger;
+import static vavi.sound.smaf.vavi.chunk.Chunk.DumpContext.getDC;
+
+
+/**
+ * SequenceData Chunk.
+ * <pre>
+ * "Mtsq" or "SEQU"
+ * </pre>
+ *
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
+ * @version 0.00 041227 nsano initial version <br>
+ */
+public class SequenceDataChunk extends Chunk {
+
+    private static final Logger logger = getLogger(SequenceDataChunk.class.getName());
+
+    private static final String FOURCC = "Mtsq";
+
+    @Override
+    protected boolean accept(String key) {
+        return FOURCC.equals(key) || "SEQU".equals(key);
+    }
+
+    @Override
+    public SequenceDataChunk init(byte[] id, int size) {
+        super.init(id, size);
+logger.log(Level.DEBUG, "SequenceData: " + size + " bytes");
+        return this;
+    }
+
+    /** TODO "Mtsq" fixed */
+    public SequenceDataChunk() {
+        System.arraycopy(FOURCC.getBytes(), 0, id, 0, 4);
+        this.size = 0;
+    }
+
+    @Override
+    protected void init(CrcDataInputStream dis, Chunk parent)
+            throws InvalidSmafDataException, IOException {
+logger.log(Level.TRACE, "available: " + dis.available());
+//skip(is, size);
+        ScoreTrackChunk.FormatType formatType = ((TrackChunk) parent).getFormatType();
+logger.log(Level.DEBUG, "formatType: " + formatType);
+        CrcDataInputStream body = keep(dis);
+        switch (formatType) {
+            case HandyPhoneStandard:
+                readHandyPhoneStandard(body);
+                break;
+            case MobileStandard_Compress:
+//Files.write(Path.of("tmp/data.enc"), raw);
+//logger.log(Level.TRACE, "data.enc created");
+                byte[] decoded = new Huffman.HuffmanInputStream(new ByteArrayInputStream(raw), 32).readAllBytes();
+//Files.write(Path.of("tmp/data.dec"), decoded);
+//logger.log(Level.TRACE, "data.dec created");
+logger.log(Level.DEBUG, "huffman decode: " + size + " -> " + decoded.length);
+                readMobileStandard(detachedStream(decoded));
+                break;
+            case MobileStandard_NoCompress:
+                readMobileStandard(body);
+                break;
+            case SEQU:
+                readSEQU(body);
+                break;
+        }
+logger.log(Level.DEBUG, "messages: " + messages.size());
+    }
+
+    /**
+     * internal use
+     * for Mtsq
+     *
+     * @param gateTime should not be 0
+     */
+    protected SmafMessage getHandyPhoneStandardMessage(int duration, int data, int gateTime) {
+        return new NoteMessage(duration, data, gateTime);
+    }
+
+    /** formatType 0 */
+    protected void readHandyPhoneStandard(CrcDataInputStream dis)
+            throws InvalidSmafDataException, IOException {
+
+        SmafMessage smafMessage = null;
+
+        while (dis.available() > 0) {
+            // -------- duration --------
+            int duration = readVariableLength(dis);
+//logger.log(Level.TRACE, "duration: %1$d, 0x%1$04x".formatted(duration));
+            // -------- event --------
+            int e1 = dis.readUnsignedByte();
+            if (e1 == 0xff) { // exclusive, nop
+                int e2 = dis.readUnsignedByte();
+                switch (e2) {
+                    case 0x2f: // meta end of track
+                    case 0x51: // meta tempo
+                    case 0x58: // meta time signature
+                        int len = dis.readUnsignedByte();
+                        byte[] b = new byte[len];
+                        dis.readFully(b);
+                        smafMessage = new MetaMessage();
+                        ((MetaMessage) smafMessage).setMessage(e2, b, len);
+                        logger.log(Level.WARNING, "meta 0xff, 0x%02x".formatted(e2));
+                        break;
+                    case 0xf0: // exclusive
+                        int messageSize = dis.readUnsignedByte();
+                        byte[] data = new byte[messageSize];
+                        dis.readFully(data);
+                        smafMessage = Factory.getSysexMessage(duration, 0xf0, data, messageSize);
+                        break;
+                    case 0x00: // nop
+                        smafMessage = new NopMessage(duration);
+                        break;
+                    default:
+                        smafMessage = new UndefinedMessage(e1, e2, duration);
+                        logger.log(Level.WARNING, "unknown 0xff, 0x%02x".formatted(e2));
+                        break;
+                }
+            } else if (e1 != 0x00) { // note
+                int gateTime = readVariableLength(dis);
+//logger.log(Level.TRACE, "gateTime: %d, 0x%04x".formatted(gateTime, gateTime));
+                smafMessage = getHandyPhoneStandardMessage(duration, e1, gateTime);
+            } else { // e1 == 0x00 other event
+                int e2 = dis.readUnsignedByte();
+                if (e2 == 0x00) {
+                    int e3 = dis.readUnsignedByte();
+                    if (e3 == 0x00) {
+                        smafMessage = new EndOfSequenceMessage(duration);
+                    } else {
+                        smafMessage = new UndefinedMessage(e1, e2, duration);
+                        logger.log(Level.WARNING, "unknown 0x00, 0x00, 0x%02x".formatted(e3));
+                    }
+                } else {
+                    int channel = (e2 & 0xc0) >> 6;
+                    int event = (e2 & 0x30) >> 4;
+                    int data = e2 & 0x0f;
+                    switch (event) {
+                        case 3:
+                            int value = dis.readUnsignedByte();
+                            switch (data) {
+                                case 0: // program change - 0x00 ~ 0x7f
+                                    smafMessage = new ProgramChangeMessage(duration, channel, value);
+                                    break;
+                                case 1: // bank select - normal: 0x00 ~ 0x7f, drum: 0x80 ~ 0xff
+                                    smafMessage = new BankSelectMessage(duration, channel, value);
+                                    break;
+                                case 2: // octave shift - 0x00, 0x01, 0x02, 0x03, 0x04, 0x81, 0x82, 0x83, 0x84
+                                    smafMessage = new OctaveShiftMessage(duration, channel, value);
+                                    break;
+                                case 3: // modulation -  0x00 ~ 0x7f
+                                    smafMessage = new ModulationMessage(duration, channel, value);
+                                    break;
+                                case 4: // pitch bend - 0x00 ~ 0x40 ~ 0x7f
+                                    smafMessage = new PitchBendMessage(duration, channel, value << 7);
+                                    break;
+                                case 7: // volume -  0x00 ~ 0x7f
+                                    smafMessage = new VolumeMessage(duration, channel, value);
+                                    break;
+                                case 0x0a: // pan -  0x00 ~ x040 ~ 0x7f
+                                    smafMessage = new PanMessage(duration, channel, value);
+                                    break;
+                                case 0x0b: // expression - normal: 0x00 ~ 0x7f
+                                    smafMessage = new ExpressionMessage(duration, channel, value);
+                                    break;
+                                default:
+                                    smafMessage = new UndefinedMessage(e1, event, duration);
+                                    logger.log(Level.WARNING, "unknown 0x00, 0x%02x, 3, %02x".formatted(e2, data));
+                                    break;
+                            }
+                            break;
+                        case 2: // modulation (short) 0x01 ~ 0x0e
+                            smafMessage = new ModulationMessage(duration, channel, modulationTable[data]);
+                            break;
+                        case 1: // pitch bend (short) 0x01 ~ 0x0e
+                            smafMessage = new PitchBendMessage(duration, channel, (data * 8) << 7);
+                            break;
+                        case 0: // expression (short) 0x01 ~ 0x0e
+                            smafMessage = new ExpressionMessage(duration, channel, data == 1 ? 0 : data * 8 + 15);
+                            break;
+                    }
+                }
+            }
+
+//logger.log(Level.TRACE, available() + ", " + smafMessage);
+            assert smafMessage != null : "smafMessage is null";
+            messages.add(smafMessage);
+//logger.log(Level.TRACE, "message: " + smafMessage);
+        }
+    }
+
+    /** for HandyPhoneStandard short */
+    protected static final int[] modulationTable = {
+            -1, 0x00, 0x08, 0x10, 0x18, 0x20, 0x28, 0x30,
+            0x38, 0x40, 0x48, 0x50, 0x60, 0x70, 0x7F, -1
+    };
+
+    /** debug */
+    private final Set<String> uc = new HashSet<>();
+    /** debug */
+    private int cc = 0;
+
+    /** formatType 1, 2 */
+    private void readMobileStandard(CrcDataInputStream dis)
+            throws InvalidSmafDataException, IOException {
+
+        SmafMessage smafMessage;
+
+        while (dis.available() > 0) {
+            // duration
+            int duration = MidiUtil.readVariableLength(dis);
+//logger.log(Level.TRACE, "duration: " + duration);
+            // event
+            int status = dis.readUnsignedByte();
+            if (status >= 0x80 && status <= 0x8f) { // note w/o velocity
+                int channel = status & 0x0f;
+                int note = dis.readUnsignedByte();
+                int gateTime = MidiUtil.readVariableLength(dis);
+                smafMessage = new NoteMessage(duration, channel, note, gateTime);
+            } else if (status >= 0x90 && status <= 0x9f) { // note w/ velocity
+                int channel = status & 0x0f;
+                int note = dis.readUnsignedByte();
+                int velocity = dis.readUnsignedByte();
+                int gateTime = MidiUtil.readVariableLength(dis);
+                smafMessage = new NoteMessage(duration, channel, note, gateTime, velocity);
+            } else if (status >= 0xa0 && status <= 0xaf) { // reserved
+                int d1 = dis.readUnsignedByte();
+                int d2 = dis.readUnsignedByte();
+                smafMessage = null;
+                logger.log(Level.WARNING, "reserved: 0xa_: %02x%02x".formatted(d1, d2));
+            } else if (status >= 0xb0 && status <= 0xbf) { // control change
+                int channel = status & 0x0f;
+                int control = dis.readUnsignedByte();
+                int value = dis.readUnsignedByte();
+                switch (control) { // TODO no specification
+                    case 0x00: // bank select MSB
+                        smafMessage = new BankSelectMessage(duration, channel, value, BankSelectMessage.Significant.Most);
+                        break;
+                    case 0x20: // bank select LSB
+                        smafMessage = new BankSelectMessage(duration, channel, value, BankSelectMessage.Significant.Least);
+                        break;
+                    case 0x01: // modulation depth MSB
+                        smafMessage = new ModulationMessage(duration, channel, value);
+                        break;
+                    case 0x07: // main volume MSB
+                        smafMessage = new VolumeMessage(duration, channel, value);
+                        break;
+                    case 0x0a: // pan pot MSB
+                        smafMessage = new PanMessage(duration, channel, value);
+                        break;
+                    case 0x0b: // expression MSB
+                        smafMessage = new ExpressionMessage(duration, channel, value);
+                        break;
+                    case 0x06: // data entry MSB
+                    case 0x26: // data entry LSB
+                    case 0x40: // hold 1 (dumper)
+                    case 0x47: // filter resonance MA-5
+                    case 0x4a: // brightness MA-5
+                    case 0x64: // RPN LSB
+                        // only when value = 00 ? pitch bend sensitivity
+                    case 0x65: // RPN MSB
+                        // only when value = 00 ? pitch bend sensitivity
+                    case 0x78: // all sound off
+                    case 0x79: // reset all controllers
+                    case 0x7b: // all notes off MA-5
+                    case 0x7e: // mono mode on
+                    case 0x7f: // poly mode on (MA-3 only)
+                        smafMessage = new MidiConvertibleMessage(duration, control, channel, value);
+                        break;
+                    default:
+                        smafMessage = new UndefinedMessage(status, control, duration);
+                        logger.log(Level.WARNING, "undefined control: %02x, %02x".formatted(control, value));
+                        break;
+                }
+            } else if (status >= 0xc0 && status <= 0xcf) { // program change
+                int channel = status & 0x0f;
+                int program = dis.readUnsignedByte();
+                smafMessage = new ProgramChangeMessage(duration, channel, program);
+            } else if (status >= 0xd0 && status <= 0xdf) { // reserved
+                int d1 = dis.readUnsignedByte();
+                smafMessage = new UndefinedMessage(status, d1, duration);
+                logger.log(Level.WARNING, "reserved: 0xd_: %02x".formatted(d1));
+            } else if (status >= 0xe0 && status <= 0xef) { // pitch vend message
+                int channel = status & 0x0f;
+                int lsb = dis.readUnsignedByte();
+                int msb = dis.readUnsignedByte();
+                smafMessage = new PitchBendMessage(duration, channel, (msb << 7) | lsb);
+            } else if (status == 0xff) { // eos, nop
+                int d1 = dis.readUnsignedByte();
+                switch (d1) {
+                    case 0x00:
+                        smafMessage = new NopMessage(duration);
+                        break;
+                    case 0x2f:
+                        int d2 = dis.readUnsignedByte(); // must be 0
+                        if (d2 != 0) {
+                            logger.log(Level.WARNING, "illegal state: %02x".formatted(d2));
+                        }
+                        smafMessage = new EndOfSequenceMessage(duration);
+                        break;
+                    default:
+                        smafMessage = new UndefinedMessage(status, d1, duration);
+                        logger.log(Level.WARNING, "unknown: 0xff: %02x".formatted(d1));
+                        break;
+                }
+            } else if (status == 0xf0) { // exclusive
+                int messageSize = MidiUtil.readVariableLength(dis);
+                byte[] data = new byte[messageSize];
+                int i = 0;
+                do {
+                    data[i] = dis.readByte();
+                    if (data[i] == (byte) 0xf7) break;
+                } while (i++ < messageSize);
+                smafMessage = Factory.getSysexMessage(duration, status, data, i);
+            } else if (status < 0x80) { // data
+                smafMessage = null;
+                if (cc < 10) {
+                    logger.log(Level.WARNING, "data found, ignore: %02x".formatted(status));
+                }
+                cc++;
+            } else /* 0xf1 ~ 0xfe */ {  // reserved
+                smafMessage = new UndefinedMessage(status, -1, duration);
+                if (!uc.contains("reserved: %02x".formatted(status))) {
+                    logger.log(Level.WARNING, "reserved: %02x".formatted(status));
+                    uc.add("reserved: %02x".formatted(status));
+                }
+            }
+
+//logger.log(Level.TRACE, available() + ", " + smafMessage);
+            assert smafMessage != null : "smafMessage is null";
+            messages.add(smafMessage);
+        }
+    }
+
+    private static final int[] shortModTable = {
+            0x00, 0x00, 0x08, 0x10, 0x18, 0x20, 0x28, 0x30,
+            0x38, 0x40, 0x48, 0x50, 0x60, 0x70, 0x7f, 0x7f,
+    };
+
+    private static final int[] shortExpTable = {
+            0x00, 0x00, 0x1f, 0x27, 0x2f, 0x37, 0x3f, 0x47,
+            0x4f, 0x57, 0x5f, 0x67, 0x6f, 0x77, 0x7f, 0x7f,
+    };
+
+    /**
+     * SEQU
+     *
+     * @see "https://github.com/but80/smaf825/blob/v1/smaf/event/event.go#L173"
+     */
+    protected void readSEQU(CrcDataInputStream dis) throws IOException, InvalidSmafDataException {
+
+        SmafMessage smafMessage;
+
+        while (dis.available() > 0) {
+            int duration = MidiUtil.readVariableLength(dis);
+            int e1 = dis.readUnsignedByte();
+            if (e1 == 0x00) {
+                if (dis.available() == 0) break; // ugly
+                var e2 = dis.readUnsignedByte();
+
+                var channel = e2 >> 6;
+                var event = e2 & 0x3f;
+                if (event == 0x00) {
+                    var fine = dis.readUnsignedByte();
+                    smafMessage = new FineTuneMessage(duration, channel, fine);
+                } else if (0x01 <= event && event <= 0x0e) {
+                    smafMessage = new ExpressionMessage(duration, channel, shortExpTable[event]);
+                } else if (0x11 <= event && event <= 0x1e) {
+                    smafMessage = new PitchBendMessage(duration, channel, (event - 0x10) * 16384 / 16);
+                } else if (0x21 <= event && event <= 0x2e) {
+                    smafMessage = new ModulationMessage(duration, channel, shortModTable[event - 0x20]);
+                } else if (event == 0x30) {
+                    var value = dis.readUnsignedByte();
+                    smafMessage = new ProgramChangeMessage(duration, channel, value);
+                } else if (event == 0x31) {
+                    var value = dis.readUnsignedByte();
+                    smafMessage = new BankSelectMessage(duration, channel, value);
+                } else if (event == 0x32) {
+                    var value = dis.readUnsignedByte();
+                    if (0x80 <= value) {
+                        value = 0x80 - value;
+                    }
+                    smafMessage = new OctaveShiftMessage(duration, channel, value);
+                } else if (event == 0x33) {
+                    var value = dis.readUnsignedByte();
+                    smafMessage = new ModulationMessage(duration, channel, value);
+                } else if (event == 0x34) {
+                    var value = dis.readUnsignedByte();
+                    smafMessage = new PitchBendMessage(duration, channel, value * 16384 / 256);
+                } else if (event == 0x36) {
+                    var value = dis.readUnsignedByte();
+                    smafMessage = new ExpressionMessage(duration, channel, value);
+                } else if (event == 0x37) {
+                    var value = dis.readUnsignedByte();
+                    smafMessage = new VolumeMessage(duration, channel, value);
+                } else if (event == 0x3a) {
+                    var value = dis.readUnsignedByte();
+                    smafMessage = new PanMessage(duration, channel, value);
+                } else if (event == 0x3b) {
+                    var value = dis.readUnsignedByte();
+                    smafMessage = new ExpressionMessage(duration, channel, value);
+                } else {
+                    smafMessage = new UndefinedMessage(e1, event, duration);
+                }
+            } else if (e1 == 0xff) {
+                var sig2 = dis.readUnsignedByte();
+                switch (sig2) {
+                    case 0x00:
+                        smafMessage = new NopMessage(duration);
+                        break;
+                    case 0xf0:
+                        int messageSize = dis.readUnsignedByte();
+                        byte[] data = new byte[messageSize];
+                        dis.readFully(data);
+                        smafMessage = Factory.getSysexMessage(duration, sig2, data, messageSize);
+                        break;
+                    default:
+                       smafMessage = new UndefinedMessage(e1, sig2, duration);
+                       break;
+                }
+            } else {
+                var channel = e1 >> 6;
+                var note = (e1 & 15) + ((e1 >> 4 & 3) + 3) * 12;
+                var gateTime = MidiUtil.readVariableLength(dis);
+                smafMessage = new NoteMessage(duration, channel, note, gateTime);
+//logger.log(Level.INFO, smafMessage);
+            }
+
+            assert smafMessage != null : "smafMessage is null";
+            messages.add(smafMessage);
+        }
+    }
+
+    /**
+     * Writes the sequence back.
+     * <p>
+     * When this chunk was read from a file the source bytes are written verbatim: parsing is
+     * lossy (the short events, the tables and the Huffman coding of
+     * {@link TrackChunk.FormatType#MobileStandard_Compress} do not survive it) and most
+     * {@link SmafMessage#getMessage()} are not implemented for those formats. A chunk built by
+     * {@link #addSmafMessage(SmafMessage)} has no source bytes and is written from its messages.
+     * </p>
+     */
+    @Override
+    public void writeTo(OutputStream os) throws IOException {
+        writeChunk(os, bos -> {
+            if (raw != null) {
+                bos.write(raw);
+            } else {
+                for (SmafMessage message : messages) {
+                    bos.write(message.getMessage());
+                }
+            }
+        });
+    }
+
+    /** the body as it was read, null when this chunk was not read from a file */
+    protected byte[] raw;
+
+    /**
+     * Reads the whole body, keeping it for {@link #writeTo(OutputStream)}, and gives a stream
+     * over it to parse.
+     */
+    protected CrcDataInputStream keep(CrcDataInputStream dis) throws IOException {
+        raw = new byte[dis.available()];
+        dis.readFully(raw);
+        return detachedStream(raw);
+    }
+
+    /** */
+    protected final List<SmafMessage> messages = new ArrayList<>();
+
+    /**
+     * @return Returns the messages.
+     */
+    public List<SmafMessage> getSmafMessages() {
+        return messages;
+    }
+
+    /** */
+    public void addSmafMessage(SmafMessage smafMessage) {
+        messages.add(smafMessage);
+        size += smafMessage.getLength(); // TODO
+        raw = null; // the messages are the source now
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(super.toString());
+        try (var dc = getDC().open()) {
+            messages.stream().map(m -> dc.format(m.toString())).forEach(sb::append);
+        }
+
+        return sb.toString();
+    }
+}

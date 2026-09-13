@@ -22,8 +22,8 @@ Provides a class for MFi service provider implementation example.
  * ~~030917 Some InfoMessages can be converted to MetaMessage (1,2,3...)~~
  * ~~041223 TempoMessage must also support delta time~~
  * ~~041231 SMF type 1 compatible → Put 4ch into one ArrayList and then process it?~~
- * Should MFiConvertible be implemented somewhere else?
- * ADPCM also plays according to Δ time -> Thread?
+ * ~~Should MFiConvertible be implemented somewhere else?~~
+ * ~~ADPCM also plays according to Δ time -> Thread?~~
  * SMF -> M$ type where MFi is still strange
  * ~~070117 Integration of { Normal, Class A, B, C, Note }, { Extension A, B, Info }~~
  * Track, AudioData, Info* integration

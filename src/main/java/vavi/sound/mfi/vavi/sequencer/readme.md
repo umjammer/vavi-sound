@@ -6,7 +6,7 @@ Provides sub classes of SysexMessage.
 something a MIDI synthesizer can use (so far the NEC tone and wave messages)
 builds the SMAF (Yamaha) exclusive that says the same thing and sends it to the
 `Receiver` it is given, packed the way
-`vavi.sound.smaf.message.yamaha.YamahaMessage` packs one while a SMAF file plays.
+`vavi.sound.smaf.vavi.yamaha.message.YamahaMessage` packs one while a SMAF file plays.
 See `vavi.sound.mfi.vavi.nec` readme, "handing the voices to the synthesizer".
 
 ## TODO

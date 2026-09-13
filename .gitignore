@@ -2,4 +2,4 @@ tmp/
 local.properties
 AGENTS.md
 mfi.properties
-smaf.properties
+src/test/java/vavi/sound/smaf/smaf.properties

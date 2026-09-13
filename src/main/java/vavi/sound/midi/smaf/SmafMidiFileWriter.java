@@ -14,7 +14,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
 
 import vavi.sound.midi.BasicMidiFileWriter;
-import vavi.sound.smaf.SmafFileFormat;
+import vavi.sound.smaf.vavi.VaviSmafFileFormat;
 import vavi.sound.smaf.SmafSystem;
 import vavi.sound.smaf.SmafUnavailableException;
 
@@ -35,19 +35,19 @@ public class SmafMidiFileWriter extends BasicMidiFileWriter {
 
     @Override
     public int[] getMidiFileTypes() {
-        return new int[] { SmafFileFormat.FILE_TYPE };
+        return new int[] { VaviSmafFileFormat.FILE_TYPE };
     }
 
     /** @param sequence MIDI sequence */
     @Override
     public int[] getMidiFileTypes(Sequence sequence) {
-        return new int[] { SmafFileFormat.FILE_TYPE };
+        return new int[] { VaviSmafFileFormat.FILE_TYPE };
     }
 
     /** @param fileType supports 0x84:SMAF */
     @Override
     public boolean isFileTypeSupported(int fileType) {
-        return fileType == SmafFileFormat.FILE_TYPE;
+        return fileType == VaviSmafFileFormat.FILE_TYPE;
     }
 
     /**
@@ -56,7 +56,7 @@ public class SmafMidiFileWriter extends BasicMidiFileWriter {
      */
     @Override
     public boolean isFileTypeSupported(int fileType, Sequence sequence) {
-        return fileType == SmafFileFormat.FILE_TYPE;
+        return fileType == VaviSmafFileFormat.FILE_TYPE;
     }
 
     /**

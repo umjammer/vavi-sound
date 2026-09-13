@@ -24,6 +24,7 @@ import vavi.sound.mfi.vavi.TrackMessage.SysexTrackMessage;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
+import vavi.sound.mobile.StreamExclusive;
 
 import static java.lang.System.getLogger;
 
@@ -33,6 +34,10 @@ import static java.lang.System.getLogger;
  * <pre>
  *  0xff, 0xff
  * </pre>
+ * system property
+ * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
+ * to convert the message into the exclusives its vendor's functions send, default {@code false}</li>
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020703 nsano refine <br>
  *          0.01 030711 nsano add constants <br>
@@ -177,21 +182,42 @@ logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".fo
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        javax.sound.midi.SysexMessage SysexMessage = new javax.sound.midi.SysexMessage();
+        if (!StreamExclusive.isEnabled()) {
+            javax.sound.midi.SysexMessage sysexMessage = new javax.sound.midi.SysexMessage();
+            int id = MfiMessageStore.put(this);
+            byte[] data = {
+                    VaviMidiDeviceProvider.MANUFACTURER_ID,
+                    MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND,
+                    (byte) ((id / 0x100) & 0xff),
+                    (byte) ((id % 0x100) & 0xff)
+            };
+            sysexMessage.setMessage(0xf0,    // sysex
+                                    data,
+                                    data.length);
 
-        int id = MfiMessageStore.put(this);
-        byte[] data = {
-                VaviMidiDeviceProvider.MANUFACTURER_ID, // TODO creating real sysex option
-                MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND,
-                (byte) ((id / 0x100) & 0xff),
-                (byte) ((id % 0x100) & 0xff)
-        };
-        SysexMessage.setMessage(0xf0,    // sysex
-                               data,
-                               data.length);
-
-        return new MidiEvent[] {
-            new MidiEvent(SysexMessage, context.getCurrent())
-        };
+            return new MidiEvent[] {
+                new MidiEvent(sysexMessage, context.getCurrent())
+            };
+        } else {
+            // what the vendor's functions would send and play at play time - the voice
+            // exclusives, the stream waves and their start / stop - here and now, so that
+            // the synthesizer gets them in the midi sequence itself, see StreamExclusive
+            int vendor = getVendor() | getCarrier();
+            MachineDependentSequencer sequencer;
+            try {
+                sequencer = MachineDependentSequencer.Factory.getSequencer(vendor);
+            } catch (IllegalArgumentException e) {
+logger.log(Level.DEBUG, "no sequencer for vendor: %02x, skipped".formatted(vendor));
+                return new MidiEvent[0];
+            }
+            try {
+                return StreamExclusive.capture(receiver -> sequencer.sequence(this, receiver)).stream()
+                        .map(m -> new MidiEvent(m, context.getCurrent()))
+                        .toArray(MidiEvent[]::new);
+            } catch (InvalidMfiDataException | RuntimeException e) {
+logger.log(Level.WARNING, "machine dependent message cannot be converted, skipped: " + this + ", " + e);
+                return new MidiEvent[0];
+            }
+        }
     }
 }
