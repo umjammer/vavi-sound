@@ -3,3 +3,4 @@ vavi.sound.adpcm.dvi.DviInputStream$DviInputStreamFactory
 vavi.sound.adpcm.oki.OkiInputStream$OkiInputStreamFactory
 vavi.sound.adpcm.vox.VoxInputStream$VoxInputStreamFactory
 vavi.sound.adpcm.yamaha.YamahaInputStream$YamahaInputStreamFactory
+vavi.sound.adpcm.ccitt.G726InputStream$G726InputStreamFactory
