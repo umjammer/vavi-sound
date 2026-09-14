@@ -207,7 +207,7 @@ abstract class G726 extends G711 {
         for (cnt = 5; cnt > 0; cnt--) state.dq[cnt] = state.dq[cnt - 1];
         // FLOAT A : convert dq[0] to 4-bit exp, 6-bit mantissa f.p.
         if (mag == 0) {
-            state.dq[0] = (dq >= 0) ? 0x20 : 0xFC20;
+            state.dq[0] = (dq >= 0) ? 0x20 : (short) 0xFC20; // -992, C short
         } else {
             exp = quan(mag, power2, 15);
             state.dq[0] = (dq >= 0) ? (exp << 6) + ((mag << 6) >> exp) : (exp << 6) + ((mag << 6) >> exp) - 0x400;
@@ -225,7 +225,7 @@ abstract class G726 extends G711 {
             exp = quan(mag, power2, 15);
             state.sr[0] = (exp << 6) + ((mag << 6) >> exp) - 0x400;
         } else
-            state.sr[0] = 0xFC20;
+            state.sr[0] = (short) 0xFC20; // -992, C short
 
         // DELAY A
         state.pk[1] = state.pk[0];

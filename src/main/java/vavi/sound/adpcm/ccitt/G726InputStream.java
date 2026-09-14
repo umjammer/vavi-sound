@@ -41,7 +41,31 @@ public class G726InputStream extends AdpcmInputStream {
      * @param byteOrder byte order for #read()
      */
     public G726InputStream(InputStream in, ByteOrder byteOrder) {
-        super(in, byteOrder, 4, ByteOrder.LITTLE_ENDIAN);
+        this(in, 4, byteOrder);
+    }
+
+    /**
+     * {@link vavi.io.BitInputStream} is little endian (RFC 3551, LSB first)
+     * <li>TODO PCM encoding
+     * @param in G726 ADPCM
+     * @param bits 2, 3, 4, 5
+     * @param byteOrder byte order for #read()
+     */
+    public G726InputStream(InputStream in, int bits, ByteOrder byteOrder) {
+        this(in, bits, ByteOrder.LITTLE_ENDIAN, byteOrder);
+    }
+
+    /**
+     * <li>TODO PCM encoding
+     * @param in G726 ADPCM
+     * @param bits 2, 3, 4, 5
+     * @param bitOrder code packing order for {@link vavi.io.BitInputStream},
+     *                 {@link ByteOrder#LITTLE_ENDIAN} for LSB first (RFC 3551, ffmpeg "g726le"),
+     *                 {@link ByteOrder#BIG_ENDIAN} for MSB first (I.366.2 AAL2, ffmpeg "g726")
+     * @param byteOrder byte order for #read()
+     */
+    public G726InputStream(InputStream in, int bits, ByteOrder bitOrder, ByteOrder byteOrder) {
+        super(in, byteOrder, bits, bitOrder);
         ((G726) decoder).setEncoding(encoding);
     }
 

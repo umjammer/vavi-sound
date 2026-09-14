@@ -27,9 +27,13 @@ import vavix.util.Checksum;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static vavi.sound.SoundUtil.volume;
+import static vavix.util.DelayedWorker.later;
 
 
 /**
@@ -108,5 +112,54 @@ line.close();
         is.close();
 
         assertEquals(Checksum.getChecksum(getClass().getResourceAsStream(correctFile)), Checksum.getChecksum(outFile));
+    }
+
+    @ParameterizedTest
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
+    @ValueSource(ints = {2, 3, 4, 5})
+    void test2(int bits) throws Exception {
+
+        int sampleRate = 8000;
+        ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
+
+        AudioFormat format = new AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                sampleRate,
+                16,
+                1,
+                2,
+                sampleRate,
+                byteOrder.equals(ByteOrder.BIG_ENDIAN));
+        Debug.print(format);
+
+        String filename = "in_%d.g726".formatted(bits * 8);
+Debug.print("filename: " + filename);
+        InputStream is = new G726InputStream(getClass().getResourceAsStream(filename), bits, ByteOrder.BIG_ENDIAN, ByteOrder.LITTLE_ENDIAN); // jtt1078 samples are packed MSB first
+Debug.print("available: " + is.available());
+
+        OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
+
+        DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+        SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
+        line.open(format);
+        line.start();
+
+        volume(line, volume);
+
+        byte[] buf = new byte[1024];
+        while (!later(5000).come() && is.available() > 0) {
+            int r = is.read(buf, 0, 1024);
+            if (r < 0) {
+                break;
+            }
+            line.write(buf, 0, r);
+            os.write(buf, 0, r);
+        }
+        line.drain();
+        line.stop();
+        line.close();
+        os.close();
+
+        is.close();
     }
 }
