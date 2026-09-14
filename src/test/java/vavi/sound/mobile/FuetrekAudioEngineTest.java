@@ -3,6 +3,7 @@ package vavi.sound.mobile;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 
 /** Regression tests for MFi4 ADPM stream channel selection. */
@@ -38,9 +39,9 @@ class FuetrekAudioEngineTest {
             engine.data[0] = stream;
 
             System.setProperty("vavi.sound.mobile.FuetrekAudioEngine.g723Decoder", "ima2");
-            assertEquals("Ima2InputStream", engine.getInputStreams(0, 1)[0].getClass().getSimpleName());
+            assertInstanceOf(vavi.sound.adpcm.ima.Ima2InputStream.class, engine.getInputStreams(0, 1)[0]);
             System.setProperty("vavi.sound.mobile.FuetrekAudioEngine.g723Decoder", "g723");
-            assertEquals("G723_16InputStream", engine.getInputStreams(0, 1)[0].getClass().getSimpleName());
+            assertInstanceOf(vavi.sound.adpcm.ccitt.G723InputStream.class, engine.getInputStreams(0, 1)[0]);
         } finally {
             if (previous == null) {
                 System.clearProperty("vavi.sound.mobile.FuetrekAudioEngine.g723Decoder");

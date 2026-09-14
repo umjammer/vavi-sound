@@ -47,7 +47,7 @@ import javax.sound.sampled.AudioFormat;
  * @version 0.00 030713 nsano port to java <br>
  *          0.01 030714 nsano fine tune <br>
  */
-class G723_40 extends G711 {
+class G723_40 extends G723 {
 
     /**
      * Maps G.723_40 code word to ructeconstructed scale factor normalized log

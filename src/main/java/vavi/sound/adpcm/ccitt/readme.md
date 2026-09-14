@@ -44,4 +44,5 @@
 
 ## TODO
 
-* 3, 5bit
+* ~~3, 5bit~~
+* check State and G726State is same

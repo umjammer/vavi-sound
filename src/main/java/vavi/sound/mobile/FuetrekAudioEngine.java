@@ -13,13 +13,12 @@ import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.ByteOrder;
-import java.util.Locale;
 import java.util.ServiceLoader;
 
 import vavi.sound.adpcm.AdpcmInputStreamFactory;
 import vavi.sound.adpcm.ccitt.G721InputStream;
 import vavi.sound.adpcm.ccitt.G721OutputStream;
-import vavi.sound.adpcm.ccitt.G723_16InputStream;
+import vavi.sound.adpcm.ccitt.G723InputStream;
 import vavi.sound.adpcm.ima.Ima2InputStream;
 
 import static java.lang.System.getLogger;
@@ -157,9 +156,7 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[str
                 String selected = auto2BitDecoder(compressed);
                 byte[] decoded = selected.equals("g721") ?
                         decodeAll(new G721InputStream(new ByteArrayInputStream(compressed), ByteOrder.LITTLE_ENDIAN)) :
-                        decodeAll(new G723_16InputStream(new ByteArrayInputStream(compressed),
-                                ByteOrder.LITTLE_ENDIAN,
-                                ByteOrder.LITTLE_ENDIAN));
+                        decodeAll(new G723InputStream(new ByteArrayInputStream(compressed), ByteOrder.LITTLE_ENDIAN, ByteOrder.LITTLE_ENDIAN));
                 // A few DoCoMo Type-2 resources are tagged as 2-bit but are
                 // actually 4-bit G.721 packets.  Their G.723 expansion has
                 // near-white-noise roughness; retain G.723 for normal streams.
@@ -172,11 +169,10 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[str
         if (order == null) {
             order = System.getProperty("vavi.sound.mobile.FuetrekAudioEngine.g723BitOrder", "little");
         }
-        order = order
-                .toLowerCase(Locale.ROOT);
+        order = order.toLowerCase();
         return switch (order) {
-            case "little", "le" -> new G723_16InputStream(in, ByteOrder.LITTLE_ENDIAN, ByteOrder.LITTLE_ENDIAN);
-            case "big", "be" -> new G723_16InputStream(in, ByteOrder.LITTLE_ENDIAN, ByteOrder.BIG_ENDIAN);
+            case "little", "le" -> new G723InputStream(in, ByteOrder.LITTLE_ENDIAN, ByteOrder.LITTLE_ENDIAN);
+            case "big", "be" -> new G723InputStream(in, ByteOrder.BIG_ENDIAN, ByteOrder.LITTLE_ENDIAN);
             default -> throw new IllegalArgumentException("unsupported G.723 bit order: " + order);
         };
     }
@@ -197,7 +193,7 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[str
 
     /** Runs the same score used by playback, but without consuming the stored stream. */
     private static String auto2BitDecoder(byte[] compressed) throws IOException {
-        byte[] g723 = decodeAll(new G723_16InputStream(new ByteArrayInputStream(compressed),
+        byte[] g723 = decodeAll(new G723InputStream(new ByteArrayInputStream(compressed),
                 ByteOrder.LITTLE_ENDIAN,
                 ByteOrder.LITTLE_ENDIAN));
         byte[] g721 = decodeAll(new G721InputStream(new ByteArrayInputStream(compressed),
