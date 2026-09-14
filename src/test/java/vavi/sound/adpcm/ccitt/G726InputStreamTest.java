@@ -33,7 +33,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static vavi.sound.SoundUtil.volume;
-import static vavix.util.DelayedWorker.later;
 
 
 /**
@@ -134,7 +133,7 @@ line.close();
 
         String filename = "in_%d.g726".formatted(bits * 8);
 Debug.print("filename: " + filename);
-        InputStream is = new G726InputStream(getClass().getResourceAsStream(filename), bits, ByteOrder.BIG_ENDIAN, ByteOrder.LITTLE_ENDIAN); // jtt1078 samples are packed MSB first
+        InputStream is = new G726InputStream(getClass().getResourceAsStream(filename), bits, ByteOrder.BIG_ENDIAN, ByteOrder.LITTLE_ENDIAN);
 Debug.print("available: " + is.available());
 
         OutputStream os = new BufferedOutputStream(Files.newOutputStream(outFile.toPath()));
@@ -147,7 +146,7 @@ Debug.print("available: " + is.available());
         volume(line, volume);
 
         byte[] buf = new byte[1024];
-        while (!later(5000).come() && is.available() > 0) {
+        while (is.available() > 0) {
             int r = is.read(buf, 0, 1024);
             if (r < 0) {
                 break;

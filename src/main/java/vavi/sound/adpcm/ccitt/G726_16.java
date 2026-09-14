@@ -85,6 +85,13 @@ class G726_16 extends G726 {
         y = state.step_size(); // adaptive quantizer step size
         i = quantize(d, y, qtab_723_16, 1); // i = ADPCM code
 
+        // Since quantize() only produces a three level output
+        // (1, 2, or 3), we must create the fourth one on our own
+        if (i == 3) { // i code for the zero region
+            if ((d & 0x8000) == 0) // If d > 0, i=3 isn't right...
+                i = 0;
+        }
+
         dq = reconstruct(i & 0x02, _dqlntab[i], y); // quantized diff
 
         sr = (dq < 0) ? se - (dq & 0x3FFF) : se + dq; // reconstructed signal
