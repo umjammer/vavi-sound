@@ -28,6 +28,7 @@ public class G723_16InputStream extends AdpcmInputStream {
     }
 
     /**
+     * <li>TODO PCM encoding
      * {@link vavi.io.BitInputStream} is 2bit little endian fixed
      */
     public G723_16InputStream(InputStream in, ByteOrder byteOrder) {
@@ -35,6 +36,8 @@ public class G723_16InputStream extends AdpcmInputStream {
     }
 
     /**
+     * <li>TODO PCM encoding
+     * {@link vavi.io.BitInputStream} is 2bit little endian fixed
      * @param bitOrder order of the packed two-bit ADPCM code words
      */
     public G723_16InputStream(InputStream in, ByteOrder byteOrder, ByteOrder bitOrder) {

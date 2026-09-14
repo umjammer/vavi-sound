@@ -20,6 +20,7 @@ import javax.sound.sampled.SourceDataLine;
 import vavi.sound.sampled.misc.HijackSourceDataLine;
 import vavi.util.Debug;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SoundUtilTest {
 
     @Test
+    @DisplayName("test #getSource, get an url from a stream")
     void test1() throws Exception {
         InputStream is = SoundUtil.class.getResourceAsStream("/test.mid");
         URI uri = SoundUtil.getSource(is);
@@ -63,6 +65,7 @@ class SoundUtilTest {
     }
 
     @Test
+    @DisplayName("test #getLine")
     void test2() throws Exception {
         AudioFormat format = new AudioFormat(44100, 16, 2, true, false);
         SourceDataLine sdl = AudioSystem.getSourceDataLine(format);

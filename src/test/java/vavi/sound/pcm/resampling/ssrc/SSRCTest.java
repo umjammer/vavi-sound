@@ -44,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static vavi.sound.SoundUtil.volume;
+import static vavix.util.DelayedWorker.later;
 
 
 /**
@@ -71,6 +72,7 @@ public class SSRCTest {
     static final String correctUpFile = "src/test/resources/vavi/sound/pcm/resampling/ssrc/up.wav";
 
     static boolean onIde = System.getProperty("vavi.test", "").equals("ide");
+    static long time = onIde ? 1000 * 1000 : 5 * 1000;
 
     @BeforeAll
     static void setUp() throws Exception {
@@ -103,7 +105,7 @@ Debug.println(format);
             line.start();
             byte[] buf = new byte[1024];
             int l;
-            while (true) {
+            while (!later(time).come()) {
                 l = ais.read(buf, 0, buf.length);
                 if (l < 0)
                     break;
@@ -133,7 +135,7 @@ Debug.println(format);
             line.start();
             byte[] buf = new byte[1024];
             int l;
-            while (true) {
+            while (!later(time).come()) {
                 l = ais.read(buf, 0, buf.length);
                 if (l < 0)
                     break;

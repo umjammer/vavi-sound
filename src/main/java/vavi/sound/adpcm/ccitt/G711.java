@@ -76,7 +76,7 @@ abstract class G711 implements Codec {
         0x3ff, 0x7ff, 0xfff, 0x1fff
     };
 
-    /* copy from CCITT G.711 specifications */
+    // copy from CCITT G.711 specifications
 
     /** u- to A-law conversions */
     private static final int[] _u2a = {
