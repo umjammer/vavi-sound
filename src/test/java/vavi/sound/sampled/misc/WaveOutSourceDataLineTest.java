@@ -7,6 +7,7 @@
 package vavi.sound.sampled.misc;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static vavi.sound.midi.MidiUtil.volume;
 
 
@@ -68,6 +70,7 @@ Debug.println("volume: " + volume);
         System.setProperty("javax.sound.midi.Synthesizer", "#Gervill");
         System.setProperty("javax.sound.sampled.SourceDataLine", "#WaveOut Mixer");
 //        System.setProperty("javax.sound.sampled.SourceDataLine", "#Null Mixer");
+        System.setProperty("vavi.sound.sampled.misc.waveout", Path.of("tmp", "waveout.wav").toString());
     }
 
     @Test
@@ -113,12 +116,16 @@ Debug.println("END");
 
         synthesizer.close();
 
-        if ("#WaveOut Mixer".equals(System.getProperty("javax.sound.sampled.SourceDataLine")))
-            Files.move(Path.of(System.getProperty("vavi.sound.sampled.misc.waveout")), Path.of("tmp", "waveout.wav"), StandardCopyOption.REPLACE_EXISTING);
+        if ("#WaveOut Mixer".equals(System.getProperty("javax.sound.sampled.SourceDataLine"))) {
+Debug.println("vavi.sound.sampled.misc.waveout: " + System.getProperty("vavi.sound.sampled.misc.waveout"));
+            assertTrue(Files.exists(Path.of(System.getProperty("vavi.sound.sampled.misc.waveout"))));
+        }
     }
 
     @AfterAll
-    static void tearDownAll() {
-        System.setProperty("javax.sound.sampled.SourceDataLine", "");
+    static void tearDownAll() throws Exception {
+        System.clearProperty("javax.sound.sampled.SourceDataLine");
+        Files.delete(Path.of(System.getProperty("vavi.sound.sampled.misc.waveout")));
+        System.clearProperty("vavi.sound.sampled.misc.waveout");
     }
 }
