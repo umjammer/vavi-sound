@@ -15,6 +15,7 @@ import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
 import vavi.sound.mfi.vavi.TrackMessage;
+import vavi.sound.midi.VaviMidiDeviceProvider;
 
 
 /**
@@ -34,6 +35,16 @@ import vavi.sound.mfi.vavi.TrackMessage;
  */
 public class MasterVolumeMessage extends ShortMessage
     implements MidiConvertible, TrackMessage {
+
+    /**
+     * sysex function id: the universal master volume following this one is the song's, not the listener's
+     * <pre>
+     * 0xf0 0x45 0x05 volume 0xf7
+     * </pre>
+     * for a synthesizer of an mfi sound source which has both of them, the others do not know
+     * the function and let it go, the universal one works for them as before.
+     */
+    public static final int SYSEX_FUNCTION_ID_MASTER_VOLUME = 0x05;
 
     /** 0 ~ 127 */
     private int volume = 100;
@@ -92,7 +103,19 @@ public class MasterVolumeMessage extends ShortMessage
 
         SysexMessage sysexMessage = new SysexMessage();
         sysexMessage.setMessage(data, data.length);
+
+        byte[] mark = {
+                (byte) 0xf0,
+                VaviMidiDeviceProvider.MANUFACTURER_ID,
+                SYSEX_FUNCTION_ID_MASTER_VOLUME,
+                (byte) (volume & 0x7f),
+                (byte) 0xf7
+        };
+        SysexMessage markMessage = new SysexMessage();
+        markMessage.setMessage(mark, mark.length);
+
         return new MidiEvent[] {
+            new MidiEvent(markMessage, context.getCurrent()),
             new MidiEvent(sysexMessage, context.getCurrent())
         };
     }
