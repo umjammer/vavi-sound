@@ -141,8 +141,9 @@ if (timeBase < 0) {
 
         int tempo    = getTempo();
         int timeBase = getTimeBase();
-        // quarter note length in μsec TODO is round OK?, TODO 48??? (actually 60 * 10^6 / tempo)
-        int l = (int) Math.round(60d * 1000000d / ((48d / timeBase) * tempo));
+        // an mfi tick is 60 / (timeBase * tempo) seconds, a midi quarter note is resolution ticks
+        int resolution = context.getResolution() > 0 ? context.getResolution() : timeBase;
+        int l = (int) Math.round(60d * 1000000d * resolution / ((double) timeBase * tempo));
 //logger.log(Level.TRACE, this);
 //logger.log(Level.TRACE, "%d = %02x, %02x, %02x".formatted(l, (l / 0x10000) & 0xff, ((l % 0x10000) / 0x100) & 0xff, l % 0x100) & 0xff));
         MetaMessage metaMessage = new MetaMessage();
@@ -177,24 +178,41 @@ if (timeBase < 0) {
         // TODO no more change if scale is changed once?
         if (context.isScaleChanged()) {
             timeBase = getNearestTimeBase((int) (context.getTimeBase() / context.getScale()));
-            tempo = (int) Math.round(60d * 1000000d / ((48d / timeBase) * l));
-//logger.log(Level.TRACE, "(SET) tempo > " + MAX_SCALELESS + ": timeBase: " + timeBase + ", tempo: " + tempo);
         } else {
             timeBase = getNearestTimeBase(context.getTimeBase());
-            tempo = (int) Math.round(60d * 1000000d / ((48d / timeBase) * l));
-//logger.log(Level.TRACE, "(SET) timeBase: " + timeBase + ", tempo: " + tempo);
         }
+        // an mfi tick is scale midi ticks and 60 / (timeBase * tempo) seconds
+        tempo = tempo(context.getTimeBase(), context.getScale(), timeBase, l);
+        // too fast for a byte, a larger time base declared for the same ticks makes it smaller
+        for (int i = 0; tempo > 255 && i < timeBaseTable.length; i++) {
+            if (timeBaseTable[i] > timeBase && tempo(context.getTimeBase(), context.getScale(), timeBaseTable[i], l) <= 255) {
+                timeBase = timeBaseTable[i];
+                tempo = tempo(context.getTimeBase(), context.getScale(), timeBase, l);
+            }
+        }
+//logger.log(Level.TRACE, "(SET) timeBase: " + timeBase + ", tempo: " + tempo);
 
         TempoMessage mfiMessage = new TempoMessage();
         mfiMessage.setDelta(context.getDelta(0)); // TODO ???
         mfiMessage.setTimeBase(timeBase);
-        mfiMessage.setTempo(tempo);
+        mfiMessage.setTempo(Math.min(tempo, 255));
 
         context.setPreviousTick(0, midiEvent.getTick());
 
         return new MfiEvent[] {
             new MfiEvent(mfiMessage, midiEvent.getTick())
         };
+    }
+
+    /**
+     * @param resolution midi resolution
+     * @param scale midi ticks an mfi tick
+     * @param timeBase mfi time base
+     * @param l midi quarter note length [μsec]
+     * @return mfi tempo
+     */
+    static int tempo(int resolution, double scale, int timeBase, int l) {
+        return (int) Math.round(60d * 1000000d * resolution / (timeBase * scale * l));
     }
 
     /** for sorting */

@@ -308,11 +308,21 @@ logger.log(Level.DEBUG, "pitch[" + channel + "]: " + pitch);
             MfiMessage message = event.getMessage();
 
             if (message instanceof TempoMessage) {
-                return ((TempoMessage) message).getTimeBase();
+                resolution = ((TempoMessage) message).getTimeBase();
+                return resolution;
             }
         }
 
 logger.log(Level.INFO, "no tempo message in track 0");
-        return 48; // MFi default time base
+        resolution = 48; // MFi default time base
+        return resolution;
+    }
+
+    /** the midi resolution {@link #getResolution(Track[])} decided, 0 before it */
+    private int resolution;
+
+    /** @return the midi resolution, 0 if not decided yet */
+    public int getResolution() {
+        return resolution;
     }
 }
