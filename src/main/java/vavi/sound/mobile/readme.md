@@ -9,5 +9,6 @@ Provides a wave sequencer class for mobile.
 
 ## TODO
 
- * something is wrong with `continued`
+ * something is wrong with `continued` ... what's?
  * investigate yamaha Adpcm-A, B and MA#
+ * output not only to line but also to data
