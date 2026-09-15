@@ -9,12 +9,14 @@ package vavi.sound.mfi.vavi.track;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
 
 import vavi.sound.mfi.ChannelMessage;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
 import vavi.sound.mfi.vavi.TrackMessage;
+import vavi.sound.midi.VaviMidiDeviceProvider;
 
 
 /**
@@ -32,6 +34,16 @@ import vavi.sound.mfi.vavi.TrackMessage;
  */
 public class ChangeBankMessage extends vavi.sound.mfi.ShortMessage
     implements ChannelMessage, MidiConvertible, TrackMessage {
+
+    /**
+     * sysex function id: the mfi bank as it is, which the midi program keeps only bit 0 of
+     * <pre>
+     * 0xf0 0x45 0x04 channel bank 0xf7
+     * </pre>
+     * for a synthesizer of an mfi sound source (e.g. fuetrek, bank 0 and 0x34 are tone sets
+     * of their own), the others do not know the function and let it go.
+     */
+    public static final int SYSEX_FUNCTION_ID_BANK = 0x04;
 
     /** */
     private int voice;
@@ -112,12 +124,24 @@ public class ChangeBankMessage extends vavi.sound.mfi.ShortMessage
 //logger.log(Level.TRACE, "bank[" + channel + "]: " + getBank());
         channel = context.setBank(channel, getBank());
 
+        SysexMessage sysexMessage = new SysexMessage();
+        byte[] data = {
+                (byte) 0xf0,
+                VaviMidiDeviceProvider.MANUFACTURER_ID,
+                SYSEX_FUNCTION_ID_BANK,
+                (byte) channel,
+                (byte) getBank(),
+                (byte) 0xf7
+        };
+        sysexMessage.setMessage(data, data.length);
+
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.PROGRAM_CHANGE,
                 channel,
                 context.getProgram(channel),
                 0);
         return new MidiEvent[] {
+                new MidiEvent(sysexMessage, context.getCurrent()),
                 new MidiEvent(shortMessage, context.getCurrent())
         };
     }

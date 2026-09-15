@@ -26,6 +26,7 @@ import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.mfi.vavi.sequencer.UnknownVendorSequencer;
+import vavi.sound.mfi.vavi.track.ChangeBankMessage;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
@@ -214,6 +215,9 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
                 break;
             case AudioDataSequencer.SYSEX_FUNCTION_ID_MFi4:
                 processSpecial_Vavi_Mfi4(message, receiver);
+                break;
+            case ChangeBankMessage.SYSEX_FUNCTION_ID_BANK:
+                // the mfi bank for a synthesizer of an mfi sound source, the midi program is enough here
                 break;
             case StreamExclusive.SYSEX_PACKED:
                 // a packed smaf exclusive a machine dependent function issued,
