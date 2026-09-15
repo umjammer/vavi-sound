@@ -18,6 +18,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
@@ -45,6 +46,7 @@ public class SmafAudioFileWriterTest {
      * mono wave -> smaf
      */
     @Test
+    @DisplayName("spi direct")
     public void test0() throws Exception {
         Path path = Paths.get(SmafAudioFileWriterTest.class.getResource("/mono.wav").toURI());
         AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(Files.newInputStream(path)));
@@ -63,6 +65,7 @@ public class SmafAudioFileWriterTest {
     }
 
     @Test
+    @DisplayName("via spi")
     public void test1() throws Exception {
         Path path = Paths.get(SmafAudioFileWriterTest.class.getResource("/mono.wav").toURI());
         AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(Files.newInputStream(path)));

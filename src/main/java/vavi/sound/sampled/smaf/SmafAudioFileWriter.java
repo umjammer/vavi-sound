@@ -29,7 +29,7 @@ public class SmafAudioFileWriter extends AudioFileWriter {
 
     /** */
     private static final Type[] outputTypes = new Type[] {
-        new SMAF(null) // TODO null
+        SMAF.SMAF
     };
 
     @Override
@@ -45,7 +45,7 @@ public class SmafAudioFileWriter extends AudioFileWriter {
     /**
      * {@inheritDoc}
      *
-     * @param fileType must be instance of {@link SMAF}
+     * @param fileType must be type of {@link SMAF}
      * @param out specify null device. e.g. win32: "nul", *nix: "/dev/null"
      * @throws IllegalArgumentException when fileType is not SMAF
      * @throws NullPointerException when fileType is not set in properties
@@ -94,7 +94,7 @@ public class SmafAudioFileWriter extends AudioFileWriter {
     /**
      * {@inheritDoc}
      *
-     * @param fileType must be instance of {@link SMAF}
+     * @param fileType must be type of {@link SMAF}
      * @param out specify null device. e.g. win32: "nul", *nix: "/dev/null"
      */
     @Override

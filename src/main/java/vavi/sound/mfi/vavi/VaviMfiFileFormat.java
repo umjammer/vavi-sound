@@ -89,7 +89,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
 
     /**
      * MIDI file type
-     * @see "vavi/sound/midi/package.html"
+     * @see vavi.sound.midi
      */
     public static final int FILE_TYPE = 0x88;
 
@@ -264,7 +264,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
         int exst = mff.getExst();
         int tracksCount = mff.headerChunk.getTracksCount();
         int audioDataCount = mff.getAudioDataChunkCount();
-//      boolean isAudioDataOnly = ff.isAudioDataOnly();
+//        boolean isAudioDataOnly = mff.isAudioDataOnly();
         Map<String, SubMessage> headerSubChunks = mff.headerChunk.getSubChunks();
         mff.audioDataChunks = new ArrayList<>();
 int dataLength = mff.headerChunk.getMfiDataLength() - (2 + mff.headerChunk.getDataLength());

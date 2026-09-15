@@ -219,22 +219,27 @@ logger.log(Level.DEBUG, "type: " + type);
         MidiEvent midiEvent = midiEvents.get(midiEventIndex);
 
         MidiMessage midiMessage = midiEvent.getMessage();
-        if (midiMessage instanceof ShortMessage) {
-            // note
-            interval = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
-        } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 81) {
-            // tempo
-            interval = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
+        switch (midiMessage) {
+            case ShortMessage _ ->
+                    // note
+                    interval = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
+            case MetaMessage metaMessage when metaMessage.getType() == 81 -> {
+                    // tempo
+                    interval = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
 logger.log(Level.DEBUG, "interval for tempo[" + mfiTrackNumber + "]: " + interval);
-        } else if (midiMessage instanceof MetaMessage && ((MetaMessage) midiMessage).getType() == 47) {
-            // eot
-            interval = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
+            }
+            case MetaMessage metaMessage when metaMessage.getType() == 47 ->
+                    // eot
+                    interval = retrieveAdjustedDelta(mfiTrackNumber, midiEvent.getTick());
+
 //logger.log(Level.TRACE, "interval for EOT[" + mfiTrackNumber + "]: " + interval);
-        } else if (midiMessage instanceof SysexMessage) {
-            return null;
-        } else {
+            case SysexMessage _ -> {
+                    return null;
+            }
+            case null, default -> {
 logger.log(Level.WARNING, "not supported for delta: " + midiEventIndex + ", " + MidiUtil.paramString(midiMessage));
-            return null;
+                    return null;
+            }
         }
 if (interval < 0) {
  // it shouldn't be possible

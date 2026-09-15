@@ -108,7 +108,7 @@ class SmafWithVoiceMaker {
     }
 
     /**
-     * Creates a MFi.
+     * Creates a SMAF.
      * @throws IOException
      * @throws UnsupportedAudioFileException
      * @throws InvalidSmafDataException
