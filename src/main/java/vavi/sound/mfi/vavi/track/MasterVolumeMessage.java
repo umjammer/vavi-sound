@@ -25,7 +25,8 @@ import vavi.sound.mfi.vavi.TrackMessage;
  * </pre>
  * <p>
  * System Property
- * <li>vavi.sound.mfi.ignoreMasterVolume ... ignore this setting when user want to set master volume by himself, default false</li>
+ * <li>{@code vavi.sound.mfi.ignoreMasterVolume} ...
+ * ignore this setting when user want to set master volume by himself, default {@code false}</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>

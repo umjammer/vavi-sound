@@ -9,10 +9,11 @@ package vavi.sound.mfi.vavi.track;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.SysexMessage;
 
-import org.junit.jupiter.api.Test;
-
-import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
 import vavi.sound.mfi.vavi.MidiContext;
+import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,6 +27,11 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
  * @version 0.00 2026-09-15 nsano initial version <br>
  */
 class MasterVolumeMessageTest {
+
+    @BeforeAll
+    static void setupAll() {
+        System.clearProperty("vavi.sound.mfi.ignoreMasterVolume");
+    }
 
     /** the universal master volume as before, marked as the song's just before it */
     @Test
