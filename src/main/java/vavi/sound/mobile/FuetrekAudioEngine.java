@@ -90,8 +90,38 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[str
         return channels;
     }
 
+    /**
+     * the sound source's output stage for 8 and 16 kHz ADPCM, see {@link FuetrekReconstructionInputStream}
+     * <p>
+     * system property {@code vavi.sound.mobile.FuetrekAudioEngine.reconstruction} ... {@code native} (default) or {@code none}
+     */
+    private static boolean isReconstructed(int sampleRate) {
+        return System.getProperty("vavi.sound.mobile.FuetrekAudioEngine.reconstruction", "native").equalsIgnoreCase("native")
+                && FuetrekReconstructionInputStream.isSupported(sampleRate);
+    }
+
+    /** the line is at the rate of the output stage when it is used */
+    @Override
+    protected javax.sound.sampled.AudioFormat getAudioFormat(int sampleRate, int channels) {
+        return super.getAudioFormat(isReconstructed(sampleRate) ? FuetrekReconstructionInputStream.OUTPUT_SAMPLE_RATE : sampleRate, channels);
+    }
+
     @Override
     protected InputStream[] getInputStreams(int streamNumber, int channels) {
+        InputStream[] iss = decodedInputStreams(streamNumber, channels);
+        int sampleRate = data[streamNumber].sampleRate;
+        if (isReconstructed(sampleRate)) {
+            for (int i = 0; i < iss.length; i++) {
+                if (iss[i] != null) {
+                    iss[i] = new FuetrekReconstructionInputStream(iss[i], sampleRate);
+                }
+            }
+        }
+        return iss;
+    }
+
+    /** the decoded pcm at the ADPCM sampling rate */
+    private InputStream[] decodedInputStreams(int streamNumber, int channels) {
         InputStream[] iss = new InputStream[2];
         if (data[streamNumber].channels == 1) {
             if (data[streamNumber].bits == 4) {
