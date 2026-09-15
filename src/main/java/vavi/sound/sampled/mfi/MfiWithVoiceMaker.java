@@ -105,7 +105,7 @@ class MfiWithVoiceMaker {
         this.masterVolume = toReal(0x7f, masterVolume);
         this.adpcmVolume = toReal(0x3f, adpcmVolume);
 
-        this.mdvm = MachineDependentMfiWithVoiceMaker.factory.get(model);
+        this.mdvm = MachineDependentMfiWithVoiceMaker.factory(model);
     }
 
     /**

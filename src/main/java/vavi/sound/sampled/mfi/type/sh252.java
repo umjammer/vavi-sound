@@ -25,14 +25,18 @@ import vavi.sound.sampled.mfi.MachineDependentMfiWithVoiceMaker;
 public class sh252 implements MachineDependentMfiWithVoiceMaker {
 
     /**
-     * @param data PCM, 16bit
+     * TODO the tempo has been updated to a new one.
+     * @param data PCM, 16bit, monaural/stereo
+     * @param time in [sec]
      * @param sampleRate 4k, 8k
+     * @param bits sampling bits
+     * @param channels adpcm channels
      * @param masterVolume 100% currently recommended
      * @param adpcmVolume 100% currently recommended
      */
     @Override
     public List<MfiEvent> getEvents(byte[] data, float time, int sampleRate, int bits, int channels, int masterVolume, int adpcmVolume)
-        throws InvalidMfiDataException, IOException {
+            throws InvalidMfiDataException, IOException {
 
         List<MfiEvent> events = new ArrayList<>();
 
@@ -52,5 +56,10 @@ public class sh252 implements MachineDependentMfiWithVoiceMaker {
         events.addAll(SharpMessage.getAdpcmEvents(data, time, sampleRate, bits, channels, true));
 
         return events;
+    }
+
+    @Override
+    public String getVersionString() {
+        return "0300";
     }
 }
