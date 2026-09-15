@@ -14,7 +14,7 @@ import javax.sound.midi.Receiver;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.sequencer.YamahaExclusive;
+import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusive;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
@@ -37,7 +37,7 @@ import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
  * <em>expanded</em> form of the very voice a level 0x01 message
  * ({@link ToneFunction}) carries, so {@link #getVm35Voice()} folds it back into
  * the VM35 voice image and this function hands it to the synthesizer as a SMAF
- * voice exclusive, see {@link YamahaExclusive}.
+ * voice exclusive, see {@link YamahaMfiExclusive}.
  * </p>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -162,12 +162,12 @@ logger.log(Level.DEBUG, "ToneSetting: not sent, no VM35 image for " +
         (type != null ? type.toString() : "unknown(%02x, %d)".formatted(voice[0], voice.length)));
             return;
         }
-        YamahaExclusive.send(receiver, YamahaExclusive.voice(
+        YamahaMfiExclusive.send(receiver, YamahaMfiExclusive.voice(
                 0,
                 0,
                 MidiContext.toProgram(bank, program),
                 drum ? note : 0,
-                type.isWaveTable() ? YamahaExclusive.VoiceType.PCM : YamahaExclusive.VoiceType.FM,
+                type.isWaveTable() ? YamahaMfiExclusive.VoiceType.PCM : YamahaMfiExclusive.VoiceType.FM,
                 vm35));
     }
 

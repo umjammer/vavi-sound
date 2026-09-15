@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi;
+package vavi.sound.mfi.vavi.sequencer;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.SysexMessage;
@@ -29,9 +29,9 @@ import vavi.sound.midi.VaviMidiDeviceProvider;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 2026-09-15 nsano initial version <br>
  */
-public final class MfiSoundSourceExclusive {
+public final class FuetrekMfiExclusive {
 
-    private MfiSoundSourceExclusive() {
+    private FuetrekMfiExclusive() {
     }
 
     /** vavi sysex function id */

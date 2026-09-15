@@ -20,7 +20,7 @@ import vavi.sound.mfi.vavi.TrackMessage;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.sound.mobile.StreamExclusive;
+import vavi.sound.mobile.YamahaExclusive;
 
 
 /**
@@ -32,7 +32,7 @@ import vavi.sound.mobile.StreamExclusive;
  * </pre>
  * system property
  * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
- * to send {@link StreamExclusive#volume} to the synthesizer, default {@code false}</li>
+ * to send {@link YamahaExclusive#volume} to the synthesizer, default {@code false}</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070117 nsano initial version <br>
@@ -110,7 +110,7 @@ public class AudioChannelVolumeMessage extends vavi.sound.mfi.ShortMessage
 
         SysexMessage sysexMessage;
 
-        if (!StreamExclusive.isEnabled()) {
+        if (!YamahaExclusive.isEnabled()) {
             sysexMessage = new SysexMessage();
             int id = MfiMessageStore.put(this);
             byte[] data = {
@@ -124,7 +124,7 @@ public class AudioChannelVolumeMessage extends vavi.sound.mfi.ShortMessage
                                    data.length);
         } else {
             // volume is 0 ~ 63
-            sysexMessage = StreamExclusive.pack(StreamExclusive.volume(voice, volume * 127 / 63));
+            sysexMessage = YamahaExclusive.pack(YamahaExclusive.volume(voice, volume * 127 / 63));
         }
 
         return new MidiEvent[] {

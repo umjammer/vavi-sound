@@ -157,11 +157,11 @@ logger.log(Level.WARNING, "adpcm still playing at jvm shutdown, cut off");
          * <p>
          * when {@code vavi.sound.mobile.AudioEngine.disabled} is set there is no engine to
          * synchronize with the synthesizer: the task only turns into exclusives, see
-         * {@link StreamExclusive#capture}, and runs at once so they are there when it returns.
+         * {@link YamahaExclusive#capture}, and runs at once so they are there when it returns.
          * </p>
          */
         public static void schedule(Runnable task) {
-            if (StreamExclusive.isEnabled()) {
+            if (YamahaExclusive.isEnabled()) {
                 task.run();
                 return;
             }

@@ -11,7 +11,7 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.SysexMessage;
 
 import vavi.sound.mfi.ShortMessage;
-import vavi.sound.mfi.vavi.MfiSoundSourceExclusive;
+import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
@@ -95,7 +95,7 @@ public class MasterVolumeMessage extends ShortMessage
         sysexMessage.setMessage(data, data.length);
 
         // the universal master volume following is the song's, not the listener's
-        SysexMessage markMessage = MfiSoundSourceExclusive.message(MfiSoundSourceExclusive.MASTER_VOLUME, volume);
+        SysexMessage markMessage = FuetrekMfiExclusive.message(FuetrekMfiExclusive.MASTER_VOLUME, volume);
 
         return new MidiEvent[] {
             new MidiEvent(markMessage, context.getCurrent()),

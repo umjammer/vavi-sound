@@ -24,7 +24,7 @@ import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
-import vavi.sound.mobile.StreamExclusive;
+import vavi.sound.mobile.YamahaExclusive;
 
 import static java.lang.System.getLogger;
 
@@ -38,7 +38,7 @@ import static java.lang.System.getLogger;
  * </pre>
  * system property
  * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
- * to send {@link StreamExclusive#on} to the synthesizer, default {@code false}</li>
+ * to send {@link YamahaExclusive#on} to the synthesizer, default {@code false}</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070117 nsano initial version <br>
@@ -117,7 +117,7 @@ public class AudioPlayMessage extends LongMessage
 
         SysexMessage sysexMessage;
 
-        if (!StreamExclusive.isEnabled()) {
+        if (!YamahaExclusive.isEnabled()) {
             sysexMessage = new SysexMessage();
             int id = MfiMessageStore.put(this);
             byte[] data = {
@@ -131,7 +131,7 @@ public class AudioPlayMessage extends LongMessage
                                    data.length);
         } else {
             // velocity is 0 ~ 63
-            sysexMessage = StreamExclusive.pack(StreamExclusive.on(index, velocity * 127 / 63, voice));
+            sysexMessage = YamahaExclusive.pack(YamahaExclusive.on(index, velocity * 127 / 63, voice));
         }
 
         return new MidiEvent[] {

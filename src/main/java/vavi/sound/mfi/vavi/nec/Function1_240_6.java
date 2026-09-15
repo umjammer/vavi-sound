@@ -13,7 +13,7 @@ import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.sequencer.YamahaExclusive;
+import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusive;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
@@ -31,7 +31,7 @@ import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
  * </p>
  * <p>
  * A {@link #FORMAT_ADPCM} wave is also handed to the synthesizer as the SMAF
- * "EXWV" exclusive it is, see {@link YamahaExclusive#wave(int, byte[])}. That
+ * "EXWV" exclusive it is, see {@link YamahaMfiExclusive#wave(int, byte[])}. That
  * exclusive has no field for the format, so a {@link #FORMAT_PCM8} wave is
  * decoded but not sent - it would arrive as ADPCM and be read as noise.
  * </p>
@@ -95,7 +95,7 @@ logger.log(Level.DEBUG, "WT-WaveSetting: No." + waveId + ", " +
         ", " + this.data.length + " bytes, " + getSampleCount() + " samples");
 
         if (format == FORMAT_ADPCM) {
-            YamahaExclusive.send(receiver, YamahaExclusive.wave(waveId, this.data));
+            YamahaMfiExclusive.send(receiver, YamahaMfiExclusive.wave(waveId, this.data));
         } else {
 logger.log(Level.DEBUG, "WT-WaveSetting: No." + waveId + ": not sent, the smaf wave exclusive is adpcm only");
         }

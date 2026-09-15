@@ -12,7 +12,7 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 
 import vavi.sound.mfi.ChannelMessage;
-import vavi.sound.mfi.vavi.MfiSoundSourceExclusive;
+import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
@@ -115,7 +115,7 @@ public class ChangeBankMessage extends vavi.sound.mfi.ShortMessage
         channel = context.setBank(channel, getBank());
 
         // the bank as it is, which the midi program keeps only bit 0 of
-        SysexMessage sysexMessage = MfiSoundSourceExclusive.message(MfiSoundSourceExclusive.BANK, channel, getBank());
+        SysexMessage sysexMessage = FuetrekMfiExclusive.message(FuetrekMfiExclusive.BANK, channel, getBank());
 
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.PROGRAM_CHANGE,

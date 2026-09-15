@@ -11,7 +11,7 @@ import javax.sound.midi.SysexMessage;
 
 import org.junit.jupiter.api.Test;
 
-import vavi.sound.mfi.vavi.MfiSoundSourceExclusive;
+import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
 import vavi.sound.mfi.vavi.MidiContext;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -33,7 +33,7 @@ class MasterVolumeMessageTest {
         MidiEvent[] events = new MasterVolumeMessage().init(0, 0xff, 0xb0, 100).getMidiEvents(new MidiContext());
 
         assertEquals(2, events.length);
-        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, MfiSoundSourceExclusive.SYSEX_FUNCTION_ID, MfiSoundSourceExclusive.MASTER_VOLUME, 100, (byte) 0xf7 },
+        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, FuetrekMfiExclusive.SYSEX_FUNCTION_ID, FuetrekMfiExclusive.MASTER_VOLUME, 100, (byte) 0xf7 },
                 assertInstanceOf(SysexMessage.class, events[0].getMessage()).getMessage());
         assertArrayEquals(new byte[] { (byte) 0xf0, 0x7f, 0x7f, 0x04, 0x01, 0x00, 100, (byte) 0xf7 },
                 assertInstanceOf(SysexMessage.class, events[1].getMessage()).getMessage());
