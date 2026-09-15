@@ -15,6 +15,7 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
+import vavi.sound.mfi.vavi.MfiSoundSourceExclusive;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
@@ -117,25 +118,27 @@ public class PitchBendRangeMessage extends vavi.sound.mfi.ShortMessage
 //logger.log(Level.TRACE, this);
 //      context.setPitchBendRange(channel, getPitchBendRange());
 
-        MidiEvent[] events = new MidiEvent[3];
+        MidiEvent[] events = new MidiEvent[4];
+        // the rpn following is mfi 0xe7, which a sound source may take otherwise
+        events[0] = new MidiEvent(MfiSoundSourceExclusive.message(MfiSoundSourceExclusive.PITCH_BEND_RANGE, channel, getPitchBendRange()), context.getCurrent());
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 channel,
                                 100,        // RPN MSB
                                 0);         // 0: pitch bend range
-        events[0] = new MidiEvent(shortMessage, context.getCurrent());
+        events[1] = new MidiEvent(shortMessage, context.getCurrent());
         shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 channel,
                                 101,        // RPN LSB
                                 0);         // 0: pitch bend range
-        events[1] = new MidiEvent(shortMessage, context.getCurrent());
+        events[2] = new MidiEvent(shortMessage, context.getCurrent());
         shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 channel,
                                 6,          // Data Entry MSB
                                 getPitchBendRange());
-        events[2] = new MidiEvent(shortMessage, context.getCurrent());
+        events[3] = new MidiEvent(shortMessage, context.getCurrent());
         return events;
     }
 
