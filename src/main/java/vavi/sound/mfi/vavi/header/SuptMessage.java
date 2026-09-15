@@ -8,7 +8,15 @@ package vavi.sound.mfi.vavi.header;
 
 import java.io.UnsupportedEncodingException;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiEvent;
+
+import vavi.sound.mfi.InvalidMfiDataException;
+import vavi.sound.mfi.vavi.MidiContext;
+import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 
 
 /**
@@ -17,7 +25,8 @@ import vavi.sound.mfi.vavi.SubMessage;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
-public class SuptMessage extends SubMessage {
+public class SuptMessage extends SubMessage
+    implements MidiConvertible {
 
     /** */
     public static final String TYPE = "supt";
@@ -43,6 +52,24 @@ public class SuptMessage extends SubMessage {
         return super.init(TYPE, data);
     }
 
+    /** */
+    public String getSupt() {
+        try {
+            return new String(getData(), readingEncoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /** */
+    public void setSupt(String supt) throws InvalidMfiDataException {
+        try {
+            setData(supt.getBytes(readingEncoding));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     @Override
     public String toString() {
         try {
@@ -54,5 +81,23 @@ public class SuptMessage extends SubMessage {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    // ----
+
+    /** Meta 0x06 */
+    @Override
+    public MidiEvent[] getMidiEvents(MidiContext context)
+            throws InvalidMidiDataException {
+
+        MetaMessage metaMessage = new MetaMessage();
+
+        metaMessage.setMessage(MetaEvent.META_MARKER.number(), // maker name
+                getData(),
+                getDataLength());
+
+        return new MidiEvent[] {
+                new MidiEvent(metaMessage, context.getCurrent())
+        };
     }
 }

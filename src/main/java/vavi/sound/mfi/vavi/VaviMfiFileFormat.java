@@ -27,6 +27,7 @@ import vavi.sound.mfi.vavi.header.ExstMessage;
 import vavi.sound.mfi.vavi.header.NoteMessage;
 import vavi.sound.mfi.vavi.header.ProtMessage;
 import vavi.sound.mfi.vavi.header.SorcMessage;
+import vavi.sound.mfi.vavi.header.SuptMessage;
 import vavi.sound.mfi.vavi.header.TitlMessage;
 import vavi.sound.mfi.vavi.header.VersMessage;
 
@@ -525,6 +526,39 @@ logger.log(Level.INFO, "no note info, use 0");
             subChunk.setExst(exst);
         } else {
             headerChunk.getSubChunks().put(ExstMessage.TYPE, new ExstMessage().init(exst));
+        }
+    }
+
+    /**
+     * Gets support information. ex. "P_Plugin 02.03.02"
+     * <p>
+     * this can be used for terminal type detection
+     * </p>
+     * @see SuptMessage
+     */
+    public String getSupt() {
+        SuptMessage subChunk = (SuptMessage) headerChunk.getSubChunks().get(SuptMessage.TYPE);
+        if (subChunk != null) {
+            return subChunk.getSupt();
+        } else {
+            throw new NoSuchElementException(SuptMessage.TYPE);
+        }
+    }
+
+    /**
+     * Sets support information.
+     *
+     * TODO when creating mfi, add this for type detection
+     *
+     * @see SuptMessage
+     */
+    public void setSupt(String supt) throws InvalidMfiDataException {
+
+        SuptMessage subChunk = (SuptMessage) headerChunk.getSubChunks().get(SuptMessage.TYPE);
+        if (subChunk != null) {
+            subChunk.setSupt(supt);
+        } else {
+            headerChunk.getSubChunks().put(SuptMessage.TYPE, new SuptMessage().init(supt));
         }
     }
 
