@@ -24,7 +24,7 @@ import vavi.sound.mfi.vavi.TrackMessage.SysexTrackMessage;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.sound.mobile.StreamExclusive;
+import vavi.sound.mobile.YamahaExclusive;
 
 import static java.lang.System.getLogger;
 
@@ -182,7 +182,7 @@ logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".fo
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        if (!StreamExclusive.isEnabled()) {
+        if (!YamahaExclusive.isEnabled()) {
             javax.sound.midi.SysexMessage sysexMessage = new javax.sound.midi.SysexMessage();
             int id = MfiMessageStore.put(this);
             byte[] data = {
@@ -211,7 +211,7 @@ logger.log(Level.DEBUG, "no sequencer for vendor: %02x, skipped".formatted(vendo
                 return new MidiEvent[0];
             }
             try {
-                return StreamExclusive.capture(receiver -> sequencer.sequence(this, receiver)).stream()
+                return YamahaExclusive.capture(receiver -> sequencer.sequence(this, receiver)).stream()
                         .map(m -> new MidiEvent(m, context.getCurrent()))
                         .toArray(MidiEvent[]::new);
             } catch (InvalidMfiDataException | RuntimeException e) {

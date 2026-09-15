@@ -15,31 +15,48 @@ import vavi.sound.adpcm.Codec;
 
 
 /**
- * G723_16 InputStream.
+ * G723 InputStream.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030828 nsano initial version <br>
  */
-public class G723_16InputStream extends AdpcmInputStream {
+public class G723InputStream extends AdpcmInputStream {
 
     @Override
     protected Codec getCodec() {
-        return new G723_16();
+        return switch (bits) {
+            case 2 -> new G723_16();
+            case 3 -> new G723_24();
+            case 5 -> new G723_40();
+            default -> throw new IllegalArgumentException("illegal bit: " + bits);
+        };
     }
 
     /**
+     * <li>TODO PCM encoding
      * {@link vavi.io.BitInputStream} is 2bit little endian fixed
      */
-    public G723_16InputStream(InputStream in, ByteOrder byteOrder) {
-        this(in, byteOrder, ByteOrder.LITTLE_ENDIAN);
+    public G723InputStream(InputStream in, ByteOrder byteOrder) {
+        this(in, 2, ByteOrder.LITTLE_ENDIAN, byteOrder);
     }
 
     /**
-     * @param bitOrder order of the packed two-bit ADPCM code words
+     * <li>TODO PCM encoding
+     * {@link vavi.io.BitInputStream} is 2bit fixed
+     * @param byteOrder byte order for #read()
      */
-    public G723_16InputStream(InputStream in, ByteOrder byteOrder, ByteOrder bitOrder) {
-        super(in, byteOrder, 2, bitOrder);
-        ((G723_16) decoder).setEncoding(encoding);
+    public G723InputStream(InputStream in, ByteOrder bitOrder, ByteOrder byteOrder) {
+        this(in, 2, bitOrder, byteOrder);
+    }
+
+    /**
+     * <li>TODO PCM encoding
+     * @param bitOrder order of the packed two-bit ADPCM code words
+     * @param byteOrder byte order for #read()
+     */
+    public G723InputStream(InputStream in, int bits, ByteOrder bitOrder, ByteOrder byteOrder) {
+        super(in, byteOrder, bits, bitOrder);
+        ((G723) decoder).setEncoding(encoding);
 //logger.log(Level.TRACE, this.in);
     }
 

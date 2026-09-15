@@ -47,7 +47,7 @@ public class MfiSynthesizer implements Synthesizer {
 
     public MfiSynthesizer() {
         this.midiSynthesizer = MidiUtil.getDefaultSynthesizer(vavi.sound.midi.VaviMidiDeviceProvider.class);
-logger.log(Level.INFO, "midiSynthesizer: " + midiSynthesizer.getClass().getName());
+logger.log(Level.DEBUG, "internal midiSynthesizer: " + midiSynthesizer.getClass().getName());
     }
 
     @Override

@@ -110,6 +110,9 @@ logger.log(Level.WARNING, "unsupported fileType: " + fileType);
             // prot
             try { ff.getProt(); }
             catch (NoSuchElementException e) { ff.setProt(defaultCreator); }
+            // supt
+            try { ff.getSupt(); }
+            catch (NoSuchElementException e) { ff.setSupt(System.getProperty("vavi.sound.mfi.supt", getClass().getName())); }
             // note length
             ff.setNoteLength(1);
         } catch (InvalidMfiDataException e) {

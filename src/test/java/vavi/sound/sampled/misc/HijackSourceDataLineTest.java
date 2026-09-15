@@ -26,6 +26,7 @@ import vavi.util.properties.annotation.PropsEntity;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static vavi.sound.midi.MidiUtil.volume;
@@ -70,8 +71,10 @@ Debug.println("volume: " + volume);
     }
 
     @Test
+    @DisplayName("hijack midi, dump data")
     void test() throws Exception {
         ScopedValue.where(HijackSourceDataLine.specialListener, e -> {
+            // listener
             byte[] data = ((HijackSourceDataLine.HijackLineEvent) e).getData();
 Debug.println("WRITE: " + data.length + " bytes\n" + StringUtil.getDump(data, Math.min(32, data.length)));
         }).call(() -> {
@@ -121,6 +124,6 @@ Debug.println("END");
 
     @AfterAll
     static void tearDownAll() {
-        System.setProperty("javax.sound.sampled.SourceDataLine", "");
+        System.clearProperty("javax.sound.sampled.SourceDataLine");
     }
 }

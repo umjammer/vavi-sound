@@ -6,6 +6,8 @@
 
 package vavi.sound.midi.smaf;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.List;
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiChannel;
@@ -32,6 +34,8 @@ import static vavi.sound.midi.VaviMidiDeviceProvider.version;
  */
 public class SmafSynthesizer implements Synthesizer {
 
+    private static final Logger logger = System.getLogger(SmafSynthesizer.class.getName());
+
     /** the device information */
     public static final MidiDevice.Info info =
             new MidiDevice.Info("Java MIDI(SMAF) Synthesizer",
@@ -43,6 +47,7 @@ public class SmafSynthesizer implements Synthesizer {
 
     public SmafSynthesizer() {
         this.midiSynthesizer = MidiUtil.getDefaultSynthesizer(vavi.sound.midi.VaviMidiDeviceProvider.class);
+logger.log(Level.DEBUG, "internal midiSynthesizer: " + midiSynthesizer.getClass().getName());
     }
 
     @Override

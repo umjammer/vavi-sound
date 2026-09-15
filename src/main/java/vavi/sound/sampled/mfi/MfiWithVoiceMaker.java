@@ -28,6 +28,7 @@ import vavi.sound.mfi.Track;
 import vavi.sound.mfi.vavi.VaviMfiFileFormat;
 import vavi.sound.mfi.vavi.header.ProtMessage;
 import vavi.sound.mfi.vavi.header.SorcMessage;
+import vavi.sound.mfi.vavi.header.SuptMessage;
 import vavi.sound.mfi.vavi.header.TitlMessage;
 import vavi.sound.mfi.vavi.header.VersMessage;
 import vavi.sound.mfi.vavi.track.EndOfTrackMessage;
@@ -65,6 +66,8 @@ class MfiWithVoiceMaker {
     protected int masterVolume;
     /** ADPCM volume */
     protected int adpcmVolume;
+    /** model */
+    protected String model;
 
     /** {@link MachineDependentMfiWithVoiceMaker} object for model */
     protected MachineDependentMfiWithVoiceMaker mdvm;
@@ -105,7 +108,8 @@ class MfiWithVoiceMaker {
         this.masterVolume = toReal(0x7f, masterVolume);
         this.adpcmVolume = toReal(0x3f, adpcmVolume);
 
-        this.mdvm = MachineDependentMfiWithVoiceMaker.factory.get(model);
+        this.mdvm = MachineDependentMfiWithVoiceMaker.factory(model);
+        this.model = model;
     }
 
     /**
@@ -155,11 +159,15 @@ t = System.currentTimeMillis();
         track.add(new MfiEvent(message, 0L));
 
         // version
-        message = new VersMessage().init(vers);
+        message = new VersMessage().init(mdvm.getVersionString());
         track.add(new MfiEvent(message, 0L));
 
         // maker
         message = new ProtMessage().init(prot);
+        track.add(new MfiEvent(message, 0L));
+
+        // supt
+        message = new SuptMessage().init(model);
         track.add(new MfiEvent(message, 0L));
 
         // machine depend, do every thing!
@@ -183,9 +191,6 @@ logger.log(Level.DEBUG, "write: " + r);
     /** maker */
     protected static String prot;
 
-    /** version */
-    protected static String vers;
-
     /** copyright */
     protected static int sorc;
 
@@ -199,7 +204,6 @@ logger.log(Level.DEBUG, "write: " + r);
             props.load(MfiWithVoiceMaker.class.getResourceAsStream("/vavi/sound/sampled/mfi/MfiWithVoiceMaker.properties"));
 
             prot = props.getProperty("prot");
-            vers = props.getProperty("vers");
             sorc = Integer.parseInt(props.getProperty("sorc"));
             defaultModel = props.getProperty("defaultModel");
         } catch (Exception e) {

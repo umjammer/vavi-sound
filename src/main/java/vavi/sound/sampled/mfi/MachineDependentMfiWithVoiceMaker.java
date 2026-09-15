@@ -8,11 +8,11 @@ package vavi.sound.sampled.mfi;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.ServiceLoader;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
-import vavi.util.properties.PrefixedClassPropertiesFactory;
-import vavi.util.properties.PrefixedPropertiesFactory;
 
 
 /**
@@ -37,18 +37,15 @@ public interface MachineDependentMfiWithVoiceMaker {
     List<MfiEvent> getEvents(byte[] data, float time, int sampleRate, int bits, int channels, int masterVolume, int adpcmVolume)
         throws InvalidMfiDataException, IOException;
 
+    String getVersionString();
+
     /** factory */
-    PrefixedPropertiesFactory<String, MachineDependentMfiWithVoiceMaker> factory =
-            new PrefixedClassPropertiesFactory<>("/vavi/sound/sampled/mfi/MfiWithVoiceMaker.properties", "class.") {
-
-                @Override
-                protected String getRestoreKey(String key) {
-                    return key;
-                }
-
-                @Override
-                protected String getStoreKey(String key) {
-                    return key.substring(key.indexOf('.') + 1);
-                }
-            };
+    static MachineDependentMfiWithVoiceMaker factory(String type) {
+        for (var maker : ServiceLoader.load(MachineDependentMfiWithVoiceMaker.class)) {
+            if (maker.getClass().getName().contains(type)) {
+                return maker;
+            }
+        }
+        throw new NoSuchElementException(type);
+    }
 }

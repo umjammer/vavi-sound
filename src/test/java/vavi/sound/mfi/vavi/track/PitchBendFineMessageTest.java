@@ -8,11 +8,15 @@ package vavi.sound.mfi.vavi.track;
 
 import org.junit.jupiter.api.Test;
 
+import javax.sound.midi.MidiEvent;
+
+import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
+import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.TrackMessage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 
 /**
@@ -41,9 +45,14 @@ class PitchBendFineMessageTest {
         assertEquals((byte) 0x70, m.getMessage()[3]);
     }
 
-    /** it deliberately emits nothing until the coarse / fine scale is settled */
+    /** the fine half goes as the sound source exclusive, no midi pitch bend of its own */
     @Test
-    void noMidiYet() {
-        assertNull(new PitchBendFineMessage().init(0, 0xff, 0xe9, 0x20).getMidiEvents(null));
+    void midiEvents() throws Exception {
+        MidiContext context = new MidiContext();
+        context.setMfiTrackNumber(2);
+        MidiEvent[] events = new PitchBendFineMessage().init(0, 0xff, 0xe9, 0x40 | 0x23).getMidiEvents(context);
+        assertEquals(1, events.length);
+        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, FuetrekMfiExclusive.SYSEX_FUNCTION_ID, FuetrekMfiExclusive.PITCH_BEND_FINE, 9, 0x23, (byte) 0xf7 },
+                events[0].getMessage().getMessage());
     }
 }

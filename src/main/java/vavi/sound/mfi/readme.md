@@ -26,8 +26,9 @@ I'll note this down just in case.
 
 ## TODO
 
-* Implementing special instructions
+* ~~Implementing special instructions~~
 * ~~030825 Handling of MfiFileFormat header information is not implemented, should it be made into a message? Should it be a file format?~~ →
    * ~~030825 There are scales that don't appear~~
-* The method of obtaining MfiSystem converter is different from others
+* ~~The method of obtaining MfiSystem converter is different from others~~ ... what's?
 * ~~090110 MfiSystem#main does not sound...~~
+* type detection, synthesizer changer

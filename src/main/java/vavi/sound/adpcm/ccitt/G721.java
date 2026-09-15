@@ -133,7 +133,7 @@ class G721 extends G711 {
         return i;
     }
 
-///** debug */
+// debug
 //private int ccc = 0;
 
     /**

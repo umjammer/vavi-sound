@@ -13,13 +13,12 @@ import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.ByteOrder;
-import java.util.Locale;
 import java.util.ServiceLoader;
 
 import vavi.sound.adpcm.AdpcmInputStreamFactory;
 import vavi.sound.adpcm.ccitt.G721InputStream;
 import vavi.sound.adpcm.ccitt.G721OutputStream;
-import vavi.sound.adpcm.ccitt.G723_16InputStream;
+import vavi.sound.adpcm.ccitt.G723InputStream;
 import vavi.sound.adpcm.ima.Ima2InputStream;
 
 import static java.lang.System.getLogger;
@@ -91,8 +90,38 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[str
         return channels;
     }
 
+    /**
+     * the sound source's output stage for 8 and 16 kHz ADPCM, see {@link FuetrekReconstructionInputStream}
+     * <p>
+     * system property {@code vavi.sound.mobile.FuetrekAudioEngine.reconstruction} ... {@code native} (default) or {@code none}
+     */
+    private static boolean isReconstructed(int sampleRate) {
+        return System.getProperty("vavi.sound.mobile.FuetrekAudioEngine.reconstruction", "native").equalsIgnoreCase("native")
+                && FuetrekReconstructionInputStream.isSupported(sampleRate);
+    }
+
+    /** the line is at the rate of the output stage when it is used */
+    @Override
+    protected javax.sound.sampled.AudioFormat getAudioFormat(int sampleRate, int channels) {
+        return super.getAudioFormat(isReconstructed(sampleRate) ? FuetrekReconstructionInputStream.OUTPUT_SAMPLE_RATE : sampleRate, channels);
+    }
+
     @Override
     protected InputStream[] getInputStreams(int streamNumber, int channels) {
+        InputStream[] iss = decodedInputStreams(streamNumber, channels);
+        int sampleRate = data[streamNumber].sampleRate;
+        if (isReconstructed(sampleRate)) {
+            for (int i = 0; i < iss.length; i++) {
+                if (iss[i] != null) {
+                    iss[i] = new FuetrekReconstructionInputStream(iss[i], sampleRate);
+                }
+            }
+        }
+        return iss;
+    }
+
+    /** the decoded pcm at the ADPCM sampling rate */
+    private InputStream[] decodedInputStreams(int streamNumber, int channels) {
         InputStream[] iss = new InputStream[2];
         if (data[streamNumber].channels == 1) {
             if (data[streamNumber].bits == 4) {
@@ -157,9 +186,7 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[str
                 String selected = auto2BitDecoder(compressed);
                 byte[] decoded = selected.equals("g721") ?
                         decodeAll(new G721InputStream(new ByteArrayInputStream(compressed), ByteOrder.LITTLE_ENDIAN)) :
-                        decodeAll(new G723_16InputStream(new ByteArrayInputStream(compressed),
-                                ByteOrder.LITTLE_ENDIAN,
-                                ByteOrder.LITTLE_ENDIAN));
+                        decodeAll(new G723InputStream(new ByteArrayInputStream(compressed), ByteOrder.LITTLE_ENDIAN, ByteOrder.LITTLE_ENDIAN));
                 // A few DoCoMo Type-2 resources are tagged as 2-bit but are
                 // actually 4-bit G.721 packets.  Their G.723 expansion has
                 // near-white-noise roughness; retain G.723 for normal streams.
@@ -172,11 +199,10 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[str
         if (order == null) {
             order = System.getProperty("vavi.sound.mobile.FuetrekAudioEngine.g723BitOrder", "little");
         }
-        order = order
-                .toLowerCase(Locale.ROOT);
+        order = order.toLowerCase();
         return switch (order) {
-            case "little", "le" -> new G723_16InputStream(in, ByteOrder.LITTLE_ENDIAN, ByteOrder.LITTLE_ENDIAN);
-            case "big", "be" -> new G723_16InputStream(in, ByteOrder.LITTLE_ENDIAN, ByteOrder.BIG_ENDIAN);
+            case "little", "le" -> new G723InputStream(in, ByteOrder.LITTLE_ENDIAN, ByteOrder.LITTLE_ENDIAN);
+            case "big", "be" -> new G723InputStream(in, ByteOrder.BIG_ENDIAN, ByteOrder.LITTLE_ENDIAN);
             default -> throw new IllegalArgumentException("unsupported G.723 bit order: " + order);
         };
     }
@@ -197,7 +223,7 @@ logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[str
 
     /** Runs the same score used by playback, but without consuming the stored stream. */
     private static String auto2BitDecoder(byte[] compressed) throws IOException {
-        byte[] g723 = decodeAll(new G723_16InputStream(new ByteArrayInputStream(compressed),
+        byte[] g723 = decodeAll(new G723InputStream(new ByteArrayInputStream(compressed),
                 ByteOrder.LITTLE_ENDIAN,
                 ByteOrder.LITTLE_ENDIAN));
         byte[] g721 = decodeAll(new G721InputStream(new ByteArrayInputStream(compressed),

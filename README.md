@@ -18,13 +18,13 @@ includes many ADPCM codecs and the [SSRC](https://github.com/shibatch/SSRC) samp
 | midi    | [SMAF](src/main/java/vavi/sound/midi/smaf)                              | YAMAHA ring tone format   |       ✅       |       ✅        |        ✅         | au, Softbank                                |
 | sampled | [MFi](src/main/java/vavi/sound/sampled/mfi)                             | Japanese ring tone format |       ✅       |       ✅        |        ✅         | DoCoMo                                      |
 | sampled | [SMAF](src/main/java/vavi/sound/sampled/smaf)                           | YAMAHA ring tone format   |       ✅       |       ✅        |        ✅         | au, Softbank                                |
-| sampled | [CCITT ADPCM](src/main/java/vavi/sound/adpcm/ccitt)                     | G711, G721, G723          |       ✅       |       ✅        |        ✅         | G721 cellphone w/ Fuetrek chip              |
+| sampled | [CCITT ADPCM](src/main/java/vavi/sound/adpcm/ccitt)                     | G711, G721, G723, G726    |       ✅       |       ✅        |        ✅         | G726 cellphone w/ Fuetrek chip              |
 | sampled | [DVI ADPCM](src/main/java/vavi/sound/adpcm/dvi)                         | DVI ADPCM                 |       ✅       |       ✅        |        ✅         | same as IMA                                 |
 | sampled | [IMA ADPCM](src/main/java/vavi/sound/adpcm/ima)                         | IMA ADPCM                 |       ✅       |       ✅        | ✅ <sup>[2]</sup> |                                             |
 | sampled | [MA ADPCM](https://gitlab.com/umjammer/vavi-sound-nda) <sup>[1]</sup>   | YAMAHA ADPCM-MA           |       ✅       |       ✅        |        ✅         | cellphone w/ YAMAHA MA chip, YMU762, YMU765 |
 | sampled | [MS ADPCM](src/main/java/vavi/sound/adpcm/ms)                           | Microsoft ADPCM           |       ✅       |       ✅        | ✅ <sup>[2]</sup> |                                             |
 | sampled | [OKI ADPCM](src/main/java/vavi/sound/adpcm/oki)                         | OKI MSM6258 ADPCM         |       ✅       |       ✅        | ✅ <sup>[2]</sup> | x68000                                      |
-| sampled | [ROHM ADPCM](https://gitlab.com/umjammer/vavi-sound-nda) <sup>[1]</sup> | ROHM ADPCM                |       ✅       |       ✅        |        ✅         | cellphone w/ Rohm chip                      |
+| sampled | [ROHM ADPCM](https://gitlab.com/umjammer/vavi-sound-nda) <sup>[1]</sup> | ROHM ADPCM                |       ✅       |       ✅        |        ✅         | cellphone w/ Rohm chip, BU8788KN            |
 | sampled | [VOX ADPCM](src/main/java/vavi/sound/adpcm/vox)                         | Dialogic ADPCM (VOX)      |       ✅       |       ✅        | ✅ <sup>[2]</sup> | OKI MSM7580                                 |
 | sampled | [YM2068 ADPCM](src/main/java/vavi/sound/adpcm/ym2608)                   | YAMAHA ADPCM-A            |       ✅       |       ✅        |        -         | YM2608 etc.                                 |
 | sampled | [YAMAHA ADPCM](src/main/java/vavi/sound/adpcm/yamaha)                   | YAMAHA ADPCM-A            |       ✅       |       ✅        | ✅ <sup>[2]</sup> | same as YM2608 ADPCM                        |
@@ -96,14 +96,14 @@ A. yes you can, follow those steps
    * https://github.com/starg2/timidity41/blob/dev41/timidity/mfi.c
    * https://github.com/logue/smfplayer.js/blob/master/src/mld.js
    * https://github.com/SquirrelJME/SquirrelJME/tree/trunk/modules/vendor-api-keitaiwiki-music/src/main/java/com/keitaiwiki/music
-   * https://github.com/GrenderG/openDoJa (futrek)
+   * https://github.com/GrenderG/openDoJa (fuetrek)
    * https://github.com/TASEmulators/freej2me-plus/blob/devel/src/javax/microedition/media/decoders/MLDDecoder.java
 
 ## TODO
 
   * ~~use `Receiver` and sysex instead of `MetaEventListener`~~
-  * ssrc: use nio pipe for 1st pass
-    * on macos m2 ultra 1st pass is in a blink of an eye
+  * ~~ssrc: use nio pipe for 1st pass~~
+    * ~~on macos m2 ultra 1st pass is in a blink of an eye~~
   * ~~`ima`, `ms` adpcm: wav reader~~
     * ~~`tritonus:tritonus-remaining:org.tritonus.sampled.file.WaveAudioFileReader`~~
   * ~~use service provider for mfi, smaf sequencer~~

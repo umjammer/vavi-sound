@@ -212,16 +212,19 @@ logger.log(Level.INFO, "open: " + format + ", " + tempPath);
         if (os != null) {
             try {
                 os.close();
-                Path path = Files.createTempFile(Path.of("tmp"), "waveout", ".wav");
-                try (InputStream is = new BufferedInputStream(Files.newInputStream(tempPath))) {
-                    long frameLength = format.getFrameSize() > 0 ? totalBytes / format.getFrameSize() : AudioSystem.NOT_SPECIFIED;
-                    AudioInputStream ais = new AudioInputStream(is, format, frameLength);
-                    AudioSystem.write(ais, AudioFileFormat.Type.WAVE, path.toFile());
+                String wav = System.getProperty("vavi.sound.sampled.misc.waveout");
+logger.log(Level.INFO, "close: " + Files.size(tempPath));
+                if (wav != null) {
+                    Path path = Path.of(wav);
+                    try (InputStream is = new BufferedInputStream(Files.newInputStream(tempPath))) {
+                        long frameLength = format.getFrameSize() > 0 ? totalBytes / format.getFrameSize() : AudioSystem.NOT_SPECIFIED;
+                        AudioInputStream ais = new AudioInputStream(is, format, frameLength);
+                        AudioSystem.write(ais, AudioFileFormat.Type.WAVE, path.toFile());
+                    }
+                    Files.deleteIfExists(tempPath);
+logger.log(Level.INFO, "wave out: " + path);
                 }
-                Files.deleteIfExists(tempPath);
                 os = null;
-logger.log(Level.INFO, "close: " + Files.size(path));
-                System.setProperty("vavi.sound.sampled.misc.waveout", path.toString());
             } catch (IOException e) {
                 logger.log(Level.ERROR, e.getMessage(), e);
             }

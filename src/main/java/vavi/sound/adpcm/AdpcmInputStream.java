@@ -46,6 +46,9 @@ public abstract class AdpcmInputStream extends FilterInputStream {
     /** */
     protected abstract Codec getCodec();
 
+    /** {@link BitOutputStream} size */
+    protected int bits;
+
     /**
      * @param in PCM
      * @param byteOrder byte order for {@link #read()}
@@ -54,6 +57,7 @@ public abstract class AdpcmInputStream extends FilterInputStream {
      */
     public AdpcmInputStream(InputStream in, ByteOrder byteOrder, int bits, ByteOrder bitOrder) {
         super(new BitInputStream(in, bits, bitOrder));
+        this.bits = bits;
         this.byteOrder = byteOrder;
         this.decoder = getCodec();
 //logger.log(Level.TRACE, this.in);
@@ -129,9 +133,7 @@ public abstract class AdpcmInputStream extends FilterInputStream {
                 if (c == -1) {
                     break;
                 }
-                if (b != null) {
-                    b[off + i] = (byte) c;
-                }
+                b[off + i] = (byte) c;
             }
         } catch (IOException e) {
             logger.log(Level.ERROR, e.getMessage(), e);

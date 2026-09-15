@@ -27,6 +27,7 @@ import vavi.sound.mfi.vavi.header.ExstMessage;
 import vavi.sound.mfi.vavi.header.NoteMessage;
 import vavi.sound.mfi.vavi.header.ProtMessage;
 import vavi.sound.mfi.vavi.header.SorcMessage;
+import vavi.sound.mfi.vavi.header.SuptMessage;
 import vavi.sound.mfi.vavi.header.TitlMessage;
 import vavi.sound.mfi.vavi.header.VersMessage;
 
@@ -89,7 +90,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
 
     /**
      * MIDI file type
-     * @see "vavi/sound/midi/package.html"
+     * @see vavi.sound.midi
      */
     public static final int FILE_TYPE = 0x88;
 
@@ -264,7 +265,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
         int exst = mff.getExst();
         int tracksCount = mff.headerChunk.getTracksCount();
         int audioDataCount = mff.getAudioDataChunkCount();
-//      boolean isAudioDataOnly = ff.isAudioDataOnly();
+//        boolean isAudioDataOnly = mff.isAudioDataOnly();
         Map<String, SubMessage> headerSubChunks = mff.headerChunk.getSubChunks();
         mff.audioDataChunks = new ArrayList<>();
 int dataLength = mff.headerChunk.getMfiDataLength() - (2 + mff.headerChunk.getDataLength());
@@ -525,6 +526,39 @@ logger.log(Level.INFO, "no note info, use 0");
             subChunk.setExst(exst);
         } else {
             headerChunk.getSubChunks().put(ExstMessage.TYPE, new ExstMessage().init(exst));
+        }
+    }
+
+    /**
+     * Gets support information. ex. "P_Plugin 02.03.02"
+     * <p>
+     * this can be used for terminal type detection
+     * </p>
+     * @see SuptMessage
+     */
+    public String getSupt() {
+        SuptMessage subChunk = (SuptMessage) headerChunk.getSubChunks().get(SuptMessage.TYPE);
+        if (subChunk != null) {
+            return subChunk.getSupt();
+        } else {
+            throw new NoSuchElementException(SuptMessage.TYPE);
+        }
+    }
+
+    /**
+     * Sets support information.
+     *
+     * TODO when creating mfi, add this for type detection
+     *
+     * @see SuptMessage
+     */
+    public void setSupt(String supt) throws InvalidMfiDataException {
+
+        SuptMessage subChunk = (SuptMessage) headerChunk.getSubChunks().get(SuptMessage.TYPE);
+        if (subChunk != null) {
+            subChunk.setSupt(supt);
+        } else {
+            headerChunk.getSubChunks().put(SuptMessage.TYPE, new SuptMessage().init(supt));
         }
     }
 

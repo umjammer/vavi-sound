@@ -15,7 +15,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
@@ -26,6 +25,8 @@ import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,8 +50,6 @@ public class MfiSynthesizerTest {
         System.setProperty("javax.sound.midi.Sequencer", "#Real Time Sequencer");
         // should be set for playing adpcm (implemented as a meta event listener)
         System.setProperty("javax.sound.midi.Synthesizer", "#Java MIDI(MFi) Synthesizer");
-        // prior user volume setting than setting in a sequence
-        System.setProperty("vavi.sound.mfi.ignoreMasterVolume", "true");
     }
 
     static boolean localPropertiesExists() {
@@ -80,6 +79,17 @@ public class MfiSynthesizerTest {
 
         System.setProperty("vavi.sound.mobile.AudioEngine.volume", String.valueOf(volume));
 Debug.println("adpcm volume: " + System.getProperty("vavi.sound.mobile.AudioEngine.volume"));
+    }
+
+    @BeforeAll
+    static void setupAll() {
+        // prior user volume setting than setting in a sequence
+        System.setProperty("vavi.sound.mfi.ignoreMasterVolume", "true");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        System.clearProperty("vavi.sound.mfi.ignoreMasterVolume");
     }
 
     @Test

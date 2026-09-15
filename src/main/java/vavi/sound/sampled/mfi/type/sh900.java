@@ -32,7 +32,7 @@ public class sh900 implements MachineDependentMfiWithVoiceMaker {
      */
     @Override
     public List<MfiEvent> getEvents(byte[] data, float time, int sampleRate, int bits, int channels, int masterVolume, int adpcmVolume)
-        throws InvalidMfiDataException, IOException {
+            throws InvalidMfiDataException, IOException {
 
         List<MfiEvent> events = new ArrayList<>();
 
@@ -58,5 +58,10 @@ public class sh900 implements MachineDependentMfiWithVoiceMaker {
         events.add(SharpMessage.getCuePointEvent(false));
 
         return events;
+    }
+
+    @Override
+    public String getVersionString() {
+        return "0301";
     }
 }

@@ -14,19 +14,19 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.SysexMessage;
 
 import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.sound.mobile.StreamExclusive;
+import vavi.sound.mobile.YamahaExclusive;
 
 import static vavi.sound.midi.MidiUtil.decode87;
 
 
 /**
- * A {@link Receiver} which collects the SMAF exclusives {@link YamahaExclusive}
+ * A {@link Receiver} which collects the SMAF exclusives {@link YamahaMfiExclusive}
  * sends, unpacked back to 8 bit.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260911 nsano initial version <br>
  */
-public class SmafExclusiveCapture implements Receiver {
+public class YamahaMfiExclusiveCapture implements Receiver {
 
     /** the 8 bit exclusives, "43 ... f7" each */
     private final List<byte[]> exclusives = new ArrayList<>();
@@ -57,7 +57,7 @@ public class SmafExclusiveCapture implements Receiver {
         byte[] data = sysexMessage.getData();
         if (data.length < 3 ||
                 (data[0] & 0xff) != (VaviMidiDeviceProvider.MANUFACTURER_ID & 0xff) ||
-                (data[1] & 0xff) != StreamExclusive.SYSEX_PACKED) {
+                (data[1] & 0xff) != YamahaExclusive.SYSEX_PACKED) {
             return;
         }
         byte[] encoded = Arrays.copyOfRange(data, 2, data.length - 1);

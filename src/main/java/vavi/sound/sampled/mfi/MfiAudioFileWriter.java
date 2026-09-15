@@ -34,7 +34,7 @@ public class MfiAudioFileWriter extends AudioFileWriter {
 
     /** */
     private static final Type[] outputTypes = new Type[] {
-        new MFi(null) // TODO null
+        MFi.MFi
     };
 
     @Override
@@ -50,7 +50,7 @@ public class MfiAudioFileWriter extends AudioFileWriter {
     /**
      * {@inheritDoc}
      *
-     * @param fileType must be instance of {@link MFi}
+     * @param fileType must be type of {@link MFi}
      * @param out specify null device. e.g. win32: "nul", *nix: "/dev/null"
      * @throws IllegalArgumentException when fileType is not MFi
      * @throws NullPointerException when fileType is not set in properties
@@ -104,7 +104,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
     /**
      * {@inheritDoc}
      *
-     * @param fileType must be instance of {@link MFi}
+     * @param fileType must be type of {@link MFi}
      * @param out specify null device. e.g. win32: "nul", *nix: "/dev/null"
      */
     @Override

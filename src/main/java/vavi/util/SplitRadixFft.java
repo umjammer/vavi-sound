@@ -88,7 +88,7 @@ public abstract class SplitRadixFft {
                 cftbsub(n, a, w);
             }
         } else if (n == 4) {
-            cftbsub(n, a, w);
+            cftfsub(n, a, w);
         }
     }
 
@@ -180,7 +180,7 @@ public abstract class SplitRadixFft {
                 bitrv2(n, ip, 2, a);
                 cftbsub(n, a, w);
             } else if (n == 4) {
-                cftbsub(n, a, w);
+                cftfsub(n, a, w);
             }
         }
     }
@@ -261,7 +261,7 @@ public abstract class SplitRadixFft {
                 bitrv2(n, ip, 2, a);
                 cftbsub(n, a, w);
             } else if (n == 4) {
-                cftbsub(n, a, w);
+                cftfsub(n, a, w);
             }
         }
         dctsub(n, a, nc, w, nw);
@@ -359,7 +359,7 @@ public abstract class SplitRadixFft {
                 bitrv2(n, ip, 2, a);
                 cftbsub(n, a, w);
             } else if (n == 4) {
-                cftbsub(n, a, w);
+                cftfsub(n, a, w);
             }
         }
         dstsub(n, a, nc, w, nw);

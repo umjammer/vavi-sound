@@ -17,7 +17,7 @@ import javax.sound.midi.Receiver;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.sequencer.YamahaExclusive;
+import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusive;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
@@ -47,7 +47,7 @@ import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
  * </p>
  * <p>
  * Every registered voice is also handed to the synthesizer as the SMAF voice
- * exclusive it is, see {@link YamahaExclusive} and {@link #getVoiceType(Tone)}.
+ * exclusive it is, see {@link YamahaMfiExclusive} and {@link #getVoiceType(Tone)}.
  * </p>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -115,12 +115,12 @@ abstract class ToneFunction implements MachineDependentFunction {
     abstract int getRecordLength(byte[] data, int offset, int remaining);
 
     /** what shape {@link Tone#voice} has */
-    abstract YamahaExclusive.VoiceType getVoiceType(Tone tone);
+    abstract YamahaMfiExclusive.VoiceType getVoiceType(Tone tone);
 
     /**
      * The plain VM35 voice image of a tone, 17 or 31 bytes for
-     * {@link YamahaExclusive.VoiceType#FM} and 16 for
-     * {@link YamahaExclusive.VoiceType#PCM}.
+     * {@link YamahaMfiExclusive.VoiceType#FM} and 16 for
+     * {@link YamahaMfiExclusive.VoiceType#PCM}.
      *
      * @return null when the tone carries no voice this can hand over
      */
@@ -143,7 +143,7 @@ abstract class ToneFunction implements MachineDependentFunction {
         if (voice == null) {
             return;
         }
-        YamahaExclusive.send(receiver, YamahaExclusive.voice(
+        YamahaMfiExclusive.send(receiver, YamahaMfiExclusive.voice(
                 0,
                 0,
                 MidiContext.toProgram(tone.bank, tone.program),

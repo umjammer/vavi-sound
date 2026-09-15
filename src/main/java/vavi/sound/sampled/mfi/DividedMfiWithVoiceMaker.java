@@ -57,7 +57,7 @@ class DividedMfiWithVoiceMaker extends MfiWithVoiceMaker {
      * @param time dividing time in second
      * @param samplingRate ADPCM sampling rate
      * @param bits ADPCM sampling bits
-     * @param channels
+     * @param channels number of channels
      * @param masterVolume [%]
      * @param adpcmVolume [%]
      */

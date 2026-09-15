@@ -11,6 +11,7 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.SysexMessage;
 
 import vavi.sound.mfi.ShortMessage;
+import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
@@ -24,7 +25,8 @@ import vavi.sound.mfi.vavi.TrackMessage;
  * </pre>
  * <p>
  * System Property
- * <li>vavi.sound.mfi.ignoreMasterVolume ... ignore this setting when user want to set master volume by himself, default false</li>
+ * <li>{@code vavi.sound.mfi.ignoreMasterVolume} ...
+ * ignore this setting when user want to set master volume by himself, default {@code false}</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020627 nsano initial version <br>
@@ -92,7 +94,12 @@ public class MasterVolumeMessage extends ShortMessage
 
         SysexMessage sysexMessage = new SysexMessage();
         sysexMessage.setMessage(data, data.length);
+
+        // the universal master volume following is the song's, not the listener's
+        SysexMessage markMessage = FuetrekMfiExclusive.message(FuetrekMfiExclusive.MASTER_VOLUME, volume);
+
         return new MidiEvent[] {
+            new MidiEvent(markMessage, context.getCurrent()),
             new MidiEvent(sysexMessage, context.getCurrent())
         };
     }

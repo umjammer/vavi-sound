@@ -7,6 +7,7 @@
 
 package vavi.sound.pcm.resampling.ssrc;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -19,6 +20,8 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.Random;
 
@@ -31,7 +34,8 @@ import static vavi.util.SplitRadixFft.rdft;
 /**
  * Shibatch Sampling Rate Converter.
  *
- * TODO 2pass 1st phase use pipe (but on m2 ultra, it's in a blink of an eye)
+ * 2pass cannot be a pipeline of the 1st and the 2nd pass,
+ * the gain of the 2nd pass needs the peak of the whole 1st pass result.
  *
  * @author <a href="mailto:shibatch@users.sourceforge.net">Naoki Shibata</a>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -161,6 +165,11 @@ public class SSRC {
         /** */
         private static final int POOLSIZE = 97;
 
+        /** C rand(), 0 ~ RAND_MAX(= {@link Integer#MAX_VALUE}) */
+        private static int rand(Random random) {
+            return random.nextInt() >>> 1;
+        }
+
         /** */
         private int initShaper(int freq, int nch, int min, int max, int dType, int pdf, double noiseAmp) {
             int i;
@@ -197,71 +206,67 @@ public class SSRC {
 
             Random random = new Random(SEED);
             for (i = 0; i < POOLSIZE; i++) {
-                pool[i] = random.nextInt();
+                pool[i] = rand(random);
             }
 
             switch (pdf) {
-            case 0: // rectangular
-                for (i = 0; i < RANDBUFLEN; i++) {
-                    int r, p;
+                case 0 -> { // rectangular
+                    for (i = 0; i < RANDBUFLEN; i++) {
+                        int r, p;
 
-                    p = random.nextInt() % POOLSIZE;
-                    r = pool[p];
-                    pool[p] = random.nextInt();
-                    randBuf[i] = noiseAmp * (((double) r) / Integer.MAX_VALUE - 0.5);
-                }
-                break;
-
-            case 1: // triangular
-                for (i = 0; i < RANDBUFLEN; i++) {
-                    int r1, r2, p;
-
-                    p = random.nextInt() % POOLSIZE;
-                    r1 = pool[p];
-                    pool[p] = random.nextInt();
-                    p = random.nextInt() % POOLSIZE;
-                    r2 = pool[p];
-                    pool[p] = random.nextInt();
-                    randBuf[i] = noiseAmp * ((((double) r1) / Integer.MAX_VALUE) - (((double) r2) / Integer.MAX_VALUE));
-                }
-                break;
-
-            case 2: // gaussian
-            {
-                int sw = 0;
-                double t = 0, u = 0;
-
-                for (i = 0; i < RANDBUFLEN; i++) {
-                    double r;
-                    int p;
-
-                    if (sw == 0) {
-                        sw = 1;
-
-                        p = random.nextInt() % POOLSIZE;
-                        r = ((double) pool[p]) / Integer.MAX_VALUE;
-                        pool[p] = random.nextInt();
-                        if (r == 1.0) {
-                            r = 0.0;
-                        }
-
-                        t = Math.sqrt(-2 * Math.log(1 - r));
-
-                        p = random.nextInt() % POOLSIZE;
-                        r = ((double) pool[p]) / Integer.MAX_VALUE;
-                        pool[p] = random.nextInt();
-
-                        u = 2 * Math.PI * r;
-
-                        randBuf[i] = noiseAmp * t * Math.cos(u);
-                    } else {
-                        sw = 0;
-
-                        randBuf[i] = noiseAmp * t * Math.sin(u);
+                        p = rand(random) % POOLSIZE;
+                        r = pool[p];
+                        pool[p] = rand(random);
+                        randBuf[i] = noiseAmp * (((double) r) / Integer.MAX_VALUE - 0.5);
                     }
                 }
-            }
-            break;
+                case 1 -> { // triangular
+                    for (i = 0; i < RANDBUFLEN; i++) {
+                        int r1, r2, p;
+
+                        p = rand(random) % POOLSIZE;
+                        r1 = pool[p];
+                        pool[p] = rand(random);
+                        p = rand(random) % POOLSIZE;
+                        r2 = pool[p];
+                        pool[p] = rand(random);
+                        randBuf[i] = noiseAmp * ((((double) r1) / Integer.MAX_VALUE) - (((double) r2) / Integer.MAX_VALUE));
+                    }
+                }
+                case 2 -> { // gaussian
+                    int sw = 0;
+                    double t = 0, u = 0;
+
+                    for (i = 0; i < RANDBUFLEN; i++) {
+                        double r;
+                        int p;
+
+                        if (sw == 0) {
+                            sw = 1;
+
+                            p = rand(random) % POOLSIZE;
+                            r = ((double) pool[p]) / Integer.MAX_VALUE;
+                            pool[p] = rand(random);
+                            if (r == 1.0) {
+                                r = 0.0;
+                            }
+
+                            t = Math.sqrt(-2 * Math.log(1 - r));
+
+                            p = rand(random) % POOLSIZE;
+                            r = ((double) pool[p]) / Integer.MAX_VALUE;
+                            pool[p] = rand(random);
+
+                            u = 2 * Math.PI * r;
+
+                            randBuf[i] = noiseAmp * t * Math.cos(u);
+                        } else {
+                            sw = 0;
+
+                            randBuf[i] = noiseAmp * t * Math.sin(u);
+                        }
+                    }
+                }
             }
 
             randPtr = 0;
@@ -338,7 +343,7 @@ public class SSRC {
     }
 
     /** */
-    private final Shaper shaper = new Shaper();
+    private final SSRC.Shaper shaper = new Shaper();
 
     /** */
     private static double alpha(double a) {
@@ -436,6 +441,91 @@ public class SSRC {
         System.err.flush();
     }
 
+    /**
+     * reads until the buffer is full or the end of the stream,
+     * so that a frame is not split by a short read.
+     * @return bytes read, 0 at the end of the stream
+     */
+    private static int readFully(ReadableByteChannel in, ByteBuffer buf) throws IOException {
+        int total = 0;
+        while (buf.hasRemaining()) {
+            int r = in.read(buf);
+            if (r <= 0) {
+                break;
+            }
+            total += r;
+        }
+        return total;
+    }
+
+    /**
+     * @return true when the channel is a {@link LookAheadChannel} at the end of the stream
+     */
+    private static boolean atEnd(ReadableByteChannel in) throws IOException {
+        return in instanceof LookAheadChannel channel && channel.atEnd();
+    }
+
+    /**
+     * A channel which tells the end of the stream before a read finds it,
+     * for a stream which length is unknown.
+     */
+    private static class LookAheadChannel implements ReadableByteChannel {
+
+        private final ReadableByteChannel in;
+
+        /** a byte read by {@link #atEnd()} */
+        private final ByteBuffer ahead = ByteBuffer.allocate(1);
+
+        private boolean eof;
+
+        LookAheadChannel(ReadableByteChannel in) {
+            this.in = in;
+        }
+
+        @Override
+        public int read(ByteBuffer dst) throws IOException {
+            if (!dst.hasRemaining()) {
+                return 0;
+            }
+            int n = 0;
+            if (ahead.position() > 0) {
+                dst.put(ahead.get(0));
+                ahead.clear();
+                n = 1;
+            }
+            if (!dst.hasRemaining() || eof) {
+                return n == 0 ? -1 : n;
+            }
+            int r = in.read(dst);
+            if (r < 0) {
+                eof = true;
+                return n == 0 ? -1 : n;
+            }
+            return n + r;
+        }
+
+        /** @return true when no more data */
+        boolean atEnd() throws IOException {
+            if (ahead.position() > 0) {
+                return false;
+            }
+            if (!eof && in.read(ahead) < 0) {
+                eof = true;
+            }
+            return eof;
+        }
+
+        @Override
+        public boolean isOpen() {
+            return in.isOpen();
+        }
+
+        @Override
+        public void close() throws IOException {
+            in.close();
+        }
+    }
+
     /** */
     private static int gcd(int x, int y) {
         while (y != 0) {
@@ -447,7 +537,7 @@ public class SSRC {
     }
 
     /** */
-    private abstract static class Resampler {
+    private abstract class Resampler {
         int nch;
         int bps;
         int dbps;
@@ -455,52 +545,92 @@ public class SSRC {
         int dfrq;
 
         double gain;
-        int chanklen;
-        boolean twopass;
+        int chunkLen;
+        boolean twoPass;
         int dither;
 
-        void init(int nch, int bps, int dbps, int sfrq, int dfrq, double gain, int chanklen, boolean twopass, int dither) {
+        /** peak level */
+        final double[] peak = { 0 };
+        /** bytes written so far */
+        long sumWritten;
+        /** all input has been processed */
+        boolean finished;
+
+        void init(int nch, int bps, int dbps, int sFrq, int dFrq, double gain, int chunkLen, boolean twopass, int dither) {
             this.nch = nch;
             this.bps = bps;
             this.dbps = dbps;
-            this.sfrq = sfrq;
-            this.dfrq = dfrq;
+            this.sfrq = sFrq;
+            this.dfrq = dFrq;
 
             this.gain = gain;
-            this.chanklen = chanklen;
-            this.twopass = twopass;
+            this.chunkLen = chunkLen;
+            this.twoPass = twopass;
             this.dither = dither;
         }
 
+        /** makes filters and buffers, call once after {@link #init} */
+        abstract void prepare();
+
         /**
+         * converts one block of the input.
+         * @return false when all input has been processed
+         */
+        abstract boolean step(ReadableByteChannel in, WritableByteChannel out) throws IOException;
+
+        /**
+         * converts all at once.
          * @return bytes written
          */
-        abstract int resample(ReadableByteChannel in, WritableByteChannel out) throws IOException;
+        long resample(ReadableByteChannel in, WritableByteChannel out) throws IOException {
+            prepare();
+            while (step(in, out)) {
+            }
+            return sumWritten;
+        }
 
-        double peak;
+        /** @return false */
+        boolean finish() {
+            showProgress(1);
+            finished = true;
+            return false;
+        }
     }
 
     /** up */
     private class Upsampler extends Resampler {
 
-        /* */
+        int frqGcd, osf, fs1, fs2;
+        double[][] stage1;
+        double[] stage2;
+        int n1, n1x, n1y, n2, n2b;
+        int[] f1order, f1inc;
+        int[] fft_ip;
+        double[] fft_w;
+        ByteBuffer rawInBuf, rawOutBuf;
+        double[] inBuf, outBuf;
+        double[][] buf1, buf2;
+        int spCount = 0;
+
+        int n2b2;
+        // keeps the location of the next sample to read in fs1 of inBuf
+        int rp;
+        // number of samples in sfrq to dispose next
+        int ds;
+        // number of samples passed to stage2 filter calculated from the value actually read into inBuf from the file
+        int nSmplWrt2 = 0;
+        // remainder of number of samples output from stage1 filter divided by n1y*osf
+        int s1p;
+        boolean init;
+        boolean ending;
+        int sumRead, sumWrite;
+        int osc;
+        int inBufLen;
+        int delay;
+
         @Override
-        int resample(ReadableByteChannel fpi, WritableByteChannel fpo) throws IOException {
-            int frqgcd, osf, fs1, fs2;
-            double[][] stage1;
-            double[] stage2;
-            int n1, n1x, n1y, n2, n2b;
+        void prepare() {
             int filter2len;
-            int[] f1order, f1inc;
-            int[] fft_ip;
-            double[] fft_w;
-            ByteBuffer rawinbuf, rawoutbuf;
-            double[] inbuf, outbuf;
-            double[][] buf1, buf2;
-            double[] peak = new double[] { 0 };
-            int spcount = 0;
-            int i, j;
-            int sumWritten = 0;
 
 System.err.println("upsample");
 
@@ -514,9 +644,9 @@ System.err.println("upsample");
 //              double delta;
                 double guard = 2;
 
-                frqgcd = gcd(sfrq, dfrq);
+                frqGcd = gcd(sfrq, dfrq);
 
-                fs1 = sfrq / frqgcd * dfrq;
+                fs1 = sfrq / frqGcd * dfrq;
 
                 if (fs1 / dfrq == 1) {
                     osf = 1;
@@ -554,7 +684,7 @@ System.err.println("upsample");
                 n1x = n1 / n1y + 1;
 
                 f1order = new int[n1y * osf];
-                for (i = 0; i < n1y * osf; i++) {
+                for (int i = 0; i < n1y * osf; i++) {
                     f1order[i] = fs1 / sfrq - (i * (fs1 / (dfrq * osf))) % (fs1 / sfrq);
                     if (f1order[i] == fs1 / sfrq) {
                         f1order[i] = 0;
@@ -562,7 +692,7 @@ System.err.println("upsample");
                 }
 
                 f1inc = new int[n1y * osf];
-                for (i = 0; i < n1y * osf; i++) {
+                for (int i = 0; i < n1y * osf; i++) {
                     f1inc[i] = f1order[i] < fs1 / (dfrq * osf) ? nch : 0;
                     if (f1order[i] == fs1 / sfrq) {
                         f1order[i] = 0;
@@ -571,7 +701,7 @@ System.err.println("upsample");
 
                 stage1 = new double[n1y][n1x];
 
-                for (i = -(n1 / 2); i <= n1 / 2; i++) {
+                for (int i = -(n1 / 2); i <= n1 / 2; i++) {
                     stage1[(i + n1 / 2) % n1y][(i + n1 / 2) / n1y] = win(i, n1, alp, iza) * hn_lpf(i, lpf, fs1) * fs1 / sfrq;
                 }
             }
@@ -582,7 +712,7 @@ System.err.println("upsample");
                 double aa = AA; // stop band attenuation(dB)
                 double lpf, d, df, alp, iza;
 //              double delta;
-                int ipsize, wsize;
+                int ipSize, wSize;
 
 //              delta = Math.pow(10, -aa / 20);
                 if (aa <= 21) {
@@ -593,7 +723,7 @@ System.err.println("upsample");
 
                 fs2 = dfrq * osf;
 
-                for (i = 1;; i = i * 2) {
+                for (int i = 1;; i = i * 2) {
                     n2 = filter2len * i;
                     if (n2 % 2 == 0) {
                         n2--;
@@ -615,15 +745,15 @@ System.err.println("upsample");
 
                 stage2 = new double[n2b];
 
-                for (i = -(n2 / 2); i <= n2 / 2; i++) {
+                for (int i = -(n2 / 2); i <= n2 / 2; i++) {
                     stage2[i + n2 / 2] = win(i, n2, alp, iza) * hn_lpf(i, lpf, fs2) / n2b * 2;
                 }
 
-                ipsize = (int) (2 + Math.sqrt(n2b));
-                fft_ip = new int[ipsize];
+                ipSize = (int) (2 + Math.sqrt(n2b));
+                fft_ip = new int[ipSize];
                 fft_ip[0] = 0;
-                wsize = n2b / 2;
-                fft_w = new double[wsize];
+                wSize = n2b / 2;
+                fft_w = new double[wSize];
 
                 rdft(n2b, 1, stage2, fft_ip, fft_w);
             }
@@ -632,448 +762,435 @@ System.err.println("upsample");
 
             setStartTime();
 
-            {
-                int n2b2 = n2b / 2;
-                // keeps the location of the next sample to read in fs1 of inbuf
-                int rp;
-                // number of samples in sfrq to dispose next
-                int ds;
-                // number of samples passed to stage2 filter calculated from the value actually read into inbuf from the file
-                int nsmplwrt1;
-                // number of samples passed to stage2 filter calculated from the value actually read into inbuf from the file
-                int nsmplwrt2 = 0;
-                // remainder of number of samples output from stage1 filter divided by n1y*osf
-                int s1p;
-                boolean init;
-                boolean ending;
-                int sumread, sumwrite;
-                int osc;
-                int ip, ip_backup;
-                int s1p_backup, osc_backup;
-                int ch, p;
-                int inbuflen;
-                int delay;
+            n2b2 = n2b / 2;
 
-                buf1 = new double[nch][n2b2 / osf + 1];
+            buf1 = new double[nch][n2b2 / osf + 1];
 
-                buf2 = new double[nch][n2b];
+            buf2 = new double[nch][n2b];
 
-                rawinbuf = ByteBuffer.allocate(nch * (n2b2 + n1x) * bps); // ,bps
-                rawoutbuf = ByteBuffer.allocate(nch * (n2b2 / osf + 1) * dbps); // ,dbps
+            rawInBuf = ByteBuffer.allocate(nch * (n2b2 + n1x) * bps); // ,bps
+            rawOutBuf = ByteBuffer.allocate(nch * (n2b2 / osf + 1) * dbps); // ,dbps
 
-                inbuf = new double[nch * (n2b2 + n1x)];
-                outbuf = new double[nch * (n2b2 / osf + 1)];
+            inBuf = new double[nch * (n2b2 + n1x)];
+            outBuf = new double[nch * (n2b2 / osf + 1)];
 
-                s1p = 0;
-                rp = 0;
-                ds = 0;
-                osc = 0;
+            s1p = 0;
+            rp = 0;
+            ds = 0;
+            osc = 0;
 
-                init = true;
-                ending = false;
-                inbuflen = n1 / 2 / (fs1 / sfrq) + 1;
-                delay = (int) ((double) n2 / 2 / (fs2 / dfrq));
+            init = true;
+            ending = false;
+            inBufLen = n1 / 2 / (fs1 / sfrq) + 1;
+            delay = (int) ((double) n2 / 2 / (fs2 / dfrq));
 
-                sumread = sumwrite = 0;
+            sumRead = sumWrite = 0;
+        }
 
-                while (true) {
-                    int nsmplread, toberead, toberead2;
+        @Override
+        boolean step(ReadableByteChannel fpi, WritableByteChannel fpo) throws IOException {
+            if (finished) {
+                return false;
+            }
 
-                    toberead2 = toberead = (int) (Math.floor((double) n2b2 * sfrq / (dfrq * osf)) + 1 + n1x - inbuflen);
-                    if (toberead + sumread > chanklen) {
-                        toberead = chanklen - sumread;
+            int i = 0, j;
+            // number of samples passed to stage2 filter calculated from the value actually read into inBuf from the file
+            int nSmplWrt1;
+            int ip, ipBackup;
+            int s1pBackup, oscBackup;
+            int ch, p;
+            int nSmplRead, toBeRead, toBeRead2;
+
+            toBeRead2 = toBeRead = (int) (Math.floor((double) n2b2 * sfrq / (dfrq * osf)) + 1 + n1x - inBufLen);
+            if (toBeRead + sumRead > chunkLen) {
+                toBeRead = chunkLen - sumRead;
+            }
+
+            rawInBuf.position(0);
+            rawInBuf.limit(bps * nch * toBeRead);
+            nSmplRead = readFully(fpi, rawInBuf);
+            rawInBuf.flip();
+            nSmplRead /= bps * nch;
+
+            switch (bps) {
+                case 1 -> {
+                    for (i = 0; i < nSmplRead * nch; i++)
+                        inBuf[nch * inBufLen + i] = (1 / (double) 0x7f) * ((rawInBuf.get(i) & 0xff) - 128);
+                }
+                case 2 -> {
+                    for (i = 0; i < nSmplRead * nch; i++) {
+                        int v = rawInBuf.order(byteOrder).asShortBuffer().get(i);
+                        inBuf[nch * inBufLen + i] = (1 / (double) 0x7fff) * v;
                     }
-
-                    rawinbuf.position(0);
-                    rawinbuf.limit(bps * nch * toberead);
-                    nsmplread = fpi.read(rawinbuf);
-                    rawinbuf.flip();
-                    nsmplread /= bps * nch;
-
-                    switch (bps) {
-                    case 1:
-                        for (i = 0; i < nsmplread * nch; i++)
-                            inbuf[nch * inbuflen + i] = (1 / (double) 0x7f) * ((double) rawinbuf.get(i) - 128);
-                        break;
-
-                    case 2:
-                        for (i = 0; i < nsmplread * nch; i++) {
-                            int v = rawinbuf.order(byteOrder).asShortBuffer().get(i);
-                            inbuf[nch * inbuflen + i] = (1 / (double) 0x7fff) * v;
-                        }
-                        break;
-
-                    case 3:
-                        for (i = 0; i < nsmplread * nch; i++) {
-                            inbuf[nch * inbuflen + i] = (1 / (double) 0x7fffff) *
-                            (((rawinbuf.get(i * 3    ) & 0xff) <<  0) |
-                             ((rawinbuf.get(i * 3 + 1) & 0xff) <<  8) |
-                             ((rawinbuf.get(i * 3 + 2) & 0xff) << 16));
-                        }
-                        break;
-
-                    case 4:
-                        for (i = 0; i < nsmplread * nch; i++) {
-                            int v = rawinbuf.order(byteOrder).asIntBuffer().get(i);
-                            inbuf[nch * inbuflen + i] = (1 / (double) 0x7fffffff) * v;
-                        }
-                        break;
+                }
+                case 3 -> {
+                    for (i = 0; i < nSmplRead * nch; i++) {
+                        inBuf[nch * inBufLen + i] = (1 / (double) 0x7f_ffff) *
+                                (((rawInBuf.get(i * 3    ) & 0xff) <<  0) |
+                                 ((rawInBuf.get(i * 3 + 1) & 0xff) <<  8) |
+                                  (rawInBuf.get(i * 3 + 2        ) << 16));
                     }
-
-                    for (; i < nch * toberead2; i++) {
-                        inbuf[nch * inbuflen + i] = 0;
-                    }
-
-                    inbuflen += toberead2;
-
-                    sumread += nsmplread;
-
-                    ending = nsmplread <= 0 || sumread >= chanklen;
-
-//                  nsmplwrt1 = ((rp - 1) * sfrq / fs1 + inbuflen - n1x) * dfrq * osf / sfrq;
-//                  if (nsmplwrt1 > n2b2) { nsmplwrt1 = n2b2; }
-                    nsmplwrt1 = n2b2;
-
-                    // apply stage 1 filter
-
-                    ip = ((sfrq * (rp - 1) + fs1) / fs1) * nch; // inbuf
-
-                    s1p_backup = s1p;
-                    ip_backup = ip;
-                    osc_backup = osc;
-
-                    for (ch = 0; ch < nch; ch++) {
-                        int op = ch; // outbuf
-//                      int fdo = fs1 / (dfrq * osf);
-                        int no = n1y * osf;
-
-                        s1p = s1p_backup;
-                        ip = ip_backup + ch;
-
-                        switch (n1x) {
-                        case 7:
-                            for (p = 0; p < nsmplwrt1; p++) {
-                                int s1o = f1order[s1p];
-
-                                buf2[ch][p] =
-                                    stage1[s1o][0] * inbuf[ip + 0 * nch] +
-                                    stage1[s1o][1] * inbuf[ip + 1 * nch] +
-                                    stage1[s1o][2] * inbuf[ip + 2 * nch] +
-                                    stage1[s1o][3] * inbuf[ip + 3 * nch] +
-                                    stage1[s1o][4] * inbuf[ip + 4 * nch] +
-                                    stage1[s1o][5] * inbuf[ip + 5 * nch]+
-                                    stage1[s1o][6] * inbuf[ip + 6 * nch];
-
-                                ip += f1inc[s1p];
-
-                                s1p++;
-                                if (s1p == no) {
-                                    s1p = 0;
-                                }
-                            }
-                            break;
-
-                        case 9:
-                            for (p = 0; p < nsmplwrt1; p++) {
-                                int s1o = f1order[s1p];
-
-                                buf2[ch][p] =
-                                    stage1[s1o][0] * inbuf[ip + 0 * nch] +
-                                    stage1[s1o][1] * inbuf[ip + 1 * nch] +
-                                      stage1[s1o][2] * inbuf[ip + 2 * nch] +
-                                      stage1[s1o][3] * inbuf[ip + 3 * nch] +
-                                      stage1[s1o][4] * inbuf[ip + 4 * nch] +
-                                      stage1[s1o][5] * inbuf[ip + 5 * nch] +
-                                      stage1[s1o][6] * inbuf[ip + 6 * nch] +
-                                      stage1[s1o][7] * inbuf[ip + 7 * nch] +
-                                      stage1[s1o][8] * inbuf[ip + 8 * nch];
-
-                                ip += f1inc[s1p];
-
-                                s1p++;
-                                if (s1p == no) {
-                                    s1p = 0;
-                                }
-                            }
-                            break;
-
-                        default:
-                            for (p = 0; p < nsmplwrt1; p++) {
-                                double tmp = 0;
-                                int ip2 = ip;
-
-                                int s1o = f1order[s1p];
-
-                                for (i = 0; i < n1x; i++) {
-                                    tmp += stage1[s1o][i] * inbuf[ip2];
-                                    ip2 += nch;
-                                }
-                                buf2[ch][p] = tmp;
-
-                                ip += f1inc[s1p];
-
-                                s1p++;
-                                if (s1p == no) {
-                                    s1p = 0;
-                                }
-                            }
-                            break;
-                        }
-
-                        osc = osc_backup;
-
-                        // apply stage 2 filter
-
-                        for (p = nsmplwrt1; p < n2b; p++) {
-                            buf2[ch][p] = 0;
-                        }
-
-//for (i = 0; i < n2b2; i++) { logger.log(Level.DEBUG, "%d:%g".formatted(i, buf2[ch][i])); }
-
-                        rdft(n2b, 1, buf2[ch], fft_ip, fft_w);
-
-                        buf2[ch][0] = stage2[0] * buf2[ch][0];
-                        buf2[ch][1] = stage2[1] * buf2[ch][1];
-
-                        for (i = 1; i < n2b / 2; i++) {
-                            double re, im;
-
-                            re = stage2[i * 2] * buf2[ch][i * 2] - stage2[i * 2 + 1] * buf2[ch][i * 2 + 1];
-                            im = stage2[i * 2 + 1] * buf2[ch][i * 2] + stage2[i * 2] * buf2[ch][i * 2 + 1];
-
-//logger.log(Level.TRACE, "%d : %g %g %g %g %g %g".formatted(i, stage2[i * 2],stage2[i * 2 + 1],buf2[ch][i * 2],buf2[ch][i * 2 + 1], re, im));
-
-                            buf2[ch][i * 2] = re;
-                            buf2[ch][i * 2 + 1] = im;
-                        }
-
-                        rdft(n2b, -1, buf2[ch], fft_ip, fft_w);
-
-                        for (i = osc, j = 0; i < n2b2; i += osf, j++) {
-                            double f = (buf1[ch][j] + buf2[ch][i]);
-                            outbuf[op + j * nch] = f;
-                        }
-
-                        nsmplwrt2 = j;
-
-                        osc = i - n2b2;
-
-                        for (j = 0; i < n2b; i += osf, j++) {
-                            buf1[ch][j] = buf2[ch][i];
-                        }
-                    }
-
-                    rp += nsmplwrt1 * (sfrq / frqgcd) / osf;
-
-                    rawoutbuf.clear();
-                    if (twopass) {
-                        for (i = 0; i < nsmplwrt2 * nch; i++) {
-                            double f = outbuf[i] > 0 ? outbuf[i] : -outbuf[i];
-                            peak[0] = Math.max(peak[0], f);
-                            rawoutbuf.asDoubleBuffer().put(i, outbuf[i]);
-                        }
-                    } else {
-                        switch (dbps) {
-                        case 1: {
-                            double gain2 = gain * 0x7f;
-                            ch = 0;
-
-                            for (i = 0; i < nsmplwrt2 * nch; i++) {
-                                int s;
-
-                                if (dither != 0) {
-                                    s = shaper.doShaping(outbuf[i] * gain2, peak, dither, ch);
-                                } else {
-                                    s = round(outbuf[i] * gain2);
-
-                                    if (s < -0x80) {
-                                        double d = (double) s / -0x80;
-                                        peak[0] = Math.max(peak[0], d);
-                                        s = -0x80;
-                                    }
-                                    if (0x7f < s) {
-                                        double d = (double) s / 0x7f;
-                                        peak[0] = Math.max(peak[0], d);
-                                        s = 0x7f;
-                                    }
-                                }
-
-                                rawoutbuf.put(i, (byte) (s + 0x80));
-
-                                ch++;
-                                if (ch == nch) {
-                                    ch = 0;
-                                }
-                            }
-                        }
-                            break;
-
-                        case 2: {
-                            double gain2 = gain * 0x7fff;
-                            ch = 0;
-
-                            for (i = 0; i < nsmplwrt2 * nch; i++) {
-                                int s;
-
-                                if (dither != 0) {
-                                    s = shaper.doShaping(outbuf[i] * gain2, peak, dither, ch);
-                                } else {
-                                    s = round(outbuf[i] * gain2);
-
-                                    if (s < -0x8000) {
-                                        double d = (double) s / -0x8000;
-                                        peak[0] = Math.max(peak[0], d);
-                                        s = -0x8000;
-                                    }
-                                    if (0x7fff < s) {
-                                        double d = (double) s / 0x7fff;
-                                        peak[0] = Math.max(peak[0], d);
-                                        s = 0x7fff;
-                                    }
-                                }
-
-                                rawoutbuf.order(byteOrder).asShortBuffer().put(i, (short) s);
-
-                                ch++;
-                                if (ch == nch) {
-                                    ch = 0;
-                                }
-                            }
-                        }
-                            break;
-
-                        case 3: {
-                            double gain2 = gain * 0x7fffff;
-                            ch = 0;
-
-                            for (i = 0; i < nsmplwrt2 * nch; i++) {
-                                int s;
-
-                                if (dither != 0) {
-                                    s = shaper.doShaping(outbuf[i] * gain2, peak, dither, ch);
-                                } else {
-                                    s = round(outbuf[i] * gain2);
-
-                                    if (s < -0x800000) {
-                                        double d = (double) s / -0x800000;
-                                        peak[0] = Math.max(peak[0], d);
-                                        s = -0x800000;
-                                    }
-                                    if (0x7fffff < s) {
-                                        double d = (double) s / 0x7fffff;
-                                        peak[0] = Math.max(peak[0], d);
-                                        s = 0x7fffff;
-                                    }
-                                }
-
-                                rawoutbuf.put(i * 3, (byte) (s & 255));
-                                s >>= 8;
-                                rawoutbuf.put(i * 3 + 1, (byte) (s & 255));
-                                s >>= 8;
-                                rawoutbuf.put(i * 3 + 2, (byte) (s & 255));
-
-                                ch++;
-                                if (ch == nch) {
-                                    ch = 0;
-                                }
-                            }
-                        }
-                            break;
-
-                        }
-                    }
-
-                    if (!init) {
-                        if (ending) {
-                            if ((double) sumread * dfrq / sfrq + 2 > sumwrite + nsmplwrt2) {
-                                rawoutbuf.position(0);
-                                rawoutbuf.limit(dbps * nch * nsmplwrt2);
-                                sumWritten += fpo.write(rawoutbuf);
-                                sumwrite += nsmplwrt2;
-                            } else {
-                                rawoutbuf.position(0);
-                                rawoutbuf.limit((int) (dbps * nch * (Math.floor((double) sumread * dfrq / sfrq) + 2 - sumwrite)));
-                                sumWritten += fpo.write(rawoutbuf);
-                                break;
-                            }
-                        } else {
-                            rawoutbuf.position(0);
-                            rawoutbuf.limit(dbps * nch * nsmplwrt2);
-                            sumWritten +=  fpo.write(rawoutbuf);
-                            sumwrite += nsmplwrt2;
-                        }
-                    } else {
-
-                        if (nsmplwrt2 < delay) {
-                            delay -= nsmplwrt2;
-                        } else {
-                            if (ending) {
-                                if ((double) sumread * dfrq / sfrq + 2 > sumwrite + nsmplwrt2 - delay) {
-                                    rawoutbuf.position(dbps * nch * delay);
-                                    rawoutbuf.limit(dbps * nch * nsmplwrt2);
-                                    sumWritten += fpo.write(rawoutbuf);
-                                    sumwrite += nsmplwrt2 - delay;
-                                } else {
-                                    rawoutbuf.position(dbps * nch * delay);
-                                    rawoutbuf.limit((int) (dbps * nch * (Math.floor((double) sumread * dfrq / sfrq) + 2 - sumwrite - delay)));
-                                    sumWritten += fpo.write(rawoutbuf);
-                                    break;
-                                }
-                            } else {
-                                rawoutbuf.position(dbps * nch * delay);
-                                rawoutbuf.limit(dbps * nch * (nsmplwrt2 - delay));
-                                sumWritten += fpo.write(rawoutbuf);
-                                sumwrite += nsmplwrt2 - delay;
-                                init = false;
-                            }
-                        }
-                    }
-
-                    {
-                        ds = (rp - 1) / (fs1 / sfrq);
-
-                        assert (inbuflen >= ds);
-
-                        System.arraycopy(inbuf, nch * ds, inbuf, 0, nch * (inbuflen - ds)); // memmove TODO overlap
-                        inbuflen -= ds;
-                        rp -= ds * (fs1 / sfrq);
-                    }
-
-                    if ((spcount++ & 7) == 7) {
-                        showProgress((double) sumread / chanklen);
+                }
+                case 4 -> {
+                    for (i = 0; i < nSmplRead * nch; i++) {
+                        int v = rawInBuf.order(byteOrder).asIntBuffer().get(i);
+                        inBuf[nch * inBufLen + i] = (1 / (double) 0x7fff_ffff) * v;
                     }
                 }
             }
 
-            showProgress(1);
+            for (; i < nch * toBeRead2; i++) {
+                inBuf[nch * inBufLen + i] = 0;
+            }
 
-            this.peak = peak[0];
+            inBufLen += toBeRead2;
 
-            return sumWritten;
+            sumRead += nSmplRead;
+
+            ending = nSmplRead < toBeRead || sumRead >= chunkLen || atEnd(fpi);
+
+//            nSmplWrt1 = ((rp - 1) * sfrq / fs1 + inBufLen - n1x) * dfrq * osf / sfrq;
+//            if (nSmplWrt1 > n2b2) { nSmplWrt1 = n2b2; }
+            nSmplWrt1 = n2b2;
+
+            // apply stage 1 filter
+
+            ip = ((sfrq * (rp - 1) + fs1) / fs1) * nch; // inBuf
+
+            s1pBackup = s1p;
+            ipBackup = ip;
+            oscBackup = osc;
+
+            for (ch = 0; ch < nch; ch++) {
+                int op = ch; // outBuf
+//                int fdo = fs1 / (dfrq * osf);
+                int no = n1y * osf;
+
+                s1p = s1pBackup;
+                ip = ipBackup + ch;
+
+                switch (n1x) {
+                    case 7 -> {
+                        for (p = 0; p < nSmplWrt1; p++) {
+                            int s1o = f1order[s1p];
+
+                            buf2[ch][p] =
+                                    stage1[s1o][0] * inBuf[ip + 0 * nch] +
+                                    stage1[s1o][1] * inBuf[ip + 1 * nch] +
+                                    stage1[s1o][2] * inBuf[ip + 2 * nch] +
+                                    stage1[s1o][3] * inBuf[ip + 3 * nch] +
+                                    stage1[s1o][4] * inBuf[ip + 4 * nch] +
+                                    stage1[s1o][5] * inBuf[ip + 5 * nch] +
+                                    stage1[s1o][6] * inBuf[ip + 6 * nch];
+
+                            ip += f1inc[s1p];
+
+                            s1p++;
+                            if (s1p == no) {
+                                s1p = 0;
+                            }
+                        }
+                    }
+                    case 9 -> {
+                        for (p = 0; p < nSmplWrt1; p++) {
+                            int s1o = f1order[s1p];
+
+                            buf2[ch][p] =
+                                    stage1[s1o][0] * inBuf[ip + 0 * nch] +
+                                    stage1[s1o][1] * inBuf[ip + 1 * nch] +
+                                    stage1[s1o][2] * inBuf[ip + 2 * nch] +
+                                    stage1[s1o][3] * inBuf[ip + 3 * nch] +
+                                    stage1[s1o][4] * inBuf[ip + 4 * nch] +
+                                    stage1[s1o][5] * inBuf[ip + 5 * nch] +
+                                    stage1[s1o][6] * inBuf[ip + 6 * nch] +
+                                    stage1[s1o][7] * inBuf[ip + 7 * nch] +
+                                    stage1[s1o][8] * inBuf[ip + 8 * nch];
+
+                            ip += f1inc[s1p];
+
+                            s1p++;
+                            if (s1p == no) {
+                                s1p = 0;
+                            }
+                        }
+                    }
+                    default -> {
+                        for (p = 0; p < nSmplWrt1; p++) {
+                            double tmp = 0;
+                            int ip2 = ip;
+
+                            int s1o = f1order[s1p];
+
+                            for (i = 0; i < n1x; i++) {
+                                tmp += stage1[s1o][i] * inBuf[ip2];
+                                ip2 += nch;
+                            }
+                            buf2[ch][p] = tmp;
+
+                            ip += f1inc[s1p];
+
+                            s1p++;
+                            if (s1p == no) {
+                                s1p = 0;
+                            }
+                        }
+                    }
+                }
+
+                osc = oscBackup;
+
+                // apply stage 2 filter
+
+                for (p = nSmplWrt1; p < n2b; p++) {
+                    buf2[ch][p] = 0;
+                }
+
+//for (i = 0; i < n2b2; i++) { logger.log(Level.DEBUG, "%d:%g".formatted(i, buf2[ch][i])); }
+
+                rdft(n2b, 1, buf2[ch], fft_ip, fft_w);
+
+                buf2[ch][0] = stage2[0] * buf2[ch][0];
+                buf2[ch][1] = stage2[1] * buf2[ch][1];
+
+                for (i = 1; i < n2b / 2; i++) {
+                    double re, im;
+
+                    re = stage2[i * 2] * buf2[ch][i * 2] - stage2[i * 2 + 1] * buf2[ch][i * 2 + 1];
+                    im = stage2[i * 2 + 1] * buf2[ch][i * 2] + stage2[i * 2] * buf2[ch][i * 2 + 1];
+
+//logger.log(Level.TRACE, "%d : %g %g %g %g %g %g".formatted(i, stage2[i * 2],stage2[i * 2 + 1],buf2[ch][i * 2],buf2[ch][i * 2 + 1], re, im));
+
+                    buf2[ch][i * 2] = re;
+                    buf2[ch][i * 2 + 1] = im;
+                }
+
+                rdft(n2b, -1, buf2[ch], fft_ip, fft_w);
+
+                for (i = osc, j = 0; i < n2b2; i += osf, j++) {
+                    double f = (buf1[ch][j] + buf2[ch][i]);
+                    outBuf[op + j * nch] = f;
+                }
+
+                nSmplWrt2 = j;
+
+                osc = i - n2b2;
+
+                for (j = 0; i < n2b; i += osf, j++) {
+                    buf1[ch][j] = buf2[ch][i];
+                }
+            }
+
+            rp += nSmplWrt1 * (sfrq / frqGcd) / osf;
+
+            rawOutBuf.clear();
+            if (twoPass) {
+                for (i = 0; i < nSmplWrt2 * nch; i++) {
+                    double f = outBuf[i] > 0 ? outBuf[i] : -outBuf[i];
+                    peak[0] = Math.max(peak[0], f);
+                    rawOutBuf.asDoubleBuffer().put(i, outBuf[i]);
+                }
+            } else {
+                switch (dbps) {
+                    case 1 -> {
+                        double gain2 = gain * 0x7f;
+                        ch = 0;
+
+                        for (i = 0; i < nSmplWrt2 * nch; i++) {
+                            int s;
+
+                            if (dither != 0) {
+                                s = shaper.doShaping(outBuf[i] * gain2, peak, dither, ch);
+                            } else {
+                                s = round(outBuf[i] * gain2);
+
+                                if (s < -0x80) {
+                                    double d = (double) s / -0x80;
+                                    peak[0] = Math.max(peak[0], d);
+                                    s = -0x80;
+                                }
+                                if (0x7f < s) {
+                                    double d = (double) s / 0x7f;
+                                    peak[0] = Math.max(peak[0], d);
+                                    s = 0x7f;
+                                }
+                            }
+
+                            rawOutBuf.put(i, (byte) (s + 0x80));
+
+                            ch++;
+                            if (ch == nch) {
+                                ch = 0;
+                            }
+                        }
+                    }
+                    case 2 -> {
+                        double gain2 = gain * 0x7fff;
+                        ch = 0;
+
+                        for (i = 0; i < nSmplWrt2 * nch; i++) {
+                            int s;
+
+                            if (dither != 0) {
+                                s = shaper.doShaping(outBuf[i] * gain2, peak, dither, ch);
+                            } else {
+                                s = round(outBuf[i] * gain2);
+
+                                if (s < -0x8000) {
+                                    double d = (double) s / -0x8000;
+                                    peak[0] = Math.max(peak[0], d);
+                                    s = -0x8000;
+                                }
+                                if (0x7fff < s) {
+                                    double d = (double) s / 0x7fff;
+                                    peak[0] = Math.max(peak[0], d);
+                                    s = 0x7fff;
+                                }
+                            }
+
+                            rawOutBuf.order(byteOrder).asShortBuffer().put(i, (short) s);
+
+                            ch++;
+                            if (ch == nch) {
+                                ch = 0;
+                            }
+                        }
+                    }
+                    case 3 -> {
+                        double gain2 = gain * 0x7f_ffff;
+                        ch = 0;
+
+                        for (i = 0; i < nSmplWrt2 * nch; i++) {
+                            int s;
+
+                            if (dither != 0) {
+                                s = shaper.doShaping(outBuf[i] * gain2, peak, dither, ch);
+                            } else {
+                                s = round(outBuf[i] * gain2);
+
+                                if (s < -0x80_0000) {
+                                    double d = (double) s / -0x80_0000;
+                                    peak[0] = Math.max(peak[0], d);
+                                    s = -0x80_0000;
+                                }
+                                if (0x7f_ffff < s) {
+                                    double d = (double) s / 0x7f_ffff;
+                                    peak[0] = Math.max(peak[0], d);
+                                    s = 0x7f_ffff;
+                                }
+                            }
+
+                            rawOutBuf.put(i * 3, (byte) (s & 255));
+                            s >>= 8;
+                            rawOutBuf.put(i * 3 + 1, (byte) (s & 255));
+                            s >>= 8;
+                            rawOutBuf.put(i * 3 + 2, (byte) (s & 255));
+
+                            ch++;
+                            if (ch == nch) {
+                                ch = 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!init) {
+                if (ending) {
+                    if ((double) sumRead * dfrq / sfrq + 2 > sumWrite + nSmplWrt2) {
+                        rawOutBuf.position(0);
+                        rawOutBuf.limit(dbps * nch * nSmplWrt2);
+                        sumWritten += fpo.write(rawOutBuf);
+                        sumWrite += nSmplWrt2;
+                    } else {
+                        rawOutBuf.position(0);
+                        rawOutBuf.limit(dbps * nch * Math.max(0, (int) (Math.floor((double) sumRead * dfrq / sfrq) + 2 - sumWrite)));
+                        sumWritten += fpo.write(rawOutBuf);
+                        return finish();
+                    }
+                } else {
+                    rawOutBuf.position(0);
+                    rawOutBuf.limit(dbps * nch * nSmplWrt2);
+                    sumWritten +=  fpo.write(rawOutBuf);
+                    sumWrite += nSmplWrt2;
+                }
+            } else {
+
+                if (nSmplWrt2 < delay) {
+                    delay -= nSmplWrt2;
+                } else {
+                    // sumWrite counts the samples after the delay, so the delay is not subtracted again from the rest (C has the bug, issue #4)
+                    if (ending) {
+                        if ((double) sumRead * dfrq / sfrq + 2 > sumWrite + nSmplWrt2 - delay) {
+                            rawOutBuf.position(dbps * nch * delay);
+                            rawOutBuf.limit(dbps * nch * nSmplWrt2);
+                            sumWritten += fpo.write(rawOutBuf);
+                            sumWrite += nSmplWrt2 - delay;
+                            init = false;
+                        } else {
+                            rawOutBuf.position(dbps * nch * delay);
+                            rawOutBuf.limit(dbps * nch * (delay + Math.max(0, (int) (Math.floor((double) sumRead * dfrq / sfrq) + 2 - sumWrite))));
+                            sumWritten += fpo.write(rawOutBuf);
+                            return finish();
+                        }
+                    } else {
+                        rawOutBuf.position(dbps * nch * delay);
+                        rawOutBuf.limit(dbps * nch * nSmplWrt2);
+                        sumWritten += fpo.write(rawOutBuf);
+                        sumWrite += nSmplWrt2 - delay;
+                        init = false;
+                    }
+                }
+            }
+
+            {
+                ds = (rp - 1) / (fs1 / sfrq);
+
+                assert (inBufLen >= ds);
+
+                System.arraycopy(inBuf, nch * ds, inBuf, 0, nch * (inBufLen - ds)); // memmove TODO overlap
+                inBufLen -= ds;
+                rp -= ds * (fs1 / sfrq);
+            }
+
+            if ((spCount++ & 7) == 7) {
+                showProgress((double) sumRead / chunkLen);
+            }
+            return true;
         }
     }
 
     /** down */
     private class Downsampler extends Resampler {
 
-        /* */
+        int frqGcd, osf, fs1, fs2;
+        double[] stage1;
+        double[][] stage2;
+        int n2, n2x, n2y, n1, n1b;
+        int[] f2order, f2inc;
+        int[] fftIp;
+        double[] fftW;
+        ByteBuffer rawInBuf, rawOutBuf;
+        double[] inBuf, outBuf;
+        double[][] buf1, buf2;
+        int spCount = 0;
+
+        int n1b2;
+        int rps; // remainder when dividing rp by (fs1/sfrq=osf)
+        int rp2; // keeps the location of the next sample to read in fs2 of buf2
+        int ds; // number of samples in sfrq to dispose next
+        // number of samples passed to stage2 filter calculated from the value actually read into inBuf from the file
+        int nSmplWrt2 = 0;
+        int s2p; // remainder of number of samples output from stage1 filter divided by n1y*osf
+        boolean init, ending;
+        int inBufLen = 0;
+        int sumRead, sumWrite;
+        int delay;
+        int op;
+
         @Override
-        int resample(ReadableByteChannel fpi, WritableByteChannel fpo) throws IOException {
-            int frqgcd, osf, fs1, fs2;
-            double[] stage1;
-            double[][] stage2;
-            int n2, n2x, n2y, n1, n1b;
+        void prepare() {
             int filter1len;
-            int[] f2order, f2inc;
-            int[] fft_ip;
-            double[] fft_w;
-            ByteBuffer rawinbuf, rawoutbuf;
-            double[] inbuf, outbuf;
-            double[][] buf1, buf2;
-            int i, j;
-            int spcount = 0;
-            double[] peak = new double[] { 0 };
-            int sumWritten = 0;
+            int i;
 
 System.err.println("downsample");
 
@@ -1087,19 +1204,19 @@ System.err.println("downsample");
 //                double delta;
                 int ipsize, wsize;
 
-                frqgcd = gcd(sfrq, dfrq);
+                frqGcd = gcd(sfrq, dfrq);
 
-                if (dfrq / frqgcd == 1) {
+                if (dfrq / frqGcd == 1) {
                     osf = 1;
-                } else if (dfrq / frqgcd % 2 == 0) {
+                } else if (dfrq / frqGcd % 2 == 0) {
                     osf = 2;
-                } else if (dfrq / frqgcd % 3 == 0) {
+                } else if (dfrq / frqGcd % 3 == 0) {
                     osf = 3;
                 } else {
                     throw new IllegalArgumentException("""
                             Resampling from %dHz to %dHz is not supported.
                             %d/gcd(%d,%d)=%d must be divided by 2 or 3."""
-                            .formatted(sfrq, dfrq, dfrq, sfrq, dfrq, dfrq / frqgcd));
+                            .formatted(sfrq, dfrq, dfrq, sfrq, dfrq, dfrq / frqGcd));
                 }
 
                 fs1 = sfrq * osf;
@@ -1141,27 +1258,27 @@ System.err.println("downsample");
                 }
 
                 ipsize = (int) (2 + Math.sqrt(n1b));
-                fft_ip = new int[ipsize];
-                fft_ip[0] = 0;
+                fftIp = new int[ipsize];
+                fftIp[0] = 0;
                 wsize = n1b / 2;
-                fft_w = new double[wsize];
+                fftW = new double[wsize];
 
-                rdft(n1b, 1, stage1, fft_ip, fft_w);
+                rdft(n1b, 1, stage1, fftIp, fftW);
 //for (i = -(n1 / 2); i <= n1 / 2; i++) {
 // logger.log(Level.DEBUG, "1': %06d: %e".formatted(i + n1 / 2, stage1[i + n1 / 2]));
 //}
 //for (i = 0; i < ipsize; i++) {
-// logger.log(Level.DEBUG, "ip: %06d: %d".formatted(i, fft_ip[i])); // OK
+// logger.log(Level.DEBUG, "ip: %06d: %d".formatted(i, fftIp[i])); // OK
 //}
 //for (i = 0; i < wsize; i++) {
-// logger.log(Level.DEBUG, "w: %06d: %e".formatted(i, fft_w[i])); // OK
+// logger.log(Level.DEBUG, "w: %06d: %e".formatted(i, fftW[i])); // OK
 //}
             }
 
             // Make stage 2 filter
 
             if (osf == 1) {
-                fs2 = sfrq / frqgcd * dfrq;
+                fs2 = sfrq / frqGcd * dfrq;
                 n2 = 1;
                 n2y = n2x = 1;
                 f2order = new int[n2y];
@@ -1176,7 +1293,7 @@ System.err.println("downsample");
 //                double delta;
                 double guard = 2;
 
-                fs2 = sfrq / frqgcd * dfrq;
+                fs2 = sfrq / frqGcd * dfrq;
 
                 df = (fs1 / 2f - sfrq / 2f) * 2 / guard;
                 lpf = sfrq / 2f + (fs1 / 2f - sfrq / 2f) / guard;
@@ -1229,511 +1346,488 @@ System.err.println("downsample");
 
             setStartTime();
 
-            {
-                int n1b2 = n1b / 2;
-//                int rp; // keeps the location of the next sample to read in fs1 of inbuf
-                int rps; // remainder when dividing rp by (fs1/sfrq=osf)
-                int rp2; // keeps the location of the next sample to read in fs2 of buf2
-                int ds; // number of samples in sfrq to dispose next
-                // number of samples passed to stage2 filter calculated from the value actually read into inbuf from the file
-//                int nsmplwrt1;
-                // number of samples passed to stage2 filter calculated from the value actually read into inbuf from the file
-                int nsmplwrt2 = 0;
-                int s2p; // remainder of number of samples output from stage1 filter divided by n1y*osf
-                boolean init, ending;
-//                int osc;
-                int bp; // calculated from rp2. Position of sample to read next after buf2
-                int rps_backup, s2p_backup;
-                int k, ch, p;
-                int inbuflen = 0;
-                int sumread, sumwrite;
-                int delay;
-                int op;
+            n1b2 = n1b / 2;
 
-                // |....B....|....C....| buf1 n1b2+n1b2
-                // |.A.|....D....| buf2 n2x+n1b2
-                //
-                // first, copy from inbuf to B while sampling osf times
-                // clear C
-                // multiply stage 1 filter to BC
-                // add B to D
-                // multiply stage 2 filter to AD
-                // move last D to A
-                // copy C to D
+            // |....B....|....C....| buf1 n1b2+n1b2
+            // |.A.|....D....| buf2 n2x+n1b2
+            //
+            // first, copy from inBuf to B while sampling osf times
+            // clear C
+            // multiply stage 1 filter to BC
+            // add B to D
+            // multiply stage 2 filter to AD
+            // move last D to A
+            // copy C to D
 
-                buf1 = new double[nch][n1b];
+            buf1 = new double[nch][n1b];
 
-                buf2 = new double[nch][n2x + 1 + n1b2];
+            buf2 = new double[nch][n2x + 1 + n1b2];
 
-                rawinbuf = ByteBuffer.allocate((nch * (n1b2 / osf + osf + 1)) * bps);
+            rawInBuf = ByteBuffer.allocate((nch * (n1b2 / osf + osf + 1)) * bps);
 //logger.log(Level.TRACE, (double) n1b2 * sfrq / dfrq + 1);
-                rawoutbuf = ByteBuffer.allocate((int) (((double) n1b2 * sfrq / dfrq + 1) * (dbps * nch)));
-                inbuf = new double[nch * (n1b2 / osf + osf + 1)];
-                outbuf = new double[(int) (nch * ((double) n1b2 * sfrq / dfrq + 1))];
+            rawOutBuf = ByteBuffer.allocate((int) (((double) n1b2 * sfrq / dfrq + 1) * (dbps * nch)));
+            inBuf = new double[nch * (n1b2 / osf + osf + 1)];
+            outBuf = new double[(int) (nch * ((double) n1b2 * sfrq / dfrq + 1))];
 
-                op = 0; // outbuf
+            op = 0; // outBuf
 
-                s2p = 0;
-//                rp = 0;
-                rps = 0;
-                ds = 0;
-//                osc = 0;
-                rp2 = 0;
+            s2p = 0;
+            rps = 0;
+            ds = 0;
+            rp2 = 0;
 
-                init = true;
-                ending = false;
-                delay = (int) ((double) n1 / 2 / ((double) fs1 / dfrq) + (double) n2 / 2 / ((double) fs2 / dfrq));
+            init = true;
+            ending = false;
+            delay = (int) ((double) n1 / 2 / ((double) fs1 / dfrq) + (double) n2 / 2 / ((double) fs2 / dfrq));
 
-                sumread = sumwrite = 0;
+            sumRead = sumWrite = 0;
+        }
 
-                while (true) {
-                    int nsmplread;
-                    int toberead;
+        @Override
+        boolean step(ReadableByteChannel fpi, WritableByteChannel fpo) throws IOException {
+            if (finished) {
+                return false;
+            }
 
-                    toberead = (n1b2 - rps - 1) / osf + 1;
-                    if (toberead + sumread > chanklen) {
-                        toberead = chanklen - sumread;
+            int i = 0, j;
+            int bp; // calculated from rp2. Position of sample to read next after buf2
+            int rpsBackup, s2pBackup;
+            int k, ch, p;
+            int nSmplRead;
+            int toBeRead, toBeRead2;
+
+            toBeRead2 = toBeRead = (n1b2 - rps - 1) / osf + 1;
+            if (toBeRead + sumRead > chunkLen) {
+                toBeRead = chunkLen - sumRead;
+            }
+
+            rawInBuf.position(0);
+            rawInBuf.limit(bps * nch * toBeRead);
+            nSmplRead = readFully(fpi, rawInBuf);
+            rawInBuf.flip();
+            nSmplRead /= bps * nch;
+
+            switch (bps) {
+                case 1 -> {
+                    for (i = 0; i < nSmplRead * nch; i++) {
+                        inBuf[nch * inBufLen + i] = (1 / (double) 0x7f) * ((rawInBuf.get(i) & 0xff) - 128);
                     }
-
-                    rawinbuf.position(0);
-                    rawinbuf.limit(bps * nch * toberead);
-                    nsmplread = fpi.read(rawinbuf);
-                    rawinbuf.flip();
-                    nsmplread /= bps * nch;
-
-                    switch (bps) {
-                    case 1:
-                        for (i = 0; i < nsmplread * nch; i++) {
-                            inbuf[nch * inbuflen + i] = (1 / (double) 0x7f) * ((rawinbuf.get(i) & 0xff) - 128);
-                        }
-                        break;
-
-                    case 2:
-                        for (i = 0; i < nsmplread * nch; i++) {
-                            int v = rawinbuf.order(byteOrder).asShortBuffer().get(i);
-                            inbuf[nch * inbuflen + i] = (1 / (double) 0x7fff) * v;
-//logger.log(Level.TRACE, "I: %f".formatted(inbuf[nch * inbuflen + i]));
-                        }
-                        break;
-
-                    case 3:
-                        for (i = 0; i < nsmplread * nch; i++) {
-                            inbuf[nch * inbuflen + i] = (1 / (double) 0x7fffff) *
-                                (((rawinbuf.get(i * 3    ) & 0xff) <<  0) |
-                                 ((rawinbuf.get(i * 3 + 1) & 0xff) <<  8) |
-                                 ((rawinbuf.get(i * 3 + 2) & 0xff) << 16));
-                        }
-                        break;
-
-                    case 4:
-                        for (i = 0; i < nsmplread * nch; i++) {
-                            int v = rawinbuf.order(byteOrder).getInt(i);
-                            inbuf[nch * inbuflen + i] = (1 / (double) 0x7fffffff) * v;
-                        }
-                        break;
+                }
+                case 2 -> {
+                    for (i = 0; i < nSmplRead * nch; i++) {
+                        int v = rawInBuf.order(byteOrder).asShortBuffer().get(i);
+                        inBuf[nch * inBufLen + i] = (1 / (double) 0x7fff) * v;
+//logger.log(Level.TRACE, "I: %f".formatted(inBuf[nch * inBufLen + i]));
                     }
-
-                    for (; i < nch * toberead; i++) {
-                        inbuf[i] = 0;
+                }
+                case 3 -> {
+                    for (i = 0; i < nSmplRead * nch; i++) {
+                        inBuf[nch * inBufLen + i] = (1 / (double) 0x7f_ffff) *
+                                (((rawInBuf.get(i * 3    ) & 0xff) <<  0) |
+                                 ((rawInBuf.get(i * 3 + 1) & 0xff) <<  8) |
+                                  (rawInBuf.get(i * 3 + 2)         << 16));
                     }
-
-                    sumread += nsmplread;
-
-                    ending = nsmplread <= 0 || sumread >= chanklen;
-
-                    rps_backup = rps;
-                    s2p_backup = s2p;
-
-                    for (ch = 0; ch < nch; ch++) {
-                        rps = rps_backup;
-
-                        for (k = 0; k < rps; k++) {
-                            buf1[ch][k] = 0;
-                        }
-
-                        for (i = rps, j = 0; i < n1b2; i += osf, j++) {
-                            assert (j < ((n1b2 - rps - 1) / osf + 1));
-
-                            buf1[ch][i] = inbuf[j * nch + ch];
-
-                            for (k = i + 1; k < i + osf; k++) {
-                                buf1[ch][k] = 0;
-                            }
-                        }
-
-                        assert (j == ((n1b2 - rps - 1) / osf + 1));
-
-                        for (k = n1b2; k < n1b; k++) {
-                            buf1[ch][k] = 0;
-                        }
-
-                        rps = i - n1b2;
-//                        rp += j;
-
-                        rdft(n1b, 1, buf1[ch], fft_ip, fft_w);
-
-                        buf1[ch][0] = stage1[0] * buf1[ch][0];
-                        buf1[ch][1] = stage1[1] * buf1[ch][1];
-
-                        for (i = 1; i < n1b2; i++) {
-                            double re, im;
-
-                            re = stage1[i * 2] * buf1[ch][i * 2] - stage1[i * 2 + 1] * buf1[ch][i * 2 + 1];
-                            im = stage1[i * 2 + 1] * buf1[ch][i * 2] + stage1[i * 2] * buf1[ch][i * 2 + 1];
-
-                            buf1[ch][i * 2] = re;
-                            buf1[ch][i * 2 + 1] = im;
-                        }
-
-                        rdft(n1b, -1, buf1[ch], fft_ip, fft_w);
-
-                        for (i = 0; i < n1b2; i++) {
-                            buf2[ch][n2x + 1 + i] += buf1[ch][i];
-                        }
-
-                        {
-                            int t1 = rp2 / (fs2 / fs1);
-                            if (rp2 % (fs2 / fs1) != 0) {
-                                t1++;
-                            }
-
-                            bp = buf2[0].length * ch + t1; // &(buf2[ch][t1]);
-                        }
-
-                        s2p = s2p_backup;
-
-                        for (p = 0; bp - (buf2[0].length * ch) < n1b2 + 1; p++) { // buf2[ch]
-                            double tmp = 0;
-                            int bp2;
-                            int s2o;
-
-                            bp2 = bp;
-                            s2o = f2order[s2p];
-                            bp += f2inc[s2p];
-                            s2p++;
-
-                            if (s2p == n2y) {
-                                s2p = 0;
-                            }
-
-                            assert ((bp2 - (buf2[0].length * ch)) * (fs2 / fs1) - (rp2 + p * (fs2 / dfrq)) == s2o); // &(buf2[ch][0])
-                            for (i = 0; i < n2x; i++) {
-//logger.log(Level.TRACE, "%d (%d, %d)".formatted(i, bp2 / buf2[0].length, bp2 % buf2[0].length));
-                                tmp += stage2[s2o][i] * buf2[bp2 / buf2[0].length][bp2 % buf2[0].length]; // *bp2++
-                                bp2++;
-                            }
-
-                            outbuf[op + p * nch + ch] = tmp;
-//logger.log(Level.TRACE, "O: %06d: %f".formatted(op + p * nch + ch, tmp));
-                        }
-
-                        nsmplwrt2 = p;
-                    }
-
-                    rp2 += nsmplwrt2 * (fs2 / dfrq);
-
-                    rawoutbuf.clear();
-                    if (twopass) {
-                        for (i = 0; i < nsmplwrt2 * nch; i++) {
-                            double f = outbuf[i] > 0 ? outbuf[i] : -outbuf[i];
-                            peak[0] = Math.max(peak[0], f);
-//logger.log(Level.TRACE, "p: " + rawoutbuf.position() + ", l: " + rawoutbuf.limit());
-                            rawoutbuf.asDoubleBuffer().put(i, outbuf[i]);
-//if (i < 100) {
-// logger.log(Level.DEBUG, "1: %06d: %f".formatted(i, outbuf[i]));
-//}
-//logger.log(Level.TRACE, "\n" + StringUtil.getDump(rawoutbuf, i, 8));
-                        }
-                    } else {
-                        switch (dbps) {
-                        case 1: {
-                            double gain2 = gain * 0x7f;
-                            ch = 0;
-
-                            for (i = 0; i < nsmplwrt2 * nch; i++) {
-                                int s;
-
-                                if (dither != 0) {
-                                    s = shaper.doShaping(outbuf[i] * gain2, peak, dither, ch);
-                                } else {
-                                    s = round(outbuf[i] * gain2);
-
-                                    if (s < -0x80) {
-                                        double d = (double) s / -0x80;
-                                        peak[0] = Math.max(peak[0], d);
-                                        s = -0x80;
-                                    }
-                                    if (0x7f < s) {
-                                        double d = (double) s / 0x7f;
-                                        peak[0] = Math.max(peak[0], d);
-                                        s = 0x7f;
-                                    }
-                                }
-
-                                rawoutbuf.put(i, (byte) (s + 0x80));
-
-                                ch++;
-                                if (ch == nch) {
-                                    ch = 0;
-                                }
-                            }
-                        }
-                            break;
-
-                        case 2: {
-                            double gain2 = gain * 0x7fff;
-                            ch = 0;
-
-                            for (i = 0; i < nsmplwrt2 * nch; i++) {
-                                int s;
-
-                                if (dither != 0) {
-                                    s = shaper.doShaping(outbuf[i] * gain2, peak, dither, ch);
-                                } else {
-                                    s = round(outbuf[i] * gain2);
-
-                                    if (s < -0x8000) {
-                                        double d = (double) s / -0x8000;
-                                        peak[0] = Math.max(peak[0], d);
-                                        s = -0x8000;
-                                    }
-                                    if (0x7fff < s) {
-                                        double d = (double) s / 0x7fff;
-                                        peak[0] = Math.max(peak[0], d);
-                                        s = 0x7fff;
-                                    }
-                                }
-
-                                rawoutbuf.order(byteOrder).asShortBuffer().put(i, (short) s);
-
-                                ch++;
-                                if (ch == nch) {
-                                    ch = 0;
-                                }
-                            }
-                        }
-                            break;
-
-                        case 3: {
-                            double gain2 = gain * 0x7fffff;
-                            ch = 0;
-
-                            for (i = 0; i < nsmplwrt2 * nch; i++) {
-                                int s;
-
-                                if (dither != 0) {
-                                    s = shaper.doShaping(outbuf[i] * gain2, peak, dither, ch);
-                                } else {
-                                    s = round(outbuf[i] * gain2);
-
-                                    if (s < -0x800000) {
-                                        double d = (double) s / -0x800000;
-                                        peak[0] = Math.max(peak[0], d);
-                                        s = -0x800000;
-                                    }
-                                    if (0x7fffff < s) {
-                                        double d = (double) s / 0x7fffff;
-                                        peak[0] = Math.max(peak[0], d);
-                                        s = 0x7fffff;
-                                    }
-                                }
-
-                                rawoutbuf.put(i * 3, (byte) (s & 255));
-                                s >>= 8;
-                                rawoutbuf.put(i * 3 + 1, (byte) (s & 255));
-                                s >>= 8;
-                                rawoutbuf.put(i * 3 + 2, (byte) (s & 255));
-
-                                ch++;
-                                if (ch == nch) {
-                                    ch = 0;
-                                }
-                            }
-                        }
-                            break;
-
-                        }
-                    }
-
-                    if (!init) {
-                        if (ending) {
-                            if ((double) sumread * dfrq / sfrq + 2 > sumwrite + nsmplwrt2) {
-                                rawoutbuf.position(0);
-                                rawoutbuf.limit(dbps * nch * nsmplwrt2);
-                                sumWritten += fpo.write(rawoutbuf);
-                                sumwrite += nsmplwrt2;
-                            } else {
-                                rawoutbuf.position(0);
-                                rawoutbuf.limit((int) (dbps * nch * (Math.floor((double) sumread * dfrq / sfrq) + 2 - sumwrite)));
-                                sumWritten += fpo.write(rawoutbuf);
-                                break;
-                            }
-                        } else {
-                            rawoutbuf.position(0);
-                            rawoutbuf.limit(dbps * nch * nsmplwrt2);
-                            sumWritten += fpo.write(rawoutbuf);
-                            sumwrite += nsmplwrt2;
-                        }
-                    } else {
-                        if (nsmplwrt2 < delay) {
-                            delay -= nsmplwrt2;
-                        } else {
-                            if (ending) {
-                                if ((double) sumread * dfrq / sfrq + 2 > sumwrite + nsmplwrt2 - delay) {
-                                    rawoutbuf.position(dbps * nch * delay);
-                                    rawoutbuf.limit(dbps * nch * nsmplwrt2);
-                                    sumWritten += fpo.write(rawoutbuf);
-                                    sumwrite += nsmplwrt2 - delay;
-                                } else {
-                                    rawoutbuf.position(dbps * nch * delay);
-System.err.printf("%d, %d, %d, %d\n",
-  (int) (dbps * nch * (Math.floor((double) sumread * dfrq / sfrq) + 2 - sumwrite - delay)),
-  (int) Math.floor((double) sumread * dfrq / sfrq), sumwrite, delay);
-                                    rawoutbuf.limit((int) (dbps * nch * (Math.floor((double) sumread * dfrq / sfrq) + 2 - sumwrite - delay)));
-                                    sumWritten += fpo.write(rawoutbuf);
-                                    break;
-                                }
-                            } else {
-                                rawoutbuf.position(dbps * nch * delay);
-                                rawoutbuf.limit(dbps * nch * (nsmplwrt2 - delay));
-                                sumWritten += fpo.write(rawoutbuf);
-                                sumwrite += nsmplwrt2 - delay;
-                                init = false;
-                            }
-                        }
-                    }
-
-                    {
-                        ds = (rp2 - 1) / (fs2 / fs1);
-
-                        if (ds > n1b2) {
-                            ds = n1b2;
-                        }
-
-                        for (ch = 0; ch < nch; ch++) {
-                            System.arraycopy(buf2[ch], ds, buf2[ch], 0, n2x + 1 + n1b2 - ds); // memmove TODO overlap
-                        }
-
-                        rp2 -= ds * (fs2 / fs1);
-                    }
-
-                    for (ch = 0; ch < nch; ch++) {
-                        System.arraycopy(buf1[ch], n1b2, buf2[ch], n2x + 1, n1b2);
-                    }
-
-                    if ((spcount++ & 7) == 7) {
-                        showProgress((double) sumread / chanklen);
+                }
+                case 4 -> {
+                    for (i = 0; i < nSmplRead * nch; i++) {
+                        int v = rawInBuf.order(byteOrder).getInt(i);
+                        inBuf[nch * inBufLen + i] = (1 / (double) 0x7fff_ffff) * v;
                     }
                 }
             }
 
-            showProgress(1);
+            for (; i < nch * toBeRead2; i++) {
+                inBuf[i] = 0;
+            }
 
-            this.peak = peak[0];
+            sumRead += nSmplRead;
 
-            return sumWritten;
+            ending = nSmplRead < toBeRead || sumRead >= chunkLen || atEnd(fpi);
+
+            rpsBackup = rps;
+            s2pBackup = s2p;
+
+            for (ch = 0; ch < nch; ch++) {
+                rps = rpsBackup;
+
+                for (k = 0; k < rps; k++) {
+                    buf1[ch][k] = 0;
+                }
+
+                for (i = rps, j = 0; i < n1b2; i += osf, j++) {
+                    assert (j < ((n1b2 - rps - 1) / osf + 1));
+
+                    buf1[ch][i] = inBuf[j * nch + ch];
+
+                    for (k = i + 1; k < i + osf; k++) {
+                        buf1[ch][k] = 0;
+                    }
+                }
+
+                assert (j == ((n1b2 - rps - 1) / osf + 1));
+
+                for (k = n1b2; k < n1b; k++) {
+                    buf1[ch][k] = 0;
+                }
+
+                rps = i - n1b2;
+//                rp += j;
+
+                rdft(n1b, 1, buf1[ch], fftIp, fftW);
+
+                buf1[ch][0] = stage1[0] * buf1[ch][0];
+                buf1[ch][1] = stage1[1] * buf1[ch][1];
+
+                for (i = 1; i < n1b2; i++) {
+                    double re, im;
+
+                    re = stage1[i * 2] * buf1[ch][i * 2] - stage1[i * 2 + 1] * buf1[ch][i * 2 + 1];
+                    im = stage1[i * 2 + 1] * buf1[ch][i * 2] + stage1[i * 2] * buf1[ch][i * 2 + 1];
+
+                    buf1[ch][i * 2] = re;
+                    buf1[ch][i * 2 + 1] = im;
+                }
+
+                rdft(n1b, -1, buf1[ch], fftIp, fftW);
+
+                for (i = 0; i < n1b2; i++) {
+                    buf2[ch][n2x + 1 + i] += buf1[ch][i];
+                }
+
+                {
+                    int t1 = rp2 / (fs2 / fs1);
+                    if (rp2 % (fs2 / fs1) != 0) {
+                        t1++;
+                    }
+
+                    bp = buf2[0].length * ch + t1; // &(buf2[ch][t1]);
+                }
+
+                s2p = s2pBackup;
+
+                for (p = 0; bp - (buf2[0].length * ch) < n1b2 + 1; p++) { // buf2[ch]
+                    double tmp = 0;
+                    int bp2;
+                    int s2o;
+
+                    bp2 = bp;
+                    s2o = f2order[s2p];
+                    bp += f2inc[s2p];
+                    s2p++;
+
+                    if (s2p == n2y) {
+                        s2p = 0;
+                    }
+
+                    assert ((bp2 - (buf2[0].length * ch)) * (fs2 / fs1) - (rp2 + p * (fs2 / dfrq)) == s2o); // &(buf2[ch][0])
+                    for (i = 0; i < n2x; i++) {
+//logger.log(Level.TRACE, "%d (%d, %d)".formatted(i, bp2 / buf2[0].length, bp2 % buf2[0].length));
+                        tmp += stage2[s2o][i] * buf2[bp2 / buf2[0].length][bp2 % buf2[0].length]; // *bp2++
+                        bp2++;
+                    }
+
+                    outBuf[op + p * nch + ch] = tmp;
+//logger.log(Level.TRACE, "O: %06d: %f".formatted(op + p * nch + ch, tmp));
+                }
+
+                nSmplWrt2 = p;
+            }
+
+            rp2 += nSmplWrt2 * (fs2 / dfrq);
+
+            rawOutBuf.clear();
+            if (twoPass) {
+                for (i = 0; i < nSmplWrt2 * nch; i++) {
+                    double f = outBuf[i] > 0 ? outBuf[i] : -outBuf[i];
+                    peak[0] = Math.max(peak[0], f);
+//logger.log(Level.TRACE, "p: " + rawOutBuf.position() + ", l: " + rawOutBuf.limit());
+                    rawOutBuf.asDoubleBuffer().put(i, outBuf[i]);
+//if (i < 100) {
+// logger.log(Level.DEBUG, "1: %06d: %f".formatted(i, outBuf[i]));
+//}
+//logger.log(Level.TRACE, "\n" + StringUtil.getDump(rawOutBuf, i, 8));
+                }
+            } else {
+                switch (dbps) {
+                    case 1 -> {
+                        double gain2 = gain * 0x7f;
+                        ch = 0;
+
+                        for (i = 0; i < nSmplWrt2 * nch; i++) {
+                            int s;
+
+                            if (dither != 0) {
+                                s = shaper.doShaping(outBuf[i] * gain2, peak, dither, ch);
+                            } else {
+                                s = round(outBuf[i] * gain2);
+
+                                if (s < -0x80) {
+                                    double d = (double) s / -0x80;
+                                    peak[0] = Math.max(peak[0], d);
+                                    s = -0x80;
+                                }
+                                if (0x7f < s) {
+                                    double d = (double) s / 0x7f;
+                                    peak[0] = Math.max(peak[0], d);
+                                    s = 0x7f;
+                                }
+                            }
+
+                            rawOutBuf.put(i, (byte) (s + 0x80));
+
+                            ch++;
+                            if (ch == nch) {
+                                ch = 0;
+                            }
+                        }
+                    }
+                    case 2 -> {
+                        double gain2 = gain * 0x7fff;
+                        ch = 0;
+
+                        for (i = 0; i < nSmplWrt2 * nch; i++) {
+                            int s;
+
+                            if (dither != 0) {
+                                s = shaper.doShaping(outBuf[i] * gain2, peak, dither, ch);
+                            } else {
+                                s = round(outBuf[i] * gain2);
+
+                                if (s < -0x8000) {
+                                    double d = (double) s / -0x8000;
+                                    peak[0] = Math.max(peak[0], d);
+                                    s = -0x8000;
+                                }
+                                if (0x7fff < s) {
+                                    double d = (double) s / 0x7fff;
+                                    peak[0] = Math.max(peak[0], d);
+                                    s = 0x7fff;
+                                }
+                            }
+
+                            rawOutBuf.order(byteOrder).asShortBuffer().put(i, (short) s);
+
+                            ch++;
+                            if (ch == nch) {
+                                ch = 0;
+                            }
+                        }
+                    }
+                    case 3 -> {
+                        double gain2 = gain * 0x7f_ffff;
+                        ch = 0;
+
+                        for (i = 0; i < nSmplWrt2 * nch; i++) {
+                            int s;
+
+                            if (dither != 0) {
+                                s = shaper.doShaping(outBuf[i] * gain2, peak, dither, ch);
+                            } else {
+                                s = round(outBuf[i] * gain2);
+
+                                if (s < -0x80_0000) {
+                                    double d = (double) s / -0x80_0000;
+                                    peak[0] = Math.max(peak[0], d);
+                                    s = -0x80_0000;
+                                }
+                                if (0x7f_ffff < s) {
+                                    double d = (double) s / 0x7f_ffff;
+                                    peak[0] = Math.max(peak[0], d);
+                                    s = 0x7f_ffff;
+                                }
+                            }
+
+                            rawOutBuf.put(i * 3, (byte) (s & 255));
+                            s >>= 8;
+                            rawOutBuf.put(i * 3 + 1, (byte) (s & 255));
+                            s >>= 8;
+                            rawOutBuf.put(i * 3 + 2, (byte) (s & 255));
+
+                            ch++;
+                            if (ch == nch) {
+                                ch = 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!init) {
+                if (ending) {
+                    if ((double) sumRead * dfrq / sfrq + 2 > sumWrite + nSmplWrt2) {
+                        rawOutBuf.position(0);
+                        rawOutBuf.limit(dbps * nch * nSmplWrt2);
+                        sumWritten += fpo.write(rawOutBuf);
+                        sumWrite += nSmplWrt2;
+                    } else {
+                        rawOutBuf.position(0);
+                        rawOutBuf.limit(dbps * nch * Math.max(0, (int) (Math.floor((double) sumRead * dfrq / sfrq) + 2 - sumWrite)));
+                        sumWritten += fpo.write(rawOutBuf);
+                        return finish();
+                    }
+                } else {
+                    rawOutBuf.position(0);
+                    rawOutBuf.limit(dbps * nch * nSmplWrt2);
+                    sumWritten += fpo.write(rawOutBuf);
+                    sumWrite += nSmplWrt2;
+                }
+            } else {
+                if (nSmplWrt2 < delay) {
+                    delay -= nSmplWrt2;
+                } else {
+                    // sumWrite counts the samples after the delay, so the delay is not subtracted again from the rest (C has the bug, issue #4)
+                    if (ending) {
+                        if ((double) sumRead * dfrq / sfrq + 2 > sumWrite + nSmplWrt2 - delay) {
+                            rawOutBuf.position(dbps * nch * delay);
+                            rawOutBuf.limit(dbps * nch * nSmplWrt2);
+                            sumWritten += fpo.write(rawOutBuf);
+                            sumWrite += nSmplWrt2 - delay;
+                            init = false;
+                        } else {
+                            rawOutBuf.position(dbps * nch * delay);
+                            rawOutBuf.limit(dbps * nch * (delay + Math.max(0, (int) (Math.floor((double) sumRead * dfrq / sfrq) + 2 - sumWrite))));
+                            sumWritten += fpo.write(rawOutBuf);
+                            return finish();
+                        }
+                    } else {
+                        rawOutBuf.position(dbps * nch * delay);
+                        rawOutBuf.limit(dbps * nch * nSmplWrt2);
+                        sumWritten += fpo.write(rawOutBuf);
+                        sumWrite += nSmplWrt2 - delay;
+                        init = false;
+                    }
+                }
+            }
+
+            {
+                ds = (rp2 - 1) / (fs2 / fs1);
+
+                if (ds > n1b2) {
+                    ds = n1b2;
+                }
+
+                for (ch = 0; ch < nch; ch++) {
+                    System.arraycopy(buf2[ch], ds, buf2[ch], 0, n2x + 1 + n1b2 - ds); // memmove TODO overlap
+                }
+
+                rp2 -= ds * (fs2 / fs1);
+            }
+
+            for (ch = 0; ch < nch; ch++) {
+                System.arraycopy(buf1[ch], n1b2, buf2[ch], n2x + 1, n1b2);
+            }
+
+            if ((spCount++ & 7) == 7) {
+                showProgress((double) sumRead / chunkLen);
+            }
+            return true;
         }
     }
 
     /** no src */
     private class NoSrc extends Resampler {
 
-        /* */
-        @Override
-        int resample(ReadableByteChannel fpi, WritableByteChannel fpo) throws IOException {
-            double[] peak = new double[] {
-                0
-            };
-            int ch = 0, sumread = 0;
-            int sumWritten = 0;
+        /** samples processed by a {@link #step} */
+        static final int BLOCK = 0x10000;
 
+        int ch = 0;
+        long sumRead = 0;
+        ByteBuffer bb;
+        ByteBuffer buf;
+
+        @Override
+        void prepare() {
             setStartTime();
 
-            ByteBuffer bb = null;
-            if (twopass) {
+            if (twoPass) {
                 bb = ByteBuffer.allocate(8);
             }
 
+            buf = ByteBuffer.allocate(4);
+        }
+
+        @Override
+        boolean step(ReadableByteChannel fpi, WritableByteChannel fpo) throws IOException {
+            if (finished) {
+                return false;
+            }
+
             int r = 0;
-            ByteBuffer buf = ByteBuffer.allocate(4);
-            while (sumread < chanklen * nch) {
+            for (int n = 0; n < BLOCK; n++) {
+                if (sumRead >= (long) chunkLen * nch) {
+                    return finish();
+                }
+
                 double f = 0;
                 int s;
 
                 switch (bps) {
-                case 1:
-                    buf.position(0);
-                    buf.limit(1);
-                    r = fpi.read(buf);
-                    buf.flip();
-                    f = (1 / (double) 0x7f) * (buf.get(0) - 128);
-                    break;
-                case 2:
-                    buf.position(0);
-                    buf.limit(2);
-                    r = fpi.read(buf);
-                    buf.flip();
-                    s = buf.order(byteOrder).asShortBuffer().get(0);
-                    f = (1 / (double) 0x7fff) * s;
-                    break;
-                case 3:
-                    buf.position(0);
-                    buf.limit(3);
-                    r = fpi.read(buf);
-                    buf.flip();
-                    f = (1 / (double) 0x7fffff) *
-                          (((buf.get(0) & 0xff) <<  0) |
-                           ((buf.get(1) & 0xff) <<  8) |
-                           ((buf.get(2) & 0xff) << 16));
-                    break;
-                case 4:
-                    buf.position(0);
-                    buf.limit(4);
-                    r = fpi.read(buf);
-                    buf.flip();
-                    s = buf.order(byteOrder).asIntBuffer().get(0);
-                    f = (1 / (double) 0x7fffffff) * s;
-                    break;
+                    case 1 -> {
+                        buf.position(0);
+                        buf.limit(1);
+                        r = readFully(fpi, buf);
+                        f = (1 / (double) 0x7f) * ((buf.get(0) & 0xff) - 128);
+                    }
+                    case 2 -> {
+                        buf.position(0);
+                        buf.limit(2);
+                        r = readFully(fpi, buf) / 2;
+                        s = buf.order(byteOrder).getShort(0);
+                        f = (1 / (double) 0x7fff) * s;
+                    }
+                    case 3 -> {
+                        buf.position(0);
+                        buf.limit(3);
+                        r = readFully(fpi, buf) / 3;
+                        f = (1 / (double) 0x7f_ffff) *
+                              (((buf.get(0) & 0xff) <<  0) |
+                               ((buf.get(1) & 0xff) <<  8) |
+                                (buf.get(2)         << 16));
+                    }
+                    case 4 -> {
+                        buf.position(0);
+                        buf.limit(4);
+                        r = readFully(fpi, buf) / 4;
+                        s = buf.order(byteOrder).getInt(0);
+                        f = (1 / (double) 0x7ff_fffff) * s;
+                    }
                 }
 
                 if (r <= 0) {
-                    break;
+                    return finish();
                 }
                 f *= gain;
 
-                if (!twopass) {
+                if (!twoPass) {
                     switch (dbps) {
-                    case 1:
-                        f *= 0x7f;
-                        s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
-                        buf.position(0);
-                        buf.limit(1);
-                        buf.put(0, (byte) (s + 128));
-                        buf.flip();
-                        sumWritten += fpo.write(buf);
-                        break;
-                    case 2:
-                        f *= 0x7fff;
-                        s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
-                        buf.position(0);
-                        buf.limit(2);
-                        buf.asShortBuffer().put(0, (short) s);
-                        buf.flip();
-                        sumWritten += fpo.write(buf);
-                        break;
-                    case 3:
-                        f *= 0x7fffff;
-                        s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
-                        buf.position(0);
-                        buf.limit(3);
-                        buf.put(0, (byte) (s & 255));
-                        s >>= 8;
-                        buf.put(1, (byte) (s & 255));
-                        s >>= 8;
-                        buf.put(2, (byte) (s & 255));
-                        buf.flip();
-                        sumWritten += fpo.write(buf);
-                        break;
+                        case 1 -> {
+                            f *= 0x7f;
+                            s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
+                            buf.position(0);
+                            buf.limit(1);
+                            buf.put(0, (byte) (s + 128));
+                            sumWritten += fpo.write(buf);
+                        }
+                        case 2 -> {
+                            f *= 0x7fff;
+                            s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
+                            buf.position(0);
+                            buf.limit(2);
+                            buf.order(byteOrder).putShort(0, (short) s);
+                            sumWritten += fpo.write(buf);
+                        }
+                        case 3 -> {
+                            f *= 0x7f_ffff;
+                            s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
+                            buf.position(0);
+                            buf.limit(3);
+                            buf.put(0, (byte) (s & 255));
+                            s >>= 8;
+                            buf.put(1, (byte) (s & 255));
+                            s >>= 8;
+                            buf.put(2, (byte) (s & 255));
+                            sumWritten += fpo.write(buf);
+                        }
                     }
                 } else {
                     double p = f > 0 ? f : -f;
@@ -1748,18 +1842,14 @@ System.err.printf("%d, %d, %d, %d\n",
                 if (ch == nch) {
                     ch = 0;
                 }
-                sumread++;
+                sumRead++;
 
-                if ((sumread & 0x3ffff) == 0) {
-                    showProgress((double) sumread / (chanklen * nch));
+                if ((sumRead & 0x3_ffff) == 0) {
+                    showProgress((double) sumRead / ((long) chunkLen * nch));
                 }
             }
 
-            showProgress(1);
-
-            this.peak = peak[0];
-
-            return sumWritten;
+            return true;
         }
     }
 
@@ -1781,25 +1871,25 @@ System.err.printf("%d, %d, %d, %d\n",
         FileChannel fpo;
         File ft;
         FileChannel fpto;
-        boolean twopass, normalize;
+        boolean twoPass, normalize;
         int dither, pdf, samp = 0;
         int nch, bps;
         int length;
-        int sfrq, dfrq, dbps;
-        double att, noiseamp;
+        int sFrq, dFrq, dbps;
+        double att, noiseAmp;
         double[] peak = new double[] { 0 };
         int i;
 
         // parse command line options
 
-        dfrq = -1;
+        dFrq = -1;
         att = 0;
         dbps = -1;
-        twopass = false;
+        twoPass = false;
         normalize = false;
         dither = 0;
         pdf = 0;
-        noiseamp = 0.18;
+        noiseAmp = 0.18;
 
         for (i = 0; i < argv.length; i++) {
             if (argv[i].charAt(0) != '-') {
@@ -1808,8 +1898,8 @@ System.err.printf("%d, %d, %d, %d\n",
 
             switch (argv[i]) {
                 case "--rate" -> {
-                    dfrq = Integer.parseInt(argv[++i]);
-//logger.log(Level.TRACE, "dfrq: %d".formatted(dfrq));
+                    dFrq = Integer.parseInt(argv[++i]);
+//logger.log(Level.TRACE, "dFrq: %d".formatted(dFrq));
                     continue;
                 }
                 case "--att" -> {
@@ -1825,11 +1915,11 @@ System.err.printf("%d, %d, %d, %d\n",
                     continue;
                 }
                 case "--twopass" -> {
-                    twopass = true;
+                    twoPass = true;
                     continue;
                 }
                 case "--normalize" -> {
-                    twopass = true;
+                    twoPass = true;
                     normalize = true;
                     continue;
                 }
@@ -1857,10 +1947,10 @@ System.err.printf("%d, %d, %d, %d\n",
                     }
 
                     try {
-                        noiseamp = Double.parseDouble(argv[i + 1]);
+                        noiseAmp = Double.parseDouble(argv[i + 1]);
                         i++;
                     } catch (NumberFormatException e) {
-                        noiseamp = presets[pdf];
+                        noiseAmp = presets[pdf];
                     }
 
                     continue;
@@ -1879,7 +1969,7 @@ System.err.printf("%d, %d, %d, %d\n",
                         DF = 8000;
                         FFTFIRLEN = 1024;
                     } else if (argv[i + 1].equals("standard")) {
-                        /* nothing to do */
+                        // nothing to do
                     } else {
                         throw new IllegalArgumentException("unrecognized profile : " + argv[i + 1]);
                     }
@@ -1942,16 +2032,16 @@ logger.log(Level.DEBUG, "p: " + bb.position() + ", l: " + bb.limit());
                 throw new IllegalStateException("Error: Only PCM is supported.");
             }
             nch = bb.getShort();
-            sfrq = bb.getInt();
+            sFrq = bb.getInt();
             bps = bb.getInt();
-            if (bps % sfrq * nch != 0) {
+            if (bps % sFrq * nch != 0) {
                 error(4);
             }
 
             word = bb.getShort();
             word = bb.getShort();
 
-            bps /= sfrq * nch;
+            bps /= sFrq * nch;
 
             if (sizeOfFmt > 16) {
                 bb.position(0);
@@ -2000,8 +2090,8 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                 }
             }
 
-            if (dfrq == -1) {
-                dfrq = sfrq;
+            if (dFrq == -1) {
+                dFrq = sFrq;
             }
 
             if (dither == -1) {
@@ -2023,20 +2113,20 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                 String[] ptype = {
                     "rectangular", "triangular", "gaussian"
                 };
-                System.err.printf("frequency : %d -> %d\n", sfrq, dfrq);
+                System.err.printf("frequency : %d -> %d\n", sFrq, dFrq);
                 System.err.printf("attenuation : %gdB\n", att);
                 System.err.printf("bits per sample : %d -> %d\n", bps * 8, dbps * 8);
                 System.err.printf("nchannels : %d\n", nch);
-                System.err.printf("length : %d bytes, %g secs\n", length, (double) length / bps / nch / sfrq);
+                System.err.printf("length : %d bytes, %g secs\n", length, (double) length / bps / nch / sFrq);
                 if (dither == 0) {
                     System.err.print("dither type : none\n");
                 } else {
-                    System.err.printf("dither type : %s, %s p.d.f, amp = %g\n", dtype[dither], ptype[pdf], noiseamp);
+                    System.err.printf("dither type : %s, %s p.d.f, amp = %g\n", dtype[dither], ptype[pdf], noiseAmp);
                 }
                 System.err.print("\n");
             }
 
-            if (twopass) {
+            if (twoPass) {
             }
 
             fpo = fos.getChannel();
@@ -2056,9 +2146,9 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
             bb.putShort(word); // format category, PCM
             word = (short) nch;
             bb.putShort(word); // channels
-            dword = dfrq;
+            dword = dFrq;
             bb.putInt(dword); // sampling rate
-            dword = dfrq * nch * dbps;
+            dword = dFrq * nch * dbps;
             bb.putInt(dword); // bytes per sec
             word = (short) (dbps * nch);
             bb.putShort(word); // block alignment
@@ -2083,18 +2173,18 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                     max = 0x7fff;
                 }
                 if (dbps == 3) {
-                    min = -0x800000;
-                    max = 0x7fffff;
+                    min = -0x80_0000;
+                    max = 0x7f_ffff;
                 }
                 if (dbps == 4) {
-                    min = -0x80000000;
-                    max = 0x7fffffff;
+                    min = -0x8000_0000;
+                    max = 0x7fff_ffff;
                 }
 
-                samp = shaper.initShaper(dfrq, nch, min, max, dither, pdf, noiseamp);
+                samp = shaper.initShaper(dFrq, nch, min, max, dither, pdf, noiseAmp);
             }
 
-            if (twopass) {
+            if (twoPass) {
                 double gain = 0;
                 int ch = 0;
                 int fptlen, sumread;
@@ -2111,22 +2201,22 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                 try (FileOutputStream tfos= new FileOutputStream(ft)) {
                     fpto = tfos.getChannel();
 
-//logger.log(Level.TRACE, "nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d, ???: %d, twopass: %b, dither: %d".formatted(nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither));
+//logger.log(Level.TRACE, "nch: %d, bps: %d, size: %d, sFrq: %d, dFrq: %d, ???: %d, ???: %d, twoPass: %b, dither: %d".formatted(nch, bps, 8, sFrq, dFrq, 1, length / bps / nch, twoPass, dither));
                     Resampler resampler;
-                    if (sfrq < dfrq) {
+                    if (sFrq < dFrq) {
                         resampler = new Upsampler();
-                    } else if (sfrq > dfrq) {
+                    } else if (sFrq > dFrq) {
                         resampler = new Downsampler();
                     } else {
                         resampler = new NoSrc();
                     }
                     if (normalize) {
-                        resampler.init(nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither);
+                        resampler.init(nch, bps, 8, sFrq, dFrq, 1, length / bps / nch, twoPass, dither);
                     } else {
-                        resampler.init(nch, bps, 8, sfrq, dfrq, Math.pow(10, -att / 20), length / bps / nch, twopass, dither);
+                        resampler.init(nch, bps, 8, sFrq, dFrq, Math.pow(10, -att / 20), length / bps / nch, twoPass, dither);
                     }
                     resampler.resample(fpi, fpto);
-                    peak[0] = resampler.peak;
+                    peak[0] = resampler.peak[0];
 
                     fpto.close();
                 }
@@ -2151,12 +2241,9 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
 
                 if (dither != 0) {
                     gain = switch (dbps) {
-                        case 1 ->
-                                (normalize || peak[0] >= (0x7f - samp) / (double) 0x7f) ? 1 / peak[0] * (0x7f - samp) : 1 / peak[0] * 0x7f;
-                        case 2 ->
-                                (normalize || peak[0] >= (0x7fff - samp) / (double) 0x7fff) ? 1 / peak[0] * (0x7fff - samp) : 1 / peak[0] * 0x7fff;
-                        case 3 ->
-                                (normalize || peak[0] >= (0x7fffff - samp) / (double) 0x7fffff) ? 1 / peak[0] * (0x7fffff - samp) : 1 / peak[0] * 0x7fffff;
+                        case 1 -> (normalize || peak[0] >= (0x7f - samp) / (double) 0x7f) ? 1 / peak[0] * (0x7f - samp) : 1 / peak[0] * 0x7f;
+                        case 2 -> (normalize || peak[0] >= (0x7fff - samp) / (double) 0x7fff) ? 1 / peak[0] * (0x7fff - samp) : 1 / peak[0] * 0x7fff;
+                        case 3 -> (normalize || peak[0] >= (0x7f_ffff - samp) / (double) 0x7f_ffff) ? 1 / peak[0] * (0x7f_ffff - samp) : 1 / peak[0] * 0x7f_ffff;
                         default -> gain;
                     };
                 } else {
@@ -2185,8 +2272,8 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                         fpti.read(bb);
                         bb.flip();
                         f = bb.getDouble();
-//if (sumread < 100) {
-// logger.log(Level.DEBUG, "2: %06d: %f".formatted(sumread, f));
+//if (sumRead < 100) {
+// logger.log(Level.DEBUG, "2: %06d: %f".formatted(sumRead, f));
 //}
                         f *= gain;
                         sumread++;
@@ -2249,16 +2336,16 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                 }
             } else {
                 Resampler resampler;
-                if (sfrq < dfrq) {
+                if (sFrq < dFrq) {
                     resampler = new Upsampler();
-                } else if (sfrq > dfrq) {
+                } else if (sFrq > dFrq) {
                     resampler = new Downsampler();
                 } else {
                     resampler = new NoSrc();
                 }
-                resampler.init(nch, bps, dbps, sfrq, dfrq, Math.pow(10, -att / 20), length / bps / nch, twopass, dither);
+                resampler.init(nch, bps, dbps, sFrq, dFrq, Math.pow(10, -att / 20), length / bps / nch, twoPass, dither);
                 resampler.resample(fpi, fpo);
-                peak[0] = resampler.peak;
+                peak[0] = resampler.peak[0];
                 if (!quiet) {
                     System.err.print("\n");
                 }
@@ -2268,7 +2355,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                 shaper.quitShaper(nch);
             }
 
-            if (!twopass && peak[0] > 1) {
+            if (!twoPass && peak[0] > 1) {
                 if (!quiet) {
                     System.err.printf("clipping detected : %gdB\n", 20 * Math.log10(peak[0]));
                 }
@@ -2309,7 +2396,7 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
      *
      * @param fpi input stream
      * @param fpo output stream
-     * @param length input length
+     * @param length input length in bytes, negative when unknown
      * @param nch number of channels
      * @param sfrq source frequency
      * @param bps source bytes per channel
@@ -2317,237 +2404,155 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
      * @param dbps destination bytes per channel
      * @param props properties
      */
-    void io(ReadableByteChannel fpi, WritableByteChannel fpo, int length, int nch, int sfrq, int bps, int dfrq, int dbps, Map<String, Object> props) throws IOException {
-        boolean twopass = (boolean) props.getOrDefault("twopass", true);
-        boolean normalize = (boolean) props.getOrDefault("normalize", true);
-        int dither = (int) props.getOrDefault("dither", 0); // 0 ~ 3
-        int pdf = (int) props.getOrDefault("pdf", 0); // 0 ~ 1
-        String profile = (String) props.getOrDefault("profile", "standard");
-        int samp = 0;
-        double att, noiseamp;
-        double[] peak = new double[] { 0 };
-
-        // TODO options
-        att = 0;
-
-        // presets[pdf]
-        noiseamp = 0.18;
-
-        switch (profile) {
-        case "fast":
-            AA = 96;
-            DF = 8000;
-            FFTFIRLEN = 1024;
-            break;
-        case "standard":
-            /* nothing to do */
-            break;
+    void io(ReadableByteChannel fpi, WritableByteChannel fpo, long length, int nch, int sfrq, int bps, int dfrq, int dbps, Map<String, Object> props) throws IOException {
+        try (Converter converter = new Converter(fpi, length, nch, sfrq, bps, dfrq, dbps, props)) {
+            while (converter.pull(fpo)) {
+            }
         }
+    }
+
+    /**
+     * A filter driven by the caller, no thread is needed.
+     * <p>
+     * Each {@link #pull} converts a chunk of the input and writes the result.
+     * In two pass mode the first pull runs the whole 1st pass,
+     * because the gain of the 2nd pass comes from the peak of the entire 1st pass result.
+     * </p>
+     */
+    class Converter implements Closeable {
+
+        /** samples converted by a 2nd pass {@link #pull} */
+        private static final int PASS2_BLOCK = 0x10000;
+
+        private final ReadableByteChannel fpi;
+        private final int nch;
+        private final int dbps;
+        private final boolean twoPass;
+        private final boolean normalize;
+        private int dither;
+        private final int samp = 0;
+        private final double att;
+        private final double[] peak = new double[] { 0 };
+        private final Resampler resampler;
+
+        private boolean started;
+        private boolean finished;
+
+        // 2nd pass
+        /** the temporary file, deleted when this is closed */
+        private FileChannel pipe;
+        private double gain = 0;
+        private int ch = 0;
+        private long fptlen, sumread;
+        private ByteBuffer inBuf, outBuf;
+
+        /**
+         * @param fpi input stream
+         * @param length input length in bytes, negative when unknown
+         * @param nch number of channels
+         * @param sfrq source frequency
+         * @param bps source bytes per channel
+         * @param dfrq destination frequency
+         * @param dbps destination bytes per channel
+         * @param props properties
+         */
+        Converter(ReadableByteChannel fpi, long length, int nch, int sfrq, int bps, int dfrq, int dbps, Map<String, Object> props) {
+            this.fpi = length < 0 ? new LookAheadChannel(fpi) : fpi;
+            this.nch = nch;
+            this.dbps = dbps;
+            twoPass = (boolean) props.getOrDefault("twopass", true);
+            normalize = (boolean) props.getOrDefault("normalize", true);
+            dither = (int) props.getOrDefault("dither", 0); // 0 ~ 3
+            int pdf = (int) props.getOrDefault("pdf", 0); // 0 ~ 1
+            String profile = (String) props.getOrDefault("profile", "standard");
+            double noiseamp;
+
+            // TODO options
+            att = 0;
+
+            // presets[pdf]
+            noiseamp = 0.18;
+
+            switch (profile) {
+            case "fast":
+                AA = 96;
+                DF = 8000;
+                FFTFIRLEN = 1024;
+                break;
+            case "standard":
+                /* nothing to do */
+                break;
+            }
 
 logger.log(Level.DEBUG, "nch: %d, sfrq: %d, bps: %d, sfrq: %d, bps: %d".formatted(nch, sfrq, bps, dfrq, dbps));
 
-        if (bps != 1 && bps != 2 && bps != 3 && bps != 4) {
-            throw new IllegalArgumentException("Only 8bit, 16bit, 24bit and 32bit PCM are supported.");
-        }
-
-        if (dither == -1) {
-            if (dbps < bps) {
-                if (dbps == 1) {
-                    dither = 4;
-                } else {
-                    dither = 3;
-                }
-            } else {
-                dither = 1;
+            if (bps != 1 && bps != 2 && bps != 3 && bps != 4) {
+                throw new IllegalArgumentException("Only 8bit, 16bit, 24bit and 32bit PCM are supported.");
             }
-        }
-
-        if (!quiet) {
-            String[] dtype = {
-                "none", "no noise shaping", "triangular spectral shape", "ATH based noise shaping", "ATH based noise shaping(less amplitude)"
-            };
-            String[] ptype = {
-                "rectangular", "triangular", "gaussian"
-            };
-            System.err.printf("frequency : %d -> %d\n", sfrq, dfrq);
-            System.err.printf("attenuation : %gdB\n", att);
-            System.err.printf("bits per sample : %d -> %d\n", bps * 8, dbps * 8);
-            System.err.printf("nchannels : %d\n", nch);
-            System.err.printf("length : %d bytes, %g secs\n", length, (double) length / bps / nch / sfrq);
-            if (dither == 0) {
-                System.err.print("dither type : none\n");
-            } else {
-                System.err.printf("dither type : %s, %s p.d.f, amp = %g\n", dtype[dither], ptype[pdf], noiseamp);
-            }
-        }
-
-        if (dither != 0) {
-            int min = 0, max = 0;
-            if (dbps == 1) {
-                min = -0x80;
-                max = 0x7f;
-            }
-            if (dbps == 2) {
-                min = -0x8000;
-                max = 0x7fff;
-            }
-            if (dbps == 3) {
-                min = -0x800000;
-                max = 0x7fffff;
-            }
-            if (dbps == 4) {
-                min = -0x80000000;
-                max = 0x7fffffff;
+            if (dbps != 1 && dbps != 2 && dbps != 3) {
+                throw new IllegalArgumentException("Only 8bit, 16bit and 24bit PCM are supported for output.");
             }
 
-            shaper.initShaper(dfrq, nch, min, max, dither, pdf, noiseamp);
-        }
+            // samples per channel
+            int chanklen = length < 0 ? Integer.MAX_VALUE : (int) Math.min(length / bps / nch, Integer.MAX_VALUE);
 
-        if (twopass) {
-            double gain = 0;
-            int ch = 0;
-            int fptlen, sumread;
-            File file = File.createTempFile("ssrc", ".tmp");
-            file.deleteOnExit();
-            try (FileInputStream fis = new FileInputStream(file);
-                 FileOutputStream fos = new FileOutputStream(file)) {
-                FileChannel pipeIn = fis.getChannel();
-                FileChannel pipeOut = fos.getChannel();
-
-                if (!quiet) {
-                    System.err.print("Pass 1\n");
-                }
-
-logger.log(Level.DEBUG, "nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d, ???: %d, twopass: %b, dither: %d".formatted(nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither));
-                Resampler resampler;
-                if (sfrq < dfrq) {
-                    resampler = new Upsampler();
-                } else if (sfrq > dfrq) {
-                    resampler = new Downsampler();
-                } else {
-                    resampler = new NoSrc();
-                }
-                if (normalize) {
-                    resampler.init(nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twopass, dither);
-                } else {
-                    resampler.init(nch, bps, 8, sfrq, dfrq, Math.pow(10, -att / 20), length / bps / nch, twopass, dither);
-                }
-                fptlen = resampler.resample(fpi, pipeOut);
-                peak[0] = resampler.peak;
-
-                pipeOut.close();
-
-                if (!quiet) {
-                    System.err.printf("\npeak : %gdB\n", 20 * Math.log10(peak[0]));
-                }
-
-                if (!normalize) {
-                    if (peak[0] < Math.pow(10, -att / 20)) {
-                        peak[0] = 1;
+            if (dither == -1) {
+                if (dbps < bps) {
+                    if (dbps == 1) {
+                        dither = 4;
                     } else {
-                        peak[0] *= Math.pow(10, att / 20);
+                        dither = 3;
                     }
                 } else {
-                    peak[0] *= Math.pow(10, att / 20);
+                    dither = 1;
                 }
-
-                if (!quiet) {
-                    System.err.print("\nPass 2\n");
-                }
-
-                if (dither != 0) {
-                    gain = switch (dbps) {
-                        case 1 ->
-                                (normalize || peak[0] >= (0x7f - samp) / (double) 0x7f) ? 1 / peak[0] * (0x7f - samp) : 1 / peak[0] * 0x7f;
-                        case 2 ->
-                                (normalize || peak[0] >= (0x7fff - samp) / (double) 0x7fff) ? 1 / peak[0] * (0x7fff - samp) : 1 / peak[0] * 0x7fff;
-                        case 3 ->
-                                (normalize || peak[0] >= (0x7fffff - samp) / (double) 0x7fffff) ? 1 / peak[0] * (0x7fffff - samp) : 1 / peak[0] * 0x7fffff;
-                        default -> gain;
-                    };
-                } else {
-                    gain = switch (dbps) {
-                        case 1 -> 1 / peak[0] * 0x7f;
-                        case 2 -> 1 / peak[0] * 0x7fff;
-                        case 3 -> 1 / peak[0] * 0x7fffff;
-                        default -> gain;
-                    };
-                }
-                shaper.randPtr = 0;
-
-                setStartTime();
-
-                fptlen /= 8;
-
-                ByteBuffer bb = ByteBuffer.allocate(8);
-                for (sumread = 0; sumread < fptlen;) {
-                    double f;
-                    int s;
-
-                    bb.clear();
-                    pipeIn.read(bb);
-                    bb.flip();
-                    f = bb.getDouble();
-//if (sumread < 100) {
-// logger.log(Level.DEBUG, "2: %06d: %f".formatted(sumread, f));
-//}
-                    f *= gain;
-                    sumread++;
-
-                    switch (dbps) {
-                    case 1: {
-                        s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
-
-                        ByteBuffer buf = ByteBuffer.allocate(1);
-                        buf.put((byte) (s + 128));
-                        buf.flip();
-
-                        fpo.write(buf);
-                    }
-                        break;
-                    case 2: {
-                        s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
-
-                        ByteBuffer buf = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
-                        buf.putShort((short) s);
-                        buf.flip();
-
-                        fpo.write(buf);
-                    }
-                        break;
-                    case 3: {
-                        s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
-
-                        ByteBuffer buf = ByteBuffer.allocate(3);
-                        buf.put((byte) (s & 255));
-                        s >>= 8;
-                        buf.put((byte) (s & 255));
-                        s >>= 8;
-                        buf.put((byte) (s & 255));
-                        buf.flip();
-
-                        fpo.write(buf);
-                    }
-                        break;
-                    }
-
-                    ch++;
-                    if (ch == nch) {
-                        ch = 0;
-                    }
-
-                    if ((sumread & 0x3ffff) == 0) {
-                        showProgress((double) sumread / fptlen);
-                    }
-                }
-                showProgress(1);
-                if (!quiet) {
-                    System.err.print("\n");
-                }
-                pipeIn.close();
             }
-        } else {
-            Resampler resampler;
+
+            if (!quiet) {
+                String[] dtype = {
+                    "none", "no noise shaping", "triangular spectral shape", "ATH based noise shaping", "ATH based noise shaping(less amplitude)"
+                };
+                String[] ptype = {
+                    "rectangular", "triangular", "gaussian"
+                };
+                System.err.printf("frequency : %d -> %d\n", sfrq, dfrq);
+                System.err.printf("attenuation : %gdB\n", att);
+                System.err.printf("bits per sample : %d -> %d\n", bps * 8, dbps * 8);
+                System.err.printf("nchannels : %d\n", nch);
+                if (length < 0) {
+                    System.err.print("length : unknown\n");
+                } else {
+                    System.err.printf("length : %d bytes, %g secs\n", length, (double) length / bps / nch / sfrq);
+                }
+                if (dither == 0) {
+                    System.err.print("dither type : none\n");
+                } else {
+                    System.err.printf("dither type : %s, %s p.d.f, amp = %g\n", dtype[dither], ptype[pdf], noiseamp);
+                }
+            }
+
+            if (dither != 0) {
+                int min = 0, max = 0;
+                if (dbps == 1) {
+                    min = -0x80;
+                    max = 0x7f;
+                }
+                if (dbps == 2) {
+                    min = -0x8000;
+                    max = 0x7fff;
+                }
+                if (dbps == 3) {
+                    min = -0x80_0000;
+                    max = 0x7f_ffff;
+                }
+                if (dbps == 4) {
+                    min = -0x8000_0000;
+                    max = 0x7fff_ffff;
+                }
+
+                shaper.initShaper(dfrq, nch, min, max, dither, pdf, noiseamp);
+            }
+
             if (sfrq < dfrq) {
                 resampler = new Upsampler();
             } else if (sfrq > dfrq) {
@@ -2555,21 +2560,205 @@ logger.log(Level.DEBUG, "nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d
             } else {
                 resampler = new NoSrc();
             }
-            resampler.init(nch, bps, dbps, sfrq, dfrq, Math.pow(10, -att / 20), length / bps / nch, twopass, dither);
-            resampler.resample(fpi, fpo);
-            peak[0] = resampler.peak;
+            if (twoPass) {
+logger.log(Level.DEBUG, "nch: %d, bps: %d, size: %d, sfrq: %d, dfrq: %d, ???: %d, ???: %d, twoPass: %b, dither: %d".formatted(nch, bps, 8, sfrq, dfrq, 1, length / bps / nch, twoPass, dither));
+                if (normalize) {
+                    resampler.init(nch, bps, 8, sfrq, dfrq, 1, chanklen, twoPass, dither);
+                } else {
+                    resampler.init(nch, bps, 8, sfrq, dfrq, Math.pow(10, -att / 20), chanklen, twoPass, dither);
+                }
+            } else {
+                resampler.init(nch, bps, dbps, sfrq, dfrq, Math.pow(10, -att / 20), chanklen, twoPass, dither);
+            }
+            // unsupported frequencies are thrown here
+            resampler.prepare();
+        }
+
+        /**
+         * converts a chunk of the input.
+         *
+         * @param fpo output stream
+         * @return false when the conversion has finished, the last call may also write data
+         */
+        boolean pull(WritableByteChannel fpo) throws IOException {
+            if (finished) {
+                return false;
+            }
+
+            if (!twoPass) {
+                if (resampler.step(fpi, fpo)) {
+                    return true;
+                }
+                peak[0] = resampler.peak[0];
+                if (!quiet) {
+                    System.err.print("\n");
+                }
+                return end();
+            }
+
+            if (!started) {
+                started = true;
+                pass1();
+            }
+
+            int n = (int) Math.min(fptlen - sumread, PASS2_BLOCK * nch);
+            if (n > 0) {
+                pass2(fpo, n);
+            }
+            if (sumread < fptlen) {
+                return true;
+            }
+
+            showProgress(1);
             if (!quiet) {
                 System.err.print("\n");
             }
+            return end();
         }
 
-        if (dither != 0) {
-            shaper.quitShaper(nch);
-        }
+        /** 1st pass, all the input is converted into doubles in a temporary file */
+        private void pass1() throws IOException {
+            // on unix the file is unlinked as soon as it is opened
+            pipe = FileChannel.open(Files.createTempFile("ssrc", ".tmp"),
+                    StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.DELETE_ON_CLOSE);
 
-        if (!twopass && peak[0] > 1) {
             if (!quiet) {
-                System.err.printf("clipping detected : %gdB\n", 20 * Math.log10(peak[0]));
+                System.err.print("Pass 1\n");
+            }
+
+            while (resampler.step(fpi, pipe)) {
+            }
+            pipe.position(0);
+            fptlen = resampler.sumWritten;
+            peak[0] = resampler.peak[0];
+
+            if (!quiet) {
+                System.err.printf("\npeak : %gdB\n", 20 * Math.log10(peak[0]));
+            }
+
+            if (!normalize) {
+                if (peak[0] < Math.pow(10, -att / 20)) {
+                    peak[0] = 1;
+                } else {
+                    peak[0] *= Math.pow(10, att / 20);
+                }
+            } else {
+                peak[0] *= Math.pow(10, att / 20);
+            }
+
+            if (!quiet) {
+                System.err.print("\nPass 2\n");
+            }
+
+            if (dither != 0) {
+                gain = switch (dbps) {
+                    case 1 -> (normalize || peak[0] >= (0x7f - samp) / (double) 0x7f) ? 1 / peak[0] * (0x7f - samp) : 1 / peak[0] * 0x7f;
+                    case 2 -> (normalize || peak[0] >= (0x7fff - samp) / (double) 0x7fff) ? 1 / peak[0] * (0x7fff - samp) : 1 / peak[0] * 0x7fff;
+                    case 3 -> (normalize || peak[0] >= (0x7f_ffff - samp) / (double) 0x7f_ffff) ? 1 / peak[0] * (0x7f_ffff - samp) : 1 / peak[0] * 0x7f_ffff;
+                    default -> gain;
+                };
+            } else {
+                gain = switch (dbps) {
+                    case 1 -> 1 / peak[0] * 0x7f;
+                    case 2 -> 1 / peak[0] * 0x7fff;
+                    case 3 -> 1 / peak[0] * 0x7fffff;
+                    default -> gain;
+                };
+            }
+            shaper.randPtr = 0;
+
+            setStartTime();
+
+            fptlen /= 8;
+
+            inBuf = ByteBuffer.allocate(PASS2_BLOCK * nch * 8);
+            outBuf = ByteBuffer.allocate(PASS2_BLOCK * nch * 3).order(ByteOrder.LITTLE_ENDIAN);
+        }
+
+        /** 2nd pass, scales n doubles in the temporary file into the output */
+        private void pass2(WritableByteChannel fpo, int n) throws IOException {
+            inBuf.clear();
+            inBuf.limit(n * 8);
+            while (inBuf.hasRemaining() && pipe.read(inBuf) > 0) {
+            }
+            inBuf.flip();
+
+            outBuf.clear();
+            for (int k = 0; k < n; k++) {
+                double f;
+                int s;
+
+                f = inBuf.getDouble();
+//if (sumRead < 100) {
+// logger.log(Level.DEBUG, "2: %06d: %f".formatted(sumRead, f));
+//}
+                f *= gain;
+                sumread++;
+
+                switch (dbps) {
+                case 1: {
+                    s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
+
+                    outBuf.put((byte) (s + 128));
+                }
+                    break;
+                case 2: {
+                    s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
+
+                    outBuf.putShort((short) s);
+                }
+                    break;
+                case 3: {
+                    s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
+
+                    outBuf.put((byte) (s & 255));
+                    s >>= 8;
+                    outBuf.put((byte) (s & 255));
+                    s >>= 8;
+                    outBuf.put((byte) (s & 255));
+                }
+                    break;
+                }
+
+                ch++;
+                if (ch == nch) {
+                    ch = 0;
+                }
+
+                if ((sumread & 0x3ffff) == 0) {
+                    showProgress((double) sumread / fptlen);
+                }
+            }
+            outBuf.flip();
+            while (outBuf.hasRemaining()) {
+                fpo.write(outBuf);
+            }
+        }
+
+        /** @return false */
+        private boolean end() throws IOException {
+            finished = true;
+
+            if (dither != 0) {
+                shaper.quitShaper(nch);
+            }
+
+            if (!twoPass && peak[0] > 1) {
+                if (!quiet) {
+                    System.err.printf("clipping detected : %gdB\n", 20 * Math.log10(peak[0]));
+                }
+            }
+
+            close();
+            return false;
+        }
+
+        /** releases the temporary file, the input stream is not closed */
+        @Override
+        public void close() throws IOException {
+            if (pipe != null) {
+                pipe.close();
+                pipe = null;
             }
         }
     }

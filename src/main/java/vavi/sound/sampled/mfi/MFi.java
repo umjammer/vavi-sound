@@ -21,6 +21,8 @@ import javax.sound.sampled.AudioFileFormat.Type;
  */
 public class MFi extends Type {
 
+    public static MFi MFi = new MFi(null);
+
     /**
      * @param properties keys are followings.
      * <pre>

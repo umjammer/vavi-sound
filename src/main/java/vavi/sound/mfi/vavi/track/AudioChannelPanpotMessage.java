@@ -20,7 +20,7 @@ import vavi.sound.mfi.vavi.TrackMessage;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.sound.mobile.StreamExclusive;
+import vavi.sound.mobile.YamahaExclusive;
 
 
 /**
@@ -32,7 +32,7 @@ import vavi.sound.mobile.StreamExclusive;
  * </pre>
  * system property
  * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
- * to send {@link StreamExclusive#panpot} to the synthesizer, default {@code false}</li>
+ * to send {@link YamahaExclusive#panpot} to the synthesizer, default {@code false}</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070117 nsano initial version <br>
@@ -111,7 +111,7 @@ public class AudioChannelPanpotMessage extends vavi.sound.mfi.ShortMessage
 
         SysexMessage sysexMessage;
 
-        if (!StreamExclusive.isEnabled()) {
+        if (!YamahaExclusive.isEnabled()) {
             sysexMessage = new SysexMessage();
             int id = MfiMessageStore.put(this);
             byte[] data = {
@@ -125,7 +125,7 @@ public class AudioChannelPanpotMessage extends vavi.sound.mfi.ShortMessage
                                    data.length);
         } else {
             // not the yamaha stream panpot (43 79 06 7f 0b), which is of a wave, this is of a channel
-            sysexMessage = StreamExclusive.pack(StreamExclusive.panpot(voice, panpot * 2));
+            sysexMessage = YamahaExclusive.pack(YamahaExclusive.panpot(voice, panpot * 2));
         }
 
         return new MidiEvent[] {

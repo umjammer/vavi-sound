@@ -12,8 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.sequencer.YamahaExclusive;
-import vavi.sound.mfi.vavi.sequencer.SmafExclusiveCapture;
+import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusive;
+import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusiveCapture;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class NecFunctionTest {
 
     /** collects the SMAF exclusives the functions hand to the synthesizer */
-    final SmafExclusiveCapture receiver = new SmafExclusiveCapture();
+    final YamahaMfiExclusiveCapture receiver = new YamahaMfiExclusiveCapture();
 
     @BeforeEach
     void setup() {
@@ -98,7 +98,7 @@ class NecFunctionTest {
         // handed over as a VM35 PCM voice, bank 12 program 0 -> midi program 0, no drum note
         byte[] exclusive = receiver.getOnly();
         assertArrayEquals(new byte[] {0x43, 0x79, 0x07, 0x7f, 0x01, 0x00, 0x00, 0x00, 0x00,
-                        (byte) YamahaExclusive.VoiceType.PCM.ordinal()},
+                        (byte) YamahaMfiExclusive.VoiceType.PCM.ordinal()},
                 Arrays.copyOf(exclusive, 10));
         assertArrayEquals(in.getVm35Voice(), Arrays.copyOfRange(exclusive, 10, exclusive.length - 1));
         assertEquals((byte) 0xf7, exclusive[exclusive.length - 1]);
@@ -129,7 +129,7 @@ class NecFunctionTest {
         byte[] exclusive = receiver.getOnly();
         assertEquals(0x01, exclusive[7] & 0xff);
         assertEquals(0x24, exclusive[8] & 0xff);
-        assertEquals(YamahaExclusive.VoiceType.PCM.ordinal(), exclusive[9] & 0xff);
+        assertEquals(YamahaMfiExclusive.VoiceType.PCM.ordinal(), exclusive[9] & 0xff);
     }
 
     /** the MA-7 register image folds back into the VM35 voice image a synthesizer takes */
@@ -188,7 +188,7 @@ class NecFunctionTest {
             // bank 1 program 3 -> midi program 0x43
             byte[] exclusive = receiver.getOnly();
             assertEquals(0x43, exclusive[7] & 0xff);
-            assertEquals(YamahaExclusive.VoiceType.FM.ordinal(), exclusive[9] & 0xff);
+            assertEquals(YamahaMfiExclusive.VoiceType.FM.ordinal(), exclusive[9] & 0xff);
             receiver.clear();
         }
     }
@@ -227,7 +227,7 @@ class NecFunctionTest {
             expected[15] = (byte) 0x83;
             assertArrayEquals(expected, in.getVm35Voice(), type.toString());
 
-            assertEquals(YamahaExclusive.VoiceType.PCM.ordinal(), receiver.getOnly()[9] & 0xff);
+            assertEquals(YamahaMfiExclusive.VoiceType.PCM.ordinal(), receiver.getOnly()[9] & 0xff);
             receiver.clear();
         }
     }

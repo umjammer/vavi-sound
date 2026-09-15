@@ -10,6 +10,8 @@ import java.util.Map;
 
 import javax.sound.sampled.AudioFileFormat.Type;
 
+import vavi.sound.sampled.mfi.MFi;
+
 
 /**
  * SMAF.
@@ -18,6 +20,8 @@ import javax.sound.sampled.AudioFileFormat.Type;
  * @version 0.00 080415 nsano initial version <br>
  */
 public class SMAF extends Type {
+
+    public static SMAF SMAF = new SMAF(null);
 
     /**
      * @param properties keys are followings.

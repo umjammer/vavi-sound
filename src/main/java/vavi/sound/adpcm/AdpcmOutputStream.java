@@ -37,6 +37,9 @@ public abstract class AdpcmOutputStream extends FilterOutputStream {
     /** */
     protected abstract Codec getCodec();
 
+    /** {@link BitOutputStream} size */
+    protected int bits;
+
     /**
      * TODO make gathered all BitOutputStream arguments BitOutputStream?
      * @param out ADPCM
@@ -46,6 +49,7 @@ public abstract class AdpcmOutputStream extends FilterOutputStream {
      */
     public AdpcmOutputStream(OutputStream out, ByteOrder byteOrder, int bits, ByteOrder bitOrder) {
         super(new BitOutputStream(out, bits, bitOrder));
+        this.bits = bits;
         this.byteOrder = byteOrder;
         this.encoder = getCodec();
 //logger.log(Level.TRACE, this.out);

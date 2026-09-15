@@ -9,8 +9,10 @@ package vavi.sound.mfi.vavi.track;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
 
 import vavi.sound.mfi.ChannelMessage;
+import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
@@ -112,12 +114,16 @@ public class ChangeBankMessage extends vavi.sound.mfi.ShortMessage
 //logger.log(Level.TRACE, "bank[" + channel + "]: " + getBank());
         channel = context.setBank(channel, getBank());
 
+        // the bank as it is, which the midi program keeps only bit 0 of
+        SysexMessage sysexMessage = FuetrekMfiExclusive.message(FuetrekMfiExclusive.BANK, channel, getBank());
+
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.PROGRAM_CHANGE,
                 channel,
                 context.getProgram(channel),
                 0);
         return new MidiEvent[] {
+                new MidiEvent(sysexMessage, context.getCurrent()),
                 new MidiEvent(shortMessage, context.getCurrent())
         };
     }

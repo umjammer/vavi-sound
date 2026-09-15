@@ -6,7 +6,7 @@
 
 package vavi.sound.mfi.vavi.nec;
 
-import vavi.sound.mfi.vavi.sequencer.YamahaExclusive;
+import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusive;
 
 
 /**
@@ -76,7 +76,7 @@ public class Function1_240_4 extends ToneFunction {
 
     /** the voice is already the VM35 FM voice image */
     @Override
-    YamahaExclusive.VoiceType getVoiceType(Tone tone) {
-        return YamahaExclusive.VoiceType.FM;
+    YamahaMfiExclusive.VoiceType getVoiceType(Tone tone) {
+        return YamahaMfiExclusive.VoiceType.FM;
     }
 }
