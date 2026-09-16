@@ -25,4 +25,4 @@ See `vavi.sound.mfi.vavi.nec` readme, "handing the voices to the synthesizer".
 
 ## TODO
 
- * there is still room for improvement
+ * ~~there is still room for improvement~~

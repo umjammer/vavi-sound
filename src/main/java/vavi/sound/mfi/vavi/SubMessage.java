@@ -230,6 +230,7 @@ logger.log(Level.DEBUG, subMessage);
 
     // ----
 
+    /** @return new instance */
     public static SubMessage factory(String subType) {
         for (SubMessage subMessage : ServiceLoader.load(SubMessage.class)) {
             if (subMessage.accept(subType)) {

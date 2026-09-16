@@ -56,6 +56,7 @@ public class MachineDependentMessage extends SysexMessage
         return "255.e.255".equals(key);
     }
 
+    /** why override? */
     @Override
     public MachineDependentMessage init(byte[] message) {
         return (MachineDependentMessage) super.init(message);
@@ -117,8 +118,8 @@ public class MachineDependentMessage extends SysexMessage
         // 6
         // 7
 logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".formatted(data[0], data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0)));
-        MachineDependentMessage message = new MachineDependentMessage().init(data);
-        return message;
+        super.init(data);
+        return this;
     }
 
     /** */

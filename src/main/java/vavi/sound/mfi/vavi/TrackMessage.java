@@ -33,7 +33,7 @@ public interface TrackMessage {
         SysexTrackMessage init(int delta, int status, int data1, DataInputStream dis) throws IOException;
     }
 
-    /** */
+    /** @return new instance */
     static TrackMessage factory(String key) {
         for (TrackMessage message : ServiceLoader.load(TrackMessage.class)) {
             if (message.accept(key)) {
