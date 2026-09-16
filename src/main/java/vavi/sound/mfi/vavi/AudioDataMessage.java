@@ -27,7 +27,7 @@ import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -60,7 +60,7 @@ import static vavi.sound.mfi.vavi.VaviMfiFileFormat.DumpContext.getDC;
  * <p>
  * system property
  * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
- * to send {@link YamahaExclusive#wave} to the synthesizer, default {@code false}</li>
+ * to send {@link MobileExclusive#wave} to the synthesizer, default {@code false}</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 050721 nsano initial version <br>
@@ -259,7 +259,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
         SysexMessage sysexMessage;
 
-        if (!YamahaExclusive.isEnabled()) {
+        if (!MobileExclusive.isEnabled()) {
             sysexMessage = new SysexMessage();
             int id = MfiMessageStore.put(this);
             byte[] data = {
@@ -273,13 +273,13 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
                                    data.length);
         } else {
             // the wave goes to the synthesizer, which plays it on an AudioPlayMessage
-            YamahaExclusive.Format streamFormat = YamahaExclusive.Format.valueOf(format);
+            MobileExclusive.Format streamFormat = MobileExclusive.Format.valueOf(format);
             AdpmMessage adpm = (AdpmMessage) subChunks.get(AdpmMessage.TYPE);
             if (streamFormat == null || adpm == null) {
 logger.log(Level.WARNING, "audio data not supported, skipped: format: %02x, adpm: %s".formatted(format, adpm));
                 return new MidiEvent[0];
             }
-            sysexMessage = YamahaExclusive.pack(YamahaExclusive.wave(audioDataNumber, streamFormat,
+            sysexMessage = MobileExclusive.pack(MobileExclusive.wave(audioDataNumber, streamFormat,
                     adpm.getChannels(), adpm.getSamplingBits(), adpm.getSamplingRate() * 1000, getData()));
         }
 

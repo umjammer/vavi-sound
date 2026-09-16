@@ -10,7 +10,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
 
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.sound.smaf.vavi.message.MidiContext.ChannelConfiguration;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
@@ -95,7 +95,7 @@ public class ProgramChangeMessage extends vavi.sound.smaf.ShortMessage
         int midiChannel = context.setProgram(this.channel, this.program);
         // for a synthesizer which plays the file's own voices the program of a drum channel is
         // the drum kit (Bank_Program3 of the MA-3 driver), see StreamExclusive#isEnabled
-        int program = midiChannel == MidiContext.CHANNEL_DRUM && !YamahaExclusive.isEnabled() ? 0 : context.getProgram(this.channel);
+        int program = midiChannel == MidiContext.CHANNEL_DRUM && !MobileExclusive.isEnabled() ? 0 : context.getProgram(this.channel);
 
 //logger.log(Level.TRACE, "ProgramChange: [" + duration + "] " + channel + "ch, " + context.getProgram(channel));
         if (context.getFormatType() == FormatType.HandyPhoneStandard &&

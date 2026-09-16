@@ -24,7 +24,7 @@ import vavi.sound.mfi.vavi.TrackMessage.SysexTrackMessage;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 
 import static java.lang.System.getLogger;
 
@@ -117,7 +117,7 @@ public class MachineDependentMessage extends SysexMessage
         // 5 vendor | carrier
         // 6
         // 7
-logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".formatted(data[0], data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0)));
+logger.log(Level.DEBUG, "MachineDepend: Δ: %02x, len: %6d, VC: %02x, data: %02x %02x %02x %02x %02x".formatted(data[0], length, data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0)));
         super.init(data);
         return this;
     }
@@ -183,7 +183,7 @@ logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".fo
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        if (!YamahaExclusive.isEnabled()) {
+        if (!MobileExclusive.isEnabled()) {
             javax.sound.midi.SysexMessage sysexMessage = new javax.sound.midi.SysexMessage();
             int id = MfiMessageStore.put(this);
             byte[] data = {
@@ -212,7 +212,7 @@ logger.log(Level.DEBUG, "no sequencer for vendor: %02x, skipped".formatted(vendo
                 return new MidiEvent[0];
             }
             try {
-                return YamahaExclusive.capture(receiver -> sequencer.sequence(this, receiver)).stream()
+                return MobileExclusive.capture(receiver -> sequencer.sequence(this, receiver)).stream()
                         .map(m -> new MidiEvent(m, context.getCurrent()))
                         .toArray(MidiEvent[]::new);
             } catch (InvalidMfiDataException | RuntimeException e) {

@@ -19,7 +19,7 @@ import javax.sound.midi.SysexMessage;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.vavi.VaviSmafSynthesizer;
@@ -44,7 +44,7 @@ import static java.lang.System.getLogger;
  * </pre>
  * system property
  * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
- * to send {@link YamahaExclusive}s to the synthesizer, default {@code false}</li>
+ * to send {@link MobileExclusive}s to the synthesizer, default {@code false}</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071009 nsano initial version <br>
@@ -196,7 +196,7 @@ public class WaveMessage extends SmafMessage
         this.midiGateTimeTicks = context.getTickOfGateTime(gateTime);
 logger.log(Level.INFO, "midiGateTimeTics: " + midiGateTimeTicks);
 
-        if (!YamahaExclusive.isEnabled()) {
+        if (!MobileExclusive.isEnabled()) {
             SysexMessage sysexMessage = new SysexMessage();
             int id = SmafMessageStore.put(this);
             byte[] data = {
@@ -216,8 +216,8 @@ logger.log(Level.INFO, "midiGateTimeTics: " + midiGateTimeTicks);
             // the synthesizer plays the wave, it is told when to start and when to stop,
             // the wave itself came as a WaveDataMessage of the same number
             return new MidiEvent[] {
-                new MidiEvent(YamahaExclusive.pack(YamahaExclusive.on(number, 127, channel)), context.getCurrentTick()),
-                new MidiEvent(YamahaExclusive.pack(YamahaExclusive.off(number)), context.getCurrentTick() + midiGateTimeTicks)
+                new MidiEvent(MobileExclusive.pack(MobileExclusive.on(number, 127, channel)), context.getCurrentTick()),
+                new MidiEvent(MobileExclusive.pack(MobileExclusive.off(number)), context.getCurrentTick() + midiGateTimeTicks)
             };
         }
     }

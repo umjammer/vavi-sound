@@ -17,7 +17,7 @@ import javax.sound.midi.SysexMessage;
 import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusive;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.vavi.sequencer.SmafMessageStore;
@@ -31,7 +31,7 @@ import static java.lang.System.getLogger;
  * <p>
  * system property
  * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
- * to send the wave to the synthesizer as an exclusive, {@link YamahaExclusive#wave} or, for a wave table
+ * to send the wave to the synthesizer as an exclusive, {@link MobileExclusive#wave} or, for a wave table
  * one, {@code 43 05 00}, default {@code false}</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -101,7 +101,7 @@ public class WaveDataMessage extends SmafMessage
 
         SysexMessage sysexMessage;
 
-        if (!YamahaExclusive.isEnabled()) {
+        if (!MobileExclusive.isEnabled()) {
             sysexMessage = new SysexMessage();
             int id = SmafMessageStore.put(this);
             byte[] data = {
@@ -115,14 +115,14 @@ public class WaveDataMessage extends SmafMessage
                                     data.length);
         } else if (waveTable) {
             // the "EXWV" exclusive as it is in the file, a wave table voice ("EXVO") plays it
-            sysexMessage = YamahaExclusive.pack(YamahaMfiExclusive.wave(number, data));
+            sysexMessage = MobileExclusive.pack(YamahaMfiExclusive.wave(number, data));
         } else {
-            YamahaExclusive.Format streamFormat = YamahaExclusive.Format.valueOf(format);
+            MobileExclusive.Format streamFormat = MobileExclusive.Format.valueOf(format);
             if (streamFormat == null) {
 logger.log(Level.WARNING, "stream wave format not supported, skipped: " + this);
                 return new MidiEvent[0];
             }
-            sysexMessage = YamahaExclusive.pack(YamahaExclusive.wave(number, streamFormat, channels, samplingBits, samplingRate, data));
+            sysexMessage = MobileExclusive.pack(MobileExclusive.wave(number, streamFormat, channels, samplingBits, samplingRate, data));
         }
 
         return new MidiEvent[] {

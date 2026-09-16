@@ -239,6 +239,6 @@ if (timeBase < 0) {
 // logger.log(Level.DEBUG, "(" + i + ") timeBaseTable[" + table.get(i).index + "], " + table.get(i).value);
 //}
 //logger.log(Level.TRACE, "(CHANGE) " + timeBase + " -> " + timeBaseTable[table.get(0).index]);
-        return timeBaseTable[table.get(0).index];
+        return timeBaseTable[table.getFirst().index];
     }
 }

@@ -12,7 +12,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.SysexMessage;
 
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.sound.smaf.vavi.message.MachineDependentMessage;
 import vavi.sound.smaf.vavi.message.MidiContext;
 import vavi.sound.smaf.vavi.message.MidiConvertible;
@@ -34,7 +34,7 @@ public class YamahaMessage extends MachineDependentMessage implements MidiConver
         // getLength() is the length of the whole smaf message, the data is what is packed
         byte[] data = getData();
 
-        SysexMessage sysexMessage = YamahaExclusive.pack(data);
+        SysexMessage sysexMessage = MobileExclusive.pack(data);
 logger.log(Level.DEBUG, "midi sysex: %02x, ".formatted(sysexMessage.getMessage()[0] & 0xff) + sysexMessage.getLength() + " bytes\n" + StringUtil.getDump(sysexMessage.getData(), 32));
 
         return new MidiEvent[] {

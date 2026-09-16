@@ -62,9 +62,9 @@ import static vavi.sound.midi.MidiUtil.encode87;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 2026-09-13 nsano initial version <br>
  */
-public final class YamahaExclusive {
+public final class MobileExclusive {
 
-    private YamahaExclusive() {
+    private MobileExclusive() {
     }
 
     /** 7bit packed sysex message for 8bit smaf sysex message */
@@ -188,6 +188,7 @@ public final class YamahaExclusive {
      * What it sends to is {@link #capture}'s, so it is only meaningful inside one: outside
      * of it the calls are dropped.
      * </p>
+     * TODO hacky
      */
     public static final AudioEngine engine = new AudioEngine() {
 

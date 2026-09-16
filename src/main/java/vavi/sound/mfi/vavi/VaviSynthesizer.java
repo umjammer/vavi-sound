@@ -31,7 +31,7 @@ import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -219,7 +219,7 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
             case FuetrekMfiExclusive.SYSEX_FUNCTION_ID_FUETREK:
                 // mfi values for a synthesizer of an mfi sound source, the midi ones are enough here
                 break;
-            case YamahaExclusive.SYSEX_FUNCTION_ID_PACKED:
+            case MobileExclusive.SYSEX_FUNCTION_ID_PACKED:
                 // a packed smaf exclusive a machine dependent function issued,
                 // it is addressed to the synthesizer behind us, just pass it on
                 break;
