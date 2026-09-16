@@ -225,7 +225,7 @@ logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
                 case WaveSequencer.SYSEX_FUNCTION_ID_SMAF:
                     processSpecial_Vavi_Wave(message);
                     break;
-                case YamahaExclusive.SYSEX_PACKED:
+                case YamahaExclusive.SYSEX_FUNCTION_ID_PACKED:
                     // a packed yamaha exclusive (a voice, see YamahaMessage), it is
                     // addressed to the synthesizer behind us, just pass it on
                     break;

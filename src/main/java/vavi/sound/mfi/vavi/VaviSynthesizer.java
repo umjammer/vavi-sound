@@ -210,16 +210,16 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
         byte[] data = message.getData();
         int functionId = data[1];
         switch (functionId) {
-            case MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND:
+            case MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPENDENT:
                 processSpecial_Vavi_MachineDependent(message, receiver);
                 break;
             case AudioDataSequencer.SYSEX_FUNCTION_ID_MFi4:
                 processSpecial_Vavi_Mfi4(message, receiver);
                 break;
-            case FuetrekMfiExclusive.SYSEX_FUNCTION_ID:
+            case FuetrekMfiExclusive.SYSEX_FUNCTION_ID_FUETREK:
                 // mfi values for a synthesizer of an mfi sound source, the midi ones are enough here
                 break;
-            case YamahaExclusive.SYSEX_PACKED:
+            case YamahaExclusive.SYSEX_FUNCTION_ID_PACKED:
                 // a packed smaf exclusive a machine dependent function issued,
                 // it is addressed to the synthesizer behind us, just pass it on
                 break;

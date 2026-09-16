@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import javax.sound.midi.Receiver;
-
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
@@ -38,7 +36,7 @@ public interface MachineDependentSequencer {
     Logger logger = System.getLogger(MachineDependentSequencer.class.getName());
 
     /** for {@link MachineDependentSequencer} */
-    int SYSEX_FUNCTION_ID_MACHINE_DEPEND = 0x01;
+    int SYSEX_FUNCTION_ID_MACHINE_DEPENDENT = 0x01;
 
     /** */
     int getId();

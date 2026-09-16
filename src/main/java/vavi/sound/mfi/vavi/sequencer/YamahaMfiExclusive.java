@@ -31,7 +31,7 @@ import static java.lang.System.getLogger;
  * <pre>
  *  f0 45 7f &lt;encode87(43 ... f7)&gt; f7
  *     ~~ ~~
- *     |  +--- {@link YamahaExclusive#SYSEX_PACKED}, an 8 bit smaf exclusive packed into 7 bit bytes
+ *     |  +--- {@link YamahaExclusive#SYSEX_FUNCTION_ID_PACKED}, an 8 bit smaf exclusive packed into 7 bit bytes
  *     +------ {@link VaviMidiDeviceProvider#MANUFACTURER_ID}
  * </pre>
  * <p>

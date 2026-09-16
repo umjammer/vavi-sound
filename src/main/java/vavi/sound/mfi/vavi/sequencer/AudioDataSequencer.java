@@ -10,8 +10,6 @@ import java.util.HashSet;
 import java.util.ServiceLoader;
 import java.util.Set;
 
-import javax.sound.midi.Receiver;
-
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mobile.AudioEngine;
 

@@ -107,7 +107,7 @@ class YamahaMfiExclusiveTest {
 
         assertEquals(0xf0, message.getStatus());
         assertEquals(VaviMidiDeviceProvider.MANUFACTURER_ID, message.getData()[0]);
-        assertEquals(YamahaExclusive.SYSEX_PACKED, message.getData()[1]);
+        assertEquals(YamahaExclusive.SYSEX_FUNCTION_ID_PACKED, message.getData()[1]);
     }
 
     /** a null receiver is not an error, the message it comes from is decoded either way */

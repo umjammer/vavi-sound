@@ -52,7 +52,7 @@ class YamahaExclusiveTest {
     static byte[] unpack(MidiMessage message) {
         byte[] data = ((SysexMessage) message).getData();
         assertEquals(VaviMidiDeviceProvider.MANUFACTURER_ID, data[0]);
-        assertEquals(YamahaExclusive.SYSEX_PACKED, data[1]);
+        assertEquals(YamahaExclusive.SYSEX_FUNCTION_ID_PACKED, data[1]);
         byte[] encoded = Arrays.copyOfRange(data, 2, data.length - 1);
         byte[] decoded = new byte[encoded.length];
         return Arrays.copyOf(decoded, decode87(encoded, decoded, 0, encoded.length));

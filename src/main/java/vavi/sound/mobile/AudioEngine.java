@@ -33,7 +33,16 @@ import java.util.concurrent.TimeUnit;
  */
 public interface AudioEngine {
 
-    /** Checks if the format is acceptable by this engine. */
+    /**
+     * Checks if the format is acceptable by this engine.
+     * <pre>
+     * smaf 1
+     * rohm 0x80
+     * fuetrek 0x81
+     * yamaha 0x82
+     * pcm 0x90
+     * </pre>
+     */
     boolean accept(int format);
 
     /**

@@ -68,7 +68,7 @@ public final class YamahaExclusive {
     }
 
     /** 7bit packed sysex message for 8bit smaf sysex message */
-    public static final int SYSEX_PACKED = 0x7f;
+    public static final int SYSEX_FUNCTION_ID_PACKED = 0x7f;
 
     /** sub id: a stream wave */
     public static final int WAVE = 0x10;
@@ -172,7 +172,7 @@ public final class YamahaExclusive {
         // pack 7bit
         byte[] data = new byte[2 + encodedLength + 1];
         data[0] = (byte) VaviMidiDeviceProvider.MANUFACTURER_ID;
-        data[1] = (byte) SYSEX_PACKED;
+        data[1] = (byte) SYSEX_FUNCTION_ID_PACKED;
         System.arraycopy(encoded, 0, data, 2, encodedLength);
         data[data.length - 1] = exclusive[exclusive.length - 1]; // 0xf7
 
