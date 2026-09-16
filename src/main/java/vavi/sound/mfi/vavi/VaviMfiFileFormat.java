@@ -287,10 +287,10 @@ logger.log(Level.DEBUG, "adat length sum: " + l + " / " + dataLength);
         // 3. track
         for (int trackNumber = 0; trackNumber < tracksCount; trackNumber++) {
 logger.log(Level.DEBUG, "track number: " + trackNumber);
-if (TrackChunk.isLoose() && !TrackChunk.isNextTrack(is)) { // for rotten mfi
+            if (TrackChunk.RottenParser.isLoose() && !TrackChunk.RottenParser.isNextTrack(is)) { // for rotten mfi
 logger.log(Level.WARNING, "ignore wrong tracks count: " + tracksCount + " -> " + trackNumber);
- break;
-}
+                break;
+            }
 
             Track track = mff.sequence.createTrack();
 
