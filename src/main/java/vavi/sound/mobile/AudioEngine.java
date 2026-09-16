@@ -37,8 +37,8 @@ public interface AudioEngine {
      * Checks if the format is acceptable by this engine.
      * <pre>
      * smaf 1
-     * rohm 0x80
-     * fuetrek 0x81
+     * rohm 0x80 not defined in spec
+     * fuetrek 0x81 FORMAT_ADPCM_TYPE2
      * yamaha 0x82
      * pcm 0x90
      * </pre>

@@ -12,8 +12,10 @@ import javax.sound.midi.MetaEventListener;
 
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
+import vavi.sound.midi.VaviMidiDeviceProvider;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mfi.vavi.header.AinfMessage.META_FUNCTION_ID_AudioEngine;
 
 
 /**
@@ -44,6 +46,16 @@ logger.log(Level.DEBUG, "meta " + message.getType() + ": " + MidiUtil.getDecoded
         case META_END_OF_TRACK:   // end of track
         case META_TEMPO:          // tempo was set
 logger.log(Level.DEBUG, "this handler ignore meta: " + message.getType());
+            break;
+        case META_MACHINE_DEPEND:
+            byte[] data = message.getData();
+            if (data.length > 2 &&
+                    data[0] == VaviMidiDeviceProvider.MANUFACTURER_ID &&
+                    data[1] == META_FUNCTION_ID_AudioEngine
+            ) {
+                int format = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
+logger.log(Level.INFO, "audio engine: " + format);
+            }
             break;
         default:
 logger.log(Level.DEBUG, "no meta sub handler: " + message.getType());

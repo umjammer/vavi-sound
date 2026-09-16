@@ -10,9 +10,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.InvalidMfiDataException;
+import vavi.sound.mfi.vavi.MidiContext;
+import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.midi.MidiConstants.MetaEvent;
+import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.util.StringUtil;
 
 
@@ -40,7 +47,8 @@ import vavi.util.StringUtil;
  * @version 0.00 050721 nsano initial version <br>
  * @since MFi 4.0
  */
-public class AinfMessage extends SubMessage {
+public class AinfMessage extends SubMessage
+    implements MidiConvertible {
 
     /** */
     public static final String TYPE = "ainf";
@@ -166,5 +174,39 @@ public class AinfMessage extends SubMessage {
             sb.append(audioInfo);
         }
         return sb.toString();
+    }
+
+    // ----
+
+    public static final int META_FUNCTION_ID_AudioEngine = 0x01;
+
+    /**
+     * MetaMessage for AudioEngine format
+     * <pre>
+     * data
+     * +--+--+--+--+--+
+     * |7f|45|01|fH|fL|
+     * +--+--+--+--+--+
+     * </pre>
+     */
+    @Override
+    public MidiEvent[] getMidiEvents(MidiContext context)
+            throws InvalidMidiDataException {
+
+        MetaMessage metaMessage = new MetaMessage();
+        int format = audioInfos.getFirst().format;
+        byte[] data = {
+                VaviMidiDeviceProvider.MANUFACTURER_ID,
+                META_FUNCTION_ID_AudioEngine,
+                (byte) ((format / 0x100) & 0xff),
+                (byte) ((format % 0x100) & 0xff)
+        };
+        metaMessage.setMessage(MetaEvent.META_MACHINE_DEPEND.number(),
+                data,
+                data.length);
+
+        return new MidiEvent[] {
+                new MidiEvent(metaMessage, context.getCurrent())
+        };
     }
 }
