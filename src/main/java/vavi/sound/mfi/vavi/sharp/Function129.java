@@ -12,7 +12,6 @@ import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static vavi.sound.mfi.vavi.sharp.SharpSequencer.VENDOR_SHARP;
 
@@ -34,7 +33,7 @@ public class Function129 implements MachineDependentFunction {
     /**
      * 0x81 Wave Channel Volume
      *
-     * @param message  see below
+     * @param data     see below
      *                 <pre>
      *                  0    delta
      *                  1    ff
@@ -50,10 +49,8 @@ public class Function129 implements MachineDependentFunction {
      * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message, Receiver receiver)
+    public void process(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
-
-        byte[] data = message.getMessage();
 
         this.channel = (data[7] & 0xc0) >> 6;   // 0 ~ 3
         this.volume  =  data[7] & 0x3f;         //

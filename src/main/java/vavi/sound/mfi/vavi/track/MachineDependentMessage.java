@@ -21,12 +21,13 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
 import vavi.sound.mfi.vavi.TrackMessage;
 import vavi.sound.mfi.vavi.TrackMessage.SysexTrackMessage;
+import vavi.sound.mfi.vavi.VaviMfiSynthesizer.VaviMfiReceiver;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
-import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
-import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.sound.mobile.YamahaExclusive;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer.MFi_SYSEX_FUNCTION_ID_MACHINE_DEPENDENT;
+import static vavi.sound.midi.VaviMidiDeviceProvider.MANUFACTURER_ID;
+import static vavi.sound.mobile.MobileExclusive.packedSystex;
 
 
 /**
@@ -56,6 +57,7 @@ public class MachineDependentMessage extends SysexMessage
         return "255.e.255".equals(key);
     }
 
+    /** why override? */
     @Override
     public MachineDependentMessage init(byte[] message) {
         return (MachineDependentMessage) super.init(message);
@@ -113,12 +115,13 @@ public class MachineDependentMessage extends SysexMessage
         dis.readFully(data, 5, length);
 
         // 0 delta
+        // ⋮
         // 5 vendor | carrier
         // 6
         // 7
-logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".formatted(data[0], data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0)));
-        MachineDependentMessage message = new MachineDependentMessage().init(data);
-        return message;
+logger.log(Level.DEBUG, "MachineDepend: Δ: %02x, len: %6d, VC: %02x, data: %02x %02x %02x %02x %02x".formatted(data[0], length, data[5], data[6], data[7], (data.length > 8 ? data[8] : 0), (data.length > 9 ? data[9] : 0), (data.length > 10 ? data[10] : 0)));
+        super.init(data);
+        return this;
     }
 
     /** */
@@ -142,82 +145,39 @@ logger.log(Level.DEBUG, "MachineDepend: %02x, %02x, %02x %02x %02x %02x %02x".fo
      * <p>
      * Create {@link SysexMessage} of Meta type 0x7f as a MIDI message
      * corresponding to this instance of {@link MachineDependentMessage}.
-     * Store this {@link MachineDependentMessage} instance in {@link MfiMessageStore}
      * as the actual data of {@link SysexMessage}
      * and store the numbered ID in 2 bytes big endian.
      * </p>
      * <p>
-     * For playback, listen to Manufacturer id 0x45 with {@link vavi.sound.mfi.vavi.VaviSynthesizer.VaviReceiver}
-     * and find the message with the corresponding id from {@link MfiMessageStore}.
+     * For playback, listen to Manufacturer id 0x45 with {@link VaviMfiReceiver}
      * Playback is performed by applying it to {@link vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer}.
      * </p>
      * <p>
-     * see also {@link vavi.sound.mfi.vavi.VaviSynthesizer.VaviReceiver} for playing functionality.
+     * see also {@link VaviMfiReceiver} for playing functionality.
      * </p>
      * <pre>
      * MIDI Sysex should be
      * +--+--+--+--+--+--+--+--+--+--+--+-
-     * |f0|45|ID|DD DD ...
+     * |f0|45|OD|DD DD ...
      * +--+--+--+--+--+--+--+--+--+--+--+-
      *  0x45 sequencer specific meta event
-     *  ID function id
+     *  ID function id 0x01
      * </pre>
-     * <pre>
-     * Current Spec.
-     * +--+--+--+--+--+--+--+
-     * |f0|45|01|DH DL|
-     * +--+--+--+--+--+--+--+
-     *  0x45 manufacturer ID added arbitrarily
-     *  0x01 function id, indicates {@link MachineDependentMessage} data
-     *  DH DL numbered id
-     * </pre>
-     * <p>
-     * Since the default MIDI sequencer is used, only meta-events can be hooked,
-     * so they are converted to meta-events.
-     * </p>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
-     * @see MachineDependentSequencer#SYSEX_FUNCTION_ID_MACHINE_DEPEND
+     * @see MachineDependentSequencer#MFi_SYSEX_FUNCTION_ID_MACHINE_DEPENDENT
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        if (!YamahaExclusive.isEnabled()) {
-            javax.sound.midi.SysexMessage sysexMessage = new javax.sound.midi.SysexMessage();
-            int id = MfiMessageStore.put(this);
-            byte[] data = {
-                    VaviMidiDeviceProvider.MANUFACTURER_ID,
-                    MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND,
-                    (byte) ((id / 0x100) & 0xff),
-                    (byte) ((id % 0x100) & 0xff)
-            };
-            sysexMessage.setMessage(0xf0,    // sysex
-                                    data,
-                                    data.length);
+        byte[] exclusive = new byte[data.length + 2];
+        exclusive[0] = (byte) MANUFACTURER_ID;
+        exclusive[1] = (byte) MFi_SYSEX_FUNCTION_ID_MACHINE_DEPENDENT;
+        System.arraycopy(data, 0, exclusive, 2, data.length);
+        javax.sound.midi.SysexMessage sysexMessage = packedSystex(exclusive);    // sysex
 
-            return new MidiEvent[] {
-                new MidiEvent(sysexMessage, context.getCurrent())
-            };
-        } else {
-            // what the vendor's functions would send and play at play time - the voice
-            // exclusives, the stream waves and their start / stop - here and now, so that
-            // the synthesizer gets them in the midi sequence itself, see StreamExclusive
-            int vendor = getVendor() | getCarrier();
-            MachineDependentSequencer sequencer;
-            try {
-                sequencer = MachineDependentSequencer.Factory.getSequencer(vendor);
-            } catch (IllegalArgumentException e) {
-logger.log(Level.DEBUG, "no sequencer for vendor: %02x, skipped".formatted(vendor));
-                return new MidiEvent[0];
-            }
-            try {
-                return YamahaExclusive.capture(receiver -> sequencer.sequence(this, receiver)).stream()
-                        .map(m -> new MidiEvent(m, context.getCurrent()))
-                        .toArray(MidiEvent[]::new);
-            } catch (InvalidMfiDataException | RuntimeException e) {
-logger.log(Level.WARNING, "machine dependent message cannot be converted, skipped: " + this + ", " + e);
-                return new MidiEvent[0];
-            }
-        }
+        return new MidiEvent[] {
+            new MidiEvent(sysexMessage, context.getCurrent())
+        };
     }
 }

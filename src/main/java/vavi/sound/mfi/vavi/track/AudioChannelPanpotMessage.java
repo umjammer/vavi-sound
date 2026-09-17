@@ -7,9 +7,9 @@
 package vavi.sound.mfi.vavi.track;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.SysexMessage;
-import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.ChannelMessage;
 import vavi.sound.mfi.InvalidMfiDataException;
@@ -18,9 +18,10 @@ import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
 import vavi.sound.mfi.vavi.TrackMessage;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
-import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
-import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
+
+import static vavi.sound.mobile.MobileExclusive.packedSystex;
+import static vavi.sound.mobile.MobileExclusive.panpot;
 
 
 /**
@@ -32,7 +33,7 @@ import vavi.sound.mobile.YamahaExclusive;
  * </pre>
  * system property
  * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
- * to send {@link YamahaExclusive#panpot} to the synthesizer, default {@code false}</li>
+ * to send {@link MobileExclusive#panpot} to the synthesizer, default {@code false}</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070117 nsano initial version <br>
@@ -109,32 +110,22 @@ public class AudioChannelPanpotMessage extends vavi.sound.mfi.ShortMessage
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        SysexMessage sysexMessage;
-
-        if (!YamahaExclusive.isEnabled()) {
-            sysexMessage = new SysexMessage();
-            int id = MfiMessageStore.put(this);
-            byte[] data = {
-                    VaviMidiDeviceProvider.MANUFACTURER_ID,
-                    SYSEX_FUNCTION_ID_MFi4,
-                    (byte) ((id / 0x100) & 0xff),
-                    (byte) ((id % 0x100) & 0xff)
-            };
-            sysexMessage.setMessage(0xf0,    // sysex
-                                   data,
-                                   data.length);
-        } else {
-            // not the yamaha stream panpot (43 79 06 7f 0b), which is of a wave, this is of a channel
-            sysexMessage = YamahaExclusive.pack(YamahaExclusive.panpot(voice, panpot * 2));
-        }
+        // not the yamaha stream panpot (43 79 06 7f 0b), which is of a wave, this is of a channel
+        SysexMessage sysexMessage = packedSystex(panpot(MFi_SYSEX_FUNCTION_ID_MFi4, voice, panpot * 2));
 
         return new MidiEvent[] {
             new MidiEvent(sysexMessage, context.getCurrent())
         };
     }
 
+    /**
+     * @param data 14 ch pp
+     * @throws IllegalArgumentException when audio engine does not found
+     * @see MobileExclusive#panpot
+     */
     @Override
-    public void sequence(Receiver receiver) throws InvalidMfiDataException {
-        // TODO Auto-generated method stub
+    public void sequence(byte[] data, Receiver receiver) throws InvalidMfiDataException {
+        assert data[0] == 0x14 : "illegal command";
+        // TODO audio engine panpot
     }
 }

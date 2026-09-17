@@ -14,7 +14,7 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.SysexMessage;
 
 import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 
 import static vavi.sound.midi.MidiUtil.decode87;
 
@@ -57,7 +57,7 @@ public class YamahaMfiExclusiveCapture implements Receiver {
         byte[] data = sysexMessage.getData();
         if (data.length < 3 ||
                 (data[0] & 0xff) != (VaviMidiDeviceProvider.MANUFACTURER_ID & 0xff) ||
-                (data[1] & 0xff) != YamahaExclusive.SYSEX_PACKED) {
+                (data[1] & 0xff) != MobileExclusive.MIDI_SYSEX_FUNCTION_ID_PACKED) {
             return;
         }
         byte[] encoded = Arrays.copyOfRange(data, 2, data.length - 1);

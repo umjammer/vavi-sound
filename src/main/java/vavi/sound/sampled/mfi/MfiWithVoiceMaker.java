@@ -26,11 +26,11 @@ import vavi.sound.mfi.MfiSystem;
 import vavi.sound.mfi.Sequence;
 import vavi.sound.mfi.Track;
 import vavi.sound.mfi.vavi.VaviMfiFileFormat;
-import vavi.sound.mfi.vavi.header.ProtMessage;
-import vavi.sound.mfi.vavi.header.SorcMessage;
-import vavi.sound.mfi.vavi.header.SuptMessage;
-import vavi.sound.mfi.vavi.header.TitlMessage;
-import vavi.sound.mfi.vavi.header.VersMessage;
+import vavi.sound.mfi.vavi.sub.ProtChunk;
+import vavi.sound.mfi.vavi.sub.SorcChunk;
+import vavi.sound.mfi.vavi.sub.SuptChunk;
+import vavi.sound.mfi.vavi.sub.TitlChunk;
+import vavi.sound.mfi.vavi.sub.VersChunk;
 import vavi.sound.mfi.vavi.track.EndOfTrackMessage;
 import vavi.sound.sampled.FilterChain;
 
@@ -149,25 +149,25 @@ t = System.currentTimeMillis();
         MfiMessage message;
 
         // copyright
-        message = new SorcMessage().init(sorc);
+        message = new SorcChunk().init(sorc);
         track.add(new MfiEvent(message, 0L));
 
         // title
         String title = file.getName();
         title = title.substring(0, title.lastIndexOf('.'));
-        message = new TitlMessage().init(title);
+        message = new TitlChunk().init(title);
         track.add(new MfiEvent(message, 0L));
 
         // version
-        message = new VersMessage().init(mdvm.getVersionString());
+        message = new VersChunk().init(mdvm.getVersionString());
         track.add(new MfiEvent(message, 0L));
 
         // maker
-        message = new ProtMessage().init(prot);
+        message = new ProtChunk().init(prot);
         track.add(new MfiEvent(message, 0L));
 
         // supt
-        message = new SuptMessage().init(model);
+        message = new SuptChunk().init(model);
         track.add(new MfiEvent(message, 0L));
 
         // machine depend, do every thing!

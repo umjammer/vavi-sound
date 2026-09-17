@@ -11,8 +11,7 @@ import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Receiver;
 
-import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -31,8 +30,8 @@ import static java.lang.System.getLogger;
  * <pre>
  *  f0 45 7f &lt;encode87(43 ... f7)&gt; f7
  *     ~~ ~~
- *     |  +--- {@link YamahaExclusive#SYSEX_PACKED}, an 8 bit smaf exclusive packed into 7 bit bytes
- *     +------ {@link VaviMidiDeviceProvider#MANUFACTURER_ID}
+ *     |  +--- {@link MobileExclusive#MIDI_SYSEX_FUNCTION_ID_PACKED}, an 8 bit smaf exclusive packed into 7 bit bytes
+ *     +------ {@link vavi.sound.mfi.vavi.VaviMfiDeviceProvider#MANUFACTURER_ID}
  * </pre>
  * <p>
  * A synthesizer which wants the voices unpacks the payload and registers them,
@@ -146,7 +145,7 @@ public final class YamahaMfiExclusive {
             return;
         }
         try {
-            receiver.send(YamahaExclusive.pack(exclusive), -1);
+            receiver.send(MobileExclusive.packedSystex(exclusive), -1);
 logger.log(Level.DEBUG, "smaf exclusive: " + exclusive.length + " bytes\n" + StringUtil.getDump(exclusive, 32));
         } catch (InvalidMidiDataException | RuntimeException e) {
 logger.log(Level.WARNING, "cannot send a smaf exclusive: " + e);

@@ -14,20 +14,22 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.SysexMessage;
 
 import vavi.sound.midi.MidiUtil;
-import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
-import vavi.sound.smaf.vavi.VaviSmafSynthesizer;
+import vavi.sound.smaf.vavi.VaviSmafSynthesizer.VaviSmafReceiver;
 import vavi.sound.smaf.vavi.chunk.TrackChunk.FormatType;
-import vavi.sound.smaf.vavi.sequencer.SmafMessageStore;
 import vavi.sound.smaf.vavi.sequencer.WaveSequencer;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mobile.MobileExclusive.off;
+import static vavi.sound.mobile.MobileExclusive.on;
+import static vavi.sound.mobile.MobileExclusive.packedSystex;
 
 
 /**
@@ -44,7 +46,7 @@ import static java.lang.System.getLogger;
  * </pre>
  * system property
  * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
- * to send {@link YamahaExclusive}s to the synthesizer, default {@code false}</li>
+ * to send {@link MobileExclusive}s to the synthesizer, default {@code false}</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071009 nsano initial version <br>
@@ -55,13 +57,13 @@ public class WaveMessage extends SmafMessage
     private static final Logger logger = getLogger(WaveMessage.class.getName());
 
     /** smaf channel 0 ~ 3 */
-    private final int channel;
+    private int channel;
 
     /** */
-    private final int number;
+    private int number;
 
     /** */
-    private final int gateTime;
+    private int gateTime;
 
     /**
      * for reading
@@ -70,11 +72,13 @@ public class WaveMessage extends SmafMessage
      * @param data
      * @param gateTime
      */
-    public WaveMessage(int duration, int data, int gateTime) {
+    public WaveMessage init(int duration, int data, int gateTime) {
         this.duration = duration;
         this.channel = (data & 0xc0) >> 6;
         this.number = data & 0x3f;
         this.gateTime = gateTime;
+
+        return this;
     }
 
     /**
@@ -85,11 +89,13 @@ public class WaveMessage extends SmafMessage
      * @param number
      * @param gateTime
      */
-    public WaveMessage(int duration, int channel, int number, int gateTime) {
+    public WaveMessage init(int duration, int channel, int number, int gateTime) {
         this.duration = duration;
         this.channel = channel;
         this.number = number;
         this.gateTime = gateTime;
+
+        return this;
     }
 
     /** */
@@ -157,17 +163,14 @@ public class WaveMessage extends SmafMessage
      * <p>
      * Create {@link SysexMessage} of Meta type 0x7f as a MIDI message corresponding to
      * this instance of {@link WaveMessage}.
-     * Store this instance of {@link WaveMessage} in {@link SmafMessageStore}
-     * as the actual data of {@link SysexMessage}
      * and store the numbered ID in 2 bytes big endian.
      * </p>
      * <p>
-     * For playback, listen to Sysex manufacturer id 0x45 with {@link VaviSmafSynthesizer.SmafReceiver}
-     * and find the message with the corresponding id from {@link SmafMessageStore}.
+     * For playback, listen to Sysex manufacturer id 0x45 with {@link VaviSmafReceiver}.
      * Apply it to {@link WaveSequencer} for playback processing.
      * </p>
      * <p>
-     * See {@link VaviSmafSynthesizer.SmafReceiver} for the playback mechanism.
+     * See {@link VaviSmafReceiver} for the playback mechanism.
      * </p>
      * <pre>
      * MIDI Systex should be
@@ -177,17 +180,8 @@ public class WaveMessage extends SmafMessage
      *  0x45 manufacturer id
      *  ID function ID
      * </pre>
-     * <pre>
-     * current specs.
-     * +--+--+--+--+--+--+--+
-     * |f0|45|01|DH DL|
-     * +--+--+--+--+--+--+--+
-     *  0x45 manufacturer ID added arbitrarily
-     *  0x03 function id, indicates {@link WaveMessage} data
-     *  DH DL numbered id
-     * </pre>
      * @see vavi.sound.midi.VaviMidiDeviceProvider#MANUFACTURER_ID
-     * @see WaveSequencer#SYSEX_FUNCTION_ID_SMAF
+     * @see WaveSequencer#SMAF_SYSEX_FUNCTION_ID_WAVE
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
@@ -196,39 +190,33 @@ public class WaveMessage extends SmafMessage
         this.midiGateTimeTicks = context.getTickOfGateTime(gateTime);
 logger.log(Level.INFO, "midiGateTimeTics: " + midiGateTimeTicks);
 
-        if (!YamahaExclusive.isEnabled()) {
-            SysexMessage sysexMessage = new SysexMessage();
-            int id = SmafMessageStore.put(this);
-            byte[] data = {
-                    VaviMidiDeviceProvider.MANUFACTURER_ID,
-                    WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
-                    (byte) ((id / 0x100) & 0xff),
-                    (byte) ((id % 0x100) & 0xff)
-            };
-            sysexMessage.setMessage(0xf0,    // sysex
-                                    data,
-                                    data.length);
-
-            return new MidiEvent[] {
-                new MidiEvent(sysexMessage, context.getCurrentTick())
-            };
-        } else {
-            // the synthesizer plays the wave, it is told when to start and when to stop,
-            // the wave itself came as a WaveDataMessage of the same number
-            return new MidiEvent[] {
-                new MidiEvent(YamahaExclusive.pack(YamahaExclusive.on(number, 127, channel)), context.getCurrentTick()),
-                new MidiEvent(YamahaExclusive.pack(YamahaExclusive.off(number)), context.getCurrentTick() + midiGateTimeTicks)
-            };
-        }
+        // the synthesizer plays the wave, it is told when to start and when to stop,
+        // the wave itself came as a WaveDataMessage of the same number
+        return new MidiEvent[] {
+            new MidiEvent(packedSystex(on(SMAF_SYSEX_FUNCTION_ID_WAVE, number, 127, channel)), context.getCurrentTick()),
+            new MidiEvent(packedSystex(off(SMAF_SYSEX_FUNCTION_ID_WAVE, number)), context.getCurrentTick() + midiGateTimeTicks)
+        };
     }
 
     private long midiGateTimeTicks;
 
+    /**
+     * @param data on  11 id vl ch
+     *             off 12 id
+     * @throws IllegalArgumentException when audio engine does not found
+     * @see MobileExclusive#on
+     */
     @Override
-    public void sequence() throws InvalidSmafDataException {
-        // resolve here: the engine is held in a ThreadLocal set on this (receiver) thread
-        AudioEngine engine = Factory.getAudioEngine();
-logger.log(Level.DEBUG, "WAVE PLAY: " + number + ", delay: " + AudioEngine.Sync.getDelay() + " ms");
-        AudioEngine.Sync.schedule(() -> engine.start(number, midiGateTimeTicks));
+    public void sequence(byte[] data, Receiver receiver) throws InvalidSmafDataException {
+        assert data[0] == 0x11 || data[0] == 0x12 : "illegal command";
+        int command = data[0];
+
+        if (command == 0x11) {
+            int id = data[1] & 0x7f;
+            // resolve here: the engine is held in a ThreadLocal set on this (receiver) thread
+            AudioEngine engine = AudioEngineFactory.getAudioEngine();
+logger.log(Level.DEBUG, "WAVE PLAY: " + id + ", delay: " + AudioEngine.Sync.getDelay() + " ms");
+            AudioEngine.Sync.schedule(() -> engine.start(id, midiGateTimeTicks));
+        }
     }
 }

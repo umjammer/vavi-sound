@@ -4,9 +4,9 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi.header;
+package vavi.sound.mfi.vavi.sub;
 
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 
 
 /**
@@ -30,7 +30,7 @@ import vavi.sound.mfi.vavi.SubMessage;
  * @version 0.00 030822 nsano initial version <br>
  *          0.01 030825 nsano complete <br>
  */
-public class SorcMessage extends SubMessage {
+public class SorcChunk extends SubChunk {
 
     /** */
     public static final String TYPE = "sorc";
@@ -41,18 +41,18 @@ public class SorcMessage extends SubMessage {
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      *
      * @param type ignored
      * @return this
      */
     @Override
-    public SubMessage init(String type, byte[] data) {
+    public SubChunk init(String type, byte[] data) {
         return super.init(TYPE, data);
     }
 
     /** */
-    public SubMessage init(int sorc) {
+    public SubChunk init(int sorc) {
         return super.init(TYPE, new byte[] {(byte) sorc});
     }
 

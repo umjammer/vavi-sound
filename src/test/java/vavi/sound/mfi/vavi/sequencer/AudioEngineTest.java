@@ -7,6 +7,8 @@
 package vavi.sound.mfi.vavi.sequencer;
 
 import org.junit.jupiter.api.Test;
+
+import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer.AudioEngineFactory;
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.mobile.AudioEngine.Util;
 import vavi.sound.mobile.FuetrekAudioEngine;
@@ -44,13 +46,13 @@ class AudioEngineTest {
     @Test
     void test3() {
         // exists in /META-INF/services/vavi.sound.mfi.vavi.sequencer.AudioEngine
-        AudioEngine audioEngine = AudioDataSequencer.Factory.getAudioEngine(0x80);
+        AudioEngine audioEngine = AudioEngineFactory.getAudioEngine(0x80);
         assertInstanceOf(RohmAudioEngine.class, audioEngine);
-        audioEngine = AudioDataSequencer.Factory.getAudioEngine(0x81);
+        audioEngine = AudioEngineFactory.getAudioEngine(0x81);
         assertInstanceOf(FuetrekAudioEngine.class, audioEngine);
         // not exists
         assertThrows(IllegalArgumentException.class, () -> {
-            AudioDataSequencer.Factory.getAudioEngine(0x83);
+            AudioEngineFactory.getAudioEngine(0x83);
         });
     }
 }

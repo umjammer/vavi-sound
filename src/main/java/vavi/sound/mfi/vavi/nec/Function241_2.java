@@ -12,7 +12,6 @@ import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
 import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
@@ -35,7 +34,7 @@ public class Function241_2 implements MachineDependentFunction {
     /**
      * 0xf1, 0x02 Pitch Bend, length 4
      *
-     * @param message  see below
+     * @param data     see below
      *                 <pre>
      *                 0    delta
      *                 1    ff
@@ -47,10 +46,8 @@ public class Function241_2 implements MachineDependentFunction {
      * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message, Receiver receiver)
+    public void process(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
-
-        byte[] data = message.getMessage();
 
         int channel = (data[7] & 0xc0) >> 6;    // 0 ~ 3
 

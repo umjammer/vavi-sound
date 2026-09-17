@@ -8,6 +8,7 @@ package vavi.sound.mfi.vavi;
 
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.Arrays;
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiDevice;
@@ -23,22 +24,21 @@ import vavi.sound.mfi.MfiDevice;
 import vavi.sound.mfi.MfiUnavailableException;
 import vavi.sound.mfi.Synthesizer;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
-import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
-import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
-import vavi.sound.mfi.vavi.sequencer.UnknownVendorSequencer;
+import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mobile.MobileExclusive.unpack;
 
 
 /**
- * VaviSynthesizer.
+ * Vavi MFi Synthesizer.
  * <p>
  * <li>{@code /vavi/sound/mfi/vavi/midi.properties#defaultSynthesizer} ... internal midi synthesizer</li>
  * <p>
@@ -49,9 +49,9 @@ import static java.lang.System.getLogger;
  * @version 0.00 2026-03-13 nsano initial version <br>
  *          0.01 2026-09-11 nsano pass packed smaf exclusives through <br>
  */
-public class VaviSynthesizer implements Synthesizer {
+public class VaviMfiSynthesizer implements Synthesizer {
 
-    private static final Logger logger = getLogger(VaviSynthesizer.class.getName());
+    private static final Logger logger = getLogger(VaviMfiSynthesizer.class.getName());
 
     /** the device information */
     static final MfiDevice.Info info =
@@ -91,16 +91,15 @@ public class VaviSynthesizer implements Synthesizer {
     /**
      * A Receiver w/ ADPCM driver.
      * <p>
-     * a player using {@link MfiMessageStore}.
      * @see MachineDependentMessage#getMidiEvents(MidiContext)
      */
-    public static class VaviReceiver implements MidiDeviceReceiver {
+    public static class VaviMfiReceiver implements MidiDeviceReceiver {
         boolean isOpen;
 
         /** */
         private final javax.sound.midi.Synthesizer midiSynthesizer;
 
-        public VaviReceiver(javax.sound.midi.Synthesizer midiSynthesizer) {
+        public VaviMfiReceiver(javax.sound.midi.Synthesizer midiSynthesizer) {
             this.midiSynthesizer = midiSynthesizer;
             try {
                 long reportedLatency = midiSynthesizer.getLatency() / 1000;
@@ -179,7 +178,7 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
      * 0xf0 manufacturerId
      * </pre>
      */
-    public static void processSpecial(javax.sound.midi.SysexMessage message, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException {
+    public static void processSpecial(javax.sound.midi.SysexMessage message, Receiver receiver) throws InvalidMfiDataException {
 
         byte[] data = message.getData();
         int manufacturerId = data[0];
@@ -188,7 +187,14 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
                 logger.log(Level.DEBUG, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
                 break;
             case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x45 vavi
-                processSpecial_Vavi(message, receiver);
+                int functionId = data[1];
+                if (functionId == MobileExclusive.MIDI_SYSEX_FUNCTION_ID_PACKED) {
+                    processSpecial_Vavi_Packed(unpack(message.getData()), receiver);
+                } else if (functionId == FuetrekMfiExclusive.MFi_SYSEX_FUNCTION_ID_FUETREK) {
+                    // mfi values for a synthesizer of an mfi sound source, the midi ones are enough here
+                } else {
+                    logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId) + "\n" + StringUtil.getDump(message.getData(), 32));
+                }
                 break;
             case 0x7f:
                 logger.log(Level.DEBUG, "unhandled Realtime Universal: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
@@ -202,29 +208,23 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
     /**
      * manufacturer id: vavi 0x45
      * <pre>
-     * 0xf0 0x45 functionId
+     * 0x45 0x01 ... MACHINE_DEPEND
+     * 0x45 0x02 ... MFi4
      * </pre>
      */
-    private static void processSpecial_Vavi(javax.sound.midi.SysexMessage message, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException {
+    private static void processSpecial_Vavi_Packed(byte[] data, Receiver receiver) throws InvalidMfiDataException {
+logger.log(Level.TRACE, "\n" + StringUtil.getDump(data, 32));
 
-        byte[] data = message.getData();
         int functionId = data[1];
         switch (functionId) {
-            case MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND:
-                processSpecial_Vavi_MachineDependent(message, receiver);
+            case MachineDependentSequencer.MFi_SYSEX_FUNCTION_ID_MACHINE_DEPENDENT:
+                processSpecial_Vavi_MachineDependent(data, receiver);
                 break;
-            case AudioDataSequencer.SYSEX_FUNCTION_ID_MFi4:
-                processSpecial_Vavi_Mfi4(message, receiver);
-                break;
-            case FuetrekMfiExclusive.SYSEX_FUNCTION_ID:
-                // mfi values for a synthesizer of an mfi sound source, the midi ones are enough here
-                break;
-            case YamahaExclusive.SYSEX_PACKED:
-                // a packed smaf exclusive a machine dependent function issued,
-                // it is addressed to the synthesizer behind us, just pass it on
+            case AudioDataSequencer.MFi_SYSEX_FUNCTION_ID_MFi4:
+                processSpecial_Vavi_Mfi4(data, receiver);
                 break;
             default:
-                logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId));
+                logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId & 0xff));
                 break;
         }
     }
@@ -232,54 +232,32 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
     /**
      * sysex function id: machine dependent (message has vendor and carrier id)
      * <pre>
-     * 0xf0 0x45 0x01 id(H) id(L)
+     * 0x45 0x01 ... mfi sysex
      * </pre>
      */
-    private static void processSpecial_Vavi_MachineDependent(javax.sound.midi.SysexMessage message, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException {
-
-        byte[] data = message.getData();
-        int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
-//logger.log(Level.TRACE, "message id: " + id);
-        if (!(MfiMessageStore.get(id) instanceof MachineDependentMessage mdm)) {
-            logger.log(Level.WARNING, "machine-dependent sysex refers to no machine-dependent message: " + id);
-            return;
-        }
-
-        int vendor = mdm.getVendor() | mdm.getCarrier();
-        MachineDependentSequencer sequencer;
-        try {
-            sequencer = MachineDependentSequencer.Factory.getSequencer(vendor);
-        } catch (IllegalArgumentException | Error e) {
-            logger.log(Level.ERROR, e.getMessage(), e);
-            logger.log(Level.ERROR, "error vendor: 0x%02x".formatted(vendor));
-            sequencer = new UnknownVendorSequencer();
-        }
-        sequencer.sequence(mdm, receiver);
+    private static void processSpecial_Vavi_MachineDependent(byte[] data, Receiver receiver) throws InvalidMfiDataException {
+        MachineDependentSequencer sequencer = MachineDependentSequencer.Factory.getSequencer(data);
+        sequencer.sequence(Arrays.copyOfRange(data, 2, data.length), receiver);
     }
 
     /**
      * sysex function id: mfi4 (message is mfi4)
      * <pre>
-     * 0xf0 0x04 0x45 0x02 id(H) id(L)
+     * 0x45 0x02 ... mfi4 wave
      * </pre>
      * @since MFi 4.0
      */
-    private static void processSpecial_Vavi_Mfi4(javax.sound.midi.SysexMessage message, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException {
-
-        byte[] data = message.getData();
-        int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
-//logger.log(Level.TRACE, "message id: " + id);
-        if (!(MfiMessageStore.get(id) instanceof AudioDataSequencer sequencer)) {
-            logger.log(Level.WARNING, "MFi4 sysex refers to no audio message: " + id);
-            return;
-        }
-logger.log(Level.DEBUG, "audio sysex received: id: " + id + ", at: " + System.nanoTime() + " ns");
-        sequencer.sequence(receiver);
+    private static void processSpecial_Vavi_Mfi4(byte[] data, Receiver receiver) throws InvalidMfiDataException {
+        AudioDataSequencer sequencer = AudioDataSequencer.factory(data);
+logger.log(Level.DEBUG, "audio sysex received at: " + System.nanoTime() + " ns");
+        sequencer.sequence(Arrays.copyOfRange(data, 2, data.length), receiver);
     }
+
+    // ----
 
     @Override
     public Receiver getReceiver() throws MidiUnavailableException {
-        return new VaviReceiver(midiSynthesizer);
+        return new VaviMfiSynthesizer.VaviMfiReceiver(midiSynthesizer);
     }
 
     @Override

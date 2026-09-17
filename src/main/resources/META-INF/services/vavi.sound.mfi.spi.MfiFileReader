@@ -1,9 +1,1 @@
-#
-# Copyright (c) 2002 by Naohide Sano, All rights reserved.
-#
-# MfiFileReader
-#
-# 0.00 020707 nsano initial version
-#
-
 vavi.sound.mfi.vavi.VaviMfiFileReader

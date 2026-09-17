@@ -6,7 +6,7 @@
 
 package vavi.sound.mfi.vavi.audio;
 
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 
 
 /**
@@ -15,18 +15,18 @@ import vavi.sound.mfi.vavi.SubMessage;
  * <pre>
  *  &quot;adpm&quot; 3 bytes
  *  0: sampling rate 0 ~ 255 kHz
- *   in case of {@link vavi.sound.mfi.vavi.AudioDataMessage#FORMAT_ADPCM_TYPE2},
- *    only 32, 16, 8 are available
+ *   in case of {@link vavi.sound.mfi.vavi.AudioDataChunk#FORMAT_ADPCM_TYPE2},
+ *     only 32, 16, 8 are available
  *  1: sampling bits 0 ~ 255 bits
- *   in cace of {@link vavi.sound.mfi.vavi.AudioDataMessage#FORMAT_ADPCM_TYPE2},
- *    only 2, 4 are available
+ *   in cace of {@link vavi.sound.mfi.vavi.AudioDataChunk#FORMAT_ADPCM_TYPE2},
+ *     only 2, 4 are available
  *  2: .... 3 210
  *          ~ ~~~
  *          | +- channels 1: mono, 2: stereo, else: reserved
  *          +- 0: non interleave, 1: interleave
  *
  *    when channels is 1, interleave is 0
- *   in case of {@link vavi.sound.mfi.vavi.AudioDataMessage#FORMAT_ADPCM_TYPE2},
+ *   in case of {@link vavi.sound.mfi.vavi.AudioDataChunk#FORMAT_ADPCM_TYPE2},
  *    when channels is 2, interleave is 0
  * </pre>
  *
@@ -34,7 +34,7 @@ import vavi.sound.mfi.vavi.SubMessage;
  * @version 0.00 070125 nsano initial version <br>
  * @since MFi 5.0
  */
-public class AdpmMessage extends SubMessage {
+public class AdpmChunk extends SubChunk {
 
     /** */
     public static final String TYPE = "adpm";
@@ -45,18 +45,18 @@ public class AdpmMessage extends SubMessage {
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      *
      * @param type ignored
      * @return this
      */
     @Override
-    public SubMessage init(String type, byte[] data) {
+    public SubChunk init(String type, byte[] data) {
         return super.init(TYPE, data);
     }
 
     /** */
-    public SubMessage init(int samplingRate, int samplingBits, boolean interleaved, int channels) {
+    public SubChunk init(int samplingRate, int samplingBits, boolean interleaved, int channels) {
         return super.init(TYPE, new byte[] {
             (byte) (samplingRate & 0xff),
             (byte) (samplingBits & 0xff),

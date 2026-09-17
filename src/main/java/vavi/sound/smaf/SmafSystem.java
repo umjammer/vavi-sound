@@ -30,6 +30,7 @@ import vavi.sound.smaf.SmafDevice.Info;
 import vavi.sound.smaf.spi.SmafDeviceProvider;
 import vavi.sound.smaf.spi.SmafFileReader;
 import vavi.sound.smaf.spi.SmafFileWriter;
+import vavi.sound.smaf.spi.SmafMidiConverter;
 
 import static java.lang.System.getLogger;
 
@@ -131,21 +132,17 @@ public final class SmafSystem {
         return getDevice(names[0], names[1], vavi.sound.smaf.Synthesizer.class);
     }
 
-    /** Gets a MIDI - MFi converter from the default provider. */
-    public static vavi.sound.smaf.MidiConverter getMidiConverter() throws SmafUnavailableException {
-
-        String[] names = System.getProperty("vavi.sound.smaf.MidiConverter", midiConverterKey).split("#");
-
-        return getDevice(names[0], names[1], vavi.sound.smaf.MidiConverter.class);
-    }
-
     /** use #toSmafSequence(javax.sound.midi.Sequence sequence, int) */
     @Deprecated
     public static vavi.sound.smaf.Sequence toSmafSequence(javax.sound.midi.Sequence sequence)
             throws InvalidMidiDataException, SmafUnavailableException {
 
-        vavi.sound.smaf.MidiConverter converter = getMidiConverter();
-        return converter.toSmafSequence(sequence);
+        for (SmafMidiConverter converter : converters) {
+            if (converter.isFileTypeSupported(sequence)) {
+                return converter.toSmafSequence(sequence);
+            }
+        }
+        throw new InvalidMidiDataException();
     }
 
     /**
@@ -156,17 +153,24 @@ public final class SmafSystem {
     public static vavi.sound.smaf.Sequence toSmafSequence(javax.sound.midi.Sequence sequence, int type)
             throws InvalidMidiDataException, SmafUnavailableException {
 
-        vavi.sound.smaf.MidiConverter converter = getMidiConverter();
-        return converter.toSmafSequence(sequence, type);
+        for (SmafMidiConverter converter : converters) {
+            if (converter.isFileTypeSupported(sequence)) {
+                return converter.toSmafSequence(sequence, type);
+            }
+        }
+        throw new InvalidMidiDataException();
     }
 
     /** Convert a MFi sequence into a MIDI sequence. */
     public static javax.sound.midi.Sequence toMidiSequence(vavi.sound.smaf.Sequence sequence)
             throws InvalidSmafDataException, SmafUnavailableException {
 
-        vavi.sound.smaf.MidiConverter converter = getMidiConverter();
-//logger.log(Level.TRACE, converter);
-        return converter.toMidiSequence(sequence);
+        for (SmafMidiConverter converter : converters) {
+            if (converter.isFileTypeSupported(sequence)) {
+                return converter.toMidiSequence(sequence);
+            }
+        }
+        throw new InvalidSmafDataException();
     }
 
     /**
@@ -305,10 +309,11 @@ public final class SmafSystem {
     private static final ServiceLoader<SmafFileReader> readers;
     /** all writers */
     private static final ServiceLoader<SmafFileWriter> writers;
+    /** all converters */
+    private static final ServiceLoader<SmafMidiConverter> converters;
 
     private static final String sequencerKey;
     private static final String synthesizerKey;
-    private static final String midiConverterKey;
 
     private static String getKey(Class<?> clazz) throws Exception {
         Field field = clazz.getDeclaredField("info");
@@ -325,11 +330,9 @@ public final class SmafSystem {
             props.load(SmafSystem.class.getResourceAsStream("SmafSystem.properties"));
             sequencerKey = getKey(Class.forName(props.getProperty("vavi.sound.smaf.Sequencer")));
             synthesizerKey = getKey(Class.forName(props.getProperty("vavi.sound.smaf.Synthesizer")));
-            midiConverterKey = getKey(Class.forName(props.getProperty("vavi.sound.smaf.MidiConverter")));
 if (logger.isLoggable(Level.TRACE)) {
  System.err.println("sequencerKey: " + sequencerKey);
  System.err.println("synthesizerKey: " + synthesizerKey);
- System.err.println("midiConverterKey: " + midiConverterKey);
 }
 
             providers = ServiceLoader.load(vavi.sound.smaf.spi.SmafDeviceProvider.class);
@@ -345,6 +348,10 @@ if (logger.isLoggable(Level.TRACE)) {
             writers = ServiceLoader.load(vavi.sound.smaf.spi.SmafFileWriter.class);
 if (logger.isLoggable(Level.TRACE)) {
  writers.forEach(System.err::println);
+}
+            converters = ServiceLoader.load(vavi.sound.smaf.spi.SmafMidiConverter.class);
+if (logger.isLoggable(Level.TRACE)) {
+ converters.forEach(System.err::println);
 }
         } catch (Exception e) {
 logger.log(Level.ERROR, e.getMessage(), e);

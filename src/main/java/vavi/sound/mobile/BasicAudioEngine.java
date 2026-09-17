@@ -110,6 +110,10 @@ logger.log(Level.INFO, "audio no: " + streamNumber + " stored" +
 
     /** init audio line */
     protected void init(int sampleRate, int channels) {
+        if (line != null && line.getFormat().getSampleRate() == sampleRate && line.getFormat().getChannels() == channels) {
+            return;
+        }
+
         try {
             AudioFormat audioFormat = getAudioFormat(sampleRate, channels);
 logger.log(Level.DEBUG, audioFormat);

@@ -66,8 +66,7 @@ public class VaviSmafDeviceProvider extends SmafDeviceProvider {
     public Info[] getDeviceInfo() {
         return new Info[] {
                 VaviSmafSynthesizer.info,
-                VaviSmafSequencer.info,
-                VaviSmafMidiConverter.info
+                VaviSmafSequencer.info
         };
     }
 
@@ -79,9 +78,6 @@ public class VaviSmafDeviceProvider extends SmafDeviceProvider {
         } else if (info == VaviSmafSequencer.info) {
             VaviSmafSequencer sequencer = new VaviSmafSequencer();
             return sequencer;
-        } else if (info == VaviSmafMidiConverter.info) {
-            VaviSmafMidiConverter converter = new VaviSmafMidiConverter();
-            return converter;
         } else {
             throw new IllegalArgumentException("info is not suitable for this provider");
         }

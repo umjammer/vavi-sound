@@ -10,20 +10,22 @@ import java.io.Serializable;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.SysexMessage;
 
 import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusive;
-import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafMessage;
-import vavi.sound.smaf.vavi.sequencer.SmafMessageStore;
 import vavi.sound.smaf.vavi.sequencer.WaveSequencer;
 
 import static java.lang.System.getLogger;
+import static vavi.sound.mobile.MobileExclusive.packedSystex;
+import static vavi.sound.mobile.MobileExclusive.wave;
 
 
 /**
@@ -31,7 +33,7 @@ import static java.lang.System.getLogger;
  * <p>
  * system property
  * <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... not to use vavi.sound.mobile.AudioEngine but
- * to send the wave to the synthesizer as an exclusive, {@link YamahaExclusive#wave} or, for a wave table
+ * to send the wave to the synthesizer as an exclusive, {@link MobileExclusive#wave} or, for a wave table
  * one, {@code 43 05 00}, default {@code false}</li>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -43,27 +45,29 @@ public class WaveDataMessage extends SmafMessage
     private static final Logger logger = getLogger(WaveDataMessage.class.getName());
 
     /** */
-    private final int number;
+    private int number;
     /** */
-    private final int format;
+    private int format;
     /** */
-    private final byte[] data;
+    private byte[] data;
     /** */
-    private final int samplingRate;
+    private int samplingRate;
     /** */
-    private final int samplingBits;
+    private int samplingBits;
     /** */
-    private final int channels;
+    private int channels;
 
     /**
      */
-    public WaveDataMessage(int number, int format, byte[] data, int samplingRate, int samplingBits, int channels) {
+    public WaveDataMessage init(int number, int format, byte[] data, int samplingRate, int samplingBits, int channels) {
         this.number = number;
         this.format = format;
         this.data = data;
         this.samplingRate = samplingRate;
         this.samplingBits = samplingBits;
         this.channels = channels;
+
+        return this;
     }
 
     @Override
@@ -101,28 +105,11 @@ public class WaveDataMessage extends SmafMessage
 
         SysexMessage sysexMessage;
 
-        if (!YamahaExclusive.isEnabled()) {
-            sysexMessage = new SysexMessage();
-            int id = SmafMessageStore.put(this);
-            byte[] data = {
-                    VaviMidiDeviceProvider.MANUFACTURER_ID,
-                    WaveSequencer.SYSEX_FUNCTION_ID_SMAF,
-                    (byte) ((id / 0x100) & 0xff),
-                    (byte) ((id % 0x100) & 0xff)
-            };
-            sysexMessage.setMessage(0xf0,    // sysex
-                                    data,
-                                    data.length);
-        } else if (waveTable) {
+        if (waveTable) {
             // the "EXWV" exclusive as it is in the file, a wave table voice ("EXVO") plays it
-            sysexMessage = YamahaExclusive.pack(YamahaMfiExclusive.wave(number, data));
+            sysexMessage = packedSystex(YamahaMfiExclusive.wave(number, data));
         } else {
-            YamahaExclusive.Format streamFormat = YamahaExclusive.Format.valueOf(format);
-            if (streamFormat == null) {
-logger.log(Level.WARNING, "stream wave format not supported, skipped: " + this);
-                return new MidiEvent[0];
-            }
-            sysexMessage = YamahaExclusive.pack(YamahaExclusive.wave(number, streamFormat, channels, samplingBits, samplingRate, data));
+            sysexMessage = packedSystex(wave(SMAF_SYSEX_FUNCTION_ID_WAVE, number, format, channels, samplingBits, samplingRate, data));
         }
 
         return new MidiEvent[] {
@@ -139,16 +126,30 @@ logger.log(Level.WARNING, "stream wave format not supported, skipped: " + this);
         return this;
     }
 
+    /**
+     * @param data 10 id fm ch bt sr adpcm ...
+     * @throws IllegalArgumentException when audio engine does not found
+     * @see MobileExclusive#wave
+     */
     @Override
-    public void sequence() throws InvalidSmafDataException {
-logger.log(Level.DEBUG, "WAVE DATA[" + number + "]: " + this);
+    public void sequence(byte[] data, Receiver receiver) throws InvalidSmafDataException {
+        assert data[0] == 0x10 : "illegal command";
+        int id = data[1] & 0x7f;
+        int format = data[2] & 0xff;
+
+        int samplingRate = (data[5] & 0xff) * 0x100 + (data[6] & 0xff);
+        int samplingBits = data[4];
+        int channels = data[3];
+        byte[] adpcm = Arrays.copyOfRange(data, 7, data.length - 1);
+
+logger.log(Level.DEBUG, "WAVE DATA[" + id + "]: " + this);
 //try {
 // java.nio.file.Files.write(Path.of("out.pcm"), data);
 // logger.log(Level.DEBUG, "WAVE DATA saved to out.pcm");
 //} catch (java.io.IOException e) {
 // logger.log(Level.ERROR, e.getMessage(), e);
 //}
-        AudioEngine engine = Factory.getAudioEngine(format);
-        engine.setData(number, -1, samplingRate, samplingBits, channels, data, false);
+        AudioEngine engine = AudioEngineFactory.getAudioEngine(format);
+        engine.setData(id, -1, samplingRate, samplingBits, channels, adpcm, false);
     }
 }

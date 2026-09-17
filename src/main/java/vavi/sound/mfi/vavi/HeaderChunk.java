@@ -18,9 +18,9 @@ import java.util.Map;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.Sequence;
-import vavi.sound.mfi.vavi.header.SorcMessage;
-import vavi.sound.mfi.vavi.header.TitlMessage;
-import vavi.sound.mfi.vavi.header.VersMessage;
+import vavi.sound.mfi.vavi.sub.SorcChunk;
+import vavi.sound.mfi.vavi.sub.TitlChunk;
+import vavi.sound.mfi.vavi.sub.VersChunk;
 
 import static java.lang.System.getLogger;
 import static vavi.sound.mfi.vavi.VaviMfiFileFormat.DumpContext.getDC;
@@ -70,7 +70,7 @@ class HeaderChunk {
     private int tracksCount;
 
     /** header, sub chunks */
-    private final Map<String, SubMessage> subChunks = new LinkedHashMap<>();
+    private final Map<String, SubChunk> subChunks = new LinkedHashMap<>();
 
     /** */
     private Support support;
@@ -78,10 +78,10 @@ class HeaderChunk {
     /** */
     public interface Support {
         /**
-         * Gets {@link SubMessage} from {@link #support}.
-         * Specs says {@link SubMessage} is located at top of {@link Sequence#getTracks()}[0].
+         * Gets {@link SubChunk} from {@link #support}.
+         * Specs says {@link SubChunk} is located at top of {@link Sequence#getTracks()}[0].
          */
-        void init(Map<String, SubMessage> subChunks);
+        void init(Map<String, SubChunk> subChunks);
         int getAudioDataLength();
         int getTracksLength();
         int getTracksCount();
@@ -150,7 +150,7 @@ class HeaderChunk {
     }
 
     /** */
-    public Map<String, SubMessage> getSubChunks() {
+    public Map<String, SubChunk> getSubChunks() {
         return subChunks;
     }
 
@@ -160,7 +160,7 @@ class HeaderChunk {
      */
     public int getSubChunksLength() {
         int length = 0;
-        for (SubMessage subChunk : subChunks.values()) {
+        for (SubChunk subChunk : subChunks.values()) {
             length += 4 + 2 + subChunk.getDataLength(); // type + length + ...
 //logger.log(Level.TRACE, subChunk + ": " + subChunks.getSubLength());
         }
@@ -171,13 +171,13 @@ class HeaderChunk {
     private boolean isValid() {
         return (majorType != -1 &&
                 minorType != -1 &&
-                subChunks.containsKey(SorcMessage.TYPE) &&
-                subChunks.containsKey(TitlMessage.TYPE) &&
-                subChunks.containsKey(VersMessage.TYPE));
+                subChunks.containsKey(SorcChunk.TYPE) &&
+                subChunks.containsKey(TitlChunk.TYPE) &&
+                subChunks.containsKey(VersChunk.TYPE));
     }
 
     /**
-     * @throws InvalidMfiDataException throws when minimum {@link SubMessage}s
+     * @throws InvalidMfiDataException throws when minimum {@link SubChunk}s
      *         { {@link VaviMfiFileFormat#setSorc(int) "sorc"},
      *         {@link VaviMfiFileFormat#setTitle(String) "titl"},
      *         {@link VaviMfiFileFormat#setVersion(String) "vers"} }
@@ -191,9 +191,9 @@ class HeaderChunk {
         if (!isValid()) {
 logger.log(Level.DEBUG, "majorType: " + majorType);
 logger.log(Level.DEBUG, "minorType: " + minorType);
-logger.log(Level.DEBUG, "[sorc]: "    + subChunks.get(SorcMessage.TYPE));
-logger.log(Level.DEBUG, "[titl]: "    + subChunks.get(TitlMessage.TYPE));
-logger.log(Level.DEBUG, "[vers]: "    + subChunks.get(VersMessage.TYPE));
+logger.log(Level.DEBUG, "[sorc]: "    + subChunks.get(SorcChunk.TYPE));
+logger.log(Level.DEBUG, "[titl]: "    + subChunks.get(TitlChunk.TYPE));
+logger.log(Level.DEBUG, "[vers]: "    + subChunks.get(VersChunk.TYPE));
             throw new InvalidMfiDataException("fields are not filled");
         }
 
@@ -222,7 +222,7 @@ logger.log(Level.DEBUG, "majorType: "     + majorType);
 logger.log(Level.DEBUG, "minorType: "     + minorType);
 logger.log(Level.DEBUG, "numberTracks: "  + tracksCount);
 
-        for (SubMessage subChunk : subChunks.values()) {
+        for (SubChunk subChunk : subChunks.values()) {
             subChunk.writeTo(os);
         }
     }
@@ -267,7 +267,7 @@ logger.log(Level.DEBUG, "numberTracks: " + headerChunk.tracksCount);
         // 1.4 header sub chunks
         long l = 0;
         while (l < headerChunk.dataLength - HEADER_LENGTH) {
-            SubMessage subChunk = SubMessage.readFrom(is);
+            SubChunk subChunk = SubChunk.readFrom(is);
             headerChunk.subChunks.put(subChunk.getSubType(), subChunk);
             l +=  4 + 2 + subChunk.getDataLength(); // type + length +
 //logger.log(Level.TRACE, "header subchunk length sum: " + l + " / " + (headerChunk.dataLength - 3));

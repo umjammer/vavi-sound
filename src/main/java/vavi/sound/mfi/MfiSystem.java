@@ -30,6 +30,7 @@ import vavi.sound.mfi.MfiDevice.Info;
 import vavi.sound.mfi.spi.MfiDeviceProvider;
 import vavi.sound.mfi.spi.MfiFileReader;
 import vavi.sound.mfi.spi.MfiFileWriter;
+import vavi.sound.mfi.spi.MfiMidiConverter;
 
 import static java.lang.System.getLogger;
 
@@ -142,21 +143,17 @@ logger.log(Level.INFO, "name: " + name + ", clazz: " + clazz + ", deviceClass: "
         return getDevice(names[0], names[1], Synthesizer.class);
     }
 
-    /** Gets a MIDI - MFi converter from the default provider. */
-    public static MidiConverter getMidiConverter() throws MfiUnavailableException {
-
-        String[] names = System.getProperty("vavi.sound.mfi.MidiConverter", midiConverterKey).split("#");
-
-        return getDevice(names[0], names[1], MidiConverter.class);
-    }
-
     /** use #toMfiSequence(javax.sound.midi.Sequence sequence, int) */
     @Deprecated
     public static Sequence toMfiSequence(javax.sound.midi.Sequence sequence)
         throws InvalidMidiDataException, MfiUnavailableException {
 
-        MidiConverter converter = getMidiConverter();
-        return converter.toMfiSequence(sequence);
+        for (MfiMidiConverter converter : converters) {
+            if (converter.isFileTypeSupported(sequence)) {
+                return converter.toMfiSequence(sequence);
+            }
+        }
+        throw new InvalidMidiDataException();
     }
 
     /**
@@ -167,17 +164,24 @@ logger.log(Level.INFO, "name: " + name + ", clazz: " + clazz + ", deviceClass: "
     public static Sequence toMfiSequence(javax.sound.midi.Sequence sequence, int type)
         throws InvalidMidiDataException, MfiUnavailableException {
 
-        MidiConverter converter = getMidiConverter();
-        return converter.toMfiSequence(sequence, type);
+        for (MfiMidiConverter converter : converters) {
+            if (converter.isFileTypeSupported(sequence)) {
+                return converter.toMfiSequence(sequence, type);
+            }
+        }
+        throw new InvalidMidiDataException();
     }
 
     /** Convert a MFi sequence into a MIDI sequence. */
     public static javax.sound.midi.Sequence toMidiSequence(Sequence sequence)
         throws InvalidMfiDataException, MfiUnavailableException {
 
-        MidiConverter converter = getMidiConverter();
-//logger.log(Level.TRACE, converter);
-        return converter.toMidiSequence(sequence);
+        for (MfiMidiConverter converter : converters) {
+            if (converter.isFileTypeSupported(sequence)) {
+                return converter.toMidiSequence(sequence);
+            }
+        }
+        throw new InvalidMfiDataException();
     }
 
     /** Gets MFi file format. */
@@ -311,10 +315,11 @@ logger.log(Level.WARNING, "no writer found for: " + fileType);
     private static final ServiceLoader<MfiFileReader> readers;
     /** all writers */
     private static final ServiceLoader<MfiFileWriter> writers;
+    /** all converters */
+    private static final ServiceLoader<MfiMidiConverter> converters;
 
     private static final String sequencerKey;
     private static final String synthesizerKey;
-    private static final String midiConverterKey;
 
     private static String getKey(Class<?> clazz) throws Exception {
         Field field = clazz.getDeclaredField("info");
@@ -331,11 +336,9 @@ logger.log(Level.WARNING, "no writer found for: " + fileType);
             props.load(MfiSystem.class.getResourceAsStream("MfiSystem.properties"));
             sequencerKey = getKey(Class.forName(props.getProperty("vavi.sound.mfi.Sequencer")));
             synthesizerKey = getKey(Class.forName(props.getProperty("vavi.sound.mfi.Synthesizer")));
-            midiConverterKey = getKey(Class.forName(props.getProperty("vavi.sound.mfi.MidiConverter")));
 if (logger.isLoggable(Level.TRACE)) {
  System.err.println("sequencerKey: " + sequencerKey);
  System.err.println("synthesizerKey: " + synthesizerKey);
- System.err.println("midiConverterKey: " + midiConverterKey);
 }
 
             providers = ServiceLoader.load(vavi.sound.mfi.spi.MfiDeviceProvider.class);
@@ -351,6 +354,10 @@ if (logger.isLoggable(Level.TRACE)) {
             writers = ServiceLoader.load(vavi.sound.mfi.spi.MfiFileWriter.class);
 if (logger.isLoggable(Level.TRACE)) {
  writers.forEach(System.err::println);
+}
+            converters = ServiceLoader.load(vavi.sound.mfi.spi.MfiMidiConverter.class);
+if (logger.isLoggable(Level.TRACE)) {
+ converters.forEach(System.err::println);
 }
         } catch (Exception e) {
 logger.log(Level.ERROR, e.getMessage(), e);

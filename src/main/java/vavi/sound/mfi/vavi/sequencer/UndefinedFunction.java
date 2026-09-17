@@ -11,7 +11,6 @@ import java.lang.System.Logger.Level;
 import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
 
@@ -30,7 +29,7 @@ public class UndefinedFunction implements MachineDependentFunction {
 
     /**
      *
-     * @param message  see below
+     * @param data     see below
      *                 <pre>
      *                 0    delta
      *                 1    ff
@@ -42,22 +41,20 @@ public class UndefinedFunction implements MachineDependentFunction {
      * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message, Receiver receiver)
+    public void process(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
 
-        byte[] data = message.getMessage();
-
         int f1 = data[6] & 0xff;
-        int f2 = -1;
+        int f2 = 0;
         int f3;
         if (data.length > 8) {
             f3 = data[8] & 0xff;
-logger.log(Level.INFO, "undefined function: %02x %02x %02x".formatted(f1, f2, f3) + "\n" + StringUtil.getDump(message.getMessage(), 128));
+logger.log(Level.INFO, "undefined function: %02x %02x %02x".formatted(f1, f2, f3) + "\n" + StringUtil.getDump(data, 128));
         } else if (data.length > 7) {
             f2 = data[7] & 0xff;
-logger.log(Level.INFO, "undefined function: %02x %02x".formatted(f1, f2) + "\n" + StringUtil.getDump(message.getMessage(), 128));
+logger.log(Level.INFO, "undefined function: %02x %02x".formatted(f1, f2) + "\n" + StringUtil.getDump(data, 128));
         } else {
-logger.log(Level.INFO, "undefined function: %02x".formatted(f1) + "\n" + StringUtil.getDump(message.getMessage(), 128));
+logger.log(Level.INFO, "undefined function: %02x".formatted(f1) + "\n" + StringUtil.getDump(data, 128));
         }
     }
 }

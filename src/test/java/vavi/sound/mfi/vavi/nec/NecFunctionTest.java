@@ -40,11 +40,11 @@ class NecFunctionTest {
         receiver.clear();
     }
 
-    /** wraps a function payload (vendor byte first) into a message the sequencer would feed back */
-    private static MachineDependentMessage message(byte[] payload) throws Exception {
+    /** wraps a function payload (vendor byte first) into the message the sequencer would feed back */
+    private static byte[] message(byte[] payload) throws Exception {
         MachineDependentMessage message = new MachineDependentMessage().init();
         message.setMessage(0, payload);
-        return message;
+        return message.getMessage();
     }
 
     @Test
@@ -286,11 +286,8 @@ class NecFunctionTest {
         assertEquals(3, in.getType(0));  // rhythm
         assertEquals(0, in.getType(1));  // no care
 
-        assertThrows(vavi.sound.mfi.InvalidMfiDataException.class, () -> {
-            MachineDependentMessage short_ = new MachineDependentMessage().init();
-            short_.setMessage(0, new byte[] {0x11, 0x02, (byte) 0xf2, 0x07, 0x00});
-            new Function2_242_7().process(short_, receiver);
-        });
+        assertThrows(vavi.sound.mfi.InvalidMfiDataException.class, () ->
+                new Function2_242_7().process(message(new byte[] {0x11, 0x02, (byte) 0xf2, 0x07, 0x00}), receiver));
     }
 
     @Test

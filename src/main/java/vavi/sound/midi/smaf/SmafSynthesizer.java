@@ -21,7 +21,7 @@ import javax.sound.midi.Transmitter;
 import javax.sound.midi.VoiceStatus;
 
 import vavi.sound.midi.MidiUtil;
-import vavi.sound.smaf.vavi.VaviSmafSynthesizer.SmafReceiver;
+import vavi.sound.smaf.vavi.VaviSmafSynthesizer.VaviSmafReceiver;
 
 import static vavi.sound.midi.VaviMidiDeviceProvider.version;
 
@@ -162,7 +162,7 @@ logger.log(Level.DEBUG, "internal midiSynthesizer: " + midiSynthesizer.getClass(
 
     @Override
     public Receiver getReceiver() throws MidiUnavailableException {
-        return new SmafReceiver(midiSynthesizer);
+        return new VaviSmafReceiver(midiSynthesizer);
     }
 
     @Override

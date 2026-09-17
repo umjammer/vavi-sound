@@ -55,10 +55,11 @@ class NecToneFunctionTest {
         return Arrays.copyOfRange(exclusive, 10, exclusive.length - 1);
     }
 
-    private static MachineDependentMessage message(byte[] payload) throws Exception {
+    /** wraps a function payload (vendor byte first) into the message the sequencer would feed back */
+    private static byte[] message(byte[] payload) throws InvalidMfiDataException {
         MachineDependentMessage message = new MachineDependentMessage().init();
         message.setMessage(0, payload);
-        return message;
+        return message.getMessage();
     }
 
     private static byte[] bytes(int... values) {

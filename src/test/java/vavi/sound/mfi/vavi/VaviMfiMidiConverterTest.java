@@ -36,7 +36,7 @@ import static vavi.sound.midi.MidiUtil.volume;
  * @version 0.00 2012/10/02 umjammer initial version <br>
  */
 @PropsEntity(url = "file:local.properties")
-public class VaviMidiConverterTest {
+public class VaviMfiMidiConverterTest {
 
     static boolean localPropertiesExists() {
         return Files.exists(Paths.get("local.properties"));
@@ -95,7 +95,7 @@ Debug.println(meta.getType());
      * @param args 0: -p|-c, 1: in_mld, 2: [out_mid]
      */
     public static void main(String[] args) throws Exception {
-        VaviMidiConverterTest app = new VaviMidiConverterTest();
+        VaviMfiMidiConverterTest app = new VaviMfiMidiConverterTest();
         app.setup();
 
         if (args[0].equals("-c")) {

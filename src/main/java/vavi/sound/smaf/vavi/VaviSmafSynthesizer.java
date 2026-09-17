@@ -8,6 +8,7 @@ package vavi.sound.smaf.vavi;
 
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.Arrays;
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiDevice;
@@ -21,14 +22,14 @@ import javax.sound.midi.SysexMessage;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.sound.mobile.AudioEngine;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafUnavailableException;
 import vavi.sound.smaf.Synthesizer;
-import vavi.sound.smaf.vavi.sequencer.MachineDependentSequencer;
-import vavi.sound.smaf.vavi.sequencer.SmafMessageStore;
 import vavi.sound.smaf.vavi.sequencer.WaveSequencer;
 import vavi.util.StringUtil;
+
+import static vavi.sound.mobile.MobileExclusive.unpack;
 
 
 /**
@@ -107,15 +108,14 @@ logger.log(Level.ERROR, e.getMessage(), e);
 
     /**
      * A Receiver w/ ADPCM driver
-     * @see SmafMessageStore
      */
-    public static class SmafReceiver implements MidiDeviceReceiver {
+    public static class VaviSmafReceiver implements MidiDeviceReceiver {
         boolean isOpen;
 
         /** */
         private final javax.sound.midi.Synthesizer midiSynthesizer;
 
-        public SmafReceiver(javax.sound.midi.Synthesizer midiSynthesizer) {
+        public VaviSmafReceiver(javax.sound.midi.Synthesizer midiSynthesizer) {
             this.midiSynthesizer = midiSynthesizer;
             try {
                 AudioEngine.Sync.setSynthesizerLatency(midiSynthesizer.getLatency() / 1000);
@@ -132,7 +132,7 @@ logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
 
             if (message instanceof SysexMessage sysexMessage) {
                 try {
-                    processSpecial(sysexMessage);
+                    processSpecial(sysexMessage, this);
                 } catch (InvalidSmafDataException e) {
                     logger.log(Level.ERROR, e.getCause().getMessage(), e.getCause());
 } catch (RuntimeException e) {
@@ -187,7 +187,7 @@ logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
          * 0xf0 manufacturerId
          * </pre>
          */
-        private static void processSpecial(javax.sound.midi.SysexMessage message) throws InvalidSmafDataException {
+        private static void processSpecial(javax.sound.midi.SysexMessage message, Receiver receiver) throws InvalidSmafDataException {
 
             byte[] data = message.getData();
             int manufacturerId = data[0];
@@ -196,7 +196,12 @@ logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
                     logger.log(Level.DEBUG, "unhandled manufacturer: %02x %02x %02x".formatted(data[0], data[1], data[2]));
                     break;
                 case VaviMidiDeviceProvider.MANUFACTURER_ID: // 0x45 vavi
-                    processSpecial_Vavi(message);
+                    int functionId = data[1];
+                    if (functionId == MobileExclusive.MIDI_SYSEX_FUNCTION_ID_PACKED) {
+                        processSpecial_Vavi_Packed(unpack(message.getData()), receiver);
+                    } else {
+                        logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId) + "\n" + StringUtil.getDump(message.getData(), 32));
+                    }
                     break;
                 case 0x7f:
                     logger.log(Level.DEBUG, "unhandled Realtime Universal: %02x".formatted(manufacturerId) + "\n" + StringUtil.getDump(message.getData(), 32));
@@ -208,26 +213,22 @@ logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
         }
 
         /**
-         * manufacturer id: vavi
+         * manufacturer id: vavi, function id: 7f: packed
          * <pre>
-         * 0xf0 0x45 functionId
+         * 0xf0 0x43 ... smaf sysex
+         * 0xf0 0x45 0x03 sub-functionId ... 03: wave
          * </pre>
+         * @param data unpacked sysex
          */
-        private static void processSpecial_Vavi(javax.sound.midi.SysexMessage message)
-                throws InvalidSmafDataException {
+        private static void processSpecial_Vavi_Packed(byte[] data, Receiver receiver) throws InvalidSmafDataException {
 
-            byte[] data = message.getData();
             int functionId = data[1];
             switch (functionId) {
-                case MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPEND: // currently not used
-                    processSpecial_Vavi_MachineDependent(message);
+                case 0x43: // yamaha smaf message
+                    processSpecial_Vavi_Yamaha(data, receiver);
                     break;
-                case WaveSequencer.SYSEX_FUNCTION_ID_SMAF:
-                    processSpecial_Vavi_Wave(message);
-                    break;
-                case YamahaExclusive.SYSEX_PACKED:
-                    // a packed yamaha exclusive (a voice, see YamahaMessage), it is
-                    // addressed to the synthesizer behind us, just pass it on
+                case WaveSequencer.SMAF_SYSEX_FUNCTION_ID_WAVE:
+                    processSpecial_Vavi_Wave(data, receiver);
                     break;
                 default:
                     logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId));
@@ -235,44 +236,34 @@ logger.log(Level.DEBUG, "getting synthesizer latency: " + e);
             }
         }
 
+        // ----
+
         /**
-         * function id: machine dependent
+         * yamaha sysex
          * <p>
          * vendor is yamaha only, so process is same as the {@link #processSpecial_Vavi_Wave}
          * <pre>
-         * 0xf0 0x45 0x01 id(H) id(L)
+         * 0xf0 0x43 ...
          * </pre>
          */
-        private static void processSpecial_Vavi_MachineDependent(javax.sound.midi.SysexMessage message)
-                throws InvalidSmafDataException {
-
-            byte[] data = message.getData();
-            int id = (data[2] & 0xff) * 0xff + (data[3] & 0xff);
-//logger.log(Level.TRACE, "message id: " + id);
-            MachineDependentSequencer sequencer = (MachineDependentSequencer) SmafMessageStore.get(id);
-            sequencer.sequence();
+        private static void processSpecial_Vavi_Yamaha(byte[] data, Receiver receiver) throws InvalidSmafDataException {
         }
 
         /**
-         * function id: smaf (message is smaf message for wave)
+         * vavi: function id: wave (message is yamaha message for wave)
          * <pre>
-         * 0xf0 0x45 0x03 id(H) id(L)
+         * 0xf0 0x45 0x03
          * </pre>
          */
-        private static void processSpecial_Vavi_Wave(javax.sound.midi.SysexMessage message)
-                throws InvalidSmafDataException {
-
-            byte[] data = message.getData();
-            int id = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
-//logger.log(Level.TRACE, "message id: " + id);
-            WaveSequencer sequencer = (WaveSequencer) SmafMessageStore.get(id);
-logger.log(Level.DEBUG, "wave sysex received: id: " + id + ", at: " + System.nanoTime() + " ns");
-            sequencer.sequence();
+        private static void processSpecial_Vavi_Wave(byte[] data, javax.sound.midi.Receiver receiver) throws InvalidSmafDataException {
+            WaveSequencer sequencer = WaveSequencer.factory(data);
+logger.log(Level.DEBUG, "wave sysex received at: " + System.nanoTime() + " ns");
+            sequencer.sequence(Arrays.copyOfRange(data, 2, data.length), receiver);
         }
     }
 
     @Override
     public Receiver getReceiver() throws MidiUnavailableException {
-        return new SmafReceiver(midiSynthesizer);
+        return new VaviSmafReceiver(midiSynthesizer);
     }
 }

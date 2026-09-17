@@ -4,10 +4,10 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi.header;
+package vavi.sound.mfi.vavi.sub;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 
 
 /**
@@ -20,7 +20,7 @@ import vavi.sound.mfi.vavi.SubMessage;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
-public class ExstMessage extends SubMessage {
+public class ExstChunk extends SubChunk {
 
     /** */
     public static final String TYPE = "exst";
@@ -31,18 +31,18 @@ public class ExstMessage extends SubMessage {
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      *
      * @param type ignored
      * @return this
      */
     @Override
-    public SubMessage init(String type, byte[] data) {
+    public SubChunk init(String type, byte[] data) {
         return super.init(TYPE, data);
     }
 
     /** TODO check endian */
-    public SubMessage init(int data) {
+    public SubChunk init(int data) {
         return super.init(TYPE, new byte[] {(byte) ((data & 0xff00) >> 8), (byte) (data & 0x00ff)});
     }
 

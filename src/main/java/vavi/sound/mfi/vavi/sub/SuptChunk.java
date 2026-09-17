@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi.header;
+package vavi.sound.mfi.vavi.sub;
 
 import java.io.UnsupportedEncodingException;
 
@@ -15,7 +15,7 @@ import javax.sound.midi.MidiEvent;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 import vavi.sound.midi.MidiConstants.MetaEvent;
 
 
@@ -25,7 +25,7 @@ import vavi.sound.midi.MidiConstants.MetaEvent;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
-public class SuptMessage extends SubMessage
+public class SuptChunk extends SubChunk
     implements MidiConvertible {
 
     /** */
@@ -37,18 +37,18 @@ public class SuptMessage extends SubMessage
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      *
      * @param type ignored
      * @return this
      */
     @Override
-    public SubMessage init(String type, byte[] data) {
+    public SubChunk init(String type, byte[] data) {
         return super.init(TYPE, data);
     }
 
     /** */
-    public SubMessage init(String data) {
+    public SubChunk init(String data) {
         return super.init(TYPE, data);
     }
 

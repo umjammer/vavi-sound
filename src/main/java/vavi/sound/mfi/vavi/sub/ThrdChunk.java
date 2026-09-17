@@ -4,9 +4,9 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi.header;
+package vavi.sound.mfi.vavi.sub;
 
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 
 
 /**
@@ -18,7 +18,7 @@ import vavi.sound.mfi.vavi.SubMessage;
  * @version 0.00 070125 nsano initial version <br>
  * @since MFi 4.0
  */
-public class ThrdMessage extends SubMessage {
+public class ThrdChunk extends SubChunk {
 
     /** */
     public static final String TYPE = "thrd";
@@ -29,13 +29,13 @@ public class ThrdMessage extends SubMessage {
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      *
      * @param type ignored
      * @return this
      */
     @Override
-    public SubMessage init(String type, byte[] data) {
+    public SubChunk init(String type, byte[] data) {
         return super.init(TYPE, data);
     }
 }

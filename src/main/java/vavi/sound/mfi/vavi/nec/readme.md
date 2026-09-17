@@ -35,31 +35,31 @@ the two bytes after the vendor are `<group>` and `<function>|<channel>` (the
 
 ## Level 0x01 - MFi 3.0 (MA-3 / MA-5)
 
-| id | payload | meaning |
-|---|---|---|
-| `01.f0._3` | n | Extended FM basic waveform |
-| `01.f0._4` | n * record | **Extended FM tone specification** - see below |
-| `01.f0._5` | n * 18 | **Extended WT tone specification** - see below |
-| `01.f0._6` | 2 + n | **Extended WT waveform specification** - see below |
-| `01.f0._7` | n | Extended stream waveform control information |
-| `01.f0._8` | n * record | **Extended AL tone specification** - see below |
-| `01.f1.x3` | 2 | StreamOn |
-| `01.f1.x4` | 2 | StreamSlaveOn |
-| `01.f1.x5` | 1 | StreamOff |
-| `01.f1.x6` | 2 | StreamPan |
-| `01.f1.x7` | 1 | Hold1 |
-| `01.f1.x8` | 0 | MonoOn (no data at all, the message is 4 bytes) |
-| `01.f1.x9` | 0 | PlayOn (no data) |
-| `01.f1.xa` | 1 | filter resonance, 0 ~ 127 (64 neutral) |
-| `01.f1.xb` | 1 | filter brightness, 0 ~ 127 (64 neutral) |
-| `01.f2._7` | 16 | Channel Status control information - see below |
-| `01.f3._1` | 1 | FM mode setting |
-| `01.f3._2` | n | UserEvent |
-| `01.f3._3` | 1 | MaxGain setting |
-| `01.f3._4` | 1 | Specify number of streams |
-| `01.f3._5` | n | AL channel specification |
-| `01.f3._7` | 1 | ? (0 or 3) |
-| `01.f3._a` | 1 | ? (always 1, looks like the same thing as `02.f3.0a`) |
+| id         | payload    | meaning                                               |
+|------------|------------|-------------------------------------------------------|
+| `01.f0._3` | n          | Extended FM basic waveform                            |
+| `01.f0._4` | n * record | **Extended FM tone specification** - see below        |
+| `01.f0._5` | n * 18     | **Extended WT tone specification** - see below        |
+| `01.f0._6` | 2 + n      | **Extended WT waveform specification** - see below    |
+| `01.f0._7` | n          | Extended stream waveform control information          |
+| `01.f0._8` | n * record | **Extended AL tone specification** - see below        |
+| `01.f1.x3` | 2          | StreamOn                                              |
+| `01.f1.x4` | 2          | StreamSlaveOn                                         |
+| `01.f1.x5` | 1          | StreamOff                                             |
+| `01.f1.x6` | 2          | StreamPan                                             |
+| `01.f1.x7` | 1          | Hold1                                                 |
+| `01.f1.x8` | 0          | MonoOn (no data at all, the message is 4 bytes)       |
+| `01.f1.x9` | 0          | PlayOn (no data)                                      |
+| `01.f1.xa` | 1          | filter resonance, 0 ~ 127 (64 neutral)                |
+| `01.f1.xb` | 1          | filter brightness, 0 ~ 127 (64 neutral)               |
+| `01.f2._7` | 16         | Channel Status control information - see below        |
+| `01.f3._1` | 1          | FM mode setting                                       |
+| `01.f3._2` | n          | UserEvent                                             |
+| `01.f3._3` | 1          | MaxGain setting                                       |
+| `01.f3._4` | 1          | Specify number of streams                             |
+| `01.f3._5` | n          | AL channel specification                              |
+| `01.f3._7` | 1          | ? (0 or 3)                                            |
+| `01.f3._a` | 1          | ? (always 1, looks like the same thing as `02.f3.0a`) |
 
 ### the tone specification messages
 
@@ -80,14 +80,14 @@ the `src` column of the tables further down (the MA-7 message carries the
 expanded `dst` side instead). The type byte is only present when the message can
 carry more than one voice shape:
 
-| message | type | record | voice | shape |
-|---|---|---|---|---|
-| `01.f0._4` | 1 | 20 | 17 | FM 2 operator |
-| `01.f0._4` | 2 | 34 | 31 | FM 4 operator |
-| `01.f0._5` | - | 18 | 16 | WT |
-| `01.f0._8` | 1 | 46 | 43 | WT + AL |
-| `01.f0._8` | 0 | 47 | 44 | FM 2 operator + AL |
-| `01.f0._8` | 0 | 61 | 58 | FM 4 operator + AL |
+| message    | type | record | voice | shape              |
+|------------|------|--------|-------|--------------------|
+| `01.f0._4` | 1    | 20     | 17    | FM 2 operator      |
+| `01.f0._4` | 2    | 34     | 31    | FM 4 operator      |
+| `01.f0._5` | -    | 18     | 16    | WT                 |
+| `01.f0._8` | 1    | 46     | 43    | WT + AL            |
+| `01.f0._8` | 0    | 47     | 44    | FM 2 operator + AL |
+| `01.f0._8` | 0    | 61     | 58    | FM 4 operator + AL |
 
 - the type byte is the **only** reliable way to tell 2 from 4 operator apart.
   104 messages in the corpus are 4 operator voices whose `ALG` is below 2, so do
@@ -161,35 +161,35 @@ encoder is the big `switch` at `0x10027960` which turns an internal event id int
 the `<group> <function>` pair, so the table below is the converter's complete
 level-2 vocabulary.
 
-| id        | internal event | payload | meaning |
-|-----------|----------------|---------|---------|
-| `02.f0.03` | 200  | n | FM basic waveform (<= 1024 samples) |
-| `02.f0.04` | 201  | n | ? |
-| `02.f0.05` | 202  | n | ? |
-| `02.f0.06` | 203 / 3105 | n | ADPCM (audio) data - `Function2_240_6` |
-| `02.f0.08` | 204  | n | ? |
-| `02.f0.0a` | 206  | n | ? |
-| `02.f0.0b` | 207  | n | ? |
-| `02.f0.0c` | 3104 | 4 + voice | **tone (voice) setting** - see below |
-| `02.f0.0e` | 3112 | n * 32 (n <= 32) | effect (SFX) parameter block A |
-| `02.f0.0f` | 3113 | n * 32 (n <= 32) | effect (SFX) parameter block B |
-| `02.f1.x7` | 209  | 1 | Hold1 (same numbering as level 1) |
-| `02.f1.x8` | 210  | 1 | MonoOn (one data byte, unlike level 1 which has none) |
-| `02.f1.x9` | 211  | 1 | PlayOn (one data byte, unlike level 1 which has none) |
-| `02.f1.xa` | 212  | 1 | filter resonance, 0 ~ 127 (64 neutral) |
-| `02.f1.xb` | 213  | 1 | filter brightness, 0 ~ 127 (64 neutral) |
-| `02.f1.xc` | 214  | 1 | ? (level 2 only, no level 1 counterpart) |
-| `02.f1.xd` | 1110 | 1 | channel level / SendLevel #1 |
-| `02.f1.xe` | 1111 | 1 | SendLevel #2 |
-| `02.f1.xf` | 1112 | 1 | SendLevel #3 |
-| `02.f2.07` | 3103 | 32 | Channel Status control information - see below |
-| `02.f3.01` | 216  | n | ? |
-| `02.f3.02` | 217  | n | ? |
-| `02.f3.03` | 218 / 3124 | 1 (or 2) | MaxGain setting |
-| `02.f3.07` | 219  | n | ? |
-| `02.f3.09` | 205  | n | ? |
-| `02.f3.0a` | 220  | 1 | emitted once at the head of track 0, always `01` |
-| `02.f3.0b` | 3126 | 2 | SfxChange (`<id> 0xf7`, id 0..31 or 64..95) |
+| id         | internal event | payload          | meaning                                               |
+|------------|----------------|------------------|-------------------------------------------------------|
+| `02.f0.03` | 200            | n                | FM basic waveform (<= 1024 samples)                   |
+| `02.f0.04` | 201            | n                | ?                                                     |
+| `02.f0.05` | 202            | n                | ?                                                     |
+| `02.f0.06` | 203 / 3105     | n                | ADPCM (audio) data - `Function2_240_6`                |
+| `02.f0.08` | 204            | n                | ?                                                     |
+| `02.f0.0a` | 206            | n                | ?                                                     |
+| `02.f0.0b` | 207            | n                | ?                                                     |
+| `02.f0.0c` | 3104           | 4 + voice        | **tone (voice) setting** - see below                  |
+| `02.f0.0e` | 3112           | n * 32 (n <= 32) | effect (SFX) parameter block A                        |
+| `02.f0.0f` | 3113           | n * 32 (n <= 32) | effect (SFX) parameter block B                        |
+| `02.f1.x7` | 209            | 1                | Hold1 (same numbering as level 1)                     |
+| `02.f1.x8` | 210            | 1                | MonoOn (one data byte, unlike level 1 which has none) |
+| `02.f1.x9` | 211            | 1                | PlayOn (one data byte, unlike level 1 which has none) |
+| `02.f1.xa` | 212            | 1                | filter resonance, 0 ~ 127 (64 neutral)                |
+| `02.f1.xb` | 213            | 1                | filter brightness, 0 ~ 127 (64 neutral)               |
+| `02.f1.xc` | 214            | 1                | ? (level 2 only, no level 1 counterpart)              |
+| `02.f1.xd` | 1110           | 1                | channel level / SendLevel #1                          |
+| `02.f1.xe` | 1111           | 1                | SendLevel #2                                          |
+| `02.f1.xf` | 1112           | 1                | SendLevel #3                                          |
+| `02.f2.07` | 3103           | 32               | Channel Status control information - see below        |
+| `02.f3.01` | 216            | n                | ?                                                     |
+| `02.f3.02` | 217            | n                | ?                                                     |
+| `02.f3.03` | 218 / 3124     | 1 (or 2)         | MaxGain setting                                       |
+| `02.f3.07` | 219            | n                | ?                                                     |
+| `02.f3.09` | 205            | n                | ?                                                     |
+| `02.f3.0a` | 220            | 1                | emitted once at the head of track 0, always `01`      |
+| `02.f3.0b` | 3126           | 2                | SfxChange (`<id> 0xf7`, id 0..31 or 64..95)           |
 
 Rows marked `?` are reachable in the encoder but neither the `n703id` samples nor
 the ~4400 file `~/Public/np2/mfi` corpus use them, so only the id is known.
@@ -243,23 +243,23 @@ in the corpus fill all 32 entries, so do not read `0x10` as "unused" in general.
  11 02 f0 0c <bank> <program> <c> <d> <voice...>
 ```
 
-| byte | meaning |
-|---|---|
-| `bank` | bank number; the low 6 bits match the `ChangeBank` (`0xe1`) data of the channel that uses it, bit 7 = drum/rhythm voice |
-| `program` | program number (matches `ChangeVoice` (`0xe0`) data); for a drum voice this is the drum index, i.e. note - 35 |
-| `c` | drum voice: the MIDI note number (`program + 35`). melody voice: `0` for a single region voice, otherwise a per split region value (`0x80 0xb5 0xba 0xce 0xde` in `14 Piano.mld`) |
-| `d` | upper key limit of the split region (ascending, last one `0x7f`); `0` when the voice has no split |
+| byte      | meaning                                                                                                                                                                           |
+|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `bank`    | bank number; the low 6 bits match the `ChangeBank` (`0xe1`) data of the channel that uses it, bit 7 = drum/rhythm voice                                                           |
+| `program` | program number (matches `ChangeVoice` (`0xe0`) data); for a drum voice this is the drum index, i.e. note - 35                                                                     |
+| `c`       | drum voice: the MIDI note number (`program + 35`). melody voice: `0` for a single region voice, otherwise a per split region value (`0x80 0xb5 0xba 0xce 0xde` in `14 Piano.mld`) |
+| `d`       | upper key limit of the split region (ascending, last one `0x7f`); `0` when the voice has no split                                                                                 |
 
 `voice[0]` is a type/flag byte and decides the length of the rest:
 
-| `voice[0]` | type | voice length |
-|---|---|---|
-| `0x00` | FM 2 operator | 24 |
-| `0x00` | FM 4 operator | 44 |
-| `0x01` | WT (wave table) | 18 |
-| `0x02` | FM 2 operator + AL (filter) | 40 |
-| `0x02` | FM 4 operator + AL | 60 |
-| `0x03` | WT + AL | 34 |
+| `voice[0]` | type                        | voice length |
+|------------|-----------------------------|--------------|
+| `0x00`     | FM 2 operator               | 24           |
+| `0x00`     | FM 4 operator               | 44           |
+| `0x01`     | WT (wave table)             | 18           |
+| `0x02`     | FM 2 operator + AL (filter) | 40           |
+| `0x02`     | FM 4 operator + AL          | 60           |
+| `0x03`     | WT + AL                     | 34           |
 
 - bit 0 = WT (else FM), bit 1 = AL (filter) section present.
 - 2 operator and 4 operator share the same flag byte, tell them apart by the
@@ -279,313 +279,313 @@ copied. Bytes not listed are always 0.
 
 #### FM 2 operator (`MA5_FM2Op`) (voice byte 0 = 0x00, 24 bytes)
 
-| byte | mask | field | from MA-7 voice byte.mask |
-|---|---|---|---|
-| 0 | 0xff | type flags (0x00) | byte 0 |
-| 1 | 0x7f | KeyNumber | 1.0x7f |
-| 2 | 0xfb | Panpot, BO | 2.0xfb |
-| 3 | 0xe7 | LFO, PE, ALG | 3.0xe7 |
-| 3 | 0x08 | ALE | 0.0x02 <<2 |
-| 4 | 0xfb | SR, XOF, SUS, KSR | 4.0xfb |
-| 5 | 0xff | RR, DR | 5.0xff |
-| 6 | 0xff | AR, SL | 6.0xff |
-| 7 | 0xff | TL, KSL | 7.0xff |
-| 8 | 0x77 | DAM, EAM, DVB, EVB | 8.0x77 |
-| 9 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 10 | 0xff | WS, FB | 10.0xff |
-| 13 | 0xf0 | MULTI | 9.0xf0 (via fn) |
-| 13 | 0x07 | DT | 9.0x07 |
-| 14 | 0xfb | SR, XOF, SUS, KSR | 11.0xfb |
-| 15 | 0xff | RR, DR | 12.0xff |
-| 16 | 0xff | AR, SL | 13.0xff |
-| 17 | 0xff | TL, KSL | 14.0xff |
-| 18 | 0x77 | DAM, EAM, DVB, EVB | 15.0x77 |
-| 19 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 20 | 0xff | WS, FB | 17.0xff |
-| 23 | 0xf0 | MULTI | 16.0xf0 (via fn) |
-| 23 | 0x07 | DT | 16.0x07 |
+| byte | mask | field                  | from MA-7 voice byte.mask |
+|------|------|------------------------|---------------------------|
+| 0    | 0xff | type flags (0x00)      | byte 0                    |
+| 1    | 0x7f | KeyNumber              | 1.0x7f                    |
+| 2    | 0xfb | Panpot, BO             | 2.0xfb                    |
+| 3    | 0xe7 | LFO, PE, ALG           | 3.0xe7                    |
+| 3    | 0x08 | ALE                    | 0.0x02 <<2                |
+| 4    | 0xfb | SR, XOF, SUS, KSR      | 4.0xfb                    |
+| 5    | 0xff | RR, DR                 | 5.0xff                    |
+| 6    | 0xff | AR, SL                 | 6.0xff                    |
+| 7    | 0xff | TL, KSL                | 7.0xff                    |
+| 8    | 0x77 | DAM, EAM, DVB, EVB     | 8.0x77                    |
+| 9    | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn)                |
+| 10   | 0xff | WS, FB                 | 10.0xff                   |
+| 13   | 0xf0 | MULTI                  | 9.0xf0 (via fn)           |
+| 13   | 0x07 | DT                     | 9.0x07                    |
+| 14   | 0xfb | SR, XOF, SUS, KSR      | 11.0xfb                   |
+| 15   | 0xff | RR, DR                 | 12.0xff                   |
+| 16   | 0xff | AR, SL                 | 13.0xff                   |
+| 17   | 0xff | TL, KSL                | 14.0xff                   |
+| 18   | 0x77 | DAM, EAM, DVB, EVB     | 15.0x77                   |
+| 19   | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn)                |
+| 20   | 0xff | WS, FB                 | 17.0xff                   |
+| 23   | 0xf0 | MULTI                  | 16.0xf0 (via fn)          |
+| 23   | 0x07 | DT                     | 16.0x07                   |
 
 #### FM 4 operator (`MA5_FM4Op`) (voice byte 0 = 0x00, 44 bytes)
 
-| byte | mask | field | from MA-7 voice byte.mask |
-|---|---|---|---|
-| 0 | 0xff | type flags (0x00) | byte 0 |
-| 1 | 0x7f | KeyNumber | 1.0x7f |
-| 2 | 0xfb | Panpot, BO | 2.0xfb |
-| 3 | 0xe7 | LFO, PE, ALG | 3.0xe7 |
-| 3 | 0x08 | ALE | 0.0x02 <<2 |
-| 4 | 0xfb | SR, XOF, SUS, KSR | 4.0xfb |
-| 5 | 0xff | RR, DR | 5.0xff |
-| 6 | 0xff | AR, SL | 6.0xff |
-| 7 | 0xff | TL, KSL | 7.0xff |
-| 8 | 0x77 | DAM, EAM, DVB, EVB | 8.0x77 |
-| 9 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 10 | 0xff | WS, FB | 10.0xff |
-| 13 | 0xf0 | MULTI | 9.0xf0 (via fn) |
-| 13 | 0x07 | DT | 9.0x07 |
-| 14 | 0xfb | SR, XOF, SUS, KSR | 11.0xfb |
-| 15 | 0xff | RR, DR | 12.0xff |
-| 16 | 0xff | AR, SL | 13.0xff |
-| 17 | 0xff | TL, KSL | 14.0xff |
-| 18 | 0x77 | DAM, EAM, DVB, EVB | 15.0x77 |
-| 19 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 20 | 0xff | WS, FB | 17.0xff |
-| 23 | 0xf0 | MULTI | 16.0xf0 (via fn) |
-| 23 | 0x07 | DT | 16.0x07 |
-| 24 | 0xfb | SR, XOF, SUS, KSR | 18.0xfb |
-| 25 | 0xff | RR, DR | 19.0xff |
-| 26 | 0xff | AR, SL | 20.0xff |
-| 27 | 0xff | TL, KSL | 21.0xff |
-| 28 | 0x77 | DAM, EAM, DVB, EVB | 22.0x77 |
-| 29 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 30 | 0xff | WS, FB | 24.0xff |
-| 33 | 0xf0 | MULTI | 23.0xf0 (via fn) |
-| 33 | 0x07 | DT | 23.0x07 |
-| 34 | 0xfb | SR, XOF, SUS, KSR | 25.0xfb |
-| 35 | 0xff | RR, DR | 26.0xff |
-| 36 | 0xff | AR, SL | 27.0xff |
-| 37 | 0xff | TL, KSL | 28.0xff |
-| 38 | 0x77 | DAM, EAM, DVB, EVB | 29.0x77 |
-| 39 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 40 | 0xff | WS, FB | 31.0xff |
-| 43 | 0xf0 | MULTI | 30.0xf0 (via fn) |
-| 43 | 0x07 | DT | 30.0x07 |
+| byte | mask | field                  | from MA-7 voice byte.mask |
+|------|------|------------------------|---------------------------|
+| 0    | 0xff | type flags (0x00)      | byte 0                    |
+| 1    | 0x7f | KeyNumber              | 1.0x7f                    |
+| 2    | 0xfb | Panpot, BO             | 2.0xfb                    |
+| 3    | 0xe7 | LFO, PE, ALG           | 3.0xe7                    |
+| 3    | 0x08 | ALE                    | 0.0x02 <<2                |
+| 4    | 0xfb | SR, XOF, SUS, KSR      | 4.0xfb                    |
+| 5    | 0xff | RR, DR                 | 5.0xff                    |
+| 6    | 0xff | AR, SL                 | 6.0xff                    |
+| 7    | 0xff | TL, KSL                | 7.0xff                    |
+| 8    | 0x77 | DAM, EAM, DVB, EVB     | 8.0x77                    |
+| 9    | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn)                |
+| 10   | 0xff | WS, FB                 | 10.0xff                   |
+| 13   | 0xf0 | MULTI                  | 9.0xf0 (via fn)           |
+| 13   | 0x07 | DT                     | 9.0x07                    |
+| 14   | 0xfb | SR, XOF, SUS, KSR      | 11.0xfb                   |
+| 15   | 0xff | RR, DR                 | 12.0xff                   |
+| 16   | 0xff | AR, SL                 | 13.0xff                   |
+| 17   | 0xff | TL, KSL                | 14.0xff                   |
+| 18   | 0x77 | DAM, EAM, DVB, EVB     | 15.0x77                   |
+| 19   | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn)                |
+| 20   | 0xff | WS, FB                 | 17.0xff                   |
+| 23   | 0xf0 | MULTI                  | 16.0xf0 (via fn)          |
+| 23   | 0x07 | DT                     | 16.0x07                   |
+| 24   | 0xfb | SR, XOF, SUS, KSR      | 18.0xfb                   |
+| 25   | 0xff | RR, DR                 | 19.0xff                   |
+| 26   | 0xff | AR, SL                 | 20.0xff                   |
+| 27   | 0xff | TL, KSL                | 21.0xff                   |
+| 28   | 0x77 | DAM, EAM, DVB, EVB     | 22.0x77                   |
+| 29   | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn)                |
+| 30   | 0xff | WS, FB                 | 24.0xff                   |
+| 33   | 0xf0 | MULTI                  | 23.0xf0 (via fn)          |
+| 33   | 0x07 | DT                     | 23.0x07                   |
+| 34   | 0xfb | SR, XOF, SUS, KSR      | 25.0xfb                   |
+| 35   | 0xff | RR, DR                 | 26.0xff                   |
+| 36   | 0xff | AR, SL                 | 27.0xff                   |
+| 37   | 0xff | TL, KSL                | 28.0xff                   |
+| 38   | 0x77 | DAM, EAM, DVB, EVB     | 29.0x77                   |
+| 39   | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn)                |
+| 40   | 0xff | WS, FB                 | 31.0xff                   |
+| 43   | 0xf0 | MULTI                  | 30.0xf0 (via fn)          |
+| 43   | 0x07 | DT                     | 30.0x07                   |
 
 #### FM 2 operator + AL (`MA5_FM2OpAL`) (voice byte 0 = 0x02, 40 bytes)
 
-| byte | mask | field | from MA-7 voice byte.mask |
-|---|---|---|---|
-| 0 | 0xff | type flags (0x02) | byte 0 |
-| 1 | 0x7f | KeyNumber | 28.0x7f |
-| 2 | 0xfb | Panpot, BO | 29.0xfb |
-| 3 | 0xe7 | LFO, PE, ALG | 30.0xe7 |
-| 3 | 0x08 | ALE | 0.0x02 <<2 |
-| 4 | 0xfb | SR, XOF, SUS, KSR | 31.0xfb |
-| 4 | 0x04 | FIX | 18.0x40 >>4 |
-| 5 | 0xff | RR, DR | 32.0xff |
-| 6 | 0xff | AR, SL | 33.0xff |
-| 7 | 0xff | TL, KSL | 34.0xff |
-| 8 | 0x77 | DAM, EAM, DVB, EVB | 35.0x77 |
-| 9 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 10 | 0xff | WS, FB | 37.0xff |
-| 11 | 0x1f | FIXBLOCK, FIXFnum(H) | 18.0x3e >>1 |
-| 12 | 0x80 | FIXFnum(L)-1 | 18.0x01 <<7 |
-| 12 | 0x7f | FIXFnum(L)-2 | 19.0x7f |
-| 13 | 0xf0 | MULTI | 36.0xf0 (via fn) |
-| 13 | 0x07 | DT | 36.0x07 |
-| 14 | 0xfb | SR, XOF, SUS, KSR | 38.0xfb |
-| 14 | 0x04 | FIX | 20.0x40 >>4 |
-| 15 | 0xff | RR, DR | 39.0xff |
-| 16 | 0xff | AR, SL | 40.0xff |
-| 17 | 0xff | TL, KSL | 41.0xff |
-| 18 | 0x77 | DAM, EAM, DVB, EVB | 42.0x77 |
-| 19 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 20 | 0xff | WS, FB | 44.0xff |
-| 21 | 0x1f | FIXBLOCK, FIXFnum(H) | 20.0x3e >>1 |
-| 22 | 0x80 | FIXFnum(L)-1 | 20.0x01 <<7 |
-| 22 | 0x7f | FIXFnum(L)-2 | 21.0x7f |
-| 23 | 0xf0 | MULTI | 43.0xf0 (via fn) |
-| 23 | 0x07 | DT | 43.0x07 |
-| 24 | 0x1f | Q | 2.0x1f |
-| 25 | 0xf0 | FLFO_DEPTH & MODE | 17.0x78 <<1 |
-| 25 | 0x08 | FLFO_RST | 26.0x40 >>3 |
-| 25 | 0x07 | FLFO_FREQ | 17.0x07 |
-| 26 | 0x1f | FC0(H) | 3.0x3e >>1 |
-| 27 | 0x80 | FC0(L)-1 | 3.0x01 <<7 |
-| 27 | 0x7f | FC0(L)-2 | 4.0x7f |
-| 28 | 0x1f | FC1(H) | 5.0x3e >>1 |
-| 29 | 0x80 | FC1(L)-1 | 5.0x01 <<7 |
-| 29 | 0x7f | FC1(L)-2 | 6.0x7f |
-| 30 | 0x1f | FC2(H) | 7.0x3e >>1 |
-| 31 | 0x80 | FC2(L)-1 | 7.0x01 <<7 |
-| 31 | 0x7f | FC2(L)-2 | 8.0x7f |
-| 32 | 0x1f | FC3(H) | 9.0x3e >>1 |
-| 33 | 0x80 | FC3(L)-1 | 9.0x01 <<7 |
-| 33 | 0x7f | FC3(L)-2 | 10.0x7f |
-| 34 | 0x1f | FC4(H) | 11.0x3e >>1 |
-| 35 | 0x80 | FC4(L)-1 | 11.0x01 <<7 |
-| 35 | 0x7f | FC4(L)-2 | 12.0x7f |
-| 36 | 0x80 | FXOF | - (via fn) |
-| 36 | 0x1f | FAR | 13.0x1f |
-| 37 | 0x80 | FSUS | - (via fn) |
-| 37 | 0x1f | FDR | 14.0x1f |
-| 38 | 0x80 | FKSL | 27.0x01 <<7 |
-| 38 | 0x1f | FSR | 15.0x1f |
-| 39 | 0x80 | FVSL | - (via fn) |
-| 39 | 0x1f | FRR | 16.0x1f |
+| byte | mask | field                  | from MA-7 voice byte.mask |
+|------|------|------------------------|---------------------------|
+| 0    | 0xff | type flags (0x02)      | byte 0                    |
+| 1    | 0x7f | KeyNumber              | 28.0x7f                   |
+| 2    | 0xfb | Panpot, BO             | 29.0xfb                   |
+| 3    | 0xe7 | LFO, PE, ALG           | 30.0xe7                   |
+| 3    | 0x08 | ALE                    | 0.0x02 <<2                |
+| 4    | 0xfb | SR, XOF, SUS, KSR      | 31.0xfb                   |
+| 4    | 0x04 | FIX                    | 18.0x40 >>4               |
+| 5    | 0xff | RR, DR                 | 32.0xff                   |
+| 6    | 0xff | AR, SL                 | 33.0xff                   |
+| 7    | 0xff | TL, KSL                | 34.0xff                   |
+| 8    | 0x77 | DAM, EAM, DVB, EVB     | 35.0x77                   |
+| 9    | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn)                |
+| 10   | 0xff | WS, FB                 | 37.0xff                   |
+| 11   | 0x1f | FIXBLOCK, FIXFnum(H)   | 18.0x3e >>1               |
+| 12   | 0x80 | FIXFnum(L)-1           | 18.0x01 <<7               |
+| 12   | 0x7f | FIXFnum(L)-2           | 19.0x7f                   |
+| 13   | 0xf0 | MULTI                  | 36.0xf0 (via fn)          |
+| 13   | 0x07 | DT                     | 36.0x07                   |
+| 14   | 0xfb | SR, XOF, SUS, KSR      | 38.0xfb                   |
+| 14   | 0x04 | FIX                    | 20.0x40 >>4               |
+| 15   | 0xff | RR, DR                 | 39.0xff                   |
+| 16   | 0xff | AR, SL                 | 40.0xff                   |
+| 17   | 0xff | TL, KSL                | 41.0xff                   |
+| 18   | 0x77 | DAM, EAM, DVB, EVB     | 42.0x77                   |
+| 19   | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn)                |
+| 20   | 0xff | WS, FB                 | 44.0xff                   |
+| 21   | 0x1f | FIXBLOCK, FIXFnum(H)   | 20.0x3e >>1               |
+| 22   | 0x80 | FIXFnum(L)-1           | 20.0x01 <<7               |
+| 22   | 0x7f | FIXFnum(L)-2           | 21.0x7f                   |
+| 23   | 0xf0 | MULTI                  | 43.0xf0 (via fn)          |
+| 23   | 0x07 | DT                     | 43.0x07                   |
+| 24   | 0x1f | Q                      | 2.0x1f                    |
+| 25   | 0xf0 | FLFO_DEPTH & MODE      | 17.0x78 <<1               |
+| 25   | 0x08 | FLFO_RST               | 26.0x40 >>3               |
+| 25   | 0x07 | FLFO_FREQ              | 17.0x07                   |
+| 26   | 0x1f | FC0(H)                 | 3.0x3e >>1                |
+| 27   | 0x80 | FC0(L)-1               | 3.0x01 <<7                |
+| 27   | 0x7f | FC0(L)-2               | 4.0x7f                    |
+| 28   | 0x1f | FC1(H)                 | 5.0x3e >>1                |
+| 29   | 0x80 | FC1(L)-1               | 5.0x01 <<7                |
+| 29   | 0x7f | FC1(L)-2               | 6.0x7f                    |
+| 30   | 0x1f | FC2(H)                 | 7.0x3e >>1                |
+| 31   | 0x80 | FC2(L)-1               | 7.0x01 <<7                |
+| 31   | 0x7f | FC2(L)-2               | 8.0x7f                    |
+| 32   | 0x1f | FC3(H)                 | 9.0x3e >>1                |
+| 33   | 0x80 | FC3(L)-1               | 9.0x01 <<7                |
+| 33   | 0x7f | FC3(L)-2               | 10.0x7f                   |
+| 34   | 0x1f | FC4(H)                 | 11.0x3e >>1               |
+| 35   | 0x80 | FC4(L)-1               | 11.0x01 <<7               |
+| 35   | 0x7f | FC4(L)-2               | 12.0x7f                   |
+| 36   | 0x80 | FXOF                   | - (via fn)                |
+| 36   | 0x1f | FAR                    | 13.0x1f                   |
+| 37   | 0x80 | FSUS                   | - (via fn)                |
+| 37   | 0x1f | FDR                    | 14.0x1f                   |
+| 38   | 0x80 | FKSL                   | 27.0x01 <<7               |
+| 38   | 0x1f | FSR                    | 15.0x1f                   |
+| 39   | 0x80 | FVSL                   | - (via fn)                |
+| 39   | 0x1f | FRR                    | 16.0x1f                   |
 
 #### FM 4 operator + AL (`MA5_FM4OpAL`) (voice byte 0 = 0x02, 60 bytes)
 
-| byte | mask | field | from MA-7 voice byte.mask |
-|---|---|---|---|
-| 0 | 0xff | type flags (0x02) | byte 0 |
-| 1 | 0x7f | KeyNumber | 28.0x7f |
-| 2 | 0xfb | Panpot, BO | 29.0xfb |
-| 3 | 0xe7 | LFO, PE, ALG | 30.0xe7 |
-| 3 | 0x08 | ALE | 0.0x02 <<2 |
-| 4 | 0xfb | SR, XOF, SUS, KSR | 31.0xfb |
-| 4 | 0x04 | FIX | 18.0x40 >>4 |
-| 5 | 0xff | RR, DR | 32.0xff |
-| 6 | 0xff | AR, SL | 33.0xff |
-| 7 | 0xff | TL, KSL | 34.0xff |
-| 8 | 0x77 | DAM, EAM, DVB, EVB | 35.0x77 |
-| 9 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 10 | 0xff | WS, FB | 37.0xff |
-| 11 | 0x1f | FIXBLOCK, FIXFnum(H) | 18.0x3e >>1 |
-| 12 | 0x80 | FIXFnum(L)-1 | 18.0x01 <<7 |
-| 12 | 0x7f | FIXFnum(L)-2 | 19.0x7f |
-| 13 | 0xf0 | MULTI | 36.0xf0 (via fn) |
-| 13 | 0x07 | DT | 36.0x07 |
-| 14 | 0xfb | SR, XOF, SUS, KSR | 38.0xfb |
-| 14 | 0x04 | FIX | 20.0x40 >>4 |
-| 15 | 0xff | RR, DR | 39.0xff |
-| 16 | 0xff | AR, SL | 40.0xff |
-| 17 | 0xff | TL, KSL | 41.0xff |
-| 18 | 0x77 | DAM, EAM, DVB, EVB | 42.0x77 |
-| 19 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 20 | 0xff | WS, FB | 44.0xff |
-| 21 | 0x1f | FIXBLOCK, FIXFnum(H) | 20.0x3e >>1 |
-| 22 | 0x80 | FIXFnum(L)-1 | 20.0x01 <<7 |
-| 22 | 0x7f | FIXFnum(L)-2 | 21.0x7f |
-| 23 | 0xf0 | MULTI | 43.0xf0 (via fn) |
-| 23 | 0x07 | DT | 43.0x07 |
-| 24 | 0xfb | SR, XOF, SUS, KSR | 45.0xfb |
-| 24 | 0x04 | FIX | 22.0x40 >>4 |
-| 25 | 0xff | RR, DR | 46.0xff |
-| 26 | 0xff | AR, SL | 47.0xff |
-| 27 | 0xff | TL, KSL | 48.0xff |
-| 28 | 0x77 | DAM, EAM, DVB, EVB | 49.0x77 |
-| 29 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 30 | 0xff | WS, FB | 51.0xff |
-| 31 | 0x1f | FIXBLOCK, FIXFnum(H) | 22.0x3e >>1 |
-| 32 | 0x80 | FIXFnum(L)-1 | 22.0x01 <<7 |
-| 32 | 0x7f | FIXFnum(L)-2 | 23.0x7f |
-| 33 | 0xf0 | MULTI | 50.0xf0 (via fn) |
-| 33 | 0x07 | DT | 50.0x07 |
-| 34 | 0xfb | SR, XOF, SUS, KSR | 52.0xfb |
-| 34 | 0x04 | FIX | 24.0x40 >>4 |
-| 35 | 0xff | RR, DR | 53.0xff |
-| 36 | 0xff | AR, SL | 54.0xff |
-| 37 | 0xff | TL, KSL | 55.0xff |
-| 38 | 0x77 | DAM, EAM, DVB, EVB | 56.0x77 |
-| 39 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 40 | 0xff | WS, FB | 58.0xff |
-| 41 | 0x1f | FIXBLOCK, FIXFnum(H) | 24.0x3e >>1 |
-| 42 | 0x80 | FIXFnum(L)-1 | 24.0x01 <<7 |
-| 42 | 0x7f | FIXFnum(L)-2 | 25.0x7f |
-| 43 | 0xf0 | MULTI | 57.0xf0 (via fn) |
-| 43 | 0x07 | DT | 57.0x07 |
-| 44 | 0x1f | Q | 2.0x1f |
-| 45 | 0xf0 | FLFO_DEPTH & MODE | 17.0x78 <<1 |
-| 45 | 0x08 | FLFO_RST | 26.0x40 >>3 |
-| 45 | 0x07 | FLFO_FREQ | 17.0x07 |
-| 46 | 0x1f | FC0(H) | 3.0x3e >>1 |
-| 47 | 0x80 | FC0(L)-1 | 3.0x01 <<7 |
-| 47 | 0x7f | FC0(L)-2 | 4.0x7f |
-| 48 | 0x1f | FC1(H) | 5.0x3e >>1 |
-| 49 | 0x80 | FC1(L)-1 | 5.0x01 <<7 |
-| 49 | 0x7f | FC1(L)-2 | 6.0x7f |
-| 50 | 0x1f | FC2(H) | 7.0x3e >>1 |
-| 51 | 0x80 | FC2(L)-1 | 7.0x01 <<7 |
-| 51 | 0x7f | FC2(L)-2 | 8.0x7f |
-| 52 | 0x1f | FC3(H) | 9.0x3e >>1 |
-| 53 | 0x80 | FC3(L)-1 | 9.0x01 <<7 |
-| 53 | 0x7f | FC3(L)-2 | 10.0x7f |
-| 54 | 0x1f | FC4(H) | 11.0x3e >>1 |
-| 55 | 0x80 | FC4(L)-1 | 11.0x01 <<7 |
-| 55 | 0x7f | FC4(L)-2 | 12.0x7f |
-| 56 | 0x80 | FXOF | - (via fn) |
-| 56 | 0x1f | FAR | 13.0x1f |
-| 57 | 0x80 | FSUS | - (via fn) |
-| 57 | 0x1f | FDR | 14.0x1f |
-| 58 | 0x80 | FKSL | 27.0x01 <<7 |
-| 58 | 0x1f | FSR | 15.0x1f |
-| 59 | 0x80 | FVSL | - (via fn) |
-| 59 | 0x1f | FRR | 16.0x1f |
+| byte | mask | field                  | from MA-7 voice byte.mask |
+|------|------|------------------------|---------------------------|
+| 0    | 0xff | type flags (0x02)      | byte 0                    |
+| 1    | 0x7f | KeyNumber              | 28.0x7f                   |
+| 2    | 0xfb | Panpot, BO             | 29.0xfb                   |
+| 3    | 0xe7 | LFO, PE, ALG           | 30.0xe7                   |
+| 3    | 0x08 | ALE                    | 0.0x02 <<2                |
+| 4    | 0xfb | SR, XOF, SUS, KSR      | 31.0xfb                   |
+| 4    | 0x04 | FIX                    | 18.0x40 >>4               |
+| 5    | 0xff | RR, DR                 | 32.0xff                   |
+| 6    | 0xff | AR, SL                 | 33.0xff                   |
+| 7    | 0xff | TL, KSL                | 34.0xff                   |
+| 8    | 0x77 | DAM, EAM, DVB, EVB     | 35.0x77                   |
+| 9    | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn)                |
+| 10   | 0xff | WS, FB                 | 37.0xff                   |
+| 11   | 0x1f | FIXBLOCK, FIXFnum(H)   | 18.0x3e >>1               |
+| 12   | 0x80 | FIXFnum(L)-1           | 18.0x01 <<7               |
+| 12   | 0x7f | FIXFnum(L)-2           | 19.0x7f                   |
+| 13   | 0xf0 | MULTI                  | 36.0xf0 (via fn)          |
+| 13   | 0x07 | DT                     | 36.0x07                   |
+| 14   | 0xfb | SR, XOF, SUS, KSR      | 38.0xfb                   |
+| 14   | 0x04 | FIX                    | 20.0x40 >>4               |
+| 15   | 0xff | RR, DR                 | 39.0xff                   |
+| 16   | 0xff | AR, SL                 | 40.0xff                   |
+| 17   | 0xff | TL, KSL                | 41.0xff                   |
+| 18   | 0x77 | DAM, EAM, DVB, EVB     | 42.0x77                   |
+| 19   | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn)                |
+| 20   | 0xff | WS, FB                 | 44.0xff                   |
+| 21   | 0x1f | FIXBLOCK, FIXFnum(H)   | 20.0x3e >>1               |
+| 22   | 0x80 | FIXFnum(L)-1           | 20.0x01 <<7               |
+| 22   | 0x7f | FIXFnum(L)-2           | 21.0x7f                   |
+| 23   | 0xf0 | MULTI                  | 43.0xf0 (via fn)          |
+| 23   | 0x07 | DT                     | 43.0x07                   |
+| 24   | 0xfb | SR, XOF, SUS, KSR      | 45.0xfb                   |
+| 24   | 0x04 | FIX                    | 22.0x40 >>4               |
+| 25   | 0xff | RR, DR                 | 46.0xff                   |
+| 26   | 0xff | AR, SL                 | 47.0xff                   |
+| 27   | 0xff | TL, KSL                | 48.0xff                   |
+| 28   | 0x77 | DAM, EAM, DVB, EVB     | 49.0x77                   |
+| 29   | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn)                |
+| 30   | 0xff | WS, FB                 | 51.0xff                   |
+| 31   | 0x1f | FIXBLOCK, FIXFnum(H)   | 22.0x3e >>1               |
+| 32   | 0x80 | FIXFnum(L)-1           | 22.0x01 <<7               |
+| 32   | 0x7f | FIXFnum(L)-2           | 23.0x7f                   |
+| 33   | 0xf0 | MULTI                  | 50.0xf0 (via fn)          |
+| 33   | 0x07 | DT                     | 50.0x07                   |
+| 34   | 0xfb | SR, XOF, SUS, KSR      | 52.0xfb                   |
+| 34   | 0x04 | FIX                    | 24.0x40 >>4               |
+| 35   | 0xff | RR, DR                 | 53.0xff                   |
+| 36   | 0xff | AR, SL                 | 54.0xff                   |
+| 37   | 0xff | TL, KSL                | 55.0xff                   |
+| 38   | 0x77 | DAM, EAM, DVB, EVB     | 56.0x77                   |
+| 39   | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn)                |
+| 40   | 0xff | WS, FB                 | 58.0xff                   |
+| 41   | 0x1f | FIXBLOCK, FIXFnum(H)   | 24.0x3e >>1               |
+| 42   | 0x80 | FIXFnum(L)-1           | 24.0x01 <<7               |
+| 42   | 0x7f | FIXFnum(L)-2           | 25.0x7f                   |
+| 43   | 0xf0 | MULTI                  | 57.0xf0 (via fn)          |
+| 43   | 0x07 | DT                     | 57.0x07                   |
+| 44   | 0x1f | Q                      | 2.0x1f                    |
+| 45   | 0xf0 | FLFO_DEPTH & MODE      | 17.0x78 <<1               |
+| 45   | 0x08 | FLFO_RST               | 26.0x40 >>3               |
+| 45   | 0x07 | FLFO_FREQ              | 17.0x07                   |
+| 46   | 0x1f | FC0(H)                 | 3.0x3e >>1                |
+| 47   | 0x80 | FC0(L)-1               | 3.0x01 <<7                |
+| 47   | 0x7f | FC0(L)-2               | 4.0x7f                    |
+| 48   | 0x1f | FC1(H)                 | 5.0x3e >>1                |
+| 49   | 0x80 | FC1(L)-1               | 5.0x01 <<7                |
+| 49   | 0x7f | FC1(L)-2               | 6.0x7f                    |
+| 50   | 0x1f | FC2(H)                 | 7.0x3e >>1                |
+| 51   | 0x80 | FC2(L)-1               | 7.0x01 <<7                |
+| 51   | 0x7f | FC2(L)-2               | 8.0x7f                    |
+| 52   | 0x1f | FC3(H)                 | 9.0x3e >>1                |
+| 53   | 0x80 | FC3(L)-1               | 9.0x01 <<7                |
+| 53   | 0x7f | FC3(L)-2               | 10.0x7f                   |
+| 54   | 0x1f | FC4(H)                 | 11.0x3e >>1               |
+| 55   | 0x80 | FC4(L)-1               | 11.0x01 <<7               |
+| 55   | 0x7f | FC4(L)-2               | 12.0x7f                   |
+| 56   | 0x80 | FXOF                   | - (via fn)                |
+| 56   | 0x1f | FAR                    | 13.0x1f                   |
+| 57   | 0x80 | FSUS                   | - (via fn)                |
+| 57   | 0x1f | FDR                    | 14.0x1f                   |
+| 58   | 0x80 | FKSL                   | 27.0x01 <<7               |
+| 58   | 0x1f | FSR                    | 15.0x1f                   |
+| 59   | 0x80 | FVSL                   | - (via fn)                |
+| 59   | 0x1f | FRR                    | 16.0x1f                   |
 
 #### WT (`MA5_WT`) (voice byte 0 = 0x01, 18 bytes)
 
-| byte | mask | field | from MA-7 voice byte.mask |
-|---|---|---|---|
-| 0 | 0xff | type flags (0x01) | byte 0 |
-| 1 | 0xff | Fs(MSB) | 1.0xff |
-| 2 | 0xff | Fs(LSB) | 2.0xff |
-| 3 | 0xf8 | Panpot | 3.0xf8 |
-| 3 | 0x07 | KSO | - (via fn) |
-| 4 | 0xc3 | LFO, Mode | 4.0xc3 |
-| 4 | 0x20 | PE | 3.0x01 <<5 |
-| 4 | 0x08 | ALE | 0.0x02 <<2 |
-| 5 | 0xfb | SR, XOF, SUS, KSR | 5.0xfb |
-| 5 | 0x04 | PEGE | - (via fn) |
-| 6 | 0xff | RR, DR | 6.0xff |
-| 7 | 0xff | AR, SL | 7.0xff |
-| 8 | 0xfc | TL | 8.0xfc |
-| 8 | 0x03 | KSL | - (via fn) |
-| 9 | 0x77 | DAM, EAM, DVB, EVB | 9.0x77 |
-| 10 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 11 | 0xff | StartAddressOffset(MSB) | 10.0xff |
-| 12 | 0xff | StartAddressOffset(LSB) | 11.0xff |
-| 13 | 0x7f | LoopPoint(H) | 12.0x7f |
-| 14 | 0xff | LoopPoint(L) | 13.0xff |
-| 15 | 0x7f | EndPoint(H) | 14.0x7f |
-| 16 | 0xff | EndPoint(L) | 15.0xff |
-| 17 | 0xff | RM, WaveID | 16.0xff |
+| byte | mask | field                   | from MA-7 voice byte.mask |
+|------|------|-------------------------|---------------------------|
+| 0    | 0xff | type flags (0x01)       | byte 0                    |
+| 1    | 0xff | Fs(MSB)                 | 1.0xff                    |
+| 2    | 0xff | Fs(LSB)                 | 2.0xff                    |
+| 3    | 0xf8 | Panpot                  | 3.0xf8                    |
+| 3    | 0x07 | KSO                     | - (via fn)                |
+| 4    | 0xc3 | LFO, Mode               | 4.0xc3                    |
+| 4    | 0x20 | PE                      | 3.0x01 <<5                |
+| 4    | 0x08 | ALE                     | 0.0x02 <<2                |
+| 5    | 0xfb | SR, XOF, SUS, KSR       | 5.0xfb                    |
+| 5    | 0x04 | PEGE                    | - (via fn)                |
+| 6    | 0xff | RR, DR                  | 6.0xff                    |
+| 7    | 0xff | AR, SL                  | 7.0xff                    |
+| 8    | 0xfc | TL                      | 8.0xfc                    |
+| 8    | 0x03 | KSL                     | - (via fn)                |
+| 9    | 0x77 | DAM, EAM, DVB, EVB      | 9.0x77                    |
+| 10   | 0x0f | EXAR, EXDR, EXSR, EXRR  | - (via fn)                |
+| 11   | 0xff | StartAddressOffset(MSB) | 10.0xff                   |
+| 12   | 0xff | StartAddressOffset(LSB) | 11.0xff                   |
+| 13   | 0x7f | LoopPoint(H)            | 12.0x7f                   |
+| 14   | 0xff | LoopPoint(L)            | 13.0xff                   |
+| 15   | 0x7f | EndPoint(H)             | 14.0x7f                   |
+| 16   | 0xff | EndPoint(L)             | 15.0xff                   |
+| 17   | 0xff | RM, WaveID              | 16.0xff                   |
 
 #### WT + AL (`MA5_WTAL`) (voice byte 0 = 0x03, 34 bytes)
 
-| byte | mask | field | from MA-7 voice byte.mask |
-|---|---|---|---|
-| 0 | 0xff | type flags (0x03) | byte 0 |
-| 1 | 0xff | Fs(MSB) | 28.0xff |
-| 2 | 0xff | Fs(LSB) | 29.0xff |
-| 3 | 0xf8 | Panpot | 30.0xf8 |
-| 3 | 0x07 | KSO | - (via fn) |
-| 4 | 0xc3 | LFO, Mode | 31.0xc3 |
-| 4 | 0x20 | PE | 30.0x01 <<5 |
-| 4 | 0x08 | ALE | 0.0x02 <<2 |
-| 4 | 0x04 | NOISE | 1.0x02 <<1 |
-| 5 | 0xfb | SR, XOF, SUS, KSR | 32.0xfb |
-| 5 | 0x04 | PEGE | - (via fn) |
-| 6 | 0xff | RR, DR | 33.0xff |
-| 7 | 0xff | AR, SL | 34.0xff |
-| 8 | 0xfc | TL | 35.0xfc |
-| 8 | 0x03 | KSL | - (via fn) |
-| 9 | 0x77 | DAM, EAM, DVB, EVB | 36.0x77 |
-| 10 | 0x0f | EXAR, EXDR, EXSR, EXRR | - (via fn) |
-| 11 | 0xff | StartAddressOffset(MSB) | 37.0xff |
-| 12 | 0xff | StartAddressOffset(LSB) | 38.0xff |
-| 13 | 0x7f | LoopPoint(H) | 39.0x7f |
-| 14 | 0xff | LoopPoint(L) | 40.0xff |
-| 15 | 0x7f | EndPoint(H) | 41.0x7f |
-| 16 | 0xff | EndPoint(L) | 42.0xff |
-| 17 | 0x1f | Q | 2.0x1f |
-| 18 | 0xf0 | FLFO_DEPTH & MODE | 17.0x78 <<1 |
-| 18 | 0x08 | FLFO_RST | 26.0x40 >>3 |
-| 18 | 0x07 | FLFO_FREQ | 17.0x07 |
-| 19 | 0x1f | FC0(H) | 3.0x3e >>1 |
-| 20 | 0x80 | FC0(L)-1 | 3.0x01 <<7 |
-| 20 | 0x7f | FC0(L)-2 | 4.0x7f |
-| 21 | 0x1f | FC1(H) | 5.0x3e >>1 |
-| 22 | 0x80 | FC1(L)-1 | 5.0x01 <<7 |
-| 22 | 0x7f | FC1(L)-2 | 6.0x7f |
-| 23 | 0x1f | FC2(H) | 7.0x3e >>1 |
-| 24 | 0x80 | FC2(L)-1 | 7.0x01 <<7 |
-| 24 | 0x7f | FC2(L)-2 | 8.0x7f |
-| 25 | 0x1f | FC3(H) | 9.0x3e >>1 |
-| 26 | 0x80 | FC3(L)-1 | 9.0x01 <<7 |
-| 26 | 0x7f | FC3(L)-2 | 10.0x7f |
-| 27 | 0x1f | FC4(H) | 11.0x3e >>1 |
-| 28 | 0x80 | FC4(L)-1 | 11.0x01 <<7 |
-| 28 | 0x7f | FC4(L)-2 | 12.0x7f |
-| 29 | 0x80 | FXOF | - (via fn) |
-| 29 | 0x1f | FAR | 13.0x1f |
-| 30 | 0x80 | FSUS | - (via fn) |
-| 30 | 0x1f | FDR | 14.0x1f |
-| 31 | 0x80 | FKSL | 27.0x01 <<7 |
-| 31 | 0x1f | FSR | 15.0x1f |
-| 32 | 0x80 | FVSL | - (via fn) |
-| 32 | 0x1f | FRR | 16.0x1f |
-| 33 | 0xff | RM, WaveID | 43.0xff |
+| byte | mask | field                   | from MA-7 voice byte.mask |
+|------|------|-------------------------|---------------------------|
+| 0    | 0xff | type flags (0x03)       | byte 0                    |
+| 1    | 0xff | Fs(MSB)                 | 28.0xff                   |
+| 2    | 0xff | Fs(LSB)                 | 29.0xff                   |
+| 3    | 0xf8 | Panpot                  | 30.0xf8                   |
+| 3    | 0x07 | KSO                     | - (via fn)                |
+| 4    | 0xc3 | LFO, Mode               | 31.0xc3                   |
+| 4    | 0x20 | PE                      | 30.0x01 <<5               |
+| 4    | 0x08 | ALE                     | 0.0x02 <<2                |
+| 4    | 0x04 | NOISE                   | 1.0x02 <<1                |
+| 5    | 0xfb | SR, XOF, SUS, KSR       | 32.0xfb                   |
+| 5    | 0x04 | PEGE                    | - (via fn)                |
+| 6    | 0xff | RR, DR                  | 33.0xff                   |
+| 7    | 0xff | AR, SL                  | 34.0xff                   |
+| 8    | 0xfc | TL                      | 35.0xfc                   |
+| 8    | 0x03 | KSL                     | - (via fn)                |
+| 9    | 0x77 | DAM, EAM, DVB, EVB      | 36.0x77                   |
+| 10   | 0x0f | EXAR, EXDR, EXSR, EXRR  | - (via fn)                |
+| 11   | 0xff | StartAddressOffset(MSB) | 37.0xff                   |
+| 12   | 0xff | StartAddressOffset(LSB) | 38.0xff                   |
+| 13   | 0x7f | LoopPoint(H)            | 39.0x7f                   |
+| 14   | 0xff | LoopPoint(L)            | 40.0xff                   |
+| 15   | 0x7f | EndPoint(H)             | 41.0x7f                   |
+| 16   | 0xff | EndPoint(L)             | 42.0xff                   |
+| 17   | 0x1f | Q                       | 2.0x1f                    |
+| 18   | 0xf0 | FLFO_DEPTH & MODE       | 17.0x78 <<1               |
+| 18   | 0x08 | FLFO_RST                | 26.0x40 >>3               |
+| 18   | 0x07 | FLFO_FREQ               | 17.0x07                   |
+| 19   | 0x1f | FC0(H)                  | 3.0x3e >>1                |
+| 20   | 0x80 | FC0(L)-1                | 3.0x01 <<7                |
+| 20   | 0x7f | FC0(L)-2                | 4.0x7f                    |
+| 21   | 0x1f | FC1(H)                  | 5.0x3e >>1                |
+| 22   | 0x80 | FC1(L)-1                | 5.0x01 <<7                |
+| 22   | 0x7f | FC1(L)-2                | 6.0x7f                    |
+| 23   | 0x1f | FC2(H)                  | 7.0x3e >>1                |
+| 24   | 0x80 | FC2(L)-1                | 7.0x01 <<7                |
+| 24   | 0x7f | FC2(L)-2                | 8.0x7f                    |
+| 25   | 0x1f | FC3(H)                  | 9.0x3e >>1                |
+| 26   | 0x80 | FC3(L)-1                | 9.0x01 <<7                |
+| 26   | 0x7f | FC3(L)-2                | 10.0x7f                   |
+| 27   | 0x1f | FC4(H)                  | 11.0x3e >>1               |
+| 28   | 0x80 | FC4(L)-1                | 11.0x01 <<7               |
+| 28   | 0x7f | FC4(L)-2                | 12.0x7f                   |
+| 29   | 0x80 | FXOF                    | - (via fn)                |
+| 29   | 0x1f | FAR                     | 13.0x1f                   |
+| 30   | 0x80 | FSUS                    | - (via fn)                |
+| 30   | 0x1f | FDR                     | 14.0x1f                   |
+| 31   | 0x80 | FKSL                    | 27.0x01 <<7               |
+| 31   | 0x1f | FSR                     | 15.0x1f                   |
+| 32   | 0x80 | FVSL                    | - (via fn)                |
+| 32   | 0x1f | FRR                     | 16.0x1f                   |
+| 33   | 0xff | RM, WaveID              | 43.0xff                   |
 
 ## handing the voices to the synthesizer
 
@@ -624,13 +624,13 @@ that stream instead of keying the OPL3. A voice whose `RM` bit says *preset (rom
 wave* has no data anywhere outside the chip, so it stays silent; the MA-7 samples
 in `tmp/samples/n703id` are all of that kind.
 
-| message | what is sent |
-|---|---|
-| `01.f0._4` | the voice as is, it already **is** the VM35 FM voice image |
-| `01.f0._5` | the voice as is, it already **is** the VM35 PCM voice image |
+| message    | what is sent                                                                                                                       |
+|------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `01.f0._4` | the voice as is, it already **is** the VM35 FM voice image                                                                         |
+| `01.f0._5` | the voice as is, it already **is** the VM35 PCM voice image                                                                        |
 | `01.f0._6` | the wave, `FORMAT_ADPCM` only - the SMAF wave exclusive has no field for the format, so a `FORMAT_PCM8` wave would arrive as ADPCM |
-| `01.f0._8` | the plain voice behind the AL part, see below |
-| `02.f0.0c` | the MA-7 register image folded back into the VM35 voice image, see below |
+| `01.f0._8` | the plain voice behind the AL part, see below                                                                                      |
+| `02.f0.0c` | the MA-7 register image folded back into the VM35 voice image, see below                                                           |
 
 - **the AL (filter) part is dropped.** `VoiceType.AL` has no decoder anywhere
   (neither smaf825 nor `vavi-sound-ma` reads one), and a voice without its filter
@@ -697,11 +697,11 @@ in `tmp/samples/n703id` are all of that kind.
   unidentified and stay `UndefinedMessage`, which handles them without losing
   anything:
 
-  | key | count | what is known |
-  |---|---|---|
+  | key                  | count | what is known                                                                                                                                                                                                               |
+  |----------------------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
   | `255.b.232` (`0xe8`) | 12643 | a per voice 6 bit control resting at 32, like the pitch bend pair, but only 1410 of them have a pitch bend at the same time on the same voice, so it is **not** part of it. The MA-5 converter neither reads nor writes it. |
-  | `127.e.240` | 5098 | a 6 byte message of the audio (0x7f) class, MFi 4.0 / 5.0 only, e.g. `00 0a 8f 80 00 00` - the first byte counts 0, 1, 2 within a file |
-  | `127.b.144` | 479 | one data byte, audio class, MFi 4.0 / 5.0 only |
+  | `127.e.240`          | 5098  | a 6 byte message of the audio (0x7f) class, MFi 4.0 / 5.0 only, e.g. `00 0a 8f 80 00 00` - the first byte counts 0, 1, 2 within a file                                                                                      |
+  | `127.b.144`          | 479   | one data byte, audio class, MFi 4.0 / 5.0 only                                                                                                                                                                              |
 
   naming any of them needs a document none of the DLLs carry
 - `tmp/samples/n703id/02 TRANSPARENT.mld` is a good ADPCM + tone sample,

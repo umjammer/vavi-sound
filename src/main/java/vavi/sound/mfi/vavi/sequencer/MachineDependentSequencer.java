@@ -7,6 +7,7 @@
 package vavi.sound.mfi.vavi.sequencer;
 
 import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -14,7 +15,6 @@ import java.util.ServiceLoader;
 import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 
 /**
@@ -38,13 +38,13 @@ public interface MachineDependentSequencer {
     Logger logger = System.getLogger(MachineDependentSequencer.class.getName());
 
     /** for {@link MachineDependentSequencer} */
-    int SYSEX_FUNCTION_ID_MACHINE_DEPEND = 0x01;
+    int MFi_SYSEX_FUNCTION_ID_MACHINE_DEPENDENT = 0x01;
 
     /** */
     int getId();
 
-    /** processes a message */
-    void sequence(MachineDependentMessage message, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException;
+    /** processes a message. this method is assumed stateless, don't use instance fields */
+    void sequence(byte[] data, Receiver receiver) throws InvalidMfiDataException;
 
     class Factory {
 
@@ -52,12 +52,16 @@ public interface MachineDependentSequencer {
         static Map<Integer, MachineDependentSequencer> sequencers = new HashMap<>();
 
         /**
+         * @param data 45 01 mfi sysex
          * @throws IllegalArgumentException no sequencer matches the key
          */
-        public static MachineDependentSequencer getSequencer(int key) {
+        public static MachineDependentSequencer getSequencer(byte[] data) {
+            int key = data[2 + 5]; // 5: vendor|carrier
             MachineDependentSequencer sequencer = sequencers.get(key);
-            // TODO UnknownVendorSequencer
-            if (sequencer == null) throw new IllegalArgumentException("no sequencer for: " + key);
+            if (sequencer == null) {
+                logger.log(Level.ERROR, "error vendor: 0x%02x".formatted(key));
+                return new UnknownVendorSequencer();
+            }
             return sequencer;
         }
 

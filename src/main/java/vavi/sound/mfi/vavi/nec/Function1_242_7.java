@@ -14,7 +14,6 @@ import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
 
@@ -46,7 +45,7 @@ public class Function1_242_7 implements MachineDependentFunction {
     /**
      * 0x01, 0xf2, 0x07 Channel Status control information
      *
-     * @param message  see below
+     * @param data     see below
      *                 <pre>
      *                 0        delta
      *                 1        ff
@@ -62,8 +61,8 @@ public class Function1_242_7 implements MachineDependentFunction {
      *
      *                 9~24     channel status, one byte per channel
      *                          76543210
-     *                          ~~ ||  ~~
-     *                          |  ||  ++-- type (0: no care, 1: melody, 2: no melody, 3: rhythm)
+     *                          ~~ || ~~
+     *                          |  || ++--  type (0: no care, 1: melody, 2: no melody, 3: rhythm)
      *                          |  |+------ LED
      *                          |  +------- vibration
      *                          +---------- KCS (key control status), 2 means on
@@ -71,10 +70,8 @@ public class Function1_242_7 implements MachineDependentFunction {
      * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message, Receiver receiver)
+    public void process(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
-
-        byte[] data = message.getMessage();
 
         if (data.length - 9 != CHANNELS) {
             throw new InvalidMfiDataException("channel status must be " + CHANNELS + " bytes: " + (data.length - 9));

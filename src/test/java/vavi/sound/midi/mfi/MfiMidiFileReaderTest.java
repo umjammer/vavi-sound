@@ -14,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
-
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiFileFormat;
@@ -22,17 +21,18 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static vavi.sound.mfi.vavi.sub.AinfChunk.META_FUNCTION_ID_AudioEngine;
 
 
 /**
@@ -96,17 +96,23 @@ class MfiMidiFileReaderTest {
 Debug.print(mfi);
         Sequence sequence = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(Path.of(mfi))));
         Track track = sequence.getTracks()[0];
-        boolean flag = false;
+        boolean hasMaker = false;
         for (int i = 0; i < track.size(); i++) {
             MidiEvent event = track.get(i);
             if (event.getMessage() instanceof MetaMessage metaMessage) {
                 if (metaMessage.getType() == MetaEvent.META_MARKER.number()) {
 Debug.print(StringUtil.getDump(metaMessage.getData()));
-                    flag = true;
+                    hasMaker = true;
+                } else if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
+                    byte[] data = metaMessage.getData();
+                    if (data.length > 2 && data[1] == META_FUNCTION_ID_AudioEngine) {
+                        int format = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
+Debug.print("audio engine format: %02x".formatted(format));
+                    }
                 }
             }
         }
-        if (!flag)
+        if (!hasMaker)
             Debug.print(Level.WARNING, "no supt defined in this mfi: " + mfi);
     }
 

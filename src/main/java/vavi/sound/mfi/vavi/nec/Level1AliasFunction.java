@@ -12,7 +12,6 @@ import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
 
@@ -57,7 +56,7 @@ abstract class Level1AliasFunction implements MachineDependentFunction {
     }
 
     /**
-     * @param message  see below
+     * @param data     see below
      *                 <pre>
      *                 0        delta
      *                 1        ff
@@ -73,10 +72,8 @@ abstract class Level1AliasFunction implements MachineDependentFunction {
      * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message, Receiver receiver)
+    public void process(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
-
-        byte[] data = message.getMessage();
 
         if (data.length < 9) {
             throw new InvalidMfiDataException("too short for a level 0x81 message: " + data.length);
@@ -86,6 +83,6 @@ abstract class Level1AliasFunction implements MachineDependentFunction {
 
 logger.log(Level.DEBUG, "level 0x81 (TODO more investigation), reading it as " + key);
 
-        MachineDependentFunction.Factory.getFunction(key).process(message, receiver);
+        MachineDependentFunction.Factory.getFunction(key).process(data, receiver);
     }
 }

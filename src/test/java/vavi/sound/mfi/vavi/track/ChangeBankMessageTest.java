@@ -37,7 +37,7 @@ class ChangeBankMessageTest {
 
         assertEquals(2, events.length);
         SysexMessage sysex = assertInstanceOf(SysexMessage.class, events[0].getMessage());
-        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, FuetrekMfiExclusive.SYSEX_FUNCTION_ID, FuetrekMfiExclusive.BANK, 5, 0x35, (byte) 0xf7 }, sysex.getMessage());
+        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, FuetrekMfiExclusive.MFi_SYSEX_FUNCTION_ID_FUETREK, FuetrekMfiExclusive.BANK, 5, 0x35, (byte) 0xf7 }, sysex.getMessage());
         ShortMessage program = assertInstanceOf(ShortMessage.class, events[1].getMessage());
         assertEquals(ShortMessage.PROGRAM_CHANGE, program.getCommand());
         assertEquals(5, program.getChannel());

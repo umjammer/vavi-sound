@@ -22,7 +22,9 @@ import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.SysexMessage;
 import vavi.sound.mfi.Track;
+import vavi.sound.mfi.vavi.AudioDataChunk.AudioDataMessage;
 import vavi.sound.mfi.vavi.TrackMessage.SysexTrackMessage;
+import vavi.sound.mfi.vavi.sub.NoteChunk;
 import vavi.sound.mfi.vavi.track.UndefinedMessage;
 import vavi.util.StringUtil;
 
@@ -139,37 +141,13 @@ try {
         return trackLength;
     }
 
-enum ParserLevel {
-    strict, medium, loose;
-
-    static ParserLevel getDefault() {
-        String name = null;
-        try {
-            name = System.getProperty("vavi.sound.mfi.vavi.parserLevel", medium.name());
-            return valueOf(name);
-        } catch (IllegalArgumentException e) {
-logger.log(Level.WARNING, "wrong level: " + name);
-            return medium;
-        }
-    }
-
-    boolean isAcceptable(ParserLevel expected) {
-        return ordinal() >= expected.ordinal();
-    }
-}
-/** for rotten mfi */
-private static final ParserLevel parserLevel = ParserLevel.getDefault();
-/** for rotten mfi */
-static boolean isLoose() {
-    return parserLevel.isAcceptable(ParserLevel.loose);
-}
-/** for rotten mfi */
-private int remaining;
+    /** for rotten mfi */
+    private final RottenParser rottenParser = new RottenParser();
 
     /**
      * @before {@link #noteLength}, {@link #exst} are must be set
      * @after {@link #length} will be set as Track Chunk length
-     * @throws IllegalStateException {@link vavi.sound.mfi.vavi.header.NoteMessage} length or
+     * @throws IllegalStateException {@link NoteChunk} length or
      *         {@link #exst} is not set
      * @throws InvalidMfiDataException at the beginning of <code>is</code> is not {@link #TYPE}
      */
@@ -196,10 +174,10 @@ private int remaining;
 logger.log(Level.DEBUG, "trackLength[" + trackNumber + "]: " + trackLength);
 
         // events
-boolean loose = isLoose() && is.markSupported(); // for rotten mfi, track length is not trustworthy
+        boolean loose = RottenParser.isLoose(is); // for rotten mfi, track length is not trustworthy
         int l = 0;
-        while ((loose ? !isNextChunk(is) : l < trackLength) && dis.available() > 2) {
-remaining = loose ? dis.available() : trackLength - l;
+        while ((loose ? !RottenParser.isNextChunk(is) : l < trackLength) && dis.available() > 2) {
+            rottenParser.remaining = loose ? dis.available() : trackLength - l;
             MfiMessage message = getMessage(dis);
             track.add(new MfiEvent(message, 0L));
 
@@ -208,56 +186,10 @@ remaining = loose ? dis.available() : trackLength - l;
 //logger.log(Level.TRACE, "track[" + trackNumber + "] event: " + message.getClass().getSimpleName() + ", length: " + message.getLength());
 //logger.log(Level.TRACE, "track[" + trackNumber + "] event length sum: " + l + " / " + trackLength + ", available: " + is.available());
         }
-if (loose && trackLength - l != 0) { // for rotten mfi
-logger.log(Level.WARNING, "ignore wrong track length: " + trackLength + " -> " + l);
- trackLength = l;
-} else
-if (parserLevel.isAcceptable(ParserLevel.medium) && trackLength - l != 0) { // for rotten mfi
- if (trackLength - l > 0) {
-  if (trackLength - l < dis.available()) {
-   byte[] b = new byte[trackLength - l];
-   dis.readFully(b);
-logger.log(Level.WARNING, "correct: " + StringUtil.getDump(b));
-  } else {
-logger.log(Level.WARNING, "cannot correct. correction over eof: " + (trackLength - l));
-  }
- } else {
-logger.log(Level.WARNING, "cannot correct. negative or eof: " + (trackLength - l));
- }
-}
+        rottenParser.recoverTrack(trackLength, l, dis);
+
         //
         this.length = trackLength + 4 + 4; // + type + length
-    }
-
-    /** for rotten mfi: chunk types which may follow a track chunk */
-    private static final List<String> nextTypes = List.of(TYPE, HeaderChunk.TYPE, AudioDataMessage.TYPE);
-
-    /**
-     * for rotten mfi: peeks the next 4 bytes as a chunk type, {@code null} when the stream ends.
-     * @param is must support mark
-     */
-    private static String peekType(InputStream is) throws IOException {
-        is.mark(4);
-        byte[] bytes = new byte[4];
-        int r = is.readNBytes(bytes, 0, 4);
-        is.reset();
-        return r == 4 ? new String(bytes) : null;
-    }
-
-    /**
-     * for rotten mfi: peeks whether a next chunk starts here, instead of relying on the track length.
-     * @param is must support mark
-     */
-    private static boolean isNextChunk(InputStream is) throws IOException {
-        String type = peekType(is);
-        return type != null && nextTypes.contains(type);
-    }
-
-    /**
-     * for rotten mfi: peeks whether a track chunk still remains, instead of relying on the tracks count.
-     */
-    static boolean isNextTrack(InputStream is) throws IOException {
-        return !is.markSupported() || TYPE.equals(peekType(is));
     }
 
     /**
@@ -318,26 +250,21 @@ logger.log(Level.WARNING, "cannot correct. negative or eof: " + (trackLength - l
      * @param dis data1 ~
      */
     private MfiMessage getNoteMessage(int delta,
-                                             int status,
-                                             DataInputStream dis,
-                                             int noteLength)
+                                      int status,
+                                      DataInputStream dis,
+                                      int noteLength)
         throws IOException {
 
         if (noteLength == 1) {
-if (parserLevel.isAcceptable(ParserLevel.medium) && remaining - 2 < 2) { // for rotten mfi
- logger.log(Level.WARNING, "correction: wrong mfi track length");
- int data1 = dis.readUnsignedByte();
- return new UndefinedMessage().init(delta, status, data1, new byte[0]);
-}
+            if (rottenParser.isRecoveryNeeded1()) { return RottenParser.recoverNote1(delta, status, dis); }
+
             int data1 = dis.readUnsignedByte();
             int data2 = dis.readUnsignedByte();
 
             return new VaviNoteMessage(delta, status, data1, data2);
         } else {
-if (parserLevel.isAcceptable(ParserLevel.medium) && remaining - 2 < 1) { // for rotten mfi
- logger.log(Level.WARNING, "correction: wrong mfi track length");
- return new UndefinedMessage().init(delta, status, 0, new byte[0]);
-}
+            if (rottenParser.isRecoveryNeeded2()) { return RottenParser.recoverNote2(delta, status, dis); }
+
             int data1 = dis.readUnsignedByte();
 
             return new VaviNoteMessage(delta, status, data1);
@@ -438,11 +365,123 @@ logger.log(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended s
         sb.append(TYPE).append("\n");
         try (var dc = getDC().open()) {
             track.stream()
-                    .filter(e -> !(e.getMessage() instanceof SubMessage))
+                    .filter(e -> !(e.getMessage() instanceof SubChunk))
                     .filter(e -> !(e.getMessage() instanceof AudioDataMessage))
                     .forEach(e -> sb.append(dc.format(e.getMessage().toString())));
         }
         sb.setLength(sb.length() - 1);
         return sb.toString();
     }
+
+//#region rotten
+
+    /** for rotten mfi */
+    static class RottenParser {
+
+        enum ParserLevel {
+            strict, medium, loose;
+
+            static ParserLevel getDefault() {
+                String name = null;
+                try {
+                    name = System.getProperty("vavi.sound.mfi.vavi.parserLevel", medium.name());
+                    return valueOf(name);
+                } catch (IllegalArgumentException e) {
+                    logger.log(Level.WARNING, "wrong level: " + name);
+                    return medium;
+                }
+            }
+
+            boolean isAcceptable(ParserLevel expected) {
+                return ordinal() >= expected.ordinal();
+            }
+        }
+
+        private static final ParserLevel parserLevel = ParserLevel.getDefault();
+
+        /** */
+        static boolean isLoose() {
+            return parserLevel.isAcceptable(ParserLevel.loose);
+        }
+
+        /** for rotten mfi: chunk types which may follow a track chunk */
+        private static final List<String> nextTypes = List.of(TYPE, HeaderChunk.TYPE, AudioDataChunk.TYPE);
+
+        /**
+         * for rotten mfi: peeks the next 4 bytes as a chunk type, {@code null} when the stream ends.
+         * @param is must support mark
+         */
+        private static String peekType(InputStream is) throws IOException {
+            is.mark(4);
+            byte[] bytes = new byte[4];
+            int r = is.readNBytes(bytes, 0, 4);
+            is.reset();
+            return r == 4 ? new String(bytes) : null;
+        }
+
+        /**
+         * for rotten mfi: peeks whether a next chunk starts here, instead of relying on the track length.
+         * @param is must support mark
+         */
+        private static boolean isNextChunk(InputStream is) throws IOException {
+            String type = peekType(is);
+            return type != null && nextTypes.contains(type);
+        }
+
+        /**
+         * for rotten mfi: peeks whether a track chunk still remains, instead of relying on the tracks count.
+         */
+        static boolean isNextTrack(InputStream is) throws IOException {
+            return !is.markSupported() || TYPE.equals(peekType(is));
+        }
+
+        private int remaining;
+
+        /** */
+        private static boolean isLoose(InputStream is) {
+            return isLoose() && is.markSupported();
+        }
+
+        private void recoverTrack(int trackLength, int l, DataInputStream dis) throws IOException {
+            if (isLoose(dis) && trackLength - l != 0) { // for rotten mfi
+                logger.log(Level.WARNING, "ignore wrong track length: " + trackLength + " -> " + l);
+                trackLength = l;
+            } else
+            if (parserLevel.isAcceptable(ParserLevel.medium) && trackLength - l != 0) { // for rotten mfi
+                if (trackLength - l > 0) {
+                    if (trackLength - l < dis.available()) {
+                        byte[] b = new byte[trackLength - l];
+                        dis.readFully(b);
+                        logger.log(Level.WARNING, "correct: " + StringUtil.getDump(b));
+                    } else {
+                        logger.log(Level.WARNING, "cannot correct. correction over eof: " + (trackLength - l));
+                    }
+                } else {
+                    logger.log(Level.WARNING, "cannot correct. negative or eof: " + (trackLength - l));
+                }
+            }
+        }
+
+        private boolean isRecoveryNeeded1() {
+            return parserLevel.isAcceptable(ParserLevel.medium) && remaining - 2 < 2;
+        }
+
+        private static UndefinedMessage recoverNote1(int delta, int status, DataInputStream dis) throws IOException {
+            logger.log(Level.WARNING, "correction: wrong mfi track length");
+            int data1 = dis.readUnsignedByte();
+            return new UndefinedMessage().init(delta, status, data1, new byte[0]);
+        }
+
+        private boolean isRecoveryNeeded2() {
+            return parserLevel.isAcceptable(ParserLevel.medium) && remaining - 2 < 1;
+        }
+
+        private static UndefinedMessage recoverNote2(int delta, int status, DataInputStream dis) throws IOException {
+            logger.log(Level.WARNING, "correction: wrong mfi track length");
+            int data1 = dis.readUnsignedByte();
+            return new UndefinedMessage().init(delta, status, data1, new byte[0]);
+        }
+    }
+
+//#endregion
 }

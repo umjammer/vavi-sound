@@ -9,7 +9,6 @@ package vavi.sound.mfi.vavi.sequencer;
 import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 
 /**
@@ -26,10 +25,10 @@ public class UnknownVendorSequencer implements MachineDependentSequencer {
     }
 
     @Override
-    public void sequence(MachineDependentMessage message, Receiver receiver)
+    public void sequence(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
 
         MachineDependentFunction mdf = new UndefinedFunction();
-        mdf.process(message, receiver);
+        mdf.process(data, receiver);
     }
 }

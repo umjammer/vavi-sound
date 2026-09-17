@@ -16,7 +16,7 @@ import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.midi.MidiConstants.MetaEvent;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.AudioEngine;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.SmafMessage;
@@ -273,8 +273,8 @@ if (value > 15) {
         int midiChannel = getMidiChannel(smafChannel);
 
         // for a synthesizer which plays the file's own voices the program of a drum channel is
-        // the drum kit (Bank_Program3 of the MA-3 driver), see StreamExclusive#isEnabled
-        if (formatType != FormatType.HandyPhoneStandard && !YamahaExclusive.isEnabled()) {
+        // the drum kit (Bank_Program3 of the MA-3 driver), see AudioEngine#isDisabled
+        if (formatType != FormatType.HandyPhoneStandard && !AudioEngine.isDisabled()) {
             if (midiChannel != drumSwapChannel && drums[midiChannel] == ChannelConfiguration.PERCUSSION) {
 logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
                 program = 0;

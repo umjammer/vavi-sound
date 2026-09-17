@@ -18,6 +18,8 @@ import java.util.ServiceLoader;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MetaMessage;
+import vavi.sound.mfi.vavi.sub.CodeChunk;
+import vavi.sound.mfi.vavi.sub.ProtChunk;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -34,7 +36,7 @@ import static java.lang.System.getLogger;
  * this class {@link #data} in [MFi meta]
  *     spec of {@link MetaMessage}
  *          |
- * |<-------+------->|<---- spec of {@link SubMessage} ---- ...
+ * |<-------+------->|<---- spec of {@link SubChunk} ---- ...
  * +--+--+--+--+--+--+--+--+--+--+--+-
  * |00 ff fd|LL LL|7f|XX XX XX XX|DD DD ...
  * +--+--+--+--+--+--+--+--+--+--+--+-
@@ -46,23 +48,22 @@ import static java.lang.System.getLogger;
  * <li>{@code vavi.sound.mfi.encoding.write} ... encoding for writing, default {@code Windows-31J}</li>
  * <li>{@code vavi.sound.mfi.encoding.read} ... encoding for reading, default {@code JISAutoDetect}</li>
  * <p>
- * <li>TODO does it have to be {@link MetaMessage}? (although it looks like MIDI)
- * <li>TODO ↑ the first thing to put in {@link vavi.sound.mfi.Track}[0] is summarized as {@link MetaMessage}
- * <li>TODO ↑ then {@link vavi.sound.mfi.vavi.AudioDataMessage} should be a subclass of {@link MetaMessage}
+ * <li>TODO the first thing to put in {@link vavi.sound.mfi.Track}[0] is summarized as {@link MetaMessage}
+ * <li>TODO all subclasses make MfiMessage class inside like AudioDataChunk </li>
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030819 nsano out source from {@link VaviMfiFileFormat} <br>
- *          0.10 030825 nsano merge {@link SubMessage} <br>
+ *          0.10 030825 nsano merge {@link SubChunk} <br>
  *          0.11 030920 nsano extends {@link MetaMessage} <br>
  */
-public abstract class SubMessage extends MetaMessage {
+public abstract class SubChunk extends MetaMessage {
 
-    private static final Logger logger = getLogger(SubMessage.class.getName());
+    private static final Logger logger = getLogger(SubChunk.class.getName());
 
-    /** TODO use {@link vavi.sound.mfi.vavi.header.CodeMessage} */
+    /** TODO use {@link CodeChunk} */
     protected static final String readingEncoding;
 
-    /** TODO use {@link vavi.sound.mfi.vavi.header.CodeMessage} */
+    /** TODO use {@link CodeChunk} */
     protected static final String writingEncoding;
 
     /** "port".length */
@@ -75,10 +76,10 @@ public abstract class SubMessage extends MetaMessage {
     public abstract boolean accept(String subType);
 
     /**
-     * @param subType ex. {@link vavi.sound.mfi.vavi.header.ProtMessage#TYPE "prot"}
+     * @param subType ex. {@link ProtChunk#TYPE "prot"}
      * @return this
      */
-    protected SubMessage init(String subType, byte[] data) {
+    protected SubChunk init(String subType, byte[] data) {
         try {
             byte[] message = getSubMessage(subType, data, data.length);
             setMessage(META_TYPE, message, message.length);
@@ -89,9 +90,9 @@ public abstract class SubMessage extends MetaMessage {
     }
 
     /**
-     * @param subType ex. {@link vavi.sound.mfi.vavi.header.ProtMessage#TYPE "prot"}
+     * @param subType ex. {@link ProtChunk#TYPE "prot"}
      */
-    protected SubMessage init(String subType, String data) {
+    protected SubChunk init(String subType, String data) {
         try {
             byte[] tmp = data.getBytes(writingEncoding);
             byte[] message = getSubMessage(subType, tmp, tmp.length);
@@ -187,10 +188,10 @@ logger.log(Level.DEBUG, this);
     }
 
     /**
-     * @return anonymous {@link SubMessage} when input is an unknown type
-     * @throws IllegalStateException when {@link SubMessage} instantiation failed
+     * @return anonymous {@link SubChunk} when input is an unknown type
+     * @throws IllegalStateException when {@link SubChunk} instantiation failed
      */
-    public static SubMessage readFrom(InputStream is)
+    public static SubChunk readFrom(InputStream is)
         throws InvalidMfiDataException,
                IOException {
 
@@ -205,13 +206,13 @@ logger.log(Level.DEBUG, this);
         dis.readFully(subData, 0, length);
 
 logger.log(Level.TRACE, "subType: " + subType + ", data.length: " + subData.length);
-        SubMessage subMessage = factory(subType);
+        SubChunk subChunk = factory(subType);
 
-        if (subMessage != null) {
-            subMessage.init(subType, subData);
+        if (subChunk != null) {
+            subChunk.init(subType, subData);
         } else {
 logger.log(Level.WARNING, "unknown sub chunk: " + subType);
-            subMessage = new SubMessage() {
+            subChunk = new SubChunk() {
                 {
                     try {
                         byte[] message = getSubMessage(subType, subData, subData.length);
@@ -224,21 +225,22 @@ logger.log(Level.WARNING, "unknown sub chunk: " + subType);
             };
         }
 
-logger.log(Level.DEBUG, subMessage);
-        return subMessage;
+logger.log(Level.DEBUG, subChunk);
+        return subChunk;
     }
 
     // ----
 
-    public static SubMessage factory(String subType) {
-        for (SubMessage subMessage : ServiceLoader.load(SubMessage.class)) {
-            if (subMessage.accept(subType)) {
+    /** @return new instance */
+    public static SubChunk factory(String subType) {
+        for (SubChunk subChunk : ServiceLoader.load(SubChunk.class)) {
+            if (subChunk.accept(subType)) {
                 // ServiceLoader caches provider instances.  SubMessage holds
                 // the parsed payload, so returning that cached instance makes
                 // every chunk share the last chunk's data (e.g. all ADPM
                 // entries become the final 2-bit header).  Create a fresh
                 // provider instance for every parsed subchunk.
-                return subMessage;
+                return subChunk;
             }
         }
 logger.log(Level.WARNING, "no matched sub chunk: " + subType);

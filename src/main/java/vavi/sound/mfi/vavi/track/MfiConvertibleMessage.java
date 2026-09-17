@@ -27,8 +27,13 @@ import vavi.sound.mfi.vavi.TrackMessage;
 public class MfiConvertibleMessage implements MfiConvertible, TrackMessage {
 
     private static final String[] keys = {
-            // Bank select MSB, Data entry MSB, Bank select LSB,NRPN LSB, NRPN MSB, RPN LSB, RPN MSB
-            "176.0", "176.6", "176.32", "176.98", "176.99", "176.100", "176.101",
+            "176.0",   // Bank select MSB
+            "176.6",   // Data entry MSB
+            "176.32",  // Bank select LSB
+            "176.98",  // NRPN LSB
+            "176.99",  // NRPN MSB
+            "176.100", // RPN LSB
+            "176.101", // RPN MSB
     };
 
     @Override

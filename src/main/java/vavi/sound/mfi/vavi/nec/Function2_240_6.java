@@ -11,7 +11,6 @@ import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
 import vavi.util.StringUtil;
 
@@ -38,7 +37,7 @@ public class Function2_240_6 implements MachineDependentFunction {
     /**
      * 0xf0, 0x_2 ADPCM, length 2
      *
-     * @param message  see below
+     * @param data     see below
      *                 <pre>
      *                 0    delta
      *                 1    ff
@@ -54,10 +53,8 @@ public class Function2_240_6 implements MachineDependentFunction {
      * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message, Receiver receiver)
+    public void process(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
-
-        byte[] data = message.getMessage();
 
         this.channel      = (data[7] & 0xc0) >> 6;  // 0 ~ 3
         this.streamNumber =  0; // TODO data[8] & 0xff;        // ??

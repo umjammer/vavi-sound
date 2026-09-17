@@ -10,7 +10,7 @@ import java.util.Arrays;
 import javax.sound.midi.SysexMessage;
 
 import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.sound.mobile.YamahaExclusive;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.sound.smaf.vavi.message.MidiContext;
 import vavi.sound.smaf.vavi.message.yamaha.YamahaMessage;
 
@@ -80,7 +80,7 @@ class YamahaMfiExclusiveTest {
         yamahaMessage.setMessage(0xf0, exclusive, exclusive.length);
 
         assertArrayEquals(yamahaMessage.getMidiEvents(new MidiContext())[0].getMessage().getMessage(),
-                YamahaExclusive.pack(exclusive).getMessage());
+                MobileExclusive.packedSystex(exclusive).getMessage());
     }
 
     /** every length must survive the 8 -> 7 bit packing, the boundaries above all */
@@ -103,11 +103,11 @@ class YamahaMfiExclusiveTest {
 
     @Test
     void packedSysexIsAVaviSysex() throws Exception {
-        SysexMessage message = YamahaExclusive.pack(YamahaMfiExclusive.wave(0, new byte[] {0x01, 0x02}));
+        SysexMessage message = MobileExclusive.packedSystex(YamahaMfiExclusive.wave(0, new byte[] {0x01, 0x02}));
 
         assertEquals(0xf0, message.getStatus());
         assertEquals(VaviMidiDeviceProvider.MANUFACTURER_ID, message.getData()[0]);
-        assertEquals(YamahaExclusive.SYSEX_PACKED, message.getData()[1]);
+        assertEquals(MobileExclusive.MIDI_SYSEX_FUNCTION_ID_PACKED, message.getData()[1]);
     }
 
     /** a null receiver is not an error, the message it comes from is decoded either way */
