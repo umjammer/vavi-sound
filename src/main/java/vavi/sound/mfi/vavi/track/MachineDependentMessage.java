@@ -24,7 +24,6 @@ import vavi.sound.mfi.vavi.TrackMessage.SysexTrackMessage;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiMessageStore;
 import vavi.sound.midi.VaviMidiDeviceProvider;
-import vavi.sound.mobile.MobileExclusive;
 
 import static java.lang.System.getLogger;
 
@@ -183,42 +182,20 @@ logger.log(Level.DEBUG, "MachineDepend: Δ: %02x, len: %6d, VC: %02x, data: %02x
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        if (!MobileExclusive.isEnabled()) {
-            javax.sound.midi.SysexMessage sysexMessage = new javax.sound.midi.SysexMessage();
-            int id = MfiMessageStore.put(this);
-            byte[] data = {
-                    VaviMidiDeviceProvider.MANUFACTURER_ID,
-                    MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPENDENT,
-                    (byte) ((id / 0x100) & 0xff),
-                    (byte) ((id % 0x100) & 0xff)
-            };
-            sysexMessage.setMessage(0xf0,    // sysex
-                                    data,
-                                    data.length);
+        javax.sound.midi.SysexMessage sysexMessage = new javax.sound.midi.SysexMessage();
+        int id = MfiMessageStore.put(this);
+        byte[] data = {
+                VaviMidiDeviceProvider.MANUFACTURER_ID,
+                MachineDependentSequencer.SYSEX_FUNCTION_ID_MACHINE_DEPENDENT,
+                (byte) ((id / 0x100) & 0xff),
+                (byte) ((id % 0x100) & 0xff)
+        };
+        sysexMessage.setMessage(0xf0,    // sysex
+                                data,
+                                data.length);
 
-            return new MidiEvent[] {
-                new MidiEvent(sysexMessage, context.getCurrent())
-            };
-        } else {
-            // what the vendor's functions would send and play at play time - the voice
-            // exclusives, the stream waves and their start / stop - here and now, so that
-            // the synthesizer gets them in the midi sequence itself, see StreamExclusive
-            int vendor = getVendor() | getCarrier();
-            MachineDependentSequencer sequencer;
-            try {
-                sequencer = MachineDependentSequencer.Factory.getSequencer(vendor);
-            } catch (IllegalArgumentException e) {
-logger.log(Level.DEBUG, "no sequencer for vendor: %02x, skipped".formatted(vendor));
-                return new MidiEvent[0];
-            }
-            try {
-                return MobileExclusive.capture(receiver -> sequencer.sequence(this, receiver)).stream()
-                        .map(m -> new MidiEvent(m, context.getCurrent()))
-                        .toArray(MidiEvent[]::new);
-            } catch (InvalidMfiDataException | RuntimeException e) {
-logger.log(Level.WARNING, "machine dependent message cannot be converted, skipped: " + this + ", " + e);
-                return new MidiEvent[0];
-            }
-        }
+        return new MidiEvent[] {
+            new MidiEvent(sysexMessage, context.getCurrent())
+        };
     }
 }

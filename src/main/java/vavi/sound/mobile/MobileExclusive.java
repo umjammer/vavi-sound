@@ -6,11 +6,7 @@
 
 package vavi.sound.mobile;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.Receiver;
 import javax.sound.midi.SysexMessage;
 
 import vavi.sound.midi.VaviMidiDeviceProvider;
@@ -179,99 +175,5 @@ public final class MobileExclusive {
         SysexMessage sysexMessage = new SysexMessage();
         sysexMessage.setMessage(0xf0, data, data.length);
         return sysexMessage;
-    }
-
-    /**
-     * An {@link AudioEngine} which plays nothing and sends the exclusives above instead,
-     * for code which is written against an engine, the MFi machine dependent functions.
-     * <p>
-     * What it sends to is {@link #capture}'s, so it is only meaningful inside one: outside
-     * of it the calls are dropped.
-     * </p>
-     * TODO hacky
-     */
-    public static final AudioEngine engine = new AudioEngine() {
-
-        @Override
-        public boolean accept(int format) {
-            return Format.valueOf(format) != null;
-        }
-
-        @Override
-        public void setData(int streamNumber, int channel, int sampleRate, int bits, int channels, byte[] adpcm, boolean continued) {
-            send(wave(streamNumber, Format.ADPCM, channels, bits, sampleRate, adpcm));
-        }
-
-        @Override
-        public void stop(int streamNumber) {
-            send(off(streamNumber));
-        }
-
-        @Override
-        public void start(int streamNumber) {
-            send(on(streamNumber, 127, NO_CHANNEL));
-        }
-
-        @Override
-        public void start(int streamNumber, long gateTime) {
-            start(streamNumber);
-        }
-
-        @Override
-        public void close() {
-        }
-
-        /** encoding is stateless and plays nothing, so it is the ordinary one */
-        @Override
-        public byte[] encode(int bits, int channels, byte[] pcm) {
-            return new YamahaAudioEngine().encode(bits, channels, pcm);
-        }
-    };
-
-    /** where {@link #engine} sends to, per thread */
-    private static final ThreadLocal<List<MidiMessage>> captured = new ThreadLocal<>();
-
-    /** */
-    private static void send(byte[] exclusive) {
-        List<MidiMessage> messages = captured.get();
-        if (messages == null) {
-            return;
-        }
-        try {
-            messages.add(pack(exclusive));
-        } catch (InvalidMidiDataException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /** what a {@link #capture} task does */
-    @FunctionalInterface
-    public interface Task<E extends Exception> {
-        void run(Receiver receiver) throws E;
-    }
-
-    /**
-     * Runs a task with a receiver which keeps what it is sent, and {@link #engine} sending
-     * there too, so that code which plays to a receiver and an engine at play time can be
-     * turned into the MIDI messages it would play, at conversion time.
-     *
-     * @return the messages, in the order they were sent
-     */
-    public static <E extends Exception> List<MidiMessage> capture(Task<E> task) throws E {
-        List<MidiMessage> messages = new ArrayList<>();
-        List<MidiMessage> outer = captured.get();
-        captured.set(messages);
-        try {
-            task.run(new Receiver() {
-                @Override public void send(MidiMessage message, long timeStamp) {
-                    messages.add(message);
-                }
-                @Override public void close() {
-                }
-            });
-        } finally {
-            captured.set(outer);
-        }
-        return messages;
     }
 }

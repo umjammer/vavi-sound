@@ -89,11 +89,8 @@ logger.log(Level.DEBUG, "%02x %02x".formatted(f1, f2));
     /** */
     private static final AudioEngine player = new YamahaAudioEngine();
 
-    /**
-     * @return the exclusive sending one when {@code vavi.sound.mobile.AudioEngine.disabled} is set,
-     *         see {@link MobileExclusive#engine}
-     */
+    /** */
     static AudioEngine getAudioEngine() {
-        return MobileExclusive.isEnabled() ? MobileExclusive.engine : player;
+        return player;
     }
 }

@@ -7,7 +7,6 @@
 package vavi.sound.mobile;
 
 import java.util.Arrays;
-import java.util.List;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.SysexMessage;
@@ -68,28 +67,6 @@ class MobileExclusiveTest {
         assertEquals(MobileExclusive.Format.ADPCM, MobileExclusive.Format.valueOf(1));
         assertEquals(MobileExclusive.Format.ADPCM, MobileExclusive.Format.valueOf(0x82));
         assertEquals(MobileExclusive.Format.UNSIGNED, MobileExclusive.Format.valueOf(5));
-    }
-
-    /** code written against an engine and a receiver turns into the messages it would play */
-    @Test
-    void capture() throws Exception {
-        byte[] adpcm = {(byte) 0xff, 0x00, 0x7f};
-        List<MidiMessage> messages = MobileExclusive.capture(receiver -> {
-            MobileExclusive.engine.setData(5, -1, 16000, 4, 1, adpcm, false);
-            // the schedule runs at once when the engine is disabled
-            AudioEngine.Sync.schedule(() -> MobileExclusive.engine.start(5));
-            receiver.send(MobileExclusive.pack(MobileExclusive.volume(0, 64)), -1);
-            MobileExclusive.engine.stop(5);
-        });
-
-        assertEquals(4, messages.size());
-        assertArrayEquals(MobileExclusive.wave(5, MobileExclusive.Format.ADPCM, 1, 4, 16000, adpcm), unpack(messages.get(0)));
-        assertArrayEquals(MobileExclusive.on(5, 127, MobileExclusive.NO_CHANNEL), unpack(messages.get(1)));
-        assertArrayEquals(MobileExclusive.volume(0, 64), unpack(messages.get(2)));
-        assertArrayEquals(MobileExclusive.off(5), unpack(messages.get(3)));
-
-        // outside of a capture the engine drops what it is told
-        MobileExclusive.engine.start(5);
     }
 
     /** a stream wave of a smaf file and the wave of a wave table voice are told apart */
