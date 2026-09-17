@@ -40,11 +40,11 @@ class NecFunctionTest {
         receiver.clear();
     }
 
-    /** wraps a function payload (vendor byte first) into a message the sequencer would feed back */
-    private static MachineDependentMessage message(byte[] payload) throws Exception {
+    /** wraps a function payload (vendor byte first) into the message the sequencer would feed back */
+    private static byte[] message(byte[] payload) throws Exception {
         MachineDependentMessage message = new MachineDependentMessage().init();
         message.setMessage(0, payload);
-        return message;
+        return message.getMessage();
     }
 
     @Test
@@ -86,7 +86,7 @@ class NecFunctionTest {
                 java.util.Arrays.copyOf(payload, 8));
 
         Function2_240_12 in = new Function2_240_12();
-        in.process(payload, receiver);
+        in.process(message(payload), receiver);
         assertEquals(12, in.getBank());
         assertFalse(in.isDrum());
         assertEquals(0, in.getProgram());
@@ -118,7 +118,7 @@ class NecFunctionTest {
         out.setVoice(voice);
 
         Function2_240_12 in = new Function2_240_12();
-        in.process(out.getMessage(), receiver);
+        in.process(message(out.getMessage()), receiver);
         assertTrue(in.isDrum());
         assertEquals(8, in.getBank());
         assertEquals(0x24, in.getNote());
@@ -166,7 +166,7 @@ class NecFunctionTest {
             out.setVoice(voice);
 
             Function2_240_12 in = new Function2_240_12();
-            in.process(out.getMessage(), receiver);
+            in.process(message(out.getMessage()), receiver);
             assertEquals(type, in.getType());
 
             byte[] expected = new byte[3 + 7 * operators];
@@ -214,7 +214,7 @@ class NecFunctionTest {
             out.setVoice(voice);
 
             Function2_240_12 in = new Function2_240_12();
-            in.process(out.getMessage(), receiver);
+            in.process(message(out.getMessage()), receiver);
             assertEquals(type, in.getType());
 
             byte[] expected = new byte[16];
@@ -243,7 +243,7 @@ class NecFunctionTest {
         out.setVoice(voice);
 
         Function2_240_12 in = new Function2_240_12();
-        in.process(out.getMessage(), receiver);
+        in.process(message(out.getMessage()), receiver);
         assertEquals(null, in.getType());
         assertEquals(null, in.getVm35Voice());
         assertTrue(receiver.getExclusives().isEmpty());
@@ -278,7 +278,7 @@ class NecFunctionTest {
         assertEquals(4 + Function2_242_7.CHANNELS, payload.length);
 
         Function2_242_7 in = new Function2_242_7();
-        in.process(payload, receiver);
+        in.process(message(payload), receiver);
         assertArrayEquals(statuses, in.getChannelStatuses());
         assertTrue(in.isUsed(0));
         assertTrue(in.isUsed(6));
@@ -286,11 +286,8 @@ class NecFunctionTest {
         assertEquals(3, in.getType(0));  // rhythm
         assertEquals(0, in.getType(1));  // no care
 
-        assertThrows(vavi.sound.mfi.InvalidMfiDataException.class, () -> {
-            MachineDependentMessage short_ = new MachineDependentMessage().init();
-            short_.setMessage(0, new byte[] {0x11, 0x02, (byte) 0xf2, 0x07, 0x00});
-            new Function2_242_7().process(short_.getMessage(), receiver);
-        });
+        assertThrows(vavi.sound.mfi.InvalidMfiDataException.class, () ->
+                new Function2_242_7().process(message(new byte[] {0x11, 0x02, (byte) 0xf2, 0x07, 0x00}), receiver));
     }
 
     @Test
@@ -313,14 +310,14 @@ class NecFunctionTest {
         assertArrayEquals(new byte[] {0x11, 0x02, (byte) 0xf1, (byte) 0x8e, 0x50}, payload);
 
         Function2_241_14 in = new Function2_241_14();
-        in.process(payload, receiver);
+        in.process(message(payload), receiver);
         assertEquals(2, in.getChannel());
         assertEquals(0x50, in.getValue());
         assertFalse(in.isFlag());
 
         // the 0x2d / 0xad / 0xed form real files contain
         Function2_241_13 flagged = new Function2_241_13();
-        flagged.process(new byte[] {0x11, 0x02, (byte) 0xf1, (byte) 0xed, 0x7f}, receiver);
+        flagged.process(message(new byte[] {0x11, 0x02, (byte) 0xf1, (byte) 0xed, 0x7f}), receiver);
         assertEquals(3, flagged.getChannel());
         assertTrue(flagged.isFlag());
         assertEquals(0x7f, flagged.getValue());
@@ -340,7 +337,7 @@ class NecFunctionTest {
         assertArrayEquals(new byte[] {0x11, 0x02, (byte) 0xf1, (byte) 0xcb, 0x64}, brightness.getMessage());
 
         Function2_241_11 in = new Function2_241_11();
-        in.process(brightness.getMessage(), receiver);
+        in.process(message(brightness.getMessage()), receiver);
         assertEquals(3, in.getChannel());
         assertEquals(100, in.getValue());
     }
@@ -359,7 +356,7 @@ class NecFunctionTest {
         assertArrayEquals(new byte[] {0x11, 0x02, (byte) 0xf1, 0x48, 0x01}, monoOn.getMessage());
 
         Function2_241_8 in = new Function2_241_8();
-        in.process(monoOn.getMessage(), receiver);
+        in.process(message(monoOn.getMessage()), receiver);
         assertEquals(1, in.getChannel());
         assertEquals(1, in.getValue());
     }
@@ -374,7 +371,7 @@ class NecFunctionTest {
         out.setData(block);
 
         Function2_240_14 in = new Function2_240_14();
-        in.process(out.getMessage(), receiver);
+        in.process(message(out.getMessage()), receiver);
         assertEquals(1, in.getBlockCount());
         assertArrayEquals(block, in.getBlock(0));
 
@@ -386,14 +383,14 @@ class NecFunctionTest {
         Function2_243_3 gain = new Function2_243_3();
         gain.setMaxGain(6);
         Function2_243_3 gainIn = new Function2_243_3();
-        gainIn.process(gain.getMessage(), receiver);
+        gainIn.process(message(gain.getMessage()), receiver);
         assertEquals(6, gainIn.getMaxGain());
 
         Function2_243_11 sfx = new Function2_243_11();
         sfx.setSfxId(0x40);
         assertArrayEquals(new byte[] {0x11, 0x02, (byte) 0xf3, 0x0b, 0x40, (byte) 0xf7}, sfx.getMessage());
         Function2_243_11 sfxIn = new Function2_243_11();
-        sfxIn.process(sfx.getMessage(), receiver);
+        sfxIn.process(message(sfx.getMessage()), receiver);
         assertEquals(0x40, sfxIn.getSfxId());
         assertThrows(IllegalArgumentException.class, () -> new Function2_243_11().setSfxId(0x20));
     }
