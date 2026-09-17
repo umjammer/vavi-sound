@@ -433,7 +433,7 @@ logger.log(Level.WARNING, "crc not match expected: %04x, actual: %04x".formatted
      * @param size chunk size
      * @return chunk
      */
-    private static Chunk factory(byte[] id, int size) {
+    public static Chunk factory(byte[] id, int size) {
         String type = new String(id);
 logger.log(Level.DEBUG, "Chunk ID(read): " + (Character.isLetterOrDigit(type.charAt(3)) ? type : "%s+0x%02x".formatted(new String(id, 0, 3), (int) type.charAt(3) & 0xff)) + ", size: " + size);
         for (Chunk chunk : ServiceLoader.load(Chunk.class)) {

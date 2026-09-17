@@ -52,7 +52,7 @@ class PitchBendFineMessageTest {
         context.setMfiTrackNumber(2);
         MidiEvent[] events = new PitchBendFineMessage().init(0, 0xff, 0xe9, 0x40 | 0x23).getMidiEvents(context);
         assertEquals(1, events.length);
-        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, FuetrekMfiExclusive.SYSEX_FUNCTION_ID_FUETREK, FuetrekMfiExclusive.PITCH_BEND_FINE, 9, 0x23, (byte) 0xf7 },
+        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, FuetrekMfiExclusive.MFi_SYSEX_FUNCTION_ID_FUETREK, FuetrekMfiExclusive.PITCH_BEND_FINE, 9, 0x23, (byte) 0xf7 },
                 events[0].getMessage().getMessage());
     }
 }

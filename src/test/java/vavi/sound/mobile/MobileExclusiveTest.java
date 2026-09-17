@@ -20,9 +20,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static vavi.sound.mfi.vavi.sequencer.AudioDataSequencer.MFi_SYSEX_FUNCTION_ID_MFi4;
 import static vavi.sound.midi.MidiUtil.decode87;
+import static vavi.sound.smaf.vavi.sequencer.WaveSequencer.SMAF_SYSEX_FUNCTION_ID_WAVE;
 
 
 /**
@@ -51,7 +51,7 @@ class MobileExclusiveTest {
     static byte[] unpack(MidiMessage message) {
         byte[] data = ((SysexMessage) message).getData();
         assertEquals(VaviMidiDeviceProvider.MANUFACTURER_ID, data[0]);
-        assertEquals(MobileExclusive.SYSEX_FUNCTION_ID_PACKED, data[1]);
+        assertEquals(MobileExclusive.MIDI_SYSEX_FUNCTION_ID_PACKED, data[1]);
         byte[] encoded = Arrays.copyOfRange(data, 2, data.length - 1);
         byte[] decoded = new byte[encoded.length];
         return Arrays.copyOf(decoded, decode87(encoded, decoded, 0, encoded.length));
@@ -59,14 +59,10 @@ class MobileExclusiveTest {
 
     @Test
     void layout() {
-        byte[] wave = MobileExclusive.wave(3, MobileExclusive.Format.ADPCM, 1, 4, 8000, new byte[] {(byte) 0x81, 0x02});
-        assertArrayEquals(new byte[] {0x45, 0x10, 3, 0, 1, 4, 0x1f, 0x40, (byte) 0x81, 0x02, (byte) 0xf7}, wave);
-        assertArrayEquals(new byte[] {0x45, 0x11, 3, 100, 0x7f, (byte) 0xf7}, MobileExclusive.on(3, 100, MobileExclusive.NO_CHANNEL));
-        assertArrayEquals(new byte[] {0x45, 0x12, 3, (byte) 0xf7}, MobileExclusive.off(3));
-
-        assertEquals(MobileExclusive.Format.ADPCM, MobileExclusive.Format.valueOf(1));
-        assertEquals(MobileExclusive.Format.ADPCM, MobileExclusive.Format.valueOf(0x82));
-        assertEquals(MobileExclusive.Format.UNSIGNED, MobileExclusive.Format.valueOf(5));
+        byte[] wave = MobileExclusive.wave(MFi_SYSEX_FUNCTION_ID_MFi4, 3, 0x82, 1, 4, 8000, new byte[] {(byte) 0x81, 0x02});
+        assertArrayEquals(new byte[] {0x45, 0x02, 0x10, 3, (byte) 0x82, 1, 4, 0x1f, 0x40, (byte) 0x81, 0x02, (byte) 0xf7}, wave);
+        assertArrayEquals(new byte[] {0x45, 0x02, 0x11, 3, 100, 0x7f, (byte) 0xf7}, MobileExclusive.on(MFi_SYSEX_FUNCTION_ID_MFi4, 3, 100, MobileExclusive.NO_CHANNEL));
+        assertArrayEquals(new byte[] {0x45, 0x02, 0x12, 3, (byte) 0xf7}, MobileExclusive.off(MFi_SYSEX_FUNCTION_ID_MFi4, 3));
     }
 
     /** a stream wave of a smaf file and the wave of a wave table voice are told apart */
@@ -75,19 +71,12 @@ class MobileExclusiveTest {
         byte[] data = {0x12, (byte) 0x34};
         vavi.sound.smaf.vavi.message.MidiContext context = new vavi.sound.smaf.vavi.message.MidiContext();
 
-        MidiEvent[] events = new WaveDataMessage(2, 1, data, 8000, 4, 1).getMidiEvents(context);
+        MidiEvent[] events = new WaveDataMessage().init(2, 1, data, 8000, 4, 1).getMidiEvents(context);
         assertEquals(1, events.length);
-        assertArrayEquals(MobileExclusive.wave(2, MobileExclusive.Format.ADPCM, 1, 4, 8000, data), unpack(events[0].getMessage()));
+        assertArrayEquals(MobileExclusive.wave(SMAF_SYSEX_FUNCTION_ID_WAVE, 2, 1, 1, 4, 8000, data), unpack(events[0].getMessage()));
 
         // "EXWV", 43 05 00 id <adpcm> f7
-        events = new WaveDataMessage(2, 1, data, 8000, 4, 1).setWaveTable(true).getMidiEvents(context);
+        events = new WaveDataMessage().init(2, 1, data, 8000, 4, 1).setWaveTable(true).getMidiEvents(context);
         assertArrayEquals(new byte[] {0x43, 0x05, 0x00, 2, 0x12, 0x34, (byte) 0xf7}, unpack(events[0].getMessage()));
-    }
-
-    @Test
-    void enabled() {
-        assertTrue(MobileExclusive.isEnabled());
-        System.clearProperty(DISABLED);
-        assertFalse(MobileExclusive.isEnabled());
     }
 }

@@ -4,20 +4,20 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi.header;
+package vavi.sound.mfi.vavi.sub;
 
 import java.io.UnsupportedEncodingException;
 
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 
 
 /**
  * MFi Header Sub Chunk for copyright control information.
- * <li> TODO use {@link CodeMessage}
+ * <li> TODO use {@link CodeChunk}
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
-public class AuthMessage extends SubMessage {
+public class AuthChunk extends SubChunk {
 
     /** */
     public static final String TYPE = "auth";
@@ -28,18 +28,18 @@ public class AuthMessage extends SubMessage {
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      *
      * @param type ignored
      * @return this
      */
     @Override
-    public SubMessage init(String type, byte[] data) {
+    public SubChunk init(String type, byte[] data) {
         return super.init(TYPE, data);
     }
 
     /** */
-    public SubMessage init(String data) {
+    public SubChunk init(String data) {
         return super.init(TYPE, data);
     }
 

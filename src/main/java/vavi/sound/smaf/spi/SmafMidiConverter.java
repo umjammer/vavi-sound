@@ -4,9 +4,12 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.smaf;
+package vavi.sound.smaf.spi;
 
 import javax.sound.midi.InvalidMidiDataException;
+
+import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.sound.smaf.Sequence;
 
 
 /**
@@ -16,7 +19,7 @@ import javax.sound.midi.InvalidMidiDataException;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260912 nsano initial version <br>
  */
-public interface MidiConverter extends SmafDevice {
+public interface SmafMidiConverter {
 
     /** Converts to a SMAF sequence from a MIDI sequence. */
     @Deprecated
@@ -30,4 +33,10 @@ public interface MidiConverter extends SmafDevice {
     /** Converts to a MIDI sequence from a SMAF sequence. */
     javax.sound.midi.Sequence toMidiSequence(Sequence sequence)
         throws InvalidSmafDataException;
+
+    /** is conversion supported for the mfi sequence */
+    boolean isFileTypeSupported(Sequence sequence);
+
+    /** is conversion supported for the midi sequence */
+    boolean isFileTypeSupported(javax.sound.midi.Sequence sequence);
 }

@@ -4,12 +4,12 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi.header;
+package vavi.sound.mfi.vavi.sub;
 
 import java.io.UnsupportedEncodingException;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 
 
 /**
@@ -23,7 +23,7 @@ import vavi.sound.mfi.vavi.SubMessage;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
-public class VersMessage extends SubMessage {
+public class VersChunk extends SubChunk {
 
     /** */
     public static final String TYPE = "vers";
@@ -34,14 +34,14 @@ public class VersMessage extends SubMessage {
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      * <li>TODO length 4 check
      *
      * @param type ignored
      * @return
      */
     @Override
-    public SubMessage init(String type, byte[] data) {
+    public SubChunk init(String type, byte[] data) {
         return super.init(TYPE, data);
     }
 
@@ -49,7 +49,7 @@ public class VersMessage extends SubMessage {
      * TODO length 4 check
      * @param data 4 bytes number (ex. { '0', '3', '0', '1' })
      */
-    public SubMessage init(String data) {
+    public SubChunk init(String data) {
         return super.init(TYPE, data);
     }
 

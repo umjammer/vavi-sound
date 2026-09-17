@@ -19,6 +19,9 @@ import java.util.Properties;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.Sequence;
 import vavi.sound.mfi.spi.MfiFileWriter;
+import vavi.sound.mfi.vavi.sub.ProtChunk;
+import vavi.sound.mfi.vavi.sub.TitlChunk;
+import vavi.sound.mfi.vavi.sub.VersChunk;
 
 import static java.lang.System.getLogger;
 
@@ -44,13 +47,13 @@ public class VaviMfiFileWriter extends MfiFileWriter {
     /** MFi minor version */
     private static int defaultMinorType = HeaderChunk.MINOR_TYPE_ALL;
 
-    /** @see vavi.sound.mfi.vavi.header.TitlMessage */
+    /** @see TitlChunk */
     private static String defaultTitle = "untitled";
 
-    /** @see vavi.sound.mfi.vavi.header.VersMessage */
+    /** @see VersChunk */
     private static String defaultVersion = "0400";
 
-    /** @see vavi.sound.mfi.vavi.header.ProtMessage */
+    /** @see ProtChunk */
     private static String defaultCreator = "vavi";
 
     @Override
@@ -82,7 +85,7 @@ public class VaviMfiFileWriter extends MfiFileWriter {
 
     /**
      * @param in You can specify the contents of the header chunk by setting
-     *           various {@link SubMessage} to {@link Sequence#getTracks() Sequence#tracks}[0].
+     *           various {@link SubChunk} to {@link Sequence#getTracks() Sequence#tracks}[0].
      * @return 0: if fileType is not supported, if there is an error in the write data
      *         else: number of bytes written
      */
@@ -154,7 +157,7 @@ logger.log(Level.WARNING, e.getMessage(), e);
             // props
             Properties props = new Properties();
             final String path = "vavi.properties";
-            props.load(SubMessage.class.getResourceAsStream(path));
+            props.load(SubChunk.class.getResourceAsStream(path));
 
             String value = props.getProperty("format.type.major");
             if (value != null) {

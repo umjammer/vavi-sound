@@ -4,9 +4,9 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi.header;
+package vavi.sound.mfi.vavi.sub;
 
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 
 
 /**
@@ -20,7 +20,7 @@ import vavi.sound.mfi.vavi.SubMessage;
  * @version 0.00 030822 nsano initial version <br>
  *          0.01 030907 nsano complete <br>
  */
-public class NoteMessage extends SubMessage {
+public class NoteChunk extends SubChunk {
 
     /** */
     public static final String TYPE = "note";
@@ -31,18 +31,18 @@ public class NoteMessage extends SubMessage {
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      *
      * @param type ignored
      * @return this
      */
     @Override
-    public SubMessage init(String type, byte[] data) {
+    public SubChunk init(String type, byte[] data) {
         return super.init(TYPE, data);
     }
 
     /** */
-    public SubMessage init(int data) {
+    public SubChunk init(int data) {
         return super.init(TYPE, new byte[] {
             (byte) ((data & 0xff00) >> 8),
             (byte)  (data & 0x00ff)

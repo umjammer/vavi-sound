@@ -32,7 +32,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static vavi.sound.mfi.vavi.header.AinfMessage.META_FUNCTION_ID_AudioEngine;
+import static vavi.sound.mfi.vavi.sub.AinfChunk.META_FUNCTION_ID_AudioEngine;
 
 
 /**

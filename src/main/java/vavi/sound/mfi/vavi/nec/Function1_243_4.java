@@ -12,7 +12,6 @@ import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
 
@@ -34,7 +33,7 @@ public class Function1_243_4 implements MachineDependentFunction {
     /**
      * 0x01, 0xf3, 0x04 Stream Number Setting
      *
-     * @param message  see below
+     * @param data     see below
      *                 <pre>
      *                 0        delta
      *                 1        ff
@@ -54,10 +53,8 @@ public class Function1_243_4 implements MachineDependentFunction {
      * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message, Receiver receiver)
+    public void process(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
-
-        byte[] data = message.getMessage();
 
         this.maxStreamNumber = data[9] & 0x03;
 

@@ -72,6 +72,6 @@ logger.log(Level.DEBUG, "messages: " + messages.size());
      */
     @Override
     protected SmafMessage getHandyPhoneStandardMessage(int duration, int data, int gateTime) {
-        return new WaveMessage(duration, data, gateTime);
+        return new WaveMessage().init(duration, data, gateTime);
     }
 }

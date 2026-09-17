@@ -12,9 +12,6 @@ import javax.sound.midi.MetaEventListener;
 
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
-import vavi.sound.smaf.vavi.message.MidiContext;
-import vavi.sound.smaf.vavi.message.WaveMessage;
-import vavi.sound.smaf.vavi.sequencer.SmafMessageStore;
 
 import static java.lang.System.getLogger;
 

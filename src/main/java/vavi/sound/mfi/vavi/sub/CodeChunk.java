@@ -4,10 +4,10 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi.header;
+package vavi.sound.mfi.vavi.sub;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 
 
 /**
@@ -15,15 +15,15 @@ import vavi.sound.mfi.vavi.SubMessage;
  * <pre>
  *  &quot;code&quot; 4 bytes: code
  * </pre>
- * @see TitlMessage
- * @see CopyMessage
- * @see ProtMessage
- * @see AuthMessage
+ * @see TitlChunk
+ * @see CopyChunk
+ * @see ProtChunk
+ * @see AuthChunk
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 070125 nsano initial version <br>
  * @since MFi 5.0
  */
-public class CodeMessage extends SubMessage {
+public class CodeChunk extends SubChunk {
 
     /** */
     public static final String TYPE = "code";
@@ -34,18 +34,18 @@ public class CodeMessage extends SubMessage {
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      *
      * @param type ignored
      * @return this
      */
     @Override
-    public SubMessage init(String type, byte[] data) {
+    public SubChunk init(String type, byte[] data) {
         return super.init(TYPE, data);
     }
 
     /** TODO check endian */
-    public SubMessage init(int data) {
+    public SubChunk init(int data) {
         return super.init(TYPE, new byte[] {
             (byte) ((data & 0xff000000) >> 24),
             (byte) ((data & 0x00ff0000) >> 16),

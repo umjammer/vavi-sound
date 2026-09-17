@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi.header;
+package vavi.sound.mfi.vavi.sub;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,10 +17,11 @@ import javax.sound.midi.MidiEvent;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 import vavi.sound.midi.MidiConstants.MetaEvent;
-import vavi.sound.midi.VaviMidiDeviceProvider;
 import vavi.util.StringUtil;
+
+import static vavi.sound.mfi.vavi.VaviMfiDeviceProvider.MANUFACTURER_ID;
 
 
 /**
@@ -47,7 +48,7 @@ import vavi.util.StringUtil;
  * @version 0.00 050721 nsano initial version <br>
  * @since MFi 4.0
  */
-public class AinfMessage extends SubMessage
+public class AinfChunk extends SubChunk
     implements MidiConvertible {
 
     /** */
@@ -62,13 +63,13 @@ public class AinfMessage extends SubMessage
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      *
      * @param type ignored
      * @return this
      */
     @Override
-    public SubMessage init(String type, byte[] data) {
+    public SubChunk init(String type, byte[] data) {
         super.init(TYPE, data);
 
         // audio info ...
@@ -85,7 +86,7 @@ public class AinfMessage extends SubMessage
     }
 
     /** */
-    public SubMessage init(boolean audioChunkOnly, int audioChunksCount, AudioInfo ... audioInfos) {
+    public SubChunk init(boolean audioChunkOnly, int audioChunksCount, AudioInfo ... audioInfos) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int tmp = audioChunksCount;
@@ -196,7 +197,7 @@ public class AinfMessage extends SubMessage
         MetaMessage metaMessage = new MetaMessage();
         int format = audioInfos.getFirst().format;
         byte[] data = {
-                VaviMidiDeviceProvider.MANUFACTURER_ID,
+                MANUFACTURER_ID,
                 META_FUNCTION_ID_AudioEngine,
                 (byte) ((format / 0x100) & 0xff),
                 (byte) ((format % 0x100) & 0xff)

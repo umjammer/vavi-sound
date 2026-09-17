@@ -18,7 +18,6 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusive;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
 
@@ -161,10 +160,8 @@ abstract class ToneFunction implements MachineDependentFunction {
     }
 
     @Override
-    public void process(MachineDependentMessage message, Receiver receiver)
+    public void process(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
-
-        byte[] data = message.getMessage();
 
         int header = hasType() ? 3 : 2;
         List<Tone> tones = new ArrayList<>();

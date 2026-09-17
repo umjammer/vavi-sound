@@ -14,9 +14,7 @@ import javax.sound.midi.Receiver;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
-import vavi.sound.mobile.MobileExclusive;
 import vavi.sound.mobile.YamahaAudioEngine;
 
 import static java.lang.System.getLogger;
@@ -45,7 +43,7 @@ public class NecSequencer implements MachineDependentSequencer {
 
     /**
      *
-     * @param message  see below
+     * @param data     see below
      *                 <pre>
      *                 0        delta
      *                 1        ff
@@ -59,10 +57,8 @@ public class NecSequencer implements MachineDependentSequencer {
      * @param receiver
      */
     @Override
-    public void sequence(MachineDependentMessage message, Receiver receiver)
+    public void sequence(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
-
-        byte[] data = message.getMessage();
 
         int f1 = data[6] & 0xff;
         int f2;
@@ -81,7 +77,7 @@ logger.log(Level.DEBUG, "%02x %02x".formatted(f1, f2));
         }
 
         MachineDependentFunction mdf = MachineDependentFunction.Factory.getFunction(key);
-        mdf.process(message, receiver);
+        mdf.process(data, receiver);
     }
 
     // ----

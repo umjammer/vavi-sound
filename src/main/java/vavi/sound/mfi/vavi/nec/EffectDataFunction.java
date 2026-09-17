@@ -13,7 +13,6 @@ import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
 import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
@@ -67,10 +66,8 @@ abstract class EffectDataFunction implements MachineDependentFunction {
     }
 
     @Override
-    public void process(MachineDependentMessage message, Receiver receiver)
+    public void process(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
-
-        byte[] data = message.getMessage();
 
         setData(Arrays.copyOfRange(data, 9, data.length));
 

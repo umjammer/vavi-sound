@@ -4,7 +4,9 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi.header;
+package vavi.sound.mfi.vavi.sub;
+
+import java.io.UnsupportedEncodingException;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -12,7 +14,7 @@ import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
@@ -23,69 +25,78 @@ import vavi.sound.midi.MidiUtil;
 
 
 /**
- * MFi Header Sub Chunk for data management and data protection information.
+ * MFi Header Sub Chunk for title information.
  * <pre>
- *  &quot;prot&quot; n bytes: data managing
- *  MIDI {@link MidiConstants.MetaEvent#META_TEXT_EVENT META_TEXT_EVENT (0x01)}
+ *  &quot;titl&quot; n byte: mld title, &lt; 16 bytes expected, SJIS encoded
+ *  MIDI {@link MidiConstants.MetaEvent#META_NAME META_NAME (0x03)}
  * </pre>
- * <li> TODO use {@link CodeMessage}
+ * <li> TODO use {@link CodeChunk}
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
- *          0.01 030905 nsano implements {@link MfiConvertible} <br>
  */
-public class ProtMessage extends SubMessage
+public class TitlChunk extends SubChunk
     implements MidiConvertible, MfiConvertible {
 
     /** */
-    public static final String TYPE = "prot";
+    public static final String TYPE = "titl";
 
     @Override
     public boolean accept(String key) {
-        return "meta.1".equals(key) || TYPE.equals(key);
+        return "meta.3".equals(key) || TYPE.equals(key);
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      *
      * @param type ignored
      * @return this
      */
     @Override
-    public ProtMessage init(String type, byte[] data) {
-        return (ProtMessage) super.init(TYPE, data);
+    public TitlChunk init(String type, byte[] data) {
+        return (TitlChunk) super.init(TYPE, data);
     }
 
     /** for creator */
-    public ProtMessage init(String data) {
-        return (ProtMessage) super.init(TYPE, data);
+    public TitlChunk init(String data) {
+        return (TitlChunk) super.init(TYPE, data);
     }
 
     /** */
-    public String getProt() {
-        return new String(getData());
+    public String getTitle() {
+        try {
+            return new String(getData(), readingEncoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /** */
-    public void setProt(String prot) throws InvalidMfiDataException {
+    public void setTitle(String title)
+        throws InvalidMfiDataException {
 
-        setData(prot.getBytes());
+        try {
+            setData(title.getBytes(writingEncoding));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
     public String toString() {
-        return "prot: " + getDataLength() + ": " + getProt();
+        return "titl: " + getDataLength() +
+               ": \"" + getTitle() + "\"";
     }
 
     // ----
 
-    /** Meta 0x01 */
+    /** Meta 0x03 */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
         MetaMessage metaMessage = new MetaMessage();
 
-        metaMessage.setMessage(MetaEvent.META_TEXT_EVENT.number(),
+        metaMessage.setMessage(MetaEvent.META_NAME.number(),    // sequence name/track name
                                getData(),
                                getDataLength());
 
@@ -100,7 +111,7 @@ public class ProtMessage extends SubMessage
 
         MetaMessage metaMessage = (MetaMessage) midiEvent.getMessage();
 
-        ProtMessage mfiMessage = new ProtMessage().init(MidiUtil.getDecodedMessage(metaMessage.getMessage()));
+        TitlChunk mfiMessage = new TitlChunk().init(MidiUtil.getDecodedMessage(metaMessage.getMessage()));
 
         return new MfiEvent[] {
             new MfiEvent(mfiMessage, midiEvent.getTick())

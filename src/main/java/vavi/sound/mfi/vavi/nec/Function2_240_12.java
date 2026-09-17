@@ -15,7 +15,6 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusive;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
 import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
@@ -99,7 +98,7 @@ public class Function2_240_12 implements MachineDependentFunction {
     /**
      * 0x02, 0xf0, 0x0c ToneSetting
      *
-     * @param message  see below
+     * @param data     see below
      *                 <pre>
      *                 0        delta
      *                 1        ff
@@ -125,10 +124,8 @@ public class Function2_240_12 implements MachineDependentFunction {
      * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message, Receiver receiver)
+    public void process(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
-
-        byte[] data = message.getMessage();
 
         this.bank     =  data[ 9] & 0x7f;
         this.drum     = (data[ 9] & 0x80) != 0;

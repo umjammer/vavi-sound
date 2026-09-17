@@ -64,7 +64,7 @@ public abstract class MachineDependentMessage extends SysexMessage {
          * @param data 0: maker id ... , 8bit!
          */
         public static SysexMessage getSysexMessage(int duration, int status, byte[] data, int length) throws InvalidSmafDataException {
-logger.log(Level.DEBUG, "smaf sysex: %d, ".formatted(data[0] & 0xff) + length + " bytes\n" + StringUtil.getDump(data, 32));
+logger.log(Level.TRACE, "smaf sysex: %d, ".formatted(data[0] & 0xff) + length + " bytes\n" + StringUtil.getDump(data, 32));
 //            assert data[data.length - 1] == (byte) 0xf7;
 
             SysexMessage sysexMessage = switch (data[0]) {

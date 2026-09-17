@@ -27,11 +27,27 @@ import java.util.concurrent.TimeUnit;
  * <ul>
  *  <li>{@code vavi.sound.mobile.AudioEngine.volume} ... adpcm volume</li>
  *  <li>{@code vavi.sound.mobile.AudioEngine.workers} ... audio engine thread pool size</li>
+ *  <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... see {@link #isDisabled()}</li>
  * </ul>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051116 nsano initial version <br>
  */
 public interface AudioEngine {
+
+    /**
+     * Whether the MIDI synthesizer behind us, not an engine of ours, plays the waves of a
+     * file ({@code vavi.sound.mobile.AudioEngine.disabled}, default {@code false}).
+     * <p>
+     * Such a synthesizer plays the file's own voices too, so what a message converts to is
+     * what the file says and not what a GM one would make of it: the program of a SMAF
+     * drum channel stays the drum kit it is ({@code Bank_Program3} of the MA-3 driver)
+     * instead of becoming 0.
+     * </p>
+     * @see MobileExclusive
+     */
+    static boolean isDisabled() {
+        return Boolean.getBoolean("vavi.sound.mobile.AudioEngine.disabled");
+    }
 
     /**
      * Checks if the format is acceptable by this engine.
@@ -163,17 +179,8 @@ logger.log(Level.WARNING, "adpcm still playing at jvm shutdown, cut off");
 
         /**
          * runs an adpcm play/stop task delayed by {@link #getDelay()}.
-         * <p>
-         * when {@code vavi.sound.mobile.AudioEngine.disabled} is set there is no engine to
-         * synchronize with the synthesizer: the task only turns into exclusives, see
-         * {@link MobileExclusive#capture}, and runs at once so they are there when it returns.
-         * </p>
          */
         public static void schedule(Runnable task) {
-            if (MobileExclusive.isEnabled()) {
-                task.run();
-                return;
-            }
             try {
                 scheduler.schedule(() -> {
                     try {

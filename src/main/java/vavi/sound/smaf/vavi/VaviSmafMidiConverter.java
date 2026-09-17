@@ -22,8 +22,7 @@ import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.MetaMessage;
-import vavi.sound.smaf.MidiConverter;
-import vavi.sound.smaf.SmafDevice;
+import vavi.sound.smaf.spi.SmafMidiConverter;
 import vavi.sound.smaf.SmafEvent;
 import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.Track;
@@ -31,10 +30,10 @@ import vavi.sound.smaf.vavi.chunk.ChannelStatus;
 import vavi.sound.smaf.vavi.chunk.ScoreTrackChunk;
 import vavi.sound.smaf.vavi.chunk.TrackChunk.FormatType;
 import vavi.sound.smaf.vavi.chunk.TrackChunk.SequenceType;
-import vavi.sound.smaf.vavi.message.MidiContext;
-import vavi.sound.smaf.vavi.message.MidiConvertible;
 import vavi.sound.smaf.vavi.message.BankSelectMessage;
 import vavi.sound.smaf.vavi.message.ExpressionMessage;
+import vavi.sound.smaf.vavi.message.MidiContext;
+import vavi.sound.smaf.vavi.message.MidiConvertible;
 import vavi.sound.smaf.vavi.message.ModulationMessage;
 import vavi.sound.smaf.vavi.message.NoteMessage;
 import vavi.sound.smaf.vavi.message.PanMessage;
@@ -55,34 +54,9 @@ import static java.lang.System.getLogger;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 071012 nsano initial version <br>
  */
-class VaviSmafMidiConverter implements MidiConverter {
+public class VaviSmafMidiConverter implements SmafMidiConverter {
 
     private static final Logger logger = getLogger(VaviSmafMidiConverter.class.getName());
-
-    /** the device information */
-    static final SmafDevice.Info info =
-        new SmafDevice.Info("Java MIDI, SMAF Sequence Converter",
-                            "vavi",
-                            "Format Converter between MIDI and SMAF",
-                            "Version " + VaviSmafDeviceProvider.version) {};
-
-    @Override
-    public Info getDeviceInfo() {
-        return info;
-    }
-
-    @Override
-    public void close() {
-    }
-
-    @Override
-    public boolean isOpen() {
-        return true;
-    }
-
-    @Override
-    public void open() {
-    }
 
 /** debug */
 private final Set<Class<? extends SmafMessage>> uc = new HashSet<>();
@@ -97,6 +71,16 @@ private final Set<Class<? extends SmafMessage>> uc = new HashSet<>();
 logger.log(Level.ERROR, e.getMessage(), e);
             throw new InvalidSmafDataException(e);
         }
+    }
+
+    @Override
+    public boolean isFileTypeSupported(vavi.sound.smaf.Sequence sequence) {
+        return true; // TODO
+    }
+
+    @Override
+    public boolean isFileTypeSupported(Sequence sequence) {
+        return true; // TODO
     }
 
     /** */

@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 
 
 /**
@@ -115,7 +115,7 @@ class SubData {
     static {
         try {
             Properties props = new Properties();
-            props.load(SubMessage.class.getResourceAsStream("/vavi/sound/smaf/vavi/chunk/tag.properties"));
+            props.load(SubChunk.class.getResourceAsStream("/vavi/sound/smaf/vavi/chunk/tag.properties"));
 
             for (String name : props.stringPropertyNames()) {
                 String[] pair = props.getProperty(name).split(",");

@@ -10,12 +10,15 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import javax.sound.midi.MetaEventListener;
 
+import vavi.sound.mfi.vavi.sub.CopyChunk;
+import vavi.sound.mfi.vavi.sub.ProtChunk;
+import vavi.sound.mfi.vavi.sub.TitlChunk;
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
-import vavi.sound.midi.VaviMidiDeviceProvider;
 
 import static java.lang.System.getLogger;
-import static vavi.sound.mfi.vavi.header.AinfMessage.META_FUNCTION_ID_AudioEngine;
+import static vavi.sound.mfi.vavi.VaviMfiDeviceProvider.MANUFACTURER_ID;
+import static vavi.sound.mfi.vavi.sub.AinfChunk.META_FUNCTION_ID_AudioEngine;
 
 
 /**
@@ -29,9 +32,9 @@ class MetaEventAdapter implements MetaEventListener {
     private static final Logger logger = getLogger(MetaEventAdapter.class.getName());
 
     /**
-     * @see vavi.sound.mfi.vavi.header.CopyMessage#getMidiEvents(MidiContext)
-     * @see vavi.sound.mfi.vavi.header.ProtMessage#getMidiEvents(MidiContext)
-     * @see vavi.sound.mfi.vavi.header.TitlMessage#getMidiEvents(MidiContext)
+     * @see CopyChunk#getMidiEvents(MidiContext)
+     * @see ProtChunk#getMidiEvents(MidiContext)
+     * @see TitlChunk#getMidiEvents(MidiContext)
      * @see vavi.sound.mfi.vavi.track.TempoMessage#getMidiEvents(MidiContext)
      */
     @Override
@@ -50,7 +53,7 @@ logger.log(Level.DEBUG, "this handler ignore meta: " + message.getType());
         case META_MACHINE_DEPEND:
             byte[] data = message.getData();
             if (data.length > 2 &&
-                    data[0] == VaviMidiDeviceProvider.MANUFACTURER_ID &&
+                    data[0] == MANUFACTURER_ID &&
                     data[1] == META_FUNCTION_ID_AudioEngine
             ) {
                 int format = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);

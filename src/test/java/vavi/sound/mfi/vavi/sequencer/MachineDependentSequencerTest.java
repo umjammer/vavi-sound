@@ -22,31 +22,36 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class MachineDependentSequencerTest {
 
+    byte[] data(int key) {
+        byte[] b = new byte[8];
+        b[7] = (byte) key;
+        return b;
+    }
+
     @Test
     void test() {
 
-        MachineDependentSequencer mds = MachineDependentSequencer.Factory.getSequencer(97);
+        MachineDependentSequencer mds = MachineDependentSequencer.Factory.getSequencer(data(97));
 Debug.println(mds);
         assertInstanceOf(vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer.class, mds);
 
-        mds = MachineDependentSequencer.Factory.getSequencer(17);
+        mds = MachineDependentSequencer.Factory.getSequencer(data(17));
         assertInstanceOf(vavi.sound.mfi.vavi.nec.NecSequencer.class, mds);
 
-        mds = MachineDependentSequencer.Factory.getSequencer(113);
+        mds = MachineDependentSequencer.Factory.getSequencer(data((113)));
         assertInstanceOf(vavi.sound.mfi.vavi.sharp.SharpSequencer.class, mds);
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            MachineDependentSequencer.Factory.getSequencer(0);
-        });
+        mds = MachineDependentSequencer.Factory.getSequencer(data(0));
+        assertInstanceOf(vavi.sound.mfi.vavi.sequencer.UnknownVendorSequencer.class, mds);
 
         // TODO recursive dependency
-        mds = MachineDependentSequencer.Factory.getSequencer(33);
+        mds = MachineDependentSequencer.Factory.getSequencer(data(33));
         assertInstanceOf(vavi.sound.mfi.vavi.fujitsu.FujitsuSequencer.class, mds);
 
-        mds = MachineDependentSequencer.Factory.getSequencer(49);
+        mds = MachineDependentSequencer.Factory.getSequencer(data(49));
         assertInstanceOf(vavi.sound.mfi.vavi.sony.SonySequencer.class, mds);
 
-        mds = MachineDependentSequencer.Factory.getSequencer(65);
+        mds = MachineDependentSequencer.Factory.getSequencer(data(65));
         assertInstanceOf(vavi.sound.mfi.vavi.panasonic.PanasonicSequencer.class, mds);
     }
 

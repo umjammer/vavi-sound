@@ -14,10 +14,11 @@ import java.util.List;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
-import vavi.sound.mfi.vavi.AudioDataMessage;
-import vavi.sound.mfi.vavi.header.AinfMessage;
-import vavi.sound.mfi.vavi.header.ExstMessage;
-import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer.Factory;
+import vavi.sound.mfi.vavi.AudioDataChunk;
+import vavi.sound.mfi.vavi.AudioDataChunk.AudioDataMessage;
+import vavi.sound.mfi.vavi.sub.AinfChunk;
+import vavi.sound.mfi.vavi.sub.ExstChunk;
+import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer.AudioEngineFactory;
 import vavi.sound.mfi.vavi.track.AudioChannelPanpotMessage;
 import vavi.sound.mfi.vavi.track.AudioChannelVolumeMessage;
 import vavi.sound.mfi.vavi.track.AudioPlayMessage;
@@ -134,16 +135,16 @@ logger.log(Level.DEBUG, "delta: " + delta);
     private static List<MfiEvent> getAudioEventsType1(byte[] data, int sampleRate, int bits, int channels) {
         List<MfiEvent> events = new ArrayList<>();
         // exst
-        events.add(new MfiEvent(new ExstMessage().init(1), 0L));
+        events.add(new MfiEvent(new ExstChunk().init(1), 0L));
 
         // ainf
-        events.add(new MfiEvent(new AinfMessage().init(false, 1), 0L));
+        events.add(new MfiEvent(new AinfChunk().init(false, 1), 0L));
 
         // audio data
-        AudioEngine audioEngine = Factory.getAudioEngine(0x80); // TODO 0x80 is not defined in spec
+        AudioEngine audioEngine = AudioEngineFactory.getAudioEngine(0x80); // TODO 0x80 is not defined in spec
         byte[] adpcm = audioEngine.encode(bits, channels, data);
-        AdpmMessage adpmMessage = (AdpmMessage) new AdpmMessage().init(sampleRate / 1000, bits, false, channels);
-        AudioDataMessage audioData = new AudioDataMessage(0x80, 0x00, adpmMessage); // TODO 0x80 is not defined in spec
+        AdpmChunk adpmMessage = (AdpmChunk) new AdpmChunk().init(sampleRate / 1000, bits, false, channels);
+        AudioDataMessage audioData = new AudioDataMessage().init(0x80, 0x00, adpmMessage); // TODO 0x80 is not defined in spec
         audioData.setData(adpcm);
         events.add(new MfiEvent(audioData, 0L));
 
@@ -155,16 +156,16 @@ logger.log(Level.DEBUG, "delta: " + delta);
         List<MfiEvent> events = new ArrayList<>();
 
         // exst
-        events.add(new MfiEvent(new ExstMessage().init(1), 0L));
+        events.add(new MfiEvent(new ExstChunk().init(1), 0L));
 
         // ainf
-        events.add(new MfiEvent(new AinfMessage().init(false, 1, new AinfMessage.AudioInfo(0x81, new byte[] { 0x10, 0x08, 0x10, 0x10, 0x08, 0x10 })), 0L));
+        events.add(new MfiEvent(new AinfChunk().init(false, 1, new AinfChunk.AudioInfo(0x81, new byte[] { 0x10, 0x08, 0x10, 0x10, 0x08, 0x10 })), 0L));
 
         // audio data
-        AudioEngine audioEngine = Factory.getAudioEngine(0x81);
+        AudioEngine audioEngine = AudioEngineFactory.getAudioEngine(0x81);
         byte[] adpcm = audioEngine.encode(bits, channels, data);
-        AdpmMessage adpmMessage = (AdpmMessage) new AdpmMessage().init(sampleRate / 1000, bits, false, channels);
-        AudioDataMessage audioData = new AudioDataMessage(AudioDataMessage.FORMAT_ADPCM_TYPE2, 0x00, adpmMessage);
+        AdpmChunk adpmMessage = (AdpmChunk) new AdpmChunk().init(sampleRate / 1000, bits, false, channels);
+        AudioDataMessage audioData = new AudioDataMessage().init(AudioDataMessage.FORMAT_ADPCM_TYPE2, 0x00, adpmMessage);
         audioData.setData(adpcm);
         events.add(new MfiEvent(audioData, 0L));
 

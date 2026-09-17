@@ -12,8 +12,13 @@ import java.util.HashSet;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import javax.sound.midi.Receiver;
+
 import vavi.sound.mobile.AudioEngine;
+import vavi.sound.mobile.MobileExclusive;
 import vavi.sound.smaf.InvalidSmafDataException;
+import vavi.sound.smaf.vavi.message.WaveDataMessage;
+import vavi.sound.smaf.vavi.message.WaveMessage;
 
 import static java.lang.System.getLogger;
 
@@ -26,16 +31,44 @@ import static java.lang.System.getLogger;
  */
 public interface WaveSequencer {
 
+    Logger logger = getLogger(WaveSequencer.class.getName());
+
     /** manufacturer vavi function id for {@link WaveSequencer} */
-    int SYSEX_FUNCTION_ID_SMAF = 0x03;
+    int SMAF_SYSEX_FUNCTION_ID_WAVE = 0x03;
 
-    /** */
-    void sequence() throws InvalidSmafDataException;
+    /** undefined */
+    class UnknownSequencer implements WaveSequencer {
+        int functionId;
+        UnknownSequencer init(int functionId) {
+            this.functionId = functionId;
+            return this;
+        }
+        @Override
+        public void sequence(byte[] data, Receiver receiver) throws InvalidSmafDataException {
+            logger.log(Level.WARNING, "function: %02x".formatted(functionId));
+        }
+    }
 
-    /** factory */
-    class Factory {
+    /**
+     * @param data 0xf0 0x45 0x03
+     */
+    static WaveSequencer factory(byte[] data) {
+        int functionId = data[2] & 0xff;
+        return switch (functionId) { // TODO use service loader?
+            case MobileExclusive.WAVE -> new WaveDataMessage();
+            case MobileExclusive.ON -> new WaveMessage();
+            case MobileExclusive.OFF -> new WaveMessage();
+            default -> new UnknownSequencer().init(functionId);
+        };
+    }
 
-        private static final Logger logger = getLogger(Factory.class.getName());
+    /** assumed as stateless, don't use instance field in this method */
+    void sequence(byte[] data, Receiver receiver) throws InvalidSmafDataException;
+
+    /** audio engine factory */
+    class AudioEngineFactory {
+
+        private static final Logger logger = getLogger(AudioEngineFactory.class.getName());
 
         /** */
         private static final ThreadLocal<AudioEngine> audioEngineStore = new ThreadLocal<>();

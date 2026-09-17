@@ -17,8 +17,8 @@ import javax.sound.midi.Synthesizer;
 
 import org.junit.jupiter.api.Test;
 
-import vavi.sound.mfi.vavi.VaviSynthesizer.VaviReceiver;
-import vavi.sound.smaf.vavi.VaviSmafSynthesizer.SmafReceiver;
+import vavi.sound.mfi.vavi.VaviMfiSynthesizer.VaviMfiReceiver;
+import vavi.sound.smaf.vavi.VaviSmafSynthesizer.VaviSmafReceiver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -75,11 +75,11 @@ class ReceiverTest {
 
     @Test
     void smafReceiver() throws Exception {
-        test(SmafReceiver::new);
+        test(VaviSmafReceiver::new);
     }
 
     @Test
     void mfiReceiver() throws Exception {
-        test(VaviReceiver::new);
+        test(VaviMfiReceiver::new);
     }
 }

@@ -15,7 +15,6 @@ import java.util.ServiceLoader;
 import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static java.lang.System.getLogger;
 
@@ -25,7 +24,7 @@ import static java.lang.System.getLogger;
  * <p>
  * Currently, an implementation class of this interface must be an bean.
  * (means having a contractor without argument)
- * {@link #process(MachineDependentMessage, Receiver)} related must be state less.
+ * {@link #process(byte[], Receiver)} related must be state less.
  * </p>
  * <pre>
  * properties file ... any
@@ -45,7 +44,7 @@ public interface MachineDependentFunction {
     String getId();
 
     /** sequence a midi sysex */
-    void process(MachineDependentMessage message, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException;
+    void process(byte[] data, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException;
 
     /** factory */
     class Factory {

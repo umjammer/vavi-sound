@@ -57,7 +57,7 @@ public class YamahaMfiExclusiveCapture implements Receiver {
         byte[] data = sysexMessage.getData();
         if (data.length < 3 ||
                 (data[0] & 0xff) != (VaviMidiDeviceProvider.MANUFACTURER_ID & 0xff) ||
-                (data[1] & 0xff) != MobileExclusive.SYSEX_FUNCTION_ID_PACKED) {
+                (data[1] & 0xff) != MobileExclusive.MIDI_SYSEX_FUNCTION_ID_PACKED) {
             return;
         }
         byte[] encoded = Arrays.copyOfRange(data, 2, data.length - 1);

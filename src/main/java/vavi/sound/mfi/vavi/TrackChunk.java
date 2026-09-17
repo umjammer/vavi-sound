@@ -22,7 +22,9 @@ import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.ShortMessage;
 import vavi.sound.mfi.SysexMessage;
 import vavi.sound.mfi.Track;
+import vavi.sound.mfi.vavi.AudioDataChunk.AudioDataMessage;
 import vavi.sound.mfi.vavi.TrackMessage.SysexTrackMessage;
+import vavi.sound.mfi.vavi.sub.NoteChunk;
 import vavi.sound.mfi.vavi.track.UndefinedMessage;
 import vavi.util.StringUtil;
 
@@ -145,7 +147,7 @@ try {
     /**
      * @before {@link #noteLength}, {@link #exst} are must be set
      * @after {@link #length} will be set as Track Chunk length
-     * @throws IllegalStateException {@link vavi.sound.mfi.vavi.header.NoteMessage} length or
+     * @throws IllegalStateException {@link NoteChunk} length or
      *         {@link #exst} is not set
      * @throws InvalidMfiDataException at the beginning of <code>is</code> is not {@link #TYPE}
      */
@@ -363,7 +365,7 @@ logger.log(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended s
         sb.append(TYPE).append("\n");
         try (var dc = getDC().open()) {
             track.stream()
-                    .filter(e -> !(e.getMessage() instanceof SubMessage))
+                    .filter(e -> !(e.getMessage() instanceof SubChunk))
                     .filter(e -> !(e.getMessage() instanceof AudioDataMessage))
                     .forEach(e -> sb.append(dc.format(e.getMessage().toString())));
         }
@@ -403,7 +405,7 @@ logger.log(Level.WARNING, "long unhandled: delta: %02x, status: %02x, extended s
         }
 
         /** for rotten mfi: chunk types which may follow a track chunk */
-        private static final List<String> nextTypes = List.of(TYPE, HeaderChunk.TYPE, AudioDataMessage.TYPE);
+        private static final List<String> nextTypes = List.of(TYPE, HeaderChunk.TYPE, AudioDataChunk.TYPE);
 
         /**
          * for rotten mfi: peeks the next 4 bytes as a chunk type, {@code null} when the stream ends.

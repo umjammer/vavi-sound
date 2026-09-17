@@ -22,14 +22,15 @@ import vavi.sound.mfi.MfiFileFormat;
 import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.Sequence;
 import vavi.sound.mfi.Track;
-import vavi.sound.mfi.vavi.header.AinfMessage;
-import vavi.sound.mfi.vavi.header.ExstMessage;
-import vavi.sound.mfi.vavi.header.NoteMessage;
-import vavi.sound.mfi.vavi.header.ProtMessage;
-import vavi.sound.mfi.vavi.header.SorcMessage;
-import vavi.sound.mfi.vavi.header.SuptMessage;
-import vavi.sound.mfi.vavi.header.TitlMessage;
-import vavi.sound.mfi.vavi.header.VersMessage;
+import vavi.sound.mfi.vavi.AudioDataChunk.AudioDataMessage;
+import vavi.sound.mfi.vavi.sub.AinfChunk;
+import vavi.sound.mfi.vavi.sub.ExstChunk;
+import vavi.sound.mfi.vavi.sub.NoteChunk;
+import vavi.sound.mfi.vavi.sub.ProtChunk;
+import vavi.sound.mfi.vavi.sub.SorcChunk;
+import vavi.sound.mfi.vavi.sub.SuptChunk;
+import vavi.sound.mfi.vavi.sub.TitlChunk;
+import vavi.sound.mfi.vavi.sub.VersChunk;
 
 import static java.lang.System.getLogger;
 
@@ -100,7 +101,7 @@ public class VaviMfiFileFormat extends MfiFileFormat {
     /** */
     private HeaderChunk headerChunk;
 
-    List<AudioDataMessage> audioDataChunks = new ArrayList<>();
+    List<AudioDataChunk> audioDataChunks = new ArrayList<>();
 
     List<TrackChunk> trackChunks = new ArrayList<>();
 
@@ -124,12 +125,12 @@ public class VaviMfiFileFormat extends MfiFileFormat {
         // retrieve header information
         this.headerChunk = new HeaderChunk(new HeaderChunk.Support() {
             @Override
-            public void init(Map<String, SubMessage> subChunks) {
+            public void init(Map<String, SubChunk> subChunks) {
                 Track track = VaviMfiFileFormat.this.sequence.getTracks()[0];
                 for (int j = 0; j < track.size(); j++) {
                     MfiEvent event = track.get(j);
                     MfiMessage message = event.getMessage();
-                    if (message instanceof SubMessage subChunk) {
+                    if (message instanceof SubChunk subChunk) {
                         //logger.log(Level.TRACE, infoMessage);
                         subChunks.put(subChunk.getSubType(), subChunk);
                     }
@@ -193,7 +194,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
      * Gets all audio data chunks.
      * @since MFi 4.0
      */
-    private List<AudioDataMessage> getAudioDatum() {
+    private List<AudioDataMessage> getAudioDataMessages() {
         List<AudioDataMessage> result = new ArrayList<>();
         Track track = sequence.getTracks()[0];
         for (int j = 0; j < track.size(); j++) {
@@ -209,7 +210,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
     /** types of messages omitted when exporting with {@link Track}[0] */
     static boolean isIgnored(MfiMessage message) {
         // TODO is it ideal to omit just SysexMessage?
-        return message instanceof SubMessage || message instanceof AudioDataMessage;
+        return message instanceof SubChunk || message instanceof AudioDataMessage;
     }
 
     /**
@@ -217,7 +218,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
      * @after {@link #byteLength} will be set
      * @after <code>os</code> will be {@link java.io.OutputStream#flush() flush}
      * @throws IllegalStateException when sequence is not set
-     * @throws InvalidMfiDataException minimum {@link SubMessage}
+     * @throws InvalidMfiDataException minimum {@link SubChunk}
      *         { {@link #setSorc(int) "sorc"},
      *         {@link #setTitle(String) "titl"},
      *         {@link #setVersion(String) "vers"} }
@@ -233,7 +234,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
         headerChunk.writeTo(os);
 
         // 2. audio data
-        for (AudioDataMessage audioData : getAudioDatum()) {
+        for (AudioDataMessage audioData : getAudioDataMessages()) {
             audioData.writeTo(os);
         }
 
@@ -266,7 +267,7 @@ logger.log(Level.DEBUG, "audioDataLength: " + audioDataLength);
         int tracksCount = mff.headerChunk.getTracksCount();
         int audioDataCount = mff.getAudioDataChunkCount();
 //        boolean isAudioDataOnly = mff.isAudioDataOnly();
-        Map<String, SubMessage> headerSubChunks = mff.headerChunk.getSubChunks();
+        Map<String, SubChunk> headerSubChunks = mff.headerChunk.getSubChunks();
         mff.audioDataChunks = new ArrayList<>();
 int dataLength = mff.headerChunk.getMfiDataLength() - (2 + mff.headerChunk.getDataLength());
 int l = 0;
@@ -275,12 +276,12 @@ int l = 0;
         for (int audioDataNumber = 0; audioDataNumber < audioDataCount; audioDataNumber++) {
 logger.log(Level.DEBUG, "audio data number: " + audioDataNumber);
 
-            AudioDataMessage audioDataChunk = new AudioDataMessage(audioDataNumber);
+            AudioDataChunk audioDataChunk = new AudioDataChunk(audioDataNumber);
             audioDataChunk.readFrom(is);
 
             mff.audioDataChunks.add(audioDataChunk);
 
-l += audioDataChunk.getLength();
+l += audioDataChunk.getAudioDataMessage().getLength();
 logger.log(Level.DEBUG, "adat length sum: " + l + " / " + dataLength);
         }
 
@@ -321,19 +322,19 @@ logger.log(Level.DEBUG, "is rest: " + is.available());
      * @param audioDataChunks source 2
      * @param track dest, must be track 0 and empty
      */
-    private static void doSpecial(Map<String, SubMessage> headerSubChunks,
-                                  List<AudioDataMessage> audioDataChunks,
+    private static void doSpecial(Map<String, SubChunk> headerSubChunks,
+                                  List<AudioDataChunk> audioDataChunks,
                                   Track track) {
         // insert SubMessage at top of Track 0
         // TODO it seems to be done in HeaderChunk???
-        for (SubMessage headerSubChunk : headerSubChunks.values()) {
+        for (SubChunk headerSubChunk : headerSubChunks.values()) {
             track.add(new MfiEvent(headerSubChunk, 0L));
         }
 
         // insert AudioDataMessage at next header sub chunks of Track 0
-        for (AudioDataMessage audioDataChunk : audioDataChunks) {
+        for (AudioDataChunk audioDataChunk : audioDataChunks) {
             // TODO convert to {@link SysexMessage}???
-            track.add(new MfiEvent(audioDataChunk, 0L));
+            track.add(new MfiEvent(audioDataChunk.getAudioDataMessage(), 0L));
         }
     }
 
@@ -367,10 +368,10 @@ logger.log(Level.DEBUG, "is rest: " + is.available());
     /**
      * Length of {@link vavi.sound.mfi.NoteMessage}
      * @return 0: 3 bytes, 1: 4bytes
-     * @see NoteMessage
+     * @see NoteChunk
      */
     public int getNoteLength() {
-        NoteMessage subChunk = (NoteMessage) headerChunk.getSubChunks().get(NoteMessage.TYPE);
+        NoteChunk subChunk = (NoteChunk) headerChunk.getSubChunks().get(NoteChunk.TYPE);
         if (subChunk != null) {
             return subChunk.getNoteLength();
         } else {
@@ -382,132 +383,132 @@ logger.log(Level.INFO, "no note info, use 0");
     /**
      * Length of {@link vavi.sound.mfi.NoteMessage}
      * @param noteLength 0: 3 bytes, 1: 4bytes
-     * @see NoteMessage
+     * @see NoteChunk
      */
     public void setNoteLength(int noteLength) {
-        NoteMessage subChunk = (NoteMessage) headerChunk.getSubChunks().get(NoteMessage.TYPE);
+        NoteChunk subChunk = (NoteChunk) headerChunk.getSubChunks().get(NoteChunk.TYPE);
         if (subChunk != null) {
             subChunk.setNoteLength(noteLength);
         } else {
-            headerChunk.getSubChunks().put(NoteMessage.TYPE, new NoteMessage().init(noteLength));
+            headerChunk.getSubChunks().put(NoteChunk.TYPE, new NoteChunk().init(noteLength));
         }
     }
 
     /**
      * @return 0: not protected, 1: protected
      * @throws NoSuchElementException when the sorc chunk is not found
-     * @see SorcMessage
+     * @see SorcChunk
      */
     public int getSorc() {
-        SorcMessage subChunk = (SorcMessage) headerChunk.getSubChunks().get(SorcMessage.TYPE);
+        SorcChunk subChunk = (SorcChunk) headerChunk.getSubChunks().get(SorcChunk.TYPE);
         if (subChunk != null) {
             return subChunk.getSorc();
         } else {
-            throw new NoSuchElementException(SorcMessage.TYPE);
+            throw new NoSuchElementException(SorcChunk.TYPE);
         }
     }
 
     /**
      * protected or not
      * @param sorc 0: not protected, 1: protected
-     * @see SorcMessage
+     * @see SorcChunk
      */
     public void setSorc(int sorc) throws InvalidMfiDataException {
 
-        SorcMessage subChunk = (SorcMessage) headerChunk.getSubChunks().get(SorcMessage.TYPE);
+        SorcChunk subChunk = (SorcChunk) headerChunk.getSubChunks().get(SorcChunk.TYPE);
         if (subChunk != null) {
             subChunk.setSorc(sorc);
         } else {
-            headerChunk.getSubChunks().put(SorcMessage.TYPE, new SorcMessage().init(sorc));
+            headerChunk.getSubChunks().put(SorcChunk.TYPE, new SorcChunk().init(sorc));
         }
     }
 
     /**
      * @throws NoSuchElementException when a title chunk is not found
-     * @see TitlMessage
+     * @see TitlChunk
      */
     public String getTitle() {
-        TitlMessage subChunk = (TitlMessage) headerChunk.getSubChunks().get(TitlMessage.TYPE);
+        TitlChunk subChunk = (TitlChunk) headerChunk.getSubChunks().get(TitlChunk.TYPE);
         if (subChunk != null) {
             return subChunk.getTitle();
         } else {
-            throw new NoSuchElementException(TitlMessage.TYPE);
+            throw new NoSuchElementException(TitlChunk.TYPE);
         }
     }
 
     /**
-     * @see TitlMessage
+     * @see TitlChunk
      */
     public void setTitle(String title) throws InvalidMfiDataException {
 
-        TitlMessage subChunk = (TitlMessage) headerChunk.getSubChunks().get(TitlMessage.TYPE);
+        TitlChunk subChunk = (TitlChunk) headerChunk.getSubChunks().get(TitlChunk.TYPE);
         if (subChunk != null) {
             subChunk.setTitle(title);
         } else {
-            headerChunk.getSubChunks().put(TitlMessage.TYPE, new TitlMessage().init(title));
+            headerChunk.getSubChunks().put(TitlChunk.TYPE, new TitlChunk().init(title));
         }
     }
 
     /**
      * @throws NoSuchElementException when a version chunk is not found
-     * @see VersMessage
+     * @see VersChunk
      */
     public String getVersion() {
-        VersMessage subChunk = (VersMessage) headerChunk.getSubChunks().get(VersMessage.TYPE);
+        VersChunk subChunk = (VersChunk) headerChunk.getSubChunks().get(VersChunk.TYPE);
         if (subChunk != null) {
             return subChunk.getVersion();
         } else {
-            throw new NoSuchElementException(VersMessage.TYPE);
+            throw new NoSuchElementException(VersChunk.TYPE);
         }
     }
 
     /**
      * @param version 4 byte number as string (ex. "0400")
-     * @see VersMessage
+     * @see VersChunk
      */
     public void setVersion(String version) throws InvalidMfiDataException {
 
-        VersMessage subChunk = (VersMessage) headerChunk.getSubChunks().get(VersMessage.TYPE);
+        VersChunk subChunk = (VersChunk) headerChunk.getSubChunks().get(VersChunk.TYPE);
         if (subChunk != null) {
             subChunk.setVersion(version);
         } else {
-            headerChunk.getSubChunks().put(VersMessage.TYPE, new VersMessage().init(version));
+            headerChunk.getSubChunks().put(VersChunk.TYPE, new VersChunk().init(version));
         }
     }
 
     /**
      * Gets copyright string.
-     * @see ProtMessage
+     * @see ProtChunk
      */
     public String getProt() {
-        ProtMessage subChunk = (ProtMessage) headerChunk.getSubChunks().get(ProtMessage.TYPE);
+        ProtChunk subChunk = (ProtChunk) headerChunk.getSubChunks().get(ProtChunk.TYPE);
         if (subChunk != null) {
             return subChunk.getProt();
         } else {
-            throw new NoSuchElementException(ProtMessage.TYPE);
+            throw new NoSuchElementException(ProtChunk.TYPE);
         }
     }
 
     /**
      * Sets copyright string.
-     * @see ProtMessage
+     * @see ProtChunk
      */
     public void setProt(String prot) throws InvalidMfiDataException {
 
-        ProtMessage subChunk = (ProtMessage) headerChunk.getSubChunks().get(ProtMessage.TYPE);
+        ProtChunk subChunk = (ProtChunk) headerChunk.getSubChunks().get(ProtChunk.TYPE);
         if (subChunk != null) {
             subChunk.setProt(prot);
         } else {
-            headerChunk.getSubChunks().put(ProtMessage.TYPE, new ProtMessage().init(prot));
+            headerChunk.getSubChunks().put(ProtChunk.TYPE, new ProtChunk().init(prot));
         }
     }
 
     /**
      * Gets Extended Status A length.
-     * @see ExstMessage
+     * @see ExstChunk
      */
     public int getExst() {
-        ExstMessage subChunk = (ExstMessage) headerChunk.getSubChunks().get(ExstMessage.TYPE);
+        ExstChunk subChunk = (ExstChunk) headerChunk.getSubChunks().get(ExstChunk.TYPE);
         if (subChunk != null) {
             return subChunk.getExst();
         } else {
@@ -517,15 +518,15 @@ logger.log(Level.INFO, "no note info, use 0");
 
     /**
      * Sets Extended Status A length.
-     * @see ExstMessage
+     * @see ExstChunk
      */
     public void setExst(int exst) throws InvalidMfiDataException {
 
-        ExstMessage subChunk = (ExstMessage) headerChunk.getSubChunks().get(ExstMessage.TYPE);
+        ExstChunk subChunk = (ExstChunk) headerChunk.getSubChunks().get(ExstChunk.TYPE);
         if (subChunk != null) {
             subChunk.setExst(exst);
         } else {
-            headerChunk.getSubChunks().put(ExstMessage.TYPE, new ExstMessage().init(exst));
+            headerChunk.getSubChunks().put(ExstChunk.TYPE, new ExstChunk().init(exst));
         }
     }
 
@@ -534,14 +535,14 @@ logger.log(Level.INFO, "no note info, use 0");
      * <p>
      * this can be used for terminal type detection
      * </p>
-     * @see SuptMessage
+     * @see SuptChunk
      */
     public String getSupt() {
-        SuptMessage subChunk = (SuptMessage) headerChunk.getSubChunks().get(SuptMessage.TYPE);
+        SuptChunk subChunk = (SuptChunk) headerChunk.getSubChunks().get(SuptChunk.TYPE);
         if (subChunk != null) {
             return subChunk.getSupt();
         } else {
-            throw new NoSuchElementException(SuptMessage.TYPE);
+            throw new NoSuchElementException(SuptChunk.TYPE);
         }
     }
 
@@ -550,25 +551,25 @@ logger.log(Level.INFO, "no note info, use 0");
      *
      * TODO when creating mfi, add this for type detection
      *
-     * @see SuptMessage
+     * @see SuptChunk
      */
     public void setSupt(String supt) throws InvalidMfiDataException {
 
-        SuptMessage subChunk = (SuptMessage) headerChunk.getSubChunks().get(SuptMessage.TYPE);
+        SuptChunk subChunk = (SuptChunk) headerChunk.getSubChunks().get(SuptChunk.TYPE);
         if (subChunk != null) {
             subChunk.setSupt(supt);
         } else {
-            headerChunk.getSubChunks().put(SuptMessage.TYPE, new SuptMessage().init(supt));
+            headerChunk.getSubChunks().put(SuptChunk.TYPE, new SuptChunk().init(supt));
         }
     }
 
     /**
      * Gets AudioDataChunk count.
-     * @see AinfMessage
+     * @see AinfChunk
      * @since MFi 4.0
      */
     public int getAudioDataChunkCount() {
-        AinfMessage subChunk = (AinfMessage) headerChunk.getSubChunks().get(AinfMessage.TYPE);
+        AinfChunk subChunk = (AinfChunk) headerChunk.getSubChunks().get(AinfChunk.TYPE);
         if (subChunk != null) {
             return subChunk.getAudioChunksCount();
         } else {
@@ -578,11 +579,11 @@ logger.log(Level.INFO, "no note info, use 0");
 
     /**
      * Whether does it consist of AudioDataChunk only?
-     * @see AinfMessage
+     * @see AinfChunk
      * @since MFi 4.0
      */
     public boolean isAudioDataOnly() {
-        AinfMessage subChunk = (AinfMessage) headerChunk.getSubChunks().get(AinfMessage.TYPE);
+        AinfChunk subChunk = (AinfChunk) headerChunk.getSubChunks().get(AinfChunk.TYPE);
         if (subChunk != null) {
             return subChunk.isAudioChunkOnly();
         } else {

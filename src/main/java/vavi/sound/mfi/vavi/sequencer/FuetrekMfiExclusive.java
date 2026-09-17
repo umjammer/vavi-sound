@@ -9,7 +9,7 @@ package vavi.sound.mfi.vavi.sequencer;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.SysexMessage;
 
-import vavi.sound.midi.VaviMidiDeviceProvider;
+import static vavi.sound.mfi.vavi.VaviMfiDeviceProvider.MANUFACTURER_ID;
 
 
 /**
@@ -35,7 +35,7 @@ public final class FuetrekMfiExclusive {
     }
 
     /** vavi sysex function id */
-    public static final int SYSEX_FUNCTION_ID_FUETREK = 0x04;
+    public static final int MFi_SYSEX_FUNCTION_ID_FUETREK = 0x04;
 
     /** sub id: mfi bank */
     public static final int BANK = 0x01;
@@ -50,8 +50,8 @@ public final class FuetrekMfiExclusive {
     public static SysexMessage message(int sub, int... data) throws InvalidMidiDataException {
         byte[] bytes = new byte[data.length + 5];
         bytes[0] = (byte) 0xf0;
-        bytes[1] = VaviMidiDeviceProvider.MANUFACTURER_ID;
-        bytes[2] = SYSEX_FUNCTION_ID_FUETREK;
+        bytes[1] = MANUFACTURER_ID;
+        bytes[2] = MFi_SYSEX_FUNCTION_ID_FUETREK;
         bytes[3] = (byte) sub;
         for (int i = 0; i < data.length; i++) {
             bytes[4 + i] = (byte) (data[i] & 0x7f);
@@ -68,7 +68,7 @@ public final class FuetrekMfiExclusive {
      */
     public static int sub(byte[] message) {
         if (message.length >= 5 && (message[0] & 0xff) == 0xf0
-                && message[1] == VaviMidiDeviceProvider.MANUFACTURER_ID && message[2] == SYSEX_FUNCTION_ID_FUETREK) {
+                && message[1] == MANUFACTURER_ID && message[2] == MFi_SYSEX_FUNCTION_ID_FUETREK) {
             return message[3] & 0x7f;
         }
         return -1;

@@ -6,12 +6,14 @@
 
 package vavi.sound.mobile;
 
+import java.text.Format;
+import java.util.Arrays;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.SysexMessage;
 
-import vavi.sound.midi.VaviMidiDeviceProvider;
-
+import static vavi.sound.midi.MidiUtil.decode87;
 import static vavi.sound.midi.MidiUtil.encode87;
+import static vavi.sound.midi.VaviMidiDeviceProvider.MANUFACTURER_ID;
 
 
 /**
@@ -24,7 +26,7 @@ import static vavi.sound.midi.MidiUtil.encode87;
  * "Mwa*" chunk to the chip directly, and a note on a stream channel starts it.
  * So the wave data and the start / stop of an MFi audio message or a SMAF PCM
  * audio track need one of their own, which is this, sent packed 8 bit into 7
- * the way every other smaf exclusive is ({@link #pack}):
+ * the way every other smaf exclusive is ({@link #packedSystex}):
  * </p>
  * <pre>
  *  f0 45 7f &lt;encode87(payload)&gt; f7
@@ -64,7 +66,7 @@ public final class MobileExclusive {
     }
 
     /** 7bit packed sysex message for 8bit smaf sysex message */
-    public static final int SYSEX_FUNCTION_ID_PACKED = 0x7f;
+    public static final int MIDI_SYSEX_FUNCTION_ID_PACKED = 0x7f;
 
     /** sub id: a stream wave */
     public static final int WAVE = 0x10;
@@ -83,97 +85,103 @@ public final class MobileExclusive {
     /** end of exclusive */
     private static final int EOX = 0xf7;
 
-    /** the sample encoding of a stream wave, the ordinal is what the {@code ff} byte carries */
-    public enum Format {
-        /** 4 bit YAMAHA adpcm, {@code vavi.sound.adpcm.ma} */
-        ADPCM,
-        /** signed (2's complement) pcm, 16 bit ones big endian */
-        SIGNED,
-        /** offset binary pcm */
-        UNSIGNED;
-
-        /**
-         * @param format the format number an {@link AudioEngine} is chosen by,
-         *               {@code 1}: smaf adpcm, {@code 0x82}: MFi adpcm, {@code 0} / {@code 4}: signed pcm,
-         *               {@code 5}: offset binary pcm, see {@code vavi.sound.smaf.vavi.chunk.WaveType}
-         * @return null when unknown
-         */
-        public static Format valueOf(int format) {
-            return switch (format) {
-                case 1, 0x82 -> ADPCM;
-                case 0, 4 -> SIGNED;
-                case 5 -> UNSIGNED;
-                default -> null;
-            };
-        }
-    }
-
-    /** whether a wave, a start, a stop ... goes as an exclusive instead of into an {@link AudioEngine} */
-    public static boolean isEnabled() {
-        return Boolean.getBoolean("vavi.sound.mobile.AudioEngine.disabled");
-    }
-
     /**
+     * @param functionId mfi/smaf sysex function id
      * @param id 1 ~ 127
      * @param data 8 bit, as it is in the file
      */
-    public static byte[] wave(int id, Format format, int channels, int bits, int samplingRate, byte[] data) {
-        byte[] exclusive = new byte[8 + data.length + 1];
-        exclusive[0] = VaviMidiDeviceProvider.MANUFACTURER_ID;
-        exclusive[1] = WAVE;
-        exclusive[2] = (byte) (id & 0x7f);
-        exclusive[3] = (byte) format.ordinal();
-        exclusive[4] = (byte) channels;
-        exclusive[5] = (byte) bits;
-        exclusive[6] = (byte) ((samplingRate >> 8) & 0xff);
-        exclusive[7] = (byte) (samplingRate & 0xff);
-        System.arraycopy(data, 0, exclusive, 8, data.length);
+    public static byte[] wave(int functionId, int id, int format, int channels, int bits, int samplingRate, byte[] data) {
+        byte[] exclusive = new byte[9 + data.length + 1];
+        exclusive[0] = (byte) MANUFACTURER_ID;
+        exclusive[1] = (byte) functionId;
+        exclusive[2] = WAVE;
+        exclusive[3] = (byte) (id & 0x7f);
+        exclusive[4] = (byte) format;
+        exclusive[5] = (byte) channels;
+        exclusive[6] = (byte) bits;
+        exclusive[7] = (byte) ((samplingRate >> 8) & 0xff);
+        exclusive[8] = (byte) (samplingRate & 0xff);
+        System.arraycopy(data, 0, exclusive, 9, data.length);
         exclusive[exclusive.length - 1] = (byte) EOX;
         return exclusive;
     }
 
     /**
+     * @param functionId mfi/smaf sysex function id
      * @param velocity 0 ~ 127
      * @param channel 0 ~ 3, {@link #NO_CHANNEL} when the stream has none
      */
-    public static byte[] on(int id, int velocity, int channel) {
-        return new byte[] {VaviMidiDeviceProvider.MANUFACTURER_ID, ON, (byte) (id & 0x7f), (byte) (velocity & 0x7f), (byte) (channel & 0x7f), (byte) EOX};
+    public static byte[] on(int functionId, int id, int velocity, int channel) {
+        return new byte[] {(byte) MANUFACTURER_ID, (byte) functionId, ON, (byte) (id & 0x7f), (byte) (velocity & 0x7f), (byte) (channel & 0x7f), (byte) EOX};
     }
 
-    /** */
-    public static byte[] off(int id) {
-        return new byte[] {VaviMidiDeviceProvider.MANUFACTURER_ID, OFF, (byte) (id & 0x7f), (byte) EOX};
+    /**
+     * @param functionId mfi/smaf sysex function id
+     */
+    public static byte[] off(int functionId, int id) {
+        return new byte[] {(byte) MANUFACTURER_ID, (byte) functionId, OFF, (byte) (id & 0x7f), (byte) EOX};
     }
 
-    /** @param volume 0 ~ 127 */
-    public static byte[] volume(int channel, int volume) {
-        return new byte[] {VaviMidiDeviceProvider.MANUFACTURER_ID, VOLUME, (byte) (channel & 0x7f), (byte) (volume & 0x7f), (byte) EOX};
+    /**
+     * @param functionId mfi/smaf sysex function id
+     * @param volume 0 ~ 127
+     */
+    public static byte[] volume(int functionId, int channel, int volume) {
+        return new byte[] {(byte) MANUFACTURER_ID, (byte) functionId, VOLUME, (byte) (channel & 0x7f), (byte) (volume & 0x7f), (byte) EOX};
     }
 
-    /** @param panpot 0 ~ 127, center 64 */
-    public static byte[] panpot(int channel, int panpot) {
-        return new byte[] {VaviMidiDeviceProvider.MANUFACTURER_ID, PANPOT, (byte) (channel & 0x7f), (byte) (panpot & 0x7f), (byte) EOX};
+    /**
+     * @param functionId mfi/smaf sysex function id
+     * @param panpot 0 ~ 127, center 64
+     */
+    public static byte[] panpot(int functionId, int channel, int panpot) {
+        return new byte[] {(byte) MANUFACTURER_ID, (byte) functionId, PANPOT, (byte) (channel & 0x7f), (byte) (panpot & 0x7f), (byte) EOX};
     }
 
     /**
      * Packs an 8 bit smaf exclusive the way
+     * {@link vavi.sound.mfi.vavi.track.MachineDependentMessage},
      * {@link vavi.sound.smaf.vavi.message.yamaha.YamahaMessage} does.
-     *
+     */
+    public static SysexMessage packedSystex(byte[] exclusive) throws InvalidMidiDataException {
+        byte[] data = pack(exclusive);
+
+        SysexMessage sysexMessage = new SysexMessage();
+        sysexMessage.setMessage(0xf0, data, data.length);
+        return sysexMessage;
+    }
+
+    /**
      * @param exclusive 0: manufacturer id ... last: 0xf7, 8 bit
      */
-    public static SysexMessage pack(byte[] exclusive) throws InvalidMidiDataException {
+    public static byte[] pack(byte[] exclusive) {
         byte[] encoded = new byte[exclusive.length * 8 / 7 + 1];
         int encodedLength = encode87(exclusive, encoded, 0, exclusive.length);
 
         // pack 7bit
         byte[] data = new byte[2 + encodedLength + 1];
-        data[0] = (byte) VaviMidiDeviceProvider.MANUFACTURER_ID;
-        data[1] = (byte) SYSEX_FUNCTION_ID_PACKED;
+        data[0] = (byte) MANUFACTURER_ID;
+        data[1] = (byte) MIDI_SYSEX_FUNCTION_ID_PACKED;
         System.arraycopy(encoded, 0, data, 2, encodedLength);
         data[data.length - 1] = exclusive[exclusive.length - 1]; // 0xf7
 
-        SysexMessage sysexMessage = new SysexMessage();
-        sysexMessage.setMessage(0xf0, data, data.length);
-        return sysexMessage;
+        return data;
+    }
+
+    /**
+     * @param data 45 7f packed 7bit data ... 7f
+     */
+    public static byte[] unpack(byte[] data) {
+        // (f0) 45 7f {encoded ...} f7, the packer encodes the whole exclusive
+        // including its own trailing 0xf7 and then repeats that 0xf7 raw, so every
+        // encoded byte is data[2] ... data[length - 2] and the decoded exclusive
+        // already ends with 0xf7. Cutting one byte short here loses the last
+        // block's high bit flags, which shows up as stray 0x80s in the tail of a
+        // voice.
+        assert data[0] == MANUFACTURER_ID && data[1] == MIDI_SYSEX_FUNCTION_ID_PACKED : "not vavi packed";
+        byte[] encoded = Arrays.copyOfRange(data, 2, data.length - 1);
+        byte[] decoded = new byte[((encoded.length + 1) * 7) / 8]; // for 8bits data
+        int n = decode87(encoded, decoded, 0, encoded.length);
+        return Arrays.copyOf(decoded, n);
     }
 }

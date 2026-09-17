@@ -14,7 +14,6 @@ import javax.sound.midi.Receiver;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.mobile.FuetrekAudioEngine;
 
@@ -43,21 +42,20 @@ public class MitsubishiSequencer implements MachineDependentSequencer {
 
     /**
      *
-     * @param message  see below
+     * @param data     45 01 + mfi sysex
      * @param receiver
      */
     @Override
-    public void sequence(MachineDependentMessage message, Receiver receiver)
+    public void sequence(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
 
-        byte[] data = message.getMessage();
-        int function = data[6] & 0xff;
+        int function = data[6 + 2] & 0xff;
 logger.log(Level.TRACE, "function: 0x%02x".formatted(function));
 
         String key = VENDOR_MITSUBISHI + "." + function;
 
         MachineDependentFunction mdf = MachineDependentFunction.Factory.getFunction(key);
-        mdf.process(message, receiver);
+        mdf.process(data, receiver);
     }
 
     // ----

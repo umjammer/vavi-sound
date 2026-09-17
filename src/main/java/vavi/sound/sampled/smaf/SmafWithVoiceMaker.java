@@ -39,7 +39,7 @@ import vavi.sound.smaf.vavi.message.EndOfSequenceMessage;
 import vavi.sound.smaf.vavi.message.NopMessage;
 import vavi.sound.smaf.vavi.message.VolumeMessage;
 import vavi.sound.smaf.vavi.message.WaveMessage;
-import vavi.sound.smaf.vavi.sequencer.WaveSequencer;
+import vavi.sound.smaf.vavi.sequencer.WaveSequencer.AudioEngineFactory;
 
 import static java.lang.System.getLogger;
 
@@ -177,7 +177,7 @@ logger.log(Level.DEBUG, "moduloOfChunks: " + moduloOfChunks);
         messageBytes += message.getLength();
 //logger.log(Level.TRACE, "messageBytes: volume: " + messageBytes);
         for (int i = 0; i < numberOfChunks; i++) {
-            message = new WaveMessage(0, 0, streamNumber++, NopMessage.maxSteps);
+            message = new WaveMessage().init(0, 0, streamNumber++, NopMessage.maxSteps);
             audioSequenceDataChunk.addSmafMessage(message);
             messageBytes += message.getLength();
 //logger.log(Level.TRACE, "messageBytes: wave: " + messageBytes);
@@ -188,7 +188,7 @@ logger.log(Level.DEBUG, "moduloOfChunks: " + moduloOfChunks);
 //logger.log(Level.TRACE, "messageBytes: nop: " + messageBytes);
         }
         if (moduloOfChunks != 0) {
-            message = new WaveMessage(0, 0, streamNumber++, moduloOfChunks);
+            message = new WaveMessage().init(0, 0, streamNumber++, moduloOfChunks);
             audioSequenceDataChunk.addSmafMessage(message);
             messageBytes += message.getLength();
 //logger.log(Level.TRACE, "messageBytes: wave: " + messageBytes);
@@ -205,7 +205,7 @@ logger.log(Level.DEBUG, "moduloOfChunks: " + moduloOfChunks);
         seekAndPhraseInfoChunk.setStopPoint(messageBytes);
 logger.log(Level.DEBUG, "sp: " + messageBytes);
 
-        AudioEngine audioEngine = WaveSequencer.Factory.getAudioEngine(ADPCM);
+        AudioEngine audioEngine = AudioEngineFactory.getAudioEngine(ADPCM);
         int chunkSize = numberOfChunks == 0 ? 0 : data.length / numberOfChunks;
 logger.log(Level.DEBUG, "chunkSize: " + chunkSize);
         int moduloChunkSize = numberOfChunks == 0 ? data.length : data.length % chunkSize;

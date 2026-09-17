@@ -13,6 +13,7 @@ import java.util.Properties;
 
 import vavi.sound.mfi.MfiDevice;
 import vavi.sound.mfi.spi.MfiDeviceProvider;
+import vavi.sound.mfi.spi.MfiMidiConverter;
 
 import static java.lang.System.getLogger;
 
@@ -23,7 +24,7 @@ import static java.lang.System.getLogger;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 020629 nsano initial version <br>
  *          0.10 020703 nsano complete <br>
- *          0.11 030819 nsano add {@link vavi.sound.mfi.MidiConverter} <br>
+ *          0.11 030819 nsano add {@link MfiMidiConverter} <br>
  */
 public class VaviMfiDeviceProvider extends MfiDeviceProvider {
 
@@ -46,6 +47,12 @@ logger.log(Level.ERROR, e.getMessage(), e);
         }
     }
 
+    /**
+     * TODO used without asking
+     * 0x45 is "unused"
+     */
+    public final static int MANUFACTURER_ID = 0x45;
+
     /** */
     public static final String version;
 
@@ -62,23 +69,19 @@ logger.log(Level.ERROR, e.getMessage(), e);
     @Override
     public MfiDevice.Info[] getDeviceInfo() {
         return new MfiDevice.Info[] {
-                VaviSequencer.info,
-                VaviSynthesizer.info,
-                VaviMidiConverter.info
+                VaviMfiSequencer.info,
+                VaviMfiSynthesizer.info
         };
     }
 
     @Override
     public MfiDevice getDevice(MfiDevice.Info info) {
-        if (info == VaviSynthesizer.info) {
-            VaviSynthesizer synthesizer = new VaviSynthesizer();
+        if (info == VaviMfiSynthesizer.info) {
+            VaviMfiSynthesizer synthesizer = new VaviMfiSynthesizer();
             return synthesizer;
-        } else if (info == VaviSequencer.info) {
-            VaviSequencer sequencer = new VaviSequencer();
+        } else if (info == VaviMfiSequencer.info) {
+            VaviMfiSequencer sequencer = new VaviMfiSequencer();
             return sequencer;
-        } else if (info == VaviMidiConverter.info) {
-            VaviMidiConverter converter = new VaviMidiConverter();
-            return converter;
         } else {
             throw new IllegalArgumentException("info is not suitable for this provider");
         }

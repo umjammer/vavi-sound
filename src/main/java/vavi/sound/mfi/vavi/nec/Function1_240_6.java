@@ -14,7 +14,6 @@ import javax.sound.midi.Receiver;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusive;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 
 import static vavi.sound.mfi.vavi.nec.NecSequencer.VENDOR_NEC;
 
@@ -56,7 +55,7 @@ public class Function1_240_6 implements MachineDependentFunction {
     /**
      * 0x01, 0xf0, 0x06 Extended WT waveform specification
      *
-     * @param message  see below
+     * @param data     see below
      *                 <pre>
      *                 0        delta
      *                 1        ff
@@ -77,10 +76,8 @@ public class Function1_240_6 implements MachineDependentFunction {
      * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message, Receiver receiver)
+    public void process(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
-
-        byte[] data = message.getMessage();
 
         if (data.length < 11) {
             throw new InvalidMfiDataException("WT-WaveSetting is too short: " + (data.length - 9));

@@ -4,11 +4,11 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi.header;
+package vavi.sound.mfi.vavi.sub;
 
 import java.util.Date;
 
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 
 
 /**
@@ -22,7 +22,7 @@ import vavi.sound.mfi.vavi.SubMessage;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
-public class DateMessage extends SubMessage {
+public class DateChunk extends SubChunk {
 
     /** */
     public static final String TYPE = "date";
@@ -33,19 +33,19 @@ public class DateMessage extends SubMessage {
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      * <li>TODO format, 8 byte check
      *
      * @param type ignored
      * @return this
      */
     @Override
-    public SubMessage init(String type, byte[] data) {
+    public SubChunk init(String type, byte[] data) {
         return super.init(TYPE, data);
     }
 
     /** TODO format, 8 byte check */
-    public SubMessage init(Date date) {
+    public SubChunk init(Date date) {
         return super.init(TYPE, date.toString());
     }
 

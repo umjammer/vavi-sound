@@ -31,11 +31,11 @@ public class YamahaMessage extends MachineDependentMessage implements MidiConver
 
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
-        // getLength() is the length of the whole smaf message, the data is what is packed
+        // data 0: manufacturer id ... last: 0xf7, 8 bit
         byte[] data = getData();
 
-        SysexMessage sysexMessage = MobileExclusive.pack(data);
-logger.log(Level.DEBUG, "midi sysex: %02x, ".formatted(sysexMessage.getMessage()[0] & 0xff) + sysexMessage.getLength() + " bytes\n" + StringUtil.getDump(sysexMessage.getData(), 32));
+        SysexMessage sysexMessage = MobileExclusive.packedSystex(data);
+logger.log(Level.TRACE, "midi sysex: %02x, ".formatted(sysexMessage.getMessage()[0] & 0xff) + sysexMessage.getLength() + " bytes\n" + StringUtil.getDump(sysexMessage.getData(), 32));
 
         return new MidiEvent[] {
             new MidiEvent(sysexMessage, context.getCurrentTick())

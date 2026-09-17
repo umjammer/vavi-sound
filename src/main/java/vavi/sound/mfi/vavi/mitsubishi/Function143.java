@@ -14,7 +14,6 @@ import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
-import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.util.StringUtil;
 
 import static vavi.sound.mfi.vavi.mitsubishi.MitsubishiSequencer.VENDOR_MITSUBISHI;
@@ -39,7 +38,7 @@ public class Function143 implements MachineDependentFunction {
     /**
      * 0x8f Wave Setup
      *
-     * @param message  see below
+     * @param data     see below
      *                 <pre>
      *                  0    delta
      *                  1    ff
@@ -51,10 +50,8 @@ public class Function143 implements MachineDependentFunction {
      * @param receiver
      */
     @Override
-    public void process(MachineDependentMessage message, Receiver receiver)
+    public void process(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
-
-        byte[] data = message.getMessage();
 
         int index = HEADER_LENGTH;
         while (index < data.length) {

@@ -4,7 +4,7 @@
  * Programmed by Naohide Sano
  */
 
-package vavi.sound.mfi.vavi.header;
+package vavi.sound.mfi.vavi.sub;
 
 import java.io.UnsupportedEncodingException;
 
@@ -14,7 +14,7 @@ import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
-import vavi.sound.mfi.vavi.SubMessage;
+import vavi.sound.mfi.vavi.SubChunk;
 import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
@@ -30,11 +30,11 @@ import vavi.sound.midi.MidiUtil;
  *  &quot;copy&quot; n bytes: copyright
  *  MIDI {@link MidiConstants.MetaEvent#META_COPYRIGHT META_COPYRIGHT (0x02)}
  * </pre>
- * <li> TODO use {@link CodeMessage}
+ * <li> TODO use {@link CodeChunk}
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
-public class CopyMessage extends SubMessage implements MidiConvertible, MfiConvertible {
+public class CopyChunk extends SubChunk implements MidiConvertible, MfiConvertible {
 
     /** */
     public static final String TYPE = "copy";
@@ -45,19 +45,19 @@ public class CopyMessage extends SubMessage implements MidiConvertible, MfiConve
     }
 
     /**
-     * for {@link SubMessage#readFrom(java.io.InputStream)}
+     * for {@link SubChunk#readFrom(java.io.InputStream)}
      *
      * @param type ignored
      * @return this
      */
     @Override
-    public CopyMessage init(String type, byte[] data) {
-        return (CopyMessage) super.init(TYPE, data);
+    public CopyChunk init(String type, byte[] data) {
+        return (CopyChunk) super.init(TYPE, data);
     }
 
     /** for creator */
-    public CopyMessage init(String data) {
-        return (CopyMessage) super.init(TYPE, data);
+    public CopyChunk init(String data) {
+        return (CopyChunk) super.init(TYPE, data);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class CopyMessage extends SubMessage implements MidiConvertible, MfiConve
 
         MetaMessage metaMessage = (MetaMessage) midiEvent.getMessage();
 
-        CopyMessage mfiMessage = new CopyMessage().init(MidiUtil.getDecodedMessage(metaMessage.getMessage()));
+        CopyChunk mfiMessage = new CopyChunk().init(MidiUtil.getDecodedMessage(metaMessage.getMessage()));
 
         return new MfiEvent[] {
             new MfiEvent(mfiMessage, midiEvent.getTick())

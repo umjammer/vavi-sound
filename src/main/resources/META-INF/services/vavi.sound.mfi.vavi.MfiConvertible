@@ -1,6 +1,6 @@
-vavi.sound.mfi.vavi.header.CopyMessage
-vavi.sound.mfi.vavi.header.ProtMessage
-vavi.sound.mfi.vavi.header.TitlMessage
+vavi.sound.mfi.vavi.sub.CopyChunk
+vavi.sound.mfi.vavi.sub.ProtChunk
+vavi.sound.mfi.vavi.sub.TitlChunk
 vavi.sound.mfi.vavi.track.ChangeVoiceMessage
 vavi.sound.mfi.vavi.track.EndOfTrackMessage
 vavi.sound.mfi.vavi.track.ExpressionMessage

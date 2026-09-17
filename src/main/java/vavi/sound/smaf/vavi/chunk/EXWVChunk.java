@@ -171,7 +171,7 @@ logger.log(Level.DEBUG, FOURCC + ": " + size + ", waveId: " + waveId + ", adpcm:
 
     public SmafMessage getSmafMessage() {
         WaveType waveType = new WaveType(1, 1, samplingRate, 4); // mono, adpcm, 4 bit
-        return new WaveDataMessage(
+        return new WaveDataMessage().init(
                 waveId,
                 waveType.getWaveFormat(),
                 data,

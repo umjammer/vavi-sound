@@ -89,7 +89,7 @@ logger.log(Level.DEBUG, "StreamWaveData[" + waveNumber + "]: " + size);
     SmafMessage toSmafMessage() {
         int waveNumber = this.getWaveNumber();
         byte[] waveData = this.getWaveData();
-        WaveDataMessage waveDataMessage = new WaveDataMessage(
+        WaveDataMessage waveDataMessage = new WaveDataMessage().init(
               waveNumber,
               waveType.getWaveFormat(),
               waveData,
