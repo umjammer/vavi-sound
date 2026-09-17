@@ -16,7 +16,7 @@ Please refer to {@link javax.sound.midi} for usage.
 
 ### License
 
-Because the original source is not found
+Because the original source is not found.
 Although it seems that there is no need to worry about the primary license,
 I'll note this down just in case.
 
@@ -32,3 +32,6 @@ I'll note this down just in case.
 * ~~The method of obtaining MfiSystem converter is different from others~~ ... what's?
 * ~~090110 MfiSystem#main does not sound...~~
 * type detection, synthesizer changer
+  * ~~machine dependent message~~ ... no vendor info
+  * ainf since mfi v4.0
+  * supt -> meta vendor specific 0x7f

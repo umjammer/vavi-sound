@@ -26,4 +26,4 @@ Provides a class for MFi service provider implementation example.
  * ~~ADPCM also plays according to Δ time -> Thread?~~
  * SMF -> M$ type where MFi is still strange
  * ~~070117 Integration of { Normal, Class A, B, C, Note }, { Extension A, B, Info }~~
- * Track, AudioData, Info* integration
+ * Track, AudioData, Info* integration ... what?
