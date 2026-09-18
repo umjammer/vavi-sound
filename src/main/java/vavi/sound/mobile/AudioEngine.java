@@ -74,7 +74,10 @@ public interface AudioEngine {
     void setData(int streamNumber, int channel, int sampleRate, int bits, int channels, byte[] adpcm, boolean continued);
 
     /**
-     * Stops adpcm playing.
+     * Stops adpcm playing, the part of the stream not heard yet is dropped.
+     * <p>
+     * Called while a {@link #start} of the same stream may still be writing to
+     * the line on another thread, see {@link Sync#scheduleStop}.
      * @param streamNumber packet id
      */
     void stop(int streamNumber);
@@ -161,6 +164,19 @@ public interface AudioEngine {
                     return thread;
                 });
 
+        /**
+         * Runs stops only. A start blocks its thread for as long as the stream is
+         * written to the line, a stop queued behind it would come after the whole
+         * stream, so a stop keeps its timing on a thread of its own and just tells
+         * the playing start to end.
+         */
+        private static final ScheduledThreadPoolExecutor stopper =
+                new ScheduledThreadPoolExecutor(1, r -> {
+                    Thread thread = new Thread(r, "ADPCM Stopper");
+                    thread.setDaemon(true);
+                    return thread;
+                });
+
         static {
             // the midi sequence can end (and the app exit) while a delayed start is
             // still pending: e.g. an adpcm only song fires end of track right after
@@ -178,11 +194,24 @@ logger.log(Level.WARNING, "adpcm still playing at jvm shutdown, cut off");
         }
 
         /**
-         * runs an adpcm play/stop task delayed by {@link #getDelay()}.
+         * runs an adpcm play task delayed by {@link #getDelay()}.
          */
         public static void schedule(Runnable task) {
+            schedule(scheduler, task);
+        }
+
+        /**
+         * runs an adpcm stop task delayed by {@link #getDelay()}, not waiting for
+         * a play task being written.
+         * @see AudioEngine#stop(int)
+         */
+        public static void scheduleStop(Runnable task) {
+            schedule(stopper, task);
+        }
+
+        private static void schedule(ScheduledThreadPoolExecutor executor, Runnable task) {
             try {
-                scheduler.schedule(() -> {
+                executor.schedule(() -> {
                     try {
                         task.run();
                     } catch (Throwable t) {

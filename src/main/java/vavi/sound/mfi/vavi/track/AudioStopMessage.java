@@ -127,7 +127,7 @@ public class AudioStopMessage extends LongMessage
 
         AudioEngine engine = AudioEngineFactory.getAudioEngine();
         if (engine != null)
-            AudioEngine.Sync.schedule(() -> engine.stop(id));
+            AudioEngine.Sync.scheduleStop(() -> engine.stop(id));
         else
             logger.log(Level.ERROR, "audio engine is not set");
     }

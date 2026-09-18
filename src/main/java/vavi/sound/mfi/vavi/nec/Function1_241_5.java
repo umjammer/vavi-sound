@@ -61,7 +61,7 @@ public class Function1_241_5 implements MachineDependentFunction {
 logger.log(Level.DEBUG, "StreamOff: " + channel + "ch, No." + streamNumber);
 
         int streamNumber = this.streamNumber; // this instance is a shared singleton
-        AudioEngine.Sync.schedule(() -> NecSequencer.getAudioEngine().stop(streamNumber));    // TODO channel ???
+        AudioEngine.Sync.scheduleStop(() -> NecSequencer.getAudioEngine().stop(streamNumber));    // TODO channel ???
     }
 
     /** channel 0 ~ 3 */
