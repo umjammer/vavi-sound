@@ -44,7 +44,8 @@ public interface AudioEngine {
      * Such a synthesizer plays the file's own voices too, so what a message converts to is
      * what the file says and not what a GM one would make of it: the program of a SMAF
      * drum channel stays the drum kit it is ({@code Bank_Program3} of the MA-3 driver)
-     * instead of becoming 0.
+     * instead of becoming 0, and its notes stay on its own channel instead of going to
+     * channel 9.
      * </p>
      * @see MobileExclusive
      */

@@ -88,6 +88,28 @@ class MidiContextTest {
         assertEquals(9, noteChannel(context, 8));
     }
 
+    /**
+     * mobile standard: for a synthesizer which plays the file's own voices a percussion channel
+     * keeps its notes, as the ma-3 driver does, the stream pcm of a "GuitarMan.mmf" on 15
+     */
+    @Test
+    void mobileStandardDrumBankAudioEngineDisabled() throws Exception {
+        String old = System.setProperty("vavi.sound.mobile.AudioEngine.disabled", "true");
+        try {
+            Sequence sequence = new Sequence();
+            Track track = track(sequence, FormatType.MobileStandard_NoCompress, all(16, ChannelStatus.Type.NoCare),
+                    new NoteMessage(0, 15, 40, 10), new NoteMessage(0, 9, 40, 10));
+            MidiContext context = context(track, 0);
+
+            new BankSelectMessage(0, 15, 0x7d, Significant.Most).getMidiEvents(context);
+            new ProgramChangeMessage(0, 15, 0).getMidiEvents(context);
+            assertEquals(15, noteChannel(context, 15));
+            assertEquals(9, noteChannel(context, 9));
+        } finally {
+            if (old == null) System.clearProperty("vavi.sound.mobile.AudioEngine.disabled"); else System.setProperty("vavi.sound.mobile.AudioEngine.disabled", old);
+        }
+    }
+
     /** mobile standard: the channel status is not what makes a percussion channel, as for the ma-3 driver */
     @Test
     void mobileStandardStatusIgnored() throws Exception {
