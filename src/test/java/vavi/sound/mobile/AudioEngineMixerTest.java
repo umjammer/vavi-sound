@@ -104,8 +104,38 @@ class AudioEngineMixerTest {
     @Test
     void theDefaultIsTheLine() {
         System.clearProperty(AudioEngineMixer.OUTPUT_KEY);
-        assertFalse(AudioEngineMixer.isEnabled());
+        // unless a synthesizer left open by another test mixes them
+        assertEquals(AudioEngineMixer.attached() > 0, AudioEngineMixer.isEnabled());
         System.setProperty(AudioEngineMixer.OUTPUT_KEY, "line");
+        assertFalse(AudioEngineMixer.isEnabled());
+    }
+
+    @Test
+    void aSynthesizerMixingThemTurnsItOn() {
+        System.clearProperty(AudioEngineMixer.OUTPUT_KEY);
+        int before = AudioEngineMixer.attached(); // synthesizers another test left open
+        assertTrue(AudioEngineMixer.attach());
+        try {
+            assertEquals(before + 1, AudioEngineMixer.attached());
+            assertTrue(AudioEngineMixer.isEnabled());
+            engine(constant(8000, (short) 1000)).start(0);
+            assertTrue(AudioEngineMixer.isPlaying());
+        } finally {
+            AudioEngineMixer.detach();
+        }
+        assertEquals(before, AudioEngineMixer.attached());
+        assertEquals(before > 0, AudioEngineMixer.isEnabled());
+        if (before == 0) {
+            assertFalse(AudioEngineMixer.isPlaying()); // dropped with the synthesizer
+        }
+    }
+
+    @Test
+    void lineSaysNoToASynthesizer() {
+        System.setProperty(AudioEngineMixer.OUTPUT_KEY, "line");
+        int before = AudioEngineMixer.attached();
+        assertFalse(AudioEngineMixer.attach());
+        assertEquals(before, AudioEngineMixer.attached());
         assertFalse(AudioEngineMixer.isEnabled());
     }
 

@@ -40,7 +40,9 @@ import static java.lang.System.getLogger;
  * <p>
  * system property
  * <ul>
- *  <li>{@code vavi.sound.mobile.AudioEngine.output} ... {@code line} (default) or {@code mixer}</li>
+ *  <li>{@code vavi.sound.mobile.AudioEngine.output} ... not set (default): a line of its own unless a
+ *      synthesizer {@link #attach() mixes} them, {@code line}: always a line of its own,
+ *      {@code mixer}: never, the player pulls</li>
  * </ul>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
@@ -56,12 +58,55 @@ public final class AudioEngineMixer {
     private AudioEngineMixer() {
     }
 
+    /** synthesizers mixing the voices into their own output, see {@link #attach()} */
+    private static int attached;
+
     /**
-     * Whether the engines play here rather than to a line of their own. Read at every use, so a
-     * player may switch it on before it starts a song.
+     * Whether the engines play here rather than to a line of their own. Read at every use.
+     * <ul>
+     *  <li>{@code mixer}: always, the player pulls with {@link #render}</li>
+     *  <li>{@code line}: never, as before this was</li>
+     *  <li>not set: while a synthesizer which mixes the voices into what it writes to its line is
+     *      open, see {@link #attach()}</li>
+     * </ul>
      */
     public static boolean isEnabled() {
-        return "mixer".equalsIgnoreCase(System.getProperty(OUTPUT_KEY, "line"));
+        String output = System.getProperty(OUTPUT_KEY);
+        if ("mixer".equalsIgnoreCase(output)) return true;
+        if ("line".equalsIgnoreCase(output)) return false;
+        synchronized (AudioEngineMixer.class) {
+            return attached > 0;
+        }
+    }
+
+    /**
+     * A synthesizer which renders its own sound and writes it to a line of its own says here that
+     * it {@link #render mixes} the voices into it, from when it opens to when it closes: the
+     * adpcm is then heard in the same line as the notes, rendered in the same block as the message
+     * which starts it, and nothing is timed by the wall clock ({@link AudioEngine.Sync}).
+     * <p>
+     * One such synthesizer at a time: two would take turns at the same voices.
+     *
+     * @return false when {@code vavi.sound.mobile.AudioEngine.output=line} says no, the engines
+     *         play to lines of their own and the synthesizer need not mix anything
+     */
+    public static synchronized boolean attach() {
+        if ("line".equalsIgnoreCase(System.getProperty(OUTPUT_KEY))) return false;
+        attached++;
+logger.log(Level.DEBUG, "attached: " + attached);
+        return true;
+    }
+
+    /** how many synthesizers mix the voices now, for a test */
+    static synchronized int attached() {
+        return attached;
+    }
+
+    /** the synthesizer of {@link #attach()} closes, what it was playing is dropped */
+    public static synchronized void detach() {
+        if (attached > 0) attached--;
+        if (attached == 0) voices.clear();
+logger.log(Level.DEBUG, "detached: " + attached);
     }
 
     /** a stream being played, the pcm of which is read as it is mixed */
@@ -163,6 +208,7 @@ logger.log(Level.WARNING, "stream " + streamNumber + ": " + e);
     }
 
     private static final List<Voice> voices = new ArrayList<>();
+
 
     /** mixing buffers, grown as they are asked for */
     private static int[] mixL = new int[0], mixR = new int[0];

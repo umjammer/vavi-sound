@@ -17,6 +17,8 @@ import javax.sound.sampled.Line;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,6 +34,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @version 0.00 2026-07-03 nsano initial version <br>
  */
 class BasicAudioEngineGateTimeTest {
+
+    /** this is about the engines playing to lines of their own, whatever else is open in the jvm */
+    private String previousOutput;
+
+    @BeforeEach
+    void pinLine() {
+        previousOutput = System.getProperty(AudioEngineMixer.OUTPUT_KEY);
+        System.setProperty(AudioEngineMixer.OUTPUT_KEY, "line");
+    }
+
+    @AfterEach
+    void unpinLine() {
+        if (previousOutput == null) System.clearProperty(AudioEngineMixer.OUTPUT_KEY);
+        else System.setProperty(AudioEngineMixer.OUTPUT_KEY, previousOutput);
+    }
 
     /** records written bytes instead of playing */
     static class FakeLine implements SourceDataLine {

@@ -63,6 +63,9 @@ public class VaviMfiSynthesizer implements Synthesizer {
     /** */
     private javax.sound.midi.Synthesizer midiSynthesizer;
 
+    /** the synthesizer played here with the adpcm mixed in, null: it plays to its own line */
+    private vavi.sound.mobile.MixingLine mixingLine;
+
     @Override
     public MidiChannel[] getChannels() {
         return midiSynthesizer.getChannels();
@@ -276,7 +279,11 @@ logger.log(Level.DEBUG, "audio sysex received at: " + System.nanoTime() + " ns")
             this.midiSynthesizer = MidiUtil.getDefaultSynthesizer(vavi.sound.midi.VaviMidiDeviceProvider.class);
 logger.log(Level.DEBUG, "midiSynthesizer: " + midiSynthesizer.getClass().getName());
 
-            midiSynthesizer.open();
+            // the adpcm is mixed into the synthesizer's line when it can be, see MixingLine
+            mixingLine = vavi.sound.mobile.MixingLine.open(midiSynthesizer);
+            if (mixingLine == null) {
+                midiSynthesizer.open();
+            }
         } catch (MidiUnavailableException e) {
 logger.log(Level.ERROR, e.getMessage(), e);
             throw new MfiUnavailableException(e);
@@ -285,6 +292,11 @@ logger.log(Level.ERROR, e.getMessage(), e);
 
     @Override
     public void close() {
-        midiSynthesizer.close();
+        if (mixingLine != null) {
+            mixingLine.close();
+            mixingLine = null;
+        } else {
+            midiSynthesizer.close();
+        }
     }
 }
