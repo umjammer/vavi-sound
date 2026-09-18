@@ -28,6 +28,9 @@ import java.util.concurrent.TimeUnit;
  *  <li>{@code vavi.sound.mobile.AudioEngine.volume} ... adpcm volume</li>
  *  <li>{@code vavi.sound.mobile.AudioEngine.workers} ... audio engine thread pool size</li>
  *  <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... see {@link #isDisabled()}</li>
+ *  <li>{@code vavi.sound.mobile.AudioEngine.output} ... {@code line} (default): each engine plays to a
+ *      {@link javax.sound.sampled.SourceDataLine} of its own, timed by {@link Sync};
+ *      {@code mixer}: no line, the player pulls the streams from {@link AudioEngineMixer}</li>
  * </ul>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051116 nsano initial version <br>
@@ -194,7 +197,8 @@ logger.log(Level.WARNING, "adpcm still playing at jvm shutdown, cut off");
         }
 
         /**
-         * runs an adpcm play task delayed by {@link #getDelay()}.
+         * runs an adpcm play task delayed by {@link #getDelay()}, or at once on this thread when
+         * the engines play to {@link AudioEngineMixer}.
          */
         public static void schedule(Runnable task) {
             schedule(scheduler, task);
@@ -210,6 +214,16 @@ logger.log(Level.WARNING, "adpcm still playing at jvm shutdown, cut off");
         }
 
         private static void schedule(ScheduledThreadPoolExecutor executor, Runnable task) {
+            if (AudioEngineMixer.isEnabled()) {
+                // nothing is written to a line, a start blocks nothing: now, on the caller's
+                // thread, which is the one rendering the song and knows when now is
+                try {
+                    task.run();
+                } catch (Throwable t) {
+logger.log(Level.ERROR, "adpcm task: " + t, t);
+                }
+                return;
+            }
             try {
                 executor.schedule(() -> {
                     try {

@@ -100,6 +100,10 @@ logger.log(Level.INFO, "audio no: " + streamNumber + " stored" +
      */
     @Override
     public void stop(int streamNumber) {
+        if (AudioEngineMixer.isEnabled()) {
+            AudioEngineMixer.stop(this, streamNumber);
+            return;
+        }
         long serial = playingSerial;
         if (playingStream == streamNumber) {
             stoppedSerial = serial;
@@ -133,8 +137,11 @@ logger.log(Level.DEBUG, "stop: no: " + streamNumber + ", at: " + System.nanoTime
                 false);
     }
 
-    /** init audio line */
+    /** init audio line, none when the engines play to {@link AudioEngineMixer} */
     protected void init(int sampleRate, int channels) {
+        if (AudioEngineMixer.isEnabled()) {
+            return;
+        }
         if (line != null && line.getFormat().getSampleRate() == sampleRate && line.getFormat().getChannels() == channels) {
             return;
         }
@@ -182,6 +189,11 @@ logger.log(Level.WARNING, getClass().getSimpleName() + ": data for ch " + stream
         int channels = getChannels(streamNumber);
         if (channels == -1) {
 logger.log(Level.INFO, "always used: no: " + streamNumber + ", ch: " + this.data[streamNumber].channel);
+            return;
+        }
+
+        if (AudioEngineMixer.isEnabled()) {
+            startMixed(streamNumber, channels, gateTime);
             return;
         }
 
@@ -241,8 +253,23 @@ logger.log(Level.DEBUG, "stopped: no: " + streamNumber + ", frames: " + framesWr
         }
     }
 
+    /**
+     * Hands the stream to {@link AudioEngineMixer}, the pcm is what the line would have been
+     * written: the same streams, at the format the line would have been opened at, the same
+     * volume and gate time. Nothing blocks, the mixer reads the streams as it is rendered.
+     */
+    private void startMixed(int streamNumber, int channels, long gateTime) {
+        InputStream[] iss = getInputStreams(streamNumber, channels);
+        AudioFormat format = getAudioFormat(data[streamNumber].sampleRate, channels);
+        double volume = Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume",  "0.2"));
+        long gateFrames = gateTime > 0 ? Math.round(gateTime * format.getSampleRate() / 1000.0) : Long.MAX_VALUE;
+logger.log(Level.DEBUG, "start (mixer): no: " + streamNumber + ", gateFrames: " + (gateFrames == Long.MAX_VALUE ? "all" : gateFrames));
+        AudioEngineMixer.start(this, streamNumber, iss, channels, format, gateFrames, volume);
+    }
+
     @Override
     public void close() {
+        AudioEngineMixer.close(this);
         if (line != null) {
             line.close();
         }
