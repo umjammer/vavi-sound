@@ -6,6 +6,9 @@
 
 package vavi.sound.mfi.vavi.track;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
@@ -19,6 +22,7 @@ import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
 import vavi.sound.mfi.vavi.TrackMessage;
+import vavi.sound.mfi.vavi.sequencer.MfiValueExclusive;
 
 
 /**
@@ -113,17 +117,22 @@ public class ChangeVoiceMessage extends vavi.sound.mfi.ShortMessage
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
 
+        List<MidiEvent> events = new ArrayList<>(Arrays.asList(context.origin(channel, context.getCurrent())));
 //logger.log(Level.TRACE, "program[" + channel + "]: " + StringUtil.toHex2(getProgram()));
         channel = context.setProgram(channel, getProgram());
+
+        // a percussion program is made 0 for a general midi drum kit, the mfi one goes along
+        if ((context.getProgram(channel) & 0x3f) != (getProgram() & 0x3f)) {
+            events.add(new MidiEvent(MfiValueExclusive.message(MfiValueExclusive.PROGRAM, channel, getProgram() & 0x3f), context.getCurrent()));
+        }
 
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.PROGRAM_CHANGE,
                                 channel,
                                 context.getProgram(channel),
                                 0);
-        return new MidiEvent[] {
-            new MidiEvent(shortMessage, context.getCurrent())
-        };
+        events.add(new MidiEvent(shortMessage, context.getCurrent()));
+        return events.toArray(MidiEvent[]::new);
     }
 
     @Override

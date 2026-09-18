@@ -15,7 +15,7 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
-import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
+import vavi.sound.mfi.vavi.sequencer.MfiValueExclusive;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
@@ -120,7 +120,7 @@ public class PitchBendRangeMessage extends vavi.sound.mfi.ShortMessage
 
         MidiEvent[] events = new MidiEvent[4];
         // the rpn following is mfi 0xe7, which a sound source may take otherwise
-        events[0] = new MidiEvent(FuetrekMfiExclusive.message(FuetrekMfiExclusive.PITCH_BEND_RANGE, channel, getPitchBendRange()), context.getCurrent());
+        events[0] = new MidiEvent(MfiValueExclusive.message(MfiValueExclusive.PITCH_BEND_RANGE, channel, getPitchBendRange()), context.getCurrent());
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 channel,

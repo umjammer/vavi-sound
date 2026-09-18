@@ -12,7 +12,7 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 
 import vavi.sound.mfi.ChannelMessage;
-import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
+import vavi.sound.mfi.vavi.sequencer.MfiValueExclusive;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
@@ -112,19 +112,26 @@ public class ChangeBankMessage extends vavi.sound.mfi.ShortMessage
 //logger.log(Level.TRACE, "track: "+context.getTrackNumber()+", voice: "+getVoice());
 
 //logger.log(Level.TRACE, "bank[" + channel + "]: " + getBank());
+        MidiEvent[] origin = context.origin(channel, context.getCurrent());
         channel = context.setBank(channel, getBank());
 
         // the bank as it is, which the midi program keeps only bit 0 of
-        SysexMessage sysexMessage = FuetrekMfiExclusive.message(FuetrekMfiExclusive.BANK, channel, getBank());
+        SysexMessage sysexMessage = MfiValueExclusive.message(MfiValueExclusive.BANK, channel, getBank());
 
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.PROGRAM_CHANGE,
                 channel,
                 context.getProgram(channel),
                 0);
-        return new MidiEvent[] {
+        MidiEvent[] events = new MidiEvent[] {
                 new MidiEvent(sysexMessage, context.getCurrent()),
                 new MidiEvent(shortMessage, context.getCurrent())
         };
+        if (origin.length == 0) {
+            return events;
+        }
+        // one for each, a synthesizer takes an origin for the next message only
+        MidiEvent[] originPc = context.origin(getVoice() + 4 * context.getMfiTrackNumber(), context.getCurrent());
+        return new MidiEvent[] { origin[0], events[0], originPc[0], events[1] };
     }
 }

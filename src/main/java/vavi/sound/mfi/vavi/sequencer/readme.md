@@ -11,7 +11,7 @@ Provides sub classes of SysexMessage.
 | 45 | 4      | 01                | MACHINE_DEPENDENT | for adpcm         | MfiMessageStore                     | idH idL f7                | VaviReceiver      |
 | 45 | 4      | 02                | MFi4              | for adpcm         | MfiMessageStore                     | idH idL f7                | VaviReceiver      |
 | 45 | 4      | 03                | SMAF              | for adpcm         | SmafMessageStore                    | idH idL f7                | SmafReceiver      |
-| 45 | -      | 04                | FUETREK           | for fuetrek sysex | FuetrekMfiExclusive                 | subId ... f7              | UcsReceiver       |
+| 45 | -      | 04                | VALUE             | for mfi values    | MfiValueExclusive                   | subId ... f7              | UcsReceiver       |
 | 45 | -      | 7f                | PACKED            | for smaf sysex    | YamahaMfiExclusive, YamahaExclusive | 7bit packed data  ...  f7 | NuledOpl3Receiver |
 
 ### Note

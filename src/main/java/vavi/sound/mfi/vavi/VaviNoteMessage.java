@@ -63,8 +63,11 @@ public class VaviNoteMessage extends NoteMessage
         int channel  = voice + 4 * context.getMfiTrackNumber();
         int pitch    = getNote();
 
-        channel = context.retrieveChannel(channel);
+        MidiEvent[] originOn = context.origin(channel, context.getCurrent());
+        MidiEvent[] originOff = context.origin(channel, context.getCurrent() + length);
+        // the pitch is the mfi channel's, a percussion one or not, not the one it is moved to's
         pitch = context.retrievePitch(channel, pitch);
+        channel = context.retrieveChannel(channel);
 
         MidiEvent[] events = new MidiEvent[2];
         ShortMessage shortMessage = new ShortMessage();
@@ -82,7 +85,11 @@ public class VaviNoteMessage extends NoteMessage
                                 0);
         events[1] = new MidiEvent(shortMessage, context.getCurrent() + length);
 
-        return events;
+        if (originOn.length == 0) {
+            return events;
+        }
+        // each right before its note, the track keeps the order of the events of a tick
+        return new MidiEvent[] { originOn[0], events[0], originOff[0], events[1] };
     }
 
     /**

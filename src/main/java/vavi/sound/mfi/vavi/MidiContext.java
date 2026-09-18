@@ -9,11 +9,14 @@ package vavi.sound.mfi.vavi;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.util.Arrays;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.Track;
+import vavi.sound.mfi.vavi.sequencer.MfiValueExclusive;
 import vavi.sound.mfi.vavi.track.TempoMessage;
 
 import static java.lang.System.getLogger;
@@ -227,6 +230,24 @@ logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + bank);
         }
 
         return channel;
+    }
+
+    /**
+     * Where a message {@link #retrieveChannel} moved came from, for a synthesizer of an mfi
+     * sound source, which plays the channels of the file as they are.
+     * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
+     * @param tick the tick of the message moved
+     * @return the {@link MfiValueExclusive#CHANNEL} exclusive to go right before the message,
+     *         nothing if the channel is not moved
+     */
+    public MidiEvent[] origin(int channel, long tick) throws InvalidMidiDataException {
+        int midiChannel = retrieveChannel(channel);
+        if (midiChannel == channel || midiChannel < 0) {
+            return new MidiEvent[0];
+        }
+        return new MidiEvent[] {
+            new MidiEvent(MfiValueExclusive.message(MfiValueExclusive.CHANNEL, midiChannel, channel), tick)
+        };
     }
 
     /**

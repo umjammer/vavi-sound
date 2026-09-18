@@ -11,7 +11,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.ChannelMessage;
-import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
+import vavi.sound.mfi.vavi.sequencer.MfiValueExclusive;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
@@ -48,11 +48,11 @@ import static java.lang.System.getLogger;
  *      449 and 48%, i.e. noise.</li>
  * </ul>
  * <p>
- * The fuetrek native player (openDoJa's {@code FueTrekSampler}) settles how they are
- * combined: the pitch word is {@code (((pitchBend << 5) + fine) << 3) - 0x100}, 0x2000
+ * A native player of an mfi sound source settles how they are combined (as openDoJa
+ * follows it): the pitch word is {@code (((pitchBend << 5) + fine) << 3) - 0x100}, 0x2000
  * when both rest at 32, this one is cached and {@link PitchBendMessage} commits.
  * Since the midi pitch bend {@link PitchBendMessage} makes is left as it is, this goes
- * as {@link FuetrekMfiExclusive#PITCH_BEND_FINE} for a synthesizer of the sound
+ * as {@link MfiValueExclusive#PITCH_BEND_FINE} for a synthesizer of the sound
  * source, the others let it go.
  * </p>
  *
@@ -128,12 +128,12 @@ public class PitchBendFineMessage extends vavi.sound.mfi.ShortMessage
 
     // ----
 
-    /** the fine half as {@link FuetrekMfiExclusive#PITCH_BEND_FINE}, see the class comment */
+    /** the fine half as {@link MfiValueExclusive#PITCH_BEND_FINE}, see the class comment */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
         return new MidiEvent[] {
-            new MidiEvent(FuetrekMfiExclusive.message(FuetrekMfiExclusive.PITCH_BEND_FINE, channel, getPitchBendFine()), context.getCurrent())
+            new MidiEvent(MfiValueExclusive.message(MfiValueExclusive.PITCH_BEND_FINE, channel, getPitchBendFine()), context.getCurrent())
         };
     }
 }

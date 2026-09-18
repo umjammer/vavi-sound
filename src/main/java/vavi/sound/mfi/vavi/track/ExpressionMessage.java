@@ -19,6 +19,7 @@ import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.TrackChunk;
 import vavi.sound.mfi.vavi.TrackMessage;
+import vavi.sound.mfi.vavi.sequencer.MfiValueExclusive;
 
 
 /**
@@ -135,14 +136,16 @@ public class ExpressionMessage extends vavi.sound.mfi.ShortMessage
 //                  39,    // main volume LSB
 //                  0);
 //      events[1] = new MidiEvent(shortMessage, context.getCurrent());
-        MidiEvent[] events = new MidiEvent[1];
+        MidiEvent[] events = new MidiEvent[2];
+        // the 6 bit value as it is, which the midi expression following does not keep
+        events[0] = new MidiEvent(MfiValueExclusive.message(MfiValueExclusive.EXPRESSION, channel, data[3] & 0x3f), context.getCurrent());
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 channel,
                                 11,    // expression MSB
                                 getVolume() < 0 ? getVolume() * 2 + 128 :
                                                   getVolume() * 2);
-        events[0] = new MidiEvent(shortMessage, context.getCurrent());
+        events[1] = new MidiEvent(shortMessage, context.getCurrent());
         return events;
     }
 
