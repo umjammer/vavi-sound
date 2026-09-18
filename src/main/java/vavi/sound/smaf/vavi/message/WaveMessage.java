@@ -188,12 +188,16 @@ public class WaveMessage extends SmafMessage
         throws InvalidMidiDataException {
 
         this.midiGateTimeTicks = context.getTickOfGateTime(gateTime);
-logger.log(Level.INFO, "midiGateTimeTics: " + midiGateTimeTicks);
+logger.log(Level.DEBUG, "midiGateTimeTics: " + midiGateTimeTicks);
 
         // the synthesizer plays the wave, it is told when to start and when to stop,
-        // the wave itself came as a WaveDataMessage of the same number
+        // the wave itself came as a WaveDataMessage of the same number.
+        // the start carries the gate time too: the receiver side is stateless (a new
+        // instance per exclusive) and an audio engine cuts the wave frame exactly by it,
+        // waiting for the stop would let a whole sample block the adpcm line.
+        // gate time ticks are [ms], see MidiContext#getResolution
         return new MidiEvent[] {
-            new MidiEvent(packedSystex(on(SMAF_SYSEX_FUNCTION_ID_WAVE, number, 127, channel)), context.getCurrentTick()),
+            new MidiEvent(packedSystex(on(SMAF_SYSEX_FUNCTION_ID_WAVE, number, 127, channel, midiGateTimeTicks)), context.getCurrentTick()),
             new MidiEvent(packedSystex(off(SMAF_SYSEX_FUNCTION_ID_WAVE, number)), context.getCurrentTick() + midiGateTimeTicks)
         };
     }
@@ -201,8 +205,8 @@ logger.log(Level.INFO, "midiGateTimeTics: " + midiGateTimeTicks);
     private long midiGateTimeTicks;
 
     /**
-     * @param data on  11 id vl ch
-     *             off 12 id
+     * @param data on  11 id vl ch g2 g1 g0
+     *             off 12 id ... the gate time of the start already stops it
      * @throws IllegalArgumentException when audio engine does not found
      * @see MobileExclusive#on
      */
@@ -213,10 +217,11 @@ logger.log(Level.INFO, "midiGateTimeTics: " + midiGateTimeTicks);
 
         if (command == 0x11) {
             int id = data[1] & 0x7f;
+            long gateTime = MobileExclusive.gateTime(data);
             // resolve here: the engine is held in a ThreadLocal set on this (receiver) thread
             AudioEngine engine = AudioEngineFactory.getAudioEngine();
-logger.log(Level.DEBUG, "WAVE PLAY: " + id + ", delay: " + AudioEngine.Sync.getDelay() + " ms");
-            AudioEngine.Sync.schedule(() -> engine.start(id, midiGateTimeTicks));
+logger.log(Level.DEBUG, "WAVE PLAY: " + id + ", gate: " + gateTime + " ms, delay: " + AudioEngine.Sync.getDelay() + " ms");
+            AudioEngine.Sync.schedule(() -> engine.start(id, gateTime));
         }
     }
 }

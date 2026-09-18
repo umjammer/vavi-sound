@@ -65,6 +65,16 @@ class MobileExclusiveTest {
         assertArrayEquals(new byte[] {0x45, 0x02, 0x12, 3, (byte) 0xf7}, MobileExclusive.off(MFi_SYSEX_FUNCTION_ID_MFi4, 3));
     }
 
+    /** a smaf wave start carries its gate time, the receiver side is stateless */
+    @Test
+    void onWithGateTime() {
+        byte[] on = MobileExclusive.on(0x03, 1, 127, 0, 0x123456);
+        assertArrayEquals(new byte[] {0x45, 0x03, 0x11, 1, 127, 0, 0x12, 0x34, 0x56, (byte) 0xf7}, on);
+        assertEquals(0x123456, MobileExclusive.gateTime(Arrays.copyOfRange(on, 2, on.length)));
+        byte[] plain = MobileExclusive.on(0x03, 1, 127, 0);
+        assertEquals(-1, MobileExclusive.gateTime(Arrays.copyOfRange(plain, 2, plain.length)));
+    }
+
     /** a stream wave of a smaf file and the wave of a wave table voice are told apart */
     @Test
     void waveDataMessage() throws Exception {

@@ -113,11 +113,13 @@ public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
         throws InvalidMidiDataException {
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
+        // on where the channel goes, a percussion one to the drum channel, a melody one away from it
+        int midiChannel = context.retrieveChannel(channel);
 
         MidiEvent[] events = new MidiEvent[1];
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
-                                channel,
+                                midiChannel,
                                 1,    // modulation depth MSB
                                 getModulationDepth() * 2);
         events[0] = new MidiEvent(shortMessage, context.getCurrent());
@@ -127,7 +129,7 @@ public class ModulationDepthMessage extends vavi.sound.mfi.ShortMessage
 //                  33,    // modulation depth LSB
 //                  0);
 //      events[1] = new MidiEvent(shortMessage, context.getCurrent());
-        return events;
+        return context.withOrigins(channel, events);
     }
 
     @Override

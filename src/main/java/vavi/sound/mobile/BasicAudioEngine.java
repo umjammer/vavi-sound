@@ -81,10 +81,35 @@ logger.log(Level.INFO, "audio no: " + streamNumber + " stored" +
         return null;
     }
 
+    /** the stream being written to the line, -1: none */
+    private volatile int playingStream = -1;
+
+    /** counts starts, tells one start of a stream from the next one of the same */
+    private volatile long playingSerial;
+
+    /** the serial of the start {@link #stop} asked to end */
+    private volatile long stoppedSerial = -1;
+
+    /**
+     * Ends the start of the stream now writing, at its next chunk, and the
+     * written but not played part is flushed there, the stop is already timed
+     * by {@link AudioEngine.Sync#scheduleStop}. A stream not playing is ignored.
+     * <p>
+     * this used to {@code drain()} and {@code stop()} the line, which waited for
+     * the whole stream and left the line stopped for the next start.
+     */
     @Override
     public void stop(int streamNumber) {
-        line.drain();
-        line.stop();
+        long serial = playingSerial;
+        if (playingStream == streamNumber) {
+            stoppedSerial = serial;
+logger.log(Level.DEBUG, "stop: no: " + streamNumber + ", at: " + System.nanoTime() + " ns");
+        }
+    }
+
+    /** @return true when {@link #stop} asked the start of the serial to end */
+    private boolean isStopped(long serial) {
+        return stoppedSerial == serial;
     }
 
     /** */
@@ -173,12 +198,19 @@ logger.log(Level.INFO, "always used: no: " + streamNumber + ", ch: " + this.data
             long gateFrames = gateTime > 0 ? Math.round(gateTime * format.getSampleRate() / 1000.0) : Long.MAX_VALUE;
 logger.log(Level.DEBUG, "start: no: " + streamNumber + ", gateFrames: " + (gateFrames == Long.MAX_VALUE ? "all" : gateFrames) + ", at: " + System.nanoTime() + " ns");
 
+            long serial = playingSerial + 1;
+            playingSerial = serial;
+            playingStream = streamNumber;
+
+            // chunks of ~10 ms, a stop is noticed between them
+            int frameSize = format.getFrameSize();
+            int chunkFrames = Math.max(1, Math.min(1024 / frameSize, (int) (format.getSampleRate() / 100)));
+
             byte[] buf = new byte[1024];
             long framesWritten = 0;
-            while (iss[0].available() > 0 && framesWritten < gateFrames) {
+            while (iss[0].available() > 0 && framesWritten < gateFrames && !isStopped(serial)) {
                 if (channels == 1) {
-                    int frameSize = format.getFrameSize();
-                    long budget = Math.min(1024 / frameSize, gateFrames - framesWritten) * frameSize;
+                    long budget = Math.min(chunkFrames, gateFrames - framesWritten) * frameSize;
                     int l = iss[0].read(buf, 0, (int) budget);
 logger.log(Level.TRACE, getClass().getSimpleName() + ": data:\n" + StringUtil.getDump(buf, 32));
                     line.write(buf, 0, l);
@@ -187,7 +219,7 @@ logger.log(Level.TRACE, getClass().getSimpleName() + ": data:\n" + StringUtil.ge
                     int lL = iss[0].read(buf, 0, 512);
                     int lR = iss[1].read(buf, 512, 512);
 //logger.log(Level.TRACE, "l : " + lL + ", r: " + lR);
-                    for (int i = 0; i < lL / 2 && framesWritten < gateFrames; i++) {
+                    for (int i = 0; i < lL / 2 && framesWritten < gateFrames && !isStopped(serial); i++) {
                         byte[] temp = new byte[4];
                         temp[0] = buf[i * 2];
                         temp[1] = buf[i * 2 + 1];
@@ -198,6 +230,12 @@ logger.log(Level.TRACE, getClass().getSimpleName() + ": data:\n" + StringUtil.ge
                     }
                 }
             }
+            if (isStopped(serial)) {
+                // what is in the line's buffer has not been heard yet, the stop is now
+                line.flush();
+logger.log(Level.DEBUG, "stopped: no: " + streamNumber + ", frames: " + framesWritten);
+            }
+            playingStream = -1;
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

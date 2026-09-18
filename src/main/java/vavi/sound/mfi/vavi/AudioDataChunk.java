@@ -260,6 +260,16 @@ logger.log(Level.DEBUG, "adat length[" + audioDataMessage.audioDataNumber + "]: 
             return data;
         }
 
+        /**
+         * an "adat" chunk is not a track event, it has no Δ. {@link #data} is pure ADPCM,
+         * the super's one reading data[0] as Δ puts the wave after the play of it.
+         * @return 0 always
+         */
+        @Override
+        public int getDelta() {
+            return 0;
+        }
+
         // ----
 
         @Override

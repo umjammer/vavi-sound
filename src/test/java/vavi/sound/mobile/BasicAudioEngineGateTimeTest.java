@@ -9,6 +9,8 @@ package vavi.sound.mobile;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.Control;
 import javax.sound.sampled.Line;
@@ -18,6 +20,7 @@ import javax.sound.sampled.SourceDataLine;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -34,6 +37,7 @@ class BasicAudioEngineGateTimeTest {
     static class FakeLine implements SourceDataLine {
         final AudioFormat format;
         long bytesWritten;
+        int flushed;
         FakeLine(AudioFormat format) {
             this.format = format;
         }
@@ -48,7 +52,7 @@ class BasicAudioEngineGateTimeTest {
         @Override public void close() {}
         @Override public boolean isOpen() { return true; }
         @Override public void drain() {}
-        @Override public void flush() {}
+        @Override public void flush() { flushed++; }
         @Override public void start() {}
         @Override public void stop() {}
         @Override public boolean isRunning() { return true; }
@@ -139,6 +143,51 @@ class BasicAudioEngineGateTimeTest {
         engine(line, 2, 16000).start(0, 100);
         // 100 ms * 8000 Hz = 800 frames * 4 bytes
         assertEquals(800 * 4, line.bytesWritten);
+    }
+
+    /** a line that blocks like a real one, the first write tells the start is playing */
+    static class SlowLine extends FakeLine {
+        final CountDownLatch writing = new CountDownLatch(1);
+        SlowLine(AudioFormat format) {
+            super(format);
+        }
+        @Override public int write(byte[] b, int off, int len) {
+            writing.countDown();
+            try { Thread.sleep(1); } catch (InterruptedException ignored) {}
+            return super.write(b, off, len);
+        }
+    }
+
+    /** an mfi audio stop ends the playing stream from another thread, and flushes the unheard part */
+    @Test
+    void stopEndsPlayingStream() throws Exception {
+        SlowLine line = new SlowLine(format(1));
+        TestEngine engine = engine(line, 1, 160000); // 10 s
+        Thread player = new Thread(() -> engine.start(0));
+        player.start();
+        assertTrue(line.writing.await(5, TimeUnit.SECONDS));
+        engine.stop(0);
+        player.join(5000);
+        assertTrue(!player.isAlive(), "start did not end");
+        assertTrue(line.bytesWritten < 160000, "written: " + line.bytesWritten);
+        assertEquals(1, line.flushed);
+
+        // the line is still usable, the next start plays whole
+        line.bytesWritten = 0;
+        engine.start(0, 100);
+        assertEquals(800 * 2, line.bytesWritten);
+    }
+
+    /** a stop of a stream not playing does nothing, not even to a later start */
+    @Test
+    void stopOfNotPlayingStreamIsIgnored() {
+        FakeLine line = new FakeLine(format(1));
+        TestEngine engine = engine(line, 1, 16000);
+        engine.stop(0);
+        engine.stop(1);
+        engine.start(0);
+        assertEquals(16000, line.bytesWritten);
+        assertEquals(0, line.flushed);
     }
 
     @Test

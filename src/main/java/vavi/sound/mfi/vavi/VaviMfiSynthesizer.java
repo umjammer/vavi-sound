@@ -24,7 +24,7 @@ import vavi.sound.mfi.MfiDevice;
 import vavi.sound.mfi.MfiUnavailableException;
 import vavi.sound.mfi.Synthesizer;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
-import vavi.sound.mfi.vavi.sequencer.FuetrekMfiExclusive;
+import vavi.sound.mfi.vavi.sequencer.MfiValueExclusive;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.midi.MidiUtil;
@@ -190,7 +190,7 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
                 int functionId = data[1];
                 if (functionId == MobileExclusive.MIDI_SYSEX_FUNCTION_ID_PACKED) {
                     processSpecial_Vavi_Packed(unpack(message.getData()), receiver);
-                } else if (functionId == FuetrekMfiExclusive.MFi_SYSEX_FUNCTION_ID_FUETREK) {
+                } else if (functionId == MfiValueExclusive.MFi_SYSEX_FUNCTION_ID_VALUE) {
                     // mfi values for a synthesizer of an mfi sound source, the midi ones are enough here
                 } else {
                     logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId) + "\n" + StringUtil.getDump(message.getData(), 32));

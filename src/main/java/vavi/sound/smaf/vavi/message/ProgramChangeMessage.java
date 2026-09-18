@@ -92,15 +92,18 @@ public class ProgramChangeMessage extends vavi.sound.smaf.ShortMessage
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
+        if (context.getFormatType() != FormatType.HandyPhoneStandard) {
+            context.bankProgram(this.channel);
+        }
         int midiChannel = context.setProgram(this.channel, this.program);
         // for a synthesizer which plays the file's own voices the program of a drum channel is
         // the drum kit (Bank_Program3 of the MA-3 driver), see AudioEngine#isDisabled
         int program = midiChannel == MidiContext.CHANNEL_DRUM && !AudioEngine.isDisabled() ? 0 : context.getProgram(this.channel);
 
 //logger.log(Level.TRACE, "ProgramChange: [" + duration + "] " + channel + "ch, " + context.getProgram(channel));
+        // a handy phone standard percussion program is the drum of each note, not a program
         if (context.getFormatType() == FormatType.HandyPhoneStandard &&
-            context.getDrum(this.channel) == ChannelConfiguration.PERCUSSION &&
-            context.getSmafTrackNumber() * 4 + this.channel != MidiContext.CHANNEL_DRUM) {
+            context.getDrum(this.channel) == ChannelConfiguration.PERCUSSION) {
             return null;
         } else {
             ShortMessage shortMessage = new ShortMessage();

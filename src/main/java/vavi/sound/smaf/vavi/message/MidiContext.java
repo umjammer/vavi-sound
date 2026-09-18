@@ -88,23 +88,25 @@ logger.log(Level.DEBUG, "formatType: " + formatType);
                             velocities[i] = 64;
                         }
                     }
-                    //
+                    // the ma-3 driver (mammfcnv.c) does not look at the channel status of a
+                    // mobile standard file, a channel is a percussion one by its bank select, see
+                    // #bankProgram; that of a handy phone standard one is a hint before its bank
                     ChannelStatus[] channelStatuses = (ChannelStatus[]) metaMessage.getMapData().get("channelStatuses");
 logger.log(Level.DEBUG, "channelStatuses: " + (channelStatuses != null ? channelStatuses.length : null));
-                    if (channelStatuses != null) {
+                    if (formatType == FormatType.HandyPhoneStandard && channelStatuses != null) {
                         for (int i = 0; i < channelStatuses.length; i++) {
-                            setDrum(i, toChannelConfiguration(getMidiChannel(i), channelStatuses[i].getType()));
-//if (getMidiChannel(i) == CHANNEL_DRUM) {
-// setDrum(i, ChannelConfiguration.PERCUSSION);
-//} else {
-// setDrum(i, ChannelConfiguration.SOUND_SET);
-//}
+                            setDrum(i, toChannelConfiguration(channelStatuses[i].getType()));
                         }
                     }
                 }
+            } else if (message instanceof NoteMessage noteMessage) {
+                notedChannels[getMidiChannel(noteMessage.getChannel())] = true;
             }
         }
     }
+
+    /** whether the track has a note on the pseudo MIDI channel, index is pseudo MIDI channel */
+    private final boolean[] notedChannels = new boolean[MAX_MIDI_CHANNELS];
 
     /** @param midiTrack */
     public void setMidiTrack(javax.sound.midi.Track midiTrack) {
@@ -119,11 +121,10 @@ logger.log(Level.DEBUG, "channelStatuses: " + (channelStatuses != null ? channel
         return midiTrack;
     }
 
-    /** convert types */
-    private static ChannelConfiguration toChannelConfiguration(int midiChannel, ChannelStatus.Type type) {
+    /** convert types, a handy phone standard pseudo MIDI channel is never {@link #CHANNEL_DRUM} */
+    private static ChannelConfiguration toChannelConfiguration(ChannelStatus.Type type) {
         return switch (type) {
-            case Melody -> ChannelConfiguration.SOUND_SET;
-            case NoCare -> midiChannel == CHANNEL_DRUM ? ChannelConfiguration.PERCUSSION : ChannelConfiguration.SOUND_SET;
+            case Melody, NoCare -> ChannelConfiguration.SOUND_SET;
             case Rhythm -> ChannelConfiguration.PERCUSSION;
             default -> ChannelConfiguration.UNUSED;
         };
@@ -183,7 +184,10 @@ assert smafTrackNumber < currentTicks.length : "smaf tracks for currentTicks: " 
     /** */
     private static final int CHANNEL_UNUSED = -1;
 
-    /** replacement channel if DRUM_CHANNEL is not a rhythm */
+    /**
+     * the MIDI channel a melody on {@link #CHANNEL_DRUM} goes to, chosen when first needed,
+     * {@link #CHANNEL_UNUSED} until then
+     */
     private int drumSwapChannel = CHANNEL_UNUSED;
 
     /**
@@ -200,39 +204,61 @@ assert smafTrackNumber < currentTicks.length : "smaf tracks for currentTicks: " 
      */
     public void setDrum(int smafChannel, ChannelConfiguration value) {
         int midiChannel = getMidiChannel(smafChannel);
+        drums[midiChannel] = value;
+logger.log(Level.DEBUG, "drums: " + midiChannel + "ch, " + value);
+    }
 
-        if (drumSwapChannel != CHANNEL_UNUSED && midiChannel == drumSwapChannel) {
-logger.log(Level.DEBUG, "already swapped: " + midiChannel + ", " + value);
-        } else {
-            drums[midiChannel] = value;
-//logger.log(Level.TRACE, "temporary: " + midiChannel + ", " + value);
-        }
-
-        // if DRUM_CHANNEL is not a rhythm, replace it with an empty channel.
-        if (midiChannel == CHANNEL_DRUM && drums[CHANNEL_DRUM] == ChannelConfiguration.SOUND_SET && drumSwapChannel == CHANNEL_UNUSED) {
-            for (int k = MAX_MIDI_CHANNELS - 1; k >= 0; k--) {
-                if (k != CHANNEL_DRUM && drums[k] == ChannelConfiguration.UNUSED) {
+    /**
+     * The MIDI channel a melody on {@link #CHANNEL_DRUM} goes to: one the track has no note on,
+     * or else a percussion one, whose own MIDI channel is left as its all go to
+     * {@link #CHANNEL_DRUM}.
+     */
+    private int drumSwapChannel() {
+        if (drumSwapChannel == CHANNEL_UNUSED) {
+            for (int k = MAX_MIDI_CHANNELS - 1; k >= 0 && drumSwapChannel == CHANNEL_UNUSED; k--) {
+                if (k != CHANNEL_DRUM && !notedChannels[k]) {
                     drumSwapChannel = k;
-logger.log(Level.DEBUG, "channel 9 -> " + k);
-                    break;
                 }
             }
-if (drumSwapChannel == CHANNEL_UNUSED) {
- logger.log(Level.DEBUG, "cannot swap: " + midiChannel + ", " + value);
-}
-logger.log(Level.DEBUG, "channel configuration: " + midiChannel + "ch, " + drums[midiChannel]);
+            for (int k = MAX_MIDI_CHANNELS - 1; k >= 0 && drumSwapChannel == CHANNEL_UNUSED; k--) {
+                if (k != CHANNEL_DRUM && drums[k] == ChannelConfiguration.PERCUSSION) {
+                    drumSwapChannel = k;
+                }
+            }
+            if (drumSwapChannel == CHANNEL_UNUSED) {
+logger.log(Level.DEBUG, "cannot swap, the melody stays on " + CHANNEL_DRUM);
+                return CHANNEL_DRUM;
+            }
+logger.log(Level.DEBUG, "channel " + CHANNEL_DRUM + " -> " + drumSwapChannel);
         }
-if (value != ChannelConfiguration.UNUSED) {
-StringBuilder sb1 = new StringBuilder(16);
-StringBuilder sb2 = new StringBuilder(16);
-StringBuilder sb3 = new StringBuilder(16);
-for (int i = 0; i < drums.length; i++) {
- sb1.append(drumSwapChannel != CHANNEL_UNUSED && drumSwapChannel == i ? "@" : "%1x".formatted(i));
- sb2.append(midiChannel == i ? "*" : " ");
- sb3.append(drums[i].name().charAt(0));
-}
-logger.log(Level.DEBUG, "drums: " + midiChannel + "ch, " + value + "\n" + sb1 + "\n" + sb2 + "\n" + sb3);
-}
+        return drumSwapChannel;
+    }
+
+    /** the bank select msb of mobile standard, index is pseudo MIDI channel */
+    private final int[] bankMsbs = new int[MAX_MIDI_CHANNELS];
+
+    /**
+     * Mobile standard only.
+     * @param smafChannel SMAF channel
+     * @param msb bank select msb
+     * @see #bankProgram(int)
+     */
+    public void setBankMsb(int smafChannel, int msb) {
+        bankMsbs[getMidiChannel(smafChannel)] = msb;
+    }
+
+    /**
+     * Mobile standard only. Whether a channel is a percussion one is settled at its program change
+     * by the bank select msb before it, as {@code Bank_Program3} of the ma-3 driver
+     * ({@code mammfcnv.c}) does: 0x7c a melody, 0x7d a percussion, else a percussion only on
+     * {@link #CHANNEL_DRUM}, which also is one until its first program change.
+     * @param smafChannel SMAF channel
+     */
+    public void bankProgram(int smafChannel) {
+        int midiChannel = getMidiChannel(smafChannel);
+        int msb = bankMsbs[midiChannel];
+        boolean drum = msb == 0x7d || (msb != 0x7c && midiChannel == CHANNEL_DRUM);
+        setDrum(smafChannel, drum ? ChannelConfiguration.PERCUSSION : ChannelConfiguration.SOUND_SET);
     }
 
     /** program no, index is pseudo MIDI channel assigned to channel */
@@ -242,6 +268,9 @@ logger.log(Level.DEBUG, "drums: " + midiChannel + "ch, " + value + "\n" + sb1 + 
     private final Map<Integer, Integer> channelMap = new HashMap<>();
 
     /**
+     * A mobile standard channel is the MIDI channel of the same number, as the ma-3 driver plays
+     * it. A handy phone standard one is numbered in the order it comes, but
+     * {@link #CHANNEL_DRUM} which is left to the percussion ones gathered there.
      * @param smafChannel SMAF channel
      * @return pseudo MIDI channel
      */
@@ -252,10 +281,16 @@ logger.log(Level.DEBUG, "drums: " + midiChannel + "ch, " + value + "\n" + sb1 + 
         if (formatType == ScoreTrackChunk.FormatType.HandyPhoneStandard) {
             key = smafTrackNumber * 4 + smafChannel;
         } else {
-            key = smafTrackNumber * 16 + smafChannel;
+            return (smafTrackNumber * 16 + smafChannel) % MAX_MIDI_CHANNELS;
         }
 
-        value = channelMap.getOrDefault(key, channelMap.size());
+        if (channelMap.containsKey(key)) {
+            return channelMap.get(key);
+        }
+        value = channelMap.size();
+        if (value >= CHANNEL_DRUM) {
+            value++;
+        }
 logger.log(Level.TRACE, "pseudo midi channel: (" + smafTrackNumber + ":" + smafChannel + ") -> " + value);
 if (value > 15) {
  logger.log(Level.WARNING, "pseudo midi channel become > 15: smaf track: " + smafTrackNumber + ", smaf channel: " + smafChannel);
@@ -275,7 +310,7 @@ if (value > 15) {
         // for a synthesizer which plays the file's own voices the program of a drum channel is
         // the drum kit (Bank_Program3 of the MA-3 driver), see AudioEngine#isDisabled
         if (formatType != FormatType.HandyPhoneStandard && !AudioEngine.isDisabled()) {
-            if (midiChannel != drumSwapChannel && drums[midiChannel] == ChannelConfiguration.PERCUSSION) {
+            if (drums[midiChannel] == ChannelConfiguration.PERCUSSION) {
 logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
                 program = 0;
             }
@@ -310,14 +345,14 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
 //logger.log(Level.TRACE, "used swapped channel: " + midiChannel);
 //        }
 
-        // drum channel is used as sound
-        if (midiChannel == CHANNEL_DRUM && drums[CHANNEL_DRUM] == ChannelConfiguration.SOUND_SET) {
-            midiChannel = drumSwapChannel;
-        }
-
         // all percussion specifications go to MIDI drum channels
         if (drums[midiChannel] == ChannelConfiguration.PERCUSSION) {
-            midiChannel = CHANNEL_DRUM;
+            return CHANNEL_DRUM;
+        }
+
+        // drum channel is used as sound
+        if (midiChannel == CHANNEL_DRUM) {
+            return drumSwapChannel();
         }
 
         return midiChannel;

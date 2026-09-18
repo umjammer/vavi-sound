@@ -8,12 +8,18 @@ package vavi.sound.mfi.vavi;
 
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
 
+import vavi.sound.mfi.ChannelMessage;
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.MfiMessage;
 import vavi.sound.mfi.Track;
+import vavi.sound.mfi.vavi.sequencer.MfiValueExclusive;
 import vavi.sound.mfi.vavi.track.TempoMessage;
 
 import static java.lang.System.getLogger;
@@ -97,32 +103,64 @@ public class MidiContext {
     /** */
     private static final int CHANNEL_UNUSED = -1;
 
-    /** destination channel if DRUM_CHANNEL is not rhythm */
+    /**
+     * the MIDI channel a melody on {@link #CHANNEL_DRUM} goes to, chosen when first needed,
+     * {@link #CHANNEL_UNUSED} until then
+     */
     private int drumSwapChannel = CHANNEL_UNUSED;
+
+    /** whether a channel message of the sequence is on the channel, index is pseudo MIDI channel */
+    private final boolean[] usedChannels = new boolean[MAX_MIDI_CHANNELS];
+
+    /**
+     * Finds the channels the sequence uses, which a melody on {@link #CHANNEL_DRUM} must not be
+     * moved to. An audio channel is not a MIDI one.
+     */
+    public void setTracks(Track[] mfiTracks) {
+        for (int t = 0; t < mfiTracks.length; t++) {
+            for (int i = 0; i < mfiTracks[t].size(); i++) {
+                MfiMessage message = mfiTracks[t].get(i).getMessage();
+                if (message instanceof ChannelMessage channelMessage && !message.getClass().getSimpleName().startsWith("Audio")) {
+                    int channel = channelMessage.getVoice() + 4 * t;
+                    if (channel < MAX_MIDI_CHANNELS) {
+                        usedChannels[channel] = true;
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
      */
     public void setDrum(int channel, ChannelConfiguration value) {
-        if (drumSwapChannel != CHANNEL_UNUSED && channel == drumSwapChannel) {
-logger.log(Level.DEBUG, "already swapped: " + channel + ", " + value);
-        } else {
-            drums[channel] = value;
-        }
+        drums[channel] = value;
+    }
 
-        // ff DRUM_CHANNEL is not a rhythm, replace it with an empty channel
-        if (channel == CHANNEL_DRUM && drums[CHANNEL_DRUM] == ChannelConfiguration.SOUND_SET && drumSwapChannel == CHANNEL_UNUSED) {
-            for (int k = MAX_MIDI_CHANNELS - 1; k >= 0; k--) {
-                if (k != CHANNEL_DRUM && drums[k] == ChannelConfiguration.UNUSED) {
-                    drumSwapChannel = k; // TODO support multiple？
-logger.log(Level.DEBUG, "channel 9 -> " + k);
-                    break;
+    /**
+     * The MIDI channel a melody on {@link #CHANNEL_DRUM} goes to: one the sequence has no
+     * channel message on, or else a percussion one, whose own MIDI channel is left as its
+     * messages all go to {@link #CHANNEL_DRUM}.
+     */
+    private int drumSwapChannel() {
+        if (drumSwapChannel == CHANNEL_UNUSED) {
+            for (int k = MAX_MIDI_CHANNELS - 1; k >= 0 && drumSwapChannel == CHANNEL_UNUSED; k--) {
+                if (k != CHANNEL_DRUM && !usedChannels[k]) {
+                    drumSwapChannel = k;
                 }
             }
-if (drumSwapChannel == CHANNEL_UNUSED) {
-logger.log(Level.DEBUG, "cannot swap: " + channel + ", " + value);
-}
+            for (int k = MAX_MIDI_CHANNELS - 1; k >= 0 && drumSwapChannel == CHANNEL_UNUSED; k--) {
+                if (k != CHANNEL_DRUM && drums[k] == ChannelConfiguration.PERCUSSION) {
+                    drumSwapChannel = k;
+                }
+            }
+            if (drumSwapChannel == CHANNEL_UNUSED) {
+logger.log(Level.DEBUG, "cannot swap, the melody stays on " + CHANNEL_DRUM);
+                return CHANNEL_DRUM;
+            }
+logger.log(Level.DEBUG, "channel " + CHANNEL_DRUM + " -> " + drumSwapChannel);
         }
+        return drumSwapChannel;
     }
 
     /** volumes assigned to channel, index is pseudo MIDI channel */
@@ -157,7 +195,7 @@ logger.log(Level.DEBUG, "cannot swap: " + channel + ", " + value);
      * @return channel after drum replacement (real MIDI channel)
      */
     public int setProgram(int channel, int program) {
-        if (channel != drumSwapChannel && drums[channel] == ChannelConfiguration.PERCUSSION) {
+        if (drums[channel] == ChannelConfiguration.PERCUSSION) {
 logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + program);
             program = 0;
         }
@@ -188,7 +226,7 @@ logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + program);
      * @return channel after drum replacement (real MIDI channel)
      */
     public int setBank(int channel, int bank) {
-        if (channel != drumSwapChannel && drums[channel] == ChannelConfiguration.PERCUSSION) {
+        if (drums[channel] == ChannelConfiguration.PERCUSSION) {
 logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + bank);
             bank = 0;
         }
@@ -213,20 +251,54 @@ logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + bank);
     // ---- note
 
     /**
+     * Where every channel message of the channel goes: {@link #CHANNEL_DRUM} is kept for the
+     * percussion ones, which are all gathered there, a melody one on it goes elsewhere.
      * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
      * @return channel after drum replacement (real MIDI channel)
      */
     public int retrieveChannel(int channel) {
-
-        if (channel == CHANNEL_DRUM && drums[CHANNEL_DRUM] == ChannelConfiguration.SOUND_SET) {
-            channel = drumSwapChannel;
-        }
-
         if (drums[channel] == ChannelConfiguration.PERCUSSION) {
-            channel = CHANNEL_DRUM;
+            return CHANNEL_DRUM;
         }
-
+        if (channel == CHANNEL_DRUM) {
+            return drumSwapChannel();
+        }
         return channel;
+    }
+
+    /**
+     * Where a message {@link #retrieveChannel} moved came from, for a synthesizer of an mfi
+     * sound source, which plays the channels of the file as they are.
+     * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
+     * @param tick the tick of the message moved
+     * @return the {@link MfiValueExclusive#CHANNEL} exclusive to go right before the message,
+     *         nothing if the channel is not moved
+     */
+    public MidiEvent[] origin(int channel, long tick) throws InvalidMidiDataException {
+        int midiChannel = retrieveChannel(channel);
+        if (midiChannel == channel) {
+            return new MidiEvent[0];
+        }
+        return new MidiEvent[] {
+            new MidiEvent(MfiValueExclusive.message(MfiValueExclusive.CHANNEL, midiChannel, channel), tick)
+        };
+    }
+
+    /**
+     * The events of the channel's messages, which are on {@link #retrieveChannel} of it
+     * already, each with {@link #origin} right before it when the channel is moved.
+     * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
+     */
+    public MidiEvent[] withOrigins(int channel, MidiEvent... events) throws InvalidMidiDataException {
+        if (retrieveChannel(channel) == channel) {
+            return events;
+        }
+        List<MidiEvent> result = new ArrayList<>();
+        for (MidiEvent event : events) {
+            result.addAll(Arrays.asList(origin(channel, event.getTick())));
+            result.add(event);
+        }
+        return result.toArray(MidiEvent[]::new);
     }
 
     /**

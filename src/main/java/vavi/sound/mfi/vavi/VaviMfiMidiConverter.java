@@ -283,6 +283,7 @@ logger.log(Level.ERROR, e.getMessage(), e);
         Track[] mfiTracks = mfiSequence.getTracks();
 
         MidiContext midiContext = new MidiContext();
+        midiContext.setTracks(mfiTracks);
 
         int resolution = midiContext.getResolution(mfiTracks);
 logger.log(Level.DEBUG, "resolution: " + resolution);

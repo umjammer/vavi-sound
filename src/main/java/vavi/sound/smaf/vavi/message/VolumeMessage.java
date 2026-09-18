@@ -104,8 +104,7 @@ public class VolumeMessage extends vavi.sound.smaf.ShortMessage
         throws InvalidMidiDataException {
 
         if (context.getFormatType() == FormatType.HandyPhoneStandard &&
-            context.getDrum(this.channel) == ChannelConfiguration.PERCUSSION &&
-            context.getSmafTrackNumber() * 4 + this.channel != MidiContext.CHANNEL_DRUM) {
+            context.getDrum(this.channel) == ChannelConfiguration.PERCUSSION) {
 
             // TODO psm sets the last(maximum?)? volume
 logger.log(Level.DEBUG, "volume: " + volume);

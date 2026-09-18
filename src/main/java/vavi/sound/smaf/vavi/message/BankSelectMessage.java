@@ -161,6 +161,9 @@ logger.log(Level.DEBUG, "BankSelect: [%d] %dch, 0x%02x".formatted(duration, chan
                 return events;
             }
         } else {                                // MobileStandard
+            if (significant == Significant.Most) {
+                context.setBankMsb(this.channel, bank);
+            }
             int midiChannel = context.retrieveChannel(this.channel);
 
 logger.log(Level.DEBUG, "BankSelect(" + significant + "): [" + duration + "] " + midiChannel + "ch, " + bank);
