@@ -142,7 +142,7 @@ public class WaveDataMessage extends SmafMessage
         int channels = data[3];
         byte[] adpcm = Arrays.copyOfRange(data, 7, data.length - 1);
 
-logger.log(Level.DEBUG, "WAVE DATA[" + id + "]: " + this);
+logger.log(Level.DEBUG, "WAVE DATA[" + id + "]: format=" + format + " samplingRate=" + samplingRate + " samplingBits=" + samplingBits + " channels=" + channels);
 //try {
 // java.nio.file.Files.write(Path.of("out.pcm"), data);
 // logger.log(Level.DEBUG, "WAVE DATA saved to out.pcm");

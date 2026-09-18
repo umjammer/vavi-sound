@@ -33,7 +33,7 @@ import static vavi.sound.midi.VaviMidiDeviceProvider.MANUFACTURER_ID;
  *
  *  payload
  *   45 10 id ff cc bb sh sl &lt;data&gt; f7   {@link #wave}      a stream wave
- *   45 11 id vv ch f7                  {@link #on}        start a stream
+ *   45 11 id vv ch [g2 g1 g0] f7       {@link #on}        start a stream, g: optional gate time [ms], big endian
  *   45 12 id f7                        {@link #off}       stop a stream
  *   45 13 ch vv f7                     {@link #volume}    volume of an MFi audio channel
  *   45 14 ch pp f7                     {@link #panpot}    panpot of an MFi audio channel
@@ -113,6 +113,31 @@ public final class MobileExclusive {
      */
     public static byte[] on(int functionId, int id, int velocity, int channel) {
         return new byte[] {(byte) MANUFACTURER_ID, (byte) functionId, ON, (byte) (id & 0x7f), (byte) (velocity & 0x7f), (byte) (channel & 0x7f), (byte) EOX};
+    }
+
+    /**
+     * A start that also tells how long the stream sounds, a SMAF wave event
+     * has its gate time with it, an audio engine plays exactly that long.
+     *
+     * @param functionId mfi/smaf sysex function id
+     * @param velocity 0 ~ 127
+     * @param channel 0 ~ 3, {@link #NO_CHANNEL} when the stream has none
+     * @param gateTime [ms] 0 ~ 0xffffff
+     */
+    public static byte[] on(int functionId, int id, int velocity, int channel, long gateTime) {
+        return new byte[] {(byte) MANUFACTURER_ID, (byte) functionId, ON, (byte) (id & 0x7f), (byte) (velocity & 0x7f), (byte) (channel & 0x7f),
+                (byte) ((gateTime >> 16) & 0xff), (byte) ((gateTime >> 8) & 0xff), (byte) (gateTime & 0xff), (byte) EOX};
+    }
+
+    /**
+     * @param on the start exclusive from the sub id: 11 id vv ch [g2 g1 g0] (f7)
+     * @return gate time [ms], -1 when the start has none
+     */
+    public static long gateTime(byte[] on) {
+        if (on.length < 7) {
+            return -1;
+        }
+        return ((on[4] & 0xffL) << 16) | ((on[5] & 0xffL) << 8) | (on[6] & 0xffL);
     }
 
     /**
