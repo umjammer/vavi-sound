@@ -361,7 +361,7 @@ logger.log(Level.DEBUG, "contents info: " + MetaEvent.valueOf(midiMetaMessage.ge
         for (int t = smafSequence.getTracks().length; t <= smafTrackNumber; t++) {
             Track smafTrack = smafSequence.createTrack();
             smafContext.setTrackUsed(t, true);
-            smafTrack.add(new SmafEvent(machineDependentMessage(), 0L));
+            smafTrack.add(new SmafEvent(machineDependentMessage(t), 0L));
 logger.log(Level.DEBUG, "create SMAF track: " + t);
         }
     }
@@ -370,12 +370,12 @@ logger.log(Level.DEBUG, "create SMAF track: " + t);
      * The Score Track Chunk header of a track to be written, the counterpart of what
      * {@link ScoreTrackChunk#getSmafEvents()} reads out of a file.
      */
-    private static MetaMessage machineDependentMessage() throws InvalidSmafDataException {
+    private static MetaMessage machineDependentMessage(int smafTrackNumber) throws InvalidSmafDataException {
         Map<String, Object> props = new HashMap<>();
         props.put("localType", ScoreTrackChunk.class);
         props.put("formatType", FormatType.HandyPhoneStandard);
         props.put("sequenceType", SequenceType.StreamSequence);
-        props.put("channelStatuses", channelStatuses());
+        props.put("channelStatuses", channelStatuses(smafTrackNumber));
         props.put("durationTimeBase", SmafContext.TIME_BASE);
         props.put("gateTimeTimeBase", SmafContext.TIME_BASE);
 
@@ -385,16 +385,17 @@ logger.log(Level.DEBUG, "create SMAF track: " + t);
     }
 
     /**
-     * The channel status of the 4 SMAF channels of a track. Which MIDI channel plays rhythm is
-     * not known before the whole sequence has been read, so every channel is "no care", which
-     * makes the MIDI drum channel the rhythm one when it is read back.
+     * The channel status of the 4 SMAF channels of a track. The SMAF channel the MIDI drum
+     * channel is written to is the rhythm one ({@link SmafContext#isPercussion}), which is what
+     * makes it a percussion one again when it is read back, the others are "no care".
      *
      * @see MidiContext#CHANNEL_DRUM
      */
-    private static ChannelStatus[] channelStatuses() {
+    private static ChannelStatus[] channelStatuses(int smafTrackNumber) {
         ChannelStatus[] channelStatuses = new ChannelStatus[SmafContext.MAX_SMAF_CHANNELS];
         for (int c = 0; c < channelStatuses.length; c++) {
-            channelStatuses[c] = new ChannelStatus(c, (byte) ChannelStatus.Type.NoCare.ordinal());
+            boolean drum = smafTrackNumber * SmafContext.MAX_SMAF_CHANNELS + c == MidiContext.CHANNEL_DRUM;
+            channelStatuses[c] = new ChannelStatus(c, (byte) (drum ? ChannelStatus.Type.Rhythm : ChannelStatus.Type.NoCare).ordinal());
         }
         return channelStatuses;
     }
