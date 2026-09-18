@@ -113,6 +113,8 @@ public class PitchBendMessage extends vavi.sound.mfi.ShortMessage
         throws InvalidMidiDataException {
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
+        // on where the channel goes, a percussion one to the drum channel, a melody one away from it
+        int midiChannel = context.retrieveChannel(channel);
 //logger.log(Level.TRACE, this);
 //      context.setPitchBend(channel, getPitchBend());
 
@@ -120,12 +122,12 @@ public class PitchBendMessage extends vavi.sound.mfi.ShortMessage
 
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.PITCH_BEND,
-                                channel,
+                                midiChannel,
                                 0,                // LSB
                                 getPitchBend() * 2);    // MSB
-        return new MidiEvent[] {
+        return context.withOrigins(channel, new MidiEvent[] {
             new MidiEvent(shortMessage, context.getCurrent())
-        };
+        });
     }
 
     @Override

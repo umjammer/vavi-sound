@@ -20,6 +20,8 @@ import static vavi.sound.mfi.vavi.VaviMfiDeviceProvider.MANUFACTURER_ID;
  * <pre>
  * 0xf0 0x45 0x04 sub ... 0xf7
  *
+ * channel is the midi one, where the mfi channel ended up
+ *
  * sub 0x01 bank          channel bank                mfi 0xe1, the midi program keeps only bit 0 of the bank
  * sub 0x02 master volume volume                      mfi 0xb0, the universal master volume following is this one
  * sub 0x03 pitch bend    channel fine                mfi 0xe9, the low 6 bits of the pitch bend 0xe4 following
@@ -27,9 +29,10 @@ import static vavi.sound.mfi.vavi.VaviMfiDeviceProvider.MANUFACTURER_ID;
  * sub 0x05 channel configuration channel raw raw7   mfi 0xba, channel is the midi one the mfi channel went to,
  *                                                    raw the low 7 bits of the mfi byte, raw7 its bit 7
  * sub 0x06 expression    channel value               mfi 0xe6, the 6 bit value as it is, the midi expression can't keep it
- * sub 0x07 channel       channel mfi channel         the next note on / off, program change or bank exclusive on the
- *                                                    channel is the mfi channel's, sent when the channel is not its own
- *                                                    (a percussion one gathered to 9, a melody one on 9 moved away)
+ * sub 0x07 channel       channel mfi channel         the next channel message (or the next of these exclusives) on the
+ *                                                    channel is the mfi channel's, sent right before each of them when
+ *                                                    the channel is not its own (a percussion one gathered to 9, a
+ *                                                    melody one on 9 moved away)
  * sub 0x08 program       channel program             mfi 0xe0, the program as it is, sent when the midi one following
  *                                                    is not it (a percussion one is made 0)
  * </pre>

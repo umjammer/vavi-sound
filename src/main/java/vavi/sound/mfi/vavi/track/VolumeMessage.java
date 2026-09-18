@@ -112,6 +112,8 @@ public class VolumeMessage extends vavi.sound.mfi.ShortMessage
         throws InvalidMidiDataException {
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
+        // on where the channel goes, a percussion one to the drum channel, a melody one away from it
+        int midiChannel = context.retrieveChannel(channel);
 
 //logger.log(Level.TRACE, "volume: " + channel + ": " + getVolume());
         context.setVolume(channel, volume);
@@ -119,7 +121,7 @@ public class VolumeMessage extends vavi.sound.mfi.ShortMessage
         MidiEvent[] events = new MidiEvent[1];
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
-                                channel,
+                                midiChannel,
                                 7,          // main volume MSB
                                 context.getVolume(channel) * 2);
         events[0] = new MidiEvent(shortMessage, context.getCurrent());
@@ -129,7 +131,7 @@ public class VolumeMessage extends vavi.sound.mfi.ShortMessage
 //                              39,         // main volume LSB
 //                              0);
 //      events[1] = new MidiEvent(shortMessage, context.getCurrent());
-        return events;
+        return context.withOrigins(channel, events);
     }
 
     @Override

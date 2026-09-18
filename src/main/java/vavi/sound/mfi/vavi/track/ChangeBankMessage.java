@@ -112,7 +112,7 @@ public class ChangeBankMessage extends vavi.sound.mfi.ShortMessage
 //logger.log(Level.TRACE, "track: "+context.getTrackNumber()+", voice: "+getVoice());
 
 //logger.log(Level.TRACE, "bank[" + channel + "]: " + getBank());
-        MidiEvent[] origin = context.origin(channel, context.getCurrent());
+        int mfiChannel = channel;
         channel = context.setBank(channel, getBank());
 
         // the bank as it is, which the midi program keeps only bit 0 of
@@ -127,11 +127,6 @@ public class ChangeBankMessage extends vavi.sound.mfi.ShortMessage
                 new MidiEvent(sysexMessage, context.getCurrent()),
                 new MidiEvent(shortMessage, context.getCurrent())
         };
-        if (origin.length == 0) {
-            return events;
-        }
-        // one for each, a synthesizer takes an origin for the next message only
-        MidiEvent[] originPc = context.origin(getVoice() + 4 * context.getMfiTrackNumber(), context.getCurrent());
-        return new MidiEvent[] { origin[0], events[0], originPc[0], events[1] };
+        return context.withOrigins(mfiChannel, events);
     }
 }

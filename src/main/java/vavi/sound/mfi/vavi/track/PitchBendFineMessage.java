@@ -132,8 +132,10 @@ public class PitchBendFineMessage extends vavi.sound.mfi.ShortMessage
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
-        return new MidiEvent[] {
-            new MidiEvent(MfiValueExclusive.message(MfiValueExclusive.PITCH_BEND_FINE, channel, getPitchBendFine()), context.getCurrent())
-        };
+        // on where the channel goes, a percussion one to the drum channel, a melody one away from it
+        int midiChannel = context.retrieveChannel(channel);
+        return context.withOrigins(channel, new MidiEvent[] {
+            new MidiEvent(MfiValueExclusive.message(MfiValueExclusive.PITCH_BEND_FINE, midiChannel, getPitchBendFine()), context.getCurrent())
+        });
     }
 }
