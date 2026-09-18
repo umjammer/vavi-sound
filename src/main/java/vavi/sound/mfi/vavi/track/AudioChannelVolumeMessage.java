@@ -123,7 +123,7 @@ public class AudioChannelVolumeMessage extends vavi.sound.mfi.ShortMessage
      */
     @Override
     public void sequence(byte[] data, Receiver receiver) throws InvalidMfiDataException {
-        assert data[0] == 0x12 : "illegal command";
+        assert data[0] == 0x13 : "illegal command";
         // TODO audio engine volume
     }
 }
