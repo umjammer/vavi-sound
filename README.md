@@ -113,8 +113,8 @@ A. yes you can, follow those steps
   * ~~psx adpcm spi~~
   * ~~sshd (.ss2) spi~~
   * ~~adpcm playback timing precisely~~
-  * smaf, mfi midi synthesizer are really needed? just receiver seems to be ok
-    * those are needed when eliminating audio engine source data line 
+  * ~~smaf, mfi midi synthesizer are really needed? just receiver seems to be ok~~
+    * ~~those are needed when eliminating audio engine source data line~~ 
   * ~~eliminate *MessageStore -> w/ data sysex~~ 
 
 ---
