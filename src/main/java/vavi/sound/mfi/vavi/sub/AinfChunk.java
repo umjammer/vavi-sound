@@ -101,6 +101,8 @@ public class AinfChunk extends SubChunk
             }
             byte[] message = getSubMessage(TYPE, baos.toByteArray(), baos.size());
             setMessage(META_TYPE, message, message.length);
+            this.audioInfos.clear();
+            this.audioInfos.addAll(List.of(audioInfos));
             return this;
         } catch (InvalidMfiDataException | IOException e) {
             throw new IllegalStateException(e);
@@ -193,6 +195,11 @@ public class AinfChunk extends SubChunk
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
             throws InvalidMidiDataException {
+
+        // audio chunks but no audio info (F901iC files: "ainf 00 02 0n 00"), no format to tell
+        if (audioInfos.isEmpty()) {
+            return new MidiEvent[0];
+        }
 
         MetaMessage metaMessage = new MetaMessage();
         int format = audioInfos.getFirst().format;

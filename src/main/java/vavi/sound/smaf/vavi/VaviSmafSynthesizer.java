@@ -54,6 +54,9 @@ public class VaviSmafSynthesizer implements Synthesizer {
     /** */
     private javax.sound.midi.Synthesizer midiSynthesizer;
 
+    /** the synthesizer played here with the adpcm mixed in, null: it plays to its own line */
+    private vavi.sound.mobile.MixingLine mixingLine;
+
     @Override
     public Info getDeviceInfo() {
         return info;
@@ -69,7 +72,11 @@ public class VaviSmafSynthesizer implements Synthesizer {
         try {
             this.midiSynthesizer = MidiUtil.getDefaultSynthesizer(vavi.sound.midi.VaviMidiDeviceProvider.class);
 
-            midiSynthesizer.open();
+            // the adpcm is mixed into the synthesizer's line when it can be, see MixingLine
+            mixingLine = vavi.sound.mobile.MixingLine.open(midiSynthesizer);
+            if (mixingLine == null) {
+                midiSynthesizer.open();
+            }
         } catch (MidiUnavailableException e) {
 logger.log(Level.ERROR, e.getMessage(), e);
             throw new SmafUnavailableException(e);
@@ -78,7 +85,12 @@ logger.log(Level.ERROR, e.getMessage(), e);
 
     @Override
     public void close() {
-        midiSynthesizer.close();
+        if (mixingLine != null) {
+            mixingLine.close();
+            mixingLine = null;
+        } else {
+            midiSynthesizer.close();
+        }
     }
 
     @Override

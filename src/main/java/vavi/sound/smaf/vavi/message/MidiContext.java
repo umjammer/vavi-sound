@@ -347,6 +347,12 @@ logger.log(Level.DEBUG, "drum always zero:[" + midiChannel + "]: " + program);
 
         // all percussion specifications go to MIDI drum channels
         if (drums[midiChannel] == ChannelConfiguration.PERCUSSION) {
+            // but for a synthesizer which plays the file's own voices a percussion channel stays
+            // where it is, as the ma-3 driver plays it: its bank, volume and panpot are its own,
+            // not those of CHANNEL_DRUM, and so is a stream it starts. see AudioEngine#isDisabled
+            if (formatType != FormatType.HandyPhoneStandard && AudioEngine.isDisabled()) {
+                return midiChannel;
+            }
             return CHANNEL_DRUM;
         }
 

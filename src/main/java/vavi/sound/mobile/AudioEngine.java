@@ -28,6 +28,9 @@ import java.util.concurrent.TimeUnit;
  *  <li>{@code vavi.sound.mobile.AudioEngine.volume} ... adpcm volume</li>
  *  <li>{@code vavi.sound.mobile.AudioEngine.workers} ... audio engine thread pool size</li>
  *  <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... see {@link #isDisabled()}</li>
+ *  <li>{@code vavi.sound.mobile.AudioEngine.output} ... {@code line} (default): each engine plays to a
+ *      {@link javax.sound.sampled.SourceDataLine} of its own, timed by {@link Sync};
+ *      {@code mixer}: no line, the player pulls the streams from {@link AudioEngineMixer}</li>
  * </ul>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 051116 nsano initial version <br>
@@ -41,7 +44,8 @@ public interface AudioEngine {
      * Such a synthesizer plays the file's own voices too, so what a message converts to is
      * what the file says and not what a GM one would make of it: the program of a SMAF
      * drum channel stays the drum kit it is ({@code Bank_Program3} of the MA-3 driver)
-     * instead of becoming 0.
+     * instead of becoming 0, and its notes stay on its own channel instead of going to
+     * channel 9.
      * </p>
      * @see MobileExclusive
      */
@@ -194,7 +198,8 @@ logger.log(Level.WARNING, "adpcm still playing at jvm shutdown, cut off");
         }
 
         /**
-         * runs an adpcm play task delayed by {@link #getDelay()}.
+         * runs an adpcm play task delayed by {@link #getDelay()}, or at once on this thread when
+         * the engines play to {@link AudioEngineMixer}.
          */
         public static void schedule(Runnable task) {
             schedule(scheduler, task);
@@ -210,6 +215,16 @@ logger.log(Level.WARNING, "adpcm still playing at jvm shutdown, cut off");
         }
 
         private static void schedule(ScheduledThreadPoolExecutor executor, Runnable task) {
+            if (AudioEngineMixer.isEnabled()) {
+                // nothing is written to a line, a start blocks nothing: now, on the caller's
+                // thread, which is the one rendering the song and knows when now is
+                try {
+                    task.run();
+                } catch (Throwable t) {
+logger.log(Level.ERROR, "adpcm task: " + t, t);
+                }
+                return;
+            }
             try {
                 executor.schedule(() -> {
                     try {
