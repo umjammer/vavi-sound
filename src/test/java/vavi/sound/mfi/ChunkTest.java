@@ -14,15 +14,20 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+import vavi.sound.mfi.vavi.SubChunk;
 import vavi.sound.mfi.vavi.VaviMfiFileFormat;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 
 /**
@@ -90,5 +95,16 @@ Debug.println(e.getMessage());
                 });
 Debug.println("mfis: " + c.get() + ", failure: " + f.size());
 f.forEach(System.err::println);
+    }
+
+    @Test
+    void test3() {
+        new SubChunk() {
+            {
+                assertArrayEquals("Naohide Sano".getBytes(), concat("Naohide ".getBytes() , "Sano".getBytes()));
+            }
+            @Override public boolean accept(String subType) { return false; }
+            public static byte[] concat(byte[]... arrays) { return SubChunk.concat(arrays); }
+        };
     }
 }

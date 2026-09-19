@@ -12,11 +12,11 @@ import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
-import vavi.sound.mfi.vavi.SubChunk;
 import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.SubChunk;
 import vavi.sound.midi.MidiConstants;
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
@@ -28,7 +28,8 @@ import vavi.sound.midi.MidiUtil;
  *  &quot;prot&quot; n bytes: data managing
  *  MIDI {@link MidiConstants.MetaEvent#META_TEXT_EVENT META_TEXT_EVENT (0x01)}
  * </pre>
- * <li> TODO use {@link CodeChunk}
+ * TODO use {@link CodeChunk} as charset
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  *          0.01 030905 nsano implements {@link MfiConvertible} <br>
@@ -86,8 +87,8 @@ public class ProtChunk extends SubChunk
         MetaMessage metaMessage = new MetaMessage();
 
         metaMessage.setMessage(MetaEvent.META_TEXT_EVENT.number(),
-                               getData(),
-                               getDataLength());
+                concat((TYPE + ": ").getBytes(), getData()),
+                4 + 2 + getDataLength());
 
         return new MidiEvent[] {
             new MidiEvent(metaMessage, context.getCurrent())

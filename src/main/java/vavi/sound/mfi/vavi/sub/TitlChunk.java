@@ -7,18 +7,17 @@
 package vavi.sound.mfi.vavi.sub;
 
 import java.io.UnsupportedEncodingException;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MfiEvent;
-import vavi.sound.mfi.vavi.SubChunk;
 import vavi.sound.mfi.vavi.MfiContext;
 import vavi.sound.mfi.vavi.MfiConvertible;
 import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.MidiConvertible;
+import vavi.sound.mfi.vavi.SubChunk;
 import vavi.sound.midi.MidiConstants;
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
@@ -30,7 +29,8 @@ import vavi.sound.midi.MidiUtil;
  *  &quot;titl&quot; n byte: mld title, &lt; 16 bytes expected, SJIS encoded
  *  MIDI {@link MidiConstants.MetaEvent#META_NAME META_NAME (0x03)}
  * </pre>
- * <li> TODO use {@link CodeChunk}
+ * TODO use {@link CodeChunk} as charset
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */

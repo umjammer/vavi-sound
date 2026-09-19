@@ -14,12 +14,14 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.Arrays;
 import java.util.ServiceLoader;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MetaMessage;
 import vavi.sound.mfi.vavi.sub.CodeChunk;
 import vavi.sound.mfi.vavi.sub.ProtChunk;
+import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -147,6 +149,7 @@ public abstract class SubChunk extends MetaMessage {
     @Override
     public byte[] getData() {
         byte[] tmp = new byte[getDataLength()];
+Debug.print(getDataLength() + "\n" + StringUtil.getDump(this.data, 32));
         System.arraycopy(this.data, HEADER_LENGTH + SUB_TYPE_LENGTH,
                          tmp, 0,
                          getDataLength());
@@ -230,6 +233,22 @@ logger.log(Level.DEBUG, subChunk);
     }
 
     // ----
+
+    protected static byte[] concat(byte[]... arrays) {
+        int length = Arrays.stream(arrays)
+                .mapToInt(a -> a.length)
+                .sum();
+
+        byte[] result = new byte[length];
+        int pos = 0;
+
+        for (byte[] a : arrays) {
+            System.arraycopy(a, 0, result, pos, a.length);
+            pos += a.length;
+        }
+
+        return result;
+    }
 
     /** @return new instance */
     public static SubChunk factory(String subType) {

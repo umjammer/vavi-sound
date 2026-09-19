@@ -7,9 +7,15 @@
 package vavi.sound.mfi.vavi.sub;
 
 import java.io.UnsupportedEncodingException;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiEvent;
 
 import vavi.sound.mfi.InvalidMfiDataException;
+import vavi.sound.mfi.vavi.MidiContext;
+import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.SubChunk;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 
 
 /**
@@ -23,7 +29,7 @@ import vavi.sound.mfi.vavi.SubChunk;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030822 nsano initial version <br>
  */
-public class VersChunk extends SubChunk {
+public class VersChunk extends SubChunk implements MidiConvertible {
 
     /** */
     public static final String TYPE = "vers";
@@ -72,6 +78,22 @@ public class VersChunk extends SubChunk {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    /** Meta 0x01 */
+    @Override
+    public MidiEvent[] getMidiEvents(MidiContext context)
+            throws InvalidMidiDataException {
+
+        MetaMessage metaMessage = new MetaMessage();
+
+        metaMessage.setMessage(MetaEvent.META_TEXT_EVENT.number(),
+                concat((TYPE + ": ").getBytes(), getData()),
+                4 + 2 + getDataLength());
+
+        return new MidiEvent[] {
+                new MidiEvent(metaMessage, context.getCurrent())
+        };
     }
 
     @Override

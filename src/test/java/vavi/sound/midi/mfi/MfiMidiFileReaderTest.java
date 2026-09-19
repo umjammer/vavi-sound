@@ -22,6 +22,7 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
 import vavi.sound.midi.MidiConstants.MetaEvent;
+import vavi.sound.midi.MidiUtil;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
 import vavi.util.properties.annotation.Property;
@@ -101,7 +102,7 @@ Debug.print(mfi);
             MidiEvent event = track.get(i);
             if (event.getMessage() instanceof MetaMessage metaMessage) {
                 if (metaMessage.getType() == MetaEvent.META_MARKER.number()) {
-Debug.print(StringUtil.getDump(metaMessage.getData()));
+Debug.print("maker: " + new String(metaMessage.getData()));
                     hasMaker = true;
                 } else if (metaMessage.getType() == MetaEvent.META_MACHINE_DEPEND.number()) {
                     byte[] data = metaMessage.getData();
@@ -109,6 +110,10 @@ Debug.print(StringUtil.getDump(metaMessage.getData()));
                         int format = (data[2] & 0xff) * 0x100 + (data[3] & 0xff);
 Debug.print("audio engine format: %02x".formatted(format));
                     }
+                } else if (metaMessage.getType() == MetaEvent.META_TEXT_EVENT.number()) {
+Debug.print("text: " + new String(metaMessage.getData()) + "\n" + StringUtil.getDump(metaMessage.getData(), 32));
+                } else {
+Debug.print(MidiUtil.paramString(metaMessage));
                 }
             }
         }
