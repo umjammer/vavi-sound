@@ -83,7 +83,7 @@ Provides a derived class of SysexMessage.
 | 0xe5 | Channel assignment        | 255.b.229 | ChannelChangeMessage   |
 | 0xe6 | Relative change in volume | 255.b.230 | ExpressionMessage      |
 | 0xe7 | Pitch bend range setting  | 255.b.231 | PitchBendRangeMessage  |
-| 0xe8 | Fine pitch bend A setting | 255.b.232 |                        |
+| 0xe8 | Fine pitch bend A setting | 255.b.232 | PitchBendFineAMessage  |
 | 0xe9 | Fine pitch bend B setting | 255.b.233 | PitchBendFineMessage   |
 | 0xea | Modulation depth setting  | 255.b.234 | ModulationDepthMessage |
 

@@ -106,7 +106,15 @@ public class PitchBendMessage extends vavi.sound.mfi.ShortMessage
     // ----
 
     /**
-     * because PsmPlayer converted it like this.
+     * The coarse half commits the bend, as PsmPlayer converted it: with the fine half at
+     * rest the midi value is {@code pitchBend * 0x100}, the very
+     * {@code (0, pitchBend * 2)} LSB / MSB pair this used to send on its own.
+     * <p>
+     * {@link PitchBendFineMessage} (0xe9) and {@link PitchBendFineAMessage} (0xe8) leave
+     * their half in the {@link MidiContext} for this, so a bend that moves finely than a
+     * coarse step now reaches a plain midi synthesizer as well - see
+     * {@link MidiContext#retrievePitchBend(int)}.
+     * </p>
      */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
@@ -116,15 +124,15 @@ public class PitchBendMessage extends vavi.sound.mfi.ShortMessage
         // on where the channel goes, a percussion one to the drum channel, a melody one away from it
         int midiChannel = context.retrieveChannel(channel);
 //logger.log(Level.TRACE, this);
-//      context.setPitchBend(channel, getPitchBend());
+        context.setPitchBend(channel, getPitchBend());
 
-//      int pitch = context.retrieveRealPitch(channel);
+        int pitch = context.retrievePitchBend(channel);
 
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.PITCH_BEND,
                                 midiChannel,
-                                0,                // LSB
-                                getPitchBend() * 2);    // MSB
+                                pitch & 0x7f,           // LSB
+                                (pitch >> 7) & 0x7f);   // MSB
         return context.withOrigins(channel, new MidiEvent[] {
             new MidiEvent(shortMessage, context.getCurrent())
         });

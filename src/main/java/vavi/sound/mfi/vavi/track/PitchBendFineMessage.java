@@ -31,6 +31,12 @@ import static java.lang.System.getLogger;
  * 6 bit value and both rest at 32.
  * </p>
  * <p>
+ * {@link PitchBendFineAMessage} (0xe8) writes the same fine half as this one - that is
+ * all "A" and "B" are - but stands on its own instead of riding with the
+ * {@link PitchBendMessage} that follows. See its comment for how the two were told
+ * apart.
+ * </p>
+ * <p>
  * How it was identified, since no MFi document was available:
  * </p>
  * <ul>
@@ -50,14 +56,18 @@ import static java.lang.System.getLogger;
  * <p>
  * A native player of an mfi sound source settles how they are combined (as openDoJa
  * follows it): the pitch word is {@code (((pitchBend << 5) + fine) << 3) - 0x100}, 0x2000
- * when both rest at 32, this one is cached and {@link PitchBendMessage} commits.
- * Since the midi pitch bend {@link PitchBendMessage} makes is left as it is, this goes
- * as {@link MfiValueExclusive#PITCH_BEND_FINE} for a synthesizer of the sound
- * source, the others let it go.
+ * when both rest at 32, this one is cached and {@link PitchBendMessage} commits. That is
+ * what {@link MidiContext#retrievePitchBend(int)} does, so the fine half reaches a plain
+ * midi synthesizer in the LSB of the bend {@link PitchBendMessage} sends - and with this
+ * half at rest that bend is {@code pitchBend * 0x100}, exactly the LSB 0 value it sent
+ * before, so a file that never bends finely converts byte for byte as it did. This still
+ * goes out as {@link MfiValueExclusive#PITCH_BEND_FINE} as well, for a synthesizer of the
+ * sound source that would rather have the mfi value; the others let it go.
  * </p>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260911 nsano initial version <br>
+ * @see PitchBendFineAMessage
  */
 public class PitchBendFineMessage extends vavi.sound.mfi.ShortMessage
     implements ChannelMessage, MidiConvertible, TrackMessage {
@@ -128,12 +138,19 @@ public class PitchBendFineMessage extends vavi.sound.mfi.ShortMessage
 
     // ----
 
-    /** the fine half as {@link MfiValueExclusive#PITCH_BEND_FINE}, see the class comment */
+    /**
+     * The fine half is left in the {@link MidiContext} for the {@link PitchBendMessage}
+     * that follows on this very tick to commit, and goes out as
+     * {@link MfiValueExclusive#PITCH_BEND_FINE} for a synthesizer of the sound source.
+     * It makes no midi pitch bend of its own - unlike {@link PitchBendFineAMessage},
+     * which has no 0xe4 behind it to do that.
+     */
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
         // on where the channel goes, a percussion one to the drum channel, a melody one away from it
         int midiChannel = context.retrieveChannel(channel);
+        context.setFinePitchBend(channel, getPitchBendFine());
         return context.withOrigins(channel, new MidiEvent[] {
             new MidiEvent(MfiValueExclusive.message(MfiValueExclusive.PITCH_BEND_FINE, midiChannel, getPitchBendFine()), context.getCurrent())
         });
