@@ -21,6 +21,7 @@ import javax.sound.midi.Transmitter;
 import javax.sound.midi.VoiceStatus;
 
 import vavi.sound.midi.MidiUtil;
+import vavi.sound.mobile.AudioEngine;
 import vavi.sound.smaf.vavi.VaviSmafSynthesizer.VaviSmafReceiver;
 
 import static vavi.sound.midi.VaviMidiDeviceProvider.version;
@@ -80,6 +81,9 @@ logger.log(Level.DEBUG, "internal midiSynthesizer: " + midiSynthesizer.getClass(
 
     @Override
     public void open() throws MidiUnavailableException {
+        // none of the streams the song before stored is this song's
+        AudioEngine.resetAll();
+
         // the adpcm is mixed into the synthesizer's line when it can be, see MixingLine
         mixingLine = vavi.sound.mobile.MixingLine.open(midiSynthesizer);
         if (mixingLine == null) {

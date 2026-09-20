@@ -34,9 +34,9 @@ class ExpressionMessageTest {
         MidiEvent[] b = new ExpressionMessage().init(0, 0xff, 0xe6, 0x80 | 0x20).getMidiEvents(context);
         assertEquals(2, a.length);
         assertEquals(((ShortMessage) a[1].getMessage()).getData2(), ((ShortMessage) b[1].getMessage()).getData2());
-        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, MfiValueExclusive.MFi_SYSEX_FUNCTION_ID_VALUE, MfiValueExclusive.EXPRESSION, 6, 0x00, (byte) 0xf7 },
+        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, MfiValueExclusive.MIDI_SYSEX_FUNCTION_ID_VALUE, MfiValueExclusive.EXPRESSION, 6, 0x00, (byte) 0xf7 },
                 a[0].getMessage().getMessage());
-        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, MfiValueExclusive.MFi_SYSEX_FUNCTION_ID_VALUE, MfiValueExclusive.EXPRESSION, 6, 0x20, (byte) 0xf7 },
+        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, MfiValueExclusive.MIDI_SYSEX_FUNCTION_ID_VALUE, MfiValueExclusive.EXPRESSION, 6, 0x20, (byte) 0xf7 },
                 b[0].getMessage().getMessage());
     }
 }

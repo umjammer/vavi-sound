@@ -26,7 +26,7 @@ import vavi.sound.mobile.MobileExclusive;
 
 import static java.lang.System.getLogger;
 import static vavi.sound.mobile.MobileExclusive.on;
-import static vavi.sound.mobile.MobileExclusive.packedSystex;
+import static vavi.sound.mobile.MobileExclusive.packedSysex;
 
 
 /**
@@ -116,7 +116,7 @@ public class AudioPlayMessage extends LongMessage
     public MidiEvent[] getMidiEvents(MidiContext context) throws InvalidMidiDataException {
 
         // velocity is 0 ~ 63
-        SysexMessage sysexMessage = packedSystex(on(MFi_SYSEX_FUNCTION_ID_MFi4, index, velocity * 127 / 63, voice));
+        SysexMessage sysexMessage = packedSysex(on(MFi_SYSEX_FUNCTION_ID_MFi4, index, velocity * 127 / 63, voice));
 
         return new MidiEvent[] {
             new MidiEvent(sysexMessage, context.getCurrent())

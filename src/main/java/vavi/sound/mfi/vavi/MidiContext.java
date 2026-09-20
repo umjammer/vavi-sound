@@ -317,27 +317,40 @@ logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + bank);
 
     // ----
 
-    /** -32 ~ 31, index is pseudo MIDI channel */
+    /** the rest of an mfi pitch bend, coarse and fine alike */
+    public static final int PITCH_BEND_NEUTRAL = 32;
+
+    /** {@link #retrievePitchBend(int)} when both halves rest */
+    public static final int MIDI_PITCH_BEND_NEUTRAL = 0x2000;
+
+    /** the mfi coarse pitch bend, 0 ~ 63 ({@link #PITCH_BEND_NEUTRAL} at rest), index is pseudo MIDI channel */
     private final int[] pitchBends = new int[MAX_MIDI_CHANNELS];
-    /** -32 ~ 31, index is pseudo MIDI channel */
+    /** the mfi fine pitch bend, 0 ~ 63 ({@link #PITCH_BEND_NEUTRAL} at rest), index is pseudo MIDI channel */
     private final int[] finePitchBends = new int[MAX_MIDI_CHANNELS];
     /** 0 ~ 24, index is pseudo MIDI channel */
     private final int[] pitchBendRanges = new int[MAX_MIDI_CHANNELS];
 
     /* initializing */ {
         for (int i = 0; i < MAX_MIDI_CHANNELS; i++) {
-            pitchBends[i] = 16;
-            finePitchBends[i] = 16;
+            pitchBends[i] = PITCH_BEND_NEUTRAL;
+            finePitchBends[i] = PITCH_BEND_NEUTRAL;
             pitchBendRanges[i] = 2;
         }
     }
 
-    /** */
+    /**
+     * @param pitchBend the mfi coarse half, 0 ~ 63
+     * @see vavi.sound.mfi.vavi.track.PitchBendMessage
+     */
     public void setPitchBend(int channel, int pitchBend) {
         pitchBends[channel] = pitchBend;
     }
 
-    /** */
+    /**
+     * @param finePitchBend the mfi fine half, 0 ~ 63; 0xe8 and 0xe9 both write this one
+     * @see vavi.sound.mfi.vavi.track.PitchBendFineAMessage
+     * @see vavi.sound.mfi.vavi.track.PitchBendFineMessage
+     */
     public void setFinePitchBend(int channel, int finePitchBend) {
         finePitchBends[channel] = finePitchBend;
     }
@@ -347,17 +360,26 @@ logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + bank);
         pitchBendRanges[channel] = pitchBendRange;
     }
 
-    /** TODO unused */
-    public int retrieveRealPitch(int channel) {
-        int pb = pitchBends[channel];
-        int fpb = finePitchBends[channel];
-        int rg = pitchBendRanges[channel];
-
-        int pitch =
-//          (int) ((pb * rgb * 100f / 32f) + ((fpb * rgb * 100f) / (32f * 32f)));
-            (pb * rg * 100 / 32) + ((fpb * rg * 100) / (32 * 32)) / 20;
-logger.log(Level.DEBUG, "pitch[" + channel + "]: " + pitch);
-        return pitch;
+    /**
+     * The midi pitch bend the two mfi halves of a channel make, as a native player of an
+     * mfi sound source puts them together (openDoJa follows it too):
+     * <pre>
+     *  (((pitchBend &lt;&lt; 5) + fine) &lt;&lt; 3) - 0x100
+     * </pre>
+     * <p>
+     * {@link #MIDI_PITCH_BEND_NEUTRAL} when both halves rest. With the fine half at rest
+     * this is {@code pitchBend * 0x100} exactly, which is what
+     * {@link vavi.sound.mfi.vavi.track.PitchBendMessage} sent on its own before the fine
+     * halves were wired in - so a file that never bends finely converts byte for byte as
+     * it did.
+     * </p>
+     *
+     * @param channel pseudo MIDI channel
+     * @return 0 ~ 0x3fff
+     */
+    public int retrievePitchBend(int channel) {
+        int pitch = (((pitchBends[channel] << 5) + finePitchBends[channel]) << 3) - 0x100;
+        return Math.clamp(pitch, 0, 0x3fff);
     }
 
     // ----

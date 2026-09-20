@@ -26,7 +26,7 @@ import vavi.sound.mobile.MobileExclusive;
 
 import static java.lang.System.getLogger;
 import static vavi.sound.mobile.MobileExclusive.off;
-import static vavi.sound.mobile.MobileExclusive.packedSystex;
+import static vavi.sound.mobile.MobileExclusive.packedSysex;
 
 
 /**
@@ -108,7 +108,7 @@ public class AudioStopMessage extends LongMessage
 
         SysexMessage sysexMessage;
 
-        sysexMessage = packedSystex(off(MFi_SYSEX_FUNCTION_ID_MFi4, index));
+        sysexMessage = packedSysex(off(MFi_SYSEX_FUNCTION_ID_MFi4, index));
 
         return new MidiEvent[] {
             new MidiEvent(sysexMessage, context.getCurrent())

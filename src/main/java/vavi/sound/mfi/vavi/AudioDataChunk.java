@@ -277,7 +277,7 @@ logger.log(Level.DEBUG, "adat length[" + audioDataMessage.audioDataNumber + "]: 
             SysexMessage sysexMessage;
 
             AdpmChunk adpm = (AdpmChunk) subChunks.get(AdpmChunk.TYPE);
-            sysexMessage = MobileExclusive.packedSystex(MobileExclusive.wave(
+            sysexMessage = MobileExclusive.packedSysex(MobileExclusive.wave(
                     MFi_SYSEX_FUNCTION_ID_MFi4,
                     audioDataNumber,
                     format,

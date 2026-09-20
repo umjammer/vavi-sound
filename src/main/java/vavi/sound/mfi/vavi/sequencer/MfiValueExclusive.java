@@ -47,7 +47,7 @@ public final class MfiValueExclusive {
     }
 
     /** vavi sysex function id */
-    public static final int MFi_SYSEX_FUNCTION_ID_VALUE = 0x04;
+    public static final int MIDI_SYSEX_FUNCTION_ID_VALUE = 0x7e;
 
     /** sub id: mfi bank */
     public static final int BANK = 0x01;
@@ -71,7 +71,7 @@ public final class MfiValueExclusive {
         byte[] bytes = new byte[data.length + 5];
         bytes[0] = (byte) 0xf0;
         bytes[1] = MANUFACTURER_ID;
-        bytes[2] = MFi_SYSEX_FUNCTION_ID_VALUE;
+        bytes[2] = MIDI_SYSEX_FUNCTION_ID_VALUE;
         bytes[3] = (byte) sub;
         for (int i = 0; i < data.length; i++) {
             bytes[4 + i] = (byte) (data[i] & 0x7f);
@@ -88,7 +88,7 @@ public final class MfiValueExclusive {
      */
     public static int sub(byte[] message) {
         if (message.length >= 5 && (message[0] & 0xff) == 0xf0
-                && message[1] == MANUFACTURER_ID && message[2] == MFi_SYSEX_FUNCTION_ID_VALUE) {
+                && message[1] == MANUFACTURER_ID && message[2] == MIDI_SYSEX_FUNCTION_ID_VALUE) {
             return message[3] & 0x7f;
         }
         return -1;

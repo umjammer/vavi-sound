@@ -24,7 +24,7 @@ import vavi.sound.smaf.SmafMessage;
 import vavi.sound.smaf.vavi.sequencer.WaveSequencer;
 
 import static java.lang.System.getLogger;
-import static vavi.sound.mobile.MobileExclusive.packedSystex;
+import static vavi.sound.mobile.MobileExclusive.packedSysex;
 import static vavi.sound.mobile.MobileExclusive.wave;
 
 
@@ -107,9 +107,9 @@ public class WaveDataMessage extends SmafMessage
 
         if (waveTable) {
             // the "EXWV" exclusive as it is in the file, a wave table voice ("EXVO") plays it
-            sysexMessage = packedSystex(YamahaMfiExclusive.wave(number, data));
+            sysexMessage = packedSysex(YamahaMfiExclusive.wave(number, data));
         } else {
-            sysexMessage = packedSystex(wave(SMAF_SYSEX_FUNCTION_ID_WAVE, number, format, channels, samplingBits, samplingRate, data));
+            sysexMessage = packedSysex(wave(SMAF_SYSEX_FUNCTION_ID_WAVE, number, format, channels, samplingBits, samplingRate, data));
         }
 
         return new MidiEvent[] {

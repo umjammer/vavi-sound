@@ -14,6 +14,10 @@ import java.io.OutputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.ByteOrder;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -40,6 +44,24 @@ public abstract class BasicAudioEngine implements AudioEngine {
     /** */
     protected Data[] data;
 
+    /**
+     * Every engine there is, {@link AudioEngine#resetAll} goes through them. Weakly held,
+     * an engine no one uses any more is not kept alive by being here.
+     */
+    private static final Set<BasicAudioEngine> engines =
+            Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
+
+    protected BasicAudioEngine() {
+        engines.add(this);
+    }
+
+    /** {@link #reset()} of every engine there is, see {@link AudioEngine#resetAll} */
+    static void resetAll() {
+        synchronized (engines) {
+            engines.forEach(BasicAudioEngine::reset);
+        }
+    }
+
     @Override
     public void setData(int streamNumber,
                         int channel,
@@ -47,27 +69,28 @@ public abstract class BasicAudioEngine implements AudioEngine {
                         int bits,
                         int channels,
                         byte[] adpcm, boolean continued) {
-        Data datum;
-        if (this.data[streamNumber] == null) {
+        Data datum = this.data[streamNumber];
+        if (datum == null) {
             datum = new Data();
-            datum.channel = channel;
-            datum.sampleRate = sampleRate;
-            datum.bits = bits;
-            datum.channels = channels;
-        } else {
-            datum = this.data[streamNumber];
+            this.data[streamNumber] = datum;
         }
         if (datum.continued) {
+            // the packet before said the data went on, this one is the rest of it
             byte[] temp = new byte[datum.adpcm.length + adpcm.length];
             System.arraycopy(datum.adpcm, 0, temp, 0, datum.adpcm.length);
             System.arraycopy(adpcm, 0, temp, datum.adpcm.length, adpcm.length);
             datum.adpcm = temp;
         } else {
+            // a stream of its own, it is what this message says it is and not what the
+            // stream of this number was in the song, or the song, before it
+            datum.channel = channel;
+            datum.sampleRate = sampleRate;
+            datum.bits = bits;
+            datum.channels = channels;
             datum.adpcm = adpcm;
             init(sampleRate, channels);
         }
         datum.continued = continued;
-        this.data[streamNumber] = datum;
         String decoder = getDecoderName(streamNumber, bits, datum.adpcm);
 logger.log(Level.INFO, "audio no: " + streamNumber + " stored" +
             (decoder == null || decoder.isBlank() ? "" : ", decoder: " + decoder));
@@ -186,6 +209,11 @@ logger.log(Level.WARNING, getClass().getSimpleName() + ": data for ch " + stream
             return;
         }
 
+        // a stream which is played is whole: were the continue flag of its last packet left
+        // standing, the next wave of this number would be put after this one and the two
+        // would be heard one after the other, the one before it and this one
+        this.data[streamNumber].continued = false;
+
         int channels = getChannels(streamNumber);
         if (channels == -1) {
 logger.log(Level.INFO, "always used: no: " + streamNumber + ", ch: " + this.data[streamNumber].channel);
@@ -265,6 +293,15 @@ logger.log(Level.DEBUG, "stopped: no: " + streamNumber + ", frames: " + framesWr
         long gateFrames = gateTime > 0 ? Math.round(gateTime * format.getSampleRate() / 1000.0) : Long.MAX_VALUE;
 logger.log(Level.DEBUG, "start (mixer): no: " + streamNumber + ", gateFrames: " + (gateFrames == Long.MAX_VALUE ? "all" : gateFrames));
         AudioEngineMixer.start(this, streamNumber, iss, channels, format, gateFrames, volume);
+    }
+
+    @Override
+    public void reset() {
+        AudioEngineMixer.close(this);
+        if (data != null) { // an engine still in its constructor, it has nothing stored yet
+            Arrays.fill(data, null);
+        }
+logger.log(Level.DEBUG, getClass().getSimpleName() + ": reset @" + Integer.toHexString(System.identityHashCode(this)));
     }
 
     @Override

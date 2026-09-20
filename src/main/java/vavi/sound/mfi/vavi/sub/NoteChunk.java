@@ -6,7 +6,14 @@
 
 package vavi.sound.mfi.vavi.sub;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiEvent;
+
+import vavi.sound.mfi.vavi.MidiContext;
+import vavi.sound.mfi.vavi.MidiConvertible;
 import vavi.sound.mfi.vavi.SubChunk;
+import vavi.sound.midi.MidiConstants.MetaEvent;
 
 
 /**
@@ -20,7 +27,7 @@ import vavi.sound.mfi.vavi.SubChunk;
  * @version 0.00 030822 nsano initial version <br>
  *          0.01 030907 nsano complete <br>
  */
-public class NoteChunk extends SubChunk {
+public class NoteChunk extends SubChunk implements MidiConvertible {
 
     /** */
     public static final String TYPE = "note";
@@ -60,6 +67,22 @@ public class NoteChunk extends SubChunk {
     public void setNoteLength(int noteLength) {
         this.data[4] = (byte) ((noteLength & 0xff00) >> 8);
         this.data[5] = (byte)  (noteLength & 0x00ff);
+    }
+
+    /** Meta 0x01 */
+    @Override
+    public MidiEvent[] getMidiEvents(MidiContext context)
+            throws InvalidMidiDataException {
+
+        MetaMessage metaMessage = new MetaMessage();
+
+        metaMessage.setMessage(MetaEvent.META_TEXT_EVENT.number(),
+                concat((TYPE + ": ").getBytes(), getData()),
+                4 + 2 + getDataLength());
+
+        return new MidiEvent[] {
+                new MidiEvent(metaMessage, context.getCurrent())
+        };
     }
 
     @Override

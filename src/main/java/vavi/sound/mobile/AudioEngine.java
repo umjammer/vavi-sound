@@ -99,6 +99,21 @@ public interface AudioEngine {
      */
     void start(int streamNumber, long gateTime);
 
+    /**
+     * Forgets every stream stored here, the song which stored them is over.
+     * <p>
+     * An engine is shared by every song a player plays, the streams of a song are sent again
+     * at the start of each play of it. What is left of the song before is heard in this one
+     * otherwise: a stream this song does not store is still the one it was, and a stream
+     * stored as the other half of a pair still pairs with the one beside it.
+     */
+    void reset();
+
+    /** {@link #reset()} of every engine there is, a player calls it when a song starts */
+    static void resetAll() {
+        BasicAudioEngine.resetAll();
+    }
+
     /** close the line inside the engine */
     void close();
 

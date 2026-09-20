@@ -44,7 +44,7 @@ public class CodeChunk extends SubChunk {
         return super.init(TYPE, data);
     }
 
-    /** TODO check endian */
+    /** TODO check endian, maybe le */
     public SubChunk init(int data) {
         return super.init(TYPE, new byte[] {
             (byte) ((data & 0xff000000) >> 24),
@@ -63,7 +63,7 @@ public class CodeChunk extends SubChunk {
                 data[3];
     }
 
-    /** TODO check endian */
+    /** TODO check endian, maybe le */
     public void setCode(int data)
         throws InvalidMfiDataException {
 

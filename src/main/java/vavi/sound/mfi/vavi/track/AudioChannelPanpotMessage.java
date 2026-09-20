@@ -20,7 +20,7 @@ import vavi.sound.mfi.vavi.TrackMessage;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mobile.MobileExclusive;
 
-import static vavi.sound.mobile.MobileExclusive.packedSystex;
+import static vavi.sound.mobile.MobileExclusive.packedSysex;
 import static vavi.sound.mobile.MobileExclusive.panpot;
 
 
@@ -111,7 +111,7 @@ public class AudioChannelPanpotMessage extends vavi.sound.mfi.ShortMessage
         throws InvalidMidiDataException {
 
         // not the yamaha stream panpot (43 79 06 7f 0b), which is of a wave, this is of a channel
-        SysexMessage sysexMessage = packedSystex(panpot(MFi_SYSEX_FUNCTION_ID_MFi4, voice, panpot * 2));
+        SysexMessage sysexMessage = packedSysex(panpot(MFi_SYSEX_FUNCTION_ID_MFi4, voice, panpot * 2));
 
         return new MidiEvent[] {
             new MidiEvent(sysexMessage, context.getCurrent())

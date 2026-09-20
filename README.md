@@ -115,7 +115,8 @@ A. yes you can, follow those steps
   * ~~adpcm playback timing precisely~~
   * ~~smaf, mfi midi synthesizer are really needed? just receiver seems to be ok~~
     * ~~those are needed when eliminating audio engine source data line~~ 
-  * ~~eliminate *MessageStore -> w/ data sysex~~ 
+  * ~~eliminate *MessageStore -> w/ data sysex~~
+  * ~~AudioDataChunk seems Δ is 0, there is the case that those pronounce at same timing ?~~
 
 ---
 

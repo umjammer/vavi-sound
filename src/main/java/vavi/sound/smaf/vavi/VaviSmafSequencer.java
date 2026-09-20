@@ -16,6 +16,7 @@ import javax.sound.midi.Transmitter;
 
 import vavi.sound.midi.MidiConstants.MetaEvent;
 import vavi.sound.midi.MidiUtil;
+import vavi.sound.mobile.AudioEngine;
 import vavi.sound.smaf.InvalidSmafDataException;
 import vavi.sound.smaf.MetaEventListener;
 import vavi.sound.smaf.MetaMessage;
@@ -93,6 +94,9 @@ logger.log(Level.ERROR, e.getMessage(), e);
         throws InvalidSmafDataException {
 
         this.sequence = sequence;
+
+        // a song of its own, none of the streams the song before stored is this song's
+        AudioEngine.resetAll();
 
         try {
             midiSequencer.setSequence(SmafSystem.toMidiSequence(sequence));

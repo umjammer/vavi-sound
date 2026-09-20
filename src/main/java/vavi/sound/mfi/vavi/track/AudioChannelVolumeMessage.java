@@ -20,7 +20,7 @@ import vavi.sound.mfi.vavi.TrackMessage;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mobile.MobileExclusive;
 
-import static vavi.sound.mobile.MobileExclusive.packedSystex;
+import static vavi.sound.mobile.MobileExclusive.packedSysex;
 import static vavi.sound.mobile.MobileExclusive.volume;
 
 
@@ -109,7 +109,7 @@ public class AudioChannelVolumeMessage extends vavi.sound.mfi.ShortMessage
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
 
-        SysexMessage sysexMessage = packedSystex(volume(MFi_SYSEX_FUNCTION_ID_MFi4, voice, volume * 127 / 63));
+        SysexMessage sysexMessage = packedSysex(volume(MFi_SYSEX_FUNCTION_ID_MFi4, voice, volume * 127 / 63));
 
         return new MidiEvent[] {
             new MidiEvent(sysexMessage, context.getCurrent())

@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.util.Arrays;
 import java.util.ServiceLoader;
 
 import vavi.sound.mfi.InvalidMfiDataException;
@@ -49,7 +50,7 @@ import static java.lang.System.getLogger;
  * <li>{@code vavi.sound.mfi.encoding.read} ... encoding for reading, default {@code JISAutoDetect}</li>
  * <p>
  * <li>TODO the first thing to put in {@link vavi.sound.mfi.Track}[0] is summarized as {@link MetaMessage}
- * <li>TODO all subclasses make MfiMessage class inside like AudioDataChunk </li>
+ * <li>TODO make MfiMessage class inside for all subclasses like AudioDataChunk </li>
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030819 nsano out source from {@link VaviMfiFileFormat} <br>
@@ -230,6 +231,22 @@ logger.log(Level.DEBUG, subChunk);
     }
 
     // ----
+
+    protected static byte[] concat(byte[]... arrays) {
+        int length = Arrays.stream(arrays)
+                .mapToInt(a -> a.length)
+                .sum();
+
+        byte[] result = new byte[length];
+        int pos = 0;
+
+        for (byte[] a : arrays) {
+            System.arraycopy(a, 0, result, pos, a.length);
+            pos += a.length;
+        }
+
+        return result;
+    }
 
     /** @return new instance */
     public static SubChunk factory(String subType) {

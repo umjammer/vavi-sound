@@ -23,6 +23,7 @@ import vavi.sound.mfi.MfiUnavailableException;
 import vavi.sound.mfi.Sequence;
 import vavi.sound.mfi.Sequencer;
 import vavi.sound.midi.MidiUtil;
+import vavi.sound.mobile.AudioEngine;
 
 import static java.lang.System.getLogger;
 
@@ -101,6 +102,9 @@ logger.log(Level.ERROR, e.getMessage(), e);
         throws InvalidMfiDataException {
 
         this.sequence = sequence;
+
+        // a song of its own, none of the streams the song before stored is this song's
+        AudioEngine.resetAll();
 
         try {
             midiSequencer.setSequence(MfiSystem.toMidiSequence(sequence));
