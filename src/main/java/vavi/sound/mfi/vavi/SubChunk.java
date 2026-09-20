@@ -21,7 +21,6 @@ import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.MetaMessage;
 import vavi.sound.mfi.vavi.sub.CodeChunk;
 import vavi.sound.mfi.vavi.sub.ProtChunk;
-import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 import static java.lang.System.getLogger;
@@ -51,7 +50,7 @@ import static java.lang.System.getLogger;
  * <li>{@code vavi.sound.mfi.encoding.read} ... encoding for reading, default {@code JISAutoDetect}</li>
  * <p>
  * <li>TODO the first thing to put in {@link vavi.sound.mfi.Track}[0] is summarized as {@link MetaMessage}
- * <li>TODO all subclasses make MfiMessage class inside like AudioDataChunk </li>
+ * <li>TODO make MfiMessage class inside for all subclasses like AudioDataChunk </li>
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 030819 nsano out source from {@link VaviMfiFileFormat} <br>
@@ -149,7 +148,6 @@ public abstract class SubChunk extends MetaMessage {
     @Override
     public byte[] getData() {
         byte[] tmp = new byte[getDataLength()];
-Debug.print(getDataLength() + "\n" + StringUtil.getDump(this.data, 32));
         System.arraycopy(this.data, HEADER_LENGTH + SUB_TYPE_LENGTH,
                          tmp, 0,
                          getDataLength());
