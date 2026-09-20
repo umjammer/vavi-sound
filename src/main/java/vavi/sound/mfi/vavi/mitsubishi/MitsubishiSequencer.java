@@ -42,14 +42,14 @@ public class MitsubishiSequencer implements MachineDependentSequencer {
 
     /**
      *
-     * @param data     45 01 + mfi sysex
+     * @param data     mfi sysex
      * @param receiver
      */
     @Override
     public void sequence(byte[] data, Receiver receiver)
         throws InvalidMfiDataException {
 
-        int function = data[6 + 2] & 0xff;
+        int function = data[6] & 0xff;
 logger.log(Level.TRACE, "function: 0x%02x".formatted(function));
 
         String key = VENDOR_MITSUBISHI + "." + function;
