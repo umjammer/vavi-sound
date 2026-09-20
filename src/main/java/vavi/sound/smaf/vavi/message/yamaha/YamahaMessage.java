@@ -34,7 +34,7 @@ public class YamahaMessage extends MachineDependentMessage implements MidiConver
         // data 0: manufacturer id ... last: 0xf7, 8 bit
         byte[] data = getData();
 
-        SysexMessage sysexMessage = MobileExclusive.packedSystex(data);
+        SysexMessage sysexMessage = MobileExclusive.packedSysex(data);
 logger.log(Level.TRACE, "midi sysex: %02x, ".formatted(sysexMessage.getMessage()[0] & 0xff) + sysexMessage.getLength() + " bytes\n" + StringUtil.getDump(sysexMessage.getData(), 32));
 
         return new MidiEvent[] {

@@ -31,7 +31,7 @@ class ChannelConfigurationMessageTest {
         // channel 10, family mode 1
         MidiEvent[] events = new ChannelConfigurationMessage().init(0, 0xff, 0xba, 0x51).getMidiEvents(context);
         assertEquals(1, events.length);
-        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, MfiValueExclusive.MFi_SYSEX_FUNCTION_ID_VALUE, MfiValueExclusive.CHANNEL_CONFIGURATION, 9, 0x51, 0, (byte) 0xf7 },
+        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, MfiValueExclusive.MIDI_SYSEX_FUNCTION_ID_VALUE, MfiValueExclusive.CHANNEL_CONFIGURATION, 9, 0x51, 0, (byte) 0xf7 },
                 events[0].getMessage().getMessage());
     }
 
@@ -41,7 +41,7 @@ class ChannelConfigurationMessageTest {
         MidiContext context = new MidiContext();
         // channel 3, family mode 0
         MidiEvent[] events = new ChannelConfigurationMessage().init(0, 0xff, 0xba, 0x18).getMidiEvents(context);
-        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, MfiValueExclusive.MFi_SYSEX_FUNCTION_ID_VALUE, MfiValueExclusive.CHANNEL_CONFIGURATION, 3, 0x18, 0, (byte) 0xf7 },
+        assertArrayEquals(new byte[] { (byte) 0xf0, 0x45, MfiValueExclusive.MIDI_SYSEX_FUNCTION_ID_VALUE, MfiValueExclusive.CHANNEL_CONFIGURATION, 3, 0x18, 0, (byte) 0xf7 },
                 events[0].getMessage().getMessage());
     }
 }

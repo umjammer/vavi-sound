@@ -26,7 +26,7 @@ import static vavi.sound.midi.VaviMidiDeviceProvider.MANUFACTURER_ID;
  * "Mwa*" chunk to the chip directly, and a note on a stream channel starts it.
  * So the wave data and the start / stop of an MFi audio message or a SMAF PCM
  * audio track need one of their own, which is this, sent packed 8 bit into 7
- * the way every other smaf exclusive is ({@link #packedSystex}):
+ * the way every other smaf exclusive is ({@link #packedSysex}):
  * </p>
  * <pre>
  *  f0 45 7f &lt;encode87(payload)&gt; f7
@@ -168,7 +168,7 @@ public final class MobileExclusive {
      * {@link vavi.sound.mfi.vavi.track.MachineDependentMessage},
      * {@link vavi.sound.smaf.vavi.message.yamaha.YamahaMessage} does.
      */
-    public static SysexMessage packedSystex(byte[] exclusive) throws InvalidMidiDataException {
+    public static SysexMessage packedSysex(byte[] exclusive) throws InvalidMidiDataException {
         byte[] data = pack(exclusive);
 
         SysexMessage sysexMessage = new SysexMessage();

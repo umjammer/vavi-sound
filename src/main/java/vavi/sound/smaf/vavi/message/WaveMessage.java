@@ -29,7 +29,7 @@ import vavi.sound.smaf.vavi.sequencer.WaveSequencer;
 import static java.lang.System.getLogger;
 import static vavi.sound.mobile.MobileExclusive.off;
 import static vavi.sound.mobile.MobileExclusive.on;
-import static vavi.sound.mobile.MobileExclusive.packedSystex;
+import static vavi.sound.mobile.MobileExclusive.packedSysex;
 
 
 /**
@@ -197,8 +197,8 @@ logger.log(Level.DEBUG, "midiGateTimeTics: " + midiGateTimeTicks);
         // waiting for the stop would let a whole sample block the adpcm line.
         // gate time ticks are [ms], see MidiContext#getResolution
         return new MidiEvent[] {
-            new MidiEvent(packedSystex(on(SMAF_SYSEX_FUNCTION_ID_WAVE, number, 127, channel, midiGateTimeTicks)), context.getCurrentTick()),
-            new MidiEvent(packedSystex(off(SMAF_SYSEX_FUNCTION_ID_WAVE, number)), context.getCurrentTick() + midiGateTimeTicks)
+            new MidiEvent(packedSysex(on(SMAF_SYSEX_FUNCTION_ID_WAVE, number, 127, channel, midiGateTimeTicks)), context.getCurrentTick()),
+            new MidiEvent(packedSysex(off(SMAF_SYSEX_FUNCTION_ID_WAVE, number)), context.getCurrentTick() + midiGateTimeTicks)
         };
     }
 

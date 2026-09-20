@@ -52,7 +52,7 @@ public final class YamahaMfiExclusive {
     }
 
     /** YAMAHA */
-    private static final int MANUFACTURER = 0x43;
+    public static final int MANUFACTURER = 0x43;
 
     /** end of exclusive */
     private static final int EOX = 0xf7;
@@ -145,7 +145,7 @@ public final class YamahaMfiExclusive {
             return;
         }
         try {
-            receiver.send(MobileExclusive.packedSystex(exclusive), -1);
+            receiver.send(MobileExclusive.packedSysex(exclusive), -1);
 logger.log(Level.DEBUG, "smaf exclusive: " + exclusive.length + " bytes\n" + StringUtil.getDump(exclusive, 32));
         } catch (InvalidMidiDataException | RuntimeException e) {
 logger.log(Level.WARNING, "cannot send a smaf exclusive: " + e);

@@ -27,7 +27,7 @@ import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
 import static java.lang.System.getLogger;
 import static vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer.MFi_SYSEX_FUNCTION_ID_MACHINE_DEPENDENT;
 import static vavi.sound.midi.VaviMidiDeviceProvider.MANUFACTURER_ID;
-import static vavi.sound.mobile.MobileExclusive.packedSystex;
+import static vavi.sound.mobile.MobileExclusive.packedSysex;
 
 
 /**
@@ -174,7 +174,7 @@ logger.log(Level.DEBUG, "MachineDepend: Δ: %02x, len: %6d, VC: %02x, data: %02x
         exclusive[0] = (byte) MANUFACTURER_ID;
         exclusive[1] = (byte) MFi_SYSEX_FUNCTION_ID_MACHINE_DEPENDENT;
         System.arraycopy(data, 0, exclusive, 2, data.length);
-        javax.sound.midi.SysexMessage sysexMessage = packedSystex(exclusive);    // sysex
+        javax.sound.midi.SysexMessage sysexMessage = packedSysex(exclusive);    // sysex
 
         return new MidiEvent[] {
             new MidiEvent(sysexMessage, context.getCurrent())

@@ -26,6 +26,7 @@ import vavi.sound.mfi.Synthesizer;
 import vavi.sound.mfi.vavi.sequencer.AudioDataSequencer;
 import vavi.sound.mfi.vavi.sequencer.MfiValueExclusive;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
+import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusive;
 import vavi.sound.mfi.vavi.track.MachineDependentMessage;
 import vavi.sound.midi.MidiUtil;
 import vavi.sound.midi.VaviMidiDeviceProvider;
@@ -193,7 +194,7 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
                 int functionId = data[1];
                 if (functionId == MobileExclusive.MIDI_SYSEX_FUNCTION_ID_PACKED) {
                     processSpecial_Vavi_Packed(unpack(message.getData()), receiver);
-                } else if (functionId == MfiValueExclusive.MFi_SYSEX_FUNCTION_ID_VALUE) {
+                } else if (functionId == MfiValueExclusive.MIDI_SYSEX_FUNCTION_ID_VALUE) {
                     // mfi values for a synthesizer of an mfi sound source, the midi ones are enough here
                 } else {
                     logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId) + "\n" + StringUtil.getDump(message.getData(), 32));
@@ -218,17 +219,25 @@ logger.log(Level.DEBUG, "synthesizer latency: reported=" + reportedLatency + " m
     private static void processSpecial_Vavi_Packed(byte[] data, Receiver receiver) throws InvalidMfiDataException {
 logger.log(Level.TRACE, "\n" + StringUtil.getDump(data, 32));
 
-        int functionId = data[1];
-        switch (functionId) {
-            case MachineDependentSequencer.MFi_SYSEX_FUNCTION_ID_MACHINE_DEPENDENT:
-                processSpecial_Vavi_MachineDependent(data, receiver);
-                break;
-            case AudioDataSequencer.MFi_SYSEX_FUNCTION_ID_MFi4:
-                processSpecial_Vavi_Mfi4(data, receiver);
-                break;
-            default:
-                logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId & 0xff));
-                break;
+        int vendorId = data[0];
+        switch (vendorId) {
+            case YamahaMfiExclusive.MANUFACTURER -> {
+                // from YamahaMfiExclusive
+            }
+            case VaviMidiDeviceProvider.MANUFACTURER_ID -> {
+                int functionId = data[1];
+                switch (functionId) {
+                    case MachineDependentSequencer.MFi_SYSEX_FUNCTION_ID_MACHINE_DEPENDENT:
+                        processSpecial_Vavi_MachineDependent(data, receiver);
+                        break;
+                    case AudioDataSequencer.MFi_SYSEX_FUNCTION_ID_MFi4:
+                        processSpecial_Vavi_Mfi4(data, receiver);
+                        break;
+                    default:
+                        logger.log(Level.WARNING, "unhandled function: %02x".formatted(functionId & 0xff));
+                        break;
+                }
+            }
         }
     }
 
