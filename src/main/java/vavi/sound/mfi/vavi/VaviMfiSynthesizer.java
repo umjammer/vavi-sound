@@ -288,6 +288,9 @@ logger.log(Level.DEBUG, "audio sysex received at: " + System.nanoTime() + " ns")
             this.midiSynthesizer = MidiUtil.getDefaultSynthesizer(vavi.sound.midi.VaviMidiDeviceProvider.class);
 logger.log(Level.DEBUG, "midiSynthesizer: " + midiSynthesizer.getClass().getName());
 
+            // none of the streams the song before stored is this song's
+            AudioEngine.resetAll();
+
             // the adpcm is mixed into the synthesizer's line when it can be, see MixingLine
             mixingLine = vavi.sound.mobile.MixingLine.open(midiSynthesizer);
             if (mixingLine == null) {

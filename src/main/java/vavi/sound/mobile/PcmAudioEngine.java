@@ -42,8 +42,11 @@ public class PcmAudioEngine extends BasicAudioEngine {
 
     /**
      * <pre>
-     *  L0 + L2 + ...
-     *  R1 + R3 + ...
+     *  from 240_2, a channel pair, the even channel L and the odd one R
+     *   0 L
+     *   1 R
+     *  from 1_240_7, "adat", SMAF wave, one stream of its own, mono or L + R in it
+     *   0 L + R
      * </pre>
      */
     public PcmAudioEngine() {
@@ -59,19 +62,11 @@ public class PcmAudioEngine extends BasicAudioEngine {
     protected int getChannels(int streamNumber) {
         int channels = 1;
         if (data[streamNumber].channel == -1) {
-            // from 1_240_7
-            if (data[streamNumber].channels == 2) {
-                channels = 2;
-            } else {
-                if (streamNumber % 2 == 1 && data[streamNumber].channels != 2 && (data[streamNumber - 1] != null && data[streamNumber - 1].channels != 2)) {
-logger.log(Level.DEBUG, "always used: no: " + streamNumber + ", ch: " + data[streamNumber].channel);
-                    return -1;
-                }
-
-                if (streamNumber % 2 == 0 && data[streamNumber].channels != 2 && (data[streamNumber + 1] != null && data[streamNumber + 1].channels != 2)) {
-                    channels = 2;
-                }
-            }
+            // from 1_240_7, an "adat" chunk or a SMAF wave: the message says itself how many
+            // channels the stream has, the streams beside it are streams of their own and not
+            // the other half of this one. pairing them by the parity of the stream number plays
+            // the one before beside this one and never plays the one before by itself.
+            channels = data[streamNumber].channels;
         } else {
             // from 240_2, channels always 1
 

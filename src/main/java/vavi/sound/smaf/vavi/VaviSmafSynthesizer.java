@@ -72,6 +72,9 @@ public class VaviSmafSynthesizer implements Synthesizer {
         try {
             this.midiSynthesizer = MidiUtil.getDefaultSynthesizer(vavi.sound.midi.VaviMidiDeviceProvider.class);
 
+            // none of the streams the song before stored is this song's
+            AudioEngine.resetAll();
+
             // the adpcm is mixed into the synthesizer's line when it can be, see MixingLine
             mixingLine = vavi.sound.mobile.MixingLine.open(midiSynthesizer);
             if (mixingLine == null) {
