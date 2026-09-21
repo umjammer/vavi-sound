@@ -87,7 +87,10 @@ public final class AudioEngineMixer {
      * adpcm is then heard in the same line as the notes, rendered in the same block as the message
      * which starts it, and nothing is timed by the wall clock ({@link AudioEngine.Sync}).
      * <p>
-     * One such synthesizer at a time: two would take turns at the same voices.
+     * One such synthesizer at a time: two would take turns at the same voices, each stepping them
+     * at its own rate, and every stream would play too fast (twice as fast for two at one rate).
+     * A second one is warned of, it is a bug of the player: a synthesizer rendered by a player
+     * which mixes the voices itself must not attach too.
      *
      * @return false when {@code vavi.sound.mobile.AudioEngine.output=line} says no, the engines
      *         play to lines of their own and the synthesizer need not mix anything
@@ -95,7 +98,12 @@ public final class AudioEngineMixer {
     public static synchronized boolean attach() {
         if ("line".equalsIgnoreCase(System.getProperty(OUTPUT_KEY))) return false;
         attached++;
+        if (attached > 1) {
+logger.log(Level.WARNING, "attached: " + attached + ", more than one mixes the same voices, the streams will play too fast",
+        new Throwable("attached here"));
+        } else {
 logger.log(Level.DEBUG, "attached: " + attached);
+        }
         return true;
     }
 
