@@ -244,7 +244,7 @@ logger.log(Level.DEBUG, "start: no: " + streamNumber + ", gateFrames: " + (gateF
 
             // chunks of ~10 ms, a stop is noticed between them
             int frameSize = format.getFrameSize();
-            int chunkFrames = Math.max(1, Math.min(1024 / frameSize, (int) (format.getSampleRate() / 100)));
+            int chunkFrames = Math.clamp(1024 / frameSize, 1, (int) (format.getSampleRate() / 100));
 
             byte[] buf = new byte[1024];
             long framesWritten = 0;
@@ -283,16 +283,19 @@ logger.log(Level.DEBUG, "stopped: no: " + streamNumber + ", frames: " + framesWr
 
     /**
      * Hands the stream to {@link AudioEngineMixer}, the pcm is what the line would have been
-     * written: the same streams, at the format the line would have been opened at, the same
-     * volume and gate time. Nothing blocks, the mixer reads the streams as it is rendered.
+     * written: the same streams, at the format the line would have been opened at, the same gate
+     * time, and at the level they were stored at - the volume of a line is not one of them, see
+     * below. Nothing blocks, the mixer reads the streams as it is rendered.
      */
     private void startMixed(int streamNumber, int channels, long gateTime) {
         InputStream[] iss = getInputStreams(streamNumber, channels);
         AudioFormat format = getAudioFormat(data[streamNumber].sampleRate, channels);
-        double volume = Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume",  "0.2"));
         long gateFrames = gateTime > 0 ? Math.round(gateTime * format.getSampleRate() / 1000.0) : Long.MAX_VALUE;
 logger.log(Level.DEBUG, "start (mixer): no: " + streamNumber + ", gateFrames: " + (gateFrames == Long.MAX_VALUE ? "all" : gateFrames));
-        AudioEngineMixer.start(this, streamNumber, iss, channels, format, gateFrames, volume);
+        // the stream goes at the level it was stored at: vavi.sound.mobile.AudioEngine.volume is
+        // the volume of the line an engine opens for itself, and no line is opened here, so how
+        // loud it is against the song is for the player mixing it to say
+        AudioEngineMixer.start(this, streamNumber, iss, channels, format, gateFrames, 1);
     }
 
     @Override

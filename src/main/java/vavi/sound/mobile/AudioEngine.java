@@ -25,7 +25,10 @@ import java.util.concurrent.TimeUnit;
  * </p>
  * system property
  * <ul>
- *  <li>{@code vavi.sound.mobile.AudioEngine.volume} ... adpcm volume</li>
+ *  <li>{@code vavi.sound.mobile.AudioEngine.volume} ... the volume of the line an engine opens for
+ *      itself (default 0.2). It is of that line alone: when the streams are pulled instead
+ *      ({@link AudioEngineMixer}) no line is opened and this is not used, the player mixing them
+ *      says how loud they are against its song</li>
  *  <li>{@code vavi.sound.mobile.AudioEngine.workers} ... audio engine thread pool size</li>
  *  <li>{@code vavi.sound.mobile.AudioEngine.disabled} ... see {@link #isDisabled()}</li>
  *  <li>{@code vavi.sound.mobile.AudioEngine.output} ... {@code line} (default): each engine plays to a

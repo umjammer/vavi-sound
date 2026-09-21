@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Synthesizer;
@@ -121,14 +122,15 @@ Debug.println("@@@ sequencer: " + sequencer.getClass().getName());
 Debug.println("@@@ synthesizer: " + synthesizer);
         assertInstanceOf(vavi.sound.midi.mfi.MfiSynthesizer.class, synthesizer);
         synthesizer.open();
-        sequencer.getTransmitter().setReceiver(synthesizer.getReceiver());
+        Receiver receiver = synthesizer.getReceiver();
+        sequencer.getTransmitter().setReceiver(receiver);
         Sequence sequence;
         if (mfi.startsWith("http"))
             sequence = MidiSystem.getSequence(URI.create(mfi).toURL());
         else
             sequence = MidiSystem.getSequence(new BufferedInputStream(Files.newInputStream(Path.of(mfi))));
 Debug.println("@@@ sequence: " + sequence);
-        volume(synthesizer.getReceiver(), midiVolume);
+        volume(receiver, midiVolume);
         sequencer.setSequence(sequence);
         sequencer.addMetaEventListener(meta -> {
 Debug.println("meta: " + MidiConstants.MetaEvent.valueOf(meta.getType()));

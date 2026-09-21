@@ -269,7 +269,9 @@ logger.log(Level.DEBUG, "audio sysex received at: " + System.nanoTime() + " ns")
 
     @Override
     public Receiver getReceiver() throws MidiUnavailableException {
-        return new VaviMfiSynthesizer.VaviMfiReceiver(midiSynthesizer);
+        Receiver receiver = new VaviMfiSynthesizer.VaviMfiReceiver(midiSynthesizer);
+        // the listener's volume is of the whole mix when the adpcm is mixed into the line
+        return mixingLine != null ? mixingLine.receiver(receiver) : receiver;
     }
 
     @Override

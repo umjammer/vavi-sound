@@ -11,8 +11,11 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.lang.reflect.Method;
 import java.util.Map;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Synthesizer;
+import javax.sound.midi.SysexMessage;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -32,6 +35,11 @@ import static java.lang.System.getLogger;
  * jvm exports it ({@code --add-exports java.desktop/com.sun.media.sound=ALL-UNNAMED}); else, or when
  * {@code vavi.sound.mobile.AudioEngine.output=line}, {@link #open} answers null and the synthesizer is
  * to be opened as it always was.
+ * <p>
+ * The listener's volume is this line's, not the synthesizer's: the streams mixed in here are as
+ * much of what is heard as the synthesizer is, so the two have to be scaled together or a song
+ * sounds different at two volumes. {@link #receiver} takes the universal master volume for that
+ * and a player hands out the receiver it wraps, see {@link #gain}.
  * <p>
  * system property
  * <ul>
@@ -53,6 +61,9 @@ public final class MixingLine implements AutoCloseable {
     private final Synthesizer synthesizer;
     private final AudioInputStream stream;
     private final SourceDataLine line;
+
+    /** the listener's volume over the whole mix, the synthesizer and the streams alike */
+    private volatile double gain = 1;
     private final Thread thread;
     private volatile boolean running = true;
     private boolean closed;
@@ -133,10 +144,12 @@ logger.log(Level.DEBUG, "mixing line: " + synthesizer.getDeviceInfo().getName() 
                 for (int i = 0; i < frames * 2; i++) {
                     pcm[i] = (short) ((bytes[i * 2] & 0xff) | (bytes[i * 2 + 1] << 8));
                 }
-                AudioEngineMixer.render(pcm, 0, frames, RATE);
+                AudioEngineMixer.render(pcm, 0, frames, RATE, adpcmGain());
+                double gain = this.gain;
                 for (int i = 0; i < frames * 2; i++) {
-                    bytes[i * 2] = (byte) pcm[i];
-                    bytes[i * 2 + 1] = (byte) (pcm[i] >> 8);
+                    int v = gain == 1 ? pcm[i] : Math.clamp((int) (pcm[i] * gain), -0x8000, 0x7fff);
+                    bytes[i * 2] = (byte) v;
+                    bytes[i * 2 + 1] = (byte) (v >> 8);
                 }
                 line.write(bytes, 0, frames * 4);
             }
@@ -145,6 +158,59 @@ logger.log(Level.DEBUG, "mixing line: " + synthesizer.getDeviceInfo().getName() 
 logger.log(Level.WARNING, "mixing line: " + e);
             }
         }
+    }
+
+    /**
+     * How loud the streams are against the synthesizer. They come at the level they were stored at
+     * ({@link AudioEngineMixer}), so this says what they are worth here, and what it says is what
+     * the volume of a line of their own would have made of them - the same property and the same
+     * default - so that a song sounds as it always has and a setting of it still works.
+     * <p>
+     * It is not the listener's volume: that one goes to the synthesizer and so misses the streams
+     * mixed in here, which is why a song sounds different at two volumes. A player which wants the
+     * two to stay together scales the line ({@link #getLine}) instead.
+     */
+    private static double adpcmGain() {
+        return Double.parseDouble(System.getProperty("vavi.sound.mobile.AudioEngine.volume", "0.2"));
+    }
+
+    /** @param gain the listener's volume over the whole mix, 0 ~ 1 */
+    public void gain(double gain) {
+        this.gain = gain;
+    }
+
+    /**
+     * Wraps the receiver of the synthesizer so that the universal master volume is this line's.
+     * <p>
+     * It is the listener's volume and the synthesizer is only a part of what the listener hears
+     * here, so letting it reach the synthesizer would scale that part alone and leave the streams
+     * where they are - a song would not sound the same at two volumes. The message is taken by
+     * {@link #gain} instead and does not go on, everything else does.
+     *
+     * @param delegate what the synthesizer plays, the rest of the messages going to it
+     */
+    public Receiver receiver(Receiver delegate) {
+        return new Receiver() {
+            @Override
+            public void send(MidiMessage message, long timeStamp) {
+                if (message instanceof SysexMessage sysex) {
+                    byte[] data = sysex.getMessage();
+                    // f0 7f dd 04 01 ll mm f7
+                    if (data.length >= 7 && (data[0] & 0xff) == 0xf0 && data[1] == 0x7f
+                            && data[3] == 0x04 && data[4] == 0x01) {
+                        gain(((data[5] & 0x7f) | ((data[6] & 0x7f) << 7)) / 16383d);
+logger.log(Level.DEBUG, "mixing line: the listener's volume is of the whole mix: %3.0f".formatted(gain * 127));
+                        return;
+                    }
+                }
+                delegate.send(message, timeStamp);
+            }
+
+            @Override
+            public void close() {
+                delegate.close();
+            }
+        };
     }
 
     /** the line, for its controls (volume) */

@@ -21,6 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import javax.sound.midi.SysexMessage;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.MidiMessage;
+import java.util.List;
+import java.util.ArrayList;
 
 
 /**
@@ -97,6 +103,35 @@ class MixingLineTest {
         }
         assertFalse(synthesizer.isOpen());
         assertEquals(before, AudioEngineMixer.attached());
+    }
+
+    /**
+     * The listener's volume is the line's: it scales the synthesizer and the streams together, so
+     * it must not reach the synthesizer, which would scale that half of the mix alone.
+     */
+    @Test
+    void theListenersVolumeIsTheLinesAndDoesNotReachTheSynthesizer() throws Exception {
+        Synthesizer synthesizer = gervill();
+        assumeTrue(synthesizer != null, "no gervill");
+        MixingLine line = open(synthesizer);
+        assumeTrue(line != null, "com.sun.media.sound not exported or no audio device");
+        try {
+            List<MidiMessage> sent = new ArrayList<>();
+            Receiver wrapped = line.receiver(new Receiver() {
+                @Override public void send(MidiMessage message, long timeStamp) { sent.add(message); }
+                @Override public void close() {}
+            });
+
+            byte[] data = {(byte) 0xf0, 0x7f, 0x7f, 0x04, 0x01, 0x00, 0x40, (byte) 0xf7};
+            wrapped.send(new SysexMessage(data, data.length), -1);
+            assertTrue(sent.isEmpty(), "the universal master volume is the line's, not the synthesizer's");
+
+            // everything else still goes to the synthesizer
+            wrapped.send(new ShortMessage(ShortMessage.NOTE_ON, 0, 60, 100), -1);
+            assertEquals(1, sent.size());
+        } finally {
+            line.close();
+        }
     }
 
     @Test
