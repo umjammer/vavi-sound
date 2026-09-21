@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Synthesizer;
@@ -97,6 +98,7 @@ Debug.println("---- path: " + path);
         play(path.toString());
     }
 
+    /** */
     void play(String file) throws Exception {
 Debug.println("mmf: " + file);
 
@@ -108,7 +110,8 @@ Debug.println("@@@ sequencer: " + sequencer.getClass().getName());
 Debug.println("@@@ synthesizer: " + synthesizer);
         assertInstanceOf(vavi.sound.midi.smaf.SmafSynthesizer.class, synthesizer);
         synthesizer.open();
-        sequencer.getTransmitter().setReceiver(synthesizer.getReceiver());
+        Receiver receiver = synthesizer.getReceiver();
+        sequencer.getTransmitter().setReceiver(receiver);
         Sequence sequence;
         if (mmf.startsWith("http"))
             sequence = MidiSystem.getSequence(URI.create(file).toURL());
@@ -117,7 +120,7 @@ Debug.println("@@@ synthesizer: " + synthesizer);
 Debug.println("@@@ sequence: " + sequence);
 MidiSystem.write(sequence, 0, Files.newOutputStream(Path.of("tmp/mmf_out.mid")));
 
-        volume(synthesizer.getReceiver(), midiVolume);
+        volume(receiver, midiVolume);
         sequencer.setSequence(sequence);
         sequencer.addMetaEventListener(meta -> {
 Debug.println("meta: " + MidiConstants.MetaEvent.valueOf(meta.getType()));

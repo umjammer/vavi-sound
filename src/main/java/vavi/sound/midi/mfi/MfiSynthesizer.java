@@ -178,7 +178,9 @@ logger.log(Level.DEBUG, "internal midiSynthesizer: " + midiSynthesizer.getClass(
 
     @Override
     public Receiver getReceiver() throws MidiUnavailableException {
-        return new VaviMfiReceiver(midiSynthesizer);
+        Receiver receiver = new VaviMfiReceiver(midiSynthesizer);
+        // the listener's volume is of the whole mix when the adpcm is mixed into the line
+        return mixingLine != null ? mixingLine.receiver(receiver) : receiver;
     }
 
     @Override

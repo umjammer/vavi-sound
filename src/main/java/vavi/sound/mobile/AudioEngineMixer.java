@@ -31,8 +31,10 @@ import static java.lang.System.getLogger;
  * In this mode an engine opens no line. A start is a voice here from the moment it is asked for,
  * {@link AudioEngine.Sync} runs it at once on the thread that asks, and the player pulls the
  * voices with {@link #render} at its own rate, from its own render loop, after it has sent the
- * messages that fall before the frames it renders. What it pulls is the same pcm the line would
- * have got, the volume ({@code vavi.sound.mobile.AudioEngine.volume}) applied the same way.
+ * messages that fall before the frames it renders. What it pulls is the streams at the level they
+ * were stored at: {@code vavi.sound.mobile.AudioEngine.volume} is the volume of the line an engine
+ * opens for itself and is none of this mode's business, so how loud a stream is against the song
+ * is the player's to say, by the {@code gain} of {@link #render(int[], int[], int, float, double)}.
  * <p>
  * Nothing else changes: the engines, their messages and {@link AudioEngine.Sync} are used the way
  * they always were, whichever mode is on.
@@ -263,7 +265,17 @@ logger.log(Level.DEBUG, "mixer stop: no: " + streamNumber);
      * @param frames frames to mix
      * @param sampleRate the rate of the buffer
      */
-    public static synchronized void render(short[] buffer, int offset, int frames, float sampleRate) {
+    public static void render(short[] buffer, int offset, int frames, float sampleRate) {
+        render(buffer, offset, frames, sampleRate, 1);
+    }
+
+    /**
+     * {@link #render(short[], int, int, float)} with the streams scaled as they are added.
+     *
+     * @param gain linear, how loud the streams are against what is already in the buffer: the
+     *             player's to choose, the streams themselves come at the level they were stored at
+     */
+    public static synchronized void render(short[] buffer, int offset, int frames, float sampleRate, double gain) {
         if (voices.isEmpty()) return;
         if (mixL.length < frames) {
             mixL = new int[frames];
@@ -280,8 +292,10 @@ logger.log(Level.DEBUG, "mixer end: no: " + voice.streamNumber);
         }
         for (int i = 0; i < frames; i++) {
             int p = offset + i * 2;
-            buffer[p] = (short) Math.clamp(buffer[p] + mixL[i], Short.MIN_VALUE, Short.MAX_VALUE);
-            buffer[p + 1] = (short) Math.clamp(buffer[p + 1] + mixR[i], Short.MIN_VALUE, Short.MAX_VALUE);
+            int l = gain == 1 ? mixL[i] : (int) (mixL[i] * gain);
+            int r = gain == 1 ? mixR[i] : (int) (mixR[i] * gain);
+            buffer[p] = (short) Math.clamp(buffer[p] + l, Short.MIN_VALUE, Short.MAX_VALUE);
+            buffer[p + 1] = (short) Math.clamp(buffer[p + 1] + r, Short.MIN_VALUE, Short.MAX_VALUE);
         }
     }
 
@@ -291,13 +305,43 @@ logger.log(Level.DEBUG, "mixer end: no: " + voice.streamNumber);
      * @param left added to, 16 bit range
      * @param right added to, 16 bit range
      */
-    public static synchronized void render(int[] left, int[] right, int frames, float sampleRate) {
+    public static void render(int[] left, int[] right, int frames, float sampleRate) {
+        render(left, right, frames, sampleRate, 1);
+    }
+
+    /**
+     * {@link #render(int[], int[], int, float)} with the streams scaled as they are added. Nothing
+     * is clamped: a player which mixes this into its sound source before it makes 16 bit of it
+     * clips once, at the end, the way a chip which had the streams of its own would.
+     *
+     * @param gain linear, how loud the streams are against what is already in the buffers
+     */
+    public static synchronized void render(int[] left, int[] right, int frames, float sampleRate, double gain) {
         if (voices.isEmpty()) return;
+        if (gain == 1) {
+            for (Iterator<Voice> i = voices.iterator(); i.hasNext(); ) {
+                Voice voice = i.next();
+                if (!voice.mix(left, right, frames, voice.sampleRate / sampleRate)) {
+                    i.remove();
+                }
+            }
+            return;
+        }
+        if (mixL.length < frames) {
+            mixL = new int[frames];
+            mixR = new int[frames];
+        }
+        java.util.Arrays.fill(mixL, 0, frames, 0);
+        java.util.Arrays.fill(mixR, 0, frames, 0);
         for (Iterator<Voice> i = voices.iterator(); i.hasNext(); ) {
             Voice voice = i.next();
-            if (!voice.mix(left, right, frames, voice.sampleRate / sampleRate)) {
+            if (!voice.mix(mixL, mixR, frames, voice.sampleRate / sampleRate)) {
                 i.remove();
             }
+        }
+        for (int i = 0; i < frames; i++) {
+            left[i] += (int) (mixL[i] * gain);
+            right[i] += (int) (mixR[i] * gain);
         }
     }
 }

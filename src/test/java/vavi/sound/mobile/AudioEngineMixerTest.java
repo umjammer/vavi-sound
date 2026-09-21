@@ -202,13 +202,43 @@ class AudioEngineMixerTest {
         assertEquals(1500, buffer[200]);
     }
 
+    /**
+     * The volume of the line an engine opens for itself is none of this mode's: no line is opened
+     * here, so a stream comes at the level it was stored at and the player says how loud it is.
+     */
     @Test
-    void theVolumeIsApplied() {
-        System.setProperty("vavi.sound.mobile.AudioEngine.volume", "0.5");
+    void theVolumeOfALineIsNotApplied() {
+        String old = System.setProperty("vavi.sound.mobile.AudioEngine.volume", "0.5");
+        try {
+            engine(constant(800, (short) 1000)).start(0);
+            short[] buffer = new short[400 * 2];
+            AudioEngineMixer.render(buffer, 0, 400, 8000);
+            assertEquals(1000, buffer[200]);
+        } finally {
+            if (old == null) System.clearProperty("vavi.sound.mobile.AudioEngine.volume");
+            else System.setProperty("vavi.sound.mobile.AudioEngine.volume", old);
+        }
+    }
+
+    /** what the player asks for is what scales a stream as it is mixed */
+    @Test
+    void theGainOfTheCallerIsApplied() {
         engine(constant(800, (short) 1000)).start(0);
         short[] buffer = new short[400 * 2];
-        AudioEngineMixer.render(buffer, 0, 400, 8000);
-        assertEquals(500, buffer[200]);
+        java.util.Arrays.fill(buffer, (short) 500);
+        AudioEngineMixer.render(buffer, 0, 400, 8000, 0.5);
+        assertEquals(1000, buffer[200]);
+    }
+
+    /** the same, into the buses of a player which cuts to 16 bit itself: nothing is clamped here */
+    @Test
+    void theGainOfTheCallerIsAppliedToBusesToo() {
+        engine(constant(800, (short) 1000)).start(0);
+        int[] left = new int[400], right = new int[400];
+        java.util.Arrays.fill(left, 32000);
+        AudioEngineMixer.render(left, right, 400, 8000, 0.5);
+        assertEquals(32500, left[200], "added, not cut to 16 bit");
+        assertEquals(500, right[200]);
     }
 
     @Test
