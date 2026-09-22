@@ -8,9 +8,14 @@ package vavi.sound.mfi.vavi.sony;
 
 import java.lang.System.Logger.Level;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Receiver;
+import javax.sound.midi.ShortMessage;
 
 import vavi.sound.mfi.InvalidMfiDataException;
+import vavi.sound.mfi.vavi.MidiContext;
+import vavi.sound.mfi.vavi.sequencer.MidiConvertibleFunction;
 
 
 /**
@@ -45,11 +50,16 @@ import vavi.sound.mfi.InvalidMfiDataException;
  *      bits the NEC one loses, e.g. {@code 1 4097 6001 8192} against
  *      {@code 0 4096 6000 8192}. The MSB byte rests at 0x40.</li>
  * </ul>
+ * <p>
+ * They are converted into MIDI pitch bends ({@link MidiConvertibleFunction}): the LSB
+ * message only keeps its byte in the {@link MidiContext}, the MSB one sends the bend on
+ * the channel of its track and voice.
+ * </p>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260923 nsano initial version <br>
  */
-abstract class PitchBendFunction extends SonyFunction {
+abstract class PitchBendFunction extends SonyFunction implements MidiConvertibleFunction {
 
     /** the function byte of the LSB message of voice 0 */
     public static final int LSB = 0xe0;
@@ -80,6 +90,29 @@ abstract class PitchBendFunction extends SonyFunction {
             this.msb = -1;
         }
 logger.log(Level.DEBUG, "Pitch Bend: %dch, lsb: %d, msb: %d".formatted(getVoice(), lsb, msb));
+    }
+
+    @Override
+    public MidiEvent[] getMidiEvents(byte[] data, MidiContext context)
+        throws InvalidMidiDataException {
+
+        int channel = getVoice() + 4 * context.getMfiTrackNumber();
+        if (!isMsb()) {
+            context.setPitchBendLsb(channel, data[7] & 0x7f);
+            return new MidiEvent[0];
+        }
+        int msb;
+        if (data.length > 8) {
+            context.setPitchBendLsb(channel, data[7] & 0x7f);
+            msb = data[8] & 0x7f;
+        } else {
+            msb = data[7] & 0x7f;
+        }
+        int lsb = context.getPitchBendLsb(channel);
+
+        ShortMessage shortMessage = new ShortMessage();
+        shortMessage.setMessage(ShortMessage.PITCH_BEND, context.retrieveChannel(channel), lsb, msb);
+        return context.withOrigins(channel, new MidiEvent(shortMessage, context.getCurrent()));
     }
 
     /** 0 ~ 127, -1 when this message does not carry it */

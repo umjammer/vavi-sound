@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.HexFormat;
@@ -21,6 +22,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.ShortMessage;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +31,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import vavi.sound.mfi.MfiEvent;
 import vavi.sound.mfi.Track;
+import vavi.sound.mfi.vavi.MidiContext;
 import vavi.sound.mfi.vavi.VaviMfiFileFormat;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.sequencer.UndefinedFunction;
@@ -123,6 +127,57 @@ class SonyFunctionTest {
         assertArrayEquals(hex("31 ea 40"), out2.getMessage());
         out2.setValue14((0x35 << 7) | 0x2b);
         assertArrayEquals(hex("31 ea 2b 35"), out2.getMessage());
+    }
+
+    /** what {@link MachineDependentMessage#getMidiEvents} makes of a payload on track 1 */
+    private static MidiEvent[] convert(MidiContext context, String payload) throws Exception {
+        MachineDependentMessage message = new MachineDependentMessage().init();
+        message.setMessage(0, hex(payload));
+        return message.getMidiEvents(context);
+    }
+
+    @Test
+    void toMidi() throws Exception {
+        MidiContext context = new MidiContext();
+        context.setMfiTrackNumber(1);
+
+        // the LSB only waits for its MSB
+        assertEquals(0, convert(context, "31 e0 71").length);
+        // voice 0 of track 1 is channel 4
+        MidiEvent[] events = convert(context, "31 e8 2e");
+        assertEquals(1, events.length);
+        ShortMessage bend = (ShortMessage) events[0].getMessage();
+        assertEquals(ShortMessage.PITCH_BEND, bend.getCommand());
+        assertEquals(4, bend.getChannel());
+        assertEquals(0x71, bend.getData1());
+        assertEquals(0x2e, bend.getData2());
+
+        // the two byte form, voice 3
+        ShortMessage both = (ShortMessage) convert(context, "31 eb 2b 35")[0].getMessage();
+        assertEquals(7, both.getChannel());
+        assertEquals(0x2b, both.getData1());
+        assertEquals(0x35, both.getData2());
+
+        // the range goes as the RPN PitchBendRangeMessage sends, voice 2 range 12
+        List<ShortMessage> rpn = Arrays.stream(convert(context, "31 ef 4c"))
+                .map(MidiEvent::getMessage)
+                .filter(ShortMessage.class::isInstance).map(ShortMessage.class::cast).toList();
+        assertEquals(3, rpn.size());
+        assertEquals(6, rpn.get(0).getChannel());
+        assertEquals(6, rpn.get(2).getData1());
+        assertEquals(12, rpn.get(2).getData2());
+
+        // Hold1 on channel 2 of the track
+        ShortMessage hold = (ShortMessage) convert(context, "31 10 8c 78")[0].getMessage();
+        assertEquals(ShortMessage.CONTROL_CHANGE, hold.getCommand());
+        assertEquals(6, hold.getChannel());
+        assertEquals(64, hold.getData1());
+        assertEquals(0x78, hold.getData2());
+
+        // the other subs still go as the sysex
+        MidiEvent[] sysex = convert(context, "31 10 11 01");
+        assertEquals(1, sysex.length);
+        assertInstanceOf(javax.sound.midi.SysexMessage.class, sysex[0].getMessage());
     }
 
     @Test

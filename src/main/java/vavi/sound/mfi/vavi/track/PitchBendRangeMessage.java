@@ -115,14 +115,27 @@ public class PitchBendRangeMessage extends vavi.sound.mfi.ShortMessage
         throws InvalidMidiDataException {
 
         int channel = getVoice() + 4 * context.getMfiTrackNumber();
-        // on where the channel goes, a percussion one to the drum channel, a melody one away from it
-        int midiChannel = context.retrieveChannel(channel);
 //logger.log(Level.TRACE, this);
 //      context.setPitchBendRange(channel, getPitchBendRange());
 
+        return getMidiEvents(context, channel, getPitchBendRange());
+    }
+
+    /**
+     * The pitch bend range RPN, for this message and the machine dependent ones that set
+     * the range as well.
+     * @param channel pseudo MIDI channel (mfiTrackNumber * 4 + voice)
+     * @param pitchBendRange [semitone]
+     */
+    public static MidiEvent[] getMidiEvents(MidiContext context, int channel, int pitchBendRange)
+        throws InvalidMidiDataException {
+
+        // on where the channel goes, a percussion one to the drum channel, a melody one away from it
+        int midiChannel = context.retrieveChannel(channel);
+
         MidiEvent[] events = new MidiEvent[4];
         // the rpn following is mfi 0xe7, which a sound source may take otherwise
-        events[0] = new MidiEvent(MfiValueExclusive.message(MfiValueExclusive.PITCH_BEND_RANGE, midiChannel, getPitchBendRange()), context.getCurrent());
+        events[0] = new MidiEvent(MfiValueExclusive.message(MfiValueExclusive.PITCH_BEND_RANGE, midiChannel, pitchBendRange), context.getCurrent());
         ShortMessage shortMessage = new ShortMessage();
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 midiChannel,
@@ -139,7 +152,7 @@ public class PitchBendRangeMessage extends vavi.sound.mfi.ShortMessage
         shortMessage.setMessage(ShortMessage.CONTROL_CHANGE,
                                 midiChannel,
                                 6,          // Data Entry MSB
-                                getPitchBendRange());
+                                pitchBendRange);
         events[3] = new MidiEvent(shortMessage, context.getCurrent());
         return context.withOrigins(channel, events);
     }

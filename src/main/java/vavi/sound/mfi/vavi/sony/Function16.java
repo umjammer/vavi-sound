@@ -9,10 +9,14 @@ package vavi.sound.mfi.vavi.sony;
 import java.lang.System.Logger.Level;
 import java.util.Arrays;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Receiver;
+import javax.sound.midi.ShortMessage;
 
 import vavi.sound.mfi.InvalidMfiDataException;
 import vavi.sound.mfi.vavi.MidiContext;
+import vavi.sound.mfi.vavi.sequencer.MidiConvertibleFunction;
 import vavi.sound.mfi.vavi.sequencer.YamahaMfiExclusive;
 import vavi.sound.mobile.AudioEngine;
 import vavi.sound.mobile.YamahaAudioEngine;
@@ -87,13 +91,15 @@ import vavi.util.StringUtil;
  * <p>
  * As with NEC's, the tones and the waves are handed to the synthesizer as the SMAF
  * exclusives they are ({@link YamahaMfiExclusive}), and the stream is played by a
- * {@link YamahaAudioEngine}, the adpcm being the one NEC's is.
+ * {@link YamahaAudioEngine}, the adpcm being the one NEC's is. Hold1 is converted into
+ * the MIDI hold pedal (control change 64) on the channel of its track and voice
+ * ({@link MidiConvertibleFunction}); the other subs go to the synthesizer as the sysex.
  * </p>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260923 nsano initial version <br>
  */
-public class Function16 extends SonyFunction {
+public class Function16 extends SonyFunction implements MidiConvertibleFunction {
 
     /** ? once at the head of track 0 */
     public static final int SUB_01 = 0x01;
@@ -197,6 +203,22 @@ logger.log(Level.DEBUG, "Hold1: %dch, %d".formatted(channel, getValue()));
         default ->
 logger.log(Level.DEBUG, "sub 0x%02x: %dch\n%s".formatted(subFunction, channel, StringUtil.getDump(this.data, 32)));
         }
+    }
+
+    /** the MIDI hold pedal */
+    private static final int CONTROL_CHANGE_HOLD1 = 64;
+
+    @Override
+    public MidiEvent[] getMidiEvents(byte[] data, MidiContext context)
+        throws InvalidMidiDataException {
+
+        if (data.length < 9 || (data[7] & 0x3f) != SUB_HOLD1) {
+            return null;
+        }
+        int channel = ((data[7] & 0xc0) >> 6) + 4 * context.getMfiTrackNumber();
+        ShortMessage shortMessage = new ShortMessage();
+        shortMessage.setMessage(ShortMessage.CONTROL_CHANGE, context.retrieveChannel(channel), CONTROL_CHANGE_HOLD1, data[8] & 0x7f);
+        return context.withOrigins(channel, new MidiEvent(shortMessage, context.getCurrent()));
     }
 
     /** channel 0 ~ 3 */

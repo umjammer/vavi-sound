@@ -61,6 +61,11 @@ logger.log(Level.WARNING, "no matched machine dependent function for: " + key);
             return function;
         }
 
+        /** @return null if the key is not found, without the warning {@link #getFunction(String)} logs */
+        public static MachineDependentFunction findFunction(String key) {
+            return functions.get(key);
+        }
+
         static {
             for (MachineDependentFunction function : ServiceLoader.load(MachineDependentFunction.class)) {
                 functions.put(function.getId(), function);

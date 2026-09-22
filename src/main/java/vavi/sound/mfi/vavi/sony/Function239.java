@@ -8,9 +8,14 @@ package vavi.sound.mfi.vavi.sony;
 
 import java.lang.System.Logger.Level;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Receiver;
 
 import vavi.sound.mfi.InvalidMfiDataException;
+import vavi.sound.mfi.vavi.MidiContext;
+import vavi.sound.mfi.vavi.sequencer.MidiConvertibleFunction;
+import vavi.sound.mfi.vavi.track.PitchBendRangeMessage;
 
 
 /**
@@ -40,11 +45,15 @@ import vavi.sound.mfi.InvalidMfiDataException;
  * range equals the NEC one's 0xe7 of the same track and voice in all 433 voices
  * both write one for.
  * </p>
+ * <p>
+ * It is converted into the pitch bend range RPN {@link PitchBendRangeMessage} sends
+ * ({@link MidiConvertibleFunction}).
+ * </p>
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 260923 nsano initial version <br>
  */
-public class Function239 extends SonyFunction {
+public class Function239 extends SonyFunction implements MidiConvertibleFunction {
 
     @Override
     int getFunction() {
@@ -58,6 +67,16 @@ public class Function239 extends SonyFunction {
         this.voice = (data[7] & 0x60) >> 5;  // 0 ~ 3
         this.range =  data[7] & 0x1f;        // semitone
 logger.log(Level.DEBUG, "Pitch Bend Range: %dch, %d".formatted(voice, range));
+    }
+
+    @Override
+    public MidiEvent[] getMidiEvents(byte[] data, MidiContext context)
+        throws InvalidMidiDataException {
+
+        int channel = ((data[7] & 0x60) >> 5) + 4 * context.getMfiTrackNumber();
+        int range = data[7] & 0x1f;
+        context.setPitchBendRange(channel, range);
+        return PitchBendRangeMessage.getMidiEvents(context, channel, range);
     }
 
     /** 0 ~ 3 */

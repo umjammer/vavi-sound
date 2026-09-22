@@ -22,7 +22,9 @@ import vavi.sound.mfi.vavi.TrackChunk;
 import vavi.sound.mfi.vavi.TrackMessage;
 import vavi.sound.mfi.vavi.TrackMessage.SysexTrackMessage;
 import vavi.sound.mfi.vavi.VaviMfiSynthesizer.VaviMfiReceiver;
+import vavi.sound.mfi.vavi.sequencer.MachineDependentFunction;
 import vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer;
+import vavi.sound.mfi.vavi.sequencer.MidiConvertibleFunction;
 
 import static java.lang.System.getLogger;
 import static vavi.sound.mfi.vavi.sequencer.MachineDependentSequencer.MFi_SYSEX_FUNCTION_ID_MACHINE_DEPENDENT;
@@ -169,6 +171,19 @@ logger.log(Level.DEBUG, "MachineDepend: Δ: %02x, len: %6d, VC: %02x, data: %02x
     @Override
     public MidiEvent[] getMidiEvents(MidiContext context)
         throws InvalidMidiDataException {
+
+        // a function whose message has a plain midi counterpart converts it here, where the
+        // track is still known. the key is the one all the sequencers but NEC's build, NEC's
+        // functions are simply not found by it.
+        if (data.length > 6) {
+            MachineDependentFunction function = MachineDependentFunction.Factory.findFunction(getVendor() + "." + (data[6] & 0xff));
+            if (function instanceof MidiConvertibleFunction convertible) {
+                MidiEvent[] events = convertible.getMidiEvents(data, context);
+                if (events != null) {
+                    return events;
+                }
+            }
+        }
 
         byte[] exclusive = new byte[data.length + 2];
         exclusive[0] = (byte) MANUFACTURER_ID;

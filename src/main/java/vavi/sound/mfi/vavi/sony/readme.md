@@ -90,6 +90,20 @@ The wave table voice messages Sharp writes as 0x10 ~ 0x12 (see the `sharp` packa
 moved up by 0x20, and the 0xb0 / 0xb1 parameters every MFi 4.0 plug in writes (see the
 `fujitsu` package). Only 16 / 17 files have them.
 
+## Making them heard
+
+A machine dependent message reaches its function in the synthesizer as a sysex, with no
+track, so a function there cannot tell which MIDI channel a bend is for. The pitch bends,
+the pitch bend range and Hold1 therefore implement
+`vavi.sound.mfi.vavi.sequencer.MidiConvertibleFunction`: `MachineDependentMessage#getMidiEvents`
+asks the function at conversion time, while `MidiContext` still knows the track, and puts
+what it returns in place of the sysex - a MIDI pitch bend, the pitch bend range RPN
+(`PitchBendRangeMessage#getMidiEvents(MidiContext, int, int)`), control change 64 - on
+`MidiContext#retrieveChannel(track * 4 + voice)`. The LSB of a bend waits in
+`MidiContext#setPitchBendLsb`. The other 0x10 subs return null and go as the sysex as
+before. So they are in a MIDI file the sequence is written to as well: the mission's
+`_so16` file converts to 122 pitch bends.
+
 ## Checking it
 
 `SonyFunctionTest.corpus` (needs `-Dvavi.test=ide` and `mfi.dir` in `local.properties`)
@@ -100,8 +114,4 @@ StreamOn's stream was sent, and that each wave table voice has its wave.
 
 ## TODO
 
-- the pitch bends and Hold1 are decoded and logged only. A machine dependent message
-  reaches its function with no track, so the MIDI channel a bend belongs to is not known
-  there; making them heard needs `MachineDependentMessage#getMidiEvents` to convert them
-  instead.
 - 0x10 subs 0x01 and 0x02, and whether 0x11 really is the FM mode.

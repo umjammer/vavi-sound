@@ -360,6 +360,24 @@ logger.log(Level.DEBUG, "drum always zero:[" + channel + "]: " + bank);
         pitchBendRanges[channel] = pitchBendRange;
     }
 
+    /** the LSB of a 14 bit machine dependent pitch bend, index is pseudo MIDI channel */
+    private final int[] pitchBendLsbs = new int[MAX_MIDI_CHANNELS];
+
+    /**
+     * Keeps the LSB of a pitch bend that comes in a message of its own, for the MSB message
+     * that commits it, the MIDI way.
+     * @param lsb 0 ~ 127
+     * @see vavi.sound.mfi.vavi.sony.PitchBendFunction
+     */
+    public void setPitchBendLsb(int channel, int lsb) {
+        pitchBendLsbs[channel] = lsb;
+    }
+
+    /** @return the LSB {@link #setPitchBendLsb(int, int)} kept the last, 0 before any */
+    public int getPitchBendLsb(int channel) {
+        return pitchBendLsbs[channel];
+    }
+
     /**
      * The midi pitch bend the two mfi halves of a channel make, as a native player of an
      * mfi sound source puts them together (openDoJa follows it too):
