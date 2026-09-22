@@ -7,6 +7,7 @@
  * vavi.sound.smaf ... smaf
  * vavi.sound.pmd ... au pmd (cmx) reader, midi converter
  * vavi.sound.dxm ... feelsound dxm reader, midi converter
+ * vavi.sound.smd ... j-phone j-sky melody reader, midi converter
  * vavi.sound.midi ... i-melody and smaf adpcm
  * vavi.sound.mobile ... mobile adpcm
  * vavi.sound.sampled.ssrc ... sampling rate converter
@@ -25,10 +26,12 @@
      - http://mind.f.fiw-web.net/phonemelody/index.html (cell phone needed or user-agent?)
      - `~/Public/np2/SPH-A920`
  - https://3.onj.me/phonetones/
+ - http://www.ne.jp/asahi/phs/phs/psmplayer/index.html
 
 ## TODO
 
 - smd, smz ... j-phone
+  - ~~reader~~, ~~converting to midi~~ (smz may be smaf)
 - dxm ... phs, feelsound, w/ adpcm, oki synthesizer
   - ~~reader~~ (sequence only), ~~converting to midi~~
 - mfm ... fuetrek, w/ adpcm, like pmd
