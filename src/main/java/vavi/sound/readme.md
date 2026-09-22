@@ -8,6 +8,7 @@
  * vavi.sound.pmd ... au pmd (cmx) reader, midi converter
  * vavi.sound.dxm ... feelsound dxm reader, midi converter
  * vavi.sound.smd ... j-phone j-sky melody reader, midi converter
+ * vavi.sound.mfm ... fuetrek mfmp reader, midi converter
  * vavi.sound.midi ... i-melody and smaf adpcm
  * vavi.sound.mobile ... mobile adpcm
  * vavi.sound.sampled.ssrc ... sampling rate converter
@@ -35,5 +36,6 @@
 - dxm ... phs, feelsound, w/ adpcm, oki synthesizer
   - ~~reader~~ (sequence only), ~~converting to midi~~
 - mfm ... fuetrek, w/ adpcm, like pmd
+  - ~~reader~~, ~~converting to midi~~, wave, ucs
 - pmd (cmx) ... au, CMIDI
   - ~~reader~~, ~~converting to midi~~, wave
