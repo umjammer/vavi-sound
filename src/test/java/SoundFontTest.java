@@ -13,6 +13,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Soundbank;
@@ -89,9 +90,10 @@ Debug.println("META: " + meta.getType());
         Sequencer sequencer = MidiSystem.getSequencer(false); // crux
 Debug.println(Level.FINE, "sequencer: " + sequencer);
         sequencer.open();
-        sequencer.getTransmitter().setReceiver(synthesizer.getReceiver());
+        Receiver receiver = synthesizer.getReceiver();
+        sequencer.getTransmitter().setReceiver(receiver);
 
-        volume(synthesizer.getReceiver(), volume);
+        volume(receiver, volume);
         sequencer.setSequence(sequence);
         sequencer.addMetaEventListener(mel);
         sequencer.start();
