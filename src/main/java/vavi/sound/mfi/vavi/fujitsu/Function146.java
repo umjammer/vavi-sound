@@ -136,7 +136,7 @@ logger.log(Level.TRACE, "voice param:\n" + StringUtil.getDump(voiceParameter));
         throws InvalidMfiDataException {
 
         byte[] tmp = new byte[4 + voiceParameter.length];
-        tmp[0] = (byte) (VENDOR_FUJITSU | CARRIER_DOCOMO);
+        tmp[0] = (byte) (getVendor() | CARRIER_DOCOMO);
         tmp[1] = (byte) 0x92;
         tmp[2] = (byte) offset;
         tmp[3] = (byte) voiceParameter.length;

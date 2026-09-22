@@ -220,7 +220,7 @@ logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(this.data, 64));
         throws InvalidMfiDataException {
 
         byte[] tmp = new byte[3 + data.length];
-        tmp[0] = (byte) (VENDOR_FUJITSU | CARRIER_DOCOMO);
+        tmp[0] = (byte) (getVendor() | CARRIER_DOCOMO);
         tmp[1] = (byte) 0x01;
         tmp[2] = (byte) subFunction;
         System.arraycopy(data, 0, tmp, 3, data.length);

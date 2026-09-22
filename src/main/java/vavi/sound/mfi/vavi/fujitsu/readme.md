@@ -40,6 +40,12 @@ the F901iC ringtones), a wave table of its own next to that stream. 0x01 is the 
 sound source setup and carries its own sub function byte. All of them but the three
 `vavi-sound-nda` ones are what this package adds.
 
+The 0x9# ~ 0xb# messages are not Fujitsu's own: the Sharp plug in
+(`MFi4PlugIn_SH 01.00.06`) and the Panasonic ones (`MFi4PlugIn_P`, `P_PlugIn`) write
+them byte for byte, and Sony writes 0xb0 / 0xb1, under their own vendor byte.
+`FujitsuFunction#getVendor()` is what the `sharp`, `panasonic` and `sony` packages
+override to reuse these classes.
+
 ## 0x01, the MFi 2.0 sound source setup
 
 The only Fujitsu function with a sub function byte after the function byte:

@@ -88,7 +88,7 @@ logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(this.data, 64));
         throws InvalidMfiDataException {
 
         byte[] tmp = new byte[2 + data.length];
-        tmp[0] = (byte) (VENDOR_FUJITSU | CARRIER_DOCOMO);
+        tmp[0] = (byte) (getVendor() | CARRIER_DOCOMO);
         tmp[1] = (byte) 0x02;
         System.arraycopy(data, 0, tmp, 2, data.length);
         return tmp;

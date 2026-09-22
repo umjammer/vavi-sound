@@ -95,7 +95,7 @@ logger.log(Level.DEBUG, "ADPCM panpot: %dch %02x".formatted(channel, panpot));
         throws InvalidMfiDataException {
 
         byte[] tmp = new byte[3];
-        tmp[0] = (byte) (VENDOR_FUJITSU | CARRIER_DOCOMO);
+        tmp[0] = (byte) (getVendor() | CARRIER_DOCOMO);
         tmp[1] = (byte) 0x82;
         tmp[2] = (byte) ((channel << 6) | panpot);
         return tmp;
