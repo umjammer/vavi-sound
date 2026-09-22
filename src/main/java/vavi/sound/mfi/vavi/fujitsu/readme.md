@@ -75,7 +75,10 @@ corpus:
   (`0xe0`), 43 of the 45 melody voices; the two left over are one file that registers
   a voice it never plays. A drum voice's is not, it is the index inside the kit, again
   as in the NEC messages where the key number rides along beside it.
-- `key number` is non zero exactly when the drum flag is set, 67 of 67.
+- `key number` is non zero exactly when the drum flag is set, 67 of 67. The grown corpus
+  (51834 voices, 4879 files) agrees but for 13 drum voices with key 0, all of them empty
+  slots (`01 00 00 00 00 a0 00 00 00 00 a0`, drum programs 0x32 ~ 0x34) that the
+  `Yamaha S2M_0100` converter writes - `Function1#isEmpty()`, which the check skips.
 - `index` counts 0, 1, 2 ... over the messages of a file for sub 0x02 (59 of 59); for
   sub 0x01 it is the program instead (8 of 8). That is the only difference between the
   two forms - both are MFi 0200 files, so it is not a version thing.

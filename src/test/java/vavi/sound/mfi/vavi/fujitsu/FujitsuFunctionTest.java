@@ -250,6 +250,14 @@ class FujitsuFunctionTest {
         assertEquals(2, melody.getBank());
         assertEquals(0x30, melody.getProgram());
 
+        // an empty drum slot "E010143T.mld" (Yamaha S2M_0100) registers, key number 0
+        Function1 empty = new Function1();
+        empty.process(message(hex("21 01 02 00 05 82 32 40 01 00 00 00 00 a0 00 00 00 00 a0")), null);
+        assertTrue(empty.isDrum());
+        assertEquals(0, empty.getKeyNumber());
+        assertTrue(empty.isEmpty());
+        assertFalse(in.isEmpty());
+
         // the other subs keep their payload as it is
         Function1 volume = new Function1();
         volume.process(message(hex("21 01 06 3f")), null);
@@ -390,7 +398,8 @@ class FujitsuFunctionTest {
                             if (!voice.isDrum() && !programs.contains(voice.getProgram())) {
                                 melodyMisses++;
                             }
-                            if (voice.isDrum() != (voice.getKeyNumber() != 0)) {
+                            // an empty slot (Yamaha S2M_0100) is a drum with key 0
+                            if (!voice.isEmpty() && voice.isDrum() != (voice.getKeyNumber() != 0)) {
                                 errors.add("%s: key %d with drum %b"
                                         .formatted(path.getFileName(), voice.getKeyNumber(), voice.isDrum()));
                             }

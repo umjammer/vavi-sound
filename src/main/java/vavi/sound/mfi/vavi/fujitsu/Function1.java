@@ -53,7 +53,10 @@ import static java.lang.System.getLogger;
  *      it is the index inside the kit - again as in the NEC messages, where the drum
  *      program is the kit index and the key number is carried beside it.</li>
  *  <li>{@link #getKeyNumber()} is non zero exactly when the drum flag is set (67 of
- *      67), i.e. the fixed key a drum voice plays at.</li>
+ *      67), i.e. the fixed key a drum voice plays at. The corpus grown to 51834 voices
+ *      of 4879 files still says so but for 13 drum voices with key 0, and those 13 are
+ *      all {@link #isEmpty() empty} slots (drum programs 0x32 ~ 0x34) of files the
+ *      {@code Yamaha S2M_0100} converter wrote - a placeholder, not a voice.</li>
  *  <li>{@link #getIndex()} counts 0, 1, 2 ... over the messages of a file for sub
  *      0x02 (59 of 59). For sub 0x01 it is the program instead (8 of 8).</li>
  * </ul>
@@ -200,6 +203,23 @@ logger.log(Level.TRACE, "data:\n" + StringUtil.getDump(this.data, 64));
     public byte[] getOperator(int operator) {
         int offset = 4 + (VOICE_LENGTH - 2 * OPERATOR_LENGTH) + operator * OPERATOR_LENGTH;
         return Arrays.copyOfRange(data, offset, offset + OPERATOR_LENGTH);
+    }
+
+    /**
+     * Whether the voice is an empty slot: both operators all 0 but their last byte, e.g.
+     * {@code 01 00 00 00 00 a0 00 00 00 00 a0}. The {@code Yamaha S2M_0100} converter
+     * registers such slots, drum ones with key number 0.
+     */
+    public boolean isEmpty() {
+        for (int operator = 0; operator < 2; operator++) {
+            byte[] bytes = getOperator(operator);
+            for (int i = 0; i < OPERATOR_LENGTH - 1; i++) {
+                if (bytes[i] != 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /** @see #SUB_VOICE_1 */
