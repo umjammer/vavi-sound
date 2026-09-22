@@ -1,6 +1,10 @@
 # vavi.sound.pmd
 
-PMD (au, Qualcomm CMX, `cmid`) reader.
+PMD (au, Qualcomm CMX, `cmid`) reader and MIDI converter.
+
+ * `PmdReader` ... reads to `Pmd`
+ * `PmdMidiConverter` ... `Pmd` to `javax.sound.midi.Sequence`
+ * `vavi.sound.midi.pmd.PmdMidiFileReader` ... `MidiSystem.getSequence()` accepts PMD
 
 Reverse engineered from `PsmPlay.exe` (PsmPlayer 5.0, APO), function at `0x4174ee`.
 It reads `cmid` with the same routine as MFi `melo`, a PMD file is an MFi file
@@ -64,7 +68,17 @@ sub chunks ... tag (4 bytes), u16 length, data
  * notes of `Converted/*.mid` (PsmPlayer 3.80 output, later edited) are found at the same time/key
    in 16 of 19 files (the output has the leading rest cut)
 
+## MIDI
+
+ * resolution: the timebase of the first tempo, ticks are not rescaled
+ * channel: `track * 4 + voice` and channel assign, bank 63 is a drum kit (it is at channel 9 in the corpus,
+   GM2 rhythm bank select is added for other channels)
+ * wide pitch bend is converted, wave events are dropped
+
+verified against `Converted/*.mid`: programs of the melodic channels are the same in 13 of 19,
+the others are the "SONG;WAVE" files, the MIDI of which has sound effect channels added by hand instead of the wave,
+and one program change moved to the top
+
 ## TODO
 
- * converting to MIDI
  * body of the wave event

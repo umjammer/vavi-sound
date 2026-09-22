@@ -14,6 +14,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Track;
 
 import vavi.sound.pmd.PmdEvent.ControlEvent;
 import vavi.sound.pmd.PmdEvent.LongEvent;
@@ -167,6 +173,71 @@ Debug.println(path.getFileName() + ": " + pmd.contents().orElse("?") + ", tracks
                 assertInstanceOf(ControlEvent.class, track.events().getLast(), path.toString());
                 assertEquals(ControlEvent.END_OF_TRACK, ((ControlEvent) track.events().getLast()).status(), path.toString());
             }
+        }
+    }
+
+    @Test
+    void testToMidi() throws Exception {
+        byte[] track = bytes(
+                0x00, 0xff, 0xcd, 0x78,             // tempo 480, 120 bpm
+                0x00, 0xff, 0xe1, 0x43,             // voice 1 bank 3
+                0x00, 0xff, 0xe0, 0x49,             // voice 1 program 9 -> 73
+                0x00, 0xff, 0xe2, 0x60,             // voice 1 volume 32 -> 64
+                0x10, 0x60, 0x30, 0xff,             // voice 1 key 32 octave -1 -> 65, gate 48, velocity 63 -> 126
+                0x00, 0xff, 0x3f, 0xff,             // voice 1 wide pitch bend 0x1fff -> 0x3ffe
+                0x30, 0xff, 0xdf, 0x00);            // end of track
+        Sequence sequence = PmdMidiConverter.toMidiSequence(PmdReader.read(pmd(true, track)));
+        assertEquals(480, sequence.getResolution());
+        Track t = sequence.getTracks()[0];
+        List<MidiEvent> events = new java.util.ArrayList<>();
+        for (int i = 0; i < t.size(); i++) events.add(t.get(i));
+
+        MetaMessage tempo = (MetaMessage) events.get(0).getMessage();
+        assertEquals(0x51, tempo.getType());
+        assertEquals(500000, ((tempo.getData()[0] & 0xff) << 16) | ((tempo.getData()[1] & 0xff) << 8) | (tempo.getData()[2] & 0xff));
+
+        List<ShortMessage> shorts = events.stream().map(MidiEvent::getMessage)
+                .filter(m -> m instanceof ShortMessage).map(m -> (ShortMessage) m).toList();
+        ShortMessage program = shorts.stream().filter(m -> m.getCommand() == ShortMessage.PROGRAM_CHANGE).toList().getLast();
+        assertEquals(1, program.getChannel());
+        assertEquals(73, program.getData1());
+        ShortMessage volume = shorts.stream().filter(m -> m.getCommand() == ShortMessage.CONTROL_CHANGE).findFirst().orElseThrow();
+        assertEquals(7, volume.getData1());
+        assertEquals(64, volume.getData2());
+        MidiEvent on = events.stream().filter(e -> e.getMessage() instanceof ShortMessage m && m.getCommand() == ShortMessage.NOTE_ON).findFirst().orElseThrow();
+        assertEquals(0x10, on.getTick());
+        assertEquals(65, ((ShortMessage) on.getMessage()).getData1());
+        assertEquals(126, ((ShortMessage) on.getMessage()).getData2());
+        MidiEvent off = events.stream().filter(e -> e.getMessage() instanceof ShortMessage m && m.getCommand() == ShortMessage.NOTE_OFF).findFirst().orElseThrow();
+        assertEquals(0x10 + 48, off.getTick());
+        ShortMessage bend = shorts.stream().filter(m -> m.getCommand() == ShortMessage.PITCH_BEND).findFirst().orElseThrow();
+        assertEquals(0x3ffe, (bend.getData2() << 7) | bend.getData1());
+        assertEquals(0x10 + 0x30, t.ticks());
+    }
+
+    @Test
+    @EnabledIf("dirExists")
+    void testCorpusToMidi() throws Exception {
+        List<Path> paths;
+        try (Stream<Path> s = Files.list(dir)) {
+            paths = s.filter(p -> p.toString().toLowerCase().endsWith(".pmd")).sorted().toList();
+        }
+        for (Path path : paths) {
+            // through the spi
+            Sequence sequence = MidiSystem.getSequence(path.toFile());
+            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+            MidiSystem.write(sequence, 1, baos);
+            Sequence midi = MidiSystem.getSequence(new java.io.ByteArrayInputStream(baos.toByteArray()));
+            int notes = 0;
+            for (Track t : midi.getTracks()) {
+                for (int i = 0; i < t.size(); i++) {
+                    if (t.get(i).getMessage() instanceof ShortMessage m && m.getCommand() == ShortMessage.NOTE_ON) notes++;
+                }
+            }
+            long expected = PmdReader.read(Files.readAllBytes(path)).tracks().stream()
+                    .flatMap(t -> t.events().stream()).filter(e -> e instanceof NoteEvent).count();
+Debug.println(path.getFileName() + ": " + midi.getMicrosecondLength() / 1000 + " ms, notes: " + notes);
+            assertEquals(expected, notes, path.toString());
         }
     }
 }

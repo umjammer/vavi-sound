@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Track;
 
 import vavi.sound.dxm.DxmEvent.ChannelEvent;
 import vavi.sound.dxm.DxmEvent.MetaEvent;
@@ -151,5 +155,48 @@ truncated.forEach(p -> Debug.println("truncated: " + p));
         // the corpus has 1047 MCDF files, 3 of them are damaged
         assertTrue(read > 0);
         assertTrue(truncated.size() <= 3, truncated.toString());
+    }
+
+    @Test
+    void testToMidi() throws Exception {
+        byte[] track = bytes(
+                0x00, 0x90, 0x3c, 0x7f,                   // note on
+                0x18, 0x80, 0x3c,                         // note off, no velocity
+                0x00, 0xe0, 0x50,                         // pitch bend, msb only
+                0x00, 0xff, 0x2f, 0x00);                  // end of track
+        Sequence sequence = DxmMidiConverter.toMidiSequence(DxmReader.read(dxm(track)));
+        assertEquals(24, sequence.getResolution());
+        Track t = sequence.getTracks()[0];
+        List<ShortMessage> shorts = new ArrayList<>();
+        for (int i = 0; i < t.size(); i++) if (t.get(i).getMessage() instanceof ShortMessage m) shorts.add(m);
+        assertEquals(3, shorts.size());
+        assertEquals(ShortMessage.NOTE_OFF, shorts.get(1).getCommand());
+        assertEquals(0, shorts.get(1).getData2());
+        assertEquals(0, shorts.get(2).getData1());
+        assertEquals(0x50, shorts.get(2).getData2());
+        assertEquals(0x18, t.ticks());
+        assertEquals("テスト", new String(((javax.sound.midi.MetaMessage) t.get(0).getMessage()).getData(), Charset.forName("MS932")));
+    }
+
+    @Test
+    @EnabledIf("dirExists")
+    void testCorpusToMidi() throws Exception {
+        List<Path> paths;
+        try (Stream<Path> s = Files.walk(dir)) {
+            paths = s.filter(p -> p.toString().toLowerCase().endsWith(".dxm")).sorted().toList();
+        }
+        int converted = 0;
+        for (Path path : paths) {
+            byte[] data = Files.readAllBytes(path);
+            if (!DxmReader.isDxm(data)) continue;
+            // through the spi
+            Sequence sequence = MidiSystem.getSequence(path.toFile());
+            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+            MidiSystem.write(sequence, MidiSystem.getMidiFileTypes(sequence)[0], baos);
+            MidiSystem.getSequence(new java.io.ByteArrayInputStream(baos.toByteArray()));
+            converted++;
+        }
+Debug.println("converted: " + converted);
+        assertTrue(converted > 0);
     }
 }

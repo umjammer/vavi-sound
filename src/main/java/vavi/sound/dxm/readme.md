@@ -1,6 +1,10 @@
 # vavi.sound.dxm
 
-DXM (Feelsound, PHS, `MCDF`) reader.
+DXM (Feelsound, PHS, `MCDF`) reader and MIDI converter.
+
+ * `DxmReader` ... reads to `Dxm`
+ * `DxmMidiConverter` ... `Dxm` to `javax.sound.midi.Sequence`, note off velocity 0, pitch bend LSB 0
+ * `vavi.sound.midi.dxm.DxmMidiFileReader` ... `MidiSystem.getSequence()` accepts DXM
 
 The sequence part is reverse engineered from `PsmPlay.exe` (PsmPlayer 5.0, APO), function at `0x41655e`.
 It scans the file for `CThd`/`CTrk` and reads them with its SMF reader,
@@ -61,5 +65,4 @@ others (0x0001, 0x0010, 0x0011, 0x0020, 0x0021, 0x0030, 0x0031, 0x008#, 0x00c#, 
 
 ## TODO
 
- * converting to MIDI
  * ADPCM, OKI synthesizer parts (not in the corpus)
