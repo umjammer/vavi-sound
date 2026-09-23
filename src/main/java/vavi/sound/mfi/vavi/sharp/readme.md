@@ -63,5 +63,6 @@ voices in the corpus, 1477 Sharp's, the rest Sony's, who writes the same message
 ## TODO
 
 - the 0x11 record, the 0x12 parameter 0x10 and 0x40.
-- nothing of 0x10 ~ 0x12 is handed to a synthesizer yet; the voice parameters would
-  have to be understood to make a soundbank of them.
+- ~~nothing of 0x10 ~ 0x12 is handed to a synthesizer yet~~ `vavi-apps-mfiplayer`'s
+  fuetrek sound source plays them (`vavi.sound.mfi.fuetrek.UcsFunction`), the 0x11 record
+  being its voice edit parameters, see the `mfi5` package.
