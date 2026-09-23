@@ -127,7 +127,7 @@ logger.log(Level.DEBUG, "%s: target: %d, parameter: %d, value: %d (%d bit)"
         throws InvalidMfiDataException {
 
         byte[] tmp = new byte[7];
-        tmp[0] = (byte) (VENDOR_FUJITSU | CARRIER_DOCOMO);
+        tmp[0] = (byte) (getVendor() | CARRIER_DOCOMO);
         tmp[1] = (byte) getFunction();
         tmp[2] = (byte) target;
         tmp[3] = (byte) width;

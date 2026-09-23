@@ -46,6 +46,15 @@ public interface MachineDependentFunction {
     /** sequence a midi sysex */
     void process(byte[] data, javax.sound.midi.Receiver receiver) throws InvalidMfiDataException;
 
+    /**
+     * Of the functions of the same {@link #getId() id}, the one of the highest priority is taken:
+     * a player with a sound source of its own puts what a message is for into it, where the one
+     * here may only read it. Of the same priority, the one found first.
+     */
+    default int getPriority() {
+        return 0;
+    }
+
     /** factory */
     class Factory {
 
@@ -61,9 +70,14 @@ logger.log(Level.WARNING, "no matched machine dependent function for: " + key);
             return function;
         }
 
+        /** @return null if the key is not found, without the warning {@link #getFunction(String)} logs */
+        public static MachineDependentFunction findFunction(String key) {
+            return functions.get(key);
+        }
+
         static {
             for (MachineDependentFunction function : ServiceLoader.load(MachineDependentFunction.class)) {
-                functions.put(function.getId(), function);
+                functions.merge(function.getId(), function, (a, b) -> b.getPriority() > a.getPriority() ? b : a);
             }
         }
     }

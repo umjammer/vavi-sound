@@ -39,8 +39,21 @@ abstract class FujitsuFunction implements MachineDependentFunction {
     /** the function byte, {@code data[6]} */
     abstract int getFunction();
 
+    /**
+     * The vendor id the key and {@code getMessage()} use, {@link #VENDOR_FUJITSU} here.
+     * <p>
+     * The MFi 4.0 plug in writers of the other vendors ({@code MFi4PlugIn_SH} of Sharp,
+     * {@code MFi4PlugIn_P} of Panasonic, the Sony one) write the very same 0x9# ~ 0xb#
+     * messages under their own vendor byte, so their packages subclass these functions
+     * and override this.
+     * </p>
+     */
+    protected int getVendor() {
+        return VENDOR_FUJITSU;
+    }
+
     @Override
     public String getId() {
-        return VENDOR_FUJITSU + "." + getFunction();
+        return getVendor() + "." + getFunction();
     }
 }

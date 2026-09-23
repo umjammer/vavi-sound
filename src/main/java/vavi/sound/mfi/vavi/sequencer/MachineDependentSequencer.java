@@ -20,6 +20,7 @@ import vavi.sound.mfi.InvalidMfiDataException;
 /**
  * Sub sequencer for machine dependent system exclusive message.
  * <pre>
+ * none 0 | docomo 1 (MFi 5, "MFi5PlugIn_DoCoMo")
  * nec 16 | docomo 1
  * fujitsu 32 | docomo 1
  * sony 48 | docomo 1

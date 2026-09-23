@@ -8,3 +8,7 @@
 
 vavi.sound.midi.mfi.MfiMidiFileReader
 vavi.sound.midi.smaf.SmafMidiFileReader
+vavi.sound.midi.pmd.PmdMidiFileReader
+vavi.sound.midi.dxm.DxmMidiFileReader
+vavi.sound.midi.mfm.MfmMidiFileReader
+vavi.sound.midi.smd.SmdMidiFileReader

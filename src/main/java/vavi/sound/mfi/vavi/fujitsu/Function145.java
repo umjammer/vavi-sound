@@ -186,7 +186,7 @@ logger.log(Level.DEBUG, "wave param[%d]: @%04x, loop: %04x ~ %04x, pitch: %.5f"
         throws InvalidMfiDataException {
 
         byte[] tmp = new byte[4 + RECORD_LENGTH];
-        tmp[0]  = (byte) (VENDOR_FUJITSU | CARRIER_DOCOMO);
+        tmp[0]  = (byte) (getVendor() | CARRIER_DOCOMO);
         tmp[1]  = (byte) 0x91;
         tmp[2]  = (byte) offset;
         tmp[3]  = (byte) RECORD_LENGTH;

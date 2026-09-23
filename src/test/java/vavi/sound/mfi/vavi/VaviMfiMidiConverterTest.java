@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Synthesizer;
@@ -124,9 +125,10 @@ Debug.println(meta.getType());
 Debug.println("midiSequencer: " + midiSequencer);
 Debug.println("midiSequencer:T: " + midiSequencer.getTransmitter());
 Debug.println("midiSequencer:R: " + midiSequencer.getReceiver());
-        midiSequencer.getTransmitter().setReceiver(synthesizer.getReceiver());
+        Receiver receiver = synthesizer.getReceiver();
+        midiSequencer.getTransmitter().setReceiver(receiver);
         midiSequencer.open();
-        volume(synthesizer.getReceiver(), midiVolume);
+        volume(receiver, midiVolume);
         midiSequencer.setSequence(midiSequence);
 
         if (play) {

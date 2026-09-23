@@ -140,7 +140,7 @@ logger.log(Level.TRACE, "wave:\n" + StringUtil.getDump(wave, 64));
         throws InvalidMfiDataException {
 
         byte[] tmp = new byte[6 + wave.length];
-        tmp[0] = (byte) (VENDOR_FUJITSU | CARRIER_DOCOMO);
+        tmp[0] = (byte) (getVendor() | CARRIER_DOCOMO);
         tmp[1] = (byte) 0x90;
         tmp[2] = (byte) ((offset >> 8) & 0xff);
         tmp[3] = (byte) (offset & 0xff);

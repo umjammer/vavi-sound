@@ -12,25 +12,30 @@ includes many ADPCM codecs and the [SSRC](https://github.com/shibatch/SSRC) samp
 
 ### Status
 
-| **SPI** | **Codec**                                                               | **Description**           | **IN Status** | **OUT Status** |  **SPI Status**  | **Comment**                                 |
-|:--------|:------------------------------------------------------------------------|:--------------------------|:-------------:|:--------------:|:----------------:|:--------------------------------------------|
-| midi    | [MFi](src/main/java/vavi/sound/midi/mfi)                                | Japanese ring tone format |       ✅       |       ✅        |        ✅         | DoCoMo                                      |
-| midi    | [SMAF](src/main/java/vavi/sound/midi/smaf)                              | YAMAHA ring tone format   |       ✅       |       ✅        |        ✅         | au, Softbank                                |
-| sampled | [MFi](src/main/java/vavi/sound/sampled/mfi)                             | Japanese ring tone format |       ✅       |       ✅        |        ✅         | DoCoMo                                      |
-| sampled | [SMAF](src/main/java/vavi/sound/sampled/smaf)                           | YAMAHA ring tone format   |       ✅       |       ✅        |        ✅         | au, Softbank                                |
-| sampled | [CCITT ADPCM](src/main/java/vavi/sound/adpcm/ccitt)                     | G711, G721, G723, G726    |       ✅       |       ✅        |        ✅         | G726 cellphone w/ Fuetrek chip              |
-| sampled | [DVI ADPCM](src/main/java/vavi/sound/adpcm/dvi)                         | DVI ADPCM                 |       ✅       |       ✅        |        ✅         | same as IMA                                 |
-| sampled | [IMA ADPCM](src/main/java/vavi/sound/adpcm/ima)                         | IMA ADPCM                 |       ✅       |       ✅        | ✅ <sup>[2]</sup> |                                             |
-| sampled | [MA ADPCM](https://gitlab.com/umjammer/vavi-sound-nda) <sup>[1]</sup>   | YAMAHA ADPCM-MA           |       ✅       |       ✅        |        ✅         | cellphone w/ YAMAHA MA chip, YMU762, YMU765 |
-| sampled | [MS ADPCM](src/main/java/vavi/sound/adpcm/ms)                           | Microsoft ADPCM           |       ✅       |       ✅        | ✅ <sup>[2]</sup> |                                             |
-| sampled | [OKI ADPCM](src/main/java/vavi/sound/adpcm/oki)                         | OKI MSM6258 ADPCM         |       ✅       |       ✅        | ✅ <sup>[2]</sup> | x68000                                      |
-| sampled | [ROHM ADPCM](https://gitlab.com/umjammer/vavi-sound-nda) <sup>[1]</sup> | ROHM ADPCM                |       ✅       |       ✅        |        ✅         | cellphone w/ Rohm chip, BU8788KN            |
-| sampled | [VOX ADPCM](src/main/java/vavi/sound/adpcm/vox)                         | Dialogic ADPCM (VOX)      |       ✅       |       ✅        | ✅ <sup>[2]</sup> | OKI MSM7580                                 |
-| sampled | [YM2068 ADPCM](src/main/java/vavi/sound/adpcm/ym2608)                   | YAMAHA ADPCM-A            |       ✅       |       ✅        |        -         | YM2608 etc.                                 |
-| sampled | [YAMAHA ADPCM](src/main/java/vavi/sound/adpcm/yamaha)                   | YAMAHA ADPCM-A            |       ✅       |       ✅        | ✅ <sup>[2]</sup> | same as YM2608 ADPCM                        |
-| sampled | [PSX ADPCM](src/main/java/vavi/sound/adpcm/psx)                         | SONY ADPCM                |       ✅       |       -        |        ✅         | .mi\[bh], .mic                              |
-| sampled | [SShd](src/main/java/vavi/sound/adpcm/sshd)                             | SONY Audio Stream (ADS)   |       ✅       |       -        |        ✅         | .ads, .ss2, psx/pcm16/ima                   |
-| sampled | [ssrc](src/main/java/vavi/sound/pcm/resampling/ssrc)                    | resampling                |       ✅       |       -        |  ✅ <su>*</sup>   | [*] need to wait for phase 1                |
+| **SPI** | **Codec**                                                               | **Description**                 | **IN Status** | **OUT Status** |  **SPI Status**  | **Comment**                                                                                                     |
+|:--------|:------------------------------------------------------------------------|:--------------------------------|:-------------:|:--------------:|:----------------:|:----------------------------------------------------------------------------------------------------------------|
+| midi    | [MFi](src/main/java/vavi/sound/midi/mfi)                                | Japanese ring tone format (着メロ) |       ✅       |       ✅        |        ✅         | DoCoMo, w/ [vavi-apps-mfiplayer](https://github.com/umjammer/vavi-apps-mfiplayer) perfect reproducibility       |
+| midi    | [SMAF](src/main/java/vavi/sound/midi/smaf)                              | YAMAHA ring tone format (着メロ)   |       ✅       |       ✅        |        ✅         | au, Softbank, w/ [vavi-apps-mfiplayer](https://github.com/umjammer/vavi-apps-mfiplayer) perfect reproducibility |
+| sampled | [MFi](src/main/java/vavi/sound/sampled/mfi)                             | Japanese ring tone format (着うた) |       ✅       |       ✅        |        ✅         | DoCoMo                                                                                                          |
+| sampled | [SMAF](src/main/java/vavi/sound/sampled/smaf)                           | YAMAHA ring tone format (着うた)   |       ✅       |       ✅        |        ✅         | au, Softbank                                                                                                    |
+| sampled | [CCITT ADPCM](src/main/java/vavi/sound/adpcm/ccitt)                     | G711, G721, G723, G726          |       ✅       |       ✅        |        ✅         | cellphone w/ Fuetrek chip, G726                                                                                 |
+| sampled | [DVI ADPCM](src/main/java/vavi/sound/adpcm/dvi)                         | DVI ADPCM                       |       ✅       |       ✅        |        ✅         | same as IMA                                                                                                     |
+| sampled | [IMA ADPCM](src/main/java/vavi/sound/adpcm/ima)                         | IMA ADPCM                       |       ✅       |       ✅        | ✅ <sup>[2]</sup> |                                                                                                                 |
+| sampled | [MA ADPCM](https://gitlab.com/umjammer/vavi-sound-nda) <sup>[1]</sup>   | YAMAHA ADPCM-MA                 |       ✅       |       ✅        |        ✅         | cellphone w/ YAMAHA MA chip, YMU762, YMU765                                                                     |
+| sampled | [MS ADPCM](src/main/java/vavi/sound/adpcm/ms)                           | Microsoft ADPCM                 |       ✅       |       ✅        | ✅ <sup>[2]</sup> |                                                                                                                 |
+| sampled | [OKI ADPCM](src/main/java/vavi/sound/adpcm/oki)                         | OKI ADPCM                       |       ✅       |       ✅        | ✅ <sup>[2]</sup> | x68000, MSM6258                                                                                                 |
+| sampled | [ROHM ADPCM](https://gitlab.com/umjammer/vavi-sound-nda) <sup>[1]</sup> | ROHM ADPCM                      |       ✅       |       ✅        |        ✅         | cellphone w/ Rohm chip, BU8788KN                                                                                |
+| sampled | [VOX ADPCM](src/main/java/vavi/sound/adpcm/vox)                         | Dialogic ADPCM (VOX)            |       ✅       |       ✅        | ✅ <sup>[2]</sup> | MSM7580                                                                                                         |
+| sampled | [YM2068 ADPCM](src/main/java/vavi/sound/adpcm/ym2608)                   | YAMAHA ADPCM-A                  |       ✅       |       ✅        |        -         | YM2608 etc.                                                                                                     |
+| sampled | [YAMAHA ADPCM](src/main/java/vavi/sound/adpcm/yamaha)                   | YAMAHA ADPCM-A                  |       ✅       |       ✅        | ✅ <sup>[2]</sup> | same as YM2608 ADPCM                                                                                            |
+| sampled | [PSX ADPCM](src/main/java/vavi/sound/adpcm/psx)                         | SONY ADPCM                      |       ✅       |       -        |        ✅         | .mi\[bh], .mic                                                                                                  |
+| sampled | [SShd](src/main/java/vavi/sound/adpcm/sshd)                             | SONY Audio Stream (ADS)         |       ✅       |       -        |        ✅         | .ads, .ss2, psx/pcm16/ima                                                                                       |
+| sampled | [ssrc](src/main/java/vavi/sound/pcm/resampling/ssrc)                    | resampling                      |       ✅       |       -        |        ✅         | ~~need to wait for phase 1~~                                                                                    |
+| midi    | [PMD](src/main/java/vavi/sound/pmd)                                     | au, Qualcomm CMX                |       ✅       |       -        |        ✅         | TODO synthesizer                                                                                                |
+| midi    | [DXM](src/main/java/vavi/sound/dxm)                                     | Feelsound, PHS                  |       ✅       |       -        |        ✅         | TODO oki synthesizer                                                                                            |
+| midi    | [SMD](src/main/java/vavi/sound/smd)                                     | J-Phone J-SKY melody            |       ✅       |       -        |        ✅         | TODO synthesizer                                                                                                |
+| midi    | [MFM](src/main/java/vavi/sound/mfm)                                     | FueTrek MFMP                    |       ✅       |       -        |        ✅         | TODO rohm? synthesizer                                                                                          |
+
 
 <sub>\[1] implemented in another library</sub><br/>
 <sub>\[2] wav file readable</sub>
@@ -117,6 +122,7 @@ A. yes you can, follow those steps
     * ~~those are needed when eliminating audio engine source data line~~ 
   * ~~eliminate *MessageStore -> w/ data sysex~~
   * ~~AudioDataChunk seems Δ is 0, there is the case that those pronounce at same timing ?~~
+  * remaining japanese, world ringtone format
 
 ---
 

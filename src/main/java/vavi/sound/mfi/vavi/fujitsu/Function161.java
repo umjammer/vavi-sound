@@ -100,7 +100,7 @@ logger.log(Level.DEBUG, "voice setting: %dvo %02x".formatted(voice, value));
         throws InvalidMfiDataException {
 
         byte[] tmp = new byte[3];
-        tmp[0] = (byte) (VENDOR_FUJITSU | CARRIER_DOCOMO);
+        tmp[0] = (byte) (getVendor() | CARRIER_DOCOMO);
         tmp[1] = (byte) 0xa1;
         tmp[2] = (byte) ((voice << 6) | value);
         return tmp;

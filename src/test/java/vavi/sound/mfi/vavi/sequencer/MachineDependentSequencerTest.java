@@ -44,6 +44,12 @@ Debug.println(mds);
         mds = MachineDependentSequencer.Factory.getSequencer(data(0));
         assertInstanceOf(vavi.sound.mfi.vavi.sequencer.UnknownVendorSequencer.class, mds);
 
+        mds = MachineDependentSequencer.Factory.getSequencer(data(1));
+        assertInstanceOf(vavi.sound.mfi.vavi.mfi5.Mfi5Sequencer.class, mds);
+
+        mds = MachineDependentSequencer.Factory.getSequencer(data(1));
+        assertInstanceOf(vavi.sound.mfi.vavi.mfi5.Mfi5Sequencer.class, mds);
+
         // TODO recursive dependency
         mds = MachineDependentSequencer.Factory.getSequencer(data(33));
         assertInstanceOf(vavi.sound.mfi.vavi.fujitsu.FujitsuSequencer.class, mds);

@@ -86,7 +86,7 @@ logger.log(Level.DEBUG, "sound source setting: " + value);
         throws InvalidMfiDataException {
 
         byte[] tmp = new byte[3];
-        tmp[0] = (byte) (VENDOR_FUJITSU | CARRIER_DOCOMO);
+        tmp[0] = (byte) (getVendor() | CARRIER_DOCOMO);
         tmp[1] = (byte) 0xa0;
         tmp[2] = (byte) value;
         return tmp;
