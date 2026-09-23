@@ -27,20 +27,20 @@ chunks ... tag (4 bytes), u32 length, data
 
 ### sub chunks
 
-| tag    | data               | rt_parser_std.dll                                          |
-|--------|--------------------|------------------------------------------------------------|
-| `titl` | title              |                                                            |
-| `copy` | copyright          |                                                            |
-| `date` | date               |                                                            |
-| `sorc` | protection         |                                                            |
-| `supt` | "1100", "1.0.0.0"  |                                                            |
-| `note` | u16                | extra bytes of a note, 1: velocity byte, 0: compact mode   |
-| `exta` | u16                | extra data length of class 0x7f commands 0x00 ~ 0x7f       |
-| `extb` | u16                | extra data length of class 0xbf commands 0x00 ~ 0x7f       |
-| `extc` | u16                | extra data length of class 0xff commands 0x00 ~ 0x7f       |
-| `tmbs` | u16                | ticks per quarter note, 0 or none: 48                      |
-| `cuep` | u32, u32           | cue points                                                 |
-| `ainf` | (id, length, value)... | audio information, e.g. sampling rates                 |
+| tag    | data                   | rt_parser_std.dll                                        |
+|--------|------------------------|----------------------------------------------------------|
+| `titl` | title                  |                                                          |
+| `copy` | copyright              |                                                          |
+| `date` | date                   |                                                          |
+| `sorc` | protection             |                                                          |
+| `supt` | "1100", "1.0.0.0"      |                                                          |
+| `note` | u16                    | extra bytes of a note, 1: velocity byte, 0: compact mode |
+| `exta` | u16                    | extra data length of class 0x7f commands 0x00 ~ 0x7f     |
+| `extb` | u16                    | extra data length of class 0xbf commands 0x00 ~ 0x7f     |
+| `extc` | u16                    | extra data length of class 0xff commands 0x00 ~ 0x7f     |
+| `tmbs` | u16                    | ticks per quarter note, 0 or none: 48                    |
+| `cuep` | u32, u32               | cue points                                               |
+| `ainf` | (id, length, value)... | audio information, e.g. sampling rates                   |
 
 ### chunks
 
@@ -57,31 +57,31 @@ the others use other values)
 
 `[delta (1 byte), event]...`
 
-| event                          | bytes                                  |                                                  |
-|--------------------------------|----------------------------------------|--------------------------------------------------|
-| note                           | `vvkkkkkk gate [VVVVVVbb]`             | key `k + (45, 65, 0, 0)[b]`, velocity `V * 2` (126 in compact mode) |
-| pitch bend (class 0x3f)        | `0x3f vvhhhhhh llllllll`               | 14 bit                                           |
-| class 0x7f, 0xbf, 0xff         | `status command data`                  | command 0x00 ~ 0x7f: 2 + ext? bytes, 0x80 ~ 0xef: 1 byte, 0xf0 ~ 0xff: u16 length + data |
+| event                   | bytes                      |                                                                                          |
+|-------------------------|----------------------------|------------------------------------------------------------------------------------------|
+| note                    | `vvkkkkkk gate [VVVVVVbb]` | key `k + (45, 65, 0, 0)[b]`, velocity `V * 2` (126 in compact mode)                      |
+| pitch bend (class 0x3f) | `0x3f vvhhhhhh llllllll`   | 14 bit                                                                                   |
+| class 0x7f, 0xbf, 0xff  | `status command data`      | command 0x00 ~ 0x7f: 2 + ext? bytes, 0x80 ~ 0xef: 1 byte, 0xf0 ~ 0xff: u16 length + data |
 
 channel = `track * 4 + voice`, the data of 0xd# commands is `vv` voice + 6 bit value.
 
-| 0xff   | meaning                                                               |
-|--------|-----------------------------------------------------------------------|
-| 00~03  | gate extension, voice = command, data `bbkkkkkk gate` (from now)      |
-| b0     | time skip, `data * 256`                                               |
-| b1     | end of track                                                          |
-| bf     | tempo, bpm `data + 20`                                                |
-| c0     | master volume `data / 2` (track 0)                                    |
-| c1     | master balance `data / 2` (track 0)                                   |
-| c2     | master coarse tuning `data - 0x40` (track 0)                          |
-| c3, c4 | track 0, not known                                                    |
-| d0     | bank 1, 1: rhythm                                                     |
-| d1     | bank 2, bit 0: program + 64, 0x34 (from GM2 bank 125), 0x36           |
+| 0xff   | meaning                                                                              |
+|--------|--------------------------------------------------------------------------------------|
+| 00~03  | gate extension, voice = command, data `bbkkkkkk gate` (from now)                     |
+| b0     | time skip, `data * 256`                                                              |
+| b1     | end of track                                                                         |
+| bf     | tempo, bpm `data + 20`                                                               |
+| c0     | master volume `data / 2` (track 0)                                                   |
+| c1     | master balance `data / 2` (track 0)                                                  |
+| c2     | master coarse tuning `data - 0x40` (track 0)                                         |
+| c3, c4 | track 0, not known                                                                   |
+| d0     | bank 1, 1: rhythm                                                                    |
+| d1     | bank 2, bit 0: program + 64, 0x34 (from GM2 bank 125), 0x36                          |
 | d2     | program change, bank select MSB: 0x79 melody, 0x78 rhythm, 0x7d, 0x14, 0x11 by d0/d1 |
-| d3     | volume `* 2` (the converter folds expression into this)               |
-| d4     | pan pot `* 2`                                                         |
-| d5     | pitch bend range                                                      |
-| d6     | modulation `* 2`                                                      |
+| d3     | volume `* 2` (the converter folds expression into this)                              |
+| d4     | pan pot `* 2`                                                                        |
+| d5     | pitch bend range                                                                     |
+| d6     | modulation `* 2`                                                                     |
 
 | 0x7f   | meaning                                                               |
 |--------|-----------------------------------------------------------------------|
@@ -98,6 +98,11 @@ class 0xbf is skipped by the dll.
 
  * all 6 samples parse to end of track at the end of every track
  * notes of `Type2_SMF2MFMP_SAMPLE.mfm` are the same (time, channel, key) as its source `Type2_SMF2MFMP_SAMPLE.mid`
+
+## References
+
+* mfmp ... https://sourceforge.net/projects/retrocode/ (/usr/local/src/retrocode) 🏡
+* https://github.com/wackypack/mtex
 
 ## TODO
 

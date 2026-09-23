@@ -25,22 +25,22 @@ entry data ...
 The upper byte of the id seems to be a part, 0x00## is for the whole content, 0x02## is for the sequence.
 A file lists ids with size 0 too.
 
-| id     | data                                                        | |
-|--------|-------------------------------------------------------------|-|
-| 0x0000 | "01.0"                                                      | format version |
-| 0x0081 | u32                                                         | file size |
-| 0x0082 | "2856"                                                      | ? |
-| 0x0083 | u16 year, u8 month, day, hour, minute, second, ?            | date |
-| 0x0084 | "01.0"                                                      | version |
-| 0x00c0 | shift_jis                                                   | title |
-| 0x0240 | `CThd` + `CTrk`s                                            | sequence (PsmPlay) |
-| 0x0280 | u32                                                         | play time [msec] |
-| 0x0281 | u32                                                         | size of 0x0240 |
-| 0x0282 | "2856"                                                      | ? |
-| 0x0283 | same as 0x0083                                              | date |
-| 0x0284 | "01.0"                                                      | version |
-| 0x02c0 | shift_jis                                                   | title |
-| 0x02c4 | shift_jis, "PS-PLAYER V7.10"                                | authoring tool |
+| id     | data                                             |                    |
+|--------|--------------------------------------------------|--------------------|
+| 0x0000 | "01.0"                                           | format version     |
+| 0x0081 | u32                                              | file size          |
+| 0x0082 | "2856"                                           | ?                  |
+| 0x0083 | u16 year, u8 month, day, hour, minute, second, ? | date               |
+| 0x0084 | "01.0"                                           | version            |
+| 0x00c0 | shift_jis                                        | title              |
+| 0x0240 | `CThd` + `CTrk`s                                 | sequence (PsmPlay) |
+| 0x0280 | u32                                              | play time [msec]   |
+| 0x0281 | u32                                              | size of 0x0240     |
+| 0x0282 | "2856"                                           | ?                  |
+| 0x0283 | same as 0x0083                                   | date               |
+| 0x0284 | "01.0"                                           | version            |
+| 0x02c0 | shift_jis                                        | title              |
+| 0x02c4 | shift_jis, "PS-PLAYER V7.10"                     | authoring tool     |
 
 others (0x0001, 0x0010, 0x0011, 0x0020, 0x0021, 0x0030, 0x0031, 0x008#, 0x00c#, 0x020#, 0x0285, 0x0286, 0x02c#) are unknown.
 
