@@ -9,9 +9,12 @@ package vavi.sound.midi.smaf;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiDeviceReceiver;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Patch;
 import javax.sound.midi.Receiver;
@@ -45,6 +48,9 @@ public class SmafSynthesizer implements Synthesizer {
                     "Version " + version) {};
 
     private final Synthesizer midiSynthesizer;
+
+    /** the receivers handed out by this, not the ones of the synthesizer behind this */
+    private final List<Receiver> receivers = new CopyOnWriteArrayList<>();
 
     /** the synthesizer played here with the adpcm mixed in, null: it plays to its own line */
     private vavi.sound.mobile.MixingLine mixingLine;
@@ -93,6 +99,10 @@ logger.log(Level.DEBUG, "internal midiSynthesizer: " + midiSynthesizer.getClass(
 
     @Override
     public void close() {
+        // a device closes the receivers it handed out
+        for (Receiver receiver : receivers) {
+            receiver.close();
+        }
         if (mixingLine != null) {
             mixingLine.close();
             mixingLine = null;
@@ -180,12 +190,31 @@ logger.log(Level.DEBUG, "internal midiSynthesizer: " + midiSynthesizer.getClass(
     public Receiver getReceiver() throws MidiUnavailableException {
         Receiver receiver = new VaviSmafReceiver(midiSynthesizer);
         // the listener's volume is of the whole mix when the adpcm is mixed into the line
-        return mixingLine != null ? mixingLine.receiver(receiver) : receiver;
+        Receiver delegate = mixingLine != null ? mixingLine.receiver(receiver) : receiver;
+        Receiver tracked = new MidiDeviceReceiver() {
+            @Override
+            public void send(MidiMessage message, long timeStamp) {
+                delegate.send(message, timeStamp);
+            }
+
+            @Override
+            public void close() {
+                receivers.remove(this);
+                delegate.close();
+            }
+
+            @Override
+            public MidiDevice getMidiDevice() {
+                return SmafSynthesizer.this;
+            }
+        };
+        receivers.add(tracked);
+        return tracked;
     }
 
     @Override
     public List<Receiver> getReceivers() {
-        return midiSynthesizer.getReceivers();
+        return List.copyOf(receivers);
     }
 
     @Override
