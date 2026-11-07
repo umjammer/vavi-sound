@@ -25,10 +25,10 @@ import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.Random;
 
+import vavi.util.Fft;
 import vavi.util.I0Bessel;
 
 import static java.lang.System.getLogger;
-import static vavi.util.SplitRadixFft.rdft;
 
 
 /**
@@ -63,6 +63,9 @@ public class SSRC {
 
     /** */
     private int FFTFIRLEN = 65536;
+
+    /** the fft implementation, selected by the system property "vavi.util.Fft" */
+    private final Fft fft = Fft.getInstance();
 
 //    /** */
 //    private static final int M = 15;
@@ -755,7 +758,7 @@ System.err.println("upsample");
                 wSize = n2b / 2;
                 fft_w = new double[wSize];
 
-                rdft(n2b, 1, stage2, fft_ip, fft_w);
+                fft.rdft(n2b, 1, stage2, fft_ip, fft_w);
             }
 
             // Apply filters
@@ -947,7 +950,7 @@ System.err.println("upsample");
 
 //for (i = 0; i < n2b2; i++) { logger.log(Level.DEBUG, "%d:%g".formatted(i, buf2[ch][i])); }
 
-                rdft(n2b, 1, buf2[ch], fft_ip, fft_w);
+                fft.rdft(n2b, 1, buf2[ch], fft_ip, fft_w);
 
                 buf2[ch][0] = stage2[0] * buf2[ch][0];
                 buf2[ch][1] = stage2[1] * buf2[ch][1];
@@ -964,7 +967,7 @@ System.err.println("upsample");
                     buf2[ch][i * 2 + 1] = im;
                 }
 
-                rdft(n2b, -1, buf2[ch], fft_ip, fft_w);
+                fft.rdft(n2b, -1, buf2[ch], fft_ip, fft_w);
 
                 for (i = osc, j = 0; i < n2b2; i += osf, j++) {
                     double f = (buf1[ch][j] + buf2[ch][i]);
@@ -1263,7 +1266,7 @@ System.err.println("downsample");
                 wsize = n1b / 2;
                 fftW = new double[wsize];
 
-                rdft(n1b, 1, stage1, fftIp, fftW);
+                fft.rdft(n1b, 1, stage1, fftIp, fftW);
 //for (i = -(n1 / 2); i <= n1 / 2; i++) {
 // logger.log(Level.DEBUG, "1': %06d: %e".formatted(i + n1 / 2, stage1[i + n1 / 2]));
 //}
@@ -1473,7 +1476,7 @@ System.err.println("downsample");
                 rps = i - n1b2;
 //                rp += j;
 
-                rdft(n1b, 1, buf1[ch], fftIp, fftW);
+                fft.rdft(n1b, 1, buf1[ch], fftIp, fftW);
 
                 buf1[ch][0] = stage1[0] * buf1[ch][0];
                 buf1[ch][1] = stage1[1] * buf1[ch][1];
@@ -1488,7 +1491,7 @@ System.err.println("downsample");
                     buf1[ch][i * 2 + 1] = im;
                 }
 
-                rdft(n1b, -1, buf1[ch], fftIp, fftW);
+                fft.rdft(n1b, -1, buf1[ch], fftIp, fftW);
 
                 for (i = 0; i < n1b2; i++) {
                     buf2[ch][n2x + 1 + i] += buf1[ch][i];

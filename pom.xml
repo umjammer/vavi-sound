@@ -138,6 +138,10 @@
         <version>3.16.0</version>
         <configuration>
           <release>25</release>
+          <compilerArgs>
+            <arg>--add-modules</arg>
+            <arg>jdk.incubator.vector</arg>
+          </compilerArgs>
         </configuration>
       </plugin>
       <plugin>
@@ -176,6 +180,7 @@
         <version>3.6.0</version>
         <configuration>
           <argLine>
+            --add-modules jdk.incubator.vector
             --add-opens=java.base/java.io=ALL-UNNAMED
             --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
             --add-opens=java.desktop/javax.sound.sampled=ALL-UNNAMED
