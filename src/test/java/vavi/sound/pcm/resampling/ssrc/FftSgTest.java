@@ -29,7 +29,7 @@ import static vavi.util.SplitRadixFft.rdft;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 060127 nsano initial version <br>
  */
-public class fftsgTest {
+public class FftSgTest {
 
     /* random number generator, 0 <= RND < 1 */
     static double RND(int[] p) {

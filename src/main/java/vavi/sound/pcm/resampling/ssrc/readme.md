@@ -6,6 +6,7 @@ Shibatch Sampling Rate Converter
 
 ### use vector, giving up bit-exactness
 
+jvm args
 ```
 -Dvavi.util.Convolver=vector -Dvavi.sound.pcm.resampling.ssrc.fir=vector -Dvavi.util.Fft=vectorradix4
 ```
