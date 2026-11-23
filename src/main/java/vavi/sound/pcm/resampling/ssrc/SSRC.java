@@ -22,10 +22,11 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
 
-import vavi.util.Fft;
+import vavi.util.Convolver;
 import vavi.util.I0Bessel;
 
 import static java.lang.System.getLogger;
@@ -64,8 +65,14 @@ public class SSRC {
     /** */
     private int FFTFIRLEN = 65536;
 
-    /** the fft implementation, selected by the system property "vavi.util.Fft" */
-    private final Fft fft = Fft.getInstance();
+    /**
+     * the polyphase filters for stereo by the Vector API ({@link VectorFilters}), the result is bit exact.
+     * the system property "vavi.sound.pcm.resampling.ssrc.fir" "vector" or "scalar" (default),
+     * "vector" needs jdk.incubator.vector.
+     */
+    private final boolean vectorFir = "vector".equals(System.getProperty("vavi.sound.pcm.resampling.ssrc.fir", "scalar")) &&
+            ModuleLayer.boot().findModule("jdk.incubator.vector").isPresent();
+
 
 //    /** */
 //    private static final int M = 15;
@@ -608,8 +615,8 @@ public class SSRC {
         double[] stage2;
         int n1, n1x, n1y, n2, n2b;
         int[] f1order, f1inc;
-        int[] fft_ip;
-        double[] fft_w;
+        /** stage 2 filter */
+        Convolver conv2;
         ByteBuffer rawInBuf, rawOutBuf;
         double[] inBuf, outBuf;
         double[][] buf1, buf2;
@@ -715,7 +722,6 @@ System.err.println("upsample");
                 double aa = AA; // stop band attenuation(dB)
                 double lpf, d, df, alp, iza;
 //              double delta;
-                int ipSize, wSize;
 
 //              delta = Math.pow(10, -aa / 20);
                 if (aa <= 21) {
@@ -746,26 +752,27 @@ System.err.println("upsample");
                 }
                 n2b *= 2;
 
+                conv2 = Convolver.getInstance();
+                if (!conv2.isExact()) {
+                    // not bit exact anyway, a longer fft for a longer block, less fft per a sample
+                    n2b *= 2;
+                }
+
                 stage2 = new double[n2b];
 
                 for (int i = -(n2 / 2); i <= n2 / 2; i++) {
                     stage2[i + n2 / 2] = win(i, n2, alp, iza) * hn_lpf(i, lpf, fs2) / n2b * 2;
                 }
 
-                ipSize = (int) (2 + Math.sqrt(n2b));
-                fft_ip = new int[ipSize];
-                fft_ip[0] = 0;
-                wSize = n2b / 2;
-                fft_w = new double[wSize];
-
-                fft.rdft(n2b, 1, stage2, fft_ip, fft_w);
+                conv2.init(n2b, stage2);
             }
 
             // Apply filters
 
             setStartTime();
 
-            n2b2 = n2b / 2;
+            // the block length, the rest of n2b holds the tail of the convolution (n2 - 1)
+            n2b2 = conv2.isExact() ? n2b / 2 : n2b / 4 * 3;
 
             buf1 = new double[nch][n2b2 / osf + 1];
 
@@ -864,15 +871,21 @@ System.err.println("upsample");
             ipBackup = ip;
             oscBackup = osc;
 
+            boolean stereo = nch == 2 && vectorFir;
+            int s1pEnd = 0;
+
             for (ch = 0; ch < nch; ch++) {
-                int op = ch; // outBuf
 //                int fdo = fs1 / (dfrq * osf);
                 int no = n1y * osf;
 
                 s1p = s1pBackup;
                 ip = ipBackup + ch;
 
-                switch (n1x) {
+                if (stereo) {
+                    if (ch == 0) {
+                        s1pEnd = VectorFilters.upStage1(inBuf, ip, stage1, f1order, f1inc, s1p, no, nSmplWrt1, n1x, buf2[0], buf2[1]);
+                    }
+                } else switch (n1x) {
                     case 7 -> {
                         for (p = 0; p < nSmplWrt1; p++) {
                             int s1o = f1order[s1p];
@@ -940,34 +953,23 @@ System.err.println("upsample");
                     }
                 }
 
-                osc = oscBackup;
-
-                // apply stage 2 filter
-
                 for (p = nSmplWrt1; p < n2b; p++) {
                     buf2[ch][p] = 0;
                 }
+            }
 
-//for (i = 0; i < n2b2; i++) { logger.log(Level.DEBUG, "%d:%g".formatted(i, buf2[ch][i])); }
+            if (stereo) {
+                s1p = s1pEnd;
+            }
 
-                fft.rdft(n2b, 1, buf2[ch], fft_ip, fft_w);
+            // apply stage 2 filter
 
-                buf2[ch][0] = stage2[0] * buf2[ch][0];
-                buf2[ch][1] = stage2[1] * buf2[ch][1];
+            conv2.convolve(buf2, nch);
 
-                for (i = 1; i < n2b / 2; i++) {
-                    double re, im;
+            for (ch = 0; ch < nch; ch++) {
+                int op = ch; // outBuf
 
-                    re = stage2[i * 2] * buf2[ch][i * 2] - stage2[i * 2 + 1] * buf2[ch][i * 2 + 1];
-                    im = stage2[i * 2 + 1] * buf2[ch][i * 2] + stage2[i * 2] * buf2[ch][i * 2 + 1];
-
-//logger.log(Level.TRACE, "%d : %g %g %g %g %g %g".formatted(i, stage2[i * 2],stage2[i * 2 + 1],buf2[ch][i * 2],buf2[ch][i * 2 + 1], re, im));
-
-                    buf2[ch][i * 2] = re;
-                    buf2[ch][i * 2 + 1] = im;
-                }
-
-                fft.rdft(n2b, -1, buf2[ch], fft_ip, fft_w);
+                osc = oscBackup;
 
                 for (i = osc, j = 0; i < n2b2; i += osf, j++) {
                     double f = (buf1[ch][j] + buf2[ch][i]);
@@ -980,6 +982,10 @@ System.err.println("upsample");
 
                 for (j = 0; i < n2b; i += osf, j++) {
                     buf1[ch][j] = buf2[ch][i];
+                }
+                // when the tail is shorter than the block
+                for (; j < buf1[ch].length; j++) {
+                    buf1[ch][j] = 0;
                 }
             }
 
@@ -1170,8 +1176,8 @@ System.err.println("upsample");
         double[][] stage2;
         int n2, n2x, n2y, n1, n1b;
         int[] f2order, f2inc;
-        int[] fftIp;
-        double[] fftW;
+        /** stage 1 filter */
+        Convolver conv1;
         ByteBuffer rawInBuf, rawOutBuf;
         double[] inBuf, outBuf;
         double[][] buf1, buf2;
@@ -1205,7 +1211,6 @@ System.err.println("downsample");
                 double aa = AA; // stop band attenuation(dB)
                 double lpf, d, df, alp, iza;
 //                double delta;
-                int ipsize, wsize;
 
                 frqGcd = gcd(sfrq, dfrq);
 
@@ -1253,6 +1258,12 @@ System.err.println("downsample");
                 }
                 n1b *= 2;
 
+                conv1 = Convolver.getInstance();
+                if (!conv1.isExact()) {
+                    // not bit exact anyway, a longer fft for a longer block, less fft per a sample
+                    n1b *= 2;
+                }
+
                 stage1 = new double[n1b];
 
                 for (i = -(n1 / 2); i <= n1 / 2; i++) {
@@ -1260,13 +1271,7 @@ System.err.println("downsample");
 //logger.log(Level.TRACE, "1: %06d: %e".formatted(i + n1 / 2, stage1[i + n1 / 2])); // OK
                 }
 
-                ipsize = (int) (2 + Math.sqrt(n1b));
-                fftIp = new int[ipsize];
-                fftIp[0] = 0;
-                wsize = n1b / 2;
-                fftW = new double[wsize];
-
-                fft.rdft(n1b, 1, stage1, fftIp, fftW);
+                conv1.init(n1b, stage1);
 //for (i = -(n1 / 2); i <= n1 / 2; i++) {
 // logger.log(Level.DEBUG, "1': %06d: %e".formatted(i + n1 / 2, stage1[i + n1 / 2]));
 //}
@@ -1349,7 +1354,8 @@ System.err.println("downsample");
 
             setStartTime();
 
-            n1b2 = n1b / 2;
+            // the block length, the rest of n1b holds the tail of the convolution (n1 - 1)
+            n1b2 = conv1.isExact() ? n1b / 2 : n1b / 4 * 3;
 
             // |....B....|....C....| buf1 n1b2+n1b2
             // |.A.|....D....| buf2 n2x+n1b2
@@ -1475,24 +1481,11 @@ System.err.println("downsample");
 
                 rps = i - n1b2;
 //                rp += j;
+            }
 
-                fft.rdft(n1b, 1, buf1[ch], fftIp, fftW);
+            conv1.convolve(buf1, nch);
 
-                buf1[ch][0] = stage1[0] * buf1[ch][0];
-                buf1[ch][1] = stage1[1] * buf1[ch][1];
-
-                for (i = 1; i < n1b2; i++) {
-                    double re, im;
-
-                    re = stage1[i * 2] * buf1[ch][i * 2] - stage1[i * 2 + 1] * buf1[ch][i * 2 + 1];
-                    im = stage1[i * 2 + 1] * buf1[ch][i * 2] + stage1[i * 2] * buf1[ch][i * 2 + 1];
-
-                    buf1[ch][i * 2] = re;
-                    buf1[ch][i * 2 + 1] = im;
-                }
-
-                fft.rdft(n1b, -1, buf1[ch], fftIp, fftW);
-
+            for (ch = 0; ch < nch; ch++) {
                 for (i = 0; i < n1b2; i++) {
                     buf2[ch][n2x + 1 + i] += buf1[ch][i];
                 }
@@ -1523,10 +1516,12 @@ System.err.println("downsample");
                     }
 
                     assert ((bp2 - (buf2[0].length * ch)) * (fs2 / fs1) - (rp2 + p * (fs2 / dfrq)) == s2o); // &(buf2[ch][0])
+                    // bp2 stays in buf2[ch]
+                    double[] b2 = buf2[ch];
+                    double[] st2 = stage2[s2o];
+                    int o2 = bp2 - buf2[0].length * ch;
                     for (i = 0; i < n2x; i++) {
-//logger.log(Level.TRACE, "%d (%d, %d)".formatted(i, bp2 / buf2[0].length, bp2 % buf2[0].length));
-                        tmp += stage2[s2o][i] * buf2[bp2 / buf2[0].length][bp2 % buf2[0].length]; // *bp2++
-                        bp2++;
+                        tmp += st2[i] * b2[o2 + i]; // *bp2++
                     }
 
                     outBuf[op + p * nch + ch] = tmp;
@@ -1717,7 +1712,9 @@ System.err.println("downsample");
             }
 
             for (ch = 0; ch < nch; ch++) {
-                System.arraycopy(buf1[ch], n1b2, buf2[ch], n2x + 1, n1b2);
+                System.arraycopy(buf1[ch], n1b2, buf2[ch], n2x + 1, n1b - n1b2);
+                // when the tail is shorter than the block
+                Arrays.fill(buf2[ch], n2x + 1 + n1b - n1b2, n2x + 1 + n1b2, 0);
             }
 
             if ((spCount++ & 7) == 7) {

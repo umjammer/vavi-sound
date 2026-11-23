@@ -34,6 +34,9 @@ class FftTest {
 
     static final int NMAX = 1 << 17;
 
+    /** the ssrc polyphase filter selection */
+    static final String FIR = "vavi.sound.pcm.resampling.ssrc.fir";
+
     static double[] random(int n, long seed) {
         Random random = new Random(seed);
         double[] a = new double[n];
@@ -173,16 +176,21 @@ class FftTest {
         String in = "src/test/resources/vavi/sound/pcm/resampling/ssrc/44100.wav";
         Path out = Paths.get("tmp/fft.bench.wav");
         Files.createDirectories(out.getParent());
-        String saved = System.getProperty(Fft.PROPERTY);
+        String[] keys = {Fft.PROPERTY, Convolver.PROPERTY, FIR};
+        String[] saved = new String[keys.length];
+        for (int i = 0; i < keys.length; i++) saved[i] = System.getProperty(keys[i]);
         try {
             for (String rate : new String[] {"48000", "8000"}) {
                 String[] args = {"--quiet", "--rate", rate, "--twopass", "--normalize", in, out.toString()};
-                String[] names = {"scalar", "vector", "vectorradix4"};
+                String[] names = {"scalar", "vector", "vectorradix4", "all vector"};
                 long[] sums = new long[names.length];
                 long[][] times = new long[names.length][5];
                 for (int r = 0; r < 6; r++) { // the 1st round is a warm up
                     for (int i = 0; i < names.length; i++) {
-                        System.setProperty(Fft.PROPERTY, names[i]);
+                        boolean all = names[i].equals("all vector");
+                        System.setProperty(Fft.PROPERTY, all ? "vectorradix4" : names[i]);
+                        System.setProperty(Convolver.PROPERTY, all ? "vector" : "scalar");
+                        System.setProperty(FIR, all ? "vector" : "scalar");
                         long t0 = System.nanoTime();
                         SSRC.main(args);
                         long t = System.nanoTime() - t0;
@@ -195,12 +203,14 @@ class FftTest {
                     Arrays.sort(times[i]);
                 }
                 Arrays.sort(times[0]);
-                double s = times[0][2] / 1e6, v = times[1][2] / 1e6, r4 = times[2][2] / 1e6;
-                System.out.printf("ssrc 44100->%s scalar %8.1f ms, vector %8.1f ms x%.2f, vectorradix4 %8.1f ms x%.2f%n",
-                        rate, s, v, s / v, r4, s / r4);
+                double s = times[0][2] / 1e6, v = times[1][2] / 1e6, r4 = times[2][2] / 1e6, a = times[3][2] / 1e6;
+                System.out.printf("ssrc 44100->%s scalar %8.1f ms, vector %8.1f ms x%.2f, vectorradix4 %8.1f ms x%.2f, all vector %8.1f ms x%.2f%n",
+                        rate, s, v, s / v, r4, s / r4, a, s / a);
             }
         } finally {
-            if (saved == null) System.clearProperty(Fft.PROPERTY); else System.setProperty(Fft.PROPERTY, saved);
+            for (int i = 0; i < keys.length; i++) {
+                if (saved[i] == null) System.clearProperty(keys[i]); else System.setProperty(keys[i], saved[i]);
+            }
         }
     }
 }

@@ -55,7 +55,7 @@ public class VectorRadix4Fft implements Fft {
     private static final int MIN_N = Math.max(64, 8 * SL);
 
     /** tables for a data length */
-    private static final class Plan {
+    static final class Plan {
         /** complex points (n / 2) */
         final int nh;
         /** bit reversal of nh */
@@ -121,7 +121,7 @@ public class VectorRadix4Fft implements Fft {
     }
 
     /** n to plan */
-    private static final Map<Integer, Plan> plans = new ConcurrentHashMap<>();
+    static final Map<Integer, Plan> plans = new ConcurrentHashMap<>();
 
     /** work area per thread, [re, im] */
     private static final ThreadLocal<double[][]> work = ThreadLocal.withInitial(() -> new double[2][0]);
@@ -210,7 +210,12 @@ public class VectorRadix4Fft implements Fft {
      *
      * @param a when not null, the input is interleaved (re, im) in a, it is deinterleaved in the 1st stage
      */
-    private static void fft(Plan p, double[] a, double[] re, double[] im, boolean forward) {
+    static void fft(Plan p, double[] a, double[] re, double[] im, boolean forward) {
+        fft(p, a, re, im, forward, false);
+    }
+
+    /** @param noLast when true, the last stage (q = 1, {@link #radix4last}) is not done */
+    static void fft(Plan p, double[] a, double[] re, double[] im, boolean forward, boolean noLast) {
         int nh = p.nh;
         double[][] t4 = forward ? p.r4f : p.r4b;
         int q = p.radix2 ? nh >> 3 : nh >> 2;
@@ -231,7 +236,9 @@ public class VectorRadix4Fft implements Fft {
             if (q >= SL) {
                 radix4(re, im, nh, q, t, forward);
             } else if (q == 1) {
-                radix4last(re, im, nh, forward);
+                if (!noLast) {
+                    radix4last(re, im, nh, forward);
+                }
             } else {
                 for (int b = 0; b < nh; b += 4 * q) {
                     radix4scalar(re, im, b, q, t, forward);
@@ -255,8 +262,8 @@ public class VectorRadix4Fft implements Fft {
             ui.add(vi).intoArray(im, j);
             DoubleVector dr = ur.sub(vr);
             DoubleVector di = ui.sub(vi);
-            dr.mul(c).sub(di.mul(s)).intoArray(re, j + h);
-            dr.mul(s).add(di.mul(c)).intoArray(im, j + h);
+            di.neg().fma(s, dr.mul(c)).intoArray(re, j + h);
+            dr.fma(s, di.mul(c)).intoArray(im, j + h);
         }
     }
 
@@ -285,20 +292,20 @@ public class VectorRadix4Fft implements Fft {
             DoubleVector yr = t0r.sub(t2r), yi = t0i.sub(t2i);
             DoubleVector c = DoubleVector.fromArray(S, t, 2 * q + j);
             DoubleVector s = DoubleVector.fromArray(S, t, 3 * q + j);
-            yr.mul(c).sub(yi.mul(s)).intoArray(re, i1);
-            yr.mul(s).add(yi.mul(c)).intoArray(im, i1);
+            yi.neg().fma(s, yr.mul(c)).intoArray(re, i1);
+            yr.fma(s, yi.mul(c)).intoArray(im, i1);
             DoubleVector ur = t1r.sub(t3i), ui = t1i.add(t3r);
             DoubleVector vr = t1r.add(t3i), vi = t1i.sub(t3r);
             DoubleVector y1r = forward ? ur : vr, y1i = forward ? ui : vi;
             c = DoubleVector.fromArray(S, t, j);
             s = DoubleVector.fromArray(S, t, q + j);
-            y1r.mul(c).sub(y1i.mul(s)).intoArray(re, i2);
-            y1r.mul(s).add(y1i.mul(c)).intoArray(im, i2);
+            y1i.neg().fma(s, y1r.mul(c)).intoArray(re, i2);
+            y1r.fma(s, y1i.mul(c)).intoArray(im, i2);
             DoubleVector y3r = forward ? vr : ur, y3i = forward ? vi : ui;
             c = DoubleVector.fromArray(S, t, 4 * q + j);
             s = DoubleVector.fromArray(S, t, 5 * q + j);
-            y3r.mul(c).sub(y3i.mul(s)).intoArray(re, i3);
-            y3r.mul(s).add(y3i.mul(c)).intoArray(im, i3);
+            y3i.neg().fma(s, y3r.mul(c)).intoArray(re, i3);
+            y3r.fma(s, y3i.mul(c)).intoArray(im, i3);
         }
     }
 
@@ -315,8 +322,8 @@ public class VectorRadix4Fft implements Fft {
             ui.add(vi).intoArray(im, j);
             DoubleVector dr = ur.sub(vr);
             DoubleVector di = ui.sub(vi);
-            dr.mul(c).sub(di.mul(s)).intoArray(re, j + h);
-            dr.mul(s).add(di.mul(c)).intoArray(im, j + h);
+            di.neg().fma(s, dr.mul(c)).intoArray(re, j + h);
+            dr.fma(s, di.mul(c)).intoArray(im, j + h);
         }
     }
 
@@ -347,8 +354,8 @@ public class VectorRadix4Fft implements Fft {
                 DoubleVector yr = t0r.sub(t2r), yi = t0i.sub(t2i);
                 DoubleVector c = DoubleVector.fromArray(S, t, 2 * q + j);
                 DoubleVector s = DoubleVector.fromArray(S, t, 3 * q + j);
-                yr.mul(c).sub(yi.mul(s)).intoArray(re, i1);
-                yr.mul(s).add(yi.mul(c)).intoArray(im, i1);
+                yi.neg().fma(s, yr.mul(c)).intoArray(re, i1);
+                yr.fma(s, yi.mul(c)).intoArray(im, i1);
                 // t1 + i t3, t1 - i t3
                 DoubleVector ur = t1r.sub(t3i), ui = t1i.add(t3r);
                 DoubleVector vr = t1r.add(t3i), vi = t1i.sub(t3r);
@@ -356,14 +363,14 @@ public class VectorRadix4Fft implements Fft {
                 DoubleVector y1r = forward ? ur : vr, y1i = forward ? ui : vi;
                 c = DoubleVector.fromArray(S, t, j);
                 s = DoubleVector.fromArray(S, t, q + j);
-                y1r.mul(c).sub(y1i.mul(s)).intoArray(re, i2);
-                y1r.mul(s).add(y1i.mul(c)).intoArray(im, i2);
+                y1i.neg().fma(s, y1r.mul(c)).intoArray(re, i2);
+                y1r.fma(s, y1i.mul(c)).intoArray(im, i2);
                 // r = 3: t1 - sign i t3
                 DoubleVector y3r = forward ? vr : ur, y3i = forward ? vi : ui;
                 c = DoubleVector.fromArray(S, t, 4 * q + j);
                 s = DoubleVector.fromArray(S, t, 5 * q + j);
-                y3r.mul(c).sub(y3i.mul(s)).intoArray(re, i3);
-                y3r.mul(s).add(y3i.mul(c)).intoArray(im, i3);
+                y3i.neg().fma(s, y3r.mul(c)).intoArray(re, i3);
+                y3r.fma(s, y3i.mul(c)).intoArray(im, i3);
             }
         }
     }
@@ -415,6 +422,150 @@ public class VectorRadix4Fft implements Fft {
             im[i2] = forward ? ui : vi;
             re[i3] = forward ? vr : ur;
             im[i3] = forward ? vi : ui;
+        }
+    }
+
+    /**
+     * the inverse of {@link #fft} (forward, no deinterleaving) without the normalization,
+     * decimation in time, bit reversed order in, natural order out.
+     * each stage is the conjugate transpose of the {@link #fft} one, they are done in the reverse order,
+     * so {@code ifft(fft(x)) = nh x}, no bit reversal is needed when the spectrum is used in place
+     * (e.g. multiplied by a spectrum made by {@link #fft} also).
+     */
+    static void ifft(Plan p, double[] re, double[] im) {
+        ifft(p, re, im, false);
+    }
+
+    /** @param noFirst when true, the 1st stage (q = 1, {@link #dit4last}) is not done */
+    static void ifft(Plan p, double[] re, double[] im, boolean noFirst) {
+        int nh = p.nh;
+        double[][] t4 = p.r4b;
+        int q = 1;
+        for (int s = t4.length - 1; s >= 0; s--, q <<= 2) {
+            if (q == 1) {
+                if (!noFirst) {
+                    dit4last(re, im, nh);
+                }
+            } else if (q >= SL) {
+                dit4(re, im, nh, q, t4[s]);
+            } else {
+                for (int b = 0; b < nh; b += 4 * q) {
+                    dit4scalar(re, im, b, q, t4[s]);
+                }
+            }
+        }
+        if (p.radix2) {
+            dit2(re, im, nh >> 1, p.r2b);
+        }
+    }
+
+    /** the conjugate transpose of {@link #radix2}, t is the backward (conjugated) twiddles */
+    private static void dit2(double[] re, double[] im, int h, double[] t) {
+        for (int j = 0; j < h; j += SL) {
+            DoubleVector y0r = DoubleVector.fromArray(S, re, j);
+            DoubleVector y0i = DoubleVector.fromArray(S, im, j);
+            DoubleVector y1r = DoubleVector.fromArray(S, re, j + h);
+            DoubleVector y1i = DoubleVector.fromArray(S, im, j + h);
+            DoubleVector c = DoubleVector.fromArray(S, t, j);
+            DoubleVector s = DoubleVector.fromArray(S, t, h + j);
+            DoubleVector wr = y1i.neg().fma(s, y1r.mul(c));
+            DoubleVector wi = y1r.fma(s, y1i.mul(c));
+            y0r.add(wr).intoArray(re, j);
+            y0i.add(wi).intoArray(im, j);
+            y0r.sub(wr).intoArray(re, j + h);
+            y0i.sub(wi).intoArray(im, j + h);
+        }
+    }
+
+    /**
+     * the conjugate transpose of {@link #radix4} (forward), t is the backward (conjugated) twiddles.
+     * inputs for r = 0, 2, 1, 3 are at b, b + q, b + 2q, b + 3q.
+     */
+    private static void dit4(double[] re, double[] im, int nh, int q, double[] t) {
+        for (int b = 0; b < nh; b += 4 * q) {
+            for (int j = 0; j < q; j += SL) {
+                int i0 = b + j, i1 = i0 + q, i2 = i1 + q, i3 = i2 + q;
+                DoubleVector y0r = DoubleVector.fromArray(S, re, i0);
+                DoubleVector y0i = DoubleVector.fromArray(S, im, i0);
+                // r = 2
+                DoubleVector yr = DoubleVector.fromArray(S, re, i1);
+                DoubleVector yi = DoubleVector.fromArray(S, im, i1);
+                DoubleVector c = DoubleVector.fromArray(S, t, 2 * q + j);
+                DoubleVector s = DoubleVector.fromArray(S, t, 3 * q + j);
+                DoubleVector y2r = yi.neg().fma(s, yr.mul(c)), y2i = yr.fma(s, yi.mul(c));
+                // r = 1
+                yr = DoubleVector.fromArray(S, re, i2);
+                yi = DoubleVector.fromArray(S, im, i2);
+                c = DoubleVector.fromArray(S, t, j);
+                s = DoubleVector.fromArray(S, t, q + j);
+                DoubleVector y1r = yi.neg().fma(s, yr.mul(c)), y1i = yr.fma(s, yi.mul(c));
+                // r = 3
+                yr = DoubleVector.fromArray(S, re, i3);
+                yi = DoubleVector.fromArray(S, im, i3);
+                c = DoubleVector.fromArray(S, t, 4 * q + j);
+                s = DoubleVector.fromArray(S, t, 5 * q + j);
+                DoubleVector y3r = yi.neg().fma(s, yr.mul(c)), y3i = yr.fma(s, yi.mul(c));
+                DoubleVector s02r = y0r.add(y2r), s02i = y0i.add(y2i);
+                DoubleVector d02r = y0r.sub(y2r), d02i = y0i.sub(y2i);
+                DoubleVector s13r = y1r.add(y3r), s13i = y1i.add(y3i);
+                DoubleVector d13r = y1r.sub(y3r), d13i = y1i.sub(y3i);
+                s02r.add(s13r).intoArray(re, i0);
+                s02i.add(s13i).intoArray(im, i0);
+                // d02 - i d13
+                d02r.add(d13i).intoArray(re, i1);
+                d02i.sub(d13r).intoArray(im, i1);
+                s02r.sub(s13r).intoArray(re, i2);
+                s02i.sub(s13i).intoArray(im, i2);
+                // d02 + i d13
+                d02r.sub(d13i).intoArray(re, i3);
+                d02i.add(d13r).intoArray(im, i3);
+            }
+        }
+    }
+
+    /** {@link #dit4} for q less than the lanes */
+    private static void dit4scalar(double[] re, double[] im, int b, int q, double[] t) {
+        for (int j = 0; j < q; j++) {
+            int i0 = b + j, i1 = i0 + q, i2 = i1 + q, i3 = i2 + q;
+            double c = t[2 * q + j], s = t[3 * q + j];
+            double y2r = re[i1] * c - im[i1] * s, y2i = re[i1] * s + im[i1] * c;
+            c = t[j];
+            s = t[q + j];
+            double y1r = re[i2] * c - im[i2] * s, y1i = re[i2] * s + im[i2] * c;
+            c = t[4 * q + j];
+            s = t[5 * q + j];
+            double y3r = re[i3] * c - im[i3] * s, y3i = re[i3] * s + im[i3] * c;
+            double s02r = re[i0] + y2r, s02i = im[i0] + y2i;
+            double d02r = re[i0] - y2r, d02i = im[i0] - y2i;
+            double s13r = y1r + y3r, s13i = y1i + y3i;
+            double d13r = y1r - y3r, d13i = y1i - y3i;
+            re[i0] = s02r + s13r;
+            im[i0] = s02i + s13i;
+            re[i1] = d02r + d13i;
+            im[i1] = d02i - d13r;
+            re[i2] = s02r - s13r;
+            im[i2] = s02i - s13i;
+            re[i3] = d02r - d13i;
+            im[i3] = d02i + d13r;
+        }
+    }
+
+    /** the conjugate transpose of {@link #radix4last} (forward), the 1st stage of {@link #ifft} */
+    private static void dit4last(double[] re, double[] im, int nh) {
+        for (int i0 = 0; i0 < nh; i0 += 4) {
+            int i1 = i0 + 1, i2 = i0 + 2, i3 = i0 + 3;
+            double s02r = re[i0] + re[i1], s02i = im[i0] + im[i1];
+            double d02r = re[i0] - re[i1], d02i = im[i0] - im[i1];
+            double s13r = re[i2] + re[i3], s13i = im[i2] + im[i3];
+            double d13r = re[i2] - re[i3], d13i = im[i2] - im[i3];
+            re[i0] = s02r + s13r;
+            im[i0] = s02i + s13i;
+            re[i1] = d02r + d13i;
+            im[i1] = d02i - d13r;
+            re[i2] = s02r - s13r;
+            im[i2] = s02i - s13i;
+            re[i3] = d02r - d13i;
+            im[i3] = d02i + d13r;
         }
     }
 }
