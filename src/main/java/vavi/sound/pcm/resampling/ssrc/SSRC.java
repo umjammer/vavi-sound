@@ -2266,14 +2266,20 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
 
                 try (FileInputStream fisf = new FileInputStream(ft)) {
                     FileChannel fpti = fisf.getChannel();
-                    bb = ByteBuffer.allocate(8);
+                    // blocks, a read and a write per a sample made this pass system call bound
+                    bb = ByteBuffer.allocate(0x10000 * 8);
+                    bb.flip();
+                    ByteBuffer ob = ByteBuffer.allocate(0x10000 * 3).order(ByteOrder.LITTLE_ENDIAN);
                     for (sumread = 0; sumread < fptlen;) {
                         double f;
                         int s;
 
-                        bb.clear();
-                        fpti.read(bb);
-                        bb.flip();
+                        if (bb.remaining() < 8) {
+                            bb.compact();
+                            while (bb.position() < 8 && fpti.read(bb) > 0) {
+                            }
+                            bb.flip();
+                        }
                         f = bb.getDouble();
 //if (sumRead < 100) {
 // logger.log(Level.DEBUG, "2: %06d: %f".formatted(sumRead, f));
@@ -2285,37 +2291,33 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                         case 1: {
                             s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
 
-                            ByteBuffer buf = ByteBuffer.allocate(1);
-                            buf.put((byte) (s + 128));
-                            buf.flip();
-
-                            fpo.write(buf);
+                            ob.put((byte) (s + 128));
                         }
                             break;
                         case 2: {
                             s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
 
-                            ByteBuffer buf = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
-                            buf.putShort((short) s);
-                            buf.flip();
-
-                            fpo.write(buf);
+                            ob.putShort((short) s);
                         }
                             break;
                         case 3: {
                             s = dither != 0 ? shaper.doShaping(f, peak, dither, ch) : round(f);
 
-                            ByteBuffer buf = ByteBuffer.allocate(3);
-                            buf.put((byte) (s & 255));
+                            ob.put((byte) (s & 255));
                             s >>= 8;
-                            buf.put((byte) (s & 255));
+                            ob.put((byte) (s & 255));
                             s >>= 8;
-                            buf.put((byte) (s & 255));
-                            buf.flip();
-
-                            fpo.write(buf);
+                            ob.put((byte) (s & 255));
                         }
                             break;
+                        }
+
+                        if (ob.remaining() < 3) {
+                            ob.flip();
+                            while (ob.hasRemaining()) {
+                                fpo.write(ob);
+                            }
+                            ob.clear();
                         }
 
                         ch++;
@@ -2326,6 +2328,10 @@ System.err.printf("chunk: %c%c%c%c\n", c0, c1, c2, c3);
                         if ((sumread & 0x3ffff) == 0) {
                             showProgress((double) sumread / fptlen);
                         }
+                    }
+                    ob.flip();
+                    while (ob.hasRemaining()) {
+                        fpo.write(ob);
                     }
                     showProgress(1);
                     if (!quiet) {
