@@ -687,9 +687,9 @@ public abstract class SplitRadixFft {
     // -------- child routines --------
 
     /**
-     * 2nd
+     * 2nd, package private for {@link VectorFft}
      */
-    private static void bitrv2(int n, int[] ip, int ipP, double[] a) {
+    static void bitrv2(int n, int[] ip, int ipP, double[] a) {
         int j, j1, k, k1, l, m, m2;
         double xr, xi, yr, yi;
 

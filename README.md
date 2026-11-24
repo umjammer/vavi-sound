@@ -103,6 +103,7 @@ A. yes you can, follow those steps
    * https://github.com/SquirrelJME/SquirrelJME/tree/trunk/modules/vendor-api-keitaiwiki-music/src/main/java/com/keitaiwiki/music
    * https://github.com/GrenderG/openDoJa (fuetrek)
    * https://github.com/TASEmulators/freej2me-plus/blob/devel/src/javax/microedition/media/decoders/MLDDecoder.java
+ * [vavi-apps-mfiplayer](https://github.com/umjammer/vavi-apps-mfiplayer) ... 👑 perfect reproducibility synthesizers for Mfi/SMAF
 
 ## TODO
 
